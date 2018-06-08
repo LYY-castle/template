@@ -1,0 +1,170 @@
+{
+  "msg": "获取菜单成功！",
+  "agentId": "10003",
+  "data": [
+    {
+      "sub_menus": [
+        {
+          "template": "ord_workingset.html",
+          "title": "坐席工作台"
+        },
+        {
+          "template": "monitor_workingset.html",
+          "title": "团队长工作台"
+        },
+        {
+          "template": "qc_ord_workingset.html",
+          "title": "质检员工作台"
+        },
+        {
+          "template": "qc_monitor_workingset.html",
+          "title": "质检队长工作台"
+        }
+      ],
+      "parent_menu_name": "工作平台",
+      "name":"abc"
+    },
+    {
+      "sub_menus": [
+        {
+          "template": "organization_list.html",
+          "title": "组织管理"
+        },
+        {
+          "template": "employee_list.html",
+          "title": "员工管理"
+        },
+        {
+          "template": "account_list.html",
+          "title": "系统账号"
+        }
+      ],
+      "parent_menu_name": "人资管理"
+    },
+    {
+      "sub_menus": [
+        {
+          "template": "sc_list_generate.html",
+          "title": "名单管理"
+        },
+        {
+          "template": "campaign_management.html",
+          "title": "活动管理"
+        },
+        {
+          "template": "nodule_list.html",
+          "title": "小结管理"
+        }
+      ],
+      "parent_menu_name": "现场主管"
+    },
+    {
+      "sub_menus": [
+        {
+          "template": "captain_list_newdistribute_group.html",
+          "title": "名单分配"
+        },
+        {
+          "template": "captain_list_recycle_group.html",
+          "title": "名单回收"
+        },
+        {
+          "template": "monitor_list_single.html",
+          "title": "名单监控(人)"
+        },
+        {
+          "template": "monitor_list_group.html",
+          "title": "名单监控(组)"
+        },
+        {
+          "template": "monitor_list.html",
+          "title": "名单监控(名单)"
+        },
+        {
+          "template": "monitor_director.html",
+          "title": "电话监控(人)"
+        },
+        {
+          "template": "monitor_manager.html",
+          "title": "电话监控(组)"
+        }
+      ],
+      "parent_menu_name": "团队长"
+    },
+    {
+      "sub_menus": [
+        {
+          "template": "dial_task.html",
+          "title": "拨打任务"
+        },
+        {
+          "template": "order_management.html",
+          "title": "订单管理"
+        },
+        {
+          "template": "find_dail.html",
+          "title": "接触历史"
+        }
+      ],
+      "parent_menu_name": "普通坐席"
+    },
+    {
+      "sub_menus": [
+        {
+          "template": "qm_charge_scorelist.html",
+          "title": "评分表管理"
+        },
+        {
+          "template": "qm_charge_selectgroup.html",
+          "title": "活动与质检"
+        },
+        {
+          "template": "qm_charge_generatetask.html",
+          "title": "质检任务管理"
+        },
+        {
+          "template": "qm_charge_appointtask.html",
+          "title": "质检任务分配"
+        },
+        {
+          "template": "qm_charge_newrecycle.html",
+          "title": "质检任务回收"
+        },
+        {
+          "template": "qm_charge_taskmonitor.html",
+          "title": "质检任务监控(组)"
+        },
+        {
+          "template": "qm_charge_taskmonitor_toman.html",
+          "title": "质检任务监控(人)"
+        }
+      ],
+      "parent_menu_name": "质检主管"
+    },
+    {
+      "sub_menus": [
+        {
+          "template": "qm_quailitymark.html",
+          "title": "质检评分"
+        },
+        {
+          "template": "qm_qc_searchquailitymark.html",
+          "title": "查询质检评分(质)"
+        }
+      ],
+      "parent_menu_name": "质检员"
+    },
+    {
+      "sub_menus": [
+        {
+          "template": "softtelephone.html",
+          "title": "软电话"
+        }
+      ],
+      "parent_menu_name": "软电话"
+    }
+  ],
+  "staffName": "打发打发",
+  "status": "1",
+  "departName": "销售小组1"
+}
