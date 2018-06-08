@@ -10,7 +10,7 @@ git clone http://119.27.184.90/crm/nui.git
 # Install dependencies
 npm install
 
-# serve with hot reload at localhost:9528
+# serve with hot reload at localhost:9500
 npm run dev
 
 # build for production with minification

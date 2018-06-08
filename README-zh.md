@@ -1,6 +1,6 @@
 # crm
 
-> 这是原项目的新版本 但是现在存在一个致命性的bug 动态路由不能自动绑定挂载在vue下
+> 这是原项目的新版本 但是现在存在一个致命性的bug 动态路由不能自动绑定挂载在vue下（注意前提是已经装了node，安装node请查看node教程）
 
 
 ## Build Setup
@@ -16,7 +16,7 @@ npm install
 # 建议不要用cnpm  安装有各种诡异的bug 可以通过如下操作解决npm速度慢的问题
 npm install --registry=https://registry.npm.taobao.org
 
-# serve with hot reload at localhost:9528
+# serve with hot reload at localhost:9500 可以自己在配置文件内自定义端口号
 npm run dev
 
 # build for production with minification
