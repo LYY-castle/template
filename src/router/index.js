@@ -66,7 +66,7 @@ if (sessionStorage.getItem('getMenu') && JSON.parse(sessionStorage.getItem('getM
         title: data[i].sub_menus[j].title,
         icon: 'user'
       }
-      children[j].component = () => import('@/views/employee_list/index')
+      children[j].component = () => import('@/views/' + data[i].sub_menus[j].template.substring(0, data[i].sub_menus[j].template.length - 5) + '/index')
     }
     baseRouter[i].children = children
     if (baseRouter[i].children.length === 1) {

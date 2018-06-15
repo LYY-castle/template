@@ -31,3 +31,20 @@ export function validatAlphabets(str) {
   return reg.test(str)
 }
 
+export const rule = {
+  customerName: [
+    { required: true, message: '请输入客户名称', trigger: 'blur' }
+  ],
+  sex: [
+    { required: true, message: '请输入客户性别', trigger: 'blur' }
+  ],
+  mobile: [
+    { required: true, message: '请输入手机号码', trigger: 'blur' },
+    { pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号码' }
+  ],
+  idNumber: [
+    { required: true, message: '请输入身份证号码', trigger: 'blur' },
+    { pattern: /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/, message: '请输入正确的身份证号码' }
+  ]
+}
+
