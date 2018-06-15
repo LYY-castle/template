@@ -191,7 +191,7 @@
 </template>
 
 <script>
-import { queryDepts, query } from '@/api/employee_list'
+import { query } from '@/api/employee_list'
 
 export default {
   name: 'employee_list',

@@ -110,7 +110,7 @@
       </el-row>
       <el-row style="margin-top:1%;">
         <el-col :span="4">
-          <el-button type="success" size="small"  @click="dialogFormVisible = true">新增</el-button>
+          <el-button type="success" size="small"  @click="addStaff">新增</el-button>
           <el-button type="danger" size="small" @click="deleteAll">批量删除</el-button>
         </el-col>
         <el-col :span="18">
@@ -305,6 +305,18 @@
       }
     },
     methods: {
+      addStaff() {
+        this.dialogFormVisible = true
+        this.ruleForm = {
+          staffName: '',
+          origin: [],
+          idNumber: '',
+          sex: '1',
+          birthday: '',
+          departName: '',
+          userPhone: ''
+        }
+      },
       deleteAll() {
         const listId = this.multipleSelection.map(function(item, index) {
           return item.id
