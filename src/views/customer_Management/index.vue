@@ -275,13 +275,9 @@
 <script>
 // import { mapGetters } from 'vuex'
 import { getMenu } from '@/api/dashboard'
-import { queryByCustomer } from '@/api/customerManagement'
-import { delCustomer } from '@/api/customerManagement'
-import { queryByCustomerId } from '@/api/customerManagement'
-import { editCustomer } from '@/api/customerManagement'
-import { addCustomer } from '@/api/customerManagement'
-import { batchDelCustomer } from '@/api/customerManagement'
+import { queryByCustomer, delCustomer, queryByCustomerId, editCustomer, addCustomer, batchDelCustomer } from '@/api/customerManagement'
 import { rule } from '@/utils/validate'
+import { formatDateTime } from '@/utils/tools'
 
 export default {
   name: 'customerManagement',
@@ -302,22 +298,6 @@ export default {
       validate: true, // 验证不通过阻止发请求
       pageShow: true, // 分页显示隐藏
       rule: rule,
-      // rule: {
-      //   customerName: [
-      //     { required: true, message: '请输入客户名称', trigger: 'blur' }
-      //   ],
-      //   sex: [
-      //     { required: true, message: '请输入客户性别', trigger: 'blur' }
-      //   ],
-      //   mobile: [
-      //     { required: true, message: '请输入手机号码', trigger: 'blur' },
-      //     { pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号码' }
-      //   ],
-      //   idNumber: [
-      //     { required: true, message: '请输入身份证号码', trigger: 'blur' },
-      //     { pattern: /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/, message: '请输入正确的身份证号码' }
-      //   ]
-      // },
       delReq: {
         customerId: ''
       },
@@ -386,25 +366,7 @@ export default {
       }
     },
     // 时间戳转年月日时分秒
-    formatDateTime(inputTime) {
-      if (inputTime) {
-        var date = new Date(inputTime)
-        var y = date.getFullYear()
-        var m = date.getMonth() + 1
-        m = m < 10 ? '0' + m : m
-        var d = date.getDate()
-        d = d < 10 ? '0' + d : d
-        var h = date.getHours()
-        h = h < 10 ? '0' + h : h
-        var minute = date.getMinutes()
-        var second = date.getSeconds()
-        minute = minute < 10 ? '0' + minute : minute
-        second = second < 10 ? '0' + second : second
-        return y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' + second
-      } else {
-        return ''
-      }
-    },
+    formatDateTime: formatDateTime,
     // 手机号码加密
     hideMobile(mobileNo) {
       if (mobileNo) {
