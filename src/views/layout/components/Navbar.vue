@@ -31,7 +31,7 @@
 <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
     </el-col>
     <el-col :span="16" style="margin-top:1.4%;">
-      
+
       <el-form :inline="true" size="mini">
           <el-col :span="6">
             <el-form-item label="坐席分机:" class="txtDN" size="mini">
@@ -40,13 +40,13 @@
               </el-col>
               <el-col :span="4">
                 <el-button type="primary" size="mini" style="margin-left:50%;">登入</el-button>
-              </el-col> 
+              </el-col>
             </el-form-item>
             <!-- <el-form-item style="margin-top:.5%;display:inline;"> -->
               <!-- <el-button type="primary" size="mini">登入</el-button> -->
             <!-- </el-form-item> -->
           </el-col>
-          
+
           <el-col :span="4">
             <img src="../../../../static/images/nologin_state.png" title="坐席状态">
               <el-form-item class="state_now">
@@ -55,7 +55,7 @@
                 <el-option label="示忙" value="shimang"></el-option>
                 <el-option label="后处理" value="houchuli"></el-option>
               </el-select>
-            </el-form-item>            
+            </el-form-item>
           </el-col>
 
           <el-col :span="5">
@@ -63,8 +63,8 @@
               <el-form-item class="numberBox">
                 <el-col :span="24">
                   <el-input v-model="formInline.user" size="mini"></el-input>
-                </el-col>  
-              </el-form-item>          
+                </el-col>
+              </el-form-item>
           </el-col>
           <el-col :span="9">
             <img src="../../../../static/images/dial_disable.png" title="拨号(不可用)" style="cursor:pointer;">
@@ -75,7 +75,7 @@
             <img src="../../../../static/images/hangup_disable.png" title="挂断(不可用)" style="cursor:pointer;">
             <!-- <img src="../../../../static/images/monitor_disable.png" title="挂断(不可用)" style="cursor:pointer;"> -->
           </el-col>
-          
+
 
       </el-form>
     </el-col>
@@ -120,7 +120,7 @@
     </el-col>
   </el-row>
   </el-menu>
-  
+
 </template>
 
 <script>
@@ -155,9 +155,10 @@ export default {
     },
     logout() {
       this.$store.dispatch('LogOut').then((data) => {
+        // location.reload() // 为了重新实例化vue-router对象 避免bug
         if (data.info) {
-          this.$router.push({ path: '/login' })
-          // location.reload() // 为了重新实例化vue-router对象 避免bug
+          this.$router.replace('/login')
+          // location.reload()
         }
       })
     }

@@ -96,6 +96,13 @@ export default {
                   duration: 5 * 1000
                 })
               }
+              if (data.code === '1') {
+                Message({
+                  message: data.message,
+                  type: 'success',
+                  duration: 5 * 1000
+                })
+              }
             } else if (data.code === '0') {
               this.loading = false
               Message({
@@ -144,7 +151,14 @@ export default {
   },
   created() {
     loginValid().then(response => {
-      console.log(response)
+      if (response.data.code === '0') {
+        Message({
+          message: response.data.msg,
+          type: 'error',
+          duration: 5 * 1000
+        })
+        this.$router.push({ path: '/dashboard' })
+      }
     })
       .catch(error => {
         console.log(error)
