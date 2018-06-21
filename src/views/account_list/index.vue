@@ -10,7 +10,15 @@
             <el-input placeholder="员工工号" v-model="formInline.angentId"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-select v-model="formInline.departName" placeholder="所属部门">
+            <el-select v-model="formInline.status" placeholder="所属部门">
+              <el-option label="所有情况" value=""></el-option>
+              <el-option label="已停用" value="0"></el-option>
+              <el-option label="启用中" value="1"></el-option>
+              <el-option label="未启用" value="2"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-select v-model="formInline.departName" placeholder="所属组织">
               <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
             </el-select>
           </el-form-item>
@@ -39,74 +47,74 @@
           </el-form-item>
         </el-form>
         <el-table
-        :header-row-style="headerRow"
-        :data="tableData"
-        ref="multipleTable"
-        tooltip-effect="dark"
-        border
-        style="width: 94%;"
-        @selection-change="handleSelectionChange">
-        <el-table-column
-          align="center"
-          type="selection"
-          width="55">
-        </el-table-column>
-        <el-table-column
-          width="55"
-          align="center"
-          type="index"
-          label="序号">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="angentId"
-          label="员工工号">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="staffName"
-          label="员工姓名">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="staffSex"
-          label="员工性别">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="departName"
-          label="所属组织">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="userPhone"
-          label="联系方式">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="creator"
-          label="操作人员">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="updateTime"
-          label="操作时间">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          label="操作"
-          width="120">
-          <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
-            <el-button
-              @click.native.prevent="deleteRow(scope.$index, tableData)"
-              type="text"
-              size="small">
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+          :header-row-style="headerRow"
+          :data="tableData"
+          ref="multipleTable"
+          tooltip-effect="dark"
+          border
+          style="width: 94%;"
+          @selection-change="handleSelectionChange">
+          <el-table-column
+            align="center"
+            type="selection"
+            width="55">
+          </el-table-column>
+          <el-table-column
+            width="55"
+            align="center"
+            type="index"
+            label="序号">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="angentId"
+            label="员工工号">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="staffName"
+            label="员工姓名">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="staffSex"
+            label="员工性别">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="departName"
+            label="所属组织">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="userPhone"
+            label="联系方式">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="creator"
+            label="操作人员">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="updateTime"
+            label="操作时间">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="操作"
+            width="120">
+            <template slot-scope="scope">
+              <el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
+              <el-button
+                @click.native.prevent="deleteRow(scope.$index, tableData)"
+                type="text"
+                size="small">
+                删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
       </el-row>
       <el-row style="margin-top:1%;">
         <el-col :span="4">
@@ -256,7 +264,8 @@
           startTime: '',
           stopTime: '',
           from: 1,
-          departName: ''
+          departName: '',
+          status: ''
         },
         ruleForm: {
           staffName: '',

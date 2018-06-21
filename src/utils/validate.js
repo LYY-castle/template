@@ -48,3 +48,11 @@ export const rule = {
   ]
 }
 
+export function validSpace(rule, value, callback) {
+  if (value.trim().length === 0) {
+    callback(new Error('输入不能为空'))
+  } else {
+    callback()
+  }
+}
+
