@@ -1,4 +1,4 @@
-0.0.0.0:80 {
+0.0.0.0:8080 {
   root /root/ui
   timeouts none
   gzip
@@ -6,7 +6,7 @@
   errors stdout
 }
 
-0.0.0.0:80/api/v1 {
+0.0.0.0:8080/api/v1 {
   proxy / 127.0.0.1:8090 {
     transparent
     websocket
