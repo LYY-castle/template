@@ -10,6 +10,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getMenu } from '@/api/dashboard'
+// import Layout from '../layout/Layout'
+import getDynamicRouter from '../../router/dynamic-router'
 
 export default {
   name: 'dashboard',
@@ -23,10 +25,11 @@ export default {
     getMenu().then(response => {
       const data = response.data
       sessionStorage.setItem('getMenu', JSON.stringify(data))
+      const dynamicRouter = getDynamicRouter()
+      this.$router.addRoutes(dynamicRouter)
+    }).catch(error => {
+      console.error(error)
     })
-      .catch(error => {
-        console.log(error)
-      })
   }
 }
 </script>
