@@ -36,7 +36,7 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @keyup.enter="searchCustomer(req)" icon="el-icon-search">查询</el-button>
+          <el-button type="primary" @click="searchCustomer(req)" icon="el-icon-search">查询</el-button>
           <el-button type="danger" @click="clearForm(req)">重置</el-button>
         </el-form-item>
         <!-- <el-form-item>
