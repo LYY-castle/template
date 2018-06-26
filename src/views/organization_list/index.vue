@@ -21,18 +21,12 @@
           </el-form-item>
           <el-form-item label="修改时间：">
             <el-date-picker
-              v-model="formInline.startTime"
-              type="datetime"
-              placeholder="开始日期"
-              value-format="yyyy-MM-dd hh:mm:ss"
-              default-time="00:00:00">
-            </el-date-picker>
-            <el-date-picker
-              v-model="formInline.stopTime"
-              type="datetime"
-              placeholder="结束日期"
-              value-format="yyyy-MM-dd hh:mm:ss"
-              default-time="00:00:00">
+              v-model="timeValue"
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
           <el-form-item>
@@ -132,6 +126,7 @@
         </el-form-item>
         <el-form-item label="上级组织" prop="id">
           <el-select v-model="ruleForm.id" placeholder="请选择部门" style="width: 100%;">
+            <el-option label="一级组织" value="0"></el-option>
             <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
@@ -153,9 +148,10 @@
         <el-form-item label="组织名" prop="departName">
           <el-input v-model="ruleFormReverse.departName"></el-input>
         </el-form-item>
-        <el-form-item label="上级组织" prop="upDepartName">
-          <el-select v-model="ruleFormReverse.upDepartName" placeholder="请选择部门" style="width: 100%;">
-            <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
+        <el-form-item label="上级组织" prop="upId">
+          <el-select v-model="ruleFormReverse.upId" placeholder="请选择部门" style="width: 100%;">
+            <el-option label="一级组织" value="0"></el-option>
+            <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="备注">
@@ -187,6 +183,7 @@
     name: 'organization_list',
     data() {
       return {
+        timeValue: '',
         organData: {},
         pagination: {
           pageNo: null,
@@ -344,6 +341,7 @@
         this.$refs[formName].resetFields()
       },
       reset() {
+        this.timeValue = ''
         this.formInline = {
           organ_id: '',
           organ_name: '',
@@ -396,19 +394,6 @@
           name: 'organization_list.html',
           query: { parent_organ: row.departName }
         })
-        // this.formInline.parent_organ = row.departName
-        // // 由于老版本不需要实时更新查询条件去查询下属组织 因此传参只需要2个值即可,其他字段完全无用 （备注 可以改装）
-        // findAllOrganPost({
-        //   organ_id: '',
-        //   organ_name: '',
-        //   parent_organ: row.departName,
-        //   startTime: '',
-        //   stopTime: '',
-        //   creator: '',
-        //   from: 1
-        // }).then(response => {
-        //   this.queryOrgan(response)
-        // })
         this.refreshOrgan()
       },
       handleClickStaff(row) {
@@ -458,6 +443,8 @@
       },
       handleCurrentChange(val) {
         this.formInline.from = val
+        this.formInline.startTime = this.timeValue[0]
+        this.formInline.stopTime = this.timeValue[1]
         findAllOrganPost(this.formInline).then(response => {
           this.queryOrgan(response)
         })
@@ -477,12 +464,20 @@
             type: 'error',
             duration: 3 * 1000
           })
+        } else {
+          for (let i = 0; i <= this.tableData.length; i++) {
+            if (this.tableData[i] && (this.tableData[i].upId === 0)) {
+              this.tableData[i].upDepartName = '根组织'
+            }
+          }
         }
         this.pagination = res.data.pageInfo
       },
       searchOrgan(req) {
         // 根据老版本的逻辑 查询只能传分页页码的第一页
         req.from = 1
+        this.formInline.startTime = this.timeValue[0]
+        this.formInline.stopTime = this.timeValue[1]
         findAllOrganPost(req).then(response => {
           this.queryOrgan(response)
         })

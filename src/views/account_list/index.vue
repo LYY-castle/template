@@ -27,18 +27,12 @@
           </el-form-item>
           <el-form-item label="操作时间：">
             <el-date-picker
-              v-model="formInline.startTime"
-              type="datetime"
-              placeholder="开始日期"
-              value-format="yyyy-MM-dd hh:mm:ss"
-              default-time="00:00:00">
-            </el-date-picker>
-            <el-date-picker
-              v-model="formInline.stopTime"
-              type="datetime"
-              placeholder="结束日期"
-              value-format="yyyy-MM-dd hh:mm:ss"
-              default-time="00:00:00">
+              v-model="timeValue"
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
           <el-form-item>
@@ -92,7 +86,7 @@
           </el-table-column>
           <el-table-column
             align="center"
-            prop="creator"
+            prop="modifier"
             label="操作人员">
           </el-table-column>
           <el-table-column
@@ -242,6 +236,7 @@
     name: 'employee_list',
     data() {
       return {
+        timeValue: '',
         staffData: {},
         options: regionData,
         pagination: {
@@ -409,6 +404,7 @@
         this.$refs[formName].resetFields()
       },
       reset() {
+        this.timeValue = ''
         this.formInline = {
           name: '',
           angentId: '',
@@ -497,6 +493,9 @@
       },
       handleCurrentChange(val) {
         this.formInline.from = val
+        this.formInline.startTime = this.timeValue[0]
+        this.formInline.stopTime = this.timeValue[1]
+        console.log(this.formInline)
         query(this.formInline).then(response => {
           this.queryStaff(response)
         })
@@ -514,6 +513,7 @@
         if (this.tableData.length !== 0) {
           for (let i = 0; i <= this.tableData.length; i++) {
             if (this.tableData[i]) {
+              this.tableData[i].updateTime = formatDateTime(this.tableData[i].updateTime)
               if (this.tableData[i].sex === 1) {
                 this.tableData[i].staffSex = '男'
               } else {
@@ -532,6 +532,8 @@
       searchStaff(req) {
         // 根据老版本的逻辑 查询只能传分页页码的第一页
         req.from = 1
+        req.startTime = this.timeValue[0]
+        req.stopTime = this.timeValue[1]
         query(req).then(response => {
           this.queryStaff(response)
         })
