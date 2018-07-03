@@ -36,7 +36,7 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="searchCustomer(req)" icon="el-icon-search">查询</el-button>
+          <el-button type="primary" @click="req.pageNo=1;searchCustomer(req)" icon="el-icon-search">查询</el-button>
           <el-button type="danger" @click="clearForm(req)">重置</el-button>
         </el-form-item>
         <!-- <el-form-item>
@@ -223,22 +223,22 @@
       :visible.sync="addVisible"
       append-to-body>
       <el-form :rules="rule" :model="customerDetail" ref="customerDetail" label-width="100px">
-        <el-form-item label="客户姓名:" prop="customerName">
+        <el-form-item label="客户姓名" prop="customerName">
           <el-input v-model="customerDetail.customerName" size="small"></el-input>
         </el-form-item>
-        <el-form-item label="客户性别:" prop="sex">
+        <el-form-item label="客户性别" prop="sex">
           <el-radio-group v-model="customerDetail.sex" size="small">
             <el-radio label='0' border>男</el-radio>
             <el-radio label='1' border>女</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="客户电话:" prop="mobile">
+        <el-form-item label="客户电话" prop="mobile">
           <el-input v-model="customerDetail.mobile" size="small"></el-input>
         </el-form-item>
-        <el-form-item label="身份证:" prop="idNumber">
+        <el-form-item label="身份证" prop="idNumber">
           <el-input v-model="customerDetail.idNumber" size="small"></el-input>
         </el-form-item>
-        <el-form-item label="客户地址:" prop="resideAddress">
+        <el-form-item label="客户地址" prop="resideAddress">
           <el-input v-model="customerDetail.resideAddress" size="small"></el-input>
         </el-form-item>
       </el-form>
@@ -349,7 +349,9 @@ export default {
     //   console.log(a)
     // },
     resetForm(formName) {
-      this.$refs[formName].resetFields()
+      if (this.$refs[formName] !== undefined) {
+        this.$refs[formName].resetFields()
+      }
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
@@ -368,7 +370,7 @@ export default {
           obj[key] = ''
         }
       }
-      if (formName) {
+      if (this.$refs[formName] !== undefined) {
         this.$refs[formName].resetFields()
       }
     },
@@ -408,7 +410,7 @@ export default {
               this.pageInfo = response.data.pageInfo
               this.pageShow = true
             } else {
-              this.$message('无查询结果，请核对查询条件')
+              this.$message(response.data.messages)
               this.tableData = response.data.data
               this.pageShow = false
             }
@@ -426,7 +428,7 @@ export default {
             this.$message.success(response.data.message)
             this.searchCustomer(this.req)
           } else {
-            this.$message('删除失败')
+            this.$message(response.data.messages)
           }
         })
         .catch(error => {
@@ -459,7 +461,7 @@ export default {
           this.$message.success(response.data.message)
           this.searchCustomer(this.req)
         } else {
-          this.$message('修改失败')
+          this.$message(response.data.messages)
         }
       }).catch(error => {
         console.log(error)

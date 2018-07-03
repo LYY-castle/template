@@ -40,7 +40,7 @@ export const rule = {
   ],
   mobile: [
     { required: true, message: '请输入手机号码', trigger: 'blur' },
-    { pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号码' }
+    { pattern: /^\d{0,20}$/, message: '请输入正确的电话号码' }
   ],
   idNumber: [
     { required: true, message: '请输入身份证号码', trigger: 'blur' },
