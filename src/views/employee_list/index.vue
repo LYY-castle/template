@@ -155,7 +155,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="联系方式:" prop="userPhone">
-          <el-input v-model="ruleForm.userPhone"></el-input>
+          <el-input v-model="ruleForm.userPhone" maxlength="20"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -202,7 +202,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="联系方式" prop="userPhone">
-          <el-input v-model="ruleFormReverse.userPhone"></el-input>
+          <el-input v-model="ruleFormReverse.userPhone" maxlength="20"></el-input>
         </el-form-item>
         <el-form-item label="操作人员" prop="modifier">
           <span>{{ruleFormReverse.modifier}}</span>
@@ -218,37 +218,37 @@
       </div>
     </el-dialog>
     <el-dialog title="员工详情" :visible.sync="dialogFormVisibleDetail" width="30%">
-      <el-form :model="ruleFormReverse" :rules="rules" ref="ruleFormReverse" label-width="100px" class="demo-ruleForm">
+      <el-form :model="ruleFormReverseDetail" :rules="rules" ref="ruleFormReverseDetail" label-width="100px" class="demo-ruleForm">
         <el-form-item label="工号">
-          <span>{{ruleFormReverse.angentId}}</span>
+          <span>{{ruleFormReverseDetail.angentId}}</span>
         </el-form-item>
         <el-form-item label="姓名">
-          <span>{{ruleFormReverse.staffName}}</span>
+          <span>{{ruleFormReverseDetail.staffName}}</span>
         </el-form-item>
         <el-form-item label="性别">
-          <span v-if="ruleFormReverse.sex === '1'">男</span>
-          <span v-if="ruleFormReverse.sex === '0'">女</span>
+          <span v-if="ruleFormReverseDetail.sex === '1'">男</span>
+          <span v-if="ruleFormReverseDetail.sex === '0'">女</span>
         </el-form-item>
         <el-form-item label="身份证">
-          <span>{{ruleFormReverse.idNumber}}</span>
+          <span>{{ruleFormReverseDetail.idNumber}}</span>
         </el-form-item>
         <el-form-item label="籍贯">
-          <span>{{ruleFormReverse.origin}}</span>
+          <span>{{ruleFormReverseDetail.origin}}</span>
         </el-form-item>
         <el-form-item label="出生日期">
-          <span>{{ruleFormReverse.birthday}}</span>
+          <span>{{ruleFormReverseDetail.birthday}}</span>
         </el-form-item>
         <el-form-item label="组织">
-          <span>{{ruleFormReverse.departName}}</span>
+          <span>{{ruleFormReverseDetail.departName}}</span>
         </el-form-item>
         <el-form-item label="联系方式">
-          <span>{{ruleFormReverse.userPhone}}</span>
+          <span>{{ruleFormReverseDetail.userPhone}}</span>
         </el-form-item>
         <el-form-item label="操作人员">
-          <span>{{ruleFormReverse.modifier}}</span>
+          <span>{{ruleFormReverseDetail.modifier}}</span>
         </el-form-item>
         <el-form-item label="操作时间">
-          <span>{{ruleFormReverse.updateTime}}</span>
+          <span>{{ruleFormReverseDetail.updateTime}}</span>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -261,7 +261,7 @@
 <script>
   import { queryDepts, query, deleteStaff, addStaff, queryone, edit, deleteAllStaff } from '@/api/employee_list'
   import { Message, MessageBox } from 'element-ui'
-  import { regionData, CodeToText } from 'element-china-area-data'
+  import { provinceAndCityData, CodeToText } from 'element-china-area-data'
   import { formatDateTime } from '@/utils/tools'
 
   export default {
@@ -269,7 +269,7 @@
     data() {
       return {
         staffData: {},
-        options: regionData,
+        options: provinceAndCityData,
         timeValue: '',
         pagination: {
           pageNo: null,
@@ -315,6 +315,19 @@
           modifier: '',
           updateTime: ''
         },
+        ruleFormReverseDetail: {
+          id: null,
+          staffName: '',
+          origin: [],
+          idNumber: '',
+          sex: '1',
+          birthday: '',
+          departName: '',
+          userPhone: '',
+          angentId: '',
+          modifier: '',
+          updateTime: ''
+        },
         dialogFormVisible: false,
         dialogFormVisibleReverse: false,
         dialogFormVisibleDetail: false,
@@ -337,7 +350,7 @@
           ],
           userPhone: [
             { required: true, message: '请输入联系方式', trigger: 'blur' },
-            { pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号码' }
+            { pattern: /^[0-9]*$/, message: '请输入正确的号码' }
           ]
         }
       }
@@ -487,10 +500,10 @@
       },
       handleClickDetail(row) {
         this.dialogFormVisibleDetail = true
-        this.ruleFormReverse = {
+        this.ruleFormReverseDetail = {
           id: row.id,
           staffName: row.staffName,
-          origin: CodeToText[JSON.parse(row.origin)[0]] + CodeToText[JSON.parse(row.origin)[1]] + CodeToText[JSON.parse(row.origin)[2]],
+          origin: CodeToText[JSON.parse(row.origin)[0]] + CodeToText[JSON.parse(row.origin)[1]],
           idNumber: row.idNumber,
           sex: row.sex.toString(),
           birthday: row.birthday,

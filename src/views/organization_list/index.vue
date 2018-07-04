@@ -126,7 +126,7 @@
         </el-form-item>
         <el-form-item label="上级组织" prop="id">
           <el-select v-model="ruleForm.id" placeholder="请选择部门" style="width: 100%;">
-            <el-option label="一级组织" value="0"></el-option>
+            <el-option label="根组织" value="0"></el-option>
             <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
@@ -150,7 +150,7 @@
         </el-form-item>
         <el-form-item label="上级组织" prop="upId">
           <el-select v-model="ruleFormReverse.upId" placeholder="请选择部门" style="width: 100%;">
-            <el-option label="一级组织" value="0"></el-option>
+            <el-option label="根组织" value="0"></el-option>
             <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
@@ -404,7 +404,7 @@
       },
       handleClickUser(row) {
         this.$router.push({
-          name: 'employee_list.html',
+          name: 'account_list.html',
           query: { departName: row.departName }
         })
       },
@@ -416,7 +416,7 @@
             const data = response.data.data[0]
             this.organData = data
             this.ruleFormReverse = {
-              upId: data.upId,
+              upId: String(data.upId),
               id: data.id,
               creator: data.creator,
               number: data.number,
@@ -467,6 +467,7 @@
         } else {
           for (let i = 0; i <= this.tableData.length; i++) {
             if (this.tableData[i] && (this.tableData[i].upId === 0)) {
+              this.tableData[i].updateTime = formatDateTime(this.tableData[i].updateTime)
               this.tableData[i].upDepartName = '根组织'
             }
           }

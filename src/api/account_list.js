@@ -1,15 +1,79 @@
 import request from '@/utils/request'
 
-export function findAllOrganGet() {
+export function findAllAccount(obj) {
   return request({
-    url: '/organization/findAllOrgan',
+    url: '/account/findAllAccount',
+    method: 'get',
+    params: obj
+  })
+}
+
+export function changeState(obj) {
+  return request({
+    url: '/account/changeState',
+    method: 'post',
+    data: obj
+  })
+}
+
+export function alterAccountList(obj) {
+  return request({
+    url: '/account/alterAccountList',
+    method: 'post',
+    data: obj
+  })
+}
+
+export function resetPWDById(obj) {
+  return request({
+    url: '/account/resetPWDById',
+    method: 'post',
+    data: obj
+  })
+}
+
+export function findAccountByAgentid(obj) {
+  return request({
+    url: '/account/findAccountByAgentid',
+    method: 'get',
+    params: obj
+  })
+}
+
+export function findOrganById(obj) {
+  return request({
+    url: '/organization/findOrganById',
+    method: 'post',
+    data: obj
+  })
+}
+
+export function getRoleList() {
+  return request({
+    url: '/authority/getRoleList',
     method: 'get'
   })
 }
 
-export function findAllOrganPost(obj) {
+export function readProp(obj) {
   return request({
-    url: '/organization/findAllOrgan',
+    url: '/account/readProp',
+    method: 'get',
+    params: obj
+  })
+}
+
+export function modifyAccount(obj) {
+  return request({
+    url: '/account/modifyAccount',
+    method: 'post',
+    data: obj
+  })
+}
+
+export function addAccount(obj) {
+  return request({
+    url: '/account/addAccount',
     method: 'post',
     data: obj
   })
@@ -22,34 +86,3 @@ export function findAllOrganTo() {
   })
 }
 
-export function modifyOrgan(obj) {
-  return request({
-    url: '/organization/modifyOrgan',
-    method: 'post',
-    data: obj
-  })
-}
-
-export function delOrgan(obj) {
-  return request({
-    url: '/organization/delOrgan',
-    method: 'post',
-    data: obj
-  })
-}
-
-export function addOrganization(obj) {
-  return request({
-    url: '/organization/addOrganization',
-    method: 'post',
-    data: obj
-  })
-}
-
-export function delOrgansByOrganIds(obj) {
-  return request({
-    url: '/organization/delOrgansByOrganIds',
-    method: 'post',
-    data: obj
-  })
-}
