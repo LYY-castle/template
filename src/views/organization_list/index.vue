@@ -466,9 +466,11 @@
           })
         } else {
           for (let i = 0; i <= this.tableData.length; i++) {
-            if (this.tableData[i] && (this.tableData[i].upId === 0)) {
+            if (this.tableData[i]) {
               this.tableData[i].updateTime = formatDateTime(this.tableData[i].updateTime)
-              this.tableData[i].upDepartName = '根组织'
+              if (this.tableData[i].upId === 0) {
+                this.tableData[i].upDepartName = '根组织'
+              }
             }
           }
         }
