@@ -1,9 +1,16 @@
 import Layout from '../views/layout/Layout'
 
-export default () => {
+export default (menuData) => {
   const baseRouter = []
-  if (sessionStorage.getItem('getMenu') && JSON.parse(sessionStorage.getItem('getMenu')).data) {
-    const data = JSON.parse(sessionStorage.getItem('getMenu')).data
+  let rawData = []
+  if (menuData) {
+    rawData = menuData.data
+  } else {
+    const sessionMenuData = sessionStorage.getItem('getMenu') && JSON.parse(sessionStorage.getItem('getMenu')).data
+    rawData = sessionMenuData || []
+  }
+  if (rawData.length !== 0) {
+    const data = rawData
     for (let i = 0; i < data.length; i++) {
       const children = []
       baseRouter[i] = {}

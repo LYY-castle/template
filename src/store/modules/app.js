@@ -2,6 +2,7 @@ import Cookies from 'js-cookie'
 
 const app = {
   state: {
+    menu: [],
     sidebar: {
       opened: !+Cookies.get('sidebarStatus'),
       withoutAnimation: false
@@ -25,6 +26,9 @@ const app = {
     },
     TOGGLE_DEVICE: (state, device) => {
       state.device = device
+    },
+    SET_MENU: (state, menu) => {
+      state.menu = menu
     }
   },
   actions: {
@@ -36,6 +40,9 @@ const app = {
     },
     ToggleDevice({ commit }, device) {
       commit('TOGGLE_DEVICE', device)
+    },
+    SetMenu({ commit }, menu) {
+      commit('SET_MENU', menu)
     }
   }
 }
