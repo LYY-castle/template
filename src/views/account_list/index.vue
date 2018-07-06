@@ -383,7 +383,7 @@
           type: 'warning'
         }).then(() => {
           alterAccountList({
-            chk_box: chk_box.join(','),
+            angentIdList: chk_box,
             status: status
           }).then(response => {
             if (response.data.code === 1) {

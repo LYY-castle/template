@@ -11,7 +11,7 @@
           </el-form-item>
           <el-form-item>
             <el-select v-model="formInline.parent_organ" placeholder="上级组织">
-              <el-option label="所有组织" value=""></el-option>
+              <el-option label="所有上级组织" value=""></el-option>
               <el-option label="一级组织" value="0"></el-option>
               <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
             </el-select>
@@ -249,7 +249,7 @@
           type: 'warning'
         }).then(() => {
           delOrgansByOrganIds({
-            organIds: organIds.join(','),
+            listId: organIds,
             operatorId: JSON.parse(sessionStorage.getItem('getMenu')).agentId
           }).then(response => {
             if (response.data.code === 1) {

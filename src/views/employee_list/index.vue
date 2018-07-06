@@ -146,7 +146,8 @@
           <el-date-picker
             v-model="ruleForm.birthday"
             type="date"
-            placeholder="选择出生日期" style="width: 100%;">
+            placeholder="选择出生日期" style="width: 100%;"
+            value-format="yyyy-MM-dd">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="组织:" prop="departName">
@@ -193,7 +194,8 @@
           <el-date-picker
             v-model="ruleFormReverse.birthday"
             type="date"
-            placeholder="选择出生日期" style="width: 100%;">
+            placeholder="选择出生日期" style="width: 100%;"
+            value-format="yyyy-MM-dd">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="组织" prop="departName">
