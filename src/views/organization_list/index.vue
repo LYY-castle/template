@@ -281,11 +281,20 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            addOrganization({
-              organ_cn: this.ruleForm.departName,
-              upId: this.ruleForm.id,
-              remark: this.ruleForm.comment
-            }).then(response => {
+            let obj = {}
+            if (this.ruleForm.id) {
+              obj = {
+                organ_cn: this.ruleForm.departName,
+                upId: this.ruleForm.id,
+                remark: this.ruleForm.comment
+              }
+            } else {
+              obj = {
+                organ_cn: this.ruleForm.departName,
+                remark: this.ruleForm.comment
+              }
+            }
+            addOrganization(obj).then(response => {
               if (response.data.exchange.body.code === 1) {
                 this.dialogFormVisible = false
                 findAllOrganGet().then(response => {
@@ -309,15 +318,28 @@
       submitFormReverse(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            modifyOrgan({
-              organ_id: this.ruleFormReverse.id,
-              organ_No: this.ruleFormReverse.number,
-              group_cn: this.ruleFormReverse.departName,
-              select_uporgan: this.ruleFormReverse.upId,
-              remark: this.ruleFormReverse.comment,
-              creator: this.ruleFormReverse.creator,
-              createTime: this.ruleFormReverse.createTime
-            }).then(response => {
+            let obj = {}
+            if (this.ruleFormReverse.upId) {
+              obj = {
+                organ_id: this.ruleFormReverse.id,
+                organ_No: this.ruleFormReverse.number,
+                group_cn: this.ruleFormReverse.departName,
+                select_uporgan: this.ruleFormReverse.upId,
+                remark: this.ruleFormReverse.comment,
+                creator: this.ruleFormReverse.creator,
+                createTime: this.ruleFormReverse.createTime
+              }
+            } else {
+              obj = {
+                organ_id: this.ruleFormReverse.id,
+                organ_No: this.ruleFormReverse.number,
+                group_cn: this.ruleFormReverse.departName,
+                remark: this.ruleFormReverse.comment,
+                creator: this.ruleFormReverse.creator,
+                createTime: this.ruleFormReverse.createTime
+              }
+            }
+            modifyOrgan(obj).then(response => {
               if (response.data.exchange.body.code === 1) {
                 this.dialogFormVisibleReverse = false
                 findAllOrganGet().then(response => {
@@ -416,7 +438,7 @@
             const data = response.data.data[0]
             this.organData = data
             this.ruleFormReverse = {
-              upId: String(data.upId),
+              upId: data.upId ? data.upId : '',
               id: data.id,
               creator: data.creator,
               number: data.number,
