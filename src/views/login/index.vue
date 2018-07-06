@@ -39,8 +39,8 @@
 // import { isvalidUsername } from '@/utils/validate'
 import { Message, MessageBox } from 'element-ui'
 import { loginValid } from '@/api/login'
-import { getMenu } from '@/api/dashboard'
-import getDynamicRouter from '@/router/dynamic-router'
+// import { getMenu } from '@/api/dashboard'
+// import getDynamicRouter from '@/router/dynamic-router'
 
 export default {
   name: 'login',
@@ -89,6 +89,8 @@ export default {
           this.loading = true
           this.$store.dispatch('Login', this.loginForm).then((data) => {
             if (data.code === '1' || data.code === '4' || data.code === '3') {
+              this.loading = false
+              this.$router.push({ path: '/dashboard' })
               if (data.code === '3') {
                 Message({
                   message: '请注销再登录',
@@ -102,18 +104,6 @@ export default {
                   type: 'success',
                   duration: 5 * 1000
                 })
-                getMenu().then(response => {
-                  const data = response.data
-                  // 存到session storage
-                  sessionStorage.setItem('getMenu', JSON.stringify(data))
-                  // 存到store里面
-                  this.$store.dispatch('SetMenu', getDynamicRouter(data))
-                  this.loading = false
-                  this.$router.push({ path: '/dashboard' })
-                }).catch(error => {
-                  console.error(error)
-                })
-                // todo get Menu Data
               }
             } else if (data.code === '0') {
               this.loading = false

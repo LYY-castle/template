@@ -9,9 +9,9 @@
 
 <script>
 import { mapGetters } from 'vuex'
-// import { getMenu } from '@/api/dashboard'
+import { getMenu } from '@/api/dashboard'
 // import Layout from '../layout/Layout'
-// import getDynamicRouter from '../../router/dynamic-router'
+import getDynamicRouter from '@/router/dynamic-router'
 
 export default {
   name: 'dashboard',
@@ -20,15 +20,18 @@ export default {
       'name',
       'roles'
     ])
+  },
+  created() {
+    getMenu().then(response => {
+      const data = response.data
+      // 存到session storage
+      sessionStorage.setItem('getMenu', JSON.stringify(data))
+      // 存到store里面
+      this.$store.dispatch('SetMenu', getDynamicRouter(data))
+    }).catch(error => {
+      console.error(error)
+    })
   }
-  // created() {
-  //   getMenu().then(response => {
-  //     // const data = response.data
-  //     // sessionStorage.setItem('getMenu', JSON.stringify(data))
-  //   }).catch(error => {
-  //     console.error(error)
-  //   })
-  // }
 }
 </script>
 
