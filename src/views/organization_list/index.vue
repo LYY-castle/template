@@ -124,9 +124,9 @@
         <el-form-item label="组织名" prop="departName">
           <el-input v-model="ruleForm.departName"></el-input>
         </el-form-item>
-        <el-form-item label="上级组织" prop="id">
+        <el-form-item label="上级组织">
           <el-select v-model="ruleForm.id" placeholder="请选择部门" style="width: 100%;">
-            <el-option label="根组织" value="0"></el-option>
+            <el-option label="根组织" value=""></el-option>
             <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
@@ -148,9 +148,9 @@
         <el-form-item label="组织名" prop="departName">
           <el-input v-model="ruleFormReverse.departName"></el-input>
         </el-form-item>
-        <el-form-item label="上级组织" prop="upId">
+        <el-form-item label="上级组织">
           <el-select v-model="ruleFormReverse.upId" placeholder="请选择部门" style="width: 100%;">
-            <el-option label="根组织" value="0"></el-option>
+            <el-option label="根组织" value=""></el-option>
             <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
@@ -208,12 +208,12 @@
           creator: ''
         },
         ruleForm: {
-          id: null,
+          id: '',
           departName: '',
           comment: ''
         },
         ruleFormReverse: {
-          upId: null,
+          upId: '',
           id: null,
           creator: '',
           number: '',
@@ -231,10 +231,10 @@
           ],
           upDepartName: [
             { required: true, message: '请选择部门', trigger: 'change' }
-          ],
-          id: [
-            { required: true, message: '请输入组织名', trigger: 'change' }
           ]
+          // id: [
+          //   { required: true, message: '请输入组织名', trigger: 'change' }
+          // ]
         }
       }
     },

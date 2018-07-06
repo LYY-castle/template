@@ -411,6 +411,7 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            this.ruleForm.sex = Number(this.ruleForm.sex)
             addStaff(this.ruleForm).then(response => {
               if (response.data.code === 1) {
                 this.dialogFormVisible = false
@@ -430,6 +431,7 @@
       submitFormReverse(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            this.ruleFormReverse.sex = Number(this.ruleFormReverse.sex)
             edit(this.ruleFormReverse).then(response => {
               if (response.data.code === 1) {
                 this.dialogFormVisibleReverse = false
