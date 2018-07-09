@@ -118,12 +118,13 @@
   import { getMenu } from '@/api/dashboard' // 菜单栏
   import { formatDateTime } from '@/utils/tools' // 格式化时间
   import {
+    getDepartId,
     getAllCamps,
     queryByKeyWords
-  } from '@/api/find_dail_staff' // api接口引用
+  } from '@/api/find_dail_charge' // api接口引用
 
   export default {
-    name: 'find_dail_staff',
+    name: 'find_dail_charge',
 
     data() {
       return {
@@ -142,13 +143,43 @@
           endTime: '',
           stime: '',
           etime: '',
+          departId: '',
           pageNo: 1
 
         }
       }
     },
 
+    mounted() {
+      // this.getAllCampsByStaff()
+      // this.searchByKeyWords(this.req)
+      this.getDepartIdByStaff()
+      getAllCamps()
+        .then(response => {
+          if (response.data.code === 0) {
+            this.campaigns = response.data.data
+            for (var i = 0; i < this.campaigns.length; i++) {
+              this.req.campaign.push(this.campaigns[i].campaignId)
+            }
+            this.searchByKeyWords(this.req)
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+
     methods: {
+      // 获得部门id
+      getDepartIdByStaff() {
+        getDepartId()
+          .then(response => {
+            localStorage.setItem('departId', response.data.departId)
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
       // 根据当前登录人显示活动
       getAllCampsByStaff() {
         getAllCamps()
@@ -161,6 +192,13 @@
             console.log(error)
           })
       },
+
+      // 分页翻页功能
+      handleCurrentChange(val) {
+      // console.log(`当前页: ${val}`);
+        this.req.pageNo = val
+        this.searchByKeyWords(this.req)
+      },
       // 时间戳转年月日时分秒
       formatDateTime: formatDateTime,
   
@@ -170,14 +208,10 @@
         this.req.campaign = []
         this.req.campaign.push(campaignId)
       },
-      // 分页翻页功能
-      handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`);
-        this.req.pageNo = val
-        this.searchByKeyWords(this.req)
-      },
+
       // 综合查询
       searchByKeyWords(req) {
+        this.req.departId = localStorage.getItem('departId')
         queryByKeyWords(req)
           .then(response => {
             if (response.data.code === 0) {
@@ -220,13 +254,6 @@
         if (formName) {
           this.$refs[formName].resetFields()
         }
-        // this.req.customerName = ''
-        // this.req.caller = ''
-        // this.req.callee = ''
-        // this.req.startTime = ''
-        // this.req.endTime = ''
-        // this.req.stime = ''
-        // this.req.etime = ''
       },
 
       putAllcamps() {
@@ -253,23 +280,8 @@
           console.log(error)
         })
     },
-    watch: {},
-
-    mounted() {
-      // this.getAllCampsByStaff()
-      // this.searchByKeyWords(this.req)
-      getAllCamps()
-        .then(response => {
-          if (response.data.code === 0) {
-            this.campaigns = response.data.data
-            for (var i = 0; i < this.campaigns.length; i++) {
-              this.req.campaign.push(this.campaigns[i].campaignId)
-            }
-            this.searchByKeyWords(this.req)
-          }
-        })
-    }
-
+    watch: {}
+  
   }
 
 </script>
