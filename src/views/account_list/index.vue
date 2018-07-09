@@ -408,11 +408,14 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            if (this.checkedPermission.indexOf(undefined) !== -1) {
+              this.checkedPermission.splice(this.checkedPermission.indexOf(undefined), 1)
+            }
             addAccount({
               agentid: this.ruleForm.agentId,
               organ: this.ruleForm.departId,
-              chk: this.checkedPermission.join(','),
-              other_accounts: JSON.stringify(this.ruleForm.other_accounts)
+              chk: this.checkedPermission,
+              other_accounts: this.ruleForm.other_accounts
             }).then(response => {
               if (response.data.exchange.body.code === 1) {
                 this.dialogFormVisible = false
@@ -441,11 +444,14 @@
       submitFormReverse(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            if (this.checkedPermission.indexOf(undefined) !== -1) {
+              this.checkedPermission.splice(this.checkedPermission.indexOf(undefined), 1)
+            }
             modifyAccount({
               agentid: this.ruleFormReverse.agentId,
               organ: this.ruleFormReverse.departId,
-              other_accounts: JSON.stringify(this.ruleFormReverse.other_accounts),
-              chk: this.checkedPermission.join(',')
+              other_accounts: this.ruleFormReverse.other_accounts,
+              chk: this.checkedPermission
             }).then(response => {
               if (response.data.exchange.body.code === 1) {
                 this.dialogFormVisibleReverse = false
@@ -594,8 +600,8 @@
       },
       handleClickStop(row) {
         changeState({
-          agentid: row.agentId,
-          state: 0
+          angentId: row.agentId,
+          status: 0
         }).then(response => {
           if (response.data.code === 1) {
             findAllAccount({ departName: '' }).then(responseData => {
@@ -606,8 +612,8 @@
       },
       handleClickStart(row) {
         changeState({
-          agentid: row.agentId,
-          state: 1
+          angentId: row.agentId,
+          status: 1
         }).then(response => {
           if (response.data.code === 1) {
             findAllAccount({ departName: '' }).then(responseData => {
