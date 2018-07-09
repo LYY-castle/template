@@ -124,7 +124,7 @@
             label="操作"
             width="100">
           <template slot-scope="scope">
-            <el-button @click="dialTo(scope.row.taskId,scope.row.campaignId,scope.row.isBlacklist,scope.row.customerPhone)"><img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</el-button>
+            <el-button @click="dialTo(scope.row.taskId,scope.row.campaignId,scope.row.isBlacklist,scope.row.customerPhone)" size="small" type="text"><img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</el-button>
           </template>
           </el-table-column>
         </el-table>
@@ -218,7 +218,7 @@ export default {
             }
           }
         })
-        .catch(function(error) {
+        .catch(error => {
           console.log(error)
         })
     },
@@ -285,7 +285,7 @@ export default {
         this.searchByKeyWords(this.req)
       } else {
         // 点击了预约名单
-        this.req.contactStatus = 1
+        this.req.contactStatus = ''
         this.req.status = 1
         this.searchByKeyWords(this.req)
       }
