@@ -107,7 +107,7 @@
     <el-dialog
       align:left
       width="30%"
-      title="客户信息修改"
+      title="活动信息修改"
       :visible.sync="editVisible"
       append-to-body>
       <el-form label-width="100px" :model="campaignDetail" ref="editCampaign" :rules="rule">
@@ -326,7 +326,7 @@
                 v-model="nameListExclude.startCreateTime"
                 type="datetime"
                 placeholder="开始日期"
-                value-format="yyyy-MM-dd hh:mm:ss"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 default-time="00:00:00">
             </el-date-picker>
             到
@@ -334,7 +334,7 @@
                 v-model="nameListExclude.endCreateTime"
                 type="datetime"
                 placeholder="结束日期"
-                value-format="yyyy-MM-dd hh:mm:ss"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 default-time="00:00:00">
             </el-date-picker>
           </el-form-item>
@@ -555,7 +555,9 @@ export default {
       addList: false,
       tableData: [], // 表格数据
       validate: true, // 验证不通过阻止发请求
-      pageShow: true, // 分页显示隐藏
+      pageShow: false, // 分页显示隐藏
+      // nameListExcludePage: false,//可选名单分页
+      // nameListPage: false,//已选名单分页
       productData: [], // 产品
       deptData: [], // 活动组织
       qcdeptData: [], // 质检组织
@@ -588,7 +590,7 @@ export default {
         status: '0',
         departId: '',
         description: ''
-      }, // 客户详情
+      }, // 活动详情
       // 分页数据
       pageInfo: {},
       // 添加名单
@@ -659,13 +661,20 @@ export default {
           if (response.data.code === 0) {
             if (response.data.data) {
               this.tableData = response.data.data
-              this.pageInfo = response.data.pageInfo
-              this.pageShow = true
-            } else {
-              this.$message(response.data.messages)
-              this.tableData = response.data.data
+              if (response.data.pageInfo) {
+                this.pageInfo = response.data.pageInfo
+                this.pageShow = true
+              } else {
+                this.pageShow = false
+              }
+            }
+            if (response.data.data.length === 0) {
               this.pageShow = false
             }
+          } else {
+            this.$message(response.data.messages)
+            this.tableData = response.data.data
+            this.pageShow = false
           }
         })
         .catch(error => {
@@ -673,7 +682,7 @@ export default {
           this.$message('操作失败')
         })
     },
-    // 删除客户信息
+    // 删除活动信息
     delCampaign(campaignId) {
       delCampaignById(campaignId)
         .then(response => {
@@ -858,11 +867,8 @@ export default {
     getNameLists(campaignId) {
       showNameListsById(campaignId).then(response => {
         if (response.data.code === 0) {
-          this.$message.success(response.data.message)
-          if (response.data.data !== '') {
-            this.nameListsTable = response.data.data
-          }
-          if (response.data.pageInfo !== undefined) {
+          this.nameListsTable = response.data.data
+          if (response.data.pageInfo !== undefined && response.data.pageInfo !== null) {
             this.nameListsPageinfo = response.data.pageInfo
           }
         }
@@ -875,9 +881,8 @@ export default {
     getNameListExclude(searchReq) {
       findNameListExcludeById(searchReq).then(response => {
         if (response.data.code === 0) {
-          this.$message.success(response.data.message)
           this.nameListExcludeTablel = response.data.data
-          if (response.data.pageInfo !== undefined) {
+          if (response.data.pageInfo !== undefined && response.data.pageInfo !== null) {
             this.nameListExcludePageinfo = response.data.pageInfo
           }
         } else {

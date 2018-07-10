@@ -45,6 +45,15 @@ export const rule = {
   idNumber: [
     { required: true, message: '请输入身份证号码', trigger: 'blur' },
     { pattern: /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/, message: '请输入正确的身份证号码' }
+  ],
+  batchName: [
+    { required: true, message: '请输入批次名称', trigger: 'blur' }
+  ],
+  ascriptionId: [
+    { required: true, message: '请选择客户归属', trigger: 'blur' }
+  ],
+  validityTime: [
+    { required: true, message: '请输入有效时间', trigger: 'blur' }
   ]
 }
 

@@ -23,7 +23,7 @@
               v-model="req.startModifierTime"
               type="datetime"
               placeholder="开始日期"
-              value-format="yyyy-MM-dd hh:mm:ss"
+              value-format="yyyy-MM-dd HH:mm:ss"
               default-time="00:00:00">
           </el-date-picker>
           到
@@ -31,7 +31,7 @@
               v-model="req.endModifierTime"
               type="datetime"
               placeholder="结束日期"
-              value-format="yyyy-MM-dd hh:mm:ss"
+              value-format="yyyy-MM-dd HH:mm:ss"
               default-time="00:00:00">
           </el-date-picker>
         </el-form-item>
@@ -303,7 +303,7 @@ export default {
       batchDelVisible: false, // 批量删除对话框显示隐藏
       tableData: [], // 表格数据
       validate: true, // 验证不通过阻止发请求
-      pageShow: true, // 分页显示隐藏
+      pageShow: false, // 分页显示隐藏
       rule: rule,
       delReq: {
         customerId: ''
@@ -405,15 +405,17 @@ export default {
       queryByCustomer(req)
         .then(response => {
           if (response.data.code === 0) {
-            if (response.data.data) {
-              this.tableData = response.data.data
+            this.tableData = response.data.data
+            if (response.data.pageInfo) {
               this.pageInfo = response.data.pageInfo
               this.pageShow = true
             } else {
-              this.$message(response.data.messages)
-              this.tableData = response.data.data
               this.pageShow = false
             }
+          } else {
+            this.$message(response.data.messages)
+            this.tableData = response.data.data
+            this.pageShow = false
           }
         })
         .catch(error => {
