@@ -11,7 +11,7 @@
           </el-form-item>
           <el-form-item>
             <el-select v-model="formInline.parent_organ" placeholder="上级组织">
-              <el-option label="所有组织" value=""></el-option>
+              <el-option label="所有上级组织" value=""></el-option>
               <el-option label="一级组织" value="0"></el-option>
               <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
             </el-select>
@@ -21,18 +21,12 @@
           </el-form-item>
           <el-form-item label="修改时间：">
             <el-date-picker
-              v-model="formInline.startTime"
-              type="datetime"
-              placeholder="开始日期"
-              value-format="yyyy-MM-dd hh:mm:ss"
-              default-time="00:00:00">
-            </el-date-picker>
-            <el-date-picker
-              v-model="formInline.stopTime"
-              type="datetime"
-              placeholder="结束日期"
-              value-format="yyyy-MM-dd hh:mm:ss"
-              default-time="00:00:00">
+              v-model="timeValue"
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
           <el-form-item>
@@ -130,8 +124,9 @@
         <el-form-item label="组织名" prop="departName">
           <el-input v-model="ruleForm.departName"></el-input>
         </el-form-item>
-        <el-form-item label="上级组织" prop="id">
+        <el-form-item label="上级组织">
           <el-select v-model="ruleForm.id" placeholder="请选择部门" style="width: 100%;">
+            <el-option label="根组织" value=""></el-option>
             <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
@@ -153,9 +148,10 @@
         <el-form-item label="组织名" prop="departName">
           <el-input v-model="ruleFormReverse.departName"></el-input>
         </el-form-item>
-        <el-form-item label="上级组织" prop="upDepartName">
-          <el-select v-model="ruleFormReverse.upDepartName" placeholder="请选择部门" style="width: 100%;">
-            <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
+        <el-form-item label="上级组织">
+          <el-select v-model="ruleFormReverse.upId" placeholder="请选择部门" style="width: 100%;">
+            <el-option label="根组织" value=""></el-option>
+            <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="备注">
@@ -187,6 +183,7 @@
     name: 'organization_list',
     data() {
       return {
+        timeValue: '',
         organData: {},
         pagination: {
           pageNo: null,
@@ -211,12 +208,12 @@
           creator: ''
         },
         ruleForm: {
-          id: null,
+          id: '',
           departName: '',
           comment: ''
         },
         ruleFormReverse: {
-          upId: null,
+          upId: '',
           id: null,
           creator: '',
           number: '',
@@ -234,10 +231,10 @@
           ],
           upDepartName: [
             { required: true, message: '请选择部门', trigger: 'change' }
-          ],
-          id: [
-            { required: true, message: '请输入组织名', trigger: 'change' }
           ]
+          // id: [
+          //   { required: true, message: '请输入组织名', trigger: 'change' }
+          // ]
         }
       }
     },
@@ -252,7 +249,7 @@
           type: 'warning'
         }).then(() => {
           delOrgansByOrganIds({
-            organIds: organIds.join(','),
+            listId: organIds,
             operatorId: JSON.parse(sessionStorage.getItem('getMenu')).agentId
           }).then(response => {
             if (response.data.code === 1) {
@@ -284,11 +281,20 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            addOrganization({
-              organ_cn: this.ruleForm.departName,
-              upId: this.ruleForm.id,
-              remark: this.ruleForm.comment
-            }).then(response => {
+            let obj = {}
+            if (this.ruleForm.id) {
+              obj = {
+                organ_cn: this.ruleForm.departName,
+                upId: this.ruleForm.id,
+                remark: this.ruleForm.comment
+              }
+            } else {
+              obj = {
+                organ_cn: this.ruleForm.departName,
+                remark: this.ruleForm.comment
+              }
+            }
+            addOrganization(obj).then(response => {
               if (response.data.exchange.body.code === 1) {
                 this.dialogFormVisible = false
                 findAllOrganGet().then(response => {
@@ -312,15 +318,28 @@
       submitFormReverse(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            modifyOrgan({
-              organ_id: this.ruleFormReverse.id,
-              organ_No: this.ruleFormReverse.number,
-              group_cn: this.ruleFormReverse.departName,
-              select_uporgan: this.ruleFormReverse.upId,
-              remark: this.ruleFormReverse.comment,
-              creator: this.ruleFormReverse.creator,
-              createTime: this.ruleFormReverse.createTime
-            }).then(response => {
+            let obj = {}
+            if (this.ruleFormReverse.upId) {
+              obj = {
+                organ_id: this.ruleFormReverse.id,
+                organ_No: this.ruleFormReverse.number,
+                group_cn: this.ruleFormReverse.departName,
+                select_uporgan: this.ruleFormReverse.upId,
+                remark: this.ruleFormReverse.comment,
+                creator: this.ruleFormReverse.creator,
+                createTime: this.ruleFormReverse.createTime
+              }
+            } else {
+              obj = {
+                organ_id: this.ruleFormReverse.id,
+                organ_No: this.ruleFormReverse.number,
+                group_cn: this.ruleFormReverse.departName,
+                remark: this.ruleFormReverse.comment,
+                creator: this.ruleFormReverse.creator,
+                createTime: this.ruleFormReverse.createTime
+              }
+            }
+            modifyOrgan(obj).then(response => {
               if (response.data.exchange.body.code === 1) {
                 this.dialogFormVisibleReverse = false
                 findAllOrganGet().then(response => {
@@ -344,6 +363,7 @@
         this.$refs[formName].resetFields()
       },
       reset() {
+        this.timeValue = ''
         this.formInline = {
           organ_id: '',
           organ_name: '',
@@ -396,19 +416,6 @@
           name: 'organization_list.html',
           query: { parent_organ: row.departName }
         })
-        // this.formInline.parent_organ = row.departName
-        // // 由于老版本不需要实时更新查询条件去查询下属组织 因此传参只需要2个值即可,其他字段完全无用 （备注 可以改装）
-        // findAllOrganPost({
-        //   organ_id: '',
-        //   organ_name: '',
-        //   parent_organ: row.departName,
-        //   startTime: '',
-        //   stopTime: '',
-        //   creator: '',
-        //   from: 1
-        // }).then(response => {
-        //   this.queryOrgan(response)
-        // })
         this.refreshOrgan()
       },
       handleClickStaff(row) {
@@ -419,7 +426,7 @@
       },
       handleClickUser(row) {
         this.$router.push({
-          name: 'employee_list.html',
+          name: 'account_list.html',
           query: { departName: row.departName }
         })
       },
@@ -431,7 +438,7 @@
             const data = response.data.data[0]
             this.organData = data
             this.ruleFormReverse = {
-              upId: data.upId,
+              upId: data.upId ? data.upId : '',
               id: data.id,
               creator: data.creator,
               number: data.number,
@@ -458,6 +465,8 @@
       },
       handleCurrentChange(val) {
         this.formInline.from = val
+        this.formInline.startTime = this.timeValue[0]
+        this.formInline.stopTime = this.timeValue[1]
         findAllOrganPost(this.formInline).then(response => {
           this.queryOrgan(response)
         })
@@ -477,12 +486,23 @@
             type: 'error',
             duration: 3 * 1000
           })
+        } else {
+          for (let i = 0; i <= this.tableData.length; i++) {
+            if (this.tableData[i]) {
+              this.tableData[i].updateTime = formatDateTime(this.tableData[i].updateTime)
+              if (this.tableData[i].upId === 0) {
+                this.tableData[i].upDepartName = '根组织'
+              }
+            }
+          }
         }
         this.pagination = res.data.pageInfo
       },
       searchOrgan(req) {
         // 根据老版本的逻辑 查询只能传分页页码的第一页
         req.from = 1
+        this.formInline.startTime = this.timeValue[0]
+        this.formInline.stopTime = this.timeValue[1]
         findAllOrganPost(req).then(response => {
           this.queryOrgan(response)
         })

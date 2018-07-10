@@ -27,9 +27,9 @@
     <!-- <el-col :span="2">
       123
     </el-col> -->
-    
+
     <!-- <el-col :span="16" style="margin-top:1.4%;"> -->
-    
+
         <el-col :span="17" style="margin-top:0.2%;">
           <el-row style="height:30px;">
             <el-col :span="1" style="margin-left:1%;">
@@ -43,13 +43,13 @@
                   </el-col>
                   <el-col :span="4">
                     <el-button type="primary" size="mini" style="margin-left:50%;">登入</el-button>
-                  </el-col> 
+                  </el-col>
                 </el-form-item>
                 <!-- <el-form-item style="margin-top:.5%;display:inline;"> -->
                   <!-- <el-button type="primary" size="mini">登入</el-button> -->
                 <!-- </el-form-item> -->
               </el-col>
-            
+
               <el-col :span="4" style="padding-top:0.6%;height:30px;">
                 <div style="display:inline-block;width:16%;">
                   <img src="../../../../static/images/nologin_state.png" title="坐席状态" style="width:100%;">
@@ -60,7 +60,7 @@
                     <el-option label="示忙" value="shimang"></el-option>
                     <el-option label="后处理" value="houchuli"></el-option>
                   </el-select>
-                </el-form-item>            
+                </el-form-item>
               </el-col>
 
               <el-col :span="5" style="height:30px;">
@@ -70,8 +70,8 @@
                 <el-form-item class="numberBox">
                   <el-col :span="24">
                     <el-input v-model="formInline.user" size="mini"></el-input>
-                  </el-col>  
-                </el-form-item>          
+                  </el-col>
+                </el-form-item>
               </el-col>
               <el-col :span="9" style="height:30px;">
                 <div style="display:inline-block;width:8%;">
@@ -100,8 +100,8 @@
             <breadcrumb></breadcrumb>
           </el-row>
         </el-col>
-      
-    
+
+
     <el-col :span="7" class="userInfo" style="margin-top:-7px;">
       <el-col :span="6">
         <p>
@@ -143,7 +143,7 @@
     </el-col>
   </el-row>
   </el-menu>
-  
+
 </template>
 
 <script>

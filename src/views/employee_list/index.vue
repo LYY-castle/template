@@ -19,18 +19,12 @@
           </el-form-item>
           <el-form-item label="操作时间：">
             <el-date-picker
-              v-model="formInline.startTime"
-              type="datetime"
-              placeholder="开始日期"
-              value-format="yyyy-MM-dd hh:mm:ss"
-              default-time="00:00:00">
-            </el-date-picker>
-            <el-date-picker
-              v-model="formInline.stopTime"
-              type="datetime"
-              placeholder="结束日期"
-              value-format="yyyy-MM-dd hh:mm:ss"
-              default-time="00:00:00">
+              v-model="timeValue"
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
           <el-form-item>
@@ -70,7 +64,8 @@
         <el-table-column
           align="center"
           prop="staffSex"
-          label="员工性别">
+          label="性别"
+          width="55">
         </el-table-column>
         <el-table-column
           align="center"
@@ -95,8 +90,9 @@
         <el-table-column
           align="center"
           label="操作"
-          width="120">
+          width="180">
           <template slot-scope="scope">
+            <el-button @click="handleClickDetail(scope.row)" type="text" size="small">详情</el-button>
             <el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
             <el-button
               @click.native.prevent="deleteRow(scope.$index, tableData)"
@@ -150,7 +146,8 @@
           <el-date-picker
             v-model="ruleForm.birthday"
             type="date"
-            placeholder="选择出生日期" style="width: 100%;">
+            placeholder="选择出生日期" style="width: 100%;"
+            value-format="yyyy-MM-dd">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="组织:" prop="departName">
@@ -159,7 +156,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="联系方式:" prop="userPhone">
-          <el-input v-model="ruleForm.userPhone"></el-input>
+          <el-input v-model="ruleForm.userPhone" maxlength="20"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -197,7 +194,8 @@
           <el-date-picker
             v-model="ruleFormReverse.birthday"
             type="date"
-            placeholder="选择出生日期" style="width: 100%;">
+            placeholder="选择出生日期" style="width: 100%;"
+            value-format="yyyy-MM-dd">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="组织" prop="departName">
@@ -206,7 +204,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="联系方式" prop="userPhone">
-          <el-input v-model="ruleFormReverse.userPhone"></el-input>
+          <el-input v-model="ruleFormReverse.userPhone" maxlength="20"></el-input>
         </el-form-item>
         <el-form-item label="操作人员" prop="modifier">
           <span>{{ruleFormReverse.modifier}}</span>
@@ -221,13 +219,51 @@
         <el-button @click="dialogFormVisibleReverse = false">取 消</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="员工详情" :visible.sync="dialogFormVisibleDetail" width="30%">
+      <el-form :model="ruleFormReverseDetail" :rules="rules" ref="ruleFormReverseDetail" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="工号">
+          <span>{{ruleFormReverseDetail.angentId}}</span>
+        </el-form-item>
+        <el-form-item label="姓名">
+          <span>{{ruleFormReverseDetail.staffName}}</span>
+        </el-form-item>
+        <el-form-item label="性别">
+          <span v-if="ruleFormReverseDetail.sex === '1'">男</span>
+          <span v-if="ruleFormReverseDetail.sex === '0'">女</span>
+        </el-form-item>
+        <el-form-item label="身份证">
+          <span>{{ruleFormReverseDetail.idNumber}}</span>
+        </el-form-item>
+        <el-form-item label="籍贯">
+          <span>{{ruleFormReverseDetail.origin}}</span>
+        </el-form-item>
+        <el-form-item label="出生日期">
+          <span>{{ruleFormReverseDetail.birthday}}</span>
+        </el-form-item>
+        <el-form-item label="组织">
+          <span>{{ruleFormReverseDetail.departName}}</span>
+        </el-form-item>
+        <el-form-item label="联系方式">
+          <span>{{ruleFormReverseDetail.userPhone}}</span>
+        </el-form-item>
+        <el-form-item label="操作人员">
+          <span>{{ruleFormReverseDetail.modifier}}</span>
+        </el-form-item>
+        <el-form-item label="操作时间">
+          <span>{{ruleFormReverseDetail.updateTime}}</span>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogFormVisibleDetail = false">返回</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
   import { queryDepts, query, deleteStaff, addStaff, queryone, edit, deleteAllStaff } from '@/api/employee_list'
   import { Message, MessageBox } from 'element-ui'
-  import { regionData, CodeToText } from 'element-china-area-data'
+  import { provinceAndCityData, CodeToText } from 'element-china-area-data'
   import { formatDateTime } from '@/utils/tools'
 
   export default {
@@ -235,7 +271,8 @@
     data() {
       return {
         staffData: {},
-        options: regionData,
+        options: provinceAndCityData,
+        timeValue: '',
         pagination: {
           pageNo: null,
           pageSize: null,
@@ -280,8 +317,22 @@
           modifier: '',
           updateTime: ''
         },
+        ruleFormReverseDetail: {
+          id: null,
+          staffName: '',
+          origin: [],
+          idNumber: '',
+          sex: '1',
+          birthday: '',
+          departName: '',
+          userPhone: '',
+          angentId: '',
+          modifier: '',
+          updateTime: ''
+        },
         dialogFormVisible: false,
         dialogFormVisibleReverse: false,
+        dialogFormVisibleDetail: false,
         rules: {
           staffName: [
             { required: true, message: '请输入姓名', trigger: 'blur' }
@@ -301,7 +352,7 @@
           ],
           userPhone: [
             { required: true, message: '请输入联系方式', trigger: 'blur' },
-            { pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号码' }
+            { pattern: /^[0-9]*$/, message: '请输入正确的号码' }
           ]
         }
       }
@@ -362,6 +413,7 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            this.ruleForm.sex = Number(this.ruleForm.sex)
             addStaff(this.ruleForm).then(response => {
               if (response.data.code === 1) {
                 this.dialogFormVisible = false
@@ -381,6 +433,7 @@
       submitFormReverse(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            this.ruleFormReverse.sex = Number(this.ruleFormReverse.sex)
             edit(this.ruleFormReverse).then(response => {
               if (response.data.code === 1) {
                 this.dialogFormVisibleReverse = false
@@ -400,6 +453,7 @@
         this.$refs[formName].resetFields()
       },
       reset() {
+        this.timeValue = ''
         this.formInline = {
           name: '',
           angentId: '',
@@ -448,6 +502,22 @@
           })
         })
       },
+      handleClickDetail(row) {
+        this.dialogFormVisibleDetail = true
+        this.ruleFormReverseDetail = {
+          id: row.id,
+          staffName: row.staffName,
+          origin: CodeToText[JSON.parse(row.origin)[0]] + CodeToText[JSON.parse(row.origin)[1]],
+          idNumber: row.idNumber,
+          sex: row.sex.toString(),
+          birthday: row.birthday,
+          departName: row.departName,
+          userPhone: row.userPhone,
+          angentId: row.angentId,
+          modifier: row.modifier,
+          updateTime: formatDateTime(row.updateTime)
+        }
+      },
       handleClick(row) {
         this.dialogFormVisibleReverse = true
         queryone(row.id).then(response => {
@@ -488,6 +558,8 @@
       },
       handleCurrentChange(val) {
         this.formInline.from = val
+        this.formInline.startTime = this.timeValue[0]
+        this.formInline.stopTime = this.timeValue[1]
         query(this.formInline).then(response => {
           this.queryStaff(response)
         })
@@ -505,6 +577,7 @@
         if (this.tableData.length !== 0) {
           for (let i = 0; i <= this.tableData.length; i++) {
             if (this.tableData[i]) {
+              this.tableData[i].updateTime = formatDateTime(this.tableData[i].updateTime)
               if (this.tableData[i].sex === 1) {
                 this.tableData[i].staffSex = '男'
               } else {
@@ -523,6 +596,8 @@
       searchStaff(req) {
         // 根据老版本的逻辑 查询只能传分页页码的第一页
         req.from = 1
+        req.startTime = this.timeValue[0]
+        req.stopTime = this.timeValue[1]
         query(req).then(response => {
           this.queryStaff(response)
         })
@@ -557,3 +632,8 @@
     }
   }
 </script>
+<!--<style>-->
+  <!--.el-table{-->
+    <!--width: 100% !important;-->
+  <!--}-->
+<!--</style>-->

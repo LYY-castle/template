@@ -30,7 +30,7 @@ export function deleteAllStaff(arr) {
     url: '/employee/batch_del',
     method: 'post',
     data: {
-      listId: arr.join(',')
+      listId: arr
     }
   })
 }
