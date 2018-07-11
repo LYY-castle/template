@@ -1,24 +1,16 @@
 import request from '@/utils/request'
 
-export function findCampaignNameListAssignInfo(obj) {
+export function findAssignDownNamelistInfoByCampaignAndDepart(obj) {
   return request({
-    url: '/campaign/findCampaignNameListAssignInfo',
+    url: '/campaign/findAssignDownNamelistInfoByCampaignAndDepart',
     method: 'get',
     params: obj
   })
 }
 
-export function findDownNamelistInfoByCampaignAndDepart(obj) {
+export function recycleTaskInfo(obj) {
   return request({
-    url: '/campaign/findDownNamelistInfoByCampaignAndDepart',
-    method: 'get',
-    params: obj
-  })
-}
-
-export function assignTaskInfo(obj) {
-  return request({
-    url: '/nameList/assignTaskInfo',
+    url: '/nameList/recycleTaskInfo',
     method: 'post',
     data: obj
   })

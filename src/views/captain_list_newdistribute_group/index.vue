@@ -63,12 +63,12 @@
           </el-table-column>
           <el-table-column
             align="center"
-            prop="creatorName"
+            prop="modifierName"
             label="操作人">
           </el-table-column>
           <el-table-column
             align="center"
-            prop="creatorTime"
+            prop="modifierTime"
             label="操作时间">
           </el-table-column>
         </el-table>
@@ -178,7 +178,7 @@
             // this.handleChange()
             for (let i = 0; i <= this.tableData.length - 1; i++) {
               if (this.tableData[i]) {
-                this.tableData[i].creatorTime = formatDateTime(this.tableData[i].creatorTime)
+                this.tableData[i].modifierTime = formatDateTime(this.tableData[i].modifierTime)
               }
             }
             findDownNamelistInfoByCampaignAndDepart({
@@ -225,7 +225,7 @@
             this.pagination = response.data.pageInfo
             for (let i = 0; i <= this.tableData.length; i++) {
               if (this.tableData[i]) {
-                this.tableData[i].creatorTime = formatDateTime(this.tableData[i].creatorTime)
+                this.tableData[i].modifierTime = formatDateTime(this.tableData[i].modifierTime)
               }
             }
           } else {

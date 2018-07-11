@@ -9,17 +9,8 @@
               <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="分配数量:">
-            <el-input-number v-model="formInline.num" :step="10" @change="handleChange"></el-input-number>
-            <span>未分配量：{{formInline.noUseNum}}</span>
-            <span>数量总计：{{formInline.totalNum}}</span>
-          </el-form-item>
-          <el-form-item label="分配方式:">
-            <el-radio v-model="formInline.radio" label="0">顺序分配</el-radio>
-            <el-radio v-model="formInline.radio" label="1">平均分配</el-radio>
-          </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="confirm(formInline)">确认分配</el-button>
+            <el-button type="primary" @click="confirm(formInline)">确认回收</el-button>
           </el-form-item>
         </el-form>
         <el-table
@@ -53,8 +44,8 @@
           </el-table-column>
           <el-table-column
             align="center"
-            prop="noUseNum"
-            label="名单未分配数量">
+            prop="useNum"
+            label="名单分配数量">
           </el-table-column>
           <el-table-column
             align="center"
@@ -63,12 +54,12 @@
           </el-table-column>
           <el-table-column
             align="center"
-            prop="creatorName"
+            prop="modifierName"
             label="操作人">
           </el-table-column>
           <el-table-column
             align="center"
-            prop="creatorTime"
+            prop="modifierTime"
             label="操作时间">
           </el-table-column>
         </el-table>
@@ -90,7 +81,8 @@
           tooltip-effect="dark"
           border
           style="width: 94%;margin-top:2%;"
-          @selection-change="handleSelectionChange2">
+          @selection-change="handleSelectionChange2"
+          v-show="type===0">
           <el-table-column
             align="center"
             type="selection"
@@ -99,17 +91,17 @@
           <el-table-column
             align="center"
             prop="departName"
-            label="分配对象">
+            label="回收对象">
           </el-table-column>
           <el-table-column
             align="center"
             prop="noUseNum"
-            :label="noUseNumLabel">
+            label="可回收数量">
           </el-table-column>
           <el-table-column
             align="center"
-            prop="useNum"
-            :label="useNumLabel">
+            prop="noUseNum"
+            label="未分配数量">
           </el-table-column>
           <el-table-column
             align="center"
@@ -118,7 +110,54 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="本次分配数量">
+            label="本次回收数量">
+            <template slot-scope="scope">
+              <el-input v-model="tableData2[scope.$index].num" @change="handleChange1(scope.row)"></el-input>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-table
+          :header-row-style="headerRow"
+          :data="tableData2"
+          ref="multipleTable"
+          tooltip-effect="dark"
+          border
+          style="width: 94%;margin-top:2%;"
+          @selection-change="handleSelectionChange2"
+          v-show="type===1">
+          <el-table-column
+            align="center"
+            type="selection"
+            width="55">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="departName"
+            label="回收对象">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="recycleNum"
+            label="可回收数量">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="noContactNum"
+            label="首拨数量">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="appointNum"
+            label="预约数量">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="totalNum"
+            label="总数量">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="本次回收数量">
             <template slot-scope="scope">
               <el-input v-model="tableData2[scope.$index].num" @change="handleChange1(scope.row)"></el-input>
             </template>
@@ -130,19 +169,18 @@
 </template>
 
 <script>
-  import { findCampaignNameListAssignInfo, findDownNamelistInfoByCampaignAndDepart, assignTaskInfo } from '@/api/captain_list_newdistribute_group'
+  import { findCampaignNameListAssignInfo } from '@/api/captain_list_newdistribute_group'
+  import { findAssignDownNamelistInfoByCampaignAndDepart, recycleTaskInfo } from '@/api/captain_list_recycle_group'
   import { Message } from 'element-ui'
   import { findCampaignByUser, getDownInfoByCurrentUser } from '@/api/monitor_list_single'
   import { formatDateTime } from '@/utils/tools'
 
   export default {
-    name: 'captain_list_newdistribute_group',
+    name: 'captain_list_recycle_group',
     data() {
       return {
         type: '',
         totalNum: 0,
-        noUseNumLabel: '',
-        useNumLabel: '',
         multipleSelection2: [],
         multipleSelection: [],
         campaignIdList: [],
@@ -150,11 +188,8 @@
         tableData2: [],
         activeNameList: [],
         formInline: {
-          radio: '0',
-          campaignId: '',
-          num: '',
-          totalNum: 0,
-          noUseNum: 0
+          campaignId: ''
+          // useNum: 0
         },
         pagination: {
           pageNo: null,
@@ -166,6 +201,8 @@
     },
     methods: {
       selectActive(val) {
+        this.tableData = []
+        this.tableData2 = []
         findCampaignNameListAssignInfo({
           campaignId: val,
           pageNo: 1,
@@ -178,31 +215,9 @@
             // this.handleChange()
             for (let i = 0; i <= this.tableData.length - 1; i++) {
               if (this.tableData[i]) {
-                this.tableData[i].creatorTime = formatDateTime(this.tableData[i].creatorTime)
+                this.tableData[i].modifierTime = formatDateTime(this.tableData[i].modifierTime)
               }
             }
-            findDownNamelistInfoByCampaignAndDepart({
-              campaignId: val
-            }).then(res => {
-              if (res.data.code === 0) {
-                this.tableData2 = res.data.data
-                this.type = res.data.type
-                for (let i = 0; i <= this.tableData2.length - 1; i++) {
-                  if (this.tableData2[i]) {
-                    this.tableData2[i].num = ''
-                    if (this.tableData2[i].staffName) {
-                      this.tableData2[i].departName = this.tableData2[i].staffName
-                    }
-                  }
-                }
-              } else {
-                Message({
-                  message: res.data.message,
-                  type: 'error',
-                  duration: 3 * 1000
-                })
-              }
-            })
           } else {
             this.tableData = []
             this.tableData2 = []
@@ -225,7 +240,7 @@
             this.pagination = response.data.pageInfo
             for (let i = 0; i <= this.tableData.length; i++) {
               if (this.tableData[i]) {
-                this.tableData[i].creatorTime = formatDateTime(this.tableData[i].creatorTime)
+                this.tableData[i].modifierTime = formatDateTime(this.tableData[i].modifierTime)
               }
             }
           } else {
@@ -241,50 +256,54 @@
       },
       handleSelectionChange(val) {
         this.multipleSelection = val
-        this.formInline.noUseNum = 0
-        this.formInline.totalNum = 0
-        for (let i = 0; i <= val.length; i++) {
-          if (val[i]) {
-            this.formInline.noUseNum += Number(val[i].noUseNum)
-            this.formInline.totalNum += Number(val[i].totalNum)
-          }
-        }
-        this.handleChange()
-      },
-      assignNum() {
-        for (let i = 0; i <= this.tableData2.length - 1; i++) {
-          if (this.tableData2[i]) {
-            this.tableData2[i].num = ''
-            this.$set(this.tableData2, i, this.tableData2[i])
-          }
-        }
-        if (this.multipleSelection2.length !== 0) {
-          for (let i = 0; i <= this.multipleSelection2.length - 1; i++) {
-            this.multipleSelection2[i].num = parseInt(Number(this.formInline.num) / this.multipleSelection2.length)
-          }
-          this.multipleSelection2[0].num += parseInt(Number(this.formInline.num) % this.multipleSelection2.length)
+        // this.formInline.useNum = 0
+        // for (let i = 0; i <= val.length; i++) {
+        //   if (val[i]) {
+        //     this.formInline.useNum += Number(val[i].useNum)
+        //   }
+        // }
+        if (val.length !== 0) {
+          const listIds = val.map(function(item, index) {
+            return item.listId
+          })
+          findAssignDownNamelistInfoByCampaignAndDepart({
+            campaignId: this.formInline.campaignId,
+            listIds: listIds.join(',')
+          }).then(res => {
+            if (res.data.code === 0) {
+              this.tableData2 = res.data.data
+              this.type = parseInt(res.data.type)
+              for (let i = 0; i <= this.tableData2.length - 1; i++) {
+                if (this.tableData2[i]) {
+                  this.tableData2[i].num = ''
+                  this.tableData2[i].recycleNum = parseInt(this.tableData2[i].noContactNum) + parseInt(this.tableData2[i].appointNum)
+                  if (this.tableData2[i].staffName) {
+                    this.tableData2[i].departName = this.tableData2[i].staffName
+                  }
+                }
+              }
+            } else {
+              Message({
+                message: res.data.message,
+                type: 'error',
+                duration: 3 * 1000
+              })
+            }
+          })
+        } else {
+          this.tableData2 = []
         }
       },
       handleSelectionChange2(val) {
         this.multipleSelection2 = val
-        this.assignNum()
+        console.log(val)
+        this.handleChange1()
       },
       headerRow({ row, rowIndex }) {
         if (rowIndex === 0) {
           return 'color:black'
         } else {
           return ''
-        }
-      },
-      handleChange(value) {
-        if (Number(this.formInline.num) > Number(this.formInline.noUseNum)) {
-          Message({
-            message: '分配量不能大于未分配量',
-            type: 'error',
-            duration: 3 * 1000
-          })
-        } else {
-          this.assignNum()
         }
       },
       handleChange1(value) {
@@ -295,8 +314,40 @@
           }
         }
       },
+      valiNum() {
+        const data = []
+        const listIds = this.multipleSelection.map(function(item, index) {
+          return item.listId
+        })
+        for (let i = 0; i <= this.multipleSelection2.length - 1; i++) {
+          const obj = {}
+          if (this.multipleSelection2[i]) {
+            if (this.multipleSelection2[i].departId) {
+              obj[String(this.multipleSelection2[i].departId)] = this.multipleSelection2[i].num
+            } else {
+              obj[String(this.multipleSelection2[i].staffId)] = this.multipleSelection2[i].num
+            }
+            data.push(obj)
+          }
+        }
+        recycleTaskInfo({
+          listIds: listIds,
+          campaignId: this.formInline.campaignId,
+          data: data,
+          type: String(this.type)
+        }).then(response => {
+          if (response.data.code === 0) {
+            this.selectActive(this.formInline.campaignId)
+          } else {
+            Message({
+              message: response.data.message,
+              type: 'error',
+              duration: 3 * 1000
+            })
+          }
+        })
+      },
       confirm() {
-        this.handleChange1()
         if (this.multipleSelection.length === 0) {
           Message({
             message: '请选择名单',
@@ -305,61 +356,31 @@
           })
         } else if (this.multipleSelection2.length === 0) {
           Message({
-            message: '请选择分配对象',
+            message: '请选择回收对象',
             type: 'error',
             duration: 3 * 1000
           })
-        } else if (Number(this.formInline.num) > Number(this.formInline.noUseNum)) {
-          Message({
-            message: '分配量不能大于未分配量',
-            type: 'error',
-            duration: 3 * 1000
-          })
-        } else if (this.totalNum !== Number(this.formInline.num)) {
-          Message({
-            message: '分配数量总和不等于分配量',
-            type: 'error',
-            duration: 3 * 1000
-          })
-        } else if (this.formInline.num) {
-          const data = []
-          const listIds = this.multipleSelection.map(function(item, index) {
-            return item.listId
-          })
-          for (let i = 0; i <= this.multipleSelection2.length - 1; i++) {
-            const obj = {}
-            if (this.multipleSelection2[i]) {
-              if (this.multipleSelection2[i].departId) {
-                obj[String(this.multipleSelection2[i].departId)] = this.multipleSelection2[i].num
-              } else {
-                obj[String(this.multipleSelection2[i].staffId)] = this.multipleSelection2[i].num
-              }
-              data.push(obj)
-            }
-          }
-          assignTaskInfo({
-            assignNum: String(this.formInline.num),
-            assignType: this.formInline.radio,
-            listIds: listIds,
-            campaignId: this.formInline.campaignId,
-            data: data,
-            type: this.type
-          }).then(response => {
-            if (response.data.code === 0) {
-              this.selectActive(this.formInline.campaignId)
-              this.formInline.num = ''
-              this.formInline.radio = '0'
+        } else if (this.totalNum) {
+          const self = this
+          const boolArr = this.multipleSelection2.map(function(item, index) {
+            if (self.type === 1) {
+              return Number(item.recycleNum) >= Number(item.num)
             } else {
-              Message({
-                message: response.data.message,
-                type: 'error',
-                duration: 3 * 1000
-              })
+              return Number(item.noUseNum) >= Number(item.num)
             }
           })
+          if (boolArr.indexOf(false) === -1) {
+            this.valiNum()
+          } else {
+            Message({
+              message: '回收量不能超过可回收量',
+              type: 'error',
+              duration: 3 * 1000
+            })
+          }
         } else {
           Message({
-            message: '请填写分配量',
+            message: '请输入合理的回收量',
             type: 'error',
             duration: 3 * 1000
           })
@@ -378,8 +399,7 @@
         })
         getDownInfoByCurrentUser().then(response => {
           if (response.data.code === 1) {
-            this.noUseNumLabel = response.data.type ? '未使用数量' : '未分配数量'
-            this.useNumLabel = response.data.type ? '已使用数量' : '已分配数量'
+            this.type = response.data.type
           }
         })
       })
