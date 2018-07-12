@@ -262,7 +262,9 @@
           for (let i = 0; i <= this.multipleSelection2.length - 1; i++) {
             this.multipleSelection2[i].num = parseInt(Number(this.formInline.num) / this.multipleSelection2.length)
           }
-          this.multipleSelection2[0].num += parseInt(Number(this.formInline.num) % this.multipleSelection2.length)
+          for (let i = 0; i < parseInt(Number(this.formInline.num) % this.multipleSelection2.length); i++) {
+            this.multipleSelection2[i].num += 1
+          }
         }
       },
       handleSelectionChange2(val) {
