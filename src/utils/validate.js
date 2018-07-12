@@ -54,6 +54,9 @@ export const rule = {
   ],
   validityTime: [
     { required: true, message: '请输入有效时间', trigger: 'blur' }
+  ],
+  listName: [
+    { required: true, message: '请输入名单名称', trigger: 'blur' }
   ]
 }
 
