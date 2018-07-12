@@ -246,7 +246,7 @@ p{
   line-height: 50px;
   border-radius: 0px !important;
   box-shadow: 0 0 5px #888;
-  margin-bottom:15px;
+  margin-bottom:0px;
   // .hamburger-container {
   //   line-height: 58px;
   //   height: 50px;
