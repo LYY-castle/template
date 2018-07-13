@@ -13,15 +13,15 @@
             </el-form-item>&nbsp;&nbsp;
 
             <el-form-item label="订单编号：">
-                <el-input v-model="req.orderId" placeholder="订单编号"></el-input>
+                <el-input v-model="req.orderId" placeholder="订单编号（上限50字符）" maxlength="50"></el-input>
             </el-form-item>&nbsp;&nbsp;&nbsp;&nbsp;
 
             <el-form-item label="产品名称：">
-                <el-input v-model="req.productName" placeholder="产品名称"></el-input>
+                <el-input v-model="req.productName" placeholder="产品名称（上限255字符）" maxlength="255"></el-input>
             </el-form-item>
 
             <el-form-item label="销售员工：">
-                <el-input v-model="req.staffName" placeholder="员工姓名"></el-input>
+                <el-input v-model="req.staffName" placeholder="员工姓名（上限50字符）" maxlength="50"></el-input>
             </el-form-item><br/>
             
             <el-form-item label="活动名称：">
@@ -35,7 +35,7 @@
             </el-form-item>
 
             <el-form-item label="客户姓名：">
-                <el-input v-model="req.customerName" placeholder="客户姓名"></el-input>
+                <el-input v-model="req.customerName" placeholder="客户姓名（上限50字符）" maxlength="50"></el-input>
             </el-form-item>&nbsp;&nbsp;&nbsp;&nbsp;
 
             <el-form-item label="销售日期：">

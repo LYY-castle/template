@@ -38,10 +38,10 @@
             </el-form-item><br/>
 
             <el-form-item label="客户姓名：">
-                <el-input v-model="req.customerName" placeholder="客户姓名"></el-input>
+                <el-input v-model="req.customerName" placeholder="客户姓名（限长50字符）" maxlength="50"></el-input>
             </el-form-item>&nbsp;&nbsp;&nbsp;&nbsp;
             <el-form-item label="客户电话：">
-                <el-input v-model="req.customerPhone" placeholder="客户电话"></el-input>
+                <el-input v-model="req.customerPhone" placeholder="客户电话（限长50字符）" maxlength="50"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)" icon="el-icon-search">筛选</el-button>

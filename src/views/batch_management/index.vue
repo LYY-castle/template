@@ -7,10 +7,10 @@
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
         <el-form-item prop="batchId">
-          <el-input v-model="req.batchId" placeholder="批次号"></el-input>
+          <el-input v-model="req.batchId" placeholder="批次号（限长20字符）" maxlength="20"></el-input>
         </el-form-item>
         <el-form-item prop="batchName">
-          <el-input v-model="req.batchName" placeholder="批次名称"></el-input>
+          <el-input v-model="req.batchName" placeholder="批次名称（限长100字符）" maxlength="100"></el-input>
         </el-form-item>
         <el-form-item prop="validityStatus">
           <el-select v-model="req.validityStatus" placeholder="有效性" style="width: 100%;">
@@ -23,7 +23,7 @@
         </el-select>
         </el-form-item>
        <el-form-item prop="modifierName">
-          <el-input v-model="req.modifierName" placeholder="操作人员"></el-input>
+          <el-input v-model="req.modifierName" placeholder="操作人员（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：" prop="startCreateTime">
           <el-date-picker
@@ -164,7 +164,7 @@
           <span>{{batchDetail.batchId}}</span>
         </el-form-item>
         <el-form-item label="批次名称" prop="batchName">
-          <el-input v-model="batchDetail.batchName" size="small"></el-input>
+          <el-input v-model="batchDetail.batchName" size="small" placeholder="上限100字符" maxlength="100"></el-input>
         </el-form-item>
         <el-form-item label="批次来源" prop="ascriptionId">
           <el-select v-model="batchDetail.ascriptionId" placeholder="请选择" style="width: 100%;">
@@ -198,7 +198,7 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="批次描述" prop="description">
-          <el-input v-model="batchDetail.description" size="small" type="textarea"></el-input>
+          <el-input v-model="batchDetail.description" size="small" type="textarea" placeholder="上限200字符" maxlength="100"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
@@ -269,7 +269,7 @@
       <el-row>
         <el-form :inline="true" size="small" :model="addReq" ref="addBatch" :rules="rule">
           <el-form-item prop="batchName">
-            <el-input v-model="addReq.batchName" placeholder="批次名称"></el-input>
+            <el-input v-model="addReq.batchName" placeholder="批次名称（限长100字符）" maxlength="100"></el-input>
           </el-form-item>
            <el-form-item prop="ascriptionId">
             <el-select v-model="addReq.ascriptionId" placeholder="客户归属" style="width: 100%;">
@@ -291,7 +291,7 @@
             </el-date-picker>
           </el-form-item>
            <el-form-item prop="description">
-            <el-input v-model="addReq.description" placeholder="备注"></el-input>
+            <el-input v-model="addReq.description" placeholder="备注（限长200字符）" maxlength="200"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="uploadVisible=true;changeUpload(2);" icon="el-icon-upload2">上传导入文件</el-button>

@@ -12,13 +12,13 @@
           </el-select>
         </el-form-item>
         <el-form-item label="客户姓名：">
-          <el-input placeholder="客户姓名" v-model="req.customerName"></el-input>
+          <el-input placeholder="客户姓名（上限50字符）" v-model="req.customerName" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="主叫：">
-          <el-input placeholder="主叫号码" v-model="req.caller"></el-input>
+          <el-input placeholder="主叫号码（上限20字符）" v-model="req.caller" maxlength="20"></el-input>
         </el-form-item>
         <el-form-item label="被叫：">
-          <el-input placeholder="被叫号码" v-model="req.callee"></el-input>
+          <el-input placeholder="被叫号码（上限20字符）" v-model="req.callee" maxlength="20"></el-input>
         </el-form-item><br/>
         <el-form-item label="联系时间：">
           <el-date-picker
