@@ -221,11 +221,13 @@
           } else {
             this.tableData = []
             this.tableData2 = []
-            Message({
-              message: response.data.message,
-              type: 'error',
-              duration: 3 * 1000
-            })
+            if (val) {
+              Message({
+                message: response.data.message,
+                type: 'error',
+                duration: 3 * 1000
+              })
+            }
           }
         })
       },
