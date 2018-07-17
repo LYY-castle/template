@@ -17,3 +17,17 @@ export function formatDateTime(inputTime) {
     return ''
   }
 }
+
+// 手机号码加密
+export function hideMobile(mobileNo) {
+  if (mobileNo) {
+    return mobileNo.substring(0, 3) + '****' + mobileNo.substring(7, 11)
+  }
+}
+
+// 身份证号码加密
+export function hideIdNumber(idNumber) {
+  if (idNumber) {
+    return idNumber.substring(0, 10) + '****' + idNumber.substring(14, 18)
+  }
+}
