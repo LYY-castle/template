@@ -17,3 +17,14 @@ export function formatDateTime(inputTime) {
     return ''
   }
 }
+
+export function checkNo(value) {
+  const reg = /^[1-9]\d*$/
+  if (value) {
+    if (value > 999999 || new RegExp(reg).test(value) === false) {
+      setTimeout(() => {
+        value = ''
+      }, 500)
+    }
+  }
+}

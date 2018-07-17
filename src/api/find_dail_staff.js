@@ -12,7 +12,7 @@ export function queryByKeyWords(req) {
     url: '/contact/getContactList',
     method: 'post',
     data: {
-      campaign: req.campaign,
+      campaigns: req.campaign,
       customerName: req.customerName,
       caller: req.caller,
       callee: req.callee,

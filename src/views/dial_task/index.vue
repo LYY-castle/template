@@ -257,13 +257,27 @@ export default {
 
     // 清空重置
     clearForm(obj, formName) {
-      for (const key in obj) {
-        if (key !== 'pageNo') {
-          obj[key] = ''
-        }
-      }
-      if (formName) {
-        this.$refs[formName].resetFields()
+      // for (const key in obj) {
+      //   if (key !== 'pageNo') {
+      //     obj[key] = ''
+      //   }
+      // }
+      // if (formName) {
+      //   this.$refs[formName].resetFields()
+      // }
+      this.req.distributeTimeStart = ''
+      this.req.distributeTimeEnd = ''
+      this.req.appointTimeStart = ''
+      this.req.appointTimeEnd = ''
+      this.req.customerName = ''
+      this.req.customerPhone = ''
+      this.req.pageNo = 1
+      if (this.activeName === 'firstDial') {
+        this.req.contactStatus = '0'
+        this.req.status = '0'
+      } else {
+        this.req.contactStatus = ''
+        this.req.status = '1'
       }
     },
     // 时间戳转年月日时分秒
@@ -282,11 +296,13 @@ export default {
         // 点击了首拨名单
         this.req.contactStatus = 0
         this.req.status = 0
+        this.req.pageNo = 1
         this.searchByKeyWords(this.req)
       } else {
         // 点击了预约名单
         this.req.contactStatus = ''
         this.req.status = 1
+        this.req.pageNo = 1
         this.searchByKeyWords(this.req)
       }
     },

@@ -37,9 +37,9 @@
               default-time="00:00:00">
           </el-date-picker>
           <el-form-item label="通话时间：">
-            <el-input v-model="req.stime" style="width:80px"></el-input>
+            <el-input v-model="req.stime" style="width:80px" @change="checkNo(req.stime)" onkeypress="return event.keyCode>=48&&event.keyCode<=57" :maxlength="3"></el-input>
             至
-            <el-input v-model="req.etime" style="width:80px"></el-input>分钟
+            <el-input v-model="req.etime" style="width:80px" @change="checkNo(req.etime)" onkeypress="return event.keyCode>=48&&event.keyCode<=57" :maxlength="3"></el-input>分钟
           </el-form-item>
         </el-form-item>
         <el-form-item>
@@ -67,7 +67,10 @@
               <div>{{hideMobile(scope.row.customerPhone)}}</div>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="归属活动" prop="campaignId">
+          <el-table-column align="center" label="归属活动">
+            <template slot-scope="scope">
+              <div>{{showCampaignName(scope.row.campaignId)}}</div>
+            </template>
           </el-table-column>
           <el-table-column align="center" label="员工姓名" prop="staffName">
           </el-table-column>
@@ -116,7 +119,7 @@
 
 <script>
   import { getMenu } from '@/api/dashboard' // 菜单栏
-  import { formatDateTime } from '@/utils/tools' // 格式化时间
+  import { formatDateTime, checkNo } from '@/utils/tools' // 格式化时间
   import {
     getAllCamps,
     queryByKeyWords
@@ -163,6 +166,7 @@
       },
       // 时间戳转年月日时分秒
       formatDateTime: formatDateTime,
+      checkNo: checkNo,
   
       // 将选择的campaignId放入数组
       selectOneCampaign(campaignId) {
@@ -198,6 +202,14 @@
       hideMobile(mobile) {
         if (mobile) {
           return mobile.substring(0, 3) + '****' + mobile.substring(7, 11)
+        }
+      },
+      // 显示活动名称
+      showCampaignName(campaignId) {
+        for (var i = 0; i < this.campaigns.length; i++) {
+          if (campaignId === this.campaigns[i].campaignId) {
+            return this.campaigns[i].campaignName
+          }
         }
       },
 

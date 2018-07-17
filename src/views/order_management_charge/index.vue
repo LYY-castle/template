@@ -69,7 +69,7 @@
           <el-table-column
             align="center"
             label="序号"
-            width="55">
+            width="50">
             <template
               slot-scope="scope">
               <div>{{scope.$index+(req.pageNo-1)*10+1}}</div>
@@ -100,6 +100,13 @@
             <template slot-scope="scope">
               <div>{{hideMobile(scope.row.customerPhone)}}</div>
             </template>
+          </el-table-column>
+          <el-table-column
+          align="center"
+          label="所属活动">
+          <template slot-scope="scope">
+            <div>{{showCampaignName(scope.row.campaignId)}}</div>
+          </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -183,10 +190,10 @@
           <span>{{orderDetail.createTime}}</span>
         </el-form-item>
         <el-form-item label="订单状态">
-          <span v-html="showStatus(orderDetail.orderId)"></span>
+          <span v-html="showStatus(orderDetail.status)"></span>
         </el-form-item>
         <el-form-item label="支付方式">
-          <span v-text="showPayType(orderDetail.payTypeName)"></span>
+          <span>{{orderDetail.payTypeName}}</span>
         </el-form-item>
         <el-form-item label="选购产品">
           <span>{{orderDetail.productName}}</span>
@@ -225,10 +232,10 @@
           <span>{{orderDetail.createTime}}</span>
         </el-form-item>
         <el-form-item label="订单状态">
-          <span v-html="showStatus(orderDetail.orderId)"></span>
+          <span v-html="showStatus(orderDetail.status)"></span>
         </el-form-item>
         <el-form-item label="支付方式">
-          <span v-text="showPayType(orderDetail.payTypeName)"></span>
+          <span>{{orderDetail.payTypeName}}</span>
         </el-form-item>
         <el-form-item label="选购产品">
           <span>{{orderDetail.productName}}</span>
@@ -456,13 +463,13 @@
       },
 
       // 支付方式名称补无
-      showPayType(payTypeName) {
-        if (payTypeName) {
-          return ''
-        } else {
-          return '无'
-        }
-      },
+      // showPayType(payTypeName) {
+      //   if (payTypeName) {
+      //     return ''
+      //   } else {
+      //     return '无'
+      //   }
+      // },
 
       // 校验
       submitForm(formName) {
@@ -519,6 +526,14 @@
             .catch(error => {
               console.log(error)
             })
+        }
+      },
+      // 显示活动名称
+      showCampaignName(campaignId) {
+        for (var i = 0; i < this.campaigns.length; i++) {
+          if (campaignId === this.campaigns[i].campaignId) {
+            return this.campaigns[i].campaignName
+          }
         }
       },
       // 发送支付短信

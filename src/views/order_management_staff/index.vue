@@ -65,7 +65,7 @@
           <el-table-column
             align="center"
             label="序号"
-            width="55">
+            width="50">
             <template
               slot-scope="scope">
               <div>{{scope.$index+(req.pageNo-1)*10+1}}</div>
@@ -88,6 +88,13 @@
             align="center"
             label="客户姓名"
             prop="customerName">
+          </el-table-column>
+          <el-table-column
+          align="center"
+          label="所属活动">
+          <template slot-scope="scope">
+            <div>{{showCampaignName(scope.row.campaignId)}}</div>
+          </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -134,7 +141,7 @@
           <el-table-column
             align="center"
             label="操作"
-            width="200">
+            width="150">
           <template slot-scope="scope">
             <el-button v-if="scope.row.productId != 'P20180101000001'" @click="editVisiable=true;searchByOrderId(scope.row.orderId)" type="text" size="medium">修改</el-button>
             <el-button v-if="scope.row.productId != 'P20180101000001'" @click="delVisiable=true;deleteReq.orderId=scope.row.orderId;deleteReq.status=scope.row.status" type="text" size="medium">删除</el-button>
@@ -182,7 +189,7 @@
           <span v-html="showStatus(orderDetail.status)"></span>
         </el-form-item>
         <el-form-item label="支付方式">
-          <span v-text="showPayType(orderDetail.payTypeName)"></span>
+          <span>{{orderDetail.payTypeName}}</span>
         </el-form-item>
         <el-form-item label="选购产品">
           <span>{{orderDetail.productName}}</span>
@@ -224,7 +231,7 @@
           <span v-html="showStatus(orderDetail.status)"></span>
         </el-form-item>
         <el-form-item label="支付方式">
-          <span v-text="showPayType(orderDetail.payTypeName)"></span>
+          <span>{{orderDetail.payTypeName}}</span>
         </el-form-item>
         <el-form-item label="选购产品">
           <span>{{orderDetail.productName}}</span>
@@ -388,7 +395,14 @@
           return mobile.substring(0, 3) + '****' + mobile.substring(7, 11)
         }
       },
-
+      // 显示活动名称
+      showCampaignName(campaignId) {
+        for (var i = 0; i < this.campaigns.length; i++) {
+          if (campaignId === this.campaigns[i].campaignId) {
+            return this.campaigns[i].campaignName
+          }
+        }
+      },
       // 判断订单状态 回显
       showStatus(orderStatus) {
         if (orderStatus === '0') {
@@ -429,13 +443,13 @@
       },
 
       // 支付方式名称补无
-      showPayType(payTypeName) {
-        if (payTypeName) {
-          return ''
-        } else {
-          return '无'
-        }
-      },
+      // showPayType(payTypeName) {
+      //   if (payTypeName) {
+      //     return ''
+      //   } else {
+      //     return '无'
+      //   }
+      // },
 
       // 校验
       submitForm(formName) {
