@@ -1,0 +1,427 @@
+<template>
+  <div style="width: 100%;height: 90%">
+    <el-row>
+      <el-form :inline="true" class="demo-form-inline" size="small">
+        <el-form-item>
+          <el-input placeholder="话机号码" v-model="formInline.agent_dn"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-select v-model="formInline.time">
+            <el-option label="天" value="day"></el-option>
+            <el-option label="小时" value="hour"></el-option>
+            <el-option label="周" value="week"></el-option>
+            <el-option label="月" value="month"></el-option>
+            <el-option label="年" value="year"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="操作时间：">
+          <el-date-picker
+            v-model="timeValue"
+            type="datetimerange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            format="yyyy-MM-dd HH:mm:ss"
+            value-format="timestamp">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="search">查询</el-button>
+        </el-form-item>
+      </el-form>
+    </el-row>
+    <div :class="className" :id="id" :style="{height:height,width:width}"></div>
+    <el-table
+      :header-row-style="headerRow"
+      :data="tableData"
+      ref="multipleTable"
+      tooltip-effect="dark"
+      border
+      style="width: 94%;">
+      <el-table-column
+        width="55"
+        align="center"
+        type="index"
+        label="序号">
+      </el-table-column>
+      <el-table-column
+        align="center"
+        prop="time_dimension"
+        label="日期">
+      </el-table-column>
+      <el-table-column
+        align="center"
+        prop="online_time_duration"
+        label="在线时长(秒)">
+      </el-table-column>
+      <el-table-column
+        align="center"
+        prop="free_time_duration"
+        label="空闲时长(秒)">
+      </el-table-column>
+      <el-table-column
+        align="center"
+        prop="busy_time_duration"
+        label="示忙时长(秒)">
+      </el-table-column>
+      <el-table-column
+        align="center"
+        prop="call_time_duration"
+        label="通话时长(秒)">
+      </el-table-column>
+      <el-table-column
+        align="center"
+        prop="calls_number"
+        label="通话次数">
+      </el-table-column>
+    </el-table>
+    <el-row style="margin-top:1%;">
+      <el-col :span="4">
+      </el-col>
+      <el-col :span="18">
+        <el-pagination
+          @current-change="handleCurrentChange"
+          :current-page.sync="pagination.pageNo"
+          :page-size="pagination.pageSize"
+          layout="total, prev, pager, next, jumper"
+          :total="pagination.totalCount" style="text-align: right">
+        </el-pagination>
+      </el-col>
+    </el-row>
+  </div>
+</template>
+
+<script>
+import echarts from 'echarts'
+import resize from './mixins/resize'
+import { statistics } from '@/api/ctiReport'
+
+export default {
+  mixins: [resize],
+  props: {
+    className: {
+      type: String,
+      default: 'chart'
+    },
+    id: {
+      type: String,
+      default: 'chart'
+    },
+    width: {
+      type: String,
+      default: '200px'
+    },
+    height: {
+      type: String,
+      default: '200px'
+    }
+  },
+  data() {
+    return {
+      bool: false,
+      chart: null,
+      obj: {},
+      timeValue: '',
+      pagination: {
+        pageNo: null,
+        pageSize: null,
+        totalCount: null,
+        totalPage: null
+      },
+      formInline: {
+        agent_dn: '',
+        from: 1,
+        time: 'day'
+      },
+      tableData: [],
+      online_time_duration: [],
+      free_time_duration: [],
+      busy_time_duration: [],
+      call_time_duration: [],
+      calls_number: []
+    }
+  },
+  mounted() {
+    this.search()
+  },
+  beforeDestroy() {
+    if (!this.chart) {
+      return
+    }
+    this.chart.dispose()
+    this.chart = null
+  },
+  methods: {
+    headerRow({ row, rowIndex }) {
+      if (rowIndex === 0) {
+        return 'color:black'
+      } else {
+        return ''
+      }
+    },
+    handleCurrentChange(val) {
+      this.formInline.from = val
+      this.search()
+    },
+    initChart() {
+      const self = this
+      this.chart = echarts.init(document.getElementById(this.id))
+      const xData = (function() {
+        const data = []
+        for (let i = 0; i < self.obj.result.length; i++) {
+          data.push(self.obj.result[i].time_dimension)
+        }
+        return data
+      }())
+      this.chart.setOption({
+        backgroundColor: '#344b58',
+        title: {
+          text: 'CTI报表',
+          x: '20',
+          top: '20',
+          textStyle: {
+            color: '#fff',
+            fontSize: '22'
+          },
+          subtextStyle: {
+            color: '#90979c',
+            fontSize: '16'
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            textStyle: {
+              color: '#fff'
+            }
+          }
+        },
+        grid: {
+          borderWidth: 0,
+          top: 110,
+          bottom: 95,
+          textStyle: {
+            color: '#fff'
+          }
+        },
+        legend: {
+          x: '30%',
+          top: '10%',
+          textStyle: {
+            color: '#90979c'
+          },
+          data: ['在线时长(秒)', '空闲时长(秒)', '示忙时长(秒)', '通话时长(秒)', '通话次数']
+        },
+        calculable: true,
+        xAxis: [{
+          type: 'category',
+          axisLine: {
+            lineStyle: {
+              color: '#90979c'
+            }
+          },
+          splitLine: {
+            show: false
+          },
+          axisTick: {
+            show: false
+          },
+          splitArea: {
+            show: false
+          },
+          axisLabel: {
+            interval: 0
+
+          },
+          data: xData
+        }],
+        yAxis: [{
+          type: 'value',
+          splitLine: {
+            show: false
+          },
+          axisLine: {
+            lineStyle: {
+              color: '#90979c'
+            }
+          },
+          axisTick: {
+            show: false
+          },
+          axisLabel: {
+            interval: 0
+          },
+          splitArea: {
+            show: false
+          }
+        }],
+        dataZoom: [{
+          show: true,
+          height: 30,
+          xAxisIndex: [
+            0
+          ],
+          bottom: 30,
+          start: 10,
+          end: 80,
+          handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
+          handleSize: '110%',
+          handleStyle: {
+            color: '#d3dee5'
+
+          },
+          textStyle: {
+            color: '#fff' },
+          borderColor: '#90979c'
+
+        }, {
+          type: 'inside',
+          show: true,
+          height: 15,
+          start: 1,
+          end: 35
+        }],
+        series: [{
+          name: '在线时长(秒)',
+          type: 'bar',
+          stack: 'total',
+          barMaxWidth: 35,
+          barGap: '10%',
+          itemStyle: {
+            normal: {
+              color: 'rgba(255,144,128,1)',
+              label: {
+                show: true,
+                textStyle: {
+                  color: '#fff'
+                },
+                position: 'insideTop',
+                formatter(p) {
+                  return p.value > 0 ? p.value : ''
+                }
+              }
+            }
+          },
+          data: this.online_time_duration
+        },
+
+        {
+          name: '空闲时长(秒)',
+          type: 'bar',
+          stack: 'total',
+          itemStyle: {
+            normal: {
+              color: 'rgba(156,191,183,1)',
+              barBorderRadius: 0,
+              label: {
+                show: true,
+                position: 'top',
+                formatter(p) {
+                  return p.value > 0 ? p.value : ''
+                }
+              }
+            }
+          },
+          data: this.free_time_duration
+        }, {
+          name: '示忙时长(秒)',
+          type: 'line',
+          stack: 'total',
+          symbolSize: 10,
+          symbol: 'circle',
+          itemStyle: {
+            normal: {
+              color: 'rgba(255,144,128,1)',
+              barBorderRadius: 0,
+              label: {
+                show: true,
+                position: 'top',
+                formatter(p) {
+                  return p.value > 0 ? p.value : ''
+                }
+              }
+            }
+          },
+          data: this.busy_time_duration
+        }, {
+          name: '通话时长(秒)',
+          type: 'line',
+          stack: 'total',
+          symbolSize: 10,
+          symbol: 'circle',
+          itemStyle: {
+            normal: {
+              color: 'rgba(252,230,48,1)',
+              barBorderRadius: 0,
+              label: {
+                show: true,
+                position: 'top',
+                formatter(p) {
+                  return p.value > 0 ? p.value : ''
+                }
+              }
+            }
+          },
+          data: this.call_time_duration }, {
+          name: '通话次数',
+          type: 'line',
+          stack: 'total',
+          symbolSize: 10,
+          symbol: 'circle',
+          itemStyle: {
+            normal: {
+              color: 'rgba(152,230,48,1)',
+              barBorderRadius: 0,
+              label: {
+                show: true,
+                position: 'top',
+                formatter(p) {
+                  return p.value > 0 ? p.value : ''
+                }
+              }
+            }
+          },
+          data: this.calls_number }
+        ]
+      })
+    },
+    search() {
+      statistics({
+        time_dimension: this.formInline.time,
+        agent_dn: this.formInline.agent_dn,
+        start_time: this.timeValue[0],
+        end_time: this.timeValue[1],
+        pageNo: this.formInline.from,
+        pageSize: 10
+      }).then(response => {
+        this.obj = response.data
+        if (this.obj.result.length) {
+          this.calls_number = this.obj.result.map(function(item, index) {
+            return item.calls_number
+          })
+          this.online_time_duration = this.obj.result.map(function(item, index) {
+            return item.online_time_duration
+          })
+          this.free_time_duration = this.obj.result.map(function(item, index) {
+            return item.free_time_duration
+          })
+          this.busy_time_duration = this.obj.result.map(function(item, index) {
+            return item.busy_time_duration
+          })
+          this.call_time_duration = this.obj.result.map(function(item, index) {
+            return item.call_time_duration
+          })
+          this.initChart()
+        }
+        this.tableData = response.data.result
+        this.pagination = {
+          pageNo: response.data.pageNo,
+          pageSize: response.data.pageSize,
+          totalCount: response.data.total_count,
+          totalPage: null
+        }
+      })
+    }
+  }
+}
+</script>
