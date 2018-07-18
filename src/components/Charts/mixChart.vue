@@ -26,7 +26,7 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="search">查询</el-button>
+          <el-button type="primary" @click="search(0)">查询</el-button>
           <el-button type="danger" @click="reset">重置</el-button>
         </el-form-item>
       </el-form>
@@ -143,7 +143,7 @@ export default {
     }
   },
   mounted() {
-    this.search()
+    this.search(0)
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -162,7 +162,7 @@ export default {
     },
     handleCurrentChange(val) {
       this.formInline.from = val
-      this.search()
+      this.search(val)
     },
     initChart() {
       const self = this
@@ -384,15 +384,15 @@ export default {
           },
           data: this.calls_number }
         ]
-      })
+      }, true)
     },
-    search() {
+    search(val) {
       statistics({
         time_dimension: this.formInline.time,
         agent_dn: this.formInline.agent_dn,
         start_time: this.timeValue[0],
         end_time: this.timeValue[1],
-        pageNo: this.formInline.from,
+        pageNo: val ? this.formInline.from : 1,
         pageSize: 10
       }).then(response => {
         this.obj = response.data
