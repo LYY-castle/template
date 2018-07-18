@@ -210,7 +210,7 @@ export default {
           textStyle: {
             color: '#90979c'
           },
-          data: ['在线时长(秒)', '空闲时长(秒)', '示忙时长(秒)', '通话时长(秒)', '通话次数']
+          data: ['空闲时长(秒)', '示忙时长(秒)', '在线时长(秒)', '通话时长(秒)', '通话次数']
         },
         calculable: true,
         xAxis: [{
@@ -289,7 +289,7 @@ export default {
           barGap: '10%',
           itemStyle: {
             normal: {
-              color: 'rgba(255,144,128,1)',
+              color: 'rgba(255,165,0,1)',
               label: {
                 show: true,
                 textStyle: {
@@ -303,15 +303,13 @@ export default {
             }
           },
           data: this.online_time_duration
-        },
-
-        {
+        }, {
           name: '空闲时长(秒)',
           type: 'bar',
           stack: 'total',
           itemStyle: {
             normal: {
-              color: 'rgba(156,191,183,1)',
+              color: 'rgba(148,204,209,1)',
               barBorderRadius: 0,
               label: {
                 show: true,
@@ -325,7 +323,7 @@ export default {
           data: this.free_time_duration
         }, {
           name: '示忙时长(秒)',
-          type: 'line',
+          type: 'bar',
           stack: 'total',
           symbolSize: 10,
           symbol: 'circle',
@@ -346,12 +344,12 @@ export default {
         }, {
           name: '通话时长(秒)',
           type: 'line',
-          stack: 'total',
+          // stack: 'total',
           symbolSize: 10,
           symbol: 'circle',
           itemStyle: {
             normal: {
-              color: 'rgba(252,230,48,1)',
+              color: 'rgba(252,0,0,1)',
               barBorderRadius: 0,
               label: {
                 show: true,
@@ -365,7 +363,7 @@ export default {
           data: this.call_time_duration }, {
           name: '通话次数',
           type: 'line',
-          stack: 'total',
+          // stack: 'total',
           symbolSize: 10,
           symbol: 'circle',
           itemStyle: {
