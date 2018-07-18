@@ -27,6 +27,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="search">查询</el-button>
+          <el-button type="danger" @click="reset">重置</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -210,7 +211,7 @@ export default {
           textStyle: {
             color: '#90979c'
           },
-          data: ['空闲时长(秒)', '示忙时长(秒)', '在线时长(秒)', '通话时长(秒)', '通话次数']
+          data: ['在线时长(秒)', '空闲时长(秒)', '示忙时长(秒)', '通话时长(秒)', '通话次数']
         },
         calculable: true,
         xAxis: [{
@@ -284,7 +285,7 @@ export default {
         series: [{
           name: '在线时长(秒)',
           type: 'bar',
-          stack: 'total',
+          // stack: 'total',
           barMaxWidth: 35,
           barGap: '10%',
           itemStyle: {
@@ -307,6 +308,7 @@ export default {
           name: '空闲时长(秒)',
           type: 'bar',
           stack: 'total',
+          barMaxWidth: 35,
           itemStyle: {
             normal: {
               color: 'rgba(148,204,209,1)',
@@ -326,6 +328,7 @@ export default {
           type: 'bar',
           stack: 'total',
           symbolSize: 10,
+          barMaxWidth: 35,
           symbol: 'circle',
           itemStyle: {
             normal: {
@@ -419,6 +422,14 @@ export default {
           totalPage: null
         }
       })
+    },
+    reset() {
+      this.formInline = {
+        agent_dn: '',
+        from: 1,
+        time: 'day'
+      }
+      this.timeValue = ''
     }
   }
 }
