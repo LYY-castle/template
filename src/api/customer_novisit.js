@@ -30,7 +30,7 @@ export function getBlackListInfoById(obj) {
   return request({
     url: '/contact/getBlackListInfoById',
     method: 'get',
-    params: { id: obj }
+    params: { 'id': obj }
   })
 }
 export function editBlackListInfo(obj) {

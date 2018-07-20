@@ -32,8 +32,8 @@
             </el-select>
           </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="findNoVisitCustomers(req);" icon="el-icon-search">查询</el-button>
-          <el-button type="danger" @click="resetForm('searchForm');">重置</el-button>
+          <el-button type="primary" @click="req.pageNo=1;paginationReq=cloneData(req);findNoVisitCustomers(req);" icon="el-icon-search">查询</el-button>
+          <el-button type="danger" @click="resetReq();">重置</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -61,8 +61,8 @@
           <el-table-column
             align="center"
             label="客户电话">
-            <template slot-scope="scope">
-             <div>{{hideMobile(scope.row.customerPhone)}}</div>
+             <template slot-scope="scope">
+              <el-button type="text" size="small" @click="detailVisible=true;delReq.id=scope.row.id;getBlackListInfoById(scope.row.id);">{{hideMobile(scope.row.customerPhone)}}</el-button>
             </template>
           </el-table-column>
           <el-table-column
@@ -222,6 +222,39 @@
           <el-button type="primary" @click="submitForm('editCustomerForm',editNoVisitCustomerDetail);editBlackListInfo(editNoVisitCustomerDetail);">确 定</el-button>
         </div>
       </el-dialog>
+       </el-dialog>
+      <!-- 免访客户详情 -->
+      <el-dialog
+      align:left
+      width="30%"
+      title="免访客户详情"
+      :visible.sync="detailVisible"
+      append-to-body>
+      <el-form  :model="editNoVisitCustomerDetail" ref="noVisitCustomerDetailForm" label-width="100px">
+        <el-form-item label="活动编号" prop="campaignIds">
+          <div style="with:95%;overflow:auto;">{{formateData(editNoVisitCustomerDetail.campaignIds)}}</div>
+        </el-form-item>
+        <el-form-item label="客户电话:" prop="customerPhone">
+          <span>{{hideMobile(editNoVisitCustomerDetail.customerPhone)}}</span>
+        </el-form-item>
+        <el-form-item label="生效时间:" prop="effectiveDate">
+          <span>{{editNoVisitCustomerDetail.effectiveDate}}</span>
+        </el-form-item>
+        <el-form-item label="失效时间:" prop="expiryDate">
+          <span>{{editNoVisitCustomerDetail.expiryDate}}</span>
+        </el-form-item>
+         <el-form-item label="操作人员:" prop="modifierName">
+          <span>{{editNoVisitCustomerDetail.modifierName}}</span>
+        </el-form-item>
+        </el-form-item>
+         <el-form-item label="操作时间:" prop="modifyTime">
+          <span>{{editNoVisitCustomerDetail.modifyTime}}</span>
+        </el-form-item>
+      </el-form>
+        <div slot="footer" style="text-align: right;">
+          <el-button @click="detailVisible = false">返回</el-button>
+        </div>
+      </el-dialog>
   </div>
 </template>
 <script>
@@ -231,6 +264,7 @@ export default {
   name: 'customerNoVisit',
   data() {
     return {
+      detailVisible: false, // 免访客户详情
       delVisible: false, // 删除对话框显示隐藏
       editVisible: false, // 修改对话框显示隐藏
       batchDelVisible: false, // 批量删除对话框显示隐藏
@@ -248,6 +282,14 @@ export default {
       },
       // 查询 发送请求参数
       req: {
+        customerPhone: '',
+        modifierName: '',
+        modifyTimeStart: '',
+        modifyTimeEnd: '',
+        campaignId: '',
+        pageNo: 1
+      },
+      paginationReq: {
         customerPhone: '',
         modifierName: '',
         modifyTimeStart: '',
@@ -280,6 +322,16 @@ export default {
     this.findNoVisitCustomers(this.req)
   },
   methods: {
+    resetReq() {
+      this.req = {
+        customerPhone: '',
+        modifierName: '',
+        modifyTimeStart: '',
+        modifyTimeEnd: '',
+        campaignId: '',
+        pageNo: 1
+      }
+    },
     findCampaigns() {
       findAllCampaigns().then(response => {
         this.campaignOptions = response.data.data
@@ -315,7 +367,8 @@ export default {
     // 分页翻页功能
     handleCurrentChange(val) {
       this.req.pageNo = val
-      this.findNoVisitCustomers(this.req)
+      this.paginationReq.pageNo = val
+      this.findNoVisitCustomers(this.paginationReq)
     },
     // 清空重置
     clearForm(obj, formName) {
@@ -358,7 +411,7 @@ export default {
       addNoVisitCustomers(noVisitCustomerDetail).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
-          this.findNoVisitCustomers(this.req)
+          this.findNoVisitCustomers(this.paginationReq)
           this.addVisible = false
         } else {
           this.$message('添加失败')
@@ -376,7 +429,9 @@ export default {
         batchDelete(batchDelReq.ids).then(response => {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
-            this.findNoVisitCustomers(this.req)
+            this.paginationReq.pageNo = 1
+            this.req.pageNo = 1
+            this.findNoVisitCustomers(this.paginationReq)
           } else {
             this.$message('删除失败')
           }
@@ -397,7 +452,7 @@ export default {
       editBlackListInfo(editNoVisitCustomerDetail).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
-          this.findNoVisitCustomers(this.req)
+          this.findNoVisitCustomers(this.paginationReq)
           this.editVisible = false
         } else {
           this.$message('修改失败')
@@ -411,7 +466,9 @@ export default {
       delBlackListInfo(id).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
-          this.findNoVisitCustomers(this.req)
+          this.paginationReq.pageNo = 1
+          this.req.pageNo = 1
+          this.findNoVisitCustomers(this.paginationReq)
           this.delVisible = false
         } else {
           this.$message('删除失败')
@@ -420,7 +477,21 @@ export default {
         console.log(error)
         this.$message('删除失败')
       })
+    },
+    // 克隆数据
+    cloneData(obj) {
+      var data = {}
+      data = JSON.parse(JSON.stringify(obj))
+      return data
+    },
+    formateData(arry) {
+      var str = ''
+      if (arry instanceof Array) {
+        str = arry.join(',')
+      }
+      return str
     }
+
   }
 }
 </script>
