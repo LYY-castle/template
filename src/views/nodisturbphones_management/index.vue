@@ -111,7 +111,7 @@
         <el-form-item label="开始号段" prop="startNumber">
            <el-input v-model="addNoDisturbPhonesDetail.startNumber" size="small" @blur.native="console.log(111);formatNum(addNoDisturbPhonesDetail.startNumber,'startNumber')"></el-input>
         </el-form-item>
-        <el-form-item label="客户电话:" prop="endNumber">
+        <el-form-item label="结束号段:" prop="endNumber">
              <el-input v-model="addNoDisturbPhonesDetail.endNumber" size="small" @blur.native="formatNum(addNoDisturbPhonesDetail.startNumber,'startNumber')"></el-input>
         </el-form-item>
       </el-form>
