@@ -82,11 +82,11 @@
         </el-table>
       </el-row>
       <el-row style="margin-top:1%;">
-        <el-col :span="4">
+        <el-col :span="10">
           <el-button type="primary" size="small" @click="addGrade()">新增评分表</el-button>
           <el-button type="danger" size="small" @click="deleteAll()">批量删除</el-button>
         </el-col>
-        <el-col :span="18">
+        <el-col :span="14">
           <el-pagination
             @current-change="handleCurrentChange"
             :current-page.sync="pagination.pageNo"
@@ -129,17 +129,17 @@
             </el-form-item>
             <div v-for="(node, index1) in item.gradeOptions">
                 <el-row>
-                  <el-col :span="10">
+                  <el-col :span="14">
                     <el-form-item :label="'选项'+String.fromCharCode(65+parseInt(index1))" :prop="'gradeTitles.'+index+'.gradeOptions.'+index1+'.optionName'" :rules="{ required: true, message: '请给出评分条件', trigger: 'blur' }">
                       <el-input v-model="node.optionName" placeholder="在此输入选项，上限50字符"></el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="4">
+                  <el-col :span="8">
                     <el-form-item label="分值" :prop="'gradeTitles.'+index+'.gradeOptions.'+index1+'.score'" :rules="{ required: true,  pattern: /^(\-?[1-9][0-9]{0,1}|0)$/, message: '分值需在±99间' }">
                       <el-input v-model="node.score"></el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="10">
+                  <el-col :span="2">
                     <el-button type="danger" @click.prevent="removeChild(index,index1)" v-if="ruleForm.gradeTitles[index].gradeOptions.length>1">删除</el-button>
                   </el-col>
                 </el-row>
@@ -467,38 +467,54 @@
       },
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
-          addGrade(this.ruleForm).then(response => {
-            if (response.data.code === 0) {
-              this.dialogFormVisible = false
-              this.searchGrade({})
-            } else {
-              Message({
-                message: response.data.message,
-                type: 'error',
-                duration: 3 * 1000
-              })
-            }
-          }).catch(error => {
-            console.log(error)
-          })
+          if (valid) {
+            addGrade(this.ruleForm).then(response => {
+              if (response.data.code === 0) {
+                this.dialogFormVisible = false
+                this.searchGrade({})
+              } else {
+                Message({
+                  message: response.data.message,
+                  type: 'error',
+                  duration: 3 * 1000
+                })
+              }
+            }).catch(error => {
+              console.log(error)
+            })
+          } else {
+            Message({
+              message: '还有内容没有完成',
+              type: 'error',
+              duration: 3 * 1000
+            })
+          }
         })
       },
       submitFormReverse(formName) {
         this.$refs[formName].validate((valid) => {
-          editGrade(this.ruleFormReverse).then(response => {
-            if (response.data.code === 0) {
-              this.dialogFormVisibleReverse = false
-              this.searchGrade({})
-            } else {
-              Message({
-                message: response.data.message,
-                type: 'error',
-                duration: 3 * 1000
-              })
-            }
-          }).catch(error => {
-            console.log(error)
-          })
+          if (valid) {
+            editGrade(this.ruleFormReverse).then(response => {
+              if (response.data.code === 0) {
+                this.dialogFormVisibleReverse = false
+                this.searchGrade({})
+              } else {
+                Message({
+                  message: response.data.message,
+                  type: 'error',
+                  duration: 3 * 1000
+                })
+              }
+            }).catch(error => {
+              console.log(error)
+            })
+          } else {
+            Message({
+              message: '还有内容没有完成',
+              type: 'error',
+              duration: 3 * 1000
+            })
+          }
         })
       },
       resetForm(formName) {
