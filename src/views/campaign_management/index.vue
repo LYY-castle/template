@@ -1,8 +1,5 @@
 <template>
   <div class="container campaignManagement" style="padding:0 20px;">
-    <!-- <el-row>
-      <h3>当前位置:活动管理</h3>
-    </el-row> -->
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
         <el-form-item prop="campaignName">
@@ -15,7 +12,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="req.num=1;findCampaignByConditions(req);" icon="el-icon-search">查询</el-button>
+          <el-button type="primary" @click="req.pageNo=1;findCampaignByConditions(req);" icon="el-icon-search">查询</el-button>
           <el-button type="danger" @click="resetForm('searchForm');">重置</el-button>
         </el-form-item>
       </el-form>
@@ -37,7 +34,7 @@
             width="55">
             <template
               slot-scope="scope">
-              <div>{{scope.$index+(req.num-1)*10+1}}</div>
+              <div>{{scope.$index+(req.pageNo-1)*10+1}}</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -66,7 +63,6 @@
           </el-table-column>
           <el-table-column
             align="center"
-            prop="modifierName"
             label="有效性">
             <template slot-scope="scope">
               <div>{{(scope.row.status == 0) ? '有效':'无效'}}</div>
@@ -92,7 +88,7 @@
       </el-col> 
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;resetForm('campaignDetail')">添加</el-button>
+        <el-button type="success" size="small" @click="addVisible=true;clearForm(campaignDetail,'campaignDetail')">添加</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         <el-pagination
           background
@@ -114,7 +110,17 @@
         <el-form-item label="活动名称" prop="campaignName">
           <el-input v-model="campaignDetail.campaignName" size="small"></el-input>
         </el-form-item>
-        <el-form-item label="产品" prop="productIds">
+        <el-form-item label="活动类型" prop="campaignTypeCode">
+          <el-select v-model="campaignDetail.campaignTypeCode" placeholder="请选择产品" style="width: 100%;">
+            <el-option
+                v-for="item in campaignTypes"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="产品" prop="products" v-if="!(campaignDetail.campaignTypeCode=='RECRUIT')">
           <el-select v-model="campaignDetail.products" multiple placeholder="请选择产品" style="width: 100%;">
             <el-option
                 v-for="item in productData"
@@ -181,7 +187,10 @@
         <el-form-item label="活动名称">
           <span>{{campaignDetail.campaignName}}</span>
         </el-form-item>
-        <el-form-item label="产品">
+        <el-form-item label="活动名称">
+          <span>{{campaignDetail.campaignTypeInfo.name}}</span>
+        </el-form-item>
+        <el-form-item label="产品" v-if="!(campaignDetail.campaignTypeInfo.code=='RECRUIT')">
           <span v-for="item in productName">{{item+' , '}}</span>
         </el-form-item>
         <el-form-item label="名单有效期">
@@ -222,8 +231,18 @@
         <el-form-item label="活动名称" prop="campaignName">
           <el-input v-model="campaignDetail.campaignName" size="small"></el-input>
         </el-form-item>
-        <el-form-item label="产品" prop="productIds">
-          <el-select v-model="campaignDetail.productIds" multiple placeholder="请选择产品" style="width: 100%;">
+        <el-form-item label="活动类型" prop="campaignTypeCode">
+          <el-select v-model="campaignDetail.campaignTypeCode" placeholder="请选择产品" style="width: 100%;">
+            <el-option
+                v-for="item in campaignTypes"
+                :key="item.code"
+                :label="item.name"
+                :value="item.code">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="产品" prop="products" v-if="!(campaignDetail.campaignTypeCode=='RECRUIT')">
+          <el-select v-model="campaignDetail.products" multiple placeholder="请选择产品" style="width: 100%;">
             <el-option
                 v-for="item in productData"
                 :key="item.productId"
@@ -312,7 +331,6 @@
         <el-button @click="addList = false;" style="float:left;" icon="el-icon-arrow-left">返 回</el-button>
         <h3 style="display:inline;">活动名称：{{campaignName}}</h3>
       </div>
-
       <el-row>
         <el-form :inline="true" size="small">
           <el-form-item>
@@ -488,17 +506,6 @@
         <el-button type="primary" @click="batchDelVisible = false;batchDelCampaigns(batchDelReq);">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog
-      width="30%"
-      :visible.sync="changeVisible"
-      append-to-body>
-      <span style="font-size:20px;">确定切换活动状态吗？</span>
-      <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="changeVisible = false">取 消</el-button>
-        <el-button type="primary" @click="changeVisible = false;changeStatus(delReq);">确 定</el-button>
-      </div>
-    </el-dialog>
-
   </div>
 </template>
 <script>
@@ -510,10 +517,10 @@ import {
   findMarksByCampaignId,
   findDeptByCampaignId,
   modifyCampaign,
-  changeCampaignStatus
+  changeCampaignStatus,
+  findAllCampaignTypes
 } from '@/api/campaign'// 侧边栏菜单
 import {
-  getMenu,
   queryCampaign,
   addCampaign,
   findCampaignById,
@@ -541,11 +548,32 @@ export default {
     }
     return {
       rule: {
+        campaignName: [
+          { required: true, message: '请输入活动名称', trigger: 'change' }
+        ],
+        campaignTypeCode: [
+          { required: true, message: '请选择活动类型', trigger: 'change' }
+        ],
+        productIds: [
+          { required: true, message: '请选择产品', trigger: 'change' }
+        ],
+        products: [
+          { required: true, message: '请选择产品', trigger: 'change' }
+        ],
         listExpiryDate: [
-          { validator: checkExpiryDate, trigger: 'blur' }
+          { required: true, message: '请输入名单有效期', trigger: 'change' },
+          { validator: checkExpiryDate, trigger: 'change' }
+        ],
+        status: [
+          { required: true, message: '请选择活动状态', trigger: 'change' }
+        ],
+        departId: [
+          { required: true, message: '请选择活动组织', trigger: 'change' }
+        ],
+        summaryId: [
+          { required: true, message: '请选择活动组织', trigger: 'change' }
         ]
       },
-      asd: [],
       detailVisible: false,
       delVisible: false, // 删除对话框显示隐藏
       editVisible: false, // 修改对话框显示隐藏
@@ -562,6 +590,7 @@ export default {
       deptData: [], // 活动组织
       qcdeptData: [], // 质检组织
       summaryData: [], // 小结
+      campaignTypes: [], // 活动类型
       marksData: [], // 评分表
       productName: [], // 产品名称
       departName: '', // 活动组织名称
@@ -578,9 +607,11 @@ export default {
         campaignName: '',
         status: '0',
         pagesize: 10,
-        num: 1
+        pageNo: 1
       },
       campaignDetail: {
+        campaignTypeCode: '',
+        campaignTypeInfo: {},
         productIds: [],
         products: [],
         deptId: [],
@@ -623,20 +654,21 @@ export default {
     this.getAllProduct()
     this.getDepts()
     this.getAllNodules()
-  },
-  beforeCreate() {
-    getMenu()
-      .then(response => {
-        const data = response.data
-        sessionStorage.setItem('getMenu', JSON.stringify(data))
-      })
-      .catch(error => {
-        console.log(error)
-      })
+    this.getAllCampaignTypes()
   },
   methods: {
     // 时间戳转年月日时分秒
     formatDateTime: formatDateTime,
+    clearForm(obj, formName) {
+      for (var key in obj) {
+        if (key === 'products' || key === 'productIds') {
+          obj[key] = []
+        }
+      }
+      if (this.$refs[formName] !== undefined) {
+        this.$refs[formName].resetFields()
+      }
+    },
     resetForm(formName) {
       if (this.$refs[formName] !== undefined) {
         this.$refs[formName].resetFields()
@@ -672,7 +704,7 @@ export default {
               this.pageShow = false
             }
           } else {
-            this.$message(response.data.messages)
+            this.$message(response.data.message)
             this.tableData = response.data.data
             this.pageShow = false
           }
@@ -706,9 +738,10 @@ export default {
           if (response.data.code === 0) {
             this.campaignDetail = response.data.data
             this.campaignDetail.departId = parseInt(this.campaignDetail.departId)
+            this.$set(this.campaignDetail, 'campaignTypeCode', this.campaignDetail.campaignTypeInfo.code)
           }
           // 遍历查找对应产品名称
-          this.productName.length = 0
+          this.productName = []
           this.departName = ''
           for (var i = 0; i < this.campaignDetail.products.length; i++) {
             list = this.campaignDetail.products[i]
@@ -723,7 +756,6 @@ export default {
           // 遍历查找对应活动组织
           for (var a = 0; a < this.deptData.length; a++) {
             if (this.deptData[a].id === this.campaignDetail.departId) {
-              // console.log(this.deptData[a].id)
               this.departName = this.deptData[a].departName
             }
           }
@@ -767,6 +799,15 @@ export default {
         console.log(error)
       })
     },
+    getAllCampaignTypes() {
+      findAllCampaignTypes().then(response => {
+        if (response.data.code === 0) {
+          this.campaignTypes = response.data.data
+        }
+      }).catch(error => {
+        console.log(error)
+      })
+    },
     // 查询活动组织
     getDepts() {
       queryDepts().then(response => {
@@ -788,7 +829,7 @@ export default {
     // 详情页面查询质检组织
     getDeptByCampaignId(campaignId) {
       findDeptByCampaignId(campaignId).then(response => {
-        this.qcdeptData.length = 0
+        this.qcdeptData = []
         for (var i = 0; i < response.data.data.length; i++) {
           this.qcdeptData.push(response.data.data[i].departName)
         }
@@ -799,6 +840,7 @@ export default {
       if (!this.validate) {
         return false
       }
+      campaignDetail.productIds = campaignDetail.products
       this.addVisible = false
       addCampaign(campaignDetail).then(response => {
         if (response.data.code === 0) {
@@ -901,11 +943,7 @@ export default {
           this.$message.success(response.data.message)
           this.getNameLists(this.nameLists)
           this.getNameListExclude(this.nameListExclude)
-          this.addNameList.listIds = this.addNameList.listIds.split(',')
           this.addList = false
-        } else {
-          this.$message(response.data.message)
-          this.addNameList.listIds = this.addNameList.listIds.split(',')
         }
       }).catch(error => {
         console.log(error)
@@ -922,7 +960,7 @@ export default {
     // 活动管理
     handleCurrentChange(val) {
       // console.log(`当前页: ${val}`);
-      this.req.num = val
+      this.req.pageNo = val
       this.findCampaignByConditions(this.req)
     },
     // 添加名单分页

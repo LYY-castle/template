@@ -66,6 +66,6 @@ export function batchDelCustomer(req) {
   return request({
     url: `/customer/batchdelete`,
     method: 'post',
-    data: { customerIds: req.join(',') }
+    data: { customerIds: req }
   })
 }

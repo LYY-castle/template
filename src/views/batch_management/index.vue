@@ -1,9 +1,5 @@
 <template>
   <div class="container" style="padding:0 20px;">
-    <!-- <el-row>
-      <h3>当前位置:批次管理</h3>
-      <a href="/api/v1/batch/downloadtemp">下载模板</a>
-    </el-row> -->
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
         <el-form-item prop="batchId">
@@ -54,6 +50,7 @@
       <el-col>
         <el-table
           :data="tableData"
+          empty-text="无"
           border
           @selection-change="handleSelectionChange">
           <el-table-column
@@ -358,7 +355,6 @@
 </template>
 <script>
 import {
-  getMenu,
   queryBatch,
   findAscrislist,
   queryDetailById,
@@ -433,16 +429,6 @@ export default {
   mounted() {
     this.getBatch(this.req)
     this.getAscrislist()
-  },
-  beforeCreate() {
-    getMenu()
-      .then(response => {
-        const data = response.data
-        sessionStorage.setItem('getMenu', JSON.stringify(data))
-      })
-      .catch(error => {
-        console.log(error)
-      })
   },
   methods: {
     // 获取token

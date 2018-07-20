@@ -33,30 +33,30 @@ export function validatAlphabets(str) {
 
 export const rule = {
   customerName: [
-    { required: true, message: '请输入客户名称', trigger: 'blur' }
+    { required: true, message: '请输入客户名称', trigger: 'change' }
   ],
   sex: [
-    { required: true, message: '请输入客户性别', trigger: 'blur' }
+    { required: true, message: '请输入客户性别', trigger: 'change' }
   ],
   mobile: [
-    { required: true, message: '请输入手机号码', trigger: 'blur' },
+    { required: true, message: '请输入手机号码', trigger: 'change' },
     { pattern: /^([1][3,4,5,7,8][0-9]{9}|0\d{2,3}-\d{7,8}|\d{1,20})$/, message: '请输入正确的电话号码' }
   ],
   idNumber: [
-    { required: true, message: '请输入身份证号码', trigger: 'blur' },
+    { required: true, message: '请输入身份证号码', trigger: 'change' },
     { pattern: /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/, message: '请输入正确的身份证号码' }
   ],
   batchName: [
-    { required: true, message: '请输入批次名称', trigger: 'blur' }
+    { required: true, message: '请输入批次名称', trigger: 'change' }
   ],
   ascriptionId: [
-    { required: true, message: '请选择客户归属', trigger: 'blur' }
+    { required: true, message: '请选择客户归属', trigger: 'change' }
   ],
   validityTime: [
-    { required: true, message: '请输入有效时间', trigger: 'blur' }
+    { required: true, message: '请输入有效时间', trigger: 'change' }
   ],
   listName: [
-    { required: true, message: '请输入名单名称', trigger: 'blur' }
+    { required: true, message: '请输入名单名称', trigger: 'change' }
   ]
 }
 

@@ -28,3 +28,36 @@ export function checkNo(value) {
     }
   }
 }
+
+export function clone(obj) {
+  // Handle the 3 simple types, and null or undefined
+  if (obj == null || typeof obj !== 'object') return obj
+
+  // Handle Date
+  if (obj instanceof Date) {
+    var copy = new Date()
+    copy.setTime(obj.getTime())
+    return copy
+  }
+
+  // Handle Array
+  if (obj instanceof Array) {
+    var copy2 = []
+    for (var i = 0; i < obj.length; i++) {
+      copy2[i] = clone(obj[i])
+    }
+    return copy2
+  }
+
+  // Handle Objects
+  if (obj instanceof Object) {
+    var copy3 = {}
+    for (var attr in obj) {
+      if (obj.hasOwnProperty(attr)) copy3[attr] = clone(obj[attr])
+    }
+    return copy3
+  }
+
+  throw new Error("Unable to copy obj! Its type isn't supported.")
+}
+

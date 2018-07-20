@@ -404,7 +404,7 @@ export default {
               this.pageShow = false
             }
           } else {
-            this.$message(response.data.messages)
+            this.$message(response.data.message)
             this.tableData = response.data.data
             this.pageShow = false
           }
@@ -443,7 +443,7 @@ export default {
             this.$message.success(response.data.message)
             this.searchNamelist(this.req)
           } else {
-            this.$message(response.data.messages)
+            this.$message(response.data.message)
           }
         })
         .catch(error => {
@@ -475,7 +475,7 @@ export default {
           this.$message.success(response.data.message)
           this.searchNamelist(this.req)
         } else {
-          this.$message(response.data.messages)
+          this.$message(response.data.message)
         }
       }).catch(error => {
         console.log(error)

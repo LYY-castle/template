@@ -24,6 +24,13 @@ export function findAllNodules() {
   })
 }
 
+// 获取活动类型
+export function findAllCampaignTypes() {
+  return request({
+    url: 'campaign/getAllCampaignTypes',
+    method: 'get'
+  })
+}
 // 根据活动id获取评分表
 export function findMarksByCampaignId(campaignId) {
   return request({
@@ -42,20 +49,10 @@ export function findDeptByCampaignId(campaignId) {
 }
 // 修改活动
 export function modifyCampaign(req) {
-  if (req.productIds.length !== 0) {
-    req.productIds = req.productIds.join(',')
-  } else {
-    req.productIds = req.productIds.toString()
-  }
-  if (req.productIds.length !== 0) {
-    req.products = req.products.join(',')
-  } else {
-    req.products = req.products.toString()
-  }
   return request({
     url: `campaign/modifyCampaign`,
     method: 'post',
-    params: req
+    data: req
   })
 }
 
@@ -64,6 +61,6 @@ export function changeCampaignStatus(req) {
   return request({
     url: 'campaign/changeCampaignStatus',
     method: 'post',
-    params: req
+    data: req
   })
 }
