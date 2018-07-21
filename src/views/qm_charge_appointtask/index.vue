@@ -81,10 +81,10 @@
       </el-pagination>
       <el-form :inline="true" :rules="rule" :model="submitAssign" ref="assignForm">
         <el-form-item label="分配数量" prop="assignNum">
-          <el-input-number v-model="submitAssign.assignNum" size="small" placeholder="分配数量" @change="assignNum" style="width:50%"></el-input-number>
+          <el-input-number v-model="submitAssign.assignNum" size="small" placeholder="分配数量" style="width:50%"></el-input-number>
           <b>条</b>
         </el-form-item>
-        <el-form-item label="未分配量" style="margin-left:-6.5%">
+        <el-form-item label="未分配量" style="margin-left:-4.5%">
           <span>{{remainSum}}</span>
         </el-form-item>
         <el-form-item label="数量总计">
@@ -212,6 +212,7 @@ export default {
   name: 'qmChargeAppointtask',
   data() {
     const checkAssignSum = (eule, value, callback) => {
+      value = Number(value)
       if (value > this.remainSum) {
         return callback(new Error('分配数量不能超过未分配数量'))
       }
@@ -278,6 +279,7 @@ export default {
     },
     // 提交前验证
     submitForm(formName) {
+      var sum = 0
       if (this.submitAssign.qualityIds.length === 0) {
         this.$message('请选择分配名单')
         return false
@@ -286,12 +288,21 @@ export default {
         this.$message('请选择分配对象')
         return false
       }
+      for (var i = 0; i < this.multipleSelection.length; i++) {
+        if (this.multipleSelection[i].assignNum) {
+          sum = sum + this.multipleSelection[i].assignNum
+        }
+      }
+      if (sum !== Number(this.submitAssign.assignNum)) {
+        this.$message.error('本次分配数量总数与分配数量不一致')
+        return false
+      }
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          for (var i = 0; i < this.disTable.length; i++) {
-            if (!(Number.isInteger(this.disTable[i].assignNum))) {
+          for (var i = 0; i < this.multipleSelection.length; i++) {
+            this.multipleSelection[i].assignNum = Number(this.multipleSelection[i].assignNum)
+            if (!(Number.isInteger(this.multipleSelection[i].assignNum))) {
               this.$message.error('请输入整数')
-              this.submitVisible = false
               return false
             } else {
               this.validate = true
@@ -318,37 +329,33 @@ export default {
     },
     // 分配对象表格多选
     handleSelectionChange2(val) {
-      // console.log(val)
       this.multipleSelection = val
       this.submitAssign.data.length = 0
       this.assignNum()
     },
+    // 将分配数量平均分配
     assignNum() {
       for (var i = 0; i <= this.disTable.length - 1; i++) {
-        if (this.disTable[i]) {
-          this.disTable[i].assignNum = []
-          // this.$set(this.disTable, i, this.disTable[i])
-          // console.log(this.disTable.i)
+        if (this.disTable[i].assignNum) {
+          this.disTable[i].assignNum = 0
         }
       }
       if (this.multipleSelection.length !== 0) {
         for (var j = 0; j <= this.multipleSelection.length - 1; j++) {
-          this.multipleSelection[j].assignNum = parseInt(this.submitAssign.assignNum / this.multipleSelection.length)
+          this.$set(this.multipleSelection[j], 'assignNum', parseInt(this.submitAssign.assignNum / this.multipleSelection.length))
         }
         for (var n = 0; n < parseInt(Number(this.submitAssign.assignNum) % this.multipleSelection.length); n++) {
-          this.multipleSelection[n].assignNum += 1
+          this.$set(this.multipleSelection[n], 'assignNum', this.multipleSelection[n].assignNum + 1)
         }
       }
     },
+    // 转data数组为字符串
     getAssignData() {
       this.submitAssign.data = ''.split('')
-      console.log(this.disTableType)
       if (this.disTableType === '0') {
         for (var i = 0; i < this.disTable.length; i++) {
-          console.log(this.disTable[i])
           var list = `{"${(this.disTable[i].departId).toString()}": ${this.disTable[i].assignNum}}`
           this.submitAssign.data.push(list)
-          console.log(this.submitAssign.data)
         }
       } else if (this.disTableType === '1') {
         for (var j = 0; j < this.disTable.length; j++) {
@@ -357,7 +364,6 @@ export default {
         }
       }
       this.submitAssign.data = ('[' + this.submitAssign.data + ']').toString()
-      console.log(this.submitAssign.data)
     },
     // 初始化分配对象
     // getDownInfoByCurrentUser() {
