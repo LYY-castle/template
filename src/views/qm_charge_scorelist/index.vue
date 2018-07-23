@@ -185,17 +185,17 @@
             </el-form-item>
             <div v-for="(node, index1) in item.gradeOptions" v-if="node.isDelete!='1'">
                 <el-row>
-                  <el-col :span="10">
+                  <el-col :span="14">
                     <el-form-item :label="'选项'+String.fromCharCode(65+parseInt(index1))" :prop="'gradeTitles.'+index+'.gradeOptions.'+index1+'.optionName'" :rules="{ required: true, message: '请给出评分条件', trigger: 'blur' }">
                       <el-input v-model="node.optionName" placeholder="在此输入选项，上限50字符"></el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="4">
+                  <el-col :span="8">
                     <el-form-item label="分值" :prop="'gradeTitles.'+index+'.gradeOptions.'+index1+'.score'" :rules="{ required: true,  pattern: /^(\-?[1-9][0-9]{0,1}|0)$/, message: '分值需在±99间' }">
                       <el-input v-model="node.score"></el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="10">
+                  <el-col :span="2">
                     <el-button type="danger" @click.prevent="removeReverseChild(index,index1)" v-if="ruleFormReverse.gradeTitles[index].gradeOptions.length>1">删除</el-button>
                   </el-col>
                 </el-row>
@@ -232,12 +232,12 @@
           <el-row>
             <div v-for="(node, index1) in item.gradeOptions" v-if="node.isDelete!='1'">
                 <el-row>
-                  <el-col :span="10">
+                  <el-col :span="14">
                     <el-form-item :label="'选项'+String.fromCharCode(65+parseInt(index1))" :prop="'gradeTitles.'+index+'.gradeOptions.'+index1+'.optionName'" >
                       <el-input v-model="node.optionName" placeholder="在此输入选项，上限50字符" readonly="readonly"></el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="4">
+                  <el-col :span="8">
                     <el-form-item label="分值" :prop="'gradeTitles.'+index+'.gradeOptions.'+index1+'.score'">
                       <el-input v-model="node.score" readonly="readonly"></el-input>
                     </el-form-item>
