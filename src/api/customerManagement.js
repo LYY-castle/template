@@ -50,7 +50,7 @@ export function editCustomer(req) {
   return request({
     url: `/customer/editcustomer`,
     method: 'post',
-    params: req
+    data: req
   })
 }
 // 添加客户
@@ -58,7 +58,7 @@ export function addCustomer(req) {
   return request({
     url: `/customer/addcustomer`,
     method: 'post',
-    params: req
+    data: req
   })
 }
 // 批量删除
@@ -66,6 +66,6 @@ export function batchDelCustomer(req) {
   return request({
     url: `/customer/batchdelete`,
     method: 'post',
-    data: { customerIds: req.join(',') }
+    data: { customerIds: req }
   })
 }

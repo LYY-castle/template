@@ -12,13 +12,13 @@
           </el-select>
         </el-form-item>
         <el-form-item label="客户姓名：">
-          <el-input placeholder="客户姓名" v-model="req.customerName"></el-input>
+          <el-input placeholder="客户姓名（上限50字符）" v-model="req.customerName" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="主叫：">
-          <el-input placeholder="主叫号码" v-model="req.caller"></el-input>
+          <el-input placeholder="主叫号码（上限20字符）" maxlength="20" v-model="req.caller"></el-input>
         </el-form-item>
         <el-form-item label="被叫：">
-          <el-input placeholder="被叫号码" v-model="req.callee"></el-input>
+          <el-input placeholder="被叫号码(上限20字符)" maxlength="20" v-model="req.callee"></el-input>
         </el-form-item><br/>
         <el-form-item label="联系时间：">
           <el-date-picker
@@ -37,9 +37,9 @@
               default-time="00:00:00">
           </el-date-picker>
           <el-form-item label="通话时间：">
-            <el-input v-model="req.stime" style="width:80px"></el-input>
+            <el-input v-model="req.stime" style="width:80px" @change="checkNo(req.stime)" onkeypress="return event.keyCode>=48&&event.keyCode<=57" :maxlength="3"></el-input>
             至
-            <el-input v-model="req.etime" style="width:80px"></el-input>分钟
+            <el-input v-model="req.etime" style="width:80px" @change="checkNo(req.stime)" onkeypress="return event.keyCode>=48&&event.keyCode<=57" :maxlength="3"></el-input>分钟
           </el-form-item>
         </el-form-item>
         <el-form-item>
@@ -67,7 +67,10 @@
               <div>{{hideMobile(scope.row.customerPhone)}}</div>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="归属活动" prop="campaignId">
+          <el-table-column align="center" label="归属活动">
+              <template slot-scope="scope">
+                <div>{{showCampaignName(scope.row.campaignId)}}</div>
+              </template>
           </el-table-column>
           <el-table-column align="center" label="员工姓名" prop="staffName">
           </el-table-column>
@@ -116,7 +119,7 @@
 
 <script>
   import { getMenu } from '@/api/dashboard' // 菜单栏
-  import { formatDateTime } from '@/utils/tools' // 格式化时间
+  import { formatDateTime, checkNo } from '@/utils/tools' // 格式化时间
   import {
     getDepartId,
     getAllCamps,
@@ -201,6 +204,7 @@
       },
       // 时间戳转年月日时分秒
       formatDateTime: formatDateTime,
+      checkNo: checkNo,
   
       // 将选择的campaignId放入数组
       selectOneCampaign(campaignId) {
@@ -227,6 +231,14 @@
           .catch(error => {
             console.log(error)
           })
+      },
+      // 显示活动名称
+      showCampaignName(campaignId) {
+        for (var i = 0; i < this.campaigns.length; i++) {
+          if (campaignId === this.campaigns[i].campaignId) {
+            return this.campaigns[i].campaignName
+          }
+        }
       },
       // 隐藏手机号
       hideMobile(mobile) {

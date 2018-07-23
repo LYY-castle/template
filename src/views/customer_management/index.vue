@@ -1,43 +1,29 @@
 <template>
   <div class="container" style="padding:0 20px;">
-    <!-- <el-row>
-      <h3>当前位置:客户管理</h3>
-    </el-row>
-    <el-row>
-      <div style="font-size:16px;">查询条件</div>
-      <div style="border-bottom:2px solid #439AE6;margin:10px 0;"></div>
-    </el-row> -->
     <el-row margin-top:>
       <el-form :inline="true" size="small">
         <el-form-item>
-          <el-input v-model="req.customerName" placeholder="客户姓名"></el-input>
+          <el-input v-model="req.customerName" placeholder="客户姓名（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-input v-model="req.customerPhone" placeholder="客户电话"></el-input>
+          <el-input v-model="req.customerPhone" placeholder="客户电话(限长50字符)" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-input v-model="req.modifierName" placeholder="操作人员"></el-input>
+          <el-input v-model="req.modifierName" placeholder="操作人员（限长50）字符" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
           <el-date-picker
-              v-model="req.startModifierTime"
-              type="datetime"
-              placeholder="开始日期"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
-          </el-date-picker>
-          到
-          <el-date-picker
-              v-model="req.endModifierTime"
-              type="datetime"
-              placeholder="结束日期"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
+              v-model="timeValue"
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              value-format="yyyy-MM-dd HH:mm:ss">
           </el-date-picker>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="req.pageNo=1;searchCustomer(req)" icon="el-icon-search">查询</el-button>
-          <el-button type="danger" @click="clearForm(req)">重置</el-button>
+          <el-button type="danger" @click="reset()">重置</el-button>
         </el-form-item>
         <!-- <el-form-item>
       
@@ -141,17 +127,20 @@
       title="客户信息修改"
       :visible.sync="editVisible"
       append-to-body>
-      <el-form label-width="100px" :model="customerDetail" ref="editCustomer" :rules="rule">
+      <el-form label-width="100px" :model="customerReverseDetail" ref="editCustomer" :rules="rule">
         <el-form-item label="客户编号">
-          <span>{{customerDetail.customerId}}</span>
+          <span>{{customerReverseDetail.customerId}}</span>
         </el-form-item>
         <el-form-item label="客户姓名" prop="customerName">
-          <el-input v-model="customerDetail.customerName" size="small"></el-input>
+          <el-input v-model="customerReverseDetail.customerName" size="small" placeholder="上限50字符" maxlength="50"></el-input>
         </el-form-item>
-        <el-form-item label="客户性别">
-          <el-radio-group v-model="customerDetail.sex" size="small">
-            <el-radio label='0' border>男</el-radio>
-            <el-radio label='1' border>女</el-radio>
+        <el-form-item label="身份证" prop="idNumber">
+          <el-input v-model="customerReverseDetail.idNumber" size="small" placeholder="上限50字符" maxlength="50" @change="autoFillReverse()"></el-input>
+        </el-form-item>
+        <el-form-item label="客户性别" prop="sex">
+          <el-radio-group v-model="customerReverseDetail.sex" size="small">
+            <el-radio-button label='0' border>男</el-radio-button>
+            <el-radio-button label='1' border>女</el-radio-button>
           </el-radio-group>
           <!-- <el-select v-model="customerDetail.sex">
             <el-option label="女" value=1></el-option>
@@ -159,25 +148,22 @@
           </el-select> -->
         </el-form-item>
         <el-form-item label="客户电话" prop="mobile">
-          <el-input v-model="customerDetail.mobile" size="small"></el-input>
-        </el-form-item>
-        <el-form-item label="身份证" prop="idNumber">
-          <el-input v-model="customerDetail.idNumber" size="small"></el-input>
+          <el-input v-model="customerReverseDetail.mobile" size="small" placeholder="上限50字符" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="客户地址" prop="resideAddress">
-          <el-input v-model="customerDetail.resideAddress" size="small"></el-input>
+          <el-input v-model="customerReverseDetail.resideAddress" size="small" placeholder="上限200字符" maxlength="200"></el-input>
         </el-form-item>
         <el-form-item label="操作人员">
-          <span>{{customerDetail.modifierName}}</span>
+          <span>{{customerReverseDetail.modifierName}}</span>
         </el-form-item>
         <el-form-item label="操作时间"> 
-          <span>{{formatDateTime(customerDetail.modifierTime)}}</span>
+          <span>{{formatDateTime(customerReverseDetail.modifierTime)}}</span>
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
         <el-button type="danger" @click="searchByCustomerId(delReq)">重 置</el-button>
         <el-button @click="editVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('editCustomer');editCustomer(customerDetail)">确 定</el-button>
+        <el-button type="primary" @click="submitForm('editCustomer');editCustomer(customerReverseDetail)">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -188,28 +174,28 @@
       append-to-body>
       <el-form label-width="100px">
         <el-form-item label="客户编号">
-          <span>{{customerDetail.customerId}}</span>
+          <span>{{customerReverseDetail.customerId}}</span>
         </el-form-item>
         <el-form-item label="客户姓名">
-          <span>{{customerDetail.customerName}}</span>
+          <span>{{customerReverseDetail.customerName}}</span>
         </el-form-item>
-        <el-form-item label="客户姓名">
-          <span>{{showSex(customerDetail.sex)}}</span>
+        <el-form-item label="客户性别">
+          <span>{{showSex(customerReverseDetail.sex)}}</span>
         </el-form-item>
         <el-form-item label="客户电话">
-          <span>{{hideMobile(customerDetail.mobile)}}</span>
+          <span>{{hideMobile(customerReverseDetail.mobile)}}</span>
         </el-form-item>
         <el-form-item label="身份证">
-          <span>{{hideIdNumber(customerDetail.idNumber)}}</span>
+          <span>{{hideIdNumber(customerReverseDetail.idNumber)}}</span>
         </el-form-item>
         <el-form-item label="客户地址">
-          <span>{{showAddress(customerDetail.resideAddress)}}</span>
+          <span>{{showAddress(customerReverseDetail.resideAddress)}}</span>
         </el-form-item>
         <el-form-item label="操作人员">
-          <span>{{customerDetail.modifierName}}</span>
+          <span>{{customerReverseDetail.modifierName}}</span>
         </el-form-item>
         <el-form-item label="操作时间">
-          <span>{{formatDateTime(customerDetail.modifierTime)}}</span>
+          <span>{{formatDateTime(customerReverseDetail.modifierTime)}}</span>
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
@@ -224,22 +210,22 @@
       append-to-body>
       <el-form :rules="rule" :model="customerDetail" ref="customerDetail" label-width="100px">
         <el-form-item label="客户姓名" prop="customerName">
-          <el-input v-model="customerDetail.customerName" size="small"></el-input>
+          <el-input v-model="customerDetail.customerName" size="small" placeholder="上限50字符" maxlength="50"></el-input>
+        </el-form-item>
+        <el-form-item label="身份证" prop="idNumber">
+          <el-input v-model="customerDetail.idNumber" size="small" placeholder="上限50字符" maxlength="50" @change="autoFill()"></el-input>
         </el-form-item>
         <el-form-item label="客户性别" prop="sex">
           <el-radio-group v-model="customerDetail.sex" size="small">
-            <el-radio label='0' border>男</el-radio>
-            <el-radio label='1' border>女</el-radio>
+            <el-radio-button label='0' border>男</el-radio-button>
+            <el-radio-button label='1' border>女</el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="客户电话" prop="mobile">
-          <el-input v-model="customerDetail.mobile" size="small"></el-input>
-        </el-form-item>
-        <el-form-item label="身份证" prop="idNumber">
-          <el-input v-model="customerDetail.idNumber" size="small"></el-input>
+          <el-input v-model="customerDetail.mobile" size="small" placeholder="上限50字符" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="客户地址" prop="resideAddress">
-          <el-input v-model="customerDetail.resideAddress" size="small"></el-input>
+          <el-input v-model="customerDetail.resideAddress" size="small" placeholder="上限200字符" maxlength="200"></el-input>
         </el-form-item>
       </el-form>
         <div slot="footer" style="text-align: right;">
@@ -283,7 +269,6 @@ import {
   addCustomer,
   batchDelCustomer
 } from '@/api/customerManagement'
-import { rule } from '@/utils/validate'
 import { formatDateTime } from '@/utils/tools'
 
 export default {
@@ -295,6 +280,33 @@ export default {
   //   ])
   // },
   data() {
+    var checkSex = (rule, value, callback) => {
+      if (value) {
+        var idNo1 = this.customerDetail.idNumber
+        var idNo2 = this.customerReverseDetail.idNumber
+        var reg = /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/
+        var sexStr = '1'
+        if (reg.test(idNo1)) {
+          sexStr = Number(idNo1.substring(idNo1.length - 2, idNo1.length - 1)) % 2 === 1 ? '0' : '1'
+          if (sexStr !== value) {
+            callback(new Error('所选性别和身份证信息不匹配'))
+          } else {
+            callback()
+          }
+        } else if (reg.test(idNo2)) {
+          sexStr = Number(idNo2.substring(idNo2.length - 2, idNo2.length - 1)) % 2 === 1 ? '0' : '1'
+          if (sexStr !== value) {
+            callback(new Error('所选性别和身份证信息不匹配'))
+          } else {
+            callback()
+          }
+        } else {
+          callback(new Error('身份证号不符合规则'))
+        }
+      } else {
+        callback(new Error('性别不能为空'))
+      }
+    }
     return {
       detailVisible: false,
       delVisible: false, // 删除对话框显示隐藏
@@ -304,7 +316,24 @@ export default {
       tableData: [], // 表格数据
       validate: true, // 验证不通过阻止发请求
       pageShow: false, // 分页显示隐藏
-      rule: rule,
+      timeValue: '',
+      rule: {
+        customerName: [
+          { required: true, message: '请输入客户名称', trigger: 'blur' }
+        ],
+        idNumber: [
+          { required: true, message: '请输入身份证号码', trigger: 'blur' },
+          { pattern: /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/, message: '请输入正确的身份证号码' }
+        ],
+        sex: [
+          { required: true, message: '请选择客户性别', trigger: 'blur' },
+          { validator: checkSex, trigger: 'change' }
+        ],
+        mobile: [
+          { required: true, message: '请输入手机号码', trigger: 'blur' },
+          { pattern: /^([1][3,4,5,7,8][0-9]{9}|0\d{2,3}-\d{7,8}|\d{1,20})$/, message: '请输入正确的电话号码' }
+        ]
+      },
       delReq: {
         customerId: ''
       },
@@ -322,11 +351,21 @@ export default {
       },
       customerDetail: {
         customerName: '',
-        sex: '',
+        sex: '1',
         mobile: '',
         idNumber: '',
         resideAddress: ''
       }, // 客户详情
+      customerReverseDetail: {
+        customerId: '',
+        customerName: '',
+        sex: '1',
+        mobile: '',
+        idNumber: '',
+        resideAddress: '',
+        modifierName: '',
+        modifierTime: ''
+      },
       // 分页数据
       pageInfo: {}
     }
@@ -345,9 +384,34 @@ export default {
       })
   },
   methods: {
-    // show(a) {
-    //   console.log(a)
-    // },
+    // 重置查询框内容
+    reset() {
+      this.timeValue = ''
+      this.req = {
+        customerName: '',
+        customerPhone: '',
+        modifierName: '',
+        startModifierTime: '',
+        endModifierTime: '',
+        pageNo: 1
+      }
+    },
+    autoFill() {
+      var reg = /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/
+      const idNo = this.customerDetail.idNumber
+      if (reg.test(idNo)) {
+        this.customerDetail.sex = ''
+        this.customerDetail.sex = Number(idNo.substring(idNo.length - 2, idNo.length - 1)) % 2 === 1 ? '0' : '1'
+      }
+    },
+    autoFillReverse() {
+      var reg = /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/
+      const idNo = this.customerReverseDetail.idNumber
+      if (reg.test(idNo)) {
+        this.customerReverseDetail.sex = ''
+        this.customerReverseDetail.sex = Number(idNo.substring(idNo.length - 2, idNo.length - 1)) % 2 === 1 ? '0' : '1'
+      }
+    },
     resetForm(formName) {
       if (this.$refs[formName] !== undefined) {
         this.$refs[formName].resetFields()
@@ -402,6 +466,8 @@ export default {
     },
     // 查询客户信息
     searchCustomer(req) {
+      req.startModifierTime = this.timeValue[0]
+      req.endModifierTime = this.timeValue[1]
       queryByCustomer(req)
         .then(response => {
           if (response.data.code === 0) {
@@ -443,8 +509,19 @@ export default {
       queryByCustomerId(customerId)
         .then(response => {
           if (response.data.code === 0) {
-            this.customerDetail = response.data.data
-            this.$set(this.customerDetail, 'sex', response.data.data.sex.toString())
+            var data = response.data.data
+            this.customerReverseDetail = {
+              customerName: data.customerName,
+              mobile: data.mobile,
+              idNumber: data.idNumber,
+              resideAddress: data.resideAddress,
+              sex: data.sex.toString(),
+              customerId: data.customerId,
+              modifierName: data.modifierName,
+              modifierTime: data.modifierTime
+            }
+          } else {
+            console.log(response.data.message)
           }
         })
         .catch(error => {
@@ -452,13 +529,22 @@ export default {
         })
     },
     // 修改客户信息
-    editCustomer(customerDetail) {
+    editCustomer(customerReverseDetail) {
       if (!this.validate) {
         return false
       }
       this.editVisible = false
-      parseInt(customerDetail.sex)
-      editCustomer(customerDetail).then(response => {
+      parseInt(customerReverseDetail.sex)
+      for (const i in customerReverseDetail) {
+        if (i === 'modifierName') {
+          customerReverseDetail[i] = ''
+        } else if (i === 'modifierTime') {
+          customerReverseDetail[i] = ''
+        } else {
+          continue
+        }
+      }
+      editCustomer(customerReverseDetail).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
           this.searchCustomer(this.req)
@@ -480,7 +566,7 @@ export default {
           this.$message.success(response.data.message)
           this.searchCustomer(this.req)
         } else {
-          this.$message('添加失败')
+          this.$message(response.data.message)
         }
       }).catch(error => {
         this.$message('添加失败')

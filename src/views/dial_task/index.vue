@@ -38,10 +38,10 @@
             </el-form-item><br/>
 
             <el-form-item label="客户姓名：">
-                <el-input v-model="req.customerName" placeholder="客户姓名"></el-input>
+                <el-input v-model="req.customerName" placeholder="客户姓名（限长50字符）" maxlength="50"></el-input>
             </el-form-item>&nbsp;&nbsp;&nbsp;&nbsp;
             <el-form-item label="客户电话：">
-                <el-input v-model="req.customerPhone" placeholder="客户电话"></el-input>
+                <el-input v-model="req.customerPhone" placeholder="客户电话（限长50字符）" maxlength="50"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)" icon="el-icon-search">筛选</el-button>
@@ -257,13 +257,27 @@ export default {
 
     // 清空重置
     clearForm(obj, formName) {
-      for (const key in obj) {
-        if (key !== 'pageNo') {
-          obj[key] = ''
-        }
-      }
-      if (formName) {
-        this.$refs[formName].resetFields()
+      // for (const key in obj) {
+      //   if (key !== 'pageNo') {
+      //     obj[key] = ''
+      //   }
+      // }
+      // if (formName) {
+      //   this.$refs[formName].resetFields()
+      // }
+      this.req.distributeTimeStart = ''
+      this.req.distributeTimeEnd = ''
+      this.req.appointTimeStart = ''
+      this.req.appointTimeEnd = ''
+      this.req.customerName = ''
+      this.req.customerPhone = ''
+      this.req.pageNo = 1
+      if (this.activeName === 'firstDial') {
+        this.req.contactStatus = '0'
+        this.req.status = '0'
+      } else {
+        this.req.contactStatus = ''
+        this.req.status = '1'
       }
     },
     // 时间戳转年月日时分秒
@@ -282,11 +296,13 @@ export default {
         // 点击了首拨名单
         this.req.contactStatus = 0
         this.req.status = 0
+        this.req.pageNo = 1
         this.searchByKeyWords(this.req)
       } else {
         // 点击了预约名单
         this.req.contactStatus = ''
         this.req.status = 1
+        this.req.pageNo = 1
         this.searchByKeyWords(this.req)
       }
     },

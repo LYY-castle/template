@@ -13,15 +13,15 @@
             </el-form-item>&nbsp;&nbsp;
 
             <el-form-item label="订单编号：">
-                <el-input v-model="req.orderId" placeholder="订单编号"></el-input>
+                <el-input v-model="req.orderId" placeholder="订单编号（上限50字符）" maxlength="50"></el-input>
             </el-form-item>&nbsp;&nbsp;&nbsp;&nbsp;
 
             <el-form-item label="产品名称：">
-                <el-input v-model="req.productName" placeholder="产品名称"></el-input>
+                <el-input v-model="req.productName" placeholder="产品名称（上限255字符）" maxlength="255"></el-input>
             </el-form-item>
 
             <el-form-item label="销售员工：">
-                <el-input v-model="req.staffName" placeholder="员工姓名"></el-input>
+                <el-input v-model="req.staffName" placeholder="员工姓名（上限50字符）" maxlength="50"></el-input>
             </el-form-item><br/>
             
             <el-form-item label="活动名称：">
@@ -35,7 +35,7 @@
             </el-form-item>
 
             <el-form-item label="客户姓名：">
-                <el-input v-model="req.customerName" placeholder="客户姓名"></el-input>
+                <el-input v-model="req.customerName" placeholder="客户姓名（上限50字符）" maxlength="50"></el-input>
             </el-form-item>&nbsp;&nbsp;&nbsp;&nbsp;
 
             <el-form-item label="销售日期：">
@@ -69,7 +69,7 @@
           <el-table-column
             align="center"
             label="序号"
-            width="55">
+            width="50">
             <template
               slot-scope="scope">
               <div>{{scope.$index+(req.pageNo-1)*10+1}}</div>
@@ -100,6 +100,13 @@
             <template slot-scope="scope">
               <div>{{hideMobile(scope.row.customerPhone)}}</div>
             </template>
+          </el-table-column>
+          <el-table-column
+          align="center"
+          label="所属活动">
+          <template slot-scope="scope">
+            <div>{{showCampaignName(scope.row.campaignId)}}</div>
+          </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -183,10 +190,10 @@
           <span>{{orderDetail.createTime}}</span>
         </el-form-item>
         <el-form-item label="订单状态">
-          <span v-html="showStatus(orderDetail.orderId)"></span>
+          <span v-html="showStatus(orderDetail.status)"></span>
         </el-form-item>
         <el-form-item label="支付方式">
-          <span v-text="showPayType(orderDetail.payTypeName)"></span>
+          <span>{{orderDetail.payTypeName}}</span>
         </el-form-item>
         <el-form-item label="选购产品">
           <span>{{orderDetail.productName}}</span>
@@ -225,10 +232,10 @@
           <span>{{orderDetail.createTime}}</span>
         </el-form-item>
         <el-form-item label="订单状态">
-          <span v-html="showStatus(orderDetail.orderId)"></span>
+          <span v-html="showStatus(orderDetail.status)"></span>
         </el-form-item>
         <el-form-item label="支付方式">
-          <span v-text="showPayType(orderDetail.payTypeName)"></span>
+          <span>{{orderDetail.payTypeName}}</span>
         </el-form-item>
         <el-form-item label="选购产品">
           <span>{{orderDetail.productName}}</span>
@@ -456,13 +463,13 @@
       },
 
       // 支付方式名称补无
-      showPayType(payTypeName) {
-        if (payTypeName) {
-          return ''
-        } else {
-          return '无'
-        }
-      },
+      // showPayType(payTypeName) {
+      //   if (payTypeName) {
+      //     return ''
+      //   } else {
+      //     return '无'
+      //   }
+      // },
 
       // 校验
       submitForm(formName) {
@@ -519,6 +526,14 @@
             .catch(error => {
               console.log(error)
             })
+        }
+      },
+      // 显示活动名称
+      showCampaignName(campaignId) {
+        for (var i = 0; i < this.campaigns.length; i++) {
+          if (campaignId === this.campaigns[i].campaignId) {
+            return this.campaigns[i].campaignName
+          }
         }
       },
       // 发送支付短信

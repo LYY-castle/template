@@ -1,26 +1,5 @@
 import request from '@/utils/request'
-// import qs from 'qs'
 
-export function getMenu() {
-  return request({
-    url: '/login/getNewMenu',
-    method: 'post'
-  })
-}
-
-export function checkPerm() {
-  return request({
-    url: '/login/checkPerm',
-    method: 'post'
-  })
-}
-
-export function findContactHistory() {
-  return request({
-    url: '/contact/findContactHistory',
-    method: 'get'
-  })
-}
 // 查询
 export function queryBatch(req) {
   return request({
@@ -73,7 +52,7 @@ export function delBatchs(batchIds) {
   return request({
     url: '/batch/batchdel',
     method: 'post',
-    params: { batchIds: batchIds.join(',') }
+    data: { batchIds: batchIds }
   })
 }
 // 确认导入
@@ -81,6 +60,6 @@ export function batchListimport(addReq) {
   return request({
     url: '/batch/confirmimport',
     method: 'post',
-    params: addReq
+    data: addReq
   })
 }
