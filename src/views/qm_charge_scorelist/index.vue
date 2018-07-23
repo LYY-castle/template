@@ -135,7 +135,7 @@
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
-                    <el-form-item label="分值" :prop="'gradeTitles.'+index+'.gradeOptions.'+index1+'.score'" :rules="{ required: true,  pattern: /^(\-?[1-9][0-9]{0,1}|0)$/, message: '分值需在±99间' }">
+                    <el-form-item label="分值" :prop="'gradeTitles.'+index+'.gradeOptions.'+index1+'.score'" :rules="{ required: true,  pattern: /^(\-?[1-9][0-9]{0,1}|0)$/, message: '分值需在±99间' ,trigger: 'blur'}">
                       <el-input v-model="node.score"></el-input>
                     </el-form-item>
                   </el-col>
@@ -150,7 +150,7 @@
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
         <el-button type="danger" @click="resetForm('ruleForm')">重置</el-button>
-        <el-button @click="dialogFormVisible = false">返 回</el-button>
+        <el-button @click="resetForm('ruleForm');dialogFormVisible = false">返 回</el-button>
       </div>
     </el-dialog>
       <el-dialog title="修改评分表" :visible.sync="dialogFormVisibleReverse" width="80%" @close="resetFormReverse('ruleFormReverse')">
@@ -191,7 +191,7 @@
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
-                    <el-form-item label="分值" :prop="'gradeTitles.'+index+'.gradeOptions.'+index1+'.score'" :rules="{ required: true,  pattern: /^(\-?[1-9][0-9]{0,1}|0)$/, message: '分值需在±99间' }">
+                    <el-form-item label="分值" :prop="'gradeTitles.'+index+'.gradeOptions.'+index1+'.score'" :rules="{ required: true,  pattern: /^(\-?[1-9][0-9]{0,1}|0)$/, message: '分值需在±99间', trigger: 'blur'}">
                       <el-input v-model="node.score"></el-input>
                     </el-form-item>
                   </el-col>
@@ -206,7 +206,7 @@
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确 定</el-button>
         <el-button type="danger" @click="resetFormReverse('ruleFormReverse')">重置</el-button>
-        <el-button @click="dialogFormVisibleReverse = false">返 回</el-button>
+        <el-button @click="resetFormReverse('ruleFormReverse');dialogFormVisibleReverse = false">返 回</el-button>
       </div>
     </el-dialog>
       <el-dialog title="查看评分表" :visible.sync="dialogFormVisibleDetail" width="80%" @close="resetFormDetail('dialogFormVisibleDetail')">
@@ -248,7 +248,7 @@
         </el-card>
         </el-form>
       <div slot="footer" class="dialog-footer">
-         <el-button @click="dialogFormVisibleDetail = false" type="danger">返 回</el-button>
+         <el-button @click="resetFormDetail('dialogFormVisibleDetail');dialogFormVisibleDetail = false" type="danger">返 回</el-button>
       </div>
     </el-dialog>
   </div>
@@ -471,6 +471,7 @@
             addGrade(this.ruleForm).then(response => {
               if (response.data.code === 0) {
                 this.dialogFormVisible = false
+                this.resetForm(formName)
                 this.searchGrade({})
               } else {
                 Message({
@@ -493,10 +494,12 @@
       },
       submitFormReverse(formName) {
         this.$refs[formName].validate((valid) => {
+          console.log(valid)
           if (valid) {
             editGrade(this.ruleFormReverse).then(response => {
               if (response.data.code === 0) {
                 this.dialogFormVisibleReverse = false
+                this.resetFormReverse(formName)
                 this.searchGrade({})
               } else {
                 Message({
@@ -610,14 +613,13 @@
                 gradeOption.id = data.gradeTitles[a].gradeOptions[i].id
                 gradeOption.isDelete = data.gradeTitles[a].gradeOptions[i].isDelete
                 gradeOption.optionName = data.gradeTitles[a].gradeOptions[i].optionName
-                gradeOption.score = data.gradeTitles[a].gradeOptions[i].score
+                gradeOption.score = (data.gradeTitles[a].gradeOptions[i].score || 0) + ''
                 gradeOption.titleId = data.gradeTitles[a].gradeOptions[i].titleId
                 gradeOptions.push(gradeOption)
               }
               obj.gradeOptions = gradeOptions
               gradeTitles.push(obj)
             }
-
             this.ruleFormReverse = {
               gradeId: data.gradeId,
               isDelete: data.isDelete,
