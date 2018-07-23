@@ -168,7 +168,7 @@
          <el-form-item>
           <el-button size="mini" type="primary" @click="addReverse">添加评分题目</el-button>
         </el-form-item>
-        <el-card class="box-card" v-for="(item, index) in ruleFormReverse.gradeTitles"  v-if="ruleFormReverse.gradeTitles[index].isDelete!='1'">
+        <el-card class="box-card" v-for="(item, index) in ruleFormReverse.gradeTitles"  v-if="ruleFormReverse.gradeTitles[index].isDelete!=='1'">
           <el-row >
             <el-col :span="18">
               <el-form-item :label="parseInt(index)+1+''"  :prop="'gradeTitles.'+index+'.titleName'" :rules="{ required: true, message: '请填写评分标题', trigger: 'blur' }">
@@ -176,14 +176,15 @@
               </el-form-item>
             </el-col>
             <el-col :span="4">
-                <el-button type="danger" @click.prevent="removeReverse(index)" v-if="ruleFormReverse.gradeTitles.length>1">删除</el-button>
+                <!-- <el-button type="danger" @click.prevent="removeReverse(index)" v-if="ruleFormReverse.gradeTitles.length>1">删除</el-button> -->
+                <el-button type="danger" @click.prevent="removeReverse(index)" v-if="getGradeTitleCount(ruleFormReverse.gradeTitles)">删除</el-button>
             </el-col>
           </el-row>
           <el-row>
             <el-form-item>
               <el-button size="mini" type="primary" @click="addReverseChoice(index)">添加评分选项</el-button>
             </el-form-item>
-            <div v-for="(node, index1) in item.gradeOptions" v-if="node.isDelete!='1'">
+            <div v-for="(node, index1) in item.gradeOptions" v-if="node.isDelete!=='1'">
                 <el-row>
                   <el-col :span="14">
                     <el-form-item :label="'选项'+String.fromCharCode(65+parseInt(index1))" :prop="'gradeTitles.'+index+'.gradeOptions.'+index1+'.optionName'" :rules="{ required: true, message: '请给出评分条件', trigger: 'blur' }">
@@ -196,7 +197,8 @@
                     </el-form-item>
                   </el-col>
                   <el-col :span="2">
-                    <el-button type="danger" @click.prevent="removeReverseChild(index,index1)" v-if="ruleFormReverse.gradeTitles[index].gradeOptions.length>1">删除</el-button>
+                    <!-- <el-button type="danger" @click.prevent="removeReverseChild(index,index1)" v-if="ruleFormReverse.gradeTitles[index].gradeOptions.length>1">删除</el-button> -->
+                    <el-button type="danger" @click.prevent="removeReverseChild(index,index1)" v-if="getOptions(ruleFormReverse.gradeTitles[index].gradeOptions)">删除</el-button>
                   </el-col>
                 </el-row>
               </div>
@@ -221,7 +223,7 @@
         <el-form-item label="评分表描述信息">
           <textarea v-model='ruleFormDetail.description' placeholder="此处填写评分表简单描述，上限100字符" readonly="readonly" maxlength="100" cols="63" rows="10">{{ruleFormDetail.description}}</textarea>
         </el-form-item>
-             <el-card class="box-card" v-for="(item, index) in ruleFormDetail.gradeTitles"  v-if="ruleFormDetail.gradeTitles[index].isDelete!='1'">
+             <el-card class="box-card" v-for="(item, index) in ruleFormDetail.gradeTitles"  v-if="ruleFormDetail.gradeTitles[index].isDelete!=='1'">
           <el-row >
             <el-col :span="18">
               <el-form-item :label="parseInt(index)+1+''"  :prop="'gradeTitles.'+index+'.titleName'" >
@@ -230,7 +232,7 @@
             </el-col>
                      </el-row>
           <el-row>
-            <div v-for="(node, index1) in item.gradeOptions" v-if="node.isDelete!='1'">
+            <div v-for="(node, index1) in item.gradeOptions" v-if="node.isDelete!=='1'">
                 <el-row>
                   <el-col :span="14">
                     <el-form-item :label="'选项'+String.fromCharCode(65+parseInt(index1))" :prop="'gradeTitles.'+index+'.gradeOptions.'+index1+'.optionName'" >
@@ -341,6 +343,24 @@
       this.searchGrade({})
     },
     methods: {
+      getGradeTitleCount(obj) {
+        var count = 0
+        for (var i = 0; i < obj.length; i++) {
+          if (obj[i].isDelete !== '1') {
+            count++
+          }
+        }
+        return count > 1
+      },
+      getOptions(obj) {
+        var count = 0
+        for (var i = 0; i < obj.length; i++) {
+          if (obj[i].isDelete !== '1') {
+            count++
+          }
+        }
+        return count > 1
+      },
       addReverse() {
         this.ruleFormReverse.gradeTitles.push({
           titleName: '',
@@ -421,7 +441,7 @@
           var id = obj.id
           var isDelete = '1'
           var optionName = obj.optionName
-          var score = obj.score
+          var score = (obj.score || 0) + ''
           var titleId = obj.titleId
           this.ruleFormReverse.gradeTitles[index1].gradeOptions.splice(index2, 1)
           this.ruleFormReverse.gradeTitles[index1].gradeOptions.push({
@@ -494,7 +514,6 @@
       },
       submitFormReverse(formName) {
         this.$refs[formName].validate((valid) => {
-          console.log(valid)
           if (valid) {
             editGrade(this.ruleFormReverse).then(response => {
               if (response.data.code === 0) {
@@ -657,7 +676,7 @@
                 gradeOption.id = data.gradeTitles[a].gradeOptions[i].id
                 gradeOption.isDelete = data.gradeTitles[a].gradeOptions[i].isDelete
                 gradeOption.optionName = data.gradeTitles[a].gradeOptions[i].optionName
-                gradeOption.score = data.gradeTitles[a].gradeOptions[i].score
+                gradeOption.score = (data.gradeTitles[a].gradeOptions[i].score || 0) + ''
                 gradeOption.titleId = data.gradeTitles[a].gradeOptions[i].titleId
                 gradeOptions.push(gradeOption)
               }
