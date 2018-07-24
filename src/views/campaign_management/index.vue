@@ -968,7 +968,7 @@ export default {
     // 活动管理
     handleCurrentChange(val) {
       // console.log(`当前页: ${val}`);
-      this.req2.pageNo = val
+      this.req.num = val
       this.findCampaignByConditions(this.req2)
     },
     // 添加名单分页
