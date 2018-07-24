@@ -41,8 +41,8 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;getBatch(req);" icon="el-icon-search">查询</el-button>
-          <el-button type="danger" @click="clearForm(req,'searchForm');">重置</el-button>
+          <el-button type="primary" @click="req2=clone(req);req.pageNo=1;getBatch(req);" icon="el-icon-search">查询</el-button>
+          <el-button type="danger" @click="clearForm(req,'searchForm');req2=clone(req);">重置</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -366,7 +366,7 @@ import {
 } from '@/api/batch_management'
 import { getToken } from '@/utils/auth'
 import { rule } from '@/utils/validate'
-import { formatDateTime } from '@/utils/tools'
+import { formatDateTime, clone } from '@/utils/tools'
 
 export default {
   name: 'batchManagement',
@@ -414,6 +414,15 @@ export default {
         endCreateTime: '',
         pageNo: 1
       },
+      req2: {
+        batchId: '',
+        batchName: '',
+        validityStatus: '',
+        modifierName: '',
+        startCreateTime: '',
+        endCreateTime: '',
+        pageNo: 1
+      },
       batchDetail: {},
       addReq: {
         batchName: '',
@@ -431,6 +440,8 @@ export default {
     this.getAscrislist()
   },
   methods: {
+    // 深度克隆
+    clone: clone,
     // 获取token
     getToken: getToken,
     // 时间戳转年月日时分秒
@@ -542,7 +553,7 @@ export default {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
             this.addVisible = false
-            this.getBatch(this.req)
+            this.getBatch(this.req2)
           } else {
             this.$message(response.data.message)
           }
@@ -622,7 +633,7 @@ export default {
         .then(response => {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
-            this.getBatch(this.req)
+            this.getBatch(this.req2)
           } else {
             this.$message('删除成功')
           }
@@ -667,7 +678,7 @@ export default {
       modifyBatch(req).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
-          this.getBatch(this.req)
+          this.getBatch(this.req2)
         } else {
           this.$message(response.data.message)
         }
@@ -684,7 +695,7 @@ export default {
         delBatchs(batchDelReq.batchIds).then(response => {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
-            this.getBatch(this.req)
+            this.getBatch(this.req2)
           } else {
             this.$message(response.data.message)
           }
@@ -705,13 +716,13 @@ export default {
     // handleSizeChange(val) {
     //   // console.log(`每页 ${val} 条`);
     //   this.searchReq.pageSize = val
-    //   this.searchCustomer(this.req)
+    //   this.searchCustomer(this.req2)
     // },
     // 分页翻页功能
     handleCurrentChange(val) {
       // console.log(`当前页: ${val}`);
-      this.req.pageNo = val
-      this.getBatch(this.req)
+      this.req2.pageNo = val
+      this.getBatch(this.req2)
     }
   }
 }

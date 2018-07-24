@@ -1,26 +1,5 @@
 import request from '@/utils/request'
-// import qs from 'qs'
 
-export function getMenu() {
-  return request({
-    url: '/login/getMenu',
-    method: 'post'
-  })
-}
-
-export function checkPerm() {
-  return request({
-    url: '/login/checkPerm',
-    method: 'post'
-  })
-}
-
-export function findContactHistory() {
-  return request({
-    url: '/contact/findContactHistory',
-    method: 'get'
-  })
-}
 // 查询
 export function queryByCustomer(req) {
   return request({

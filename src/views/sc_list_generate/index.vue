@@ -29,8 +29,8 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;searchNamelist(req)" icon="el-icon-search">查询</el-button>
-          <el-button type="danger" @click="clearForm(req)">重置</el-button>
+          <el-button type="primary" @click="req2=clone(req);req.pageNo=1;searchNamelist(req)" icon="el-icon-search">查询</el-button>
+          <el-button type="danger" @click="clearForm(req);req2=clone(req);">重置</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -177,8 +177,8 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="getBatch(searchBatch)" icon="el-icon-search">查询</el-button>
-            <el-button type="danger" @click="clearForm(searchBatch);searchBatch.validityStatus=0;">重置</el-button>
+            <el-button type="primary" @click="searchBatch2=clone(searchBatch);searchBatch.pageno=1;getBatch(searchBatch)" icon="el-icon-search">查询</el-button>
+            <el-button type="danger" @click="clearForm(searchBatch);searchBatch.validityStatus=0;searchBatch2=clone(searchBatch)">重置</el-button>
           </el-form-item>
         </el-form>
       </el-row>
@@ -303,6 +303,7 @@ import {
 } from '@/api/sc_list_generate'
 import { queryBatch } from '@/api/batch_management'
 import { rule } from '@/utils/validate'
+import { clone } from '@/utils/tools'
 
 export default {
   name: 'scListGenerate',
@@ -334,7 +335,24 @@ export default {
         endCreateTime: '',
         pageNo: 1
       },
+      req2: {
+        listId: '',
+        listName: '',
+        modifierName: '',
+        startCreateTime: '',
+        endCreateTime: '',
+        pageNo: 1
+      },
       searchBatch: {
+        batchId: '',
+        batchName: '',
+        validityStatus: 0,
+        createAuthor: '',
+        startCreateTime: '',
+        endCreateTime: '',
+        pageNo: 1
+      },
+      searchBatch2: {
         batchId: '',
         batchName: '',
         validityStatus: 0,
@@ -365,6 +383,8 @@ export default {
     this.searchNamelist(this.req)
   },
   methods: {
+    // 深度克隆
+    clone: clone,
     resetForm(formName) {
       if (this.$refs[formName] !== undefined) {
         this.$refs[formName].resetFields()
@@ -441,7 +461,7 @@ export default {
         .then(response => {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
-            this.searchNamelist(this.req)
+            this.searchNamelist(this.req2)
           } else {
             this.$message(response.data.message)
           }
@@ -473,7 +493,7 @@ export default {
       editNamelist(this.editReq).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
-          this.searchNamelist(this.req)
+          this.searchNamelist(this.req2)
         } else {
           this.$message(response.data.message)
         }
@@ -496,7 +516,7 @@ export default {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
           setTimeout(() => {
-            this.searchNamelist(this.req)
+            this.searchNamelist(this.req2)
           }, 500)
         } else {
           this.$message('添加失败')
@@ -514,7 +534,7 @@ export default {
         batchDelList(batchDelReq.idlist).then(response => {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
-            this.searchNamelist(this.req)
+            this.searchNamelist(this.req2)
           } else {
             this.$message('删除失败')
           }
@@ -541,17 +561,17 @@ export default {
     // handleSizeChange(val) {
     //   // console.log(`每页 ${val} 条`);
     //   this.searchReq.pageSize = val
-    //   this.searchNamelist(this.req)
+    //   this.searchNamelist(this.req2)
     // },
     // 分页翻页功能
     handleCurrentChange(val) {
       // console.log(`当前页: ${val}`);
-      this.req.pageNo = val
-      this.searchNamelist(this.req)
+      this.req2.pageNo = val
+      this.searchNamelist(this.req2)
     },
     namelistPageChange(val) {
-      this.searchBatch.pageNo = val
-      this.getBatch(this.searchBatch)
+      this.searchBatch2.pageNo = val
+      this.getBatch(this.searchBatch2)
     }
   }
 }

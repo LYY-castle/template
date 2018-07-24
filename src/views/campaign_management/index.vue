@@ -12,8 +12,8 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;findCampaignByConditions(req);" icon="el-icon-search">查询</el-button>
-          <el-button type="danger" @click="resetForm('searchForm');">重置</el-button>
+          <el-button type="primary" @click="req.pageNo=1;findCampaignByConditions(req);req2=clone(req)" icon="el-icon-search">查询</el-button>
+          <el-button type="danger" @click="resetForm('searchForm');req2=clone(req)">重置</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -530,7 +530,7 @@ import {
   findNameListExcludeById,
   assignCampaignAndList
 } from '@/api/campaign_management'
-import { formatDateTime } from '@/utils/tools'
+import { formatDateTime, clone } from '@/utils/tools'
 
 export default {
   name: 'campaignManagement',
@@ -609,6 +609,12 @@ export default {
         pagesize: 10,
         pageNo: 1
       },
+      req2: {
+        campaignName: '',
+        status: '0',
+        pagesize: 10,
+        pageNo: 1
+      },
       campaignDetail: {
         campaignTypeCode: '',
         campaignTypeInfo: {},
@@ -657,6 +663,8 @@ export default {
     this.getAllCampaignTypes()
   },
   methods: {
+    // 深度克隆
+    clone: clone,
     // 时间戳转年月日时分秒
     formatDateTime: formatDateTime,
     clearForm(obj, formName) {
@@ -720,7 +728,7 @@ export default {
         .then(response => {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
-            this.findCampaignByConditions(this.req)
+            this.findCampaignByConditions(this.req2)
           } else {
             this.$message(response.data.message)
           }
@@ -780,7 +788,7 @@ export default {
       modifyCampaign(campaignDetail).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
-          this.findCampaignByConditions(this.req)
+          this.findCampaignByConditions(this.req2)
         } else {
           this.$message(response.data.message)
         }
@@ -845,7 +853,7 @@ export default {
       addCampaign(campaignDetail).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
-          this.findCampaignByConditions(this.req)
+          this.findCampaignByConditions(this.req2)
         } else {
           this.$message(response.data.message)
         }
@@ -862,7 +870,7 @@ export default {
         delCampaigns(batchDelReq.campaignIds).then(response => {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
-            this.findCampaignByConditions(this.req)
+            this.findCampaignByConditions(this.req2)
           } else {
             this.$message(response.data.message)
           }
@@ -895,7 +903,7 @@ export default {
       changeCampaignStatus(status).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
-          this.findCampaignByConditions(this.req)
+          this.findCampaignByConditions(this.req2)
         } else {
           this.$message(response.data.message)
         }
@@ -954,14 +962,14 @@ export default {
     // handleSizeChange(val) {
     //   // console.log(`每页 ${val} 条`);
     //   this.searchReq.pageSize = val
-    //   this.searchCustomer(this.req)
+    //   this.searchCustomer(this.req2)
     // },
     // 分页翻页功能
     // 活动管理
     handleCurrentChange(val) {
       // console.log(`当前页: ${val}`);
-      this.req.pageNo = val
-      this.findCampaignByConditions(this.req)
+      this.req2.pageNo = val
+      this.findCampaignByConditions(this.req2)
     },
     // 添加名单分页
     // 可选名单

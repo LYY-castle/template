@@ -22,8 +22,8 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;searchCustomer(req)" icon="el-icon-search">查询</el-button>
-          <el-button type="danger" @click="reset()">重置</el-button>
+          <el-button type="primary" @click="req.pageNo=1;searchCustomer(req);req2=clone(req);" icon="el-icon-search">查询</el-button>
+          <el-button type="danger" @click="reset();req2=clone(req)">重置</el-button>
         </el-form-item>
         <!-- <el-form-item>
       
@@ -269,16 +269,10 @@ import {
   addCustomer,
   batchDelCustomer
 } from '@/api/customerManagement'
-import { formatDateTime } from '@/utils/tools'
+import { formatDateTime, clone } from '@/utils/tools'
 
 export default {
   name: 'customerManagement',
-  // computed: {
-  //   ...mapGetters([
-  //     'name',
-  //     'roles'
-  //   ])
-  // },
   data() {
     var checkSex = (rule, value, callback) => {
       if (value) {
@@ -349,6 +343,14 @@ export default {
         endModifierTime: '',
         pageNo: 1
       },
+      req2: {
+        customerName: '',
+        customerPhone: '',
+        modifierName: '',
+        startModifierTime: '',
+        endModifierTime: '',
+        pageNo: 1
+      },
       customerDetail: {
         customerName: '',
         sex: '1',
@@ -373,17 +375,9 @@ export default {
   mounted() {
     this.searchCustomer(this.req)
   },
-  beforeCreate() {
-    getMenu()
-      .then(response => {
-        const data = response.data
-        sessionStorage.setItem('getMenu', JSON.stringify(data))
-      })
-      .catch(error => {
-        console.log(error)
-      })
-  },
   methods: {
+    // 深度克隆
+    clone: clone,
     // 重置查询框内容
     reset() {
       this.timeValue = ''
@@ -494,7 +488,7 @@ export default {
         .then(response => {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
-            this.searchCustomer(this.req)
+            this.searchCustomer(this.req2)
           } else {
             this.$message(response.data.messages)
           }
@@ -547,7 +541,7 @@ export default {
       editCustomer(customerReverseDetail).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
-          this.searchCustomer(this.req)
+          this.searchCustomer(this.req2)
         } else {
           this.$message(response.data.messages)
         }
@@ -564,7 +558,7 @@ export default {
       addCustomer(customerDetail).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
-          this.searchCustomer(this.req)
+          this.searchCustomer(this.req2)
         } else {
           this.$message(response.data.message)
         }
@@ -582,7 +576,7 @@ export default {
         batchDelCustomer(batchDelReq.customerIds).then(response => {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
-            this.searchCustomer(this.req)
+            this.searchCustomer(this.req2)
           } else {
             this.$message('删除失败')
           }
@@ -603,13 +597,13 @@ export default {
     // handleSizeChange(val) {
     //   // console.log(`每页 ${val} 条`);
     //   this.searchReq.pageSize = val
-    //   this.searchCustomer(this.req)
+    //   this.searchCustomer(this.req2)
     // },
     // 分页翻页功能
     handleCurrentChange(val) {
       // console.log(`当前页: ${val}`);
-      this.req.pageNo = val
-      this.searchCustomer(this.req)
+      this.req2.pageNo = val
+      this.searchCustomer(this.req2)
     }
   }
 }
