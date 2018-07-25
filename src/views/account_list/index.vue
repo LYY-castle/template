@@ -30,8 +30,8 @@
               v-model="timeValue"
               type="datetimerange"
               range-separator="-"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
               value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
@@ -120,7 +120,7 @@
         </el-col>
       </el-row>
     </div>
-    <el-dialog title="生成系统账号" :visible.sync="dialogFormVisible" width="30%" @close="resetForm('ruleForm')">
+    <el-dialog title="生成系统账号" :visible.sync="dialogFormVisible" width="60%" @close="resetForm('ruleForm')">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="工号">
           <span>{{ruleForm.agentId}}</span>
@@ -166,12 +166,12 @@
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
         <el-button type="danger" @click="resetForm('ruleForm')">重置</el-button>
         <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="修改系统账号" :visible.sync="dialogFormVisibleReverse" width="30%" @close="resetFormReverse">
+    <el-dialog title="修改系统账号" :visible.sync="dialogFormVisibleReverse" width="60%" @close="resetFormReverse">
       <el-form :model="ruleFormReverse" :rules="rules" ref="ruleFormReverse" label-width="100px" class="demo-ruleForm">
         <el-form-item label="工号">
           <span>{{ruleFormReverse.agentId}}</span>
@@ -217,12 +217,12 @@
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确 定</el-button>
         <el-button type="danger" @click="resetReverse(ruleFormReverse.agentId)">重置</el-button>
         <el-button @click="dialogFormVisibleReverse = false">取 消</el-button>
+        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="系统账号详情" :visible.sync="dialogFormVisibleDetail" width="30%">
+    <el-dialog title="系统账号详情" :visible.sync="dialogFormVisibleDetail" width="60%">
       <el-form :model="ruleFormReverseDetail" ref="ruleFormReverseDetail" label-width="100px" class="demo-ruleForm">
         <el-form-item label="工号">
           <span>{{ruleFormReverseDetail.agentId}}</span>

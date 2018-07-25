@@ -24,8 +24,8 @@
               v-model="timeValue"
               type="datetimerange"
               range-separator="-"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
               value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
@@ -135,9 +135,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
         <el-button type="danger" @click="resetForm('ruleForm')">重置</el-button>
         <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="修改组织" :visible.sync="dialogFormVisibleReverse" width="30%" @close="resetForm('ruleFormReverse')">
