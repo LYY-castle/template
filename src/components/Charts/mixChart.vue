@@ -19,8 +19,8 @@
             v-model="timeValue"
             type="datetimerange"
             range-separator="-"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
             format="yyyy-MM-dd HH:mm:ss"
             value-format="timestamp">
           </el-date-picker>
