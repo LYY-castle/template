@@ -4,10 +4,10 @@
       <el-row>
         <el-form :inline="true" class="demo-form-inline" size="small">
           <el-form-item>
-            <el-input placeholder="员工姓名" v-model="formInline.staffName"></el-input>
+            <el-input placeholder="员工姓名（限长45字符）" v-model="formInline.staffName" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-input placeholder="员工工号" v-model="formInline.angentId"></el-input>
+            <el-input placeholder="员工工号（限长45字符）" v-model="formInline.angentId" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item>
             <el-select v-model="formInline.status" placeholder="所属部门">
@@ -23,9 +23,9 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-input placeholder="修改人员" v-model="formInline.creator"></el-input>
+            <el-input placeholder="操作人员（限长45字符）" v-model="formInline.creator" maxlength="45"></el-input>
           </el-form-item>
-          <el-form-item label="修改时间：">
+          <el-form-item label="操作时间：">
             <el-date-picker
               v-model="timeValue"
               type="datetimerange"
@@ -82,12 +82,12 @@
           <el-table-column
             align="center"
             prop="modifier"
-            label="修改人员">
+            label="操作人员">
           </el-table-column>
           <el-table-column
             align="center"
             prop="updateTime"
-            label="修改时间">
+            label="操作时间">
           </el-table-column>
           <el-table-column
             align="center"
@@ -126,7 +126,7 @@
           <span>{{ruleForm.agentId}}</span>
         </el-form-item>
         <el-form-item label="组织">
-          <span>{{ruleForm.upDepartName}}--></span>
+          <span v-if="ruleForm.upDepartName!=='0'">{{ruleForm.upDepartName}}--></span>
           <span style="color: blue">{{ruleForm.departName}}</span>
         </el-form-item>
         <el-form-item label="角色建议">
@@ -177,7 +177,7 @@
           <span>{{ruleFormReverse.agentId}}</span>
         </el-form-item>
         <el-form-item label="组织">
-          <span>{{ruleFormReverse.upDepartName}}--></span>
+          <span v-if="ruleFormReverse.upDepartName!=='0'">{{ruleFormReverse.upDepartName}}--></span>
           <span style="color: blue">{{ruleFormReverse.departName}}</span>
         </el-form-item>
         <el-form-item label="角色建议">

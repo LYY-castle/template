@@ -4,10 +4,10 @@
       <el-row>
         <el-form :inline="true" class="demo-form-inline" size="small">
           <el-form-item>
-            <el-input placeholder="员工姓名" v-model="formInline.name"></el-input>
+            <el-input placeholder="员工姓名（上限45字符）" v-model="formInline.name" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-input placeholder="员工工号" v-model="formInline.angentId"></el-input>
+            <el-input placeholder="员工工号（上限45字符）" v-model="formInline.angentId" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item>
             <el-select v-model="formInline.departName" placeholder="所属部门">
@@ -15,7 +15,7 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-input placeholder="操作人员" v-model="formInline.modifierName"></el-input>
+            <el-input placeholder="操作人员（上限45字符）" v-model="formInline.modifierName" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item label="操作时间：">
             <el-date-picker
@@ -123,23 +123,23 @@
     <el-dialog title="添加员工" :visible.sync="dialogFormVisible" width="30%" @close="resetForm('ruleForm')">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="姓名:" prop="staffName">
-          <el-input v-model="ruleForm.staffName"></el-input>
+          <el-input v-model="ruleForm.staffName" maxlength="45" placeholder="上限45字符"></el-input>
+        </el-form-item>
+        <el-form-item label="身份证:" prop="idNumber">
+          <el-input v-model="ruleForm.idNumber" placeholder="上限45字符" maxlength="45" @change="autoFill()"></el-input>
         </el-form-item>
         <el-form-item label="性别:" prop="sex">
           <el-radio-group v-model="ruleForm.sex">
-            <el-radio label="1">男</el-radio>
-            <el-radio label="0">女</el-radio>
+            <el-radio-button label="1">男</el-radio-button>
+            <el-radio-button label="0">女</el-radio-button>
           </el-radio-group>
-        </el-form-item>
-        <el-form-item label="身份证:" prop="idNumber">
-          <el-input v-model="ruleForm.idNumber"></el-input>
         </el-form-item>
         <el-form-item label="籍贯:" prop="origin">
           <el-cascader
             size="large"
             :options="options"
             v-model="ruleForm.origin"
-            @change="handleChange" style="width: 100%;">
+            @change="handleChange()" style="width: 100%;">
           </el-cascader>
         </el-form-item>
         <el-form-item label="出生日期:" prop="birthday">
@@ -156,7 +156,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="联系方式:" prop="userPhone">
-          <el-input v-model="ruleForm.userPhone" maxlength="20"></el-input>
+          <el-input v-model="ruleForm.userPhone" maxlength="20" placeholder="上限20字符"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -171,16 +171,16 @@
           <span>{{ruleFormReverse.angentId}}</span>
         </el-form-item>
         <el-form-item label="姓名" prop="staffName">
-          <el-input v-model="ruleFormReverse.staffName"></el-input>
+          <el-input v-model="ruleFormReverse.staffName" maxlength="45" placeholder="上限45字符"></el-input>
+        </el-form-item>
+        <el-form-item label="身份证" prop="idNumber">
+          <el-input v-model="ruleFormReverse.idNumber" placeholder="上限45字符" maxlength="45" @change="autoFillReverse()"></el-input>
         </el-form-item>
         <el-form-item label="性别" prop="sex">
           <el-radio-group v-model="ruleFormReverse.sex">
-            <el-radio label="1">男</el-radio>
-            <el-radio label="0">女</el-radio>
+            <el-radio-button label="1">男</el-radio-button>
+            <el-radio-button label="0">女</el-radio-button>
           </el-radio-group>
-        </el-form-item>
-        <el-form-item label="身份证" prop="idNumber">
-          <el-input v-model="ruleFormReverse.idNumber"></el-input>
         </el-form-item>
         <el-form-item label="籍贯" prop="origin">
           <el-cascader
@@ -204,7 +204,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="联系方式" prop="userPhone">
-          <el-input v-model="ruleFormReverse.userPhone" maxlength="20"></el-input>
+          <el-input v-model="ruleFormReverse.userPhone" maxlength="20" placeholder="上限20字符"></el-input>
         </el-form-item>
         <el-form-item label="操作人员" prop="modifier">
           <span>{{ruleFormReverse.modifier}}</span>
@@ -269,6 +269,57 @@
   export default {
     name: 'employee_list',
     data() {
+      var checkIdNo = (rule, value, callback) => {
+        if (value) {
+          var idNo1 = this.ruleForm.idNumber
+          var idNo2 = this.ruleFormReverse.idNumber
+          var reg = /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/
+          if (reg.test(idNo1)) {
+            if (idNo1.substring(0, 4) !== value[1].substring(0, 4)) {
+              callback(new Error('所选地址和身份证信息不匹配'))
+            } else {
+              callback()
+            }
+          } else if (reg.test(idNo2)) {
+            if (idNo2.substring(0, 4) !== value[1].substring(0, 4)) {
+              callback(new Error('所选地址和身份证信息不匹配'))
+            } else {
+              callback()
+            }
+          } else {
+            callback(new Error('身份证号不符合规则'))
+          }
+        } else {
+          callback(new Error('所选地址不能为空'))
+        }
+      }
+      var checkSex = (rule, value, callback) => {
+        if (value !== '') {
+          var idNo1 = this.ruleForm.idNumber
+          var idNo2 = this.ruleFormReverse.idNumber
+          var reg = /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/
+          var sexStr = '1'
+          if (reg.test(idNo1)) {
+            sexStr = Number(idNo1.substring(idNo1.length - 2, idNo1.length - 1)) % 2 === 1 ? '1' : '0'
+            if (sexStr !== value.toString()) {
+              callback(new Error('所选性别和身份证信息不匹配'))
+            } else {
+              callback()
+            }
+          } else if (reg.test(idNo2)) {
+            sexStr = Number(idNo2.substring(idNo2.length - 2, idNo2.length - 1)) % 2 === 1 ? '1' : '0'
+            if (sexStr !== value.toString()) {
+              callback(new Error('所选性别和身份证信息不匹配'))
+            } else {
+              callback()
+            }
+          } else {
+            callback(new Error('身份证号不符合规则'))
+          }
+        } else {
+          callback(new Error('性别不能为空'))
+        }
+      }
       return {
         staffData: {},
         options: provinceAndCityData,
@@ -334,11 +385,15 @@
         dialogFormVisibleReverse: false,
         dialogFormVisibleDetail: false,
         rules: {
+          sex: [
+            { validator: checkSex, trigger: 'change' }
+          ],
           staffName: [
             { required: true, message: '请输入姓名', trigger: 'blur' }
           ],
           origin: [
-            { required: true, message: '请选择籍贯', trigger: 'blur' }
+            { required: true, message: '请选择籍贯', trigger: 'blur' },
+            { validator: checkIdNo, trigger: 'change' }
           ],
           idNumber: [
             { required: true, message: '请输入身份证号码', trigger: 'blur' },
@@ -352,12 +407,42 @@
           ],
           userPhone: [
             { required: true, message: '请输入联系方式', trigger: 'blur' },
-            { pattern: /^[0-9]*$/, message: '请输入正确的号码' }
+            { pattern: /^([1][3,4,5,7,8][0-9]{9}|0\d{2,3}-\d{7,8}|\d{1,20})$/, message: '请输入正确的号码' }
           ]
         }
       }
     },
     methods: {
+      autoFill() {
+        var reg = /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/
+        const idNo = this.ruleForm.idNumber
+        if (reg.test(idNo)) {
+          this.ruleForm.origin = []
+          this.ruleForm.sex = '1'
+          this.ruleForm.birthday = ''
+          var prov = idNo.substring(0, 2) + '0000'
+          var zone = idNo.substring(0, 4) + '00'
+          this.ruleForm.origin = [prov, zone]
+          var birthdayStr = idNo.substring(6, 10) + '-' + idNo.substring(10, 12) + '-' + idNo.substring(12, 14)
+          this.ruleForm.birthday = birthdayStr
+          this.ruleForm.sex = Number(idNo.substring(idNo.length - 2, idNo.length - 1)) % 2 === 1 ? '1' : '0'
+        }
+      },
+      autoFillReverse() {
+        var reg = /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/
+        const idNo = this.ruleFormReverse.idNumber
+        if (reg.test(idNo)) {
+          this.ruleFormReverse.origin = []
+          this.ruleFormReverse.sex = '1'
+          this.ruleFormReverse.birthday = ''
+          var prov = idNo.substring(0, 2) + '0000'
+          var zone = idNo.substring(0, 4) + '00'
+          this.ruleFormReverse.origin = [prov, zone]
+          var birthdayStr = idNo.substring(6, 10) + '-' + idNo.substring(10, 12) + '-' + idNo.substring(12, 14)
+          this.ruleFormReverse.birthday = birthdayStr
+          this.ruleFormReverse.sex = Number(idNo.substring(idNo.length - 2, idNo.length - 1)) % 2 === 1 ? '1' : '0'
+        }
+      },
       addStaff() {
         this.dialogFormVisible = true
         this.ruleForm = {
@@ -407,8 +492,9 @@
         })
       },
       handleChange(value) {
-        console.log(CodeToText[value[2]])
+        console.log(value)
         console.log(this.ruleForm.origin)
+        console.log(this.ruleFormReverse.origin)
       },
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {

@@ -4,10 +4,10 @@
       <el-row>
         <el-form :inline="true" class="demo-form-inline" size="small">
           <el-form-item>
-            <el-input placeholder="组织编号" v-model="formInline.organ_id"></el-input>
+            <el-input placeholder="组织编号（限长11字符）" v-model="formInline.organ_id" maxlength="11"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-input placeholder="组织名称" v-model="formInline.organ_name"></el-input>
+            <el-input placeholder="组织名称（限长45字符）" v-model="formInline.organ_name" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item>
             <el-select v-model="formInline.parent_organ" placeholder="上级组织">
@@ -17,9 +17,9 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-input placeholder="修改人员" v-model="formInline.creator"></el-input>
+            <el-input placeholder="操作人员（限长45字符）" v-model="formInline.creator" maxlength="45"></el-input>
           </el-form-item>
-          <el-form-item label="修改时间：">
+          <el-form-item label="操作时间：">
             <el-date-picker
               v-model="timeValue"
               type="datetimerange"
@@ -76,12 +76,12 @@
           <el-table-column
             align="center"
             prop="modifier"
-            label="修改人">
+            label="操作人员">
           </el-table-column>
           <el-table-column
             align="center"
             prop="updateTime"
-            label="修改时间"
+            label="操作时间"
             width="150">
           </el-table-column>
           <el-table-column
@@ -122,7 +122,7 @@
     <el-dialog title="新增组织" :visible.sync="dialogFormVisible" width="30%" @close="resetForm('ruleForm')">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="组织名" prop="departName">
-          <el-input v-model="ruleForm.departName"></el-input>
+          <el-input v-model="ruleForm.departName" placeholder="上限45字符" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="上级组织">
           <el-select v-model="ruleForm.id" placeholder="请选择部门" style="width: 100%;">
@@ -131,7 +131,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="备注">
-          <el-input type="textarea" v-model="ruleForm.comment"></el-input>
+          <el-input type="textarea" v-model="ruleForm.comment" placeholder="上限255字符" maxlength="255"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -146,7 +146,7 @@
           <span>{{ruleFormReverse.number}}</span>
         </el-form-item>
         <el-form-item label="组织名" prop="departName">
-          <el-input v-model="ruleFormReverse.departName"></el-input>
+          <el-input v-model="ruleFormReverse.departName" placeholder="上限45字符" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="上级组织">
           <el-select v-model="ruleFormReverse.upId" placeholder="请选择部门" style="width: 100%;">
@@ -155,7 +155,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="备注">
-          <el-input type="textarea" v-model="ruleFormReverse.comment"></el-input>
+          <el-input type="textarea" v-model="ruleFormReverse.comment" placeholder="上限255字符" maxlength="255"></el-input>
         </el-form-item>
         <el-form-item label="创建人">
           <span>{{ruleFormReverse.creator}}</span>
