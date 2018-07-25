@@ -1,8 +1,11 @@
 <template>
   <section class="app-main">
     <transition name="fade" mode="out-in">
-      <!-- <router-view :key="key"></router-view> -->
-      <router-view></router-view>
+      <!--keep-alive:include用作缓存-->
+      <keep-alive :include="cachedViews">
+        <router-view :key="key"></router-view>
+      </keep-alive>
+      <!--<router-view></router-view>-->
     </transition>
   </section>
 </template>
@@ -14,6 +17,12 @@ export default {
     // key() {
     //   return this.$route.name !== undefined ? this.$route.name + +new Date() : this.$route + +new Date()
     // }
+    cachedViews() {
+      return this.$store.state.tagsView.cachedViews
+    },
+    key() {
+      return this.$route.fullPath
+    }
   }
 }
 </script>

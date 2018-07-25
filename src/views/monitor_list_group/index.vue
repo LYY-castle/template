@@ -9,13 +9,13 @@
               <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="收到名单日期：">
+          <el-form-item label="收到名单时间：">
             <el-date-picker
               v-model="receiveTimeValue"
               type="datetimerange"
               range-separator="-"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
               value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
