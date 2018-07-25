@@ -259,8 +259,7 @@
   </div>
 </template>
 <script>
-// import { mapGetters } from 'vuex'
-import { getMenu } from '@/api/dashboard'// 侧边栏菜单
+
 import {
   queryByCustomer,
   delCustomer,
