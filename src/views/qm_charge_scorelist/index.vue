@@ -100,9 +100,9 @@
     <el-dialog title="新增评分表" :visible.sync="dialogFormVisible" width="60%" @close="resetForm('ruleForm')">
       <el-form :model="ruleForm" ref="ruleForm" label-width="150px" class="demo-ruleForm">
         <el-row>
-          <el-col :span="10">
+          <el-col :span="17">
             <el-form-item label="评分表名" prop="gradeName" :rules="{ required: true, message: '请填写评分表名', trigger: 'blur' }">
-              <el-input placeholder="此处填写评分表名，上限50字符" maxlength="50" v-model='ruleForm.gradeName'>{{ruleForm.gradeName}}</el-input>
+              <el-input placeholder="此处填写评分表名，上限50字符"  maxlength="50" v-model='ruleForm.gradeName'>{{ruleForm.gradeName}}</el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -156,7 +156,7 @@
       <el-dialog title="修改评分表" :visible.sync="dialogFormVisibleReverse" width="60%" @close="resetFormReverse('ruleFormReverse');dialogFormVisibleReverse=false">
       <el-form :model="ruleFormReverse" ref="ruleFormReverse" label-width="150px" class="demo-ruleForm">
         <el-row>
-          <el-col :span="10">
+          <el-col :span="17">
             <el-form-item label="评分表名" prop="gradeName" :rules="{ required: true, message: '请填写评分表名', trigger: 'blur' }">
               <el-input placeholder="此处填写评分表名，上限50字符" maxlength="50" v-model='ruleFormReverse.gradeName'>{{ruleFormReverse.gradeName}}</el-input>
             </el-form-item>
@@ -214,7 +214,7 @@
       <el-dialog title="查看评分表" :visible.sync="dialogFormVisibleDetail" width="60%" @close="resetFormDetail('dialogFormVisibleDetail')">
       <el-form :model="ruleFormDetail" ref="ruleFormDetail" label-width="150px" class="demo-ruleForm">
         <el-row>
-          <el-col :span="10">
+          <el-col :span="17">
             <el-form-item label="评分表名" prop="gradeName" readonly>
               <el-input placeholder="此处填写评分表名，上限50字符" maxlength="50" readonly="readonly" v-model='ruleFormDetail.gradeName'>{{ruleFormDetail.gradeName}}</el-input>
             </el-form-item>
@@ -742,13 +742,5 @@
   }
 </script>
 <style>
-  .el-checkbox+.el-checkbox {
-    margin-left: 0px;
-  }
-  .el-checkbox__label {
-    padding-left: 0px;
-  }
-  .reverse{
-    width: 60%;
-  }
+
 </style>
