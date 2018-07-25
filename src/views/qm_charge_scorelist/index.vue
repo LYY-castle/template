@@ -14,8 +14,8 @@
               v-model="timeValue"
               type="datetimerange"
               range-separator="-"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
               value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
@@ -97,7 +97,7 @@
         </el-col>
       </el-row>
     </div>
-    <el-dialog title="新增评分表" :visible.sync="dialogFormVisible" width="80%" @close="resetForm('ruleForm')">
+    <el-dialog title="新增评分表" :visible.sync="dialogFormVisible" width="60%" @close="resetForm('ruleForm')">
       <el-form :model="ruleForm" ref="ruleForm" label-width="150px" class="demo-ruleForm">
         <el-row>
           <el-col :span="10">
@@ -107,7 +107,7 @@
           </el-col>
         </el-row>
         <el-form-item label="评分表描述信息">
-          <textarea v-model='ruleForm.description' placeholder="此处填写评分表简单描述，上限100字符" maxlength="100" cols="63" rows="10">{{ruleForm.description}}</textarea>
+          <textarea v-model='ruleForm.description' placeholder="此处填写评分表简单描述，上限100字符" maxlength="100" cols="63" rows="4">{{ruleForm.description}}</textarea>
         </el-form-item>
          <el-form-item>
           <el-button size="mini" type="primary" @click="add">添加评分题目</el-button>
@@ -153,7 +153,7 @@
         <el-button @click="resetForm('ruleForm');dialogFormVisible = false">返 回</el-button>
       </div>
     </el-dialog>
-      <el-dialog title="修改评分表" :visible.sync="dialogFormVisibleReverse" width="80%" @close="resetFormReverse('ruleFormReverse')">
+      <el-dialog title="修改评分表" :visible.sync="dialogFormVisibleReverse" width="60%" @close="resetFormReverse('ruleFormReverse');dialogFormVisibleReverse=false">
       <el-form :model="ruleFormReverse" ref="ruleFormReverse" label-width="150px" class="demo-ruleForm">
         <el-row>
           <el-col :span="10">
@@ -163,7 +163,7 @@
           </el-col>
         </el-row>
         <el-form-item label="评分表描述信息">
-          <textarea v-model='ruleFormReverse.description' placeholder="此处填写评分表简单描述，上限100字符" maxlength="100" cols="63" rows="10">{{ruleFormReverse.description}}</textarea>
+          <textarea v-model='ruleFormReverse.description' placeholder="此处填写评分表简单描述，上限100字符" maxlength="100" cols="63" rows="4">{{ruleFormReverse.description}}</textarea>
         </el-form-item>
          <el-form-item>
           <el-button size="mini" type="primary" @click="addReverse">添加评分题目</el-button>
@@ -211,7 +211,7 @@
         <el-button @click="resetFormReverse('ruleFormReverse');dialogFormVisibleReverse = false">返 回</el-button>
       </div>
     </el-dialog>
-      <el-dialog title="查看评分表" :visible.sync="dialogFormVisibleDetail" width="80%" @close="resetFormDetail('dialogFormVisibleDetail')">
+      <el-dialog title="查看评分表" :visible.sync="dialogFormVisibleDetail" width="60%" @close="resetFormDetail('dialogFormVisibleDetail')">
       <el-form :model="ruleFormDetail" ref="ruleFormDetail" label-width="150px" class="demo-ruleForm">
         <el-row>
           <el-col :span="10">
@@ -221,7 +221,7 @@
           </el-col>
         </el-row>
         <el-form-item label="评分表描述信息">
-          <textarea v-model='ruleFormDetail.description' placeholder="此处填写评分表简单描述，上限100字符" readonly="readonly" maxlength="100" cols="63" rows="10">{{ruleFormDetail.description}}</textarea>
+          <textarea v-model='ruleFormDetail.description' placeholder="此处填写评分表简单描述，上限100字符" readonly="readonly" maxlength="100" cols="63" rows="4">{{ruleFormDetail.description}}</textarea>
         </el-form-item>
              <el-card class="box-card" v-for="(item, index) in ruleFormDetail.gradeTitles"  v-if="ruleFormDetail.gradeTitles[index].isDelete!=='1'">
           <el-row >
@@ -265,6 +265,7 @@
     name: 'qm_charge_scorelist',
     data() {
       return {
+        reverseRow: {},
         timeValue: '',
         pagination: {
           pageNo: null,
@@ -490,8 +491,8 @@
           if (valid) {
             addGrade(this.ruleForm).then(response => {
               if (response.data.code === 0) {
-                this.dialogFormVisible = false
                 this.resetForm(formName)
+                this.dialogFormVisible = false
                 this.searchGrade({})
               } else {
                 Message({
@@ -517,8 +518,8 @@
           if (valid) {
             editGrade(this.ruleFormReverse).then(response => {
               if (response.data.code === 0) {
-                this.dialogFormVisibleReverse = false
                 this.resetFormReverse(formName)
+                this.dialogFormVisibleReverse = false
                 this.searchGrade({})
               } else {
                 Message({
@@ -540,40 +541,24 @@
         })
       },
       resetForm(formName) {
-        this.ruleForm = {
-          gradeName: '',
-          description: '',
-          gradeTitles: [{
-            titleName: '',
-            gradeOptions: [{
-              score: '',
-              optionName: ''
-            }]
-          }]
+        var obj = {}
+        obj.description = ''
+        obj.gradeName = ''
+        var gradeTitles = this.ruleForm.gradeTitles
+        for (var i = 0; i < gradeTitles.length; i++) {
+          gradeTitles[i].titleName = ''
+          var gradeOptions = gradeTitles[i].gradeOptions
+          for (var j = 0; j < gradeOptions.length; j++) {
+            gradeOptions[j].score = ''
+            gradeOptions[j].optionName = ''
+          }
+          gradeTitles[i].gradeOptions = gradeOptions
         }
+        obj.gradeTitles = gradeTitles
+        this.ruleForm = obj
       },
       resetFormReverse(formName) {
-        this.ruleFormReverse = {
-          gradeId: '',
-          isDelete: '0',
-          id: null,
-          gradeName: '',
-          description: '',
-          gradeTitles: [{
-            gradeId: '',
-            id: null,
-            isDelete: '0',
-            titleId: '',
-            titleName: '',
-            gradeOptions: [{
-              score: '',
-              optionName: '',
-              id: null,
-              titleId: '',
-              isDelete: '0'
-            }]
-          }]
-        }
+        this.handleClick(this.reverseRow)
       },
       resetFormDetail(formName) {
         this.ruleFormDetail = {
@@ -613,6 +598,7 @@
         console.log(val)
       },
       handleClick(row) {
+        this.reverseRow = row
         this.dialogFormVisibleReverse = true
         getGradeByGradeId({ 'gradeId': row.gradeId }).then(response => {
           if (response.data.code === 0) {
@@ -763,6 +749,6 @@
     padding-left: 0px;
   }
   .reverse{
-    width: 70%;
+    width: 60%;
   }
 </style>
