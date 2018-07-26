@@ -19,7 +19,7 @@
             <el-form-item label="产品名称：">
                 <el-input v-model="req.productName" placeholder="产品名称"></el-input>
             </el-form-item><br/>
-            
+
             <el-form-item label="活动名称：">
               <el-select v-model="req.campaignId" placeholder="请选择" clearable filterable>
                   <el-option
@@ -56,7 +56,7 @@
             </el-form-item>
           </el-form>
       </el-row>
-      
+
       <el-row>
       <el-col>
         <el-table
@@ -149,8 +149,8 @@
             <el-button v-if="scope.row.status === '0' && scope.row.productId != 'P20180101000001'" @click="messageVisiable=true;messageParams.orderId=scope.row.orderId;messageParams.phone=scope.row.customerPhone;" type="text" size="medium">发送短信</el-button>
           </template>
           </el-table-column>
-        </el-table> 
-      </el-col> 
+        </el-table>
+      </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
         <el-pagination
@@ -244,13 +244,13 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button type="primary" @click="submitForm('editorder');editOrder(orderDetail)">确定</el-button>
         <el-button type="danger" @click="searchByOrderId(orderDetail.orderId)">重置</el-button>
         <el-button @click="editVisiable=false">返回</el-button>
+        <el-button type="primary" @click="submitForm('editorder');editOrder(orderDetail)">确定</el-button>
       </div>
     </el-dialog>
     <!-- 订单修改的dialog  end-->
-    
+
     <el-dialog
       width="30%"
       title="删除提示"
@@ -426,7 +426,7 @@
             console.log(error)
           })
       },
-  
+
       // 根据订单id查询
       searchByOrderId(orderId) {
         queryByOrderId(orderId)

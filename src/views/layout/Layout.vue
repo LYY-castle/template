@@ -2,7 +2,7 @@
   <div class="app-wrapper" :class="classObj">
     <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside"></div>
     <sidebar class="sidebar-container"></sidebar>
-    <div class="main-container" style="margin-left: 210px">
+    <div class="main-container">
       <navbar></navbar>
       <tags-view></tags-view>
       <app-main></app-main>
@@ -67,5 +67,8 @@ export default {
 <style>
   #app .sidebar-container {
     width: 210px!important;
+  }
+  #app .main-container {
+    margin-left: 210px;
   }
 </style>

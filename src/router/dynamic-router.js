@@ -18,6 +18,9 @@ export default (menuData) => {
       baseRouter[i].component = Layout
       baseRouter[i].name = 'workbench' + i
       baseRouter[i].redirect = baseRouter[i].path + '/' + data[i].sub_menus[0].template
+      if (data[i].parent_menu_name === '软电话') {
+        baseRouter[i].hidden = true
+      }
       baseRouter[i].meta = {
         title: data[i].parent_menu_name, icon: 'example'
       }

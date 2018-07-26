@@ -193,7 +193,7 @@
         <el-form-item label="系统权限">
           <!--<el-input v-model="ruleFormReverse.permission"></el-input>-->
           <el-checkbox-group v-model="checkedPermission" @change="handleCheckedPermissionChange">
-            <el-checkbox v-for="permission in permissions" :label="permission.roleNumber" :key="permission.roleNumber">{{permission.roleName}}</el-checkbox>
+            <el-checkbox style="width: 20%;" v-for="permission in permissions" :label="permission.roleNumber" :key="permission.roleNumber">{{permission.roleName}}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <el-form-item>

@@ -84,7 +84,7 @@
                   <img src="../../../../static/images/trans_disable.png" title="转接(不可用)" style="cursor:pointer;width:100%;">
                 </div>
                 <div style="display:inline-block;width:8%;">
-                  <img src="../../../../static/images/conf_disable.png" title="三方(不可用)" style="cursor:pointer;width:100%;s">
+                  <img src="../../../../static/images/conf_disable.png" title="三方(不可用)" style="cursor:pointer;width:100%;">
                 </div>
                 <div style="display:inline-block;width:8%;">
                   <img src="../../../../static/images/retrieve_disable.png" title="取回(不可用)" style="cursor:pointer;width:100%;">
@@ -150,6 +150,7 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import cti from '@/utils/ctijs'
 
 export default {
   name: 'layout',
@@ -184,6 +185,9 @@ export default {
         }
       })
     }
+  },
+  mounted() {
+    console.log(cti)
   }
 }
 </script>
