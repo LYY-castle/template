@@ -917,8 +917,12 @@ export default {
     getNameLists(campaignId) {
       showNameListsById(campaignId).then(response => {
         if (response.data.code === 0) {
-          this.nameListsTable = response.data.data
-          if (response.data.pageInfo !== undefined && response.data.pageInfo !== null) {
+          if (response.data.data) {
+            this.nameListsTable = response.data.data
+          } else {
+            this.nameListsTable = []
+          }
+          if (response.data.pageInfo !== undefined && response.data.pageInfo) {
             this.nameListsPageinfo = response.data.pageInfo
           }
         }
@@ -968,7 +972,7 @@ export default {
     // 活动管理
     handleCurrentChange(val) {
       // console.log(`当前页: ${val}`);
-      this.req.num = val
+      this.req2.pageNo = val
       this.findCampaignByConditions(this.req2)
     },
     // 添加名单分页
@@ -982,7 +986,7 @@ export default {
     nameListChange(val) {
       // console.log(`当前页: ${val}`);
       this.nameLists.pageNo = val
-      this.getNameLists(this.NameLists)
+      this.getNameLists(this.nameLists)
     }
   }
 }
