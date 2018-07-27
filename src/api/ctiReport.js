@@ -8,3 +8,10 @@ export function statistics(obj) {
   })
 }
 
+export function oBTaskReportStatistics(obj) {
+  return request({
+    url: '/ob-report/ob-task-statistics',
+    method: 'get',
+    params: obj
+  })
+}
