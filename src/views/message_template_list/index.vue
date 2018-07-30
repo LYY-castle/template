@@ -68,6 +68,11 @@
                 <div>{{formatData(scope.row.upId)}}</div>
             </template>
           </el-table-column>
+           <el-table-column
+            align="center"
+            label="操作人"
+            prop="modifier">
+          </el-table-column>
           <el-table-column
             align="center"
             label="操作时间"
