@@ -96,9 +96,9 @@
               </el-col>
             </el-form>
           </el-row>
-          <el-row style="height:40px;padding-top:15px;padding-right:15px;">
+          <!-- <el-row style="height:40px;padding-top:15px;padding-right:15px;">
             <breadcrumb></breadcrumb>
-          </el-row>
+          </el-row> -->
         </el-col>
 
 
@@ -233,8 +233,16 @@ export default {
     width:65%;
   }
   .userInfo{
+    div{
+      line-height:29px;
+    }
     p{
       height:20px;
+      font-size: 14px;
+      b,span{
+        height:16px;
+        line-height:16px;
+      }
     }
   }
 }

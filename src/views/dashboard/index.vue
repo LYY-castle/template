@@ -28,6 +28,7 @@ export default {
       sessionStorage.setItem('getMenu', JSON.stringify(data))
       // 存到store里面
       this.$store.dispatch('SetMenu', getDynamicRouter(data))
+      this.$router.addRoutes(getDynamicRouter(data))
     }).catch(error => {
       console.error(error)
     })

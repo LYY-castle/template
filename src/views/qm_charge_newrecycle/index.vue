@@ -1,5 +1,5 @@
 <template>
-  <div class="container" style="padding:0 20px;">
+  <div class="container" style="padding:10px 20px;">
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
         <el-form-item>
@@ -106,11 +106,6 @@
           <el-table-column
             align="center"
             prop="useNum"
-            label="暂存数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="totalNum"
             label="已使用数量">
           </el-table-column>
           <el-table-column
@@ -267,6 +262,10 @@ export default {
           }
           if (!(this.multipleSelection[i].assignNum)) {
             this.$message.error('请填写回收数量')
+            return false
+          }
+          if (this.multipleSelection[i].assignNum < 0) {
+            this.$message.error('回收数量必须大于0')
             return false
           }
           if (this.disTableType === '0' && this.multipleSelection[i].noUseNum < this.multipleSelection[i].assignNum) {
