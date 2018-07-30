@@ -183,7 +183,7 @@
         this.chart.setOption({
           backgroundColor: '#344b58',
           title: {
-            text: 'CTI报表',
+            text: 'OB报表',
             x: '20',
             top: '20',
             textStyle: {
@@ -217,7 +217,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['新增首播数量', '新增成功数量', '新增失败数量', '新增预约数量']
+            data: ['新增首拨数量', '新增成功数量', '新增失败数量', '新增预约数量']
           },
           calculable: true,
           xAxis: [{
@@ -289,7 +289,7 @@
           //   end: 35
           // }],
           series: [{
-            name: '新增首播数量',
+            name: '新增首拨数量',
             type: 'bar',
             stack: 'total',
             barMaxWidth: 35,
@@ -377,7 +377,7 @@
         oBTaskReportStatistics({
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
-          agent_dn: this.formInline.agent_dn,
+          agent_id: this.formInline.agent_dn,
           start_time: this.timeValue[0],
           end_time: this.timeValue[1],
           pageNo: val ? this.formInline.from : 1,
@@ -397,8 +397,13 @@
             this.new_appoint_contact_task_count = this.obj.result.map(function(item, index) {
               return item.new_appoint_contact_task_count
             })
-            this.initChart()
+          } else {
+            this.new_first_dial_task_count = []
+            this.new_success_contact_task_count = []
+            this.new_fail_contact_task_count = []
+            this.new_appoint_contact_task_count = []
           }
+          this.initChart()
           this.tableData = response.data.result
           this.pagination = {
             pageNo: response.data.pageNo,
