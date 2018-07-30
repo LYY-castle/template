@@ -38,7 +38,7 @@
       ref="multipleTable"
       tooltip-effect="dark"
       border
-      style="width: 94%;">
+      style="width: 100%;">
       <el-table-column
         width="55"
         align="center"
@@ -238,6 +238,27 @@ export default {
         }],
         yAxis: [{
           type: 'value',
+          name: '时长',
+          splitLine: {
+            show: false
+          },
+          axisLine: {
+            lineStyle: {
+              color: '#90979c'
+            }
+          },
+          axisTick: {
+            show: false
+          },
+          axisLabel: {
+            interval: 0
+          },
+          splitArea: {
+            show: false
+          }
+        }, {
+          type: 'value',
+          name: '通话次数',
           splitLine: {
             show: false
           },
@@ -367,6 +388,7 @@ export default {
           name: '通话次数',
           type: 'line',
           // stack: 'total',
+          yAxisIndex: 1,
           symbolSize: 10,
           symbol: 'circle',
           itemStyle: {
