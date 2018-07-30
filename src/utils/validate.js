@@ -57,6 +57,9 @@ export const rule = {
   ],
   listName: [
     { required: true, message: '请输入名单名称', trigger: 'change' }
+  ],
+  taskName: [
+    { required: true, message: '请输入质检任务名称', trigger: 'change' }
   ]
 }
 
