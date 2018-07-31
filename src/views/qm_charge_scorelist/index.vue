@@ -38,10 +38,13 @@
             width="55">
           </el-table-column>
           <el-table-column
-            width="55"
             align="center"
-            type="index"
-            label="序号">
+            label="序号"
+            width="55">
+              <template
+              slot-scope="scope">
+              <div>{{scope.$index+(formInline.currentPage-1)*10+1}}</div>
+              </template>
           </el-table-column>
           <el-table-column
             align="center"
