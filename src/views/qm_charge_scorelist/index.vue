@@ -541,20 +541,17 @@
         })
       },
       resetForm(formName) {
-        var obj = {}
-        obj.description = ''
-        obj.gradeName = ''
-        var gradeTitles = this.ruleForm.gradeTitles
-        for (var i = 0; i < gradeTitles.length; i++) {
-          gradeTitles[i].titleName = ''
-          var gradeOptions = gradeTitles[i].gradeOptions
-          for (var j = 0; j < gradeOptions.length; j++) {
-            gradeOptions[j].score = ''
-            gradeOptions[j].optionName = ''
-          }
-          gradeTitles[i].gradeOptions = gradeOptions
+        var obj = {
+          gradeName: '',
+          description: '',
+          gradeTitles: [{
+            titleName: '',
+            gradeOptions: [{
+              score: '',
+              optionName: ''
+            }]
+          }]
         }
-        obj.gradeTitles = gradeTitles
         this.ruleForm = obj
       },
       resetFormReverse(formName) {
