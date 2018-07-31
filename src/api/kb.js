@@ -15,9 +15,19 @@ export function addDirectory(obj) {
   })
 }
 
-export function findContactHistory() {
+export function delDirectory(obj) {
   return request({
-    url: '/contact/findContactHistory',
-    method: 'get'
+    url: '/knowledgeBaseController/delDirectory/' + obj.id,
+    method: 'post'
+  })
+}
+
+export function modifyDirectoryName(obj) {
+  return request({
+    url: '/knowledgeBaseController/modifyDirectoryName/' + obj.id,
+    method: 'post',
+    data: {
+      name: obj.name
+    }
   })
 }
