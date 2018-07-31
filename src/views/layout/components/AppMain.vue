@@ -3,7 +3,7 @@
     <transition name="fade" mode="out-in">
       <!--keep-alive:include用作缓存-->
       <keep-alive :include="cachedViews">
-        <router-view :key="key"></router-view>
+        <router-view :key="key" class="container"></router-view>
       </keep-alive>
       <!--<router-view></router-view>-->
     </transition>
@@ -26,3 +26,9 @@ export default {
   }
 }
 </script>
+
+<style rel="stylesheet/scss">
+  .container{
+    padding:100px 20px;
+  }
+</style>

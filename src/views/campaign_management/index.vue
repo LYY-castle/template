@@ -1,5 +1,5 @@
 <template>
-  <div class="container campaignManagement" style="padding:10px 20px;">
+  <div class="container campaignManagement">
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
         <el-form-item prop="campaignName">

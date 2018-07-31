@@ -1,5 +1,5 @@
 <template>
-  <div class="container" style="padding:10px 20px;">
+  <div class="container">
       <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
         <el-form-item prop="startNumber">

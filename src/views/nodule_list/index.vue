@@ -1,5 +1,5 @@
 <template>
-  <div class="container" style="padding:10px 20px;">
+  <div class="container">
     <el-row margin-top:>
       <el-form :inline="true" size="small">
         <el-form-item>
@@ -41,6 +41,15 @@
             align="center"
             type="selection"
             width="55">
+          </el-table-column>
+           <el-table-column
+            align="center"
+            label="序号"
+            width="55">
+            <template
+              slot-scope="scope">
+              <div>{{scope.$index+(req2.from-1)*10+1}}</div>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"

@@ -1,6 +1,6 @@
 <template>
   <!-- 拨打任务列表div层 -->
-  <div class='container' style="padding:0 20px;" v-if="isDialTask===true">
+  <div class='container' v-if="isDialTask===true">
       <el-row>
           <el-form :inline="true" size="small">
             <el-form-item label="分配时间：">

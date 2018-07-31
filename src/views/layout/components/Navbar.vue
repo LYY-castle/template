@@ -1,5 +1,5 @@
 <template>
-  <el-menu class="navbar" mode="horizontal">
+  <el-menu :class="navbar" mode="horizontal">
     <!-- <div> -->
       <!-- <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
      <breadcrumb></breadcrumb>
@@ -38,10 +38,10 @@
             <el-form :inline="true" size="mini">
               <el-col :span="4" style="height:30px;">
                 <el-form-item class="txtDN" size="mini">
-                  <el-col :span="19">
+                  <el-col :span="22">
                     <el-input v-model="formInline.user" placeholder="坐席分机"></el-input>
                   </el-col>
-                  <el-col :span="4">
+                  <el-col :span="2">
                     <el-button type="primary" size="mini" style="margin-left:50%;">登入</el-button>
                   </el-col>
                 </el-form-item>
@@ -137,8 +137,8 @@
           <span>123</span>
         </p>
       </el-col>
-      <el-col :span="3" style="margin-top:19px;">
-        <el-button type="primary" style="margin-left:50%;" @click="logout">注销</el-button>
+      <el-col :span="3" style="margin-top:18px;">
+        <el-button type="primary" @click="logout" size="mini">注销</el-button>
       </el-col>
     </el-col>
   </el-row>
@@ -160,7 +160,9 @@ export default {
       formInline: {
         user: '',
         region: ''
-      }
+      },
+      navbar: 'navbar',
+      sidebarStatus: ''
     }
   },
   components: {
@@ -171,11 +173,35 @@ export default {
     ...mapGetters([
       'sidebar',
       'avatar'
-    ])
+    ]),
+    sidebar() {
+      this.sidebarStatus = this.$store.state.app.sidebar
+      return this.$store.state.app.sidebar
+    }
   },
   methods: {
     toggleSideBar() {
       this.$store.dispatch('ToggleSideBar')
+      console.log(this.$store.state.app.sidebar.opened)
+      var sidebarStatus = this.$store.state.app.sidebar.opened
+      if (sidebarStatus) {
+        this.navbar = 'navbar open'
+        sidebarStatus = 1
+      } else {
+        this.navbar = 'navbar close'
+        sidebarStatus = 0
+      }
+    },
+    toggleNavbar() {
+      console.log(this.$store.state.app.sidebar.opened)
+      var sidebarStatus = this.$store.state.app.sidebar.opened
+      if (sidebarStatus) {
+        this.navbar = 'navbar open'
+        sidebarStatus = 1
+      } else {
+        this.navbar = 'navbar close'
+        sidebarStatus = 0
+      }
     },
     logout() {
       this.$store.dispatch('LogOut').then((data) => {
@@ -188,6 +214,7 @@ export default {
   },
   mounted() {
     console.log(cti)
+    this.toggleNavbar()
   }
 }
 </script>
@@ -252,13 +279,21 @@ export default {
 p{
   margin:0;
 }
-
+.navbar.open{
+  transition: width 0.3s;
+  width:90%
+}
+.navbar.close{
+  transition: width 0.3s;
+  width:100%
+}
 .navbar {
-  /*height: 100px;*/
   line-height: 50px;
   border-radius: 0px !important;
   box-shadow: 0 0 5px #888;
   margin-bottom:0px;
+  position:fixed;
+  z-index:999;
   // .hamburger-container {
   //   line-height: 58px;
   //   height: 50px;

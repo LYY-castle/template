@@ -66,9 +66,35 @@ export default {
 </style>
 <style>
   #app .sidebar-container {
-    width: 210px!important;
+    /* width: 210px!important; */
+    width: 11%!important;
   }
   #app .main-container {
-    margin-left: 210px;
+    /* margin-left: 210px; */
+    margin-left: 11%;
   }
+  @media screen and (min-width: 1200px) {
+    #app .sidebar-container span{
+      font-size:12px;
+    }
+    #app .sidebar-container .svg-icon {
+    margin-right: 0;
+}
+  }
+  @media all and (min-width:1024px) and (max-width:1199px)  {
+    #app .sidebar-container span{
+      font-size:10px;
+    }
+    #app .sidebar-container .svg-icon {
+    margin-right: 0;
+}
+  }
+  @media all and (min-width:400px) and (max-width:1023px)  {  
+    #app .sidebar-container span{
+      font-size:8px;
+    }
+    #app .sidebar-container .svg-icon {
+    margin-right: 0;
+}
+  }  
 </style>

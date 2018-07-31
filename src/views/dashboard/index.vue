@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard-container">
+  <div class="container">
     <!--<div class="dashboard-text">name:{{name}}</div>-->
     <!--<div class="dashboard-text">roles:<span v-for='role in roles' :key='role'>{{role}}</span></div>-->
     <div class="dashboard-text">欢迎登陆本系统</div>

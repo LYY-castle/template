@@ -1,5 +1,5 @@
 <template>
-  <div class='container' style="padding:0 20px;">
+  <div class='container'>
     <el-row>
       <el-form :inline="true" size="small">
         <el-form-item label="活动名称">

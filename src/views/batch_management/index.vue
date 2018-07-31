@@ -1,5 +1,5 @@
 <template>
-  <div class="container" style="padding:10px 20px;">
+  <div class="container">
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
         <el-form-item prop="batchId">
@@ -127,7 +127,7 @@
             align="center"
             label="操作">
           <template slot-scope="scope">
-            <el-button @click="editVisible=true;getDetailById(scope.row.batchId)" type="text" size="small">修改</el-button>
+            <el-button @click="editVisible=true;delReq.batchId=scope.row.batchId;getDetailById(scope.row.batchId)" type="text" size="small">修改</el-button>
             <el-button @click="delVisible=true;delReq.batchId=scope.row.batchId" type="text" size="small">删除</el-button>
           </template>
           </el-table-column>
@@ -199,7 +199,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button type="danger" @click="getCampaignById(delReq.campaignId)">重 置</el-button>
+        <el-button type="danger" @click="getDetailById(delReq.batchId)">重 置</el-button>
         <el-button @click="editVisible = false;">取 消</el-button>
         <el-button type="primary" @click="submitForm('editBatch');editBatch(batchDetail);">确 定</el-button>
       </div>
