@@ -50,6 +50,10 @@
           align="center"
           type="index"
           label="序号">
+          <template
+            slot-scope="scope">
+            <div>{{scope.$index+(pagination.pageNo-1)*10+1}}</div>
+          </template>
         </el-table-column>
         <el-table-column
           align="center"

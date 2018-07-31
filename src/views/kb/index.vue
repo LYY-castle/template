@@ -1,12 +1,6 @@
 <template>
   <el-row class="tac" style="margin-top: 1%">
     <el-col :span="5">
-
-      <!--<el-button-group>-->
-        <!--<el-button type="primary" size="mini" icon="el-icon-plus"></el-button>-->
-        <!--<el-button type="primary" size="mini" icon="el-icon-edit"></el-button>-->
-        <!--<el-button type="primary" size="mini" icon="el-icon-delete"></el-button>-->
-      <!--</el-button-group>-->
       <el-scrollbar wrapClass="scrollbar-wrapper">
         <el-menu
           mode="vertical"
@@ -17,9 +11,24 @@
           active-text-color="#409EFF"
           style="max-height:500px;"
         >
+          <el-menu-item index="0" @click="dialogFormVisible = true">
+            <i class="el-icon-plus"></i>
+            <span slot="title">新增顶级目录</span>
+          </el-menu-item>
           <sidebar-item1 :routes="parentArr"></sidebar-item1>
         </el-menu>
       </el-scrollbar>
+      <el-dialog title="新增目录" :visible.sync="dialogFormVisible">
+        <el-form :model="form">
+          <el-form-item label="目录名称" label-width="120px">
+            <el-input v-model="form.name" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="addParent">确 定</el-button>
+        </div>
+      </el-dialog>
     </el-col>
     <el-col :span="19">
       <div class="components-container board">
@@ -44,6 +53,10 @@
     },
     data() {
       return {
+        dialogFormVisible: false,
+        form: {
+          name: ''
+        },
         parentArr: [],
         navData: [],
         options: {
@@ -58,6 +71,9 @@
       }
     },
     methods: {
+      addParent() {
+        this.dialogFormVisible = false
+      },
       routes() {
         return this.navData
       },
@@ -68,14 +84,16 @@
         console.log(key, keyPath)
       },
       route() {
-        for (let i = 0; i < this.navData.length; i++) {
-          this.navData[i].children = []
-          if (this.navData[i].parentid === 0) {
-            this.parentArr.push(this.navData[i])
-          }
-          for (let j = 0; j < this.navData.length; j++) {
-            if (this.navData[i].id === this.navData[j].parentid) {
-              this.navData[i].children.push(this.navData[j])
+        if (this.navData.length) {
+          for (let i = 0; i < this.navData.length; i++) {
+            this.navData[i].children = []
+            if (this.navData[i].parentid === 0) {
+              this.parentArr.push(this.navData[i])
+            }
+            for (let j = 0; j < this.navData.length; j++) {
+              if (this.navData[i].id === this.navData[j].parentid) {
+                this.navData[i].children.push(this.navData[j])
+              }
             }
           }
         }
