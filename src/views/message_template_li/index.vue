@@ -51,15 +51,17 @@
               <div>{{scope.$index+(req.pageNo-1)*10+1}}</div>
             </template>
           </el-table-column>
-          <el-table-column
+          <!-- <el-table-column
             align="center"
             label="模板编号"
             prop="id">
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column
             align="center"
-            label="模板名称"
-            prop="name">
+            label="模板名称">
+            <template slot-scope="scope">
+             <el-button type="text" size="small" @click="detailVisible=true;delReq.id=scope.row.id;getTemplateById(scope.row.id);">{{scope.row.name}}</el-button> 
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -69,15 +71,16 @@
             </template>
           </el-table-column>
           <el-table-column
-            align="center"
+            align="left"
             label="模板内容"
-            prop="content">
+            prop="content"
+            show-overflow-tooltip=true>
           </el-table-column>
-          <el-table-column
+          <!-- <el-table-column
             align="center"
             label="模板类型"
             prop="type">
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column
             align="center"
             label="操作人"
@@ -86,7 +89,8 @@
           <el-table-column
             align="center"
             label="操作时间"
-            prop="id">
+            prop="id"
+            width="190">
             <template slot-scope="scope">
                 <div>{{formatDateTime(scope.row.modifyTime)}}</div>
             </template>
@@ -94,7 +98,7 @@
           <el-table-column
             align="center"
             label="操作"
-            width="200">1
+            width="100px">
           <template slot-scope="scope">
             <el-button @click="editVisible=true;delReq.id=scope.row.id;getTemplateById(scope.row.id);" type="text" size="small">修改</el-button>
             <el-button @click="delVisible=true;delReq.id=scope.row.templateid" type="text" size="small">删除</el-button>
@@ -104,7 +108,7 @@
       </el-col> 
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;clearForm(addMessageTemplateDetail,'addMessageForm');">新建模板组</el-button>
+        <el-button type="success" size="small" @click="addVisible=true;resetAdd(addMessageTemplateDetail);">新建短信模板</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         <el-pagination
           v-if="pageShow"
@@ -174,8 +178,8 @@
         <el-button type="primary" @click="delVisible = false;delTemplate(delReq.id);">确 定</el-button>
       </div>
     </el-dialog>
-      <!-- 修改免访客户 -->
-      <el-dialog
+    <!-- 修改 -->
+    <el-dialog
       align:left
       width="30%"
       title="修改免访号段"
@@ -207,6 +211,34 @@
           <el-button type="primary" @click="submitForm('editTemplateForm',editTemplateDetail);editTemplate(editTemplateDetail);">确 定</el-button>
         </div>
       </el-dialog>
+      <!-- 详情 -->
+    <el-dialog
+      align:left
+      width="30%"
+      title="修改免访号段"
+      :visible.sync="detailVisible"
+      append-to-body>
+      <el-form  :model="editTemplateDetail" ref="templateForm" label-width="120px">
+        <el-form-item label="模板标题：" prop="name">
+          <span>{{editTemplateDetail.name}}</span>
+        </el-form-item>
+        <el-form-item label="模板签名：" prop="autograph">
+          <span>{{editTemplateDetail.autograph}}</span>
+        </el-form-item>
+        <el-form-item label="归属模板组：" prop="groupId">
+          <span>{{formatData(editTemplateDetail.groupId)}}</span>
+        </el-form-item>
+        <el-form-item label="短信模板内容：" prop="content">
+          <span>{{editTemplateDetail.content}}</span>
+        </el-form-item>
+        <!-- <el-form-item label="Tips：" >
+          <span>短信模板内容中至少要有一个动态参数并用{}括起来，否则会直接失败。例如：您的验证码是{1}，{2}...第一个花括号为1代表第一个参数，第二个花括号为2代表第二个参数，以此类推。</span>
+        </el-form-item> -->
+      </el-form>
+        <div slot="footer" style="text-align: right;">
+          <el-button @click="detailVisible = false">取 消</el-button>
+        </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -227,6 +259,7 @@ export default {
       }
     }
     return {
+      detailVisible: false, // 详情对话框
       delVisible: false, // 删除对话框显示隐藏
       editVisible: false, // 修改对话框显示隐藏
       batchDelVisible: false, // 批量删除对话框显示隐藏
@@ -312,9 +345,13 @@ export default {
     },
     resetAdd() {
       this.addMessageTemplateDetail = {
-        name: '', // 开始号段
-        upId: '' // 结束号段
+        name: '', // 名字
+        autograph: '', // 签名
+        content: '', // 内容
+        groupId: '', // 上级id
+        type: '4' // 短信类型
       }
+      console.log(this.addMessageTemplateDetail)
     },
     getAllTemplateGroup() {
       getAllTemplateGroup().then(response => {
@@ -458,6 +495,7 @@ export default {
       if (this.$refs[formName] !== undefined) {
         this.$refs[formName].resetFields()
       }
+      console.log(this.addMessageTemplateDetail)
     },
     // 校验检测
     submitForm(formName, value) {
