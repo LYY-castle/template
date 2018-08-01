@@ -124,7 +124,7 @@
     <!-- 新建短信模板 -->
      <el-dialog
       align:left
-      width="30%"
+      width="38%"
       title="新建短信模板"
       :visible.sync="addVisible"
       append-to-body>
@@ -181,8 +181,8 @@
     <!-- 修改 -->
     <el-dialog
       align:left
-      width="30%"
-      title="修改免访号段"
+      width="38%"
+      title="修改短信模板"
       :visible.sync="editVisible"
       append-to-body>
       <el-form :rules="rule" :model="editTemplateDetail" ref="editTemplateForm" label-width="120px">
@@ -215,7 +215,7 @@
     <el-dialog
       align:left
       width="30%"
-      title="修改免访号段"
+      title="短信模板详情"
       :visible.sync="detailVisible"
       append-to-body>
       <el-form  :model="editTemplateDetail" ref="templateForm" label-width="120px">
