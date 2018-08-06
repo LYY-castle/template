@@ -43,7 +43,7 @@
 <script>
   import Kanban from '@/components/Kanban'
   import SidebarItem1 from './nav'
-  import { getAllDirectory } from '@/api/kb'
+  import { getAllDirectory, addDirectory } from '@/api/kb'
 
   export default {
     name: 'kb',
