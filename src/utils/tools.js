@@ -1,3 +1,4 @@
+import request from '@/utils/request'
 export function formatDateTime(inputTime) {
   if (inputTime) {
     var date = new Date(inputTime)
@@ -83,4 +84,20 @@ export function clone(obj) {
   }
 
   throw new Error("Unable to copy obj! Its type isn't supported.")
+}
+
+export function getRequestUser() {
+  return request({
+    url: '/login/getRequestUser',
+    method: 'post'
+  })
+}
+
+export function verify(str, reg) {
+  if (str !== null) {
+    if (str.indexOf(reg) + 1 > 0) {
+      str = str.replace(new RegExp('(' + reg + ')', 'g'), '')
+    }
+  }
+  return str
 }
