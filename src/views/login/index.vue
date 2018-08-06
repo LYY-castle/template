@@ -86,11 +86,12 @@ export default {
         // 清除以前登录的token
         this.$store.dispatch('FedLogOut', this.loginForm)
         if (valid) {
+          localStorage.setItem('agentId', this.loginForm.username)
+          localStorage.setItem('DN', this.loginForm.extensionNumber)
           this.loading = true
           this.$store.dispatch('Login', this.loginForm).then((data) => {
             if (data.code === '1' || data.code === '4' || data.code === '3') {
               this.loading = false
-              localStorage.setItem('agentId', this.loginForm.username)
               this.$router.push({ path: '/dashboard' })
               if (data.code === '3') {
                 Message({
@@ -122,7 +123,6 @@ export default {
               }).then(() => {
                 this.$store.dispatch('LoginAnd', this.loginForm).then((data) => {
                   if (data.code === '1') {
-                    localStorage.setItem('agentId', this.loginForm.username)
                     this.loading = false
                     this.$router.push({ path: '/dashboard' })
                   } else {
@@ -162,12 +162,12 @@ export default {
           duration: 5 * 1000
         })
         localStorage.setItem('agentId', this.loginForm.username)
+        localStorage.setItem('DN', this.loginForm.extensionNumber)
         this.$router.push({ path: '/dashboard' })
       }
+    }).catch(error => {
+      console.log(error)
     })
-      .catch(error => {
-        console.log(error)
-      })
   }
 }
 </script>

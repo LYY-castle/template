@@ -1,5 +1,5 @@
 import jQuery from 'jquery'
-
+import that from '@/views/layout/components/Navbar'
 export default (new (function() {
   var uuid_list = new Array()
   var uuid_dn_list = new Array()
@@ -11,49 +11,47 @@ export default (new (function() {
   var EventObject = jQuery({})
   var Send2_wsCTI_terval_id = ''
   var t
-//EventObject.bind('onmessage', function(event, evt) {
-//	console.log("event object: ", event);
-//	console.log("evt: ", evt);
-//});
-
+  var UUID = ''
+  var DN = ''
+  var AgentID=''
   EventObject.bind('onopen', function(event) {
-    this.NewSessionConnected(event)
-  })
+    that.methods.NewSessionConnected(event)
+   })
   EventObject.bind('onclose', function(event) {
-    this.on_SessionClose(event)
+    that.methods.on_SessionClose(event)
   })
   EventObject.bind('onerror', function(event) {
-    this.on_SessionError(event)
+    that.methods.on_SessionError(event)
   })
   EventObject.bind('on_error', function(event, errtype, errdescription) {
-    this.on_error(event, errtype, errdescription)
+    that.methods.on_error(event, errtype, errdescription)
   })
   EventObject.bind('on_loginsucess', function(event, agentid, DN) {
-    this.on_loginsucess(event, agentid, DN)
+    that.methods.on_loginsucess(event, agentid, DN)
   })
   EventObject.bind('on_reasonchange', function(event, agentid, DN, reasoncode) {
-    this.on_reasonchange(event, agentid, DN, reasoncode)
+    that.methods.on_reasonchange(event, agentid, DN, reasoncode)
   })
 //Ringing_Event|AgentID|DN|UUID|callerid|calleeid|ori_ani|other-leg-UUID|queueName
   EventObject.bind('on_ringing_event', function(event, agentid, DN, UUID, callerid, calleeid, ori_ani, other_leg_uuid, queueName, activeLine) {
-    this.on_ringing_event(event, agentid, DN, UUID, callerid, calleeid, ori_ani, other_leg_uuid, queueName, activeLine)
+    that.methods.on_ringing_event(event, agentid, DN, UUID, callerid, calleeid, ori_ani, other_leg_uuid, queueName, activeLine)
   })
 //RingBack_Event|AgentID|DN|UUID|callerid|calleeid|ori_ani
   EventObject.bind('on_ringback_event', function(event, agentid, DN, UUID, callerid, calleeid, ori_ani, activeLine) {
-    this.on_ringback_event(event, agentid, DN, UUID, callerid, calleeid, ori_ani, activeLine)
+    that.methods.on_ringback_event(event, agentid, DN, UUID, callerid, calleeid, ori_ani, activeLine)
   })
 //Answer_Event|AgentID|DN|UUID|caller|callee|io|other-leg-UUID
   EventObject.bind('on_answer_event', function(event, agentid, DN, UUID, callerid, calleeid, io, other_leg_uuid) {
-    this.on_answer_event(event, agentid, DN, UUID, callerid, calleeid, io, other_leg_uuid)
+    that.methods.on_answer_event(event, agentid, DN, UUID, callerid, calleeid, io, other_leg_uuid)
     //console.log(event+"|"+agentid+"|"+DN+"|"+UUID+"|"+callerid+"|"+calleeid+"|"io+"|"+other_leg_uuid);
   })
 //Hangup_Event|AgentID|DN|UUID
   EventObject.bind('on_hangup_event', function(event, agentid, DN, UUID, hangupLine, activeLineCount) {
-    this.on_hangup_event(event, agentid, DN, UUID, hangupLine, activeLineCount)
+    that.methods.on_hangup_event(event, agentid, DN, UUID, hangupLine, activeLineCount)
   })
 //Hold_Event|AgentID|DN|UUID|Callee|OtherLegUUID
   EventObject.bind('on_hold_event', function(event, agentid, DN, UUID, calleeid, other_leg_uuid) {
-    this.on_hold_event(event, agentid, DN, UUID, calleeid, other_leg_uuid)
+    that.methods.on_hold_event(event, agentid, DN, UUID, calleeid, other_leg_uuid)
   })
 //获取挂电原因
   /*EventObject.bind('on_hp_hangupcause',function(event,HP_HangupCause){
@@ -61,19 +59,19 @@ export default (new (function() {
   });*/
 
   EventObject.bind('on_SIP_unregister', function(event, DN) {
-    this.on_SIP_unregister(event, DN)
+    that.methods.on_SIP_unregister(event, DN)
   })
 //UnHold_Event|AgentID|DN|UUID|Callee|OtherLegUUID
   EventObject.bind('on_unhold_event', function(event, agentid, DN, UUID, calleeid, other_leg_uuid) {
-    this.on_unhold_event(event, agentid, DN, UUID, calleeid, other_leg_uuid)
+    that.methods.on_unhold_event(event, agentid, DN, UUID, calleeid, other_leg_uuid)
   })
 
   EventObject.bind('on_queuecount', function(event, queuename, queuecount) {
-    this.on_queuecount(event, queuename, queuecount)
+    that.methods.on_queuecount(event, queuename, queuecount)
   })	//增加计算队列排队数
 
   EventObject.bind('onUpdateCallInfo', function(event, beforeOtherLegDN, afterOterLegDN, updateLine) {
-    this.onUpdateCallInfo(event, beforeOtherLegDN, afterOterLegDN, updateLine)
+    that.methods.onUpdateCallInfo(event, beforeOtherLegDN, afterOterLegDN, updateLine)
   })
 //var wsUri ="ws://192.168.1.5:9050/";
   var output
@@ -81,8 +79,7 @@ export default (new (function() {
   var bolConnected = false
 
   var wscti = null
-  console.log('starting')
-
+ 
 //var wscti = new WebSocket(wsUri);
 
   // function init() {
@@ -136,6 +133,7 @@ export default (new (function() {
     EventObject.trigger('onmessage', [evt])
 
     var obj = JSON.parse(evt.data)
+    console.log(obj)
     var event_name = obj.EventName
     switch (event_name) {
       case 'UpdateCallInfo':
@@ -219,7 +217,7 @@ export default (new (function() {
         EventObject.trigger('on_ringback_event', [RB_AgentID, RB_DN, RB_UUID, RB_callerid, RB_calleeid, RB_oriAni, activeLine])
         if (uuidcount() < 2) {
           sleep(1500)
-          this.answercall()
+          answerCall()
         }
 
         break
@@ -372,9 +370,9 @@ export default (new (function() {
     while (new Date().getTime() < startTime + milliSeconds); // hog cpu
   }
 
-  this.login=function (AgentID, DN, Queue, Position, type) {
-
-
+  this.login=function (agentId, dn, Queue, Position, type) {
+    DN = dn
+    AgentID = agentId
     //Login|000044|6051|12345|1
     //doSend("Login|"+ AgentID + "|" + DN );
 
@@ -416,7 +414,7 @@ export default (new (function() {
     //doSend("SetStatus|"+ AgentID + "|" + reasoncode);
   }
 
-  this.answercall=function () {
+ this.answercall = function () {
     //Answer|uuid|DN
     UUID = get(uuid_list, size(uuid_list) - 1)
     var answercall_cmd = '{ "BodyData" : [' +
@@ -426,6 +424,14 @@ export default (new (function() {
     doSend(answercall_cmd)
 
     //doSend("Answer|"+ UUID + "|" + DN);
+  }
+  function answerCall(){
+    UUID = get(uuid_list, size(uuid_list) - 1)
+    var answercall_cmd = '{ "BodyData" : [' +
+      '{ "BodyHeader":"UUID" , "BodyValue":"' + UUID + '" },' +
+      '{ "BodyHeader":"DN" , "BodyValue":"' + DN + '"}],' +
+      '"CommandName":"Answer"}'
+    doSend(answercall_cmd)
   }
 
   this.makecall=function (srcDN, destDN) {
