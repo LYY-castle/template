@@ -109,7 +109,7 @@
 
     <!-- 新建问卷div -->
     <div class='container' style="padding:0 20px;" v-show="isMainPage===false && isDetail === false">
-      <div class="fixedButton">
+      <div class="fixedButton"><br/>
         <el-button @click="addSingleCheck();" type="primary" size="medium" round icon="el-icon-plus">单选</el-button>
         <el-button @click="addMultiCheck();" type="primary" size="medium" round icon="el-icon-plus">多选</el-button>
         <el-button @click="addFillBlank();" type="primary" size="medium" round icon="el-icon-plus">填空</el-button>
@@ -180,7 +180,7 @@
                         <el-button class="myButton" size="medium" icon="el-icon-error" @click="removeBlanks(index)"  circle></el-button>
                       </el-tooltip>
                       <div v-for="(a,blankIndex) in item.options">
-                        <el-input type="text" placeholder='回答(45个字符内)' style="width:456px" v-model="a.content" clearable maxlength="45"></el-input>
+                        <el-input type="text" placeholder='回答(45个字符内)' style="width:480px" v-model="a.content" clearable maxlength="45"></el-input>
                       </div>
                     </el-form-item>
                   </div>
@@ -259,7 +259,7 @@
 
     <!-- 修改问卷div -->
     <div class='container' style="padding:0 20px;" v-show="isMainPage===false && isDetail===true">
-      <div class="fixedButton">
+      <div class="fixedButton"><br/>
         <el-button @click="addSingleCheck();" type="primary" size="medium" round icon="el-icon-plus">单选</el-button>
         <el-button @click="addMultiCheck();" type="primary" size="medium" round icon="el-icon-plus">多选</el-button>
         <el-button @click="addFillBlank();" type="primary" size="medium" round icon="el-icon-plus">填空</el-button>
@@ -334,7 +334,7 @@
                         <el-button class="myButton" size="medium" icon="el-icon-error" @click="removeBlanks(index)"  circle></el-button>
                       </el-tooltip>
                       <div v-for="(a,blankIndex) in item.options">
-                        <el-input type="text" placeholder='回答' style="width:456px" v-model="a.content" clearable maxlength="45"></el-input>
+                        <el-input type="text" placeholder='回答' style="width:480px" v-model="a.content" clearable maxlength="45"></el-input>
                       </div>
                     </el-form-item>
                   </div>
