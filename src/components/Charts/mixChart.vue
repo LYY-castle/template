@@ -29,6 +29,12 @@
           <el-button type="primary" @click="search(0)">查询</el-button>
           <el-button type="danger" @click="reset">重置</el-button>
         </el-form-item>
+        <el-form-item>
+          <el-select v-model="formInline.kind">
+            <el-option value="" label="请选择"></el-option>
+            <el-option v-for="item in kinds" :key="item" :label="item" :value="item"></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
     </el-row>
     <div :class="className" :id="id" :style="{height:height,width:width}"></div>
@@ -127,6 +133,7 @@ export default {
       chart: null,
       obj: {},
       timeValue: '',
+      kinds: ['在线时长(秒)', '空闲时长(秒)', '示忙时长(秒)', '通话时长(秒)', '通话次数'],
       pagination: {
         pageNo: null,
         pageSize: null,
@@ -136,8 +143,10 @@ export default {
       formInline: {
         agent_dn: '',
         from: 1,
-        time: 'day'
+        time: 'day',
+        kind: ''
       },
+      series: [],
       tableData: [],
       online_time_duration: [],
       free_time_duration: [],
@@ -215,7 +224,7 @@ export default {
           textStyle: {
             color: '#90979c'
           },
-          data: ['在线时长(秒)', '空闲时长(秒)', '示忙时长(秒)', '通话时长(秒)', '通话次数']
+          data: this.kinds
         },
         calculable: true,
         xAxis: [{
@@ -242,7 +251,7 @@ export default {
         }],
         yAxis: [{
           type: 'value',
-          name: '时长',
+          name: this.formInline.kind ? this.formInline.kind : '时长',
           splitLine: {
             show: false
           },
@@ -281,135 +290,33 @@ export default {
             show: false
           }
         }],
-        // dataZoom: [{
-        //   show: true,
-        //   height: 30,
-        //   xAxisIndex: [
-        //     0
-        //   ],
-        //   bottom: 30,
-        //   start: 10,
-        //   end: 80,
-        //   handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
-        //   handleSize: '110%',
-        //   handleStyle: {
-        //     color: '#d3dee5'
-        //
-        //   },
-        //   textStyle: {
-        //     color: '#fff' },
-        //   borderColor: '#90979c'
-        //
-        // }, {
-        //   type: 'inside',
-        //   show: true,
-        //   height: 15,
-        //   start: 1,
-        //   end: 35
-        // }],
-        series: [{
-          name: '在线时长(秒)',
-          type: 'bar',
-          // stack: 'total',
-          barMaxWidth: 35,
-          barGap: '10%',
-          itemStyle: {
-            normal: {
-              color: 'rgba(255,165,0,1)',
-              label: {
-                show: true,
-                textStyle: {
-                  color: '#fff'
-                },
-                position: 'insideTop',
-                formatter(p) {
-                  return p.value > 0 ? p.value : ''
-                }
-              }
-            }
+        dataZoom: [{
+          show: true,
+          height: 30,
+          xAxisIndex: [
+            0
+          ],
+          bottom: 30,
+          start: 10,
+          end: 80,
+          handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
+          handleSize: '110%',
+          handleStyle: {
+            color: '#d3dee5'
+
           },
-          data: this.online_time_duration
+          textStyle: {
+            color: '#fff' },
+          borderColor: '#90979c'
+
         }, {
-          name: '空闲时长(秒)',
-          type: 'bar',
-          stack: 'total',
-          barMaxWidth: 35,
-          itemStyle: {
-            normal: {
-              color: 'rgba(148,204,209,1)',
-              barBorderRadius: 0,
-              label: {
-                show: true,
-                position: 'top',
-                formatter(p) {
-                  return p.value > 0 ? p.value : ''
-                }
-              }
-            }
-          },
-          data: this.free_time_duration
-        }, {
-          name: '示忙时长(秒)',
-          type: 'bar',
-          stack: 'total',
-          symbolSize: 10,
-          barMaxWidth: 35,
-          symbol: 'circle',
-          itemStyle: {
-            normal: {
-              color: 'rgba(255,144,128,1)',
-              barBorderRadius: 0,
-              label: {
-                show: true,
-                position: 'top',
-                formatter(p) {
-                  return p.value > 0 ? p.value : ''
-                }
-              }
-            }
-          },
-          data: this.busy_time_duration
-        }, {
-          name: '通话时长(秒)',
-          type: 'line',
-          // stack: 'total',
-          symbolSize: 10,
-          symbol: 'circle',
-          itemStyle: {
-            normal: {
-              color: 'rgba(252,0,0,1)',
-              barBorderRadius: 0,
-              label: {
-                show: true,
-                position: 'top',
-                formatter(p) {
-                  return p.value > 0 ? p.value : ''
-                }
-              }
-            }
-          },
-          data: this.call_time_duration }, {
-          name: '通话次数',
-          type: 'line',
-          // stack: 'total',
-          yAxisIndex: 1,
-          symbolSize: 10,
-          symbol: 'circle',
-          itemStyle: {
-            normal: {
-              color: 'rgba(152,230,48,1)',
-              barBorderRadius: 0,
-              label: {
-                show: true,
-                position: 'top',
-                formatter(p) {
-                  return p.value > 0 ? p.value : ''
-                }
-              }
-            }
-          },
-          data: this.calls_number }
-        ]
+          type: 'inside',
+          show: true,
+          height: 15,
+          start: 1,
+          end: 35
+        }],
+        series: this.series
       }, true)
     },
     search(val) {
@@ -438,6 +345,33 @@ export default {
           this.call_time_duration = this.obj.result.map(function(item, index) {
             return item.call_time_duration
           })
+          for (let i = 0; i < this.kinds.length; i++) {
+            this.series.push(
+              {
+                name: this.kinds[i],
+                type: 'bar',
+                stack: 'total',
+                barMaxWidth: 35,
+                barGap: '10%',
+                itemStyle: {
+                  normal: {
+                    // color: 'rgba(' + 50 * i + ',' + 50 * i + ',' + 0 + ',' + 1 + ')',
+                    label: {
+                      show: true,
+                      textStyle: {
+                        color: '#fff'
+                      },
+                      position: 'insideTop',
+                      formatter(p) {
+                        return p.value > 0 ? p.value : ''
+                      }
+                    }
+                  }
+                },
+                data: this.online_time_duration
+              })
+          }
+          this.series[this.series.length - 1].yAxisIndex = 1
           this.initChart()
         }
         this.tableData = response.data.result
