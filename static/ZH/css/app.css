@@ -1,0 +1,10 @@
+.register{
+	width:90%;
+	margin: auto 5%;
+}
+.careful{
+	border: 1.5px solid red !important;
+}
+.disabled{
+	background-color: #99bfdc;
+}
