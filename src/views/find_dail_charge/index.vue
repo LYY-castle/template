@@ -189,7 +189,7 @@
                 <span>{{detailInfo.contactInfo.callerNumber}}</span>
               </el-form-item>
               <el-form-item   label="被叫:" prop="contactInfo.calleeNumber">
-                  <span>{{hideMobile(detailInfo.contactInfo.callerNumber)}}</span>
+                  <span>{{hideMobile(detailInfo.contactInfo.calleeNumber)}}</span>
               </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -526,26 +526,11 @@
       },
       checkEdit() {
         var taskId = this.ids.taskId
-        console.log('taskId', taskId)
         var taskStatus = this.detailInfo.dialTaskInfo.status
-        console.log('taskStatus', taskStatus)
         var appointTime = this.detailInfo.dialTaskInfo.appointTime
-        console.log('appointTime', appointTime)
         var recordId = this.ids.recordId
-        console.log('recordId', recordId)
         var nodules = this.$refs.tree.getCheckedKeys(true)
-        console.log('nodules', nodules)
         var description = this.detailInfo.contactInfo.description
-        console.log('description', description)
-        console.log('originalStatus', this.originalStatus)
-        //  var nodules = [];
-        //  var values = $("input[name='ckb']:checked");
-        //  for(var i = 0;i<values.length;i++){
-        // 	 nodules[i] = values[i].getAttribute("id");
-        //  }
-        //  var description = $("#description").val();					   //小结备注
-        //  var taskStatus = $("input[name='taskStatus']:checked").val(); //任务状态
-        //  var appointTime = $("#appointTime").val();
         if (Date.parse(appointTime) - Date.parse(new Date()) < 0) {
           this.$message('预约时间不能比现在早！')
           return
