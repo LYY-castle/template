@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#2196f3">
+<meta http-equiv="Content-Security-Policy"
+	content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap:">
+<title>金点招聘页面</title>
+<link rel="stylesheet" href="../ZH/build/css/framework7.css">
+<link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+	<div class="page">
+		<div class="navbar">
+			<div class="navbar-inner sliding">
+
+				<div class="title">Welcome to JD</div>
+			</div>
+		</div>
+		<div class="page-content login-screen-content">
+			<div class="login-screen-title">
+				<img src="images/JDlog.png" alt="图片无法显示"></img>
+			</div>
+			
+			<div class="list inline-labels no-hairlines-md">
+				<ul>
+					<li class="item-content">
+						<font style="font-size: large; vertical-align: inherit;text-align: center;">请输入以下信息</font>
+					</li>
+					<li class="item-content item-input">
+						<div class="item-inner">
+							<div class="item-media">
+								<font style="color: red">*</font>
+							</div>
+							<div class="item-input-wrap">
+								<input type="text" placeholder="姓名" class="name">
+								<span class="input-clear-button"></span>
+							</div>
+						</div>
+					</li>
+					<li class="item-content item-input">
+						<div class="item-inner">
+							<div class="item-media">
+								<font style="color: red">*</font>
+							</div>
+							<div class="item-input-wrap">
+								<input type="tel" placeholder="手机号" class='phone'>
+								<span class="input-clear-button"></span>
+							</div>
+						</div>
+					</li>
+					<li class="item-content item-input item-input-with-value">
+						<div class="item-media">
+							<font style="color: red">*</font>
+						</div>
+						<div class="item-title item-label">
+							<font style="vertical-align: bottom;">性别</font>
+						</div>
+						<div class="item-inner">
+							<div class="item-input-wrap input-dropdown-wrap">
+								<select placeholder="请选择性别（必选）" class="input-with-value sex">
+									<option value="0">男</option>
+									<option value="1">女</option>
+								</select>
+							</div>
+						</div>
+					</li>
+					<li class="item-content item-input item-input-with-value">
+						<div class="item-media">
+							<font style="color: red">*</font>
+						</div>
+						<div class="item-title item-label">
+							<font style="vertical-align: bottom;">推荐方式</font>
+						</div>
+						<div class="item-inner">
+							<div class="item-input-wrap input-dropdown-wrap">
+								<select placeholder="请选择信息来源（必选）"
+									class="input-with-value source">
+									<option value="myself">本人</option>
+									<option value="himself">他人</option>
+								</select>
+							</div>
+						</div>
+					</li>
+					<li class="item-content item-input introduceNameLable hideLabel">
+						<div class="item-media">
+							<font style="color: red">*</font>
+						</div>
+						<div class="item-inner">
+							<div class="item-input-wrap">
+								<input type="text" placeholder="推荐人姓名" class="introduceName">
+								<span class="input-clear-button"></span>
+							</div>
+						</div>
+					</li>
+					<li class="item-content item-input">
+						<div class="item-inner">
+							<div class="item-input-wrap">
+								<input type="text" placeholder="身份证号" class="idcard">
+								<span class="input-clear-button"></span>
+							</div>
+						</div>
+					</li>
+
+					<li class="item-content item-input">
+						<div class="item-inner">
+							<div class="item-input-wrap">
+								<input type="text" placeholder="邮箱地址" class="email">
+								<span class="input-clear-button"></span>
+							</div>
+						</div>
+					</li>
+
+					<li class="item-content item-input">
+						<div class="item-inner">
+							<div class="item-input-wrap ">
+								<textarea placeholder="此处填写备注信息（上限64kb）"
+									class="input-with-value comment"></textarea>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<button class="col button button-fill register" id="register">推荐</button>
+		</div>
+	</div>
+	<script src="../ZH//build/js/framework7.js"></script>
+	<script src="../ZH/js/routes.js"></script>
+	<script src="../ZH/js/platComJs.js"></script>
+	<script src="../ZH/js/util.js"></script>
+	<script src="js/index.js"></script>
+</body>
+</html>

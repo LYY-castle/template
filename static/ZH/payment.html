@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#2196f3">
+  <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap:">
+  <meta http-equiv="Content-Type" content="multipart/form-data; charset=utf-8" />
+  <title>ZH支付页面</title>
+  <link rel="stylesheet" href="./build/css/framework7.css">
+  <link rel="stylesheet" href="css/payment.css">
+</head>
+<body>
+  <div class="page">
+	  <div class="navbar">
+		<div class="navbar-inner sliding">
+		  <div class="title center">ZH支付</div>
+		</div>
+	  </div>
+	  <div class="page-content">
+		<div class="list inline-labels no-hairlines-md">
+			
+			<div class="card">
+			  <div class="card-header">订单详情</div>
+			  <div class="card-content">
+			    <div class="card-content-inner">
+			    	<form id="infomation" method="post">
+				    	<ul>
+				    		<li class="item-content"><label>订单号</label><span id="orderId"></span></li>
+				    		<li class="item-content"><label>订单金额</label><span id="totalCount"></span></li>
+					    	<li class="item-content"><label>产品或服务</label><span id="productName"></span></li>
+					    	<li class="item-content"><label>保险年限</label><span id="dateTime"></span></li>
+					    	<li class="item-content"><label>客户</label><span id="customerName"></span></li>
+					    	<li class="item-content"><label>客户手机</label><span id="customerphone"></span></li>
+					    	<li class="item-content"><label>订单描述</label><span id="description"></span></li>
+				    	</ul>
+			    	</form>
+			    </div>
+			  </div>
+			</div>
+			<div class="card" id="payinfo">
+			  <div class="card-header">请选择支付方式：</div>
+			  <div class="card-content">
+			    <div class="card-content-inner">
+			    	<ul>
+						<li>
+							<label class="item-radio item-content">
+					            <div class="item-inner">
+					           	 	<img src="img/alipay.png"></img><span>支付宝</span>
+					            </div>
+					            <input type="radio" name="payment" value="alipay" id="alipay">
+					            <i class="icon icon-radio"></i>
+					          </label>
+						</li>
+						<li>
+							<label class="item-radio item-content">
+					            <div class="item-inner">
+					           	 	<img src="img/wxpay.png"></img><span>微信支付</span>
+					            </div>
+					            <input type="radio" name="payment" value="wxpay" id="wxpay">
+					            <i class="icon icon-radio"></i>
+					          </label>
+						</li>
+					</ul>
+			    </div>
+			  </div>
+			</div>
+		  	<button class="col button button-fill gopay disabled" id="gopay">去支付</button>
+		</div>
+	  </div>
+	</div>
+  <script src="./build/js/framework7.js"></script>
+  <script src="js/routes.js"></script>
+  <script src="js/util.js"></script>
+  <script src="js/payment.js"></script>
+</body>
+</html>
