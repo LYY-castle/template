@@ -202,9 +202,9 @@ export default {
       bolConnected: false,
       talkCaller: '',
       talkCallee: '',
-      tran_Flagbit: '',
-      conf_Flagbit: '',
-      hold_Flagbit: '',
+      tran_Flagbit: '0',
+      conf_Flagbit: '0',
+      hold_Flagbit: '0',
       talkStatu: '',
       global_taskId: '',
       islogin: false,
@@ -347,56 +347,55 @@ export default {
         this.conf_Flagbit = this.conf_Flagbit
       }
     },
-    // agentstartconffer() {
-    //   this.talkCaller = this.caller
-    //   this.talkCallee = this.callee
-    //   if (this.conf_Flagbit === '1') {
-    //     cti.completeconference()
-    //     this.oldtelephonestate = this.telephoneState
-    //     this.telephoneState = '完成三方'
-    //     if (this.oldtelephonestate !== this.telephoneState) {
-    //       clearInterval(interval)
-    //       this.times()
-    //     }
-    //     this.setbtnStatus('conference')
-    //     this.conf_Flagbit = '0'
-    //   } else {
-    //     cti.starttransfer(this.formInline.user, this.formInline.DN)
-    //     this.oldtelephonestate = this.telephoneState
-    //     this.telephoneState = '发起三方'
-    //     if (this.oldtelephonestate !== this.telephoneState) {
-    //       clearInterval(interval)
-    //       this.times()
-    //     }
-    //     this.setbtnStatus('confconsolutaion')
-    //     this.conf_Flagbit = '1'
-    //   }
-    // },
-    // agentstarttransfer() {
-    //   this.talkCaller = this.caller
-    //   this.talkCallee = this.callee
-    //   if (this.tran_Flagbit === '1') {
-    //     cti.completetransfer()
-    //     this.oldtelephonestate = this.telephoneState
-    //     this.telephoneState = '完成转接'
-    //     if (this.oldtelephonestate !== this.telephoneState) {
-    //       clearInterval(interval)
-    //       this.times()
-    //     }
-    //     this.tran_Flagbit = '0'
-    //   } else {
-    //     console.log(this.formInline.user + ',' + this.formInline.DN)
-    //     cti.starttransfer(this.formInline.user, this.formInline.DN)
-    //     this.oldtelephonestate = this.telephoneState
-    //     this.telephoneState = '发起转接'
-    //     if (this.oldtelephonestate !== this.telephoneState) {
-    //       clearInterval(interval)
-    //       this.times()
-    //     }
-    //     this.setbtnStatus('transconsolutaion')
-    //     this.tran_Flagbit = '1'
-    //   }
-    // },
+    agentstartconffer() {
+      this.talkCaller = this.caller
+      this.talkCallee = this.callee
+      if (this.conf_Flagbit === '1') {
+        cti.completeconference()
+        this.oldtelephonestate = this.telephoneState
+        this.telephoneState = '完成三方'
+        if (this.oldtelephonestate !== this.telephoneState) {
+          clearInterval(interval)
+          this.times()
+        }
+        this.setbtnStatus('conference')
+        this.conf_Flagbit = '0'
+      } else {
+        cti.starttransfer(this.formInline.user, this.formInline.DN)
+        this.oldtelephonestate = this.telephoneState
+        this.telephoneState = '发起三方'
+        if (this.oldtelephonestate !== this.telephoneState) {
+          clearInterval(interval)
+          this.times()
+        }
+        this.setbtnStatus('confconsolutaion')
+        this.conf_Flagbit = '1'
+      }
+    },
+    agentstarttransfer() {
+      this.talkCaller = this.caller
+      this.talkCallee = this.callee
+      if (this.tran_Flagbit === '1') {
+        cti.completetransfer()
+        this.oldtelephonestate = this.telephoneState
+        this.telephoneState = '完成转接'
+        if (this.oldtelephonestate !== this.telephoneState) {
+          clearInterval(interval)
+          this.times()
+        }
+        this.tran_Flagbit = '0'
+      } else {
+        cti.starttransfer(this.formInline.user, this.formInline.DN)
+        this.oldtelephonestate = this.telephoneState
+        this.telephoneState = '发起转接'
+        if (this.oldtelephonestate !== this.telephoneState) {
+          clearInterval(interval)
+          this.times()
+        }
+        this.setbtnStatus('transconsolutaion')
+        this.tran_Flagbit = '1'
+      }
+    },
     agentunhold() {
       cti.unhold(1)
       this.oldtelephonestate = this.telephoneState
@@ -635,11 +634,12 @@ export default {
       }).catch(error => {
         console.log('error:' + error)
       })
+      console.log(hangupLine + '//' + activeLineCount)
       switch (hangupLine) {
         case 1:
           if (activeLineCount > 0) {
-            cti.setAgentStatus(agentid, vm.talkStatu)
             vm.setbtnStatus('talking')
+            cti.setAgentStatus(agentid, vm.talkStatu)
           } else {
             vm.telephoneState = ''
             vm.caller = ''
@@ -652,7 +652,7 @@ export default {
             cti.setAgentStatus(agentid, '14')
           }
           break
-        case '2':
+        case 2:
           if (vm.tran_Flagbit === '0' && vm.conf_Flagbit === '1') {
             vm.conf_Flagbit = '0'
             vm.telephoneState = '三方被拒'
@@ -666,7 +666,7 @@ export default {
             vm.callee = vm.talkCallee
             cti.setAgentStatus(agentid, vm.talkStatu)
           } else {
-            console.log('未知情况')
+            console.log('通话取回')
           }
           vm.setbtnStatus('talking')
           break
