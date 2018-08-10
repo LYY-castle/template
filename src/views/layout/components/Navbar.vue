@@ -446,12 +446,24 @@ export default {
     agentLogin() {
       const agentId = localStorage.getItem('agentId')
       const DN = this.formInline.DN
-      if (agentId !== null && DN !== null && DN !== '') { cti.login(agentId, this.formInline.DN, '518', '1', '0') }
+      if (agentId !== null && DN !== null && DN !== '') {
+        cti.login(agentId, this.formInline.DN, '518', '1', '0')
+        if (this.reasonCode === '-1' || this.reasonCode === '-2') {
+          // localStorage.setItem('callerDN', null)
+          localStorage.setItem('DN', null)
+        } else {
+          // localStorage.setItem('callerDN', DN)
+          localStorage.setItem('DN', DN)
+        }
+      }
     },
     agentLogoff() {
       const agentId = localStorage.getItem('agentId')
       const DN = this.formInline.DN
-      if (agentId !== null && DN !== null && DN !== '') { cti.logoff(agentId, DN, 9) }
+      if (agentId !== null && DN !== null && DN !== '') {
+        cti.logoff(agentId, DN, 9)
+        localStorage.removeItem('DN')
+      }
     },
     sleep(seconds) {
       const starttime = new Date().getTime()
@@ -689,6 +701,7 @@ export default {
       vm.caller = callerid
       vm.callee = calleeid
       vm.orginCaller = ori_ani
+      vm.global_taskId = localStorage.getItem('global_taskId')
       addDialContact({
         'event': 'on_ringback_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': callerid, 'calleeid': calleeid, 'ori_ani': ori_ani, 'ringback_time': new Date(), 'callDirection': 0, 'global_taskId': vm.global_taskId
       }).then(res => {
@@ -725,6 +738,7 @@ export default {
     on_reasonchange(event, agentId, DN, reasonCode) {
       console.log('响应事件：' + event + ',员工工号：' + agentId + '，分机：' + DN + '，状态码：' + reasonCode)
       this.reasonCode = reasonCode
+      localStorage.setItem('reasonCode', this.reasonCode)
       switch (reasonCode) {
         case '-1':
           vm.islogin = false
