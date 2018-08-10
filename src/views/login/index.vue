@@ -124,6 +124,7 @@ export default {
                 this.$store.dispatch('LoginAnd', this.loginForm).then((data) => {
                   if (data.code === '1') {
                     this.loading = false
+                    localStorage.setItem('agentId', this.loginForm.username)
                     this.$router.push({ path: '/dashboard' })
                   } else {
                     this.loading = false

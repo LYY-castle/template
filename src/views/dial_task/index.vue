@@ -1,6 +1,7 @@
 <template>
+<div class='container'>
   <!-- 拨打任务列表div层 -->
-  <div class='container' v-if="isDialTask===true">
+  <div  v-if="isDialTask===true">
       <el-row>
           <el-form :inline="true" size="small">
             <el-form-item label="分配时间：">
@@ -125,14 +126,14 @@
             label="操作"
             width="100">
           <template slot-scope="scope">
-            <el-button @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone)" size="small" type="text"><img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</el-button>
+            <a href="#" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone)" size="small" type="text"><img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</a>
           </template>
           </el-table-column>
         </el-table>
       </el-col> 
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="primary" @click="quickDialto();">快速拨打勾选</el-button>
+        <a href="#" @click="quickDialto();"><el-button type="primary">快速拨打勾选</el-button></a>
         <el-pagination
           v-if="pageShow"
           background
@@ -147,7 +148,7 @@
   </div>
 
   <!-- 客户详情 div层 -->
-  <div class='container' style="padding:0 20px;" v-else>
+  <div  v-else >
     <el-row :gutter="20">
       <el-col :span="5" style="text-align:center">
         <br/>
@@ -161,7 +162,8 @@
           <img src="../../../static/images/my_imgs/img_xiegang.png"  alt="横杆"/>
         </div>
         <div>
-          <a><img src="../../../static/images/my_imgs/img_dial.png" alt="拨打" width="28px" height="28px"></a>
+          <img v-if="!hideDialTo" src="../../../static/images/dial_normal.png" alt="拨打" width="28px" height="28px" @click="dialTo(taskId,campaignId,isBlacklist,customerPhone)" style="cursor:pointer">
+          <img v-if="hideDialTo" src="../../../static/images/dial_disable.png" alt="拨打" width="28px" height="28px"  style="cursor:default">
         </div>  
       </el-col>
       <el-col :span="3"></el-col>
@@ -237,7 +239,7 @@
         </el-collapse-item>
 
         <!-- 产品信息 -->
-        <el-collapse-item name="2" v-if="hasProductInfo===true">
+        <el-collapse-item name="2" v-if="hasProductInfo===true && campaignType !== 'RECRUIT'">
           <template slot="title">
             <b>产品信息<i class="el-icon-d-caret"></i></b>
           </template>
@@ -248,7 +250,7 @@
                 v-if="this.productInfo.some(i => i === this.child_insurance)"
                 v-if="this.productInfo.some(i => i=== this.disease_insurance)"
                 -->
-              <el-tab-pane name="1" label="车险" v-model="car_insurance" v-if="this.productInfo.some(i => i=== this.car_insurance)">
+              <el-tab-pane name="P20180101000002" label="车险" v-model="car_insurance" v-if="this.productInfo.some(i => i=== this.car_insurance)">
                 <div>
                   <span>投保年龄：</span>
                     <el-input placeholder="25岁" size="medium" type="text" value="25岁" style="width:80px"></el-input>&nbsp;&nbsp;
@@ -261,10 +263,10 @@
                   <span>保障期间：</span>
                     <el-input placeholder="1年" size="medium" type="text" value="1年" style="width:80px"></el-input>&nbsp;&nbsp;
                   <span>保费合计：</span>
-                    <el-input placeholder="3500" size="medium" type="text" value="3500" style="width:80px"></el-input>元&nbsp;&nbsp;
+                    <el-input placeholder="3500" size="medium" type="text" value="3500" style="width:80px" v-model="insurancePay_car"></el-input>元&nbsp;&nbsp;
                 </div>
               </el-tab-pane>
-              <el-tab-pane name="2" label="儿童险"  v-model="child_insurance" v-if="this.productInfo.some(i => i === this.child_insurance)">
+              <el-tab-pane name="P20180101000003" label="儿童险"  v-model="child_insurance" v-if="this.productInfo.some(i => i === this.child_insurance)">
                 <div>
                   <span>投保年龄：</span>
                     <el-input placeholder="3岁" size="medium" type="text" value="3岁" style="width:80px"></el-input>&nbsp;&nbsp;
@@ -277,10 +279,10 @@
                   <span>保障期间：</span>
                     <el-input placeholder="1年" size="medium" type="text" value="1年" style="width:80px"></el-input>&nbsp;&nbsp;
                   <span>保费合计：</span>
-                    <el-input placeholder="80" size="medium" type="text" value="80" style="width:80px"></el-input>元&nbsp;&nbsp;
+                    <el-input placeholder="80" size="medium" type="text" value="80" style="width:80px" v-model="insurancePay_child"></el-input>元&nbsp;&nbsp;
                 </div>
               </el-tab-pane>
-              <el-tab-pane name="3" label="重疾险" v-model="disease_insurance" v-if="this.productInfo.some(i => i=== this.disease_insurance)">
+              <el-tab-pane name="P20180101000004" label="重疾险" v-model="disease_insurance" v-if="this.productInfo.some(i => i=== this.disease_insurance)">
                 <div>
                   <span>投保年龄：</span>
                     <el-input placeholder="36岁" size="medium" type="text" value="36岁" style="width:80px"></el-input>&nbsp;&nbsp;
@@ -293,7 +295,7 @@
                   <span>保障期间：</span>
                     <el-input placeholder="1年" size="medium" type="text" value="1年" style="width:80px"></el-input>&nbsp;&nbsp;
                   <span>保费合计：</span>
-                    <el-input placeholder="2800" size="medium" type="text" value="2800" style="width:80px"></el-input>元&nbsp;&nbsp;
+                    <el-input placeholder="2800" size="medium" type="text" value="2800" style="width:80px" v-model="insurancePay_ill"></el-input>元&nbsp;&nbsp;
                 </div>
               </el-tab-pane>
             </el-tabs>
@@ -309,9 +311,9 @@
             <el-row :gutter="20">
               <el-col :span="8">
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                <el-radio v-model="radio" label="2" name="2"><span style="color:#67C23A">成功</span></el-radio>
-                <el-radio v-model="radio" label="3" name="3"><span style="color:#F56C6C">失败</span></el-radio>
-                <el-radio v-model="radio" label="1" name="1"><span style="color:#409EFF">预约</span></el-radio>
+                <el-radio v-model="radio" label="2" name="2" border @change="setSendMessage(radio)"><span style="color:#67C23A">成功</span></el-radio>
+                <el-radio v-model="radio" label="3" name="3" border @change="setSendMessage(radio)"><span style="color:#F56C6C">失败</span></el-radio>
+                <el-radio v-model="radio" label="1" name="1" border @change="setSendMessage(radio)" v-show="isLastContactTime===false"><span style="color:#409EFF">预约</span></el-radio>
               </el-col>
               <el-col :span="8" v-show="this.radio === '1'">
                 <span style="color:#F56C6C">*</span>请选择预约时间：
@@ -348,11 +350,13 @@
     <el-row>
       <div style="text-align:center">
         <el-checkbox v-if="showAutoDial===true" checked="checked" v-model="autoDialNext">完成后显示下一个客户</el-checkbox>
-        <el-button type="success" size="medium" @click="generateRecord()">完成</el-button>
+        <el-checkbox v-if="showSendMessage === true && campaignType !== 'RECRUIT'" v-model="sendMessage" checked="checked">发送支付短信</el-checkbox>
+        <a href="#" @click="generateRecord()"><el-button type="success" size="medium" >完成</el-button></a>
         <el-button type="primary" size="medium" @click="returnList()">返回列表</el-button>
       </div>
     </el-row>
   </div>
+</div>
 </template>
 
 <style lang='scss' scoped>
@@ -360,8 +364,12 @@
 
 <script>
 import { getMenu } from '@/api/dashboard' // 侧边菜单栏
-// import { rule } from '@/utils/validate' // 校验工具
-import { formatDateTime } from '@/utils/tools' // 格式化时间
+import cti from '@/utils/ctijs' //
+import { getPhoneOwn } from '@/api/navbar'
+import {
+  formatDateTime,
+  getIDCardInfo
+} from '@/utils/tools' // 格式化时间
 import {
   queryByKeywords,
   isInNodisturbPhones,
@@ -369,7 +377,16 @@ import {
   queryCustomerInfo,
   queryContactRecord,
   hasOrderInfos,
-  getSummaries
+  getSummaries,
+  getCampaignType,
+  addNewProduct,
+  getStaffNameById,
+  generateOrder,
+  sendMessageToCustomer,
+  checkDialTimes,
+  queryOneTask,
+  updateTaskStatus,
+  updateRecordInfo
 } from '@/api/dialTask' // 接口
 
 export default {
@@ -377,7 +394,18 @@ export default {
 
   data() {
     return {
+      interval: null,
+      canContact: 1,
+      hideDialTo: false, // 判断超出拨打次数限制时是否将图标置灰
+      isLastContactTime: false, // 判断是否是最后一次拨打次数
       isDialTask: true, // 判断是进入哪个界面  true为拨打任务  false为 拨打任务详情
+      campaignType: '', // 活动类型
+      taskId: '', // 任务id
+      campaignId: '', // 活动id
+      isBlacklist: '', // 判断是否是黑名单
+      customerId: '', // 客户id
+      customerPhone: '', // 客户手机号
+      taskDone: null, // 判断拨打任务是否已经完成
       activeName: 'firstDial',
       tableData: [], // 表格数据
       pageShow: true, // 是否显示分页
@@ -394,12 +422,20 @@ export default {
       appointTime: '', // 预约时间
       hasProductInfo: false, // 是否有产品的标志
       productInfo: [], // 需要展示的产品的id
+      selectedProduct: {}, // 选中的需要生成的产品信息
+      productDetailId: '', // 添加/生成产品详细id
+      insurancePay_car: '3500', // 车险费用
+      insurancePay_child: '80', // 儿童险费用
+      insurancePay_ill: '2800', // 重疾险费用
+      order_Params: {}, // 即将生成订单的参数
       car_insurance: 'P20180101000002', // 车险id
       child_insurance: 'P20180101000003', // 儿童险id
-      disease_insurance: 'P20180101000004', // 车险id
+      disease_insurance: 'P20180101000004', // 重疾险id
       activeTab: '', // 产品展示项
       showAutoDial: false, // 是否展示自动拨打下一个
       autoDialNext: true, // 完成后自动拨打下一个
+      showSendMessage: false, // 是否展示发送支付短信
+      sendMessage: true, //  发送支付短信checkbox
       car_insurance_seats: '2', //
       nodulesTree: [], // 需要展示的小结树 数据
       summaryTreeProps: {
@@ -429,28 +465,129 @@ export default {
         idNumber: '',
         resideAddress: '',
         bankCardType: ''
-      }
+      },
+      idNumber: ''
     }
   },
-
-  // 组件刚被创建时 属性还未计算时   methods方法还未调用时
-  beforeCreate() {
-    getMenu()
-      .then(response => {
-        const data = response.data
-        sessionStorage.setItem('getMenu', JSON.stringify(data))
-      })
-      .catch(error => {
-        console.log(error)
-      })
-  },
-
-  // 模板编译/挂载之后
-  mounted() {
-    this.searchByKeyWords(this.req)
-  },
-
   methods: {
+    // 点击拨打图标触发事件
+    dialTo(taskId, campaignId, isBlacklist, customerPhone) {
+      this.hideDialTo = true
+      // console.log(taskId + ',' + campaignId + ',' + isBlacklist + ',' + customerPhone)
+      if (localStorage.getItem('reasonCode') === null || localStorage.getItem('reasonCode') === '-1' || localStorage.getItem('reasonCode') === '-2') {
+        this.$message.error('请先登录话机！')
+        return
+      } else {
+        this.inNodisturbPhones(customerPhone)
+        if (this.flag === false && isBlacklist === '0') {
+        // 非黑名单  非免访号段内的号码
+        // 判断剩余拨打次数
+          checkDialTimes(taskId)
+            .then(response => {
+              if (response.data.code === 0) {
+                if (response.data.data.canContact === '1') {
+                // 说明未超过次数限制还能拨打
+                  if (response.data.data.lastContactTime === '1') {
+                  // 说明是最后一次 将预约栏隐藏
+                    this.radio = ''
+                    this.isLastContactTime = true
+                    queryOneTask(taskId)
+                      .then(response1 => {
+                        if (response1.data.code === 0) {
+                          if (response1.data.data.status === 2 || response1.data.data.status === 3) {
+                            this.$message.error('该拨打任务已结束！')
+                            return
+                          } else {
+                            localStorage.setItem('global_taskId', taskId)
+                            this.normalDial(taskId, campaignId, customerPhone)
+                          }
+                        }
+                      })
+                  } else {
+                    queryOneTask(taskId)
+                      .then(response1 => {
+                        if (response1.data.code === 0) {
+                          if (response1.data.data.status === 2 || response1.data.data.status === 3) {
+                            this.$message.error('该拨打任务已结束！')
+                            return
+                          } else {
+                            localStorage.setItem('global_taskId', taskId)
+                            this.normalDial(taskId, campaignId, customerPhone)
+                          }
+                        }
+                      })
+                  }
+                } else {
+                  this.hideDialTo = true
+                  this.canContact = 0
+                  // clearInterval(this.interval)
+                  this.$message.error('超过拨打限制次数！')
+                  return
+                }
+              }
+            })
+        } else {
+          this.$message.error('该号码在免访号段或黑名单中！')
+          return
+        }
+      }
+    },
+    // 定时监控设置能否继续拨打的状态
+    editDialToStatus() {
+      var reasonCode = localStorage.getItem('reasonCode')
+      if (reasonCode === '-1' || reasonCode === '-2' || reasonCode === '-3' || reasonCode === '-4' || reasonCode === '') {
+        this.hideDialTo = true
+      } else if ((reasonCode === '0' || reasonCode === '14') && this.canContact === 0) {
+        this.hideDialTo = true
+        // clearInterval(this.interval)
+      } else {
+        this.hideDialTo = false
+      }
+    },
+    // 调用cti拨打功能
+    normalDial(taskId, campaignId, customerPhone) {
+      // console.log('1,' + localStorage.getItem('DN'))
+      // console.log('2,' + localStorage.getItem('callerDN'))
+      const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
+      if (regex.test(customerPhone)) {
+        if (!getPhoneOwn(customerPhone)) {
+          customerPhone = '90' + customerPhone
+        } else {
+          customerPhone = '90' + customerPhone
+        }
+      }
+      // console.log('dialTo:' + customerPhone)
+      if (localStorage.getItem('DN') !== null && localStorage.getItem('DN') !== '') {
+        cti.makecall(localStorage.getItem('DN'), customerPhone)
+        setTimeout(() => {
+          this.getRecordId(taskId, campaignId)
+        }, 3000)
+      } else {
+        this.$message.error('请重新登录话机！')
+        return
+      }
+    },
+    // 获取新生成的接触记录信息
+    getRecordId(taskId, campaignId) {
+      queryContactRecord(taskId, campaignId)
+        .then(response => {
+          if (response.data.code === 0) {
+            if (response.data.data && response.data.pageInfo.totalCount !== 0) {
+              this.recordId = response.data.data[0].recordId
+              this.contactRecord = response.data.data
+            }
+          }
+        })
+    },
+    // 判断是否需要显示发送支付短信的checkbox
+    setSendMessage(radio) {
+      if (radio === '2') {
+        this.showSendMessage = true
+      } else {
+        this.showSendMessage = false
+        this.sendMessage = false
+      }
+    },
     // 改变小结数组选中状态
     sendSummaryId(data, checked, ischildSelected) {
       if (checked && data.summaryDetailInfos === null) {
@@ -462,20 +599,6 @@ export default {
         }
       }
     },
-    // checkOrNot(data, node) {
-    //   if (node.checked) {
-    //     node.checked = false
-    //     if (this.selectedSummarys.some(i => i === data.id)) {
-    //       // 移除数组中此项id
-    //       this.selectedSummarys.splice(this.selectedSummarys.indexOf(data.id), 1)
-    //     }
-    //   } else {
-    //     node.checked = true
-    //     if (data.summaryDetailInfos === null) {
-    //       this.selectedSummarys.push(data.id)
-    //     }
-    //   }
-    // },
     // 综合查询
     searchByKeyWords(req) {
       queryByKeywords(req)
@@ -557,14 +680,6 @@ export default {
 
     // 清空重置
     clearForm(obj, formName) {
-      // for (const key in obj) {
-      //   if (key !== 'pageNo') {
-      //     obj[key] = ''
-      //   }
-      // }
-      // if (formName) {
-      //   this.$refs[formName].resetFields()
-      // }
       this.req.distributeTimeStart = ''
       this.req.distributeTimeEnd = ''
       this.req.appointTimeStart = ''
@@ -614,14 +729,22 @@ export default {
     },
     // 跳转拨打页面
     changeToCustomerDetail(taskId, campaignId, customerId, isBlacklist, customerPhone) {
+      this.customerPhone = customerPhone
       // 调用方法判断是否在免访号段内
       this.inNodisturbPhones(customerPhone)
       if (this.flag === false && isBlacklist === '0') {
         // window.localStorage.removeItem('taskIds')
-        // window.localStorage.setItem('taskId', taskId)
-        // window.localStorage.setItem('campaignId', campaignId)
+        // localStorage.setItem('taskId', taskId)
+        // localStorage.setItem('campaignId', campaignId)
+        this.taskId = taskId
+        this.campaignId = campaignId
+        this.isBlacklist = isBlacklist
+        this.customerId = customerId
         this.activeNames = ['1', '2', '3', '4']
         this.autoDialNext = false
+        this.showSendMessage = false
+        this.hideDialTo = false
+        this.isLastContactTime = false
         this.radio = ''
         this.recordId = ''
         this.summary_description = ''
@@ -652,32 +775,48 @@ export default {
       if (this.taskIds.length === 0) {
         this.$message.error('您还未选中任务，请先选择任务.')
       } else {
-        this.$message('跳转到拨打详情页')
+        // this.$message('跳转到拨打详情页')
         // console.log('linn:' + this.taskIds[0])
         // console.log('linn:' + this.campaignIds[0])
         // console.log('linn:' + this.isBlacklists[0])
         // console.log('linn:' + this.customerIds[0])
+        this.taskId = this.taskIds[0]
+        this.campaignId = this.campaignIds[0]
+        this.isBlacklist = this.isBlacklists[0]
+        this.customerId = this.customerIds[0]
         this.showDetailInfos(this.taskIds[0], this.campaignIds[0], this.customerIds[0], this.isBlacklists[0], null)
         if (this.taskIds.length > 1) {
           this.showAutoDial = true
         }
         this.activeNames = ['1', '2', '3', '4']
         this.autoDialNext = false
+        this.showSendMessage = false
+        this.isLastContactTime = false
         this.radio = ''
         this.recordId = ''
         this.summary_description = ''
         this.appointTime = ''
         this.selectedSummarys = []
+        this.hideDialTo = false
         this.isDialTask = false
       }
     },
     // 展示拨打页面详情
     showDetailInfos(taskId, campaignId, customerId, isBlacklist, customerPhone) {
+      // 判断活动类型
+      getCampaignType(campaignId)
+        .then(res1 => {
+          if (res1.data.code === 0) {
+            this.campaignType = res1.data.data.campaignTypeInfo.code
+          }
+        })
       // 获取客户基本信息
       queryCustomerInfo(customerId)
         .then(res => {
           if (res.data.code === 0) {
             this.customerInfo = res.data.data
+            this.idNumber = res.data.data.idNumber
+            this.customerPhone = res.data.data.mobile
           }
         })
         // 判断是否有接触记录信息
@@ -687,7 +826,7 @@ export default {
             this.contactRecord = res2.data.data
           }
         })
-        // 判断是否有订单信息
+        // 判断是否有产品信息
       hasOrderInfos(campaignId)
         .then(res3 => {
           if (res3.data.code === 0 && res3.data.data.length > 0) {
@@ -723,8 +862,9 @@ export default {
     },
     // 生成订单/接触记录/修改任务状态
     generateRecord() {
+      // console.log(this.selectedSummarys)
+      // console.log(this.recordId + ',' + this.taskId + ',' + this.radio + ',' + this.appointTime + ',' + this.selectedSummarys)
       // 判断 1、是否打电话 2、是否选择任务状态  3、是否勾选小结
-      // To Do
       if (this.recordId === '') {
         this.$message.error('您还未拨打电话！')
         return false
@@ -741,44 +881,249 @@ export default {
         this.$message.error('未选择小结！')
         return false
       } else {
-        this.$message.success('成功！')
-        // 发送请求修改任务状态与添加小结
+        // 生成完整接触记录及小结
+        // 判断任务状态radio  2：成功 3：失败  1：预约
+        if (this.radio === '2' && this.campaignType !== 'RECRUIT') {
+          // 说明任务状态为成功 判断是否需要添加产品、生成订单
+          if (this.activeTab !== '0') {
+          // 选择了产品
+            switch (this.activeTab) {
+              case 'P20180101000002':// 车险
+                this.selectedProduct.applicantBirthDay = getIDCardInfo(this.idNumber).get('birthDay')
+                this.selectedProduct.applicantName = this.customerInfo.customerName
+                this.selectedProduct.applicantPhone = this.customerInfo.mobile
+                this.selectedProduct.applicantSex = getIDCardInfo(this.idNumber).get('sex')
+                this.selectedProduct.insuredBirthDay = getIDCardInfo(this.idNumber).get('birthDay')
+                this.selectedProduct.insuredName = this.customerInfo.customerName
+                this.selectedProduct.insuredPhone = this.customerInfo.mobile
+                this.selectedProduct.insuredSex = getIDCardInfo(this.idNumber).get('sex')
+                this.selectedProduct.productId = 'P20180101000002'
+                // 添加产品
+                addNewProduct(this.selectedProduct)
+                  .then(response => {
+                    if (response.data.code === 0) {
+                      this.productDetailId = response.data.data
+                      // 生成订单
+                      this.order_Params.campaignId = this.campaignId
+                      this.order_Params.taskId = this.taskId
+                      this.order_Params.staffId = localStorage.getItem('agentId')
+                      this.order_Params.staffName = localStorage.getItem('staffName')
+                      this.order_Params.creatorId = localStorage.getItem('agentId')
+                      this.order_Params.creatorName = localStorage.getItem('staffName')
+                      this.order_Params.totalAmount = this.insurancePay_car
+                      this.order_Params.productName = '车险'
+                      this.order_Params.productId = 'P20180101000002'
+                      this.order_Params.productDetailId = this.productDetailId
+                      this.order_Params.customerId = this.customerInfo.customerId
+                      this.order_Params.customerName = this.customerInfo.customerName
+                      this.order_Params.customerPhone = this.customerInfo.mobile
+                      this.order_Params.description = '车险'
+                      generateOrder(this.order_Params)
+                        .then(res => {
+                          if (res.data.code === 0) {
+                            // 成功生成订单 判断是否发送短信
+                            if (this.sendMessage === true) {
+                              sendMessageToCustomer(res.data.data, this.customerInfo.mobile)
+                            }
+                            this.$message({
+                              message: '成功生成订单',
+                              type: 'success'
+                            })
+                          } else {
+                            this.$message.error(res.data.message)
+                            return
+                          }
+                        })
+                    } else {
+                      this.$message.error('出错啦...请稍后重试！')
+                      return
+                    }
+                  })
+                break
 
-        if (this.autoDialNext === true) {
-          //  勾选了自动拨打下一个
-          this.taskIds.shift()
-          this.campaignIds.shift()
-          this.customerIds.shift()
-          this.isBlacklists.shift()
-          // 判断展示 checkbox与否
-          if (this.taskIds.length > 1) {
-            this.showAutoDial = true
+              case 'P20180101000003': // 儿童险
+                this.selectedProduct.applicantBirthDay = getIDCardInfo(this.idNumber).get('birthDay')
+                this.selectedProduct.applicantName = this.customerInfo.customerName
+                this.selectedProduct.applicantPhone = this.customerInfo.mobile
+                this.selectedProduct.applicantSex = getIDCardInfo(this.idNumber).get('sex')
+                this.selectedProduct.insuredBirthDay = getIDCardInfo(this.idNumber).get('birthDay')
+                this.selectedProduct.insuredName = this.customerInfo.customerName
+                this.selectedProduct.insuredPhone = this.customerInfo.mobile
+                this.selectedProduct.insuredSex = getIDCardInfo(this.idNumber).get('sex')
+                this.selectedProduct.productId = 'P20180101000003'
+                // 添加产品
+                addNewProduct(this.selectedProduct)
+                  .then(response => {
+                    if (response.data.code === 0) {
+                      this.productDetailId = response.data.data
+                      // 生成订单
+                      this.order_Params.campaignId = this.campaignId
+                      this.order_Params.taskId = this.taskId
+                      this.order_Params.staffId = localStorage.getItem('agentId')
+                      this.order_Params.staffName = localStorage.getItem('staffName')
+                      this.order_Params.creatorId = localStorage.getItem('agentId')
+                      this.order_Params.creatorName = localStorage.getItem('staffName')
+                      this.order_Params.totalAmount = this.insurancePay_car
+                      this.order_Params.productName = '儿童险'
+                      this.order_Params.productId = 'P20180101000003'
+                      this.order_Params.productDetailId = this.productDetailId
+                      this.order_Params.customerId = this.customerInfo.customerId
+                      this.order_Params.customerName = this.customerInfo.customerName
+                      this.order_Params.customerPhone = this.customerInfo.mobile
+                      this.order_Params.description = '儿童险'
+                      generateOrder(this.order_Params)
+                        .then(res => {
+                          if (res.data.code === 0) {
+                            // 成功生成订单 判断是否发送短信
+                            if (this.sendMessage === true) {
+                              sendMessageToCustomer(res.data.data, this.customerInfo.mobile)
+                            }
+                            this.$message({
+                              message: '成功生成订单',
+                              type: 'success'
+                            })
+                          } else {
+                            // 生成订单出错
+                            this.$message.error(res.data.message)
+                            return
+                          }
+                        })
+                    } else {
+                      // 添加产品出错
+                      this.$message.error('出错啦...请稍后重试！')
+                      return
+                    }
+                  })
+                break
+
+              case 'P20180101000004':
+                this.selectedProduct.applicantBirthDay = getIDCardInfo(this.idNumber).get('birthDay')
+                this.selectedProduct.applicantName = this.customerInfo.customerName
+                this.selectedProduct.applicantPhone = this.customerInfo.mobile
+                this.selectedProduct.applicantSex = getIDCardInfo(this.idNumber).get('sex')
+                this.selectedProduct.insuredBirthDay = getIDCardInfo(this.idNumber).get('birthDay')
+                this.selectedProduct.insuredName = this.customerInfo.customerName
+                this.selectedProduct.insuredPhone = this.customerInfo.mobile
+                this.selectedProduct.insuredSex = getIDCardInfo(this.idNumber).get('sex')
+                this.selectedProduct.productId = 'P20180101000004'
+                // 添加产品
+                addNewProduct(this.selectedProduct)
+                  .then(response => {
+                    if (response.data.code === 0) {
+                      this.productDetailId = response.data.data
+                      // 生成订单
+                      this.order_Params.campaignId = this.campaignId
+                      this.order_Params.taskId = this.taskId
+                      this.order_Params.staffId = localStorage.getItem('agentId')
+                      this.order_Params.staffName = localStorage.getItem('staffName')
+                      this.order_Params.creatorId = localStorage.getItem('agentId')
+                      this.order_Params.creatorName = localStorage.getItem('staffName')
+                      this.order_Params.totalAmount = this.insurancePay_car
+                      this.order_Params.productName = '重疾险'
+                      this.order_Params.productId = 'P20180101000004'
+                      this.order_Params.productDetailId = this.productDetailId
+                      this.order_Params.customerId = this.customerInfo.customerId
+                      this.order_Params.customerName = this.customerInfo.customerName
+                      this.order_Params.customerPhone = this.customerInfo.mobile
+                      this.order_Params.description = '重疾险'
+                      generateOrder(this.order_Params)
+                        .then(res => {
+                          if (res.data.code === 0) {
+                            // 成功生成订单 判断是否发送短信
+                            if (this.sendMessage === true) {
+                              sendMessageToCustomer(res.data.data, this.customerInfo.mobile)
+                            }
+                            this.$message({
+                              message: '成功生成订单',
+                              type: 'success'
+                            })
+                          } else {
+                            // 生成订单出错
+                            this.$message.error(res.data.message)
+                            return
+                          }
+                        })
+                    } else {
+                      // 添加产品出错
+                      this.$message.error('出错啦...请稍后重试！')
+                      return
+                    }
+                  })
+                break
+            }
           } else {
-            this.showAutoDial = false
-            this.autoDialNext = false
+            this.$message.error('未选择任何产品！')
+            return
           }
-          this.activeNames = ['1', '2', '3', '4']
-          this.radio = ''
-          this.recordId = ''
-          this.summary_description = ''
-          this.appointTime = ''
-          this.selectedSummarys = []
-          this.showDetailInfos(this.taskIds[0], this.campaignIds[0], this.customerIds[0], this.isBlacklists[0], null)
-        } else {
-          // 没勾选自动拨打下一个 返回列表
-          this.radio = ''
-          this.recordId = ''
-          this.summary_description = ''
-          this.appointTime = ''
-          this.selectedSummarys = []
-          this.taskIds = []
-          this.campaignIds = []
-          this.customerIds = []
-          this.isBlacklists = []
-          this.showAutoDial = false
-          this.searchByKeyWords(this.req)
-          this.isDialTask = true
         }
+        // 选择失败、预约 或 成功但没有产品(如招聘)的情况
+        // 修改任务状态
+        updateTaskStatus(this.taskId, this.radio, this.appointTime)
+          .then(res => {
+            if (res.data.code === 0) {
+              // 修改小结备注
+              updateRecordInfo(this.recordId, this.radio, this.selectedSummarys, this.summary_description)
+                .then(res1 => {
+                  if (res1.data.code === 0) {
+                  // 后处理
+                    if (this.autoDialNext === true) {
+                      //  勾选了自动拨打下一个
+                      console.log('before shift:' + this.taskIds[0] + ',' + this.campaignIds[0] + ',' + this.customerIds[0] + ',' + this.isBlacklists[0])
+                      this.taskIds.shift()
+                      this.campaignIds.shift()
+                      this.customerIds.shift()
+                      this.isBlacklists.shift()
+                      console.log('after shift:' + this.taskIds[0] + ',' + this.campaignIds[0] + ',' + this.customerIds[0] + ',' + this.isBlacklists[0])
+                      this.taskId = this.taskIds[0]
+                      this.campaignId = this.campaignIds[0]
+                      this.customerId = this.customerIds[0]
+                      this.isBlacklist = this.isBlacklists[0]
+                      // 判断展示 checkbox与否
+                      if (this.taskIds.length > 1) {
+                        this.showAutoDial = true
+                      } else {
+                        this.showAutoDial = false
+                        this.autoDialNext = false
+                      }
+                      this.activeNames = ['1', '2', '3', '4']
+                      this.radio = ''
+                      this.recordId = ''
+                      this.summary_description = ''
+                      this.canContact = 1
+                      this.appointTime = ''
+                      this.selectedSummarys = []
+                      this.hideDialTo = false
+                      this.isLastContactTime = false
+                      this.showDetailInfos(this.taskIds[0], this.campaignIds[0], this.customerIds[0], this.isBlacklists[0], null)
+                    } else {
+                      // 没勾选自动拨打下一个 返回列表
+                      this.radio = ''
+                      this.recordId = ''
+                      this.summary_description = ''
+                      this.appointTime = ''
+                      this.selectedSummarys = []
+                      this.canContact = 1
+                      this.hideDialTo = false
+                      this.isLastContactTime = false
+                      this.taskIds = []
+                      this.campaignIds = []
+                      this.customerIds = []
+                      this.isBlacklists = []
+                      this.showAutoDial = false
+                      this.searchByKeyWords(this.req)
+                      this.isDialTask = true
+                    }
+                  } else {
+                    this.$message.error(res1.data.message)
+                    this.searchByKeyWords(this.req)
+                    this.isDialTask = true
+                  }
+                })
+            } else {
+              this.$message.error(res.data.message)
+              return
+            }
+          })
       }
     },
     // 返回列表
@@ -786,6 +1131,36 @@ export default {
       this.isDialTask = true
       this.searchByKeyWords(this.req)
     }
+  },
+  // 组件刚被创建时 属性还未计算时   methods方法还未调用时
+  beforeCreate() {
+    getMenu()
+      .then(response => {
+        const data = response.data
+        sessionStorage.setItem('getMenu', JSON.stringify(data))
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  },
+  // 模板编译/挂载之后
+  mounted() {
+    this.searchByKeyWords(this.req)
+    getStaffNameById(localStorage.getItem('agentId'))
+      .then(res => {
+        if (res.data.code === 1) {
+          localStorage.setItem('staffName', res.data.data[0].staffName)
+        }
+      })
+    this.interval = setInterval(() => {
+      this.editDialToStatus()
+    }, 2000)
+  },
+  // 离开时清除定时器
+  destroyed: function() {
+    console.log('i m leaving dial page')
+    clearInterval(this.interval)
   }
 }
 </script>
+

@@ -74,7 +74,7 @@
           </el-table-column>
           <el-table-column align="center" label="员工姓名" prop="staffName">
           </el-table-column>
-          <el-table-column align="center" label="最近联系时间" prop="hangUpTime">
+          <el-table-column align="center" label="最近联系时间" prop="callTime">
           </el-table-column>
           <el-table-column align="center" label="预约时间">
             <template slot-scope="scope">
