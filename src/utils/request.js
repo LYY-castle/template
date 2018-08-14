@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '../store'
-import { getToken } from '@/utils/auth'
+import { getToken, setToken } from '@/utils/auth'
 // import qs from 'qs'
 import router from '../router/index'
 
@@ -31,6 +31,10 @@ service.interceptors.response.use(
     /**
   * code为非20000是抛错 可结合自己业务进行修改
   */
+    const authorization = response.headers.authorization
+    if (typeof authorization !== 'undefined' && authorization !== '') {
+      setToken(authorization)
+    }
     const res = response.data
     if (res.code !== 20000) {
       if (res.code === '403') {
