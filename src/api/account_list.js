@@ -31,7 +31,7 @@ export function resetPWDById(obj) {
     data: obj
   })
 }
-
+// 角色建议
 export function findAccountByAgentid(obj) {
   return request({
     url: '/account/findAccountByAgentid',
@@ -45,13 +45,6 @@ export function findOrganById(obj) {
     url: '/organization/findOrganById',
     method: 'post',
     data: obj
-  })
-}
-
-export function getRoleList() {
-  return request({
-    url: '/authority/getRoleList',
-    method: 'get'
   })
 }
 
@@ -86,3 +79,37 @@ export function findAllOrganTo() {
   })
 }
 
+// 查询角色列表
+export function getRoles() {
+  return request({
+    url: 'auth/roles'
+  })
+}
+// 查询角色菜单
+export function getMenuById(roleId) {
+  return request({
+    url: `auth/role/${roleId}/menus`
+  })
+}
+// 赋予用户角色
+export function addRole(userId, roleIds) {
+  return request({
+    url: `auth/users/${userId}/roles`,
+    method: 'post',
+    data: { 'roleIds': roleIds, 'method': 'POST' }
+  })
+}
+// 修改用户角色
+export function editRole(userId, roleIds) {
+  return request({
+    url: `auth/users/${userId}/roles`,
+    method: 'post',
+    data: { 'roleIds': roleIds, 'method': 'PUT' }
+  })
+}
+// 查询用户角色
+export function getUserRole(userId) {
+  return request({
+    url: `auth/users/${userId}/roles`
+  })
+}

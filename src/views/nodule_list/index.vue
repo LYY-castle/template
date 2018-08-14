@@ -115,7 +115,7 @@
         <el-form-item label="小结标题" prop="summaryName">
           <el-input v-model="summaryDetail.summaryName" size="small" maxlength="50"></el-input>
         </el-form-item>
-        <el-form-item label="备注" prop="description">
+        <el-form-item label="备注">
           <el-input v-model="summaryDetail.description" type="textarea" size="small" maxlength="255"></el-input>
         </el-form-item>
         <div class="expand">
@@ -151,7 +151,7 @@
         <el-form-item label="小结编号">
           <span>{{summaryDetail.summaryId}}</span>
         </el-form-item>
-        <el-form-item label="备注" prop="description">
+        <el-form-item label="备注">
           <span>{{summaryDetail.description}}</span>
         </el-form-item>
         <div class="expand2">
@@ -184,7 +184,7 @@
         <el-form-item label="小结标题" prop="summaryName">
           <el-input v-model="addSummary.summaryName" size="small" maxlength="50"></el-input>
         </el-form-item>
-        <el-form-item label="备注" prop="description">
+        <el-form-item label="备注">
           <el-input v-model="addSummary.description" type="textarea" size="small" maxlength="255"></el-input>
         </el-form-item>
         <div class="expand">
@@ -253,10 +253,10 @@ export default {
       rule: {
         summaryName: [
           { required: true, message: '请输入小结标题', trigger: 'blur' }
-        ],
-        description: [
-          { required: true, message: '请输入小结描述', trigger: 'blur' }
         ]
+        // description: [
+        //   { required: true, message: '请输入小结描述', trigger: 'blur' }
+        // ]
       },
       detailVisible: false,
       delVisible: false, // 删除对话框显示隐藏

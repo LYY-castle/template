@@ -1,9 +1,8 @@
 import request from '@/utils/request'
 
-export function getMenu() {
+export function getMenu(userId) {
   return request({
-    url: '/login/getNewMenu',
-    method: 'post'
+    url: `auth/${userId}/menus`
   })
 }
 
