@@ -124,131 +124,109 @@
         </el-col>
       </el-row>
     </div>
-    <el-dialog title="生成系统账号" :visible.sync="dialogFormVisible" width="60%" @close="resetForm('ruleForm')">
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="工号">
-          <span>{{ruleForm.agentId}}</span>
-        </el-form-item>
-        <el-form-item label="组织">
-          <span v-if="ruleForm.upDepartName!=='0'">{{ruleForm.upDepartName}}--></span>
-          <span style="color: blue">{{ruleForm.departName}}</span>
-        </el-form-item>
-        <el-form-item label="角色建议">
-          <el-checkbox-group v-model="checkedRoles" @change="handleCheckedRolesChange">
-            <el-checkbox v-model="checkAgent" label="agent" @change="handleCheckAgent">普通坐席</el-checkbox>
-            <el-checkbox v-model="checkMonitor" label="monitor" @change="handleCheckMonitor">团队长坐席</el-checkbox>
-            <el-checkbox v-model="checkChief" label="chief" @change="handleCheckChief">坐席主管</el-checkbox>
-            <el-checkbox v-model="checkQc" label="qc" @change="handleCheckQc">质检员</el-checkbox>
-            <el-checkbox v-model="checkQcmonitor" label="qcmonitor" @change="handleCheckQcmonitor">质检队长</el-checkbox>
-            <el-checkbox v-model="checkQcchief" label="qcchief" @change="handleCheckQcchief">质检主管</el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="系统权限">
-          <!--<el-input v-model="ruleFormReverse.permission"></el-input>-->
-          <el-checkbox-group v-model="checkedPermission" @change="handleCheckedPermissionChange">
-            <el-checkbox v-for="permission in permissions" :label="permission.roleNumber" :key="permission.roleNumber">{{permission.roleName}}</el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item>
-          <el-button size="mini" type="primary" @click="add">添加其他账号</el-button>
-        </el-form-item>
-        <div v-for="(other_account, index) in ruleForm.other_accounts">
-          <el-form-item label="账号方式">
-            <el-select v-model="other_account.comment" class="reverse">
-              <el-option label="QQ账号" value="QQ"></el-option>
-              <el-option label="微信账号" value="WX"></el-option>
-              <el-option label="CTI账号" value="CTI"></el-option>
-            </el-select>
-            <el-button type="danger" @click.prevent="remove(index)">删除</el-button>
-          </el-form-item>
-          <el-form-item label="账号" :prop="'other_accounts.'+index+'.username'" :rules="{ required: true, message: '请输入账号', trigger: 'blur' }">
-            <el-input v-model="other_account.username"></el-input>
-          </el-form-item>
-          <el-form-item label="密码" :prop="'other_accounts.'+index+'.passWord'" :rules="{ required: true, message: '请输入密码', trigger: 'blur' }">
-            <el-input v-model="other_account.passWord"></el-input>
-          </el-form-item>
-        </div>
-      </el-form>
+    <el-dialog title="赋予系统账号角色" :visible.sync="dialogFormVisible" width="70%">
+      <el-row>
+        <el-card>
+          <el-row slot="header">
+            <el-col>
+              <div>
+                <b>工号：</b>
+                <span>{{ruleFormReverse.agentId}}</span>
+                <b v-if="ruleFormReverse.upDepartName!=='0'" style="margin-left:30px;">上级部门：</b>
+                <span v-if="ruleFormReverse.upDepartName!=='0'">{{ruleFormReverse.upDepartName}}</span>
+                <b style="margin-left:30px;">所属部门：</b>
+                <span>{{ruleFormReverse.departName}}</span>
+              </div>
+            </el-col>
+          </el-row>
+          <div style="text-align:center">
+            <el-checkbox-group v-model="checkRoleData2" @change="checkRoles">
+              <el-checkbox-button v-for="(item,key) in roleLists" :label="key" :key="item">{{item}}</el-checkbox-button>
+            </el-checkbox-group>
+          </div>
+          <el-row style="margin-top:10px;" v-if="roleMenu.length!=0">
+              <el-card>
+                <el-row v-model="activeName" style="border-bottom:1px solid #EBEEF5;">
+                  <el-row style="color:#B4B4B4;margin-bottom:10px;"><b style="font-size:20px;">所选角色的可用功能为：</b></el-row>
+                  <el-col :span="4" v-for="item in roleMenu" style="margin-top:5px;border-bottom:1px solid #EBEEF5;">{{item.name}}</el-col>
+                </el-row>
+              </el-card>        
+          </el-row>
+        </el-card>
+      </el-row>
       <div slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="resetForm('ruleForm')">重置</el-button>
+        <el-button type="danger" @click="checkRoleData2=[];roleMenu=[]">重置</el-button>
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+        <el-button type="primary" @click="addRole(roleIds)">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="修改系统账号" :visible.sync="dialogFormVisibleReverse" width="60%" @close="resetFormReverse">
-      <el-form :model="ruleFormReverse" :rules="rules" ref="ruleFormReverse" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="工号">
-          <span>{{ruleFormReverse.agentId}}</span>
-        </el-form-item>
-        <el-form-item label="组织">
-          <span v-if="ruleFormReverse.upDepartName!=='0'">{{ruleFormReverse.upDepartName}}--></span>
-          <span style="color: blue">{{ruleFormReverse.departName}}</span>
-        </el-form-item>
-        <el-form-item label="角色建议">
-          <el-checkbox-group v-model="checkedRoles" @change="handleCheckedRolesChange">
-            <el-checkbox v-model="checkAgent" label="agent" @change="handleCheckAgent">普通坐席</el-checkbox>
-            <el-checkbox v-model="checkMonitor" label="monitor" @change="handleCheckMonitor">团队长坐席</el-checkbox>
-            <el-checkbox v-model="checkChief" label="chief" @change="handleCheckChief">坐席主管</el-checkbox>
-            <el-checkbox v-model="checkQc" label="qc" @change="handleCheckQc">质检员</el-checkbox>
-            <el-checkbox v-model="checkQcmonitor" label="qcmonitor" @change="handleCheckQcmonitor">质检队长</el-checkbox>
-            <el-checkbox v-model="checkQcchief" label="qcchief" @change="handleCheckQcchief">质检主管</el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="系统权限">
-          <!--<el-input v-model="ruleFormReverse.permission"></el-input>-->
-          <el-checkbox-group v-model="checkedPermission" @change="handleCheckedPermissionChange">
-            <el-checkbox style="width: 20%;" v-for="permission in permissions" :label="permission.roleNumber" :key="permission.roleNumber">{{permission.roleName}}</el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item>
-          <el-button size="mini" type="primary" @click="addUser">添加其他账号</el-button>
-        </el-form-item>
-        <div v-for="(other_account, index) in ruleFormReverse.other_accounts">
-          <el-form-item label="账号方式">
-            <el-select v-model="other_account.comment" class="reverse">
-              <el-option label="QQ账号" value="QQ"></el-option>
-              <el-option label="微信账号" value="WX"></el-option>
-              <el-option label="CTI账号" value="CTI"></el-option>
-            </el-select>
-            <el-button type="danger" @click.prevent="removeDomain(index)">删除</el-button>
-          </el-form-item>
-          <el-form-item label="账号" :prop="'other_accounts.'+index+'.username'" :rules="{ required: true, message: '请输入账号', trigger: 'blur' }">
-            <el-input v-model="other_account.username"></el-input>
-          </el-form-item>
-          <el-form-item label="密码" :prop="'other_accounts.'+index+'.passWord'" :rules="{ required: true, message: '请输入密码', trigger: 'blur' }">
-            <el-input v-model="other_account.passWord"></el-input>
-          </el-form-item>
-        </div>
-      </el-form>
+    <el-dialog title="修改系统账号角色" :visible.sync="dialogFormVisibleReverse" width="70%">
+      <el-row>
+        <el-card>
+          <el-row slot="header">
+            <el-col>
+              <div>
+                <b>工号：</b>
+                <span>{{ruleFormReverse.agentId}}</span>
+                <b v-if="ruleFormReverse.upDepartName!=='0'" style="margin-left:30px;">上级部门：</b>
+                <span v-if="ruleFormReverse.upDepartName!=='0'">{{ruleFormReverse.upDepartName}}</span>
+                <b style="margin-left:30px;">所属部门：</b>
+                <span>{{ruleFormReverse.departName}}</span>
+              </div>
+            </el-col>
+          </el-row>
+          <div style="text-align:center">
+            <el-checkbox-group v-model="checkRoleData2" @change="checkRoles">
+              <el-checkbox-button v-for="(item,key) in roleLists" :label="key" :key="item">{{item}}</el-checkbox-button>
+            </el-checkbox-group>
+          </div>
+          <el-row style="margin-top:10px;" v-if="roleMenu.length!=0">
+              <el-card>
+                <el-row v-model="activeName" style="border-bottom:1px solid #EBEEF5;">
+                  <el-row style="color:#B4B4B4;margin-bottom:10px;"><b style="font-size:20px;">所选角色的可用功能为：</b></el-row>
+                  <el-col :span="4" v-for="item in roleMenu" style="margin-top:5px;border-bottom:1px solid #EBEEF5;">{{item.name}}</el-col>
+                </el-row>
+              </el-card>        
+          </el-row>
+        </el-card>
+      </el-row>
+      
       <div slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="resetReverse(ruleFormReverse.agentId)">重置</el-button>
+        <el-button type="danger" @click="getUserRole(ruleFormReverse.agentId)">重置</el-button>
         <el-button @click="dialogFormVisibleReverse = false">取 消</el-button>
-        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确 定</el-button>
+        <el-button type="primary" @click="editRole(roleIds)">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="系统账号详情" :visible.sync="dialogFormVisibleDetail" width="60%">
-      <el-form :model="ruleFormReverseDetail" ref="ruleFormReverseDetail" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="工号">
-          <span>{{ruleFormReverseDetail.agentId}}</span>
-        </el-form-item>
-        <el-form-item label="组织">
-          <span>{{ruleFormReverseDetail.departName}}</span>
-        </el-form-item>
-        <el-form-item label="系统权限">
-          <span v-for="role in ruleFormReverseDetail.roles">{{role.roleName}} | </span>
-        </el-form-item>
-        <div v-for="other_account in ruleFormReverseDetail.other_accounts">
-          <el-form-item :label="other_account.comment">
-            <span>{{other_account.username}}</span>
-          </el-form-item>
-        </div>
-        <el-form-item label="创建人">
-          <span>{{ruleFormReverseDetail.creator}}</span>
-        </el-form-item>
-        <el-form-item label="创建时间">
-          <span>{{ruleFormReverseDetail.createTime}}</span>
-        </el-form-item>
-      </el-form>
+    <el-dialog title="系统账号详情" :visible.sync="dialogFormVisibleDetail" width="70%">
+     <el-row>
+        <el-card>
+          <el-row slot="header">
+            <el-col>
+              <div>
+                <b>工号：</b>
+                <span>{{ruleFormReverse.agentId}}</span>
+                <b v-if="ruleFormReverse.upDepartName!=='0'" style="margin-left:30px;">上级部门：</b>
+                <span v-if="ruleFormReverse.upDepartName!=='0'">{{ruleFormReverse.upDepartName}}</span>
+                <b style="margin-left:30px;">所属部门：</b>
+                <span>{{ruleFormReverse.departName}}</span>
+              </div>
+            </el-col>
+          </el-row>
+          <div style="text-align:center">
+            <el-checkbox-group v-model="checkRoleData2" @change="checkRoles">
+              <el-checkbox-button class="detailChkBox" v-for="(item,key) in roleLists" :label="key" :key="item">{{item}}</el-checkbox-button>
+            </el-checkbox-group>
+          </div>
+          <el-row style="margin-top:10px;" v-if="roleMenu.length!=0">
+              <el-card>
+                <el-row v-model="activeName" style="border-bottom:1px solid #EBEEF5;">
+                  <el-row style="color:#B4B4B4;margin-bottom:10px;"><b style="font-size:20px;">所选角色的可用功能为：</b></el-row>
+                  <el-col :span="4" v-for="item in roleMenu" style="margin-top:5px;border-bottom:1px solid #EBEEF5;">{{item.name}}</el-col>
+                </el-row>
+              </el-card>        
+          </el-row>
+        </el-card>
+      </el-row>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogFormVisibleDetail = false">返回</el-button>
       </div>
@@ -257,505 +235,617 @@
 </template>
 
 <script>
-  import { findAllAccount, findAllOrganTo, changeState, resetPWDById, findAccountByAgentid, getRoleList, readProp, modifyAccount, alterAccountList, findOrganById, addAccount } from '@/api/account_list'
-  import { Message, MessageBox } from 'element-ui'
-  import { formatDateTime } from '@/utils/tools'
+import {
+  findAllAccount,
+  findAllOrganTo,
+  changeState,
+  resetPWDById,
+  findAccountByAgentid,
+  readProp,
+  alterAccountList,
+  addAccount,
+  // 角色
+  getRoles,
+  getMenuById,
+  addRole,
+  getUserRole,
+  editRole
+} from '@/api/account_list'
+import { Message, MessageBox } from 'element-ui'
+import { formatDateTime } from '@/utils/tools'
 
-  export default {
-    name: 'account_list',
-    data() {
-      return {
-        permissions: [],
-        checkAgent: false,
-        checkMonitor: false,
-        checkChief: false,
-        checkQc: false,
-        checkQcmonitor: false,
-        checkQcchief: false,
-        checkedPermission: [],
-        roles: [
-          {
-            name: '普通坐席',
-            label: 'agent'
-          },
-          {
-            name: '团队长坐席',
-            label: 'monitor'
-          },
-          {
-            name: '坐席主管',
-            label: 'chief'
-          },
-          {
-            name: '质检员',
-            label: 'qc'
-          },
-          {
-            name: '质检队长',
-            label: 'qcmonitor'
-          },
-          {
-            name: '质检主管',
-            label: 'qcchief'
-          }
-        ],
-        checkedRoles: [],
-        timeValue: '',
-        staffData: {},
-        pagination: {
-          pageNo: null,
-          pageSize: null,
-          totalCount: null,
-          totalPage: null
-        },
-        regionOptions: [],
-        tableData: [],
-        multipleSelection: [],
-        formInline: {
-          staffName: '',
-          angentId: '',
-          creator: '',
-          start_time: '',
-          end_time: '',
-          from: 1,
-          departName: '',
-          status: ''
-        },
-        ruleForm: {
-          departId: '',
-          upDepartName: '',
-          departName: '',
-          agentId: '',
-          other_accounts: []
-        },
-        ruleFormReverse: {
-          departId: '',
-          upDepartName: '',
-          departName: '',
-          agentId: '',
-          other_accounts: []
-        },
-        ruleFormReverseDetail: {
-          agentId: '',
-          departName: '',
-          creator: '',
-          createTime: '',
-          roles: [],
-          other_accounts: []
-        },
-        dialogFormVisible: false,
-        dialogFormVisibleReverse: false,
-        dialogFormVisibleDetail: false,
-        rules: {
-          qwe: [
-            { required: true, message: '请输入密码', trigger: 'blur' }
-          ],
-          w: [
-            { required: true, message: '请输入账号', trigger: 'blur' }
-          ]
-        }
+export default {
+  name: 'account_list',
+  data() {
+    return {
+      rule: {
+        checkRoleData2: [
+          { required: true, message: '请选择角色', trigger: 'change' }
+        ]
+      },
+      validate: false,
+      permissions: [],
+      roleIds: [],
+      roleLists: {},
+      roles: [],
+      activeName: ['1'],
+      checkRoleData: [],
+      checkRoleData2: [],
+      roleMenu: [],
+      tabName: '',
+      checkAgent: false,
+      checkMonitor: false,
+      checkChief: false,
+      checkQc: false,
+      checkQcmonitor: false,
+      checkQcchief: false,
+      checkedPermission: [],
+      // roles: [
+      //   {
+      //     name: '普通坐席',
+      //     label: 'agent'
+      //   },
+      //   {
+      //     name: '团队长坐席',
+      //     label: 'monitor'
+      //   },
+      //   {
+      //     name: '坐席主管',
+      //     label: 'chief'
+      //   },
+      //   {
+      //     name: '质检员',
+      //     label: 'qc'
+      //   },
+      //   {
+      //     name: '质检队长',
+      //     label: 'qcmonitor'
+      //   },
+      //   {
+      //     name: '质检主管',
+      //     label: 'qcchief'
+      //   }
+      // ],
+      checkedRoles: [],
+      timeValue: '',
+      staffData: {},
+      pagination: {
+        pageNo: null,
+        pageSize: null,
+        totalCount: null,
+        totalPage: null
+      },
+      regionOptions: [],
+      tableData: [],
+      multipleSelection: [],
+      formInline: {
+        staffName: '',
+        angentId: '',
+        creator: '',
+        start_time: '',
+        end_time: '',
+        from: 1,
+        departName: '',
+        status: ''
+      },
+      ruleForm: {
+        departId: '',
+        upDepartName: '',
+        departName: '',
+        agentId: '',
+        other_accounts: []
+      },
+      ruleFormReverse: {
+        departId: '',
+        upDepartName: '',
+        departName: '',
+        agentId: '',
+        other_accounts: []
+      },
+      ruleFormReverseDetail: {
+        agentId: '',
+        departName: '',
+        creator: '',
+        createTime: '',
+        roles: [],
+        other_accounts: []
+      },
+      dialogFormVisible: false,
+      dialogFormVisibleReverse: false,
+      dialogFormVisibleDetail: false,
+      rules: {
+        qwe: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+        w: [{ required: true, message: '请输入账号', trigger: 'blur' }]
       }
+    }
+  },
+  mounted() {
+    this.getRoles()
+  },
+  methods: {
+    // 查询所有角色列表
+    getRoles() {
+      getRoles().then(response => {
+        var result = response.data.result
+        for (var i = 0; i < response.data.result.length; i++) {
+          this.roleLists[result[i].id] = result[i].roleName
+        }
+      }).catch(error => {
+        console.log(error)
+      })
     },
-    methods: {
-      add() {
-        this.ruleForm.other_accounts.push({
-          comment: 'QQ',
-          username: '',
-          passWord: ''
-        })
-      },
-      addUser() {
-        this.ruleFormReverse.other_accounts.push({
-          comment: 'QQ',
-          username: '',
-          passWord: ''
-        })
-      },
-      remove(index) {
-        this.ruleForm.other_accounts.splice(index, 1)
-      },
-      removeDomain(index) {
-        this.ruleFormReverse.other_accounts.splice(index, 1)
-      },
-      all(status) {
-        const chk_box = this.multipleSelection.map(function(item, index) {
-          return item.agentId
-        })
-        MessageBox.confirm('确定执行批量操作吗？', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          alterAccountList({
-            angentIdList: chk_box,
-            status: status
-          }).then(response => {
-            if (response.data.code === 1) {
-              Message({
-                message: response.data.message,
-                type: 'success',
-                duration: 3 * 1000
-              })
-              findAllAccount({ departName: '', from: this.pagination.pageNo }).then(responsedata => {
-                this.queryStaff(responsedata)
-              })
-            } else {
-              Message({
-                message: response.data.message,
-                type: 'error',
-                duration: 3 * 1000
-              })
+    // 查询用户对应角色
+    getUserRole(userId) {
+      getUserRole(userId).then(response => {
+        this.checkRoleData2 = []
+        if (response.data.result.length) {
+          for (var i = 0; i < response.data.result.length; i++) {
+            this.checkRoleData2.push(response.data.result[i].id.toString())
+          }
+        }
+        if (this.checkRoleData2.length) {
+          getMenuById(this.checkRoleData2.join(',')).then(response => {
+            if (response.data.result.length !== undefined) {
+              // 一级菜单不显示
+              this.roleMenu.length = 0
+              for (var i = 0; i < response.data.result.length; i++) {
+                if (response.data.result[i].parentId !== '0') {
+                  this.roleMenu.push(response.data.result[i])
+                  console.log(this.roleMenu)
+                }
+              }
             }
+          }).catch(error => {
+            if (error.response.status === 403) {
+              this.roleMenu = []
+            }
+            console.log(error)
           })
-        })
-      },
-      submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            if (this.checkedPermission.indexOf(undefined) !== -1) {
-              this.checkedPermission.splice(this.checkedPermission.indexOf(undefined), 1)
-            }
-            addAccount({
-              agentid: this.ruleForm.agentId,
-              organ: this.ruleForm.departId,
-              chk: this.checkedPermission,
-              other_accounts: this.ruleForm.other_accounts
-            }).then(response => {
-              if (response.data.exchange.body.code === 1) {
-                this.dialogFormVisible = false
-                Message({
-                  message: response.data.exchange.body.message + '密码为：' + response.data.exchange.body.password,
-                  type: 'success',
-                  duration: 6 * 1000
-                })
-                findAllAccount({ departName: '' }).then(response => {
-                  this.queryStaff(response)
-                })
-              } else {
-                Message({
-                  message: response.data.exchange.body.message,
-                  type: 'error',
-                  duration: 6 * 1000
-                })
-              }
-            })
-          } else {
-            // console.log('error submit!!')
-            return false
-          }
-        })
-      },
-      submitFormReverse(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            if (this.checkedPermission.indexOf(undefined) !== -1) {
-              this.checkedPermission.splice(this.checkedPermission.indexOf(undefined), 1)
-            }
-            modifyAccount({
-              agentid: this.ruleFormReverse.agentId,
-              organ: this.ruleFormReverse.departId,
-              other_accounts: this.ruleFormReverse.other_accounts,
-              chk: this.checkedPermission
-            }).then(response => {
-              if (response.data.exchange.body.code === 1) {
-                this.dialogFormVisibleReverse = false
-                findAllAccount({ departName: this.$route.query.departName ? this.$route.query.departName : '' }).then(responsedata => {
-                  this.queryStaff(responsedata)
-                })
-              } else {
-                Message({
-                  message: response.data.exchange.body.message,
-                  type: 'error',
-                  duration: 6 * 1000
-                })
-              }
-            })
-          } else {
-            return false
-          }
-        })
-      },
-      resetForm(formName) {
-        this.checkedPermission = []
-        this.checkedRoles = []
-        this.ruleForm = {
-          departId: '',
-          upDepartName: '',
-          departName: '',
-          agentId: '',
-          other_accounts: []
+        } else {
+          this.roleMenu = []
         }
-      },
-      resetFormReverse() {
-        this.resetReverse(this.ruleFormReverse.agentId)
-      },
-      reset() {
-        this.timeValue = ''
-        this.formInline = {
-          staffName: '',
-          angentId: '',
-          creator: '',
-          start_time: '',
-          end_time: '',
-          departName: '',
-          status: '',
-          from: this.pagination.pageNo
-        }
-      },
-      handleSelectionChange(val) {
-        this.multipleSelection = val
-        console.log(val)
-      },
-      handleCheckAgent(value) {
-        this.check(value, 'agent')
-      },
-      handleCheckMonitor(value) {
-        this.check(value, 'monitor')
-      },
-      handleCheckChief(value) {
-        this.check(value, 'chief')
-      },
-      handleCheckQc(value) {
-        this.check(value, 'qc')
-      },
-      handleCheckQcmonitor(value) {
-        this.check(value, 'qcmonitor')
-      },
-      handleCheckQcchief(value) {
-        this.check(value, 'qcchief')
-      },
-      check(bool, item) {
-        readProp({ item: item }).then(response => {
-          if (response.data.length) {
-            if (bool) {
-              for (let i = 0; i <= response.data.length; i++) {
-                if (this.checkedPermission.indexOf(response.data[i]) === -1) {
-                  this.checkedPermission.push(response.data[i])
-                }
-              }
-            } else {
-              for (let i = 0; i <= response.data.length; i++) {
-                if (this.checkedPermission.indexOf(response.data[i]) !== -1) {
-                  this.checkedPermission.splice(this.checkedPermission.indexOf(response.data[i]), 1)
-                }
-              }
+      })
+    },
+    // 选中角色事件
+    checkRoles(val) {
+      this.roleIds = val
+      getMenuById(val.join(',')).then(response => {
+        if (response.data.result.length !== undefined) {
+          // 一级菜单不显示
+          this.roleMenu.length = 0
+          for (var i = 0; i < response.data.result.length; i++) {
+            if (response.data.result[i].parentId !== '0') {
+              this.roleMenu.push(response.data.result[i])
             }
           }
-        })
-      },
-      handleCheckedRolesChange(value) {
-        // 选中之后的数据组成的数组
-        console.log(value)
-      },
-      handleCheckedPermissionChange(value) {
-        console.log(this.checkedPermission)
-      },
-      handleClick(row) {
-        this.checkedPermission = []
-        this.dialogFormVisibleReverse = true
-        findAccountByAgentid({ agentid: row.agentId }).then(response => {
-          if (response.data.code === 1) {
-            this.ruleFormReverse = {
-              departId: row.departId,
-              upDepartName: response.data.depart.upDepartName,
-              departName: response.data.depart.departName,
-              agentId: response.data.account.angentId,
-              other_accounts: response.data.otherAccount
-            }
-            getRoleList().then(responseRole => {
-              if (responseRole.data.code === 1) {
-                this.permissions = responseRole.data.data
-                for (let i = 0; i <= response.data.account.roles.length; i++) {
-                  if (response.data.account.roles[i]) {
-                    this.checkedPermission.push(response.data.account.roles[i].roleNumber)
-                  }
-                }
+        } else {
+          this.roleMenu.length = 0
+        }
+      }).catch(error => {
+        this.roleMenu = []
+        console.log(error)
+      })
+    },
+    // 赋予角色
+    addRole(roleIds) {
+      if (this.checkRoleData2.length === 0) {
+        this.$message.error('请选择角色')
+        return false
+      }
+      addRole(this.ruleFormReverse.agentId, roleIds).then(response => {
+        if (response.status === 200) {
+          this.dialogFormVisible = false
+          this.$message.success('赋予用户角色成功')
+          if (this.$route.query.departName) {
+            findAllAccount({ departName: this.$route.query.departName }).then(
+              response => {
+                this.queryStaff(response)
+                this.formInline.departName = this.$route.query.departName
+                this.pagination = response.data.pageInfo
               }
+            )
+          } else {
+            findAllAccount({ departName: '' }).then(response => {
+              this.queryStaff(response)
             })
           }
-        })
-      },
-      handleClickDetail(row) {
-        this.dialogFormVisibleDetail = true
-        findAccountByAgentid({ agentid: row.agentId }).then(response => {
-          if (response.data.code === 1) {
-            this.ruleFormReverseDetail = {
-              agentId: response.data.account.angentId,
-              departName: response.data.depart.departName,
-              creator: response.data.account.creator,
-              createTime: formatDateTime(response.data.account.createTime),
-              roles: response.data.account.roles,
-              other_accounts: response.data.otherAccount
-            }
-          }
-        })
-        // row已经包含了单个的数据
-      },
-      handleClickPass(row) {
-        resetPWDById({ agentId: row.agentId }).then(response => {
+        }
+      }).catch(error => {
+        this.$message.error('赋予用户角色失败')
+        console.log(error)
+      })
+    },
+    // 修改角色
+    editRole(roleIds) {
+      if (this.checkRoleData2.length === 0) {
+        this.$message.error('请选择角色')
+        return false
+      }
+      editRole(this.ruleFormReverse.agentId, roleIds).then(response => {
+        console.log(roleIds)
+        if (response.status === 200) {
+          this.dialogFormVisibleReverse = false
+          this.$message.success('修改用户角色成功')
+        }
+      }).catch(error => {
+        this.$message.error('修改用户角色失败')
+        console.log(error)
+      })
+    },
+    add() {
+      this.ruleForm.other_accounts.push({
+        comment: 'QQ',
+        username: '',
+        passWord: ''
+      })
+    },
+    addUser() {
+      this.ruleFormReverse.other_accounts.push({
+        comment: 'QQ',
+        username: '',
+        passWord: ''
+      })
+    },
+    remove(index) {
+      this.ruleForm.other_accounts.splice(index, 1)
+    },
+    removeDomain(index) {
+      this.ruleFormReverse.other_accounts.splice(index, 1)
+    },
+    all(status) {
+      const chk_box = this.multipleSelection.map(function(item, index) {
+        return item.agentId
+      })
+      MessageBox.confirm('确定执行批量操作吗？', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        alterAccountList({
+          angentIdList: chk_box,
+          status: status
+        }).then(response => {
           if (response.data.code === 1) {
             Message({
-              message: '重置密码成功，密码为该员工身份证的后六位',
+              message: response.data.message,
               type: 'success',
+              duration: 3 * 1000
+            })
+            findAllAccount({
+              departName: '',
+              from: this.pagination.pageNo
+            }).then(responsedata => {
+              this.queryStaff(responsedata)
+            })
+          } else {
+            Message({
+              message: response.data.message,
+              type: 'error',
               duration: 3 * 1000
             })
           }
         })
-      },
-      handleClickStop(row) {
-        changeState({
-          angentId: row.agentId,
-          status: 0
-        }).then(response => {
-          if (response.data.code === 1) {
-            findAllAccount({ departName: '' }).then(responseData => {
-              this.queryStaff(responseData)
-            })
+      })
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          if (this.checkedPermission.indexOf(undefined) !== -1) {
+            this.checkedPermission.splice(
+              this.checkedPermission.indexOf(undefined),
+              1
+            )
           }
-        })
-      },
-      handleClickStart(row) {
-        changeState({
-          angentId: row.agentId,
-          status: 1
-        }).then(response => {
-          if (response.data.code === 1) {
-            findAllAccount({ departName: '' }).then(responseData => {
-              this.queryStaff(responseData)
-            })
-          }
-        })
-      },
-      handleClickAdd(row) {
-        this.checkedPermission = []
-        this.checkedRoles = []
-        this.dialogFormVisible = true
-        this.ruleForm.departName = row.departName
-        this.ruleForm.agentId = row.agentId
-        this.ruleForm.departId = row.departId
-        findOrganById({ id: row.departId }).then(response => {
-          if (response.data.code === 1) {
-            this.ruleForm.upDepartName = response.data.data.upDepartName
-          }
-        })
-        getRoleList().then(responseRole => {
-          if (responseRole.data.code === 1) {
-            this.permissions = responseRole.data.data
-          }
-        })
-      },
-      resetReverse(id) {
-        findAccountByAgentid({ agentid: id }).then(response => {
-          if (response.data.code === 1) {
-            this.ruleFormReverse = {
-              departId: response.data.depart.departId,
-              upDepartName: response.data.depart.upDepartName,
-              departName: response.data.depart.departName,
-              agentId: response.data.account.angentId,
-              other_accounts: response.data.otherAccount
+          addAccount({
+            agentid: this.ruleForm.agentId,
+            organ: this.ruleForm.departId,
+            chk: this.checkedPermission,
+            other_accounts: this.ruleForm.other_accounts
+          }).then(response => {
+            if (response.data.exchange.body.code === 1) {
+              this.dialogFormVisible = false
+              Message({
+                message:
+                  response.data.exchange.body.message +
+                  '密码为：' +
+                  response.data.exchange.body.password,
+                type: 'success',
+                duration: 6 * 1000
+              })
+              findAllAccount({ departName: '' }).then(response => {
+                this.queryStaff(response)
+              })
+            } else {
+              Message({
+                message: response.data.exchange.body.message,
+                type: 'error',
+                duration: 6 * 1000
+              })
             }
-            this.checkedPermission = []
-            this.checkedRoles = []
-            for (let i = 0; i <= response.data.account.roles.length; i++) {
-              if (response.data.account.roles[i]) {
-                this.checkedPermission[i] = response.data.account.roles[i].roleNumber
+          })
+        } else {
+          // console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    // submitRoleForm(formName) {
+    //   if (this.$refs[formName] !== undefined) {
+    //     this.$refs[formName].validate(valid => {
+    //       if (valid) {
+    //         this.validate = true
+    //       } else {
+    //         this.validate = false
+    //       }
+    //     })
+    //   }
+    // },
+    resetForm(formName) {
+      this.checkedPermission = []
+      this.checkedRoles = []
+      this.ruleForm = {
+        departId: '',
+        upDepartName: '',
+        departName: '',
+        agentId: '',
+        other_accounts: []
+      }
+    },
+    resetFormReverse() {
+      this.resetReverse(this.ruleFormReverse.agentId)
+    },
+    reset() {
+      this.timeValue = ''
+      this.formInline = {
+        staffName: '',
+        angentId: '',
+        creator: '',
+        start_time: '',
+        end_time: '',
+        departName: '',
+        status: '',
+        from: this.pagination.pageNo
+      }
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+      console.log(val)
+    },
+    handleCheckAgent(value) {
+      this.check(value, 'agent')
+    },
+    handleCheckMonitor(value) {
+      this.check(value, 'monitor')
+    },
+    handleCheckChief(value) {
+      this.check(value, 'chief')
+    },
+    handleCheckQc(value) {
+      this.check(value, 'qc')
+    },
+    handleCheckQcmonitor(value) {
+      this.check(value, 'qcmonitor')
+    },
+    handleCheckQcchief(value) {
+      this.check(value, 'qcchief')
+    },
+    check(bool, item) {
+      readProp({ item: item }).then(response => {
+        if (response.data.length) {
+          if (bool) {
+            for (let i = 0; i <= response.data.length; i++) {
+              if (this.checkedPermission.indexOf(response.data[i]) === -1) {
+                this.checkedPermission.push(response.data[i])
+              }
+            }
+          } else {
+            for (let i = 0; i <= response.data.length; i++) {
+              if (this.checkedPermission.indexOf(response.data[i]) !== -1) {
+                this.checkedPermission.splice(
+                  this.checkedPermission.indexOf(response.data[i]),
+                  1
+                )
               }
             }
           }
-        })
-      },
-      handleCurrentChange(val) {
-        this.formInline.from = val
-        this.formInline.start_time = this.timeValue[0]
-        this.formInline.end_time = this.timeValue[1]
-        findAllAccount(this.formInline).then(response => {
-          this.queryStaff(response)
-        })
-      },
-      headerRow({ row, rowIndex }) {
-        if (rowIndex === 0) {
-          return 'color:black'
-        } else {
-          return ''
         }
-      },
-      queryStaff(res) {
-        this.tableData = []
-        this.pagination = res.data.pageInfo
-        if (res.data.data && (res.data.data.length !== 0)) {
-          for (let i = 0; i <= res.data.data.length; i++) {
-            if (res.data.data[i] && (res.data.data.length !== 0)) {
-              var data = {}
-              data.updateTime = formatDateTime(res.data.data[i][8])
-              data.agentId = res.data.data[i][5]
-              data.staffName = res.data.data[i][2]
-              data.departName = res.data.data[i][3]
-              data.statusZH = (res.data.data[i][6] === 0) ? '已停用' : ((res.data.data[i][6] === 1) ? '启用中' : ((res.data.data[i][6] === 2) ? '未启用' : ''))
-              data.status = res.data.data[i][6]
-              data.modifier = res.data.data[i][9]
-              data.departId = res.data.data[i][7]
-              data.userPhone = res.data.data[i][4]
-              this.tableData.push(data)
-            }
+      })
+    },
+    handleCheckedRolesChange(value) {
+      // 选中之后的数据组成的数组
+      console.log(value)
+    },
+    handleCheckedPermissionChange(value) {
+      console.log(this.checkedPermission)
+    },
+    handleClick(row) {
+      this.checkedPermission = []
+      this.dialogFormVisibleReverse = true
+      findAccountByAgentid({ agentid: row.agentId }).then(response => {
+        if (response.data.code === 1) {
+          this.ruleFormReverse = {
+            departId: row.departId,
+            upDepartName: response.data.depart.upDepartName,
+            departName: response.data.depart.departName,
+            agentId: response.data.account.angentId,
+            other_accounts: response.data.otherAccount
           }
-        } else {
+        }
+      })
+      this.getUserRole(row.agentId)
+    },
+    handleClickDetail(row) {
+      this.dialogFormVisibleDetail = true
+      findAccountByAgentid({ agentid: row.agentId }).then(response => {
+        if (response.data.code === 1) {
+          this.ruleFormReverse = {
+            departId: row.departId,
+            upDepartName: response.data.depart.upDepartName,
+            departName: response.data.depart.departName,
+            agentId: response.data.account.angentId,
+            other_accounts: response.data.otherAccount
+          }
+        }
+      })
+      this.getUserRole(row.agentId)
+      // row已经包含了单个的数据
+    },
+    handleClickPass(row) {
+      resetPWDById({ agentId: row.agentId }).then(response => {
+        if (response.data.code === 1) {
           Message({
-            message: '无查询结果，请核对查询条件',
-            type: 'error',
+            message: '重置密码成功，密码为该员工身份证的后六位',
+            type: 'success',
             duration: 3 * 1000
           })
         }
-      },
-      searchStaff(req) {
-        // 根据老版本的逻辑 查询只能传分页页码的第一页
-        req.from = 1
-        req.start_time = this.timeValue[0]
-        req.end_time = this.timeValue[1]
-        findAllAccount(req).then(response => {
-          this.queryStaff(response)
-        })
-      },
-      refreshOrganTo() {
-        findAllOrganTo().then(response => {
-          this.regionOptions = response.data.data
+      })
+    },
+    handleClickStop(row) {
+      changeState({
+        angentId: row.agentId,
+        status: 0
+      }).then(response => {
+        if (response.data.code === 1) {
+          findAllAccount({ departName: '' }).then(responseData => {
+            this.queryStaff(responseData)
+          })
+        }
+      })
+    },
+    handleClickStart(row) {
+      changeState({
+        angentId: row.agentId,
+        status: 1
+      }).then(response => {
+        if (response.data.code === 1) {
+          findAllAccount({ departName: '' }).then(responseData => {
+            this.queryStaff(responseData)
+          })
+        }
+      })
+    },
+    handleClickAdd(row) {
+      this.dialogFormVisible = true
+      this.ruleForm.departName = row.departName
+      this.ruleForm.agentId = row.agentId
+      this.ruleForm.departId = row.departId
+      this.roleMenu.length = 0
+      this.checkRoleData2 = []
+      findAccountByAgentid({ agentid: row.agentId }).then(response => {
+        if (response.data.code === 1) {
+          this.ruleFormReverse = {
+            departId: row.departId,
+            upDepartName: response.data.depart.upDepartName,
+            departName: response.data.depart.departName,
+            agentId: response.data.account.angentId,
+            other_accounts: response.data.otherAccount
+          }
+        }
+      })
+    },
+    resetReverse(id) {
+      this.handleClick(id)
+    },
+    handleCurrentChange(val) {
+      this.formInline.from = val
+      this.formInline.start_time = this.timeValue[0]
+      this.formInline.end_time = this.timeValue[1]
+      findAllAccount(this.formInline).then(response => {
+        this.queryStaff(response)
+      })
+    },
+    headerRow({ row, rowIndex }) {
+      if (rowIndex === 0) {
+        return 'color:black'
+      } else {
+        return ''
+      }
+    },
+    queryStaff(res) {
+      this.tableData = []
+      this.pagination = res.data.pageInfo
+      if (res.data.data && res.data.data.length !== 0) {
+        for (let i = 0; i <= res.data.data.length; i++) {
+          if (res.data.data[i] && res.data.data.length !== 0) {
+            var data = {}
+            data.updateTime = formatDateTime(res.data.data[i][8])
+            data.agentId = res.data.data[i][5]
+            data.staffName = res.data.data[i][2]
+            data.departName = res.data.data[i][3]
+            data.statusZH =
+              res.data.data[i][6] === 0
+                ? '已停用'
+                : res.data.data[i][6] === 1
+                  ? '启用中'
+                  : res.data.data[i][6] === 2 ? '未启用' : ''
+            data.status = res.data.data[i][6]
+            data.modifier = res.data.data[i][9]
+            data.departId = res.data.data[i][7]
+            data.userPhone = res.data.data[i][4]
+            this.tableData.push(data)
+          }
+        }
+      } else {
+        Message({
+          message: '无查询结果，请核对查询条件',
+          type: 'error',
+          duration: 3 * 1000
         })
       }
     },
-    created() {
-      if (this.$route.query.departName) {
-        findAllAccount({ departName: this.$route.query.departName }).then(response => {
+    searchStaff(req) {
+      // 根据老版本的逻辑 查询只能传分页页码的第一页
+      req.from = 1
+      req.start_time = this.timeValue[0]
+      req.end_time = this.timeValue[1]
+      findAllAccount(req).then(response => {
+        this.queryStaff(response)
+      })
+    },
+    refreshOrganTo() {
+      findAllOrganTo().then(response => {
+        this.regionOptions = response.data.data
+      })
+    }
+  },
+  created() {
+    if (this.$route.query.departName) {
+      findAllAccount({ departName: this.$route.query.departName }).then(
+        response => {
           this.queryStaff(response)
           this.formInline.departName = this.$route.query.departName
           this.pagination = response.data.pageInfo
-        })
-      } else {
+        }
+      )
+    } else {
+      findAllAccount({ departName: '' }).then(response => {
+        this.queryStaff(response)
+      })
+    }
+    this.refreshOrganTo()
+  },
+  watch: {
+    $route(to, from) {
+      // 判断url是否带参
+      if (!to.query.departName) {
+        this.formInline.departName = ''
         findAllAccount({ departName: '' }).then(response => {
           this.queryStaff(response)
         })
       }
-      this.refreshOrganTo()
-    },
-    watch: {
-      $route(to, from) {
-        // 判断url是否带参
-        if (!to.query.departName) {
-          this.formInline.departName = ''
-          findAllAccount({ departName: '' }).then(response => {
-            this.queryStaff(response)
-          })
-        }
-      }
     }
   }
+}
 </script>
 <style>
-  .el-checkbox+.el-checkbox {
-    margin-left: 0px;
-  }
-  .el-checkbox__label {
-    padding-left: 0px;
-  }
-  .reverse{
-    width: 70%;
-  }
+.el-checkbox + .el-checkbox {
+  margin-left: 0px;
+}
+.el-checkbox__label {
+  padding-left: 0px;
+}
+.reverse {
+  width: 70%;
+}
 </style>

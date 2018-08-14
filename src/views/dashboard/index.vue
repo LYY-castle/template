@@ -21,8 +21,8 @@ export default {
       'roles'
     ])
   },
-  created() {
-    getMenu().then(response => {
+  mounted() {
+    getMenu(localStorage.getItem('agentId')).then(response => {
       const data = response.data
       // 存到session storage
       sessionStorage.setItem('getMenu', JSON.stringify(data))
@@ -30,6 +30,11 @@ export default {
       this.$store.dispatch('SetMenu', getDynamicRouter(data))
       this.$router.addRoutes(getDynamicRouter(data))
     }).catch(error => {
+      if (error.response.status === 403) {
+        sessionStorage.setItem('getMenu', '')
+        this.$store.dispatch('SetMenu', [])
+        this.$router.addRoutes(getDynamicRouter(''))
+      }
       console.error(error)
     })
   }
