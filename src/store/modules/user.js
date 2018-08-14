@@ -1,5 +1,5 @@
 import { login, loginAnd, logout, getInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, removeToken } from '@/utils/auth'
 
 const user = {
   state: {
@@ -32,8 +32,8 @@ const user = {
         login(username, userInfo.password, userInfo.extensionNumber.trim()).then(response => {
           const data = response.data
           if (data.code === 1 || data.code === '1') {
-            setToken(data.token)
-            commit('SET_TOKEN', data.token)
+            // setToken(data.token)
+            commit('SET_TOKEN', true)
           }
           resolve(data)
         }).catch(error => {
@@ -91,8 +91,8 @@ const user = {
           // this.dispatch('FedLogOut') //需要清除token重登陆
           const data = response.data
           if (data.code === '1') {
-            setToken(data.token)
-            commit('SET_TOKEN', data.token)
+            // setToken(data.token)
+            commit('SET_TOKEN', true)
           }
           resolve(data)
         }).catch(error => {
