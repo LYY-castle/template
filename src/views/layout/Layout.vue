@@ -65,6 +65,9 @@ export default {
   }
 </style>
 <style>
+  .main-container{
+      transform: scale3d(1, 1, 1);
+  }
   #app .sidebar-container {
     /* width: 210px!important; */
     width: 11%!important;

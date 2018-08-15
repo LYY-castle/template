@@ -136,7 +136,7 @@
         </el-col>
       </el-row>
     </div>
-    <el-dialog title="开始质检评分" :visible.sync="dialogFormVisible" width="80%" @close="cleanInfo()">
+    <el-dialog title="开始质检评分" :visible.sync="dialogFormVisible" width="80%" @close="cleanInfo()" append-to-body>
       <div >正在对：{{taskId}} 进行操作</div>
       <div >
           <audio autoplay="autoplay"
@@ -345,7 +345,7 @@
     </el-dialog>
 
 
-    <el-dialog title="修改质检评分" :visible.sync="dialogFormVisibleReverse" width="80%"  @close="cleanInfo()">
+    <el-dialog title="修改质检评分" :visible.sync="dialogFormVisibleReverse" width="80%"  @close="cleanInfo()" append-to-body>
       <div>正在对：{{taskId}} 进行操作</div>
       <div >
           <audio autoplay="autoplay"

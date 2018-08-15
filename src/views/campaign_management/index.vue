@@ -39,15 +39,15 @@
           </el-table-column>
           <el-table-column
             align="center"
-            prop="campaignId"
             label="活动编号">
+            <template slot-scope="scope">
+              <el-button type="text" size="small" @click="detailVisible=true;getDeptByCampaignId(scope.row.campaignId);getMarksByCampaignId(scope.row.campaignId);getCampaignById(scope.row.campaignId);">{{scope.row.campaignId}}</el-button>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
+            prop="campaignName"
             label="活动名称">
-            <template slot-scope="scope">
-              <el-button type="text" size="small" @click="detailVisible=true;getDeptByCampaignId(scope.row.campaignId);getMarksByCampaignId(scope.row.campaignId);getCampaignById(scope.row.campaignId);">{{scope.row.campaignName}}</el-button>
-            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -187,7 +187,7 @@
         <el-form-item label="活动名称">
           <span>{{campaignDetail.campaignName}}</span>
         </el-form-item>
-        <el-form-item label="活动名称">
+        <el-form-item label="活动类型">
           <span>{{campaignDetail.campaignTypeInfo.name}}</span>
         </el-form-item>
         <el-form-item label="产品" v-if="!(campaignDetail.campaignTypeInfo.code=='RECRUIT')">

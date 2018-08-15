@@ -855,26 +855,6 @@ export default {
     },
     toggleSideBar() {
       this.$store.dispatch('ToggleSideBar')
-      // console.log(this.$store.state.app.sidebar.opened)
-      var sidebarStatus = this.$store.state.app.sidebar.opened
-      if (sidebarStatus) {
-        this.navbar = 'navbar open'
-        sidebarStatus = 1
-      } else {
-        this.navbar = 'navbar close'
-        sidebarStatus = 0
-      }
-    },
-    toggleNavbar() {
-      // console.log(this.$store.state.app.sidebar.opened)
-      var sidebarStatus = this.$store.state.app.sidebar.opened
-      if (sidebarStatus) {
-        this.navbar = 'navbar open'
-        sidebarStatus = 1
-      } else {
-        this.navbar = 'navbar close'
-        sidebarStatus = 0
-      }
     },
     logout() {
       this.$store.dispatch('LogOut').then((data) => {
@@ -913,12 +893,13 @@ export default {
     }).catch(error => {
       console.log(error)
     })
-    this.toggleNavbar()
   }
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
+
 .navbar{
+  width:100%;
   .el-form-item{
     margin-bottom:0;
     height:30px;

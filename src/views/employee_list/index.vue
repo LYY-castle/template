@@ -124,7 +124,7 @@
         </el-col>
       </el-row>
     </div>
-    <el-dialog title="添加员工" :visible.sync="dialogFormVisible" width="30%" @close="resetForm('ruleForm')">
+    <el-dialog title="添加员工" :visible.sync="dialogFormVisible" width="30%" @close="resetForm('ruleForm')" append-to-body>
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="姓名:" prop="staffName">
           <el-input v-model="ruleForm.staffName" maxlength="45" placeholder="上限45字符"></el-input>
@@ -169,7 +169,7 @@
         <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="修改员工" :visible.sync="dialogFormVisibleReverse" width="30%" @close="resetForm('ruleFormReverse')">
+    <el-dialog title="修改员工" :visible.sync="dialogFormVisibleReverse" width="30%" @close="resetForm('ruleFormReverse')" append-to-body>
       <el-form :model="ruleFormReverse" :rules="rules" ref="ruleFormReverse" label-width="100px" class="demo-ruleForm">
         <el-form-item label="工号" prop="angentId">
           <span>{{ruleFormReverse.angentId}}</span>
@@ -223,7 +223,7 @@
         <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="员工详情" :visible.sync="dialogFormVisibleDetail" width="30%">
+    <el-dialog title="员工详情" :visible.sync="dialogFormVisibleDetail" width="30%" append-to-body>
       <el-form :model="ruleFormReverseDetail" :rules="rules" ref="ruleFormReverseDetail" label-width="100px" class="demo-ruleForm">
         <el-form-item label="工号">
           <span>{{ruleFormReverseDetail.angentId}}</span>
