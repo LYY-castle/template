@@ -124,6 +124,7 @@
       },
       add(item, arr, index) {
         this.dialogFormVisible = true
+        this.form.name = ''
         this.menu = item
         this.arr = arr
         this.index = index

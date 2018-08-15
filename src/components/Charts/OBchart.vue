@@ -63,7 +63,7 @@
       <el-table-column
         align="center"
         prop="new_first_dial_task_count"
-        label="新增首播数量">
+        label="新增首拨数量">
       </el-table-column>
       <el-table-column
         align="center"
