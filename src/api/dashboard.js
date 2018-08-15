@@ -19,7 +19,6 @@ export function findContactHistory() {
     method: 'get'
   })
 }
-
 export function getUserInfo() {
   return request({
     url: '/login/getMenu',
