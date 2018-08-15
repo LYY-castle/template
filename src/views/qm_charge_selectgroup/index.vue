@@ -368,18 +368,6 @@ export default {
     this.searchByCampaign(this.req)
   },
 
-  beforeCreate() {
-    // 菜单
-    getMenu()
-      .then(response => {
-        const data = response.data
-        sessionStorage.setItem('getMenu', JSON.stringify(data))
-      })
-      .catch(error => {
-        console.log(error)
-      })
-  },
-
   watch: {},
 
   components: {},
