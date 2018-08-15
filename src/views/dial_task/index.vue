@@ -363,7 +363,6 @@
 </style>
 
 <script>
-import { getMenu } from '@/api/dashboard' // 侧边菜单栏
 import cti from '@/utils/ctijs' //
 import { getPhoneOwn } from '@/api/navbar'
 import {
@@ -1131,17 +1130,6 @@ export default {
       this.isDialTask = true
       this.searchByKeyWords(this.req)
     }
-  },
-  // 组件刚被创建时 属性还未计算时   methods方法还未调用时
-  beforeCreate() {
-    getMenu()
-      .then(response => {
-        const data = response.data
-        sessionStorage.setItem('getMenu', JSON.stringify(data))
-      })
-      .catch(error => {
-        console.log(error)
-      })
   },
   // 模板编译/挂载之后
   mounted() {

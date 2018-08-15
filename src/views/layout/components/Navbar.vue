@@ -189,7 +189,7 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import { getUserInfo } from '@/api/dashboard'
 import { Message } from 'element-ui'
-import { addComeContact, addDialContact, addAnswerContact, addHangupContact, getPhoneOwn, getMenu, checkSoftphonePerm } from '@/api/navbar'
+import { addComeContact, addDialContact, addAnswerContact, addHangupContact, getPhoneOwn, checkSoftphonePerm } from '@/api/navbar'
 
 import cti from '@/utils/ctijs'
 var vm = null
