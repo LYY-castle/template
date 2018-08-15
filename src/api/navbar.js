@@ -35,3 +35,15 @@ export function getPhoneOwn(req) {
     params: { 'phone': req }
   })
 }
+export function getMenu() {
+  return request({
+    url: '/login/getNewMenu',
+    method: 'post'
+  })
+}
+export function checkSoftphonePerm(agentId) {
+  return request({
+    url: '/auth/users/' + agentId + '/perms/-softbar/GET',
+    method: 'get'
+  })
+}

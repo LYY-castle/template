@@ -187,9 +187,9 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-import { getMenu, getUserInfo } from '@/api/dashboard'
+import { getUserInfo } from '@/api/dashboard'
 import { Message } from 'element-ui'
-import { addComeContact, addDialContact, addAnswerContact, addHangupContact, getPhoneOwn } from '@/api/navbar'
+import { addComeContact, addDialContact, addAnswerContact, addHangupContact, getPhoneOwn, getMenu, checkSoftphonePerm } from '@/api/navbar'
 
 import cti from '@/utils/ctijs'
 var vm = null
@@ -887,15 +887,22 @@ export default {
   },
   mounted() {
     vm = this
-    let menu = []
-    getMenu().then(res => {
-      menu = res.data.data.map(function(item, index) {
-        return item.parent_menu_name
-      })
-      this.havesoftphone = (menu.indexOf('软电话') > -1)
-      if (this.havesoftphone) {
-        cti.connectCTI('ws://119.27.179.175:9050/')
-      }
+    const agentId = localStorage.getItem('agentId')
+    // const menu = []
+    // getMenu().then(res => {
+    //   menu = res.data.data.map(function(item, index) {
+    //     return item.parent_menu_name
+    //   })
+    //   this.havesoftphone = (menu.indexOf('软电话') > -1)
+    //   if (this.havesoftphone) {
+    //     cti.connectCTI('ws://119.27.179.175:9050/')
+    //   }
+    // }).catch(error => {
+    //   console.log(error)
+    // })
+    checkSoftphonePerm(agentId).then(res => {
+      this.havesoftphone = true
+      cti.connectCTI('ws://119.27.179.175:9050/')
     }).catch(error => {
       console.log(error)
     })
