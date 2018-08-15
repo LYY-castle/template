@@ -11,7 +11,7 @@
             <el-option label="年" value="year"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="操作时间：">
+        <el-form-item v-show="formInline.time === 'hour'" label="操作时间：">
           <el-date-picker
             v-model="timeValue"
             type="datetimerange"
@@ -19,6 +19,61 @@
             start-placeholder="开始时间"
             end-placeholder="结束时间"
             format="yyyy-MM-dd HH:mm">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item v-show="formInline.time === 'day'" label="操作时间：">
+          <el-date-picker
+            v-model="timeValue"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            format="yyyy-MM-dd">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item v-show="formInline.time === 'week'" label="操作时间：">
+          <el-date-picker
+            v-model="timeValue[0]"
+            type="week"
+            format="yyyy 第 WW 周"
+            placeholder="开始周">
+          </el-date-picker>
+          <span>-</span>
+          <el-date-picker
+            v-model="timeValue[1]"
+            type="week"
+            format="yyyy 第 WW 周"
+            placeholder="结束周">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item v-show="formInline.time === 'month'" label="操作时间：">
+          <el-date-picker
+            v-model="timeValue[0]"
+            type="month"
+            placeholder="开始月"
+            format="yyyy-MM">
+          </el-date-picker>
+          <span>-</span>
+          <el-date-picker
+            v-model="timeValue[1]"
+            type="month"
+            placeholder="结束月"
+            format="yyyy-MM">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item v-show="formInline.time === 'year'" label="操作时间：">
+          <el-date-picker
+            v-model="timeValue[0]"
+            type="year"
+            placeholder="开始年"
+            format="yyyy">
+          </el-date-picker>
+          <span>-</span>
+          <el-date-picker
+            v-model="timeValue[1]"
+            type="year"
+            placeholder="结束年"
+            format="yyyy">
           </el-date-picker>
         </el-form-item>
         <el-form-item>
@@ -72,9 +127,16 @@
         :data="tableData1"
         ref="multipleTable"
         tooltip-effect="dark"
+        :span-method="arraySpanMethod"
         show-summary
         border
         style="width: 100%;">
+        <el-table-column
+          align="center"
+          type="index"
+          label="合计表"
+          width="100">
+        </el-table-column>
         <el-table-column
           align="center"
           prop="agent_id"
@@ -171,6 +233,7 @@
   import echarts from 'echarts'
   import resize from './mixins/resize'
   import { statistics, getAllStaffByDepartId, getDepartId, totalAgent, reportAgent } from '@/api/ctiReport'
+  import { Message } from 'element-ui'
 
   export default {
     mixins: [resize],
@@ -283,6 +346,21 @@
       this.chartTime = null
     },
     methods: {
+      arraySpanMethod({ row, column, rowIndex, columnIndex }) {
+        if (columnIndex === 0) { //  表示第一列合并行
+          if (rowIndex % this.formInline.agent_dn.length === 0) {
+            return {
+              rowspan: this.formInline.agent_dn.length,
+              colspan: 1
+            }
+          } else {
+            return {
+              rowspan: 0,
+              colspan: 0
+            }
+          }
+        }
+      },
       objectSpanMethod({ row, column, rowIndex, columnIndex }) {
         if (columnIndex === 0) { //  表示第一列合并行
           if (rowIndex % 5 === 0) {
@@ -1177,26 +1255,31 @@
         })
       },
       search(val) {
-        this.pageNo = []
-        this.pageSize = []
-        this.totalCount = []
-        totalAgent({
-          time_dimension: this.formInline.time,
-          agent_id: this.formInline.agent_dn.join(','),
-          start_time: Date.parse(this.timeValue[0]),
-          end_time: Date.parse(this.timeValue[1])
-        }).then(response => {
-          this.tableData1 = response.data.result
-        })
-        this.timeValueClone = this.timeValue
-        this.teamData(val)
+        if (this.timeValue[0] > this.timeValue[1]) {
+          Message({
+            message: '开始时间不能大于结束时间',
+            type: 'error',
+            duration: 3 * 1000
+          })
+        } else {
+          this.pageNo = []
+          this.pageSize = []
+          this.totalCount = []
+          totalAgent({
+            time_dimension: this.formInline.time,
+            agent_id: this.formInline.agent_dn.join(','),
+            start_time: Date.parse(this.timeValue[0]),
+            end_time: Date.parse(this.timeValue[1])
+          }).then(response => {
+            this.tableData1 = response.data.result
+          })
+          this.timeValueClone = this.timeValue
+          this.teamData(val)
+        }
       },
       reset() {
-        this.formInline = {
-          agent_dn: '',
-          from: 1,
-          time: 'day'
-        }
+        this.formInline.from = 1
+        this.formInline.time = 'day'
         this.timeValue = [new Date(new Date() - 7 * 24 * 3600 * 1000), new Date()]
       }
     }
