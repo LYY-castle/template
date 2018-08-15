@@ -58,11 +58,11 @@
     <div style="margin-top: 1%">
       <el-row>
         <el-pagination
-          @current-change="handleCurrentChange"
-          :current-page.sync="pagination.pageNo"
-          :page-size="pagination.pageSize"
+          @current-change="handleCurrentChangeStaff"
+          :current-page.sync="paginationStaffPage.pageNo"
+          :page-size="paginationStaffPage.pageSize"
           layout="total, prev, pager, next, jumper"
-          :total="pagination.totalCount" style="text-align: right">
+          :total="paginationStaffPage.totalCount" style="text-align: right">
         </el-pagination>
       </el-row>
     </div>
@@ -216,6 +216,12 @@
           totalCount: null,
           totalPage: null
         },
+        paginationStaffPage: {
+          pageNo: null,
+          pageSize: null,
+          totalCount: null,
+          totalPage: null
+        },
         paginationStaff: [],
         pageNo: [],
         pageSize: [],
@@ -243,7 +249,8 @@
         free_time_durationAgent: [],
         busy_time_durationAgent: [],
         call_time_durationAgent: [],
-        calls_numberAgent: []
+        calls_numberAgent: [],
+        agentTime: []
       }
     },
     mounted() {
@@ -301,6 +308,9 @@
       handleCurrentChange(val) {
         this.formInline.from = val
         this.teamData(val)
+      },
+      handleCurrentChangeStaff(val) {
+        this.agentChange(this.formInline.staff, val)
       },
       page(val, index) {
         this.currentIndex = index
@@ -881,9 +891,9 @@
               show: false
             },
             axisLabel: {
-              interval: 'auto'
+              interval: 0
             },
-            data: this.timeOptions
+            data: this.agentTime
           }],
           yAxis: [{
             type: 'value',
@@ -1085,12 +1095,14 @@
           }
         })
       },
-      agentChange(val) {
+      agentChange(val, page) {
         reportAgent({
           time_dimension: this.formInline.time,
           agent_id: val,
           start_time: Date.parse(this.timeValueClone[0]),
-          end_time: Date.parse(this.timeValueClone[1])
+          end_time: Date.parse(this.timeValueClone[1]),
+          pageNo: page || 1,
+          pageSize: 5
         }).then(response => {
           if (response.data.result.length) {
             this.calls_numberAgent = response.data.result.map(function(item, index) {
@@ -1108,7 +1120,16 @@
             this.call_time_durationAgent = response.data.result.map(function(item, index) {
               return item.call_time_duration
             })
+            this.agentTime = response.data.result.map(function(item, index) {
+              return item.time_dimension
+            })
             this.initChart2()
+          }
+          this.paginationStaffPage = {
+            pageNo: response.data.pageNo,
+            pageSize: response.data.pageSize,
+            totalCount: response.data.total_count,
+            totalPage: null
           }
         })
       },
