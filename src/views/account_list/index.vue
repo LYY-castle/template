@@ -124,7 +124,7 @@
         </el-col>
       </el-row>
     </div>
-    <el-dialog title="赋予系统账号角色" :visible.sync="dialogFormVisible" width="70%">
+    <el-dialog title="赋予系统账号角色" :visible.sync="dialogFormVisible" width="70%" append-to-body>
       <el-row>
         <el-card>
           <el-row slot="header">
@@ -160,7 +160,7 @@
         <el-button type="primary" @click="addRole(roleIds)">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="修改系统账号角色" :visible.sync="dialogFormVisibleReverse" width="70%">
+    <el-dialog title="修改系统账号角色" :visible.sync="dialogFormVisibleReverse" width="70%" append-to-body>
       <el-row>
         <el-card>
           <el-row slot="header">
@@ -197,7 +197,7 @@
         <el-button type="primary" @click="editRole(roleIds)">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="系统账号详情" :visible.sync="dialogFormVisibleDetail" width="70%">
+    <el-dialog title="系统账号详情" :visible.sync="dialogFormVisibleDetail" width="70%" append-to-body>
      <el-row>
         <el-card>
           <el-row slot="header">
@@ -383,6 +383,7 @@ export default {
             this.checkRoleData2.push(response.data.result[i].id.toString())
           }
         }
+        this.roleIds = this.checkRoleData2
         if (this.checkRoleData2.length) {
           getMenuById(this.checkRoleData2.join(',')).then(response => {
             if (response.data.result.length !== undefined) {
@@ -391,7 +392,6 @@ export default {
               for (var i = 0; i < response.data.result.length; i++) {
                 if (response.data.result[i].parentId !== '0') {
                   this.roleMenu.push(response.data.result[i])
-                  console.log(this.roleMenu)
                 }
               }
             }

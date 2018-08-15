@@ -58,7 +58,7 @@
       </el-submenu>
 
     </template>
-    <el-dialog title="新增目录" :visible.sync="dialogFormVisible">
+    <el-dialog title="新增目录" :visible.sync="dialogFormVisible" append-to-body>
       <el-form :model="form">
         <el-form-item label="目录名称" label-width="120px">
           <el-input v-model="form.name" auto-complete="off"></el-input>
@@ -69,7 +69,7 @@
         <el-button type="primary" @click="submit">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="修改目录" :visible.sync="dialogFormReverseVisible">
+    <el-dialog title="修改目录" :visible.sync="dialogFormReverseVisible" append-to-body>
       <el-form :model="formReverse">
         <el-form-item label="目录名称" label-width="120px">
           <el-input v-model="formReverse.name" auto-complete="off"></el-input>

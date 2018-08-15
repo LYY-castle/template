@@ -222,7 +222,6 @@
           <el-button type="primary" @click="submitForm('editCustomerForm',editNoVisitCustomerDetail);editBlackListInfo(editNoVisitCustomerDetail);">确 定</el-button>
         </div>
       </el-dialog>
-       </el-dialog>
       <!-- 免访客户详情 -->
       <el-dialog
       align:left

@@ -7,11 +7,11 @@
         <span class='el-icon-close' @click.prevent.stop='closeSelectedTag(tag)'></span>
       </router-link>
     </scroll-pane>
-    <ul class='contextmenu' v-show="visible" :style="{left:left+'px',top:top+'px'}">
+    <!-- <ul class='contextmenu' v-show="visible" :style="{left:left+'px',top:top+'px'}">
       <li @click="closeSelectedTag(selectedTag)">close</li>
       <li @click="closeOthersTags">closeOthers</li>
       <li @click="closeAllTags">closeAll</li>
-    </ul>
+    </ul> -->
   </div>
 </template>
 
