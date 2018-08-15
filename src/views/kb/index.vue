@@ -73,6 +73,15 @@
     methods: {
       addParent() {
         this.dialogFormVisible = false
+        addDirectory({
+          name: this.form.name,
+          parentid: 0
+        }).then(response => {
+          response.data.children = []
+          response.data.path = '/' + response.data.parentid + '/' + response.data.id
+          this.parentArr.push(response.data)
+          this.dialogFormVisible = false
+        })
       },
       routes() {
         return this.navData
