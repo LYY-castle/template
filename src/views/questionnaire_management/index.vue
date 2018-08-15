@@ -377,7 +377,6 @@
 </style>
 
 <script>
-import { getMenu } from '@/api/dashboard' // 侧边栏菜单
 import { formatDateTime } from '@/utils/tools'
 import {
   queryByKeyWords,
@@ -844,17 +843,6 @@ export default {
 
   mounted() {
     this.searchByKeyWords(this.req)
-  },
-
-  beforeCreate() {
-    getMenu()
-      .then(response => {
-        const data = response.data
-        sessionStorage.setItem('getMenu', JSON.stringify(data))
-      })
-      .catch(error => {
-        console.log(error)
-      })
   },
 
   watch: {},

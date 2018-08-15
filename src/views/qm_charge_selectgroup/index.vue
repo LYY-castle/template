@@ -120,8 +120,6 @@
 </style>
 
 <script>
-import { getMenu } from '@/api/dashboard' // 菜单栏
-// import { formatDateTime } from '@/utils/tools' // 格式化时间
 import {
   queryByCampaign,
   queryByCampaignId,
