@@ -198,6 +198,7 @@ export default {
   name: 'layout',
   data() {
     return {
+      dialNum: '',
       reasonCode: '',
       bolConnected: false,
       talkCaller: '',
@@ -361,7 +362,25 @@ export default {
         this.setbtnStatus('conference')
         this.conf_Flagbit = '0'
       } else {
-        cti.starttransfer(this.formInline.user, this.formInline.DN)
+        vm.dialNum = this.formInline.user
+        const reg = /^([1-9][0-9]{2,10}|[0-9]{1,4}\-?[0-9]{1,4}\-?[0-9]{1,9})$/
+        if (reg.test(vm.dialNum)) {
+          const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
+          if (regex.test(vm.dialNum)) {
+            this.getPromise(vm.dialNum).then(function() {
+              cti.starttransfer(vm.dialNum, vm.formInline.DN)
+            })
+          } else {
+            cti.starttransfer(vm.dialNum, vm.formInline.DN)
+          }
+        } else {
+          Message({
+            message: '号码不规范',
+            type: 'error',
+            duration: 1 * 1000
+          })
+          return
+        }
         this.oldtelephonestate = this.telephoneState
         this.telephoneState = '发起三方'
         if (this.oldtelephonestate !== this.telephoneState) {
@@ -385,7 +404,25 @@ export default {
         }
         this.tran_Flagbit = '0'
       } else {
-        cti.starttransfer(this.formInline.user, this.formInline.DN)
+        vm.dialNum = this.formInline.user
+        const reg = /^([1-9][0-9]{2,10}|[0-9]{1,4}\-?[0-9]{1,4}\-?[0-9]{1,9})$/
+        if (reg.test(vm.dialNum)) {
+          const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
+          if (regex.test(vm.dialNum)) {
+            this.getPromise(vm.dialNum).then(function() {
+              cti.starttransfer(vm.dialNum, vm.formInline.DN)
+            })
+          } else {
+            cti.starttransfer(vm.dialNum, vm.formInline.DN)
+          }
+        } else {
+          Message({
+            message: '号码不规范',
+            type: 'error',
+            duration: 1 * 1000
+          })
+          return
+        }
         this.oldtelephonestate = this.telephoneState
         this.telephoneState = '发起转接'
         if (this.oldtelephonestate !== this.telephoneState) {
@@ -420,27 +457,37 @@ export default {
         this.hold_Flagbit = '1'
       }
     },
+    getPromise(num) {
+      return new Promise(function(resolve, reject) {
+        getPhoneOwn(num).then(res => {
+          if (res.data.data[0].zipCode === '518000' && res.data.data[0].areaCode === '0755') { // 深圳市邮编518000，区号0755
+            vm.dialNum = '9' + vm.formInline.user
+          } else {
+            vm.dialNum = '90' + vm.formInline.user
+          }
+          resolve()
+        })
+      })
+    },
     agentdialout() {
       const DN = this.formInline.DN
-      let dialNum = this.formInline.user
+      vm.dialNum = this.formInline.user
       const reg = /^([1-9][0-9]{2,10}|[0-9]{1,4}\-?[0-9]{1,4}\-?[0-9]{1,9})$/
-      if (reg.test(dialNum)) {
+      if (reg.test(vm.dialNum)) {
         const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
-        if (regex.test(dialNum)) {
-          if (!getPhoneOwn(dialNum)) {
-            dialNum = '90' + dialNum
-          } else {
-            dialNum = '9' + dialNum
-          }
+        if (regex.test(vm.dialNum)) {
+          this.getPromise(vm.dialNum).then(function() {
+            cti.makecall(DN, vm.dialNum)
+          })
+        } else {
+          cti.makecall(DN, vm.dialNum)
         }
-        cti.makecall(DN, dialNum)
       } else {
         Message({
           message: '号码不规范',
           type: 'error',
           duration: 1 * 1000
         })
-        return
       }
     },
     agentLogin() {
@@ -646,23 +693,19 @@ export default {
       }).catch(error => {
         console.log('error:' + error)
       })
-      console.log(hangupLine + '//' + activeLineCount)
       switch (hangupLine) {
         case 1:
-          if (activeLineCount > 0) {
-            vm.setbtnStatus('talking')
-            cti.setAgentStatus(agentid, vm.talkStatu)
-          } else {
-            vm.telephoneState = ''
-            vm.caller = ''
-            vm.callee = ''
-            vm.orginCaller = ''
-            vm.tran_Flagbit = '0'
-            vm.conf_Flagbit = '0'
-            vm.hold_Flagbit = '0'
-            vm.setbtnStatus('login')
-            cti.setAgentStatus(agentid, '14')
-          }
+
+          vm.telephoneState = ''
+          vm.caller = ''
+          vm.callee = ''
+          vm.orginCaller = ''
+          vm.tran_Flagbit = '0'
+          vm.conf_Flagbit = '0'
+          vm.hold_Flagbit = '0'
+          vm.setbtnStatus('login')
+          cti.setAgentStatus(agentid, '14')
+
           break
         case 2:
           if (vm.tran_Flagbit === '0' && vm.conf_Flagbit === '1') {
@@ -702,6 +745,17 @@ export default {
       vm.callee = calleeid
       vm.orginCaller = ori_ani
       vm.global_taskId = localStorage.getItem('global_taskId')
+      if (calleeid.length === 12) {
+        if (calleeid.substring(0, 1) === '9') {
+          calleeid = calleeid.substring(1)
+        }
+      } else if (calleeid.length === 13) {
+        if (calleeid.substring(0, 2) === '90') {
+          calleeid = calleeid.substring(2)
+        }
+      } else {
+        calleeid += ''
+      }
       addDialContact({
         'event': 'on_ringback_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': callerid, 'calleeid': calleeid, 'ori_ani': ori_ani, 'ringback_time': new Date(), 'callDirection': 0, 'global_taskId': vm.global_taskId
       }).then(res => {
@@ -868,18 +922,6 @@ export default {
   mounted() {
     vm = this
     const agentId = localStorage.getItem('agentId')
-    // const menu = []
-    // getMenu().then(res => {
-    //   menu = res.data.data.map(function(item, index) {
-    //     return item.parent_menu_name
-    //   })
-    //   this.havesoftphone = (menu.indexOf('软电话') > -1)
-    //   if (this.havesoftphone) {
-    //     cti.connectCTI('ws://119.27.179.175:9050/')
-    //   }
-    // }).catch(error => {
-    //   console.log(error)
-    // })
     checkSoftphonePerm(agentId).then(res => {
       this.havesoftphone = true
       cti.connectCTI('ws://119.27.179.175:9050/')
