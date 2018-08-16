@@ -330,414 +330,414 @@
 
 <script>
  
-  import { formatDateTime, checkNo, hideIdNumber, hideMobile, formatSeconds } from '@/utils/tools' // 格式化时间
-  import {
-    getDepartId,
-    getAllCamps,
-    queryByKeyWords,
-    isHaveManager,
-    isHaveStaff,
-    getAllStaffByDepartId,
-    getSummariesByCampaignId,
-    getContactByGradeId,
-    queryrecordbytaskid,
-    getStaffNameByAgentId,
-    queryTaskByTaskId,
-    queryOrderByTaskId,
-    querycustomerbyid,
-    updateTaskStatus,
-    generateRecord
-  } from '@/api/find_dail_charge' // api接口引用
+import { formatDateTime, checkNo, hideIdNumber, hideMobile, formatSeconds } from '@/utils/tools' // 格式化时间
+ import {
+   getDepartId,
+   getAllCamps,
+   queryByKeyWords,
+   isHaveManager,
+   isHaveStaff,
+   getAllStaffByDepartId,
+   getSummariesByCampaignId,
+   getContactByGradeId,
+   queryrecordbytaskid,
+   getStaffNameByAgentId,
+   queryTaskByTaskId,
+   queryOrderByTaskId,
+   querycustomerbyid,
+   updateTaskStatus,
+   generateRecord
+ } from '@/api/contact_record_dail' // api接口引用
 
-  export default {
-    name: 'find_dail_staff',
+ export default {
+   name: 'find_dail_staff',
 
-    data() {
-      return {
-        isMainPage: true, // 显示或隐藏详情页面
-        requestFail: false, // 请求失败
-        originalStatus: '',
-        defaultProps: {
-          children: 'summaryDetailInfos',
-          label: 'name'
-        },
-        detailInfo: {
-          summariesInfo: [],
-          contactInfo: {},
-          recordInfo: [],
-          staffInfo: {},
-          customerInfo: {},
-          orderInfo: [],
-          dialTaskInfo: {}
-        },
-        ids: {
-          campaignId: '',
-          recordId: '',
-          taskId: '',
-          agentId: '',
-          customerId: ''
-        },
-        isForbidden: {
-          forbiddenManager: false, // 没有主管权限
-          forbiddenStaff: false// 没有员工权限
-        }, // 判断是否能操作页面
-        isManager: false, // 是主管
-        isStaff: false, // 普通员工
-        staffInfo: {
-          agentid: '',
-          departId: ''
-        },
-        tableData: [], // 表格数据
-        pageShow: false, // 分页显示与否
-        pageInfo: {}, // 分页信息
-        campaigns: [], // 所有活动 (名称+id)
-        staffs: [], // 所有员工
-        campaignId: '', // select框选中的活动id
-        // 查询条件
-        req: {
-          customerName: '',
-          campaign: [],
-          caller: '',
-          callee: '',
-          startTime: '',
-          endTime: '',
-          stime: '',
-          etime: '',
-          departId: '',
-          agentid: '',
-          pageSize: 10,
-          pageNo: 1
+   data() {
+     return {
+       isMainPage: true, // 显示或隐藏详情页面
+       requestFail: false, // 请求失败
+       originalStatus: '',
+       defaultProps: {
+         children: 'summaryDetailInfos',
+         label: 'name'
+       },
+       detailInfo: {
+         summariesInfo: [],
+         contactInfo: {},
+         recordInfo: [],
+         staffInfo: {},
+         customerInfo: {},
+         orderInfo: [],
+         dialTaskInfo: {}
+       },
+       ids: {
+         campaignId: '',
+         recordId: '',
+         taskId: '',
+         agentId: '',
+         customerId: ''
+       },
+       isForbidden: {
+         forbiddenManager: false, // 没有主管权限
+         forbiddenStaff: false// 没有员工权限
+       }, // 判断是否能操作页面
+       isManager: false, // 是主管
+       isStaff: false, // 普通员工
+       staffInfo: {
+         agentid: '',
+         departId: ''
+       },
+       tableData: [], // 表格数据
+       pageShow: false, // 分页显示与否
+       pageInfo: {}, // 分页信息
+       campaigns: [], // 所有活动 (名称+id)
+       staffs: [], // 所有员工
+       campaignId: '', // select框选中的活动id
+       // 查询条件
+       req: {
+         customerName: '',
+         campaign: [],
+         caller: '',
+         callee: '',
+         startTime: '',
+         endTime: '',
+         stime: '',
+         etime: '',
+         departId: '',
+         agentid: '',
+         pageSize: 10,
+         pageNo: 1
 
-        }
-      }
-    },
+       }
+     }
+   },
 
-    mounted() {
-      // this.getDepartIdByStaff()
-      // 获得部门id
-      getDepartId()
-        .then(response => {
-          this.staffInfo.agentid = response.data.agentid
-          this.staffInfo.departId = response.data.departId
-          new Promise((resolve, reject) => {
-            getAllStaffByDepartId(this.staffInfo.departId).then(response => {
-              this.staffs = response.data.data
-              resolve()
-            })
-          })
-          localStorage.setItem('departId', response.data.departId)
-          this.$forceUpdate()
-        })
-        .catch(error => {
-          console.log(error)
-        })
-  
-      getAllCamps()
-        .then(response => {
-          if (response.data.code === 0) {
-            this.campaigns = response.data.data
-            for (var i = 0; i < this.campaigns.length; i++) {
-              this.req.campaign.push(this.campaigns[i].campaignId)
-            }
-            this.searchByKeyWords(this.req)
-          }
-        })
-        .catch(error => {
-          console.log(error)
-        })
-    },
+   mounted() {
+     // this.getDepartIdByStaff()
+     // 获得部门id
+     getDepartId()
+       .then(response => {
+         this.staffInfo.agentid = response.data.agentid
+         this.staffInfo.departId = response.data.departId
+         new Promise((resolve, reject) => {
+           getAllStaffByDepartId(this.staffInfo.departId).then(response => {
+             this.staffs = response.data.data
+             resolve()
+           })
+         })
+         localStorage.setItem('departId', response.data.departId)
+         this.$forceUpdate()
+       })
+       .catch(error => {
+         console.log(error)
+       })
+ 
+     getAllCamps()
+       .then(response => {
+         if (response.data.code === 0) {
+           this.campaigns = response.data.data
+           for (var i = 0; i < this.campaigns.length; i++) {
+             this.req.campaign.push(this.campaigns[i].campaignId)
+           }
+           this.searchByKeyWords(this.req)
+         }
+       })
+       .catch(error => {
+         console.log(error)
+       })
+   },
 
-    methods: {
-      async isHavePermissions() {
-        // 判断主管
-        await isHaveManager(this.staffInfo.agentid).then(response => {
-          this.isManager = true
-        }).catch(error => {
-          if (error.response.status === 403) {
-            this.isForbidden.forbiddenManager = true
-          } else {
-            this.requestFail = true
-          }
-        })
-        // 判断员工
-        await isHaveStaff(this.staffInfo.agentid).then(response => {
-          this.isStaff = true
-        }).catch(error => {
-          if (error.response.status === 403) {
-            this.isForbidden.forbiddenStaff = true
-          } else {
-            this.requestFail = true
-          }
-        })
-      },
-      // 详情页面加载
-      contactDetail() {
-        getSummariesByCampaignId(this.ids.campaignId).then(response => {
-          if (response.data.code === 0) {
-            this.detailInfo.summariesInfo = response.data.data
-          }
-        })
-        getContactByGradeId(this.ids.recordId).then(response => {
-          if (response.data.code === 0) {
-            this.detailInfo.contactInfo = response.data.data
-            console.log(response.data.data)
-            // this.checkedSummaryKeys(response.data.data.summaryDetailInfos)
-            const a = response.data.data.summaryDetailInfos.map(function(item, index) {
-              if (item) {
-                return item.id
-              } else {
-                return
-              }
-            })
-            this.$refs.tree.setCheckedKeys(a)
-          }
-        })
-        queryrecordbytaskid(this.ids.taskId, this.ids.campaignId).then(response => {
-          var obj = response.data.data
-          if (response.data.code === 0) {
-            for (var i in obj) {
-              if (obj[i].recordId !== this.ids.recordId) {
-                this.detailInfo.recordInfo.push(obj[i])
-              }
-            }
-          }
-        })
-        getStaffNameByAgentId(this.ids.agentId).then(response => {
-          if (response.data.code === 1) {
-            this.detailInfo.staffInfo = response.data.data[0]
-          }
-        })
-        queryTaskByTaskId(this.ids.taskId).then(response => {
-          if (response.data.code === 0) {
-            this.detailInfo.dialTaskInfo = response.data.data
-            this.originalStatus = response.data.data.status
-          }
-        })
-        queryOrderByTaskId(this.ids.taskId).then(response => {
-          if (response.data.code === 0) {
-            this.detailInfo.orderInfo = response.data.data
-          }
-        })
-        querycustomerbyid(this.ids.customerId).then(response => {
-          if (response.data.code === 0) {
-            this.detailInfo.customerInfo = response.data.data
-          }
-        })
-      },
-      checkEdit() {
-        var taskId = this.ids.taskId
-        console.log('taskId', taskId)
-        var taskStatus = this.detailInfo.dialTaskInfo.status
-        console.log('taskStatus', taskStatus)
-        var appointTime = this.detailInfo.dialTaskInfo.appointTime
-        console.log('appointTime', appointTime)
-        var recordId = this.ids.recordId
-        console.log('recordId', recordId)
-        var nodules = this.$refs.tree.getCheckedKeys(true)
-        console.log('nodules', nodules)
-        var description = this.detailInfo.contactInfo.description
-        console.log('description', description)
-        console.log('originalStatus', this.originalStatus)
-        //  var nodules = [];
-        //  var values = $("input[name='ckb']:checked");
-        //  for(var i = 0;i<values.length;i++){
-        // 	 nodules[i] = values[i].getAttribute("id");
-        //  }
-        //  var description = $("#description").val();					   //小结备注
-        //  var taskStatus = $("input[name='taskStatus']:checked").val(); //任务状态
-        //  var appointTime = $("#appointTime").val();
-        if (Date.parse(appointTime) - Date.parse(new Date()) < 0) {
-          this.$message('预约时间不能比现在早！')
-          return
-        }
-        if (this.originalStatus == null || this.originalStatus === '') {
-          this.updateStatusOrNodule(taskId, taskStatus, appointTime, recordId, nodules, description)
-        } else {
-          if (this.originalStatus !== taskStatus) {
-            if (this.originalStatus === '2' && (taskStatus === '1' || taskStatus === '3') && this.detailInfo.orderInfo.length > 0) {
-              this.$message('请您先删除订单再修改任务状态!')
-              return
-            }
-            if (this.originalStatus === '3' && (taskStatus === '2')) {
-              this.$message('非法操作!')
-              return
-            }
-            if (this.originalStatus === '1' && (taskStatus === '2')) {
-              this.$message('非法操作!')
-              return
-            }
-            this.updateStatusOrNodule(taskId, taskStatus, appointTime, recordId, nodules, description)
-          } else {
-          // 修改小结 与 备注
-            if (taskStatus === '1') {
-              this.updateStatusOrNodule(taskId, taskStatus, appointTime, recordId, nodules, description)
-            } else {
-              generateRecord(recordId, nodules, description).then(response => {
-                if (response.data.code === 0) {
-                  this.searchByKeyWords(this.req)
-                  this.isMainPage = true
-                  this.$message('修改成功')
-                } else {
-                  this.$message(response.data.message)
-                }
-              })
-            }
-          }
-        }
-      },
-      updateStatusOrNodule(taskId, taskStatus, appointTime, recordId, nodules, description) {
-        updateTaskStatus(taskId, taskStatus, appointTime).then(response => {
-          if (response.data.code === 0) {
-            generateRecord(recordId, nodules, description).then(response => {
-              if (response.data.code === 0) {
-                this.searchByKeyWords(this.req)
-                this.isMainPage = true
-                this.$message('修改成功')
-              } else {
-                this.$message(response.data.message)
-              }
-            })
-          } else {
-            this.$message(response.data.message)
-          }
-        })
-      },
-      // 根据当前登录人显示活动
-      getAllCampsByStaff() {
-        getAllCamps()
-          .then(response => {
-            if (response.data.code === 0) {
-              this.campaigns = response.data.data
-            }
-          })
-          .catch(error => {
-            console.log(error)
-          })
-      },
-      // 时间戳转年月日时分秒
-      formatDateTime: formatDateTime,
-      checkNo: checkNo,
-      formatSeconds: formatSeconds,
-      hideIdNumber: hideIdNumber,
-      hideMobile: hideMobile,
-      // 将选择的campaignId放入数组
-      selectOneCampaign(campaignId) {
-        // 清空数组
-        this.req.campaign = []
-        this.req.campaign.push(campaignId)
-      },
-      // 分页翻页功能
-      handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`);
-        this.req.pageNo = val
-        this.searchByKeyWords(this.req)
-      },
-      // 综合查询
-      async searchByKeyWords(req) {
-        await this.isHavePermissions()
-        if (this.isStaff || this.isManager) {
-          this.req.departId = localStorage.getItem('departId')
-          if (this.isStaff && this.isManager === false) {
-            this.req.agentid = this.staffInfo.agentid
-          }
-          queryByKeyWords(req)
-            .then(response => {
-              if (response.data.code === 0) {
-                this.tableData = response.data.data
-                this.pageShow = true
-                this.pageInfo = response.data.pageInfo
-              } else {
-                this.tableData = response.data.data
-                this.pageShow = false
-                this.$message.error = '无查询结果，请核对查询条件'
-              }
-            })
-            .catch(error => {
-              console.log(error)
-            })
-        } else if (this.isForbidden.forbiddenManager && this.isForbidden.forbiddenStaff) {
-          this.$message('没权限操作该页面！')
-        } else {
-          this.$message('系统繁忙！')
-        }
-      },
-      // 显示活动名称
-      showCampaignName(campaignId) {
-        for (var i = 0; i < this.campaigns.length; i++) {
-          if (campaignId === this.campaigns[i].campaignId) {
-            return this.campaigns[i].campaignName
-          }
-        }
-      },
-      // 详情小结树展示
-      checkedSummaryKeys(summary) {
-        if (summary.length !== 0) {
-          for (var j in summary) {
-            this.$set(this.checkedKeys, j, summary[j].id)
-          }
-        }
-      },
-      // 详情小结展示
-      showSummaryInfo(summary) {
-        var html = ''
-        if (summary.length === 0) {
-          html = '无'
-        } else {
-          for (var j in summary) {
-            html += summary[j].name + ', '
-          }
-          if (html.indexOf(', ') > -1) {
-            html = html.substring(0, html.length - 1)
-          }
-        }
-        return html
-      },
-      // 预约时间补无
-      showAppointTime(appointTime) {
-        if (appointTime) {
-          return appointTime
-        } else {
-          return '无'
-        }
-      },
-      resetDetai() {
-        this.detailInfo.summariesInfo = []
-        this.detailInfo.contactInfo = {}
-        this.detailInfo.recordInfo = []
-        this.detailInfo.staffInfo = {}
-        this.detailInfo.customerInfo = {}
-        this.detailInfo.orderInfo = []
-        this.detailInfo.dialTaskInfo = {}
-      },
-      // 清空重置
-      clearForm(obj, formName) {
-        for (const key in obj) {
-          if (key !== 'pageNo' && key !== 'pageSize') {
-            obj[key] = ''
-          }
-        }
-        if (formName) {
-          this.$refs[formName].resetFields()
-        }
-      },
-      // 克隆数据
-      cloneData(obj) {
-        var data = {}
-        data = JSON.parse(JSON.stringify(obj))
-        return data
-      },
-      putAllcamps() {
-        this.req.campaign = []
-        for (var i = 0; i < this.campaigns.length; i++) {
-          this.req.campaign.push(this.campaigns[i].campaignId)
-        }
-      }
-  
-    },
+   methods: {
+     async isHavePermissions() {
+       // 判断主管
+       await isHaveManager(this.staffInfo.agentid).then(response => {
+         this.isManager = true
+       }).catch(error => {
+         if (error.response.status === 403) {
+           this.isForbidden.forbiddenManager = true
+         } else {
+           this.requestFail = true
+         }
+       })
+       // 判断员工
+       await isHaveStaff(this.staffInfo.agentid).then(response => {
+         this.isStaff = true
+       }).catch(error => {
+         if (error.response.status === 403) {
+           this.isForbidden.forbiddenStaff = true
+         } else {
+           this.requestFail = true
+         }
+       })
+     },
+     // 详情页面加载
+     contactDetail() {
+       getSummariesByCampaignId(this.ids.campaignId).then(response => {
+         if (response.data.code === 0) {
+           this.detailInfo.summariesInfo = response.data.data
+         }
+       })
+       getContactByGradeId(this.ids.recordId).then(response => {
+         if (response.data.code === 0) {
+           this.detailInfo.contactInfo = response.data.data
+           console.log(response.data.data)
+           // this.checkedSummaryKeys(response.data.data.summaryDetailInfos)
+           const a = response.data.data.summaryDetailInfos.map(function(item, index) {
+             if (item) {
+               return item.id
+             } else {
+               return
+             }
+           })
+           this.$refs.tree.setCheckedKeys(a)
+         }
+       })
+       queryrecordbytaskid(this.ids.taskId, this.ids.campaignId).then(response => {
+         var obj = response.data.data
+         if (response.data.code === 0) {
+           for (var i in obj) {
+             if (obj[i].recordId !== this.ids.recordId) {
+               this.detailInfo.recordInfo.push(obj[i])
+             }
+           }
+         }
+       })
+       getStaffNameByAgentId(this.ids.agentId).then(response => {
+         if (response.data.code === 1) {
+           this.detailInfo.staffInfo = response.data.data[0]
+         }
+       })
+       queryTaskByTaskId(this.ids.taskId).then(response => {
+         if (response.data.code === 0) {
+           this.detailInfo.dialTaskInfo = response.data.data
+           this.originalStatus = response.data.data.status
+         }
+       })
+       queryOrderByTaskId(this.ids.taskId).then(response => {
+         if (response.data.code === 0) {
+           this.detailInfo.orderInfo = response.data.data
+         }
+       })
+       querycustomerbyid(this.ids.customerId).then(response => {
+         if (response.data.code === 0) {
+           this.detailInfo.customerInfo = response.data.data
+         }
+       })
+     },
+     checkEdit() {
+       var taskId = this.ids.taskId
+       console.log('taskId', taskId)
+       var taskStatus = this.detailInfo.dialTaskInfo.status
+       console.log('taskStatus', taskStatus)
+       var appointTime = this.detailInfo.dialTaskInfo.appointTime
+       console.log('appointTime', appointTime)
+       var recordId = this.ids.recordId
+       console.log('recordId', recordId)
+       var nodules = this.$refs.tree.getCheckedKeys(true)
+       console.log('nodules', nodules)
+       var description = this.detailInfo.contactInfo.description
+       console.log('description', description)
+       console.log('originalStatus', this.originalStatus)
+       //  var nodules = [];
+       //  var values = $("input[name='ckb']:checked");
+       //  for(var i = 0;i<values.length;i++){
+       // 	 nodules[i] = values[i].getAttribute("id");
+       //  }
+       //  var description = $("#description").val();					   //小结备注
+       //  var taskStatus = $("input[name='taskStatus']:checked").val(); //任务状态
+       //  var appointTime = $("#appointTime").val();
+       if (Date.parse(appointTime) - Date.parse(new Date()) < 0) {
+         this.$message('预约时间不能比现在早！')
+         return
+       }
+       if (this.originalStatus == null || this.originalStatus === '') {
+         this.updateStatusOrNodule(taskId, taskStatus, appointTime, recordId, nodules, description)
+       } else {
+         if (this.originalStatus !== taskStatus) {
+           if (this.originalStatus === '2' && (taskStatus === '1' || taskStatus === '3') && this.detailInfo.orderInfo.length > 0) {
+             this.$message('请您先删除订单再修改任务状态!')
+             return
+           }
+           if (this.originalStatus === '3' && (taskStatus === '2')) {
+             this.$message('非法操作!')
+             return
+           }
+           if (this.originalStatus === '1' && (taskStatus === '2')) {
+             this.$message('非法操作!')
+             return
+           }
+           this.updateStatusOrNodule(taskId, taskStatus, appointTime, recordId, nodules, description)
+         } else {
+           // 修改小结 与 备注
+           if (taskStatus === '1') {
+             this.updateStatusOrNodule(taskId, taskStatus, appointTime, recordId, nodules, description)
+           } else {
+             generateRecord(recordId, nodules, description).then(response => {
+               if (response.data.code === 0) {
+                 this.searchByKeyWords(this.req)
+                 this.isMainPage = true
+                 this.$message('修改成功')
+               } else {
+                 this.$message(response.data.message)
+               }
+             })
+           }
+         }
+       }
+     },
+     updateStatusOrNodule(taskId, taskStatus, appointTime, recordId, nodules, description) {
+       updateTaskStatus(taskId, taskStatus, appointTime).then(response => {
+         if (response.data.code === 0) {
+           generateRecord(recordId, nodules, description).then(response => {
+             if (response.data.code === 0) {
+               this.searchByKeyWords(this.req)
+               this.isMainPage = true
+               this.$message('修改成功')
+             } else {
+               this.$message(response.data.message)
+             }
+           })
+         } else {
+           this.$message(response.data.message)
+         }
+       })
+     },
+     // 根据当前登录人显示活动
+     getAllCampsByStaff() {
+       getAllCamps()
+         .then(response => {
+           if (response.data.code === 0) {
+             this.campaigns = response.data.data
+           }
+         })
+         .catch(error => {
+           console.log(error)
+         })
+     },
+     // 时间戳转年月日时分秒
+     formatDateTime: formatDateTime,
+     checkNo: checkNo,
+     formatSeconds: formatSeconds,
+     hideIdNumber: hideIdNumber,
+     hideMobile: hideMobile,
+     // 将选择的campaignId放入数组
+     selectOneCampaign(campaignId) {
+       // 清空数组
+       this.req.campaign = []
+       this.req.campaign.push(campaignId)
+     },
+     // 分页翻页功能
+     handleCurrentChange(val) {
+       // console.log(`当前页: ${val}`);
+       this.req.pageNo = val
+       this.searchByKeyWords(this.req)
+     },
+     // 综合查询
+     async searchByKeyWords(req) {
+       await this.isHavePermissions()
+       if (this.isStaff || this.isManager) {
+         this.req.departId = localStorage.getItem('departId')
+         if (this.isStaff && this.isManager === false) {
+           this.req.agentid = this.staffInfo.agentid
+         }
+         queryByKeyWords(req)
+           .then(response => {
+             if (response.data.code === 0) {
+               this.tableData = response.data.data
+               this.pageShow = true
+               this.pageInfo = response.data.pageInfo
+             } else {
+               this.tableData = response.data.data
+               this.pageShow = false
+               this.$message.error = '无查询结果，请核对查询条件'
+             }
+           })
+           .catch(error => {
+             console.log(error)
+           })
+       } else if (this.isForbidden.forbiddenManager && this.isForbidden.forbiddenStaff) {
+         this.$message('没权限操作该页面！')
+       } else {
+         this.$message('系统繁忙！')
+       }
+     },
+     // 显示活动名称
+     showCampaignName(campaignId) {
+       for (var i = 0; i < this.campaigns.length; i++) {
+         if (campaignId === this.campaigns[i].campaignId) {
+           return this.campaigns[i].campaignName
+         }
+       }
+     },
+     // 详情小结树展示
+     checkedSummaryKeys(summary) {
+       if (summary.length !== 0) {
+         for (var j in summary) {
+           this.$set(this.checkedKeys, j, summary[j].id)
+         }
+       }
+     },
+     // 详情小结展示
+     showSummaryInfo(summary) {
+       var html = ''
+       if (summary.length === 0) {
+         html = '无'
+       } else {
+         for (var j in summary) {
+           html += summary[j].name + ', '
+         }
+         if (html.indexOf(', ') > -1) {
+           html = html.substring(0, html.length - 1)
+         }
+       }
+       return html
+     },
+     // 预约时间补无
+     showAppointTime(appointTime) {
+       if (appointTime) {
+         return appointTime
+       } else {
+         return '无'
+       }
+     },
+     resetDetai() {
+       this.detailInfo.summariesInfo = []
+       this.detailInfo.contactInfo = {}
+       this.detailInfo.recordInfo = []
+       this.detailInfo.staffInfo = {}
+       this.detailInfo.customerInfo = {}
+       this.detailInfo.orderInfo = []
+       this.detailInfo.dialTaskInfo = {}
+     },
+     // 清空重置
+     clearForm(obj, formName) {
+       for (const key in obj) {
+         if (key !== 'pageNo' && key !== 'pageSize') {
+           obj[key] = ''
+         }
+       }
+       if (formName) {
+         this.$refs[formName].resetFields()
+       }
+     },
+     // 克隆数据
+     cloneData(obj) {
+       var data = {}
+       data = JSON.parse(JSON.stringify(obj))
+       return data
+     },
+     putAllcamps() {
+       this.req.campaign = []
+       for (var i = 0; i < this.campaigns.length; i++) {
+         this.req.campaign.push(this.campaigns[i].campaignId)
+       }
+     }
+ 
+   },
 
-    watch: {}
-  
-  }
+   watch: {}
+ 
+ }
 
 </script>
 

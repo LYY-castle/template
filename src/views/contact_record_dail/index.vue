@@ -159,9 +159,10 @@
               <el-form-item  label="员工姓名：">
                 <span>{{detailInfo.staffInfo.staffName}}</span>
               </el-form-item>
-              <el-form-item  label="客户姓名：" prop="contactInfo.customerName" size="small">
-                <span>{{detailInfo.contactInfo.customerName}}</span>
+               <el-form-item  label="员工工号：" prop="contactInfo.staffId">
+                <span>{{detailInfo.contactInfo.staffId}}</span>
               </el-form-item>
+              
                 <el-form-item  label="话后小结：">
                   <el-tree
                     ref = "tree"
@@ -174,7 +175,7 @@
                </el-form-item>
             </div>
           </el-col>
-          <el-col :span="3">
+          <!-- <el-col :span="3">
             <div class="grid-content bg-purple">
               <el-form-item  label="员工工号：" prop="contactInfo.staffId">
                 <span>{{detailInfo.contactInfo.staffId}}</span>
@@ -183,16 +184,19 @@
                 <span>{{hideIdNumber(detailInfo.customerInfo.idNumber)}}</span>
               </el-form-item>
             </div>
-          </el-col>
-          <el-col :span="3">
+          </el-col> -->
+          <el-col :span="4">
              <el-form-item  label="主叫:" prop="contactInfo.callerNumber">
                 <span>{{detailInfo.contactInfo.callerNumber}}</span>
               </el-form-item>
               <el-form-item   label="被叫:" prop="contactInfo.calleeNumber">
                   <span>{{hideMobile(detailInfo.contactInfo.calleeNumber)}}</span>
               </el-form-item>
+              <el-form-item  label="客户姓名：" prop="contactInfo.customerName" size="small">
+                <span>{{detailInfo.contactInfo.customerName}}</span>
+              </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="5">
             <div class="grid-content bg-purple">
               <el-form-item label="拨打时间：" prop="contactInfo.callTime">
                 <span>{{detailInfo.contactInfo.callTime}}</span>
@@ -200,9 +204,12 @@
               <el-form-item  label="接听时间：" prop="contactInfo.answerTime">
                 <span>{{(detailInfo.contactInfo.answerTime)== null?'无':(detailInfo.contactInfo.answerTime)}}</span>
               </el-form-item>
+               <el-form-item  label="身份证：" prop="customerInfo.idNumber">
+                <span>{{hideIdNumber(detailInfo.customerInfo.idNumber)}}</span>
+              </el-form-item>
             </div>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <div class="grid-content bg-purple">
               <el-form-item  label="电话录音：" prop="contactInfo.soundRecordUrl">
                 <audio v-bind:src="detailInfo.contactInfo.soundRecordUrl" controls="controls"></audio>
@@ -329,7 +336,6 @@
 </style>
 
 <script>
-  import { getMenu } from '@/api/dashboard' // 菜单栏
   import { formatDateTime, checkNo, hideIdNumber, hideMobile, formatSeconds } from '@/utils/tools' // 格式化时间
   import {
     getDepartId,
@@ -347,10 +353,10 @@
     querycustomerbyid,
     updateTaskStatus,
     generateRecord
-  } from '@/api/find_dail_charge' // api接口引用
+  } from '@/api/contact_record_dail' // api接口引用
 
   export default {
-    name: 'find_dail_charge',
+    name: 'contact_record_dail',
 
     data() {
       return {
@@ -720,18 +726,6 @@
         }
       }
   
-    },
-    // 组件刚被创建时 属性还未计算时   methods方法还未调用时
-    beforeCreate() {
-      // 菜单
-      getMenu()
-        .then(response => {
-          const data = response.data
-          sessionStorage.setItem('getMenu', JSON.stringify(data))
-        })
-        .catch(error => {
-          console.log(error)
-        })
     },
     watch: {}
   
