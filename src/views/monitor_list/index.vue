@@ -197,12 +197,12 @@
                   this.nameList.push(response.data.data[i])
                 }
               }
-              this.search({
-                starttime: '',
-                endtime: '',
-                campaignId: this.campaignIdList.join(','),
-                listId: this.contactList.join(',')
-              })
+              // this.search({
+              //   starttime: '',
+              //   endtime: '',
+              //   campaignId: this.campaignIdList.join(','),
+              //   listId: this.contactList.join(',')
+              // })
             }
           })
         })
