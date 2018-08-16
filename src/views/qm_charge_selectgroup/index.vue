@@ -120,8 +120,6 @@
 </style>
 
 <script>
-import { getMenu } from '@/api/dashboard' // 菜单栏
-// import { formatDateTime } from '@/utils/tools' // 格式化时间
 import {
   queryByCampaign,
   queryByCampaignId,
@@ -366,18 +364,6 @@ export default {
 
   mounted() {
     this.searchByCampaign(this.req)
-  },
-
-  beforeCreate() {
-    // 菜单
-    getMenu()
-      .then(response => {
-        const data = response.data
-        sessionStorage.setItem('getMenu', JSON.stringify(data))
-      })
-      .catch(error => {
-        console.log(error)
-      })
   },
 
   watch: {},

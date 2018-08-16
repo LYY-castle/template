@@ -100,7 +100,7 @@
         </el-col>
       </el-row>
     </div>
-    <el-dialog title="新增评分表" :visible.sync="dialogFormVisible" width="60%" @close="resetForm('ruleForm')">
+    <el-dialog title="新增评分表" :visible.sync="dialogFormVisible" width="60%" @close="resetForm('ruleForm')" append-to-body>
       <el-form :model="ruleForm" ref="ruleForm" label-width="150px" class="demo-ruleForm">
         <el-row>
           <el-col :span="17">
@@ -156,7 +156,7 @@
         <el-button @click="resetForm('ruleForm');dialogFormVisible = false">返 回</el-button>
       </div>
     </el-dialog>
-      <el-dialog title="修改评分表" :visible.sync="dialogFormVisibleReverse" width="60%" @close="resetFormReverse('ruleFormReverse');dialogFormVisibleReverse=false">
+      <el-dialog title="修改评分表" :visible.sync="dialogFormVisibleReverse" width="60%" @close="resetFormReverse('ruleFormReverse');dialogFormVisibleReverse=false" append-to-body>
       <el-form :model="ruleFormReverse" ref="ruleFormReverse" label-width="150px" class="demo-ruleForm">
         <el-row>
           <el-col :span="17">
@@ -214,7 +214,7 @@
         <el-button @click="resetFormReverse('ruleFormReverse');dialogFormVisibleReverse = false">返 回</el-button>
       </div>
     </el-dialog>
-      <el-dialog title="查看评分表" :visible.sync="dialogFormVisibleDetail" width="60%" @close="resetFormDetail('dialogFormVisibleDetail')">
+      <el-dialog title="查看评分表" :visible.sync="dialogFormVisibleDetail" width="60%" @close="resetFormDetail('dialogFormVisibleDetail')" append-to-body>
       <el-form :model="ruleFormDetail" ref="ruleFormDetail" label-width="150px" class="demo-ruleForm">
         <el-row>
           <el-col :span="17">

@@ -285,7 +285,6 @@
 </style>
 
 <script>
-  import { getMenu } from '@/api/dashboard' // 侧边菜单栏
   import { rule } from '@/utils/validate' // 校验工具
   // import { formatDateTime } from '@/utils/tools' // 格式化时间
   import {
@@ -563,19 +562,6 @@
         }
       }
 
-    },
-
-    // 组件刚被创建时 属性还未计算时   methods方法还未调用时
-    beforeCreate() {
-      // 菜单
-      getMenu()
-        .then(response => {
-          const data = response.data
-          sessionStorage.setItem('getMenu', JSON.stringify(data))
-        })
-        .catch(error => {
-          console.log(error)
-        })
     }
 }
 </script>

@@ -50,19 +50,19 @@ service.interceptors.response.use(
   },
   error => {
     console.log('err' + error)// for debug
-    if (error.response.status === 403) {
-      Message({
-        message: '没有权限',
-        type: 'error',
-        duration: 5 * 1000
-      })
-    } else {
-      Message({
-        message: error.message,
-        type: 'error',
-        duration: 5 * 1000
-      })
-    }
+    // if (error.response.status === 403) {
+    //   Message({
+    //     message: '没有权限',
+    //     type: 'error',
+    //     duration: 5 * 1000
+    //   })
+    // } else {
+    //   Message({
+    //     message: error.message,
+    //     type: 'error',
+    //     duration: 5 * 1000
+    //   })
+    // }
     return Promise.reject(error)
   }
 )

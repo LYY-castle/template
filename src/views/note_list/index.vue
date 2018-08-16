@@ -170,8 +170,6 @@
 </style>
 
 <script>
-// import { quillEditor } from 'vue-quill-editor'
-import { getMenu } from '@/api/dashboard' // 侧边栏菜单
 import { formatDateTime } from '@/utils/tools' // 格式化时间
 import { getRequestUser, verify } from '@/utils/tools' // 获取当前用户信息
 import {
@@ -431,17 +429,6 @@ export default {
         if (this.req.uid !== '') {
           this.firstInQuery(this.req.uid)
         }
-      })
-  },
-
-  beforeCreate() {
-    getMenu()
-      .then(response => {
-        const data = response.data
-        sessionStorage.setItem('getMenu', JSON.stringify(data))
-      })
-      .catch(error => {
-        console.log(error)
       })
   },
 

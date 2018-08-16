@@ -123,7 +123,7 @@
         </el-col>
       </el-row>
     </div>
-    <el-dialog title="新增组织" :visible.sync="dialogFormVisible" width="30%" @close="resetForm('ruleForm')">
+    <el-dialog title="新增组织" :visible.sync="dialogFormVisible" width="30%" @close="resetForm('ruleForm')" append-to-body>
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="组织名" prop="departName">
           <el-input v-model="ruleForm.departName" placeholder="上限45字符" maxlength="45"></el-input>
@@ -144,7 +144,7 @@
         <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="修改组织" :visible.sync="dialogFormVisibleReverse" width="30%" @close="resetForm('ruleFormReverse')">
+    <el-dialog title="修改组织" :visible.sync="dialogFormVisibleReverse" width="30%" @close="resetForm('ruleFormReverse')" append-to-body>
       <el-form :model="ruleFormReverse" :rules="rules" ref="ruleFormReverse" label-width="100px" class="demo-ruleForm">
         <el-form-item label="组织编号">
           <span>{{ruleFormReverse.number}}</span>

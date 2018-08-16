@@ -18,7 +18,7 @@
           <sidebar-item1 :routes="parentArr"></sidebar-item1>
         </el-menu>
       </el-scrollbar>
-      <el-dialog title="新增目录" :visible.sync="dialogFormVisible">
+      <el-dialog title="新增目录" :visible.sync="dialogFormVisible" append-to-body>
         <el-form :model="form">
           <el-form-item label="目录名称" label-width="120px">
             <el-input v-model="form.name" auto-complete="off"></el-input>
@@ -43,7 +43,7 @@
 <script>
   import Kanban from '@/components/Kanban'
   import SidebarItem1 from './nav'
-  import { getAllDirectory } from '@/api/kb'
+  import { getAllDirectory, addDirectory } from '@/api/kb'
 
   export default {
     name: 'kb',
@@ -73,6 +73,15 @@
     methods: {
       addParent() {
         this.dialogFormVisible = false
+        addDirectory({
+          name: this.form.name,
+          parentid: 0
+        }).then(response => {
+          response.data.children = []
+          response.data.path = '/' + response.data.parentid + '/' + response.data.id
+          this.parentArr.push(response.data)
+          this.dialogFormVisible = false
+        })
       },
       routes() {
         return this.navData
