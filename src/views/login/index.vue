@@ -162,8 +162,6 @@ export default {
           type: 'error',
           duration: 5 * 1000
         })
-        localStorage.setItem('agentId', this.loginForm.username)
-        localStorage.setItem('DN', this.loginForm.extensionNumber)
         this.$router.push({ path: '/dashboard' })
       }
     }).catch(error => {

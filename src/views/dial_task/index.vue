@@ -126,14 +126,14 @@
             label="操作"
             width="100">
           <template slot-scope="scope">
-            <a href="#" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone)" size="small" type="text"><img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</a>
+            <el-button @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone)" size="small" type="text"><img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</el-button>
           </template>
           </el-table-column>
         </el-table>
       </el-col> 
     </el-row>
     <el-row style="margin-top:5px;">
-        <a href="#" @click="quickDialto();"><el-button type="primary">快速拨打勾选</el-button></a>
+        <el-button type="primary" @click="quickDialto();">快速拨打勾选</el-button>
         <el-pagination
           v-if="pageShow"
           background
