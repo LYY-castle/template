@@ -126,14 +126,14 @@
             label="操作"
             width="100">
           <template slot-scope="scope">
-            <el-button @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone)" size="small" type="text"><img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</el-button>
+            <a href="#" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone)" size="small" type="text"><img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</a>
           </template>
           </el-table-column>
         </el-table>
       </el-col> 
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="primary" @click="quickDialto();">快速拨打勾选</el-button>
+        <a href="#" @click="quickDialto();"><el-button type="primary">快速拨打勾选</el-button></a>
         <el-pagination
           v-if="pageShow"
           background
@@ -1129,10 +1129,27 @@ export default {
     returnList() {
       this.isDialTask = true
       this.searchByKeyWords(this.req)
+    },
+    getParametersFromContactRecordDail() {
+      const taskId = this.$route.query.taskId
+      const campaignId = this.$route.query.campaignId
+      const isBlacklist = this.$route.query.isBlacklist
+      const customerPhone = this.$route.query.customerPhone
+      const customerId = this.$route.query.customerId
+      if (typeof taskId !== 'undefined' && typeof campaignId !== 'undefined' && typeof customerId !== 'undefined' && typeof isBlacklist !== 'undefined' && typeof customerPhone !== 'undefined') {
+        console.log('taskId', taskId)
+        console.log('campaignId', campaignId)
+        console.log('isBlacklist', isBlacklist)
+        console.log('customerPhone', customerPhone)
+        this.isDialTask = false
+        // 点击拨打图标触发事件
+        this.changeToCustomerDetail(taskId, campaignId, customerId, isBlacklist, customerPhone)
+      }
     }
   },
   // 模板编译/挂载之后
   mounted() {
+    this.getParametersFromContactRecordDail()
     this.searchByKeyWords(this.req)
     getStaffNameById(localStorage.getItem('agentId'))
       .then(res => {

@@ -133,6 +133,7 @@ export default (new (function() {
     EventObject.trigger('onmessage', [evt])
 
     var obj = JSON.parse(evt.data)
+    console.log(obj)
     var event_name = obj.EventName
     switch (event_name) {
       case 'UpdateCallInfo':
