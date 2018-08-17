@@ -1129,10 +1129,27 @@ export default {
     returnList() {
       this.isDialTask = true
       this.searchByKeyWords(this.req)
+    },
+    getParametersFromContactRecordDail() {
+      const taskId = this.$route.query.taskId
+      const campaignId = this.$route.query.campaignId
+      const isBlacklist = this.$route.query.isBlacklist
+      const customerPhone = this.$route.query.customerPhone
+      const customerId = this.$route.query.customerId
+      if (typeof taskId !== 'undefined' && typeof campaignId !== 'undefined' && typeof customerId !== 'undefined' && typeof isBlacklist !== 'undefined' && typeof customerPhone !== 'undefined') {
+        console.log('taskId', taskId)
+        console.log('campaignId', campaignId)
+        console.log('isBlacklist', isBlacklist)
+        console.log('customerPhone', customerPhone)
+        this.isDialTask = false
+        // 点击拨打图标触发事件
+        this.changeToCustomerDetail(taskId, campaignId, customerId, isBlacklist, customerPhone)
+      }
     }
   },
   // 模板编译/挂载之后
   mounted() {
+    this.getParametersFromContactRecordDail()
     this.searchByKeyWords(this.req)
     getStaffNameById(localStorage.getItem('agentId'))
       .then(res => {

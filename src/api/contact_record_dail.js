@@ -131,3 +131,11 @@ export function generateRecord(recordId, nodules, description) {
     data: { 'recordId': recordId, 'nodules': nodules, 'noduledesc': description }
   })
 }
+// 查询订单
+export function quertOrderDetail(id) {
+  return request({
+    url: '/order/quertDetail',
+    method: 'get',
+    params: { 'orderId': id }
+  })
+}

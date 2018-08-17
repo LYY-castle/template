@@ -71,7 +71,7 @@
           </el-table-column>
           <el-table-column align="center" label="客户姓名">
             <template slot-scope="scope">
-              <el-button type="text" @click="" size="medium">{{scope.row.customerName}}</el-button>
+              <el-button type="text" @click="transferParameters(scope.row.taskId, scope.row.campaignId,scope.row.customerId,scope.row.customerPhone)" size="medium">{{scope.row.customerName}}</el-button>
             </template>
           </el-table-column>
           <el-table-column align="center" label="联系电话">
@@ -307,7 +307,7 @@
           </el-table-column>
           <el-table-column align="center" label="订单编号">
             <template slot-scope="scope">
-              <el-button type="text" @click="" size="medium">{{scope.row.orderId}}</el-button>
+              <el-button type="text" @click="detailVisible=true;orderId=scope.row.orderId;quertOrderDetail()" size="medium">{{scope.row.orderId}}</el-button>
             </template>
           </el-table-column>
           <el-table-column align="center" label="产品名称" prop="productName">
@@ -329,6 +329,46 @@
         </el-table>
       </el-col>
     </el-row>
+    <!-- 订单详情 -->
+      <el-dialog
+      align:left
+      width="40%"
+      title="订单详情"
+      :visible.sync="detailVisible"
+      append-to-body>
+      <el-form  :model="orderDetailInfo" ref="orderDetailForm" label-width="120px">
+        <el-form-item label="客户姓名：" prop="customerName">
+          <div>{{orderDetailInfo.customerName}}</div>
+        </el-form-item>
+        <el-form-item label="联系电话：" prop="customerPhone">
+          <span>{{hideMobile(orderDetailInfo.customerPhone)}}</span>
+        </el-form-item>
+        <el-form-item label="订单编号：" prop="orderId">
+          <span>{{orderDetailInfo.orderId}}</span>
+        </el-form-item>
+        <el-form-item label="创建时间：" prop="createTime">
+          <span>{{orderDetailInfo.createTime}}</span>
+        </el-form-item>
+        <el-form-item label="订单状态：">
+          <span>{{orderDetailInfo.status===0?"未完成":"已完成"}}</span>
+        </el-form-item>
+        <el-form-item label="支付方式：" prop="modifyTime">
+          <span>{{orderDetailInfo.productId==="P20180101000001"?'赠险无需支付':(orderDetailInfo.payTypeName==null?'无':orderDetailInfo.payTypeName)}}</span>
+        </el-form-item>
+        <el-form-item label="选购产品：" prop="productName">
+          <span>{{orderDetailInfo.productName}}</span>
+        </el-form-item>
+        <el-form-item label="订单总价(元)：" prop="totalAmount">
+          <span>{{orderDetailInfo.totalAmount}}</span>
+        </el-form-item>
+        <el-form-item label="订单备注：" prop="description">
+          <span>{{orderDetailInfo.description}}</span>
+        </el-form-item>
+      </el-form>
+        <div slot="footer" style="text-align: right;">
+          <el-button @click="detailVisible = false">返回</el-button>
+        </div>
+      </el-dialog>
 </div>
 </template>
 
@@ -352,7 +392,8 @@
     queryOrderByTaskId,
     querycustomerbyid,
     updateTaskStatus,
-    generateRecord
+    generateRecord,
+    quertOrderDetail
   } from '@/api/contact_record_dail' // api接口引用
 
   export default {
@@ -360,8 +401,11 @@
 
     data() {
       return {
+        detailVisible: false, // 订单详情展示开关
         isMainPage: true, // 显示或隐藏详情页面
         requestFail: false, // 请求失败
+        orderId: '', // 订单Id
+        orderDetailInfo: {}, // 订单详情
         originalStatus: '',
         defaultProps: {
           children: 'summaryDetailInfos',
@@ -454,6 +498,22 @@
     },
 
     methods: {
+      // 跳转到别的组件
+      transferParameters(taskId, campaignId, customerId, customerPhone) {
+        queryTaskByTaskId(taskId).then(response => {
+          if (response.data.code === 0) {
+            const isBlacklist = response.data.data.isBlacklist
+            this.$router.push({
+              name: 'dial_task.html',
+              query: {// 通过query 传递参数
+                taskId: taskId, campaignId: campaignId, customerId: customerId, isBlacklist: isBlacklist, customerPhone: customerPhone
+              }
+            })
+          }
+        }).catch(error => {
+          console.log(error)
+        })
+      },
       async isHavePermissions() {
         // 判断主管
         await isHaveManager(this.staffInfo.agentid).then(response => {
@@ -684,6 +744,13 @@
           }
         }
         return html
+      },
+      quertOrderDetail() {
+        quertOrderDetail(this.orderId).then(response => {
+          if (response.data.code === 0) {
+            this.orderDetailInfo = response.data.data
+          }
+        })
       },
       // 预约时间补无
       showAppointTime(appointTime) {
