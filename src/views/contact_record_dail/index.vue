@@ -186,10 +186,10 @@
             </div>
           </el-col> -->
           <el-col :span="4">
-             <el-form-item  label="主叫:" prop="contactInfo.callerNumber">
+             <el-form-item  label="主叫：" prop="contactInfo.callerNumber">
                 <span>{{detailInfo.contactInfo.callerNumber}}</span>
               </el-form-item>
-              <el-form-item   label="被叫:" prop="contactInfo.calleeNumber">
+              <el-form-item   label="被叫：" prop="contactInfo.calleeNumber">
                   <span>{{hideMobile(detailInfo.contactInfo.calleeNumber)}}</span>
               </el-form-item>
               <el-form-item  label="客户姓名：" prop="contactInfo.customerName" size="small">
