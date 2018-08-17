@@ -191,18 +191,14 @@
           })
           contactFindAllNameList().then(res => {
             this.contactList = res.data.data
-            if (this.contactList) {
+            if (this.contactList && this.contactList.length !== 0 ) {
               for (let i = 0; i <= this.contactList.length; i++) {
                 if (this.contactList[i] && (this.nameListId.indexOf(this.contactList[i]) !== -1)) {
-                  this.nameList.push(response.data.data[i])
+                  if (response.data.data[i]) {
+                    this.nameList.push(response.data.data[i])
+                  }
                 }
               }
-              // this.search({
-              //   starttime: '',
-              //   endtime: '',
-              //   campaignId: this.campaignIdList.join(','),
-              //   listId: this.contactList.join(',')
-              // })
             }
           })
         })

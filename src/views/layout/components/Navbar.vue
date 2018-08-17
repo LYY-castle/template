@@ -1003,7 +1003,9 @@ p{
 }
 .navbar.open{
   transition: width 0.3s;
-  width:90%
+  width:90%;
+  position:fixed;
+  z-index:999;
 }
 .navbar.close{
   transition: width 0.3s;
