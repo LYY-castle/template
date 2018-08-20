@@ -71,11 +71,27 @@
             align="center"
             prop="staffName"
             label="姓名">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.staffName }}</p>
+                <div slot="reference">
+                  {{ scope.row.staffName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="departName"
             label="所属组织">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.departName }}</p>
+                <div slot="reference">
+                  {{ scope.row.departName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -86,6 +102,14 @@
             align="center"
             prop="modifier"
             label="操作人员">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.modifier }}</p>
+                <div slot="reference">
+                  {{ scope.row.modifier }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
