@@ -46,7 +46,6 @@
           ref="multipleTable"
           tooltip-effect="dark"
           border
-          style="width: 94%;"
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
@@ -91,7 +90,8 @@
           <el-table-column
             align="center"
             prop="updateTime"
-            label="操作时间">
+            label="操作时间"
+            width="155">
           </el-table-column>
           <el-table-column
             align="center"
@@ -150,7 +150,7 @@
                   <el-row style="color:#B4B4B4;margin-bottom:10px;"><b style="font-size:20px;">所选角色的可用功能为：</b></el-row>
                   <el-col :span="4" v-for="item in roleMenu" style="margin-top:5px;border-bottom:1px solid #EBEEF5;">{{item.name}}</el-col>
                 </el-row>
-              </el-card>        
+              </el-card>
           </el-row>
         </el-card>
       </el-row>
@@ -186,11 +186,11 @@
                   <el-row style="color:#B4B4B4;margin-bottom:10px;"><b style="font-size:20px;">所选角色的可用功能为：</b></el-row>
                   <el-col :span="4" v-for="item in roleMenu" style="margin-top:5px;border-bottom:1px solid #EBEEF5;">{{item.name}}</el-col>
                 </el-row>
-              </el-card>        
+              </el-card>
           </el-row>
         </el-card>
       </el-row>
-      
+
       <div slot="footer" class="dialog-footer">
         <el-button type="danger" @click="getUserRole(ruleFormReverse.agentId)">重置</el-button>
         <el-button @click="dialogFormVisibleReverse = false">取 消</el-button>
@@ -223,7 +223,7 @@
                   <el-row style="color:#B4B4B4;margin-bottom:10px;"><b style="font-size:20px;">所选角色的可用功能为：</b></el-row>
                   <el-col :span="4" v-for="item in roleMenu" style="margin-top:5px;border-bottom:1px solid #EBEEF5;">{{item.name}}</el-col>
                 </el-row>
-              </el-card>        
+              </el-card>
           </el-row>
         </el-card>
       </el-row>

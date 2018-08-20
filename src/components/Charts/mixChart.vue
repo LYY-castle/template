@@ -86,6 +86,7 @@
     <div style="margin-top: 1%">
       <el-row>
         <el-pagination
+          background
           @current-change="handleCurrentChange"
           :current-page.sync="pagination.pageNo"
           :page-size="pagination.pageSize"
@@ -113,6 +114,7 @@
     <div style="margin-top: 1%">
       <el-row>
         <el-pagination
+          background
           @current-change="handleCurrentChangeStaff"
           :current-page.sync="paginationStaffPage.pageNo"
           :page-size="paginationStaffPage.pageSize"
@@ -122,21 +124,15 @@
       </el-row>
     </div>
     <div style="margin-top: 1%">
+      <h3>合计表</h3>
       <el-table
         :header-row-style="headerRow"
         :data="tableData1"
         ref="multipleTable"
         tooltip-effect="dark"
-        :span-method="arraySpanMethod"
         show-summary
         border
         style="width: 100%;">
-        <el-table-column
-          align="center"
-          type="index"
-          label="合计表"
-          width="100">
-        </el-table-column>
         <el-table-column
           align="center"
           prop="agent_id"
@@ -168,6 +164,7 @@
           label="通话次数">
         </el-table-column>
       </el-table>
+      <h3>员工表详情</h3>
       <div style="margin-top:1%;" v-for="(item, index) in staffOptions">
         <el-table
           :header-row-style="headerRow"
@@ -216,6 +213,7 @@
         <el-row style="margin-top:1%;">
           <div @click="page(item,index)">
             <el-pagination
+              background
               @current-change="handleCurrentChange1"
               :current-page.sync="pageNo[index]"
               :page-size="pageSize[index]"
@@ -361,7 +359,7 @@
           }
         }
       },
-      objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+      objectSpanMethod({ row, column, rowIndex, columnIndex }, val) {
         if (columnIndex === 0) { //  表示第一列合并行
           if (rowIndex % 5 === 0) {
             return {
@@ -400,7 +398,7 @@
           start_time: Date.parse(this.timeValueClone[0]),
           end_time: Date.parse(this.timeValueClone[1]),
           pageNo: val,
-          pageSize: 5
+          pageSize: this.pageSize[this.currentIndex]
         }).then(response => {
           this.pageNo.splice(this.currentIndex, 1, response.data.pageNo)
           this.pageSize.splice(this.currentIndex, 1, response.data.pageSize)
@@ -635,6 +633,7 @@
             type: 'bar',
             stack: 'total',
             symbolSize: 10,
+            barMaxWidth: 35,
             symbol: 'circle',
             itemStyle: {
               normal: {
@@ -1180,7 +1179,7 @@
           start_time: Date.parse(this.timeValueClone[0]),
           end_time: Date.parse(this.timeValueClone[1]),
           pageNo: page || 1,
-          pageSize: 5
+          pageSize: 8
         }).then(response => {
           if (response.data.result.length) {
             this.calls_numberAgent = response.data.result.map(function(item, index) {
