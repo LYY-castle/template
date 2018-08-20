@@ -180,7 +180,7 @@
       <el-dialog
       align:left
       width="30%"
-      title="新增免访客户"
+      title="修改免访客户"
       :visible.sync="editVisible"
       append-to-body>
       <el-form :rules="rule" :model="editNoVisitCustomerDetail" ref="editCustomerForm" label-width="100px">
@@ -448,6 +448,9 @@ export default {
       })
     },
     editBlackListInfo(editNoVisitCustomerDetail) {
+      if (!this.validate) {
+        return false
+      }
       editBlackListInfo(editNoVisitCustomerDetail).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
