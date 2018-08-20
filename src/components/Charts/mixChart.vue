@@ -11,7 +11,7 @@
             <el-option label="年" value="year"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="操作时间：">
+        <el-form-item v-show="formInline.time === 'hour'" label="操作时间：">
           <el-date-picker
             v-model="timeValue"
             type="datetimerange"
@@ -19,6 +19,61 @@
             start-placeholder="开始时间"
             end-placeholder="结束时间"
             format="yyyy-MM-dd HH:mm">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item v-show="formInline.time === 'day'" label="操作时间：">
+          <el-date-picker
+            v-model="timeValue"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            format="yyyy-MM-dd">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item v-show="formInline.time === 'week'" label="操作时间：">
+          <el-date-picker
+            v-model="timeValue[0]"
+            type="week"
+            format="yyyy 第 WW 周"
+            placeholder="开始周">
+          </el-date-picker>
+          <span>-</span>
+          <el-date-picker
+            v-model="timeValue[1]"
+            type="week"
+            format="yyyy 第 WW 周"
+            placeholder="结束周">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item v-show="formInline.time === 'month'" label="操作时间：">
+          <el-date-picker
+            v-model="timeValue[0]"
+            type="month"
+            placeholder="开始月"
+            format="yyyy-MM">
+          </el-date-picker>
+          <span>-</span>
+          <el-date-picker
+            v-model="timeValue[1]"
+            type="month"
+            placeholder="结束月"
+            format="yyyy-MM">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item v-show="formInline.time === 'year'" label="操作时间：">
+          <el-date-picker
+            v-model="timeValue[0]"
+            type="year"
+            placeholder="开始年"
+            format="yyyy">
+          </el-date-picker>
+          <span>-</span>
+          <el-date-picker
+            v-model="timeValue[1]"
+            type="year"
+            placeholder="结束年"
+            format="yyyy">
           </el-date-picker>
         </el-form-item>
         <el-form-item>
@@ -31,6 +86,7 @@
     <div style="margin-top: 1%">
       <el-row>
         <el-pagination
+          background
           @current-change="handleCurrentChange"
           :current-page.sync="pagination.pageNo"
           :page-size="pagination.pageSize"
@@ -58,15 +114,17 @@
     <div style="margin-top: 1%">
       <el-row>
         <el-pagination
-          @current-change="handleCurrentChange"
-          :current-page.sync="pagination.pageNo"
-          :page-size="pagination.pageSize"
+          background
+          @current-change="handleCurrentChangeStaff"
+          :current-page.sync="paginationStaffPage.pageNo"
+          :page-size="paginationStaffPage.pageSize"
           layout="total, prev, pager, next, jumper"
-          :total="pagination.totalCount" style="text-align: right">
+          :total="paginationStaffPage.totalCount" style="text-align: right">
         </el-pagination>
       </el-row>
     </div>
     <div style="margin-top: 1%">
+      <h3>合计表</h3>
       <el-table
         :header-row-style="headerRow"
         :data="tableData1"
@@ -106,6 +164,7 @@
           label="通话次数">
         </el-table-column>
       </el-table>
+      <h3>员工表详情</h3>
       <div style="margin-top:1%;" v-for="(item, index) in staffOptions">
         <el-table
           :header-row-style="headerRow"
@@ -154,6 +213,7 @@
         <el-row style="margin-top:1%;">
           <div @click="page(item,index)">
             <el-pagination
+              background
               @current-change="handleCurrentChange1"
               :current-page.sync="pageNo[index]"
               :page-size="pageSize[index]"
@@ -171,6 +231,7 @@
   import echarts from 'echarts'
   import resize from './mixins/resize'
   import { statistics, getAllStaffByDepartId, getDepartId, totalAgent, reportAgent } from '@/api/ctiReport'
+  import { Message } from 'element-ui'
 
   export default {
     mixins: [resize],
@@ -216,6 +277,12 @@
           totalCount: null,
           totalPage: null
         },
+        paginationStaffPage: {
+          pageNo: null,
+          pageSize: null,
+          totalCount: null,
+          totalPage: null
+        },
         paginationStaff: [],
         pageNo: [],
         pageSize: [],
@@ -243,7 +310,8 @@
         free_time_durationAgent: [],
         busy_time_durationAgent: [],
         call_time_durationAgent: [],
-        calls_numberAgent: []
+        calls_numberAgent: [],
+        agentTime: []
       }
     },
     mounted() {
@@ -276,7 +344,22 @@
       this.chartTime = null
     },
     methods: {
-      objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+      arraySpanMethod({ row, column, rowIndex, columnIndex }) {
+        if (columnIndex === 0) { //  表示第一列合并行
+          if (rowIndex % this.formInline.agent_dn.length === 0) {
+            return {
+              rowspan: this.formInline.agent_dn.length,
+              colspan: 1
+            }
+          } else {
+            return {
+              rowspan: 0,
+              colspan: 0
+            }
+          }
+        }
+      },
+      objectSpanMethod({ row, column, rowIndex, columnIndex }, val) {
         if (columnIndex === 0) { //  表示第一列合并行
           if (rowIndex % 5 === 0) {
             return {
@@ -302,6 +385,9 @@
         this.formInline.from = val
         this.teamData(val)
       },
+      handleCurrentChangeStaff(val) {
+        this.agentChange(this.formInline.staff, val)
+      },
       page(val, index) {
         this.currentIndex = index
       },
@@ -312,7 +398,7 @@
           start_time: Date.parse(this.timeValueClone[0]),
           end_time: Date.parse(this.timeValueClone[1]),
           pageNo: val,
-          pageSize: 5
+          pageSize: this.pageSize[this.currentIndex]
         }).then(response => {
           this.pageNo.splice(this.currentIndex, 1, response.data.pageNo)
           this.pageSize.splice(this.currentIndex, 1, response.data.pageSize)
@@ -547,6 +633,7 @@
             type: 'bar',
             stack: 'total',
             symbolSize: 10,
+            barMaxWidth: 35,
             symbol: 'circle',
             itemStyle: {
               normal: {
@@ -881,9 +968,9 @@
               show: false
             },
             axisLabel: {
-              interval: 'auto'
+              interval: 0
             },
-            data: this.timeOptions
+            data: this.agentTime
           }],
           yAxis: [{
             type: 'value',
@@ -1085,12 +1172,14 @@
           }
         })
       },
-      agentChange(val) {
+      agentChange(val, page) {
         reportAgent({
           time_dimension: this.formInline.time,
           agent_id: val,
           start_time: Date.parse(this.timeValueClone[0]),
-          end_time: Date.parse(this.timeValueClone[1])
+          end_time: Date.parse(this.timeValueClone[1]),
+          pageNo: page || 1,
+          pageSize: 8
         }).then(response => {
           if (response.data.result.length) {
             this.calls_numberAgent = response.data.result.map(function(item, index) {
@@ -1108,7 +1197,16 @@
             this.call_time_durationAgent = response.data.result.map(function(item, index) {
               return item.call_time_duration
             })
+            this.agentTime = response.data.result.map(function(item, index) {
+              return item.time_dimension
+            })
             this.initChart2()
+          }
+          this.paginationStaffPage = {
+            pageNo: response.data.pageNo,
+            pageSize: response.data.pageSize,
+            totalCount: response.data.total_count,
+            totalPage: null
           }
         })
       },
@@ -1156,26 +1254,31 @@
         })
       },
       search(val) {
-        this.pageNo = []
-        this.pageSize = []
-        this.totalCount = []
-        totalAgent({
-          time_dimension: this.formInline.time,
-          agent_id: this.formInline.agent_dn.join(','),
-          start_time: Date.parse(this.timeValue[0]),
-          end_time: Date.parse(this.timeValue[1])
-        }).then(response => {
-          this.tableData1 = response.data.result
-        })
-        this.timeValueClone = this.timeValue
-        this.teamData(val)
+        if (this.timeValue[0] > this.timeValue[1]) {
+          Message({
+            message: '开始时间不能大于结束时间',
+            type: 'error',
+            duration: 3 * 1000
+          })
+        } else {
+          this.pageNo = []
+          this.pageSize = []
+          this.totalCount = []
+          totalAgent({
+            time_dimension: this.formInline.time,
+            agent_id: this.formInline.agent_dn.join(','),
+            start_time: Date.parse(this.timeValue[0]),
+            end_time: Date.parse(this.timeValue[1])
+          }).then(response => {
+            this.tableData1 = response.data.result
+          })
+          this.timeValueClone = this.timeValue
+          this.teamData(val)
+        }
       },
       reset() {
-        this.formInline = {
-          agent_dn: '',
-          from: 1,
-          time: 'day'
-        }
+        this.formInline.from = 1
+        this.formInline.time = 'day'
         this.timeValue = [new Date(new Date() - 7 * 24 * 3600 * 1000), new Date()]
       }
     }

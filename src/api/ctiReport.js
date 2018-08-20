@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function statistics(obj) {
   return request({
-    url: '/cti-report-controller/cti-record',
+    url: '/ctireportcontroller/ctirecord',
     method: 'get',
     params: obj
   })
@@ -10,7 +10,7 @@ export function statistics(obj) {
 
 export function totalAgent(obj) {
   return request({
-    url: '/cti-report-controller/cti-total-agent',
+    url: '/ctireportcontroller/ctitotalagent',
     method: 'get',
     params: obj
   })
@@ -18,7 +18,7 @@ export function totalAgent(obj) {
 
 export function reportAgent(obj) {
   return request({
-    url: '/cti-report-controller/cti-report-agent',
+    url: '/ctireportcontroller/ctireportagent',
     method: 'get',
     params: obj
   })
@@ -26,7 +26,7 @@ export function reportAgent(obj) {
 
 export function oBTaskReportStatistics(obj) {
   return request({
-    url: '/ob-report/ob-task-statistics',
+    url: '/obreport/obtaskstatistics',
     method: 'get',
     params: obj
   })
