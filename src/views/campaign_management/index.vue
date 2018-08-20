@@ -519,7 +519,7 @@ import {
   modifyCampaign,
   changeCampaignStatus,
   findAllCampaignTypes
-} from '@/api/campaign'// 侧边栏菜单
+} from '@/api/campaign'
 import {
   queryCampaign,
   addCampaign,
@@ -535,10 +535,10 @@ import { formatDateTime, clone } from '@/utils/tools'
 export default {
   name: 'campaignManagement',
   data() {
-    // 有效时间不能超过365天
+    // 有效时间不能超过9999天
     var checkExpiryDate = (eule, value, callback) => {
-      if (value > 365) {
-        return callback(new Error('有效时间不能超过365天'))
+      if (value > 9999) {
+        return callback(new Error('有效时间不能超过9999天'))
       }
       if (!/^\d+$/.test(value)) {
         return callback(new Error('请输入数字'))

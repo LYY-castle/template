@@ -7,10 +7,10 @@ export function findQualityTaskByInfo(req) {
     params: req
   })
 }
-/** 通过活动id获取活动下的评分表内容*/
-export function getMarksByCampaignId(req) {
+/** 根据任务id显示当前任务采用的评分表 */
+export function getMarksByTaskId(req) {
   return request({
-    url: '/quality/getMarksByCampaignId',
+    url: '/quality/getMarksByTaskId',
     method: 'get',
     params: req
   })

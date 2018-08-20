@@ -468,7 +468,7 @@ import {
 } from '@/api/qm_searchquailitymark'
 import {
   queryrecordbytaskid,
-  getMarksByCampaignId,
+  getMarksByTaskId,
   getGradeByGradeId,
   getGradeListByGradeId,
   querycustomerbyid,
@@ -1078,7 +1078,7 @@ export default {
     getMarks(row, type) {
       this.gradeInfo = []
       console.log(row)
-      getMarksByCampaignId({ 'activityId': row.campaignId }).then(response => {
+      getMarksByTaskId({ 'taskId': row.qualityTaskId }).then(response => {
         if (response.data.code === 0) {
           var data = response.data.data
           if (data.length <= 0) {

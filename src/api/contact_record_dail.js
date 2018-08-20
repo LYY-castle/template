@@ -60,11 +60,11 @@ export function isHaveStaff(id) {
 
 // 详情页面请求
 // 得到小结
-export function getSummariesByCampaignId(id) {
+export function getSummariesByTaskId(id) {
   return request({
-    url: '/dialtask/getSummariesByCampaignId',
+    url: '/dialtask/getSummariesByTaskId',
     method: 'get',
-    params: { 'campaignId': id }
+    params: { 'taskId': id }
   })
 }
 // 查询接触历史

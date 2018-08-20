@@ -384,7 +384,7 @@
     isHaveManager,
     isHaveStaff,
     getAllStaffByDepartId,
-    getSummariesByCampaignId,
+    getSummariesByTaskId,
     getContactByGradeId,
     queryrecordbytaskid,
     getStaffNameByAgentId,
@@ -538,7 +538,7 @@
       },
       // 详情页面加载
       contactDetail() {
-        getSummariesByCampaignId(this.ids.campaignId).then(response => {
+        getSummariesByTaskId(this.ids.taskId).then(response => {
           if (response.data.code === 0) {
             this.detailInfo.summariesInfo = response.data.data
           }

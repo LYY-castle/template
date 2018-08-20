@@ -556,7 +556,7 @@
 </template>
 
 <script>
-  import { findQualityTaskByInfo, getMarksByCampaignId, getGradeListByGradeId, querycustomerbyid, queryrecordbytaskid, queryOrder, addQCGradeRecord, editQCGradeRecord, getGradeByGradeId, repalceString } from '@/api/qm_quailitymark'
+  import { findQualityTaskByInfo, getMarksByTaskId, getGradeListByGradeId, querycustomerbyid, queryrecordbytaskid, queryOrder, addQCGradeRecord, editQCGradeRecord, getGradeByGradeId, repalceString } from '@/api/qm_quailitymark'
   import { formatDateTime } from '@/utils/tools'
 
   export default {
@@ -896,7 +896,7 @@
       /** 获取评分表信息 */
       getMarks(row, type) {
         this.gradeInfo = []
-        getMarksByCampaignId({ 'activityId': row.activityId }).then(response => {
+        getMarksByTaskId({ 'taskId': row.id }).then(response => {
           if (response.data.code === 0) {
             var data = response.data.data
             if (data.length <= 0) {

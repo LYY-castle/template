@@ -833,8 +833,8 @@ export default {
             this.productInfo = res3.data.data
           }
         })
-        // 根据活动id获取小结
-      getSummaries(campaignId)
+        // 根任务id获取小结
+      getSummaries(taskId)
         .then(res4 => {
           if (res4.data.code === 0 && res4.data.data.length > 0) {
             this.nodulesTree = res4.data.data
