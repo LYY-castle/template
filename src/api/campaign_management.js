@@ -66,3 +66,11 @@ export function assignCampaignAndList(addNameList) {
     data: addNameList
   })
 }
+// 活动移除名单
+export function removeList(campaignId, listIds) {
+  return request({
+    url: '/campaign/removeList',
+    method: 'post',
+    data: { 'campaignId': campaignId, 'listIds': listIds }
+  })
+}
