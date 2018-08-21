@@ -2,11 +2,11 @@
   <div class="container">
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item prop="contactTaskId">
-          <el-input v-model="req.contactTaskId" placeholder="坐席任务编号" maxlength="50" v-if="n==2||n==3"></el-input>
+        <el-form-item prop="contactTaskId" v-if="n==2||n==3">
+          <el-input v-model="req.contactTaskId" placeholder="坐席任务编号" maxlength="50"></el-input>
         </el-form-item>
-        <el-form-item prop="qualityTaskId">
-          <el-input v-model="req.qualityTaskId" placeholder="质检任务编号" maxlength="50" v-if="n==1||n==4"></el-input>
+        <el-form-item prop="qualityTaskId" v-if="n==1||n==4">
+          <el-input v-model="req.qualityTaskId" placeholder="质检任务编号" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item v-if="n==1||n==4" prop="activityId">
           <el-select v-model="req.activityId" placeholder="质检活动">
@@ -28,11 +28,11 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item prop="agentid">
-          <el-input v-model="req.agentid" placeholder="坐席工号" maxlength="50" v-if="n==1||n==4"></el-input>
+        <el-form-item prop="agentid" v-if="n==1||n==4">
+          <el-input v-model="req.agentid" placeholder="坐席工号" maxlength="50"></el-input>
         </el-form-item>
-        <el-form-item prop="qcAgentid">
-          <el-input v-model="req.qcAgentid" placeholder="质检员工号" maxlength="50" v-if="n==2||n==3"></el-input>
+        <el-form-item prop="qcAgentid" v-if="n==2||n==3">
+          <el-input v-model="req.qcAgentid" placeholder="质检员工号" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="质检结束时间" prop="timeValue">
           <el-date-picker
@@ -45,19 +45,17 @@
           </el-date-picker>
         </el-form-item>
         <!-- <br> -->
-        <el-form-item label="质检评分分数" prop="min">
-          <el-input v-model="req.min" size="small" style="width:35%" v-on:blur="checkMin()"></el-input>
-          <b>到</b>
+        <el-form-item label="质检评分分数" prop="min" class="min">
+          <!-- <el-col :span="1"> -->
+            <el-input v-model="req.min" size="small" v-on:blur="checkMin()"></el-input>
+          <!-- </el-col>  -->
         </el-form-item>
-        <el-form-item style="margin-left:-6.7%" prop="max">
-          <el-input v-model="req.max" size="small" style="width:38%" v-on:blur="checkMax()"></el-input>
+        <b style="display:inline-block;padding-top:8px;font-size:14px;color: #606266;">到</b>
+        <el-form-item prop="max" class="max">
+          <!-- <el-col :span="1"> -->
+            <el-input v-model="req.max" size="small" v-on:blur="checkMax()"></el-input>
+          <!-- </el-col> -->
         </el-form-item>
-        <!-- <el-form-item v-if="n==2||n==4" label="查询类型" prop="searchType" style="margin-left:-7.7%">
-          <el-radio-group v-model="searchType" size="small">
-            <el-radio label='0'>本人</el-radio>
-            <el-radio label='1'>下属</el-radio>
-          </el-radio-group>
-        </el-form-item> -->
         <el-form-item>
           <el-button type="primary" @click="req.from=1;findQualityResultByInfo(req);req2=clone(req);" icon="el-icon-search">查询</el-button>
           <el-button type="danger" @click="resetForm('searchForm');">重置</el-button>
@@ -116,6 +114,10 @@
             width="55"
             prop="contactRecordUrl"
             label="录音">
+            <template slot-scope="scope">
+              <a v-if="scope.row.contactRecordUrl" style="color:#63B0FF" :title="scope.row.contactRecordUrl">查看</a>
+              <div v-if="!scope.row.contactRecordUrl">无</div>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -199,6 +201,10 @@
             width="55"
             prop="contactRecordUrl"
             label="录音">
+            <template slot-scope="scope">
+              <a v-if="scope.row.contactRecordUrl" style="color:#63B0FF" :title="scope.row.contactRecordUrl">查看</a>
+              <div v-if="!scope.row.contactRecordUrl">无</div>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -464,7 +470,8 @@ import {
   checkPromission_qc, // 质检员
   checkPromission_charge, // 现场主管
   checkPromission_sit, // 坐席
-  checkPromission_qs// 质检主管
+  checkPromission_qs, // 质检主管
+  getDepartIdByAgentId// 查找部门id
 } from '@/api/qm_searchquailitymark'
 import {
   queryrecordbytaskid,
@@ -556,10 +563,8 @@ export default {
     this.findQmCampaignByUser()
     this.findAllGradeForm()
     this.findQmCampaign()
-    if (this.n === 2) {
-      this.getStaffNameByAgentId(localStorage.getItem('agentId'))
-    }
     // 获取登陆工号的角色 1、质检员  2、团队长  3、坐席  4、质检组长
+    // 质检员
     checkPromission_qc(this.agentId).then(response => {
       this.n = 1
       this.a = true
@@ -573,27 +578,21 @@ export default {
         console.log(error)
       }
     })
+    // 团队长
     checkPromission_charge(this.agentId).then(response => {
       this.n = 2
       this.b = true
-      // if (this.searchType === '1') {
       this.$set(this.req, 'contactTaskId', '')
       this.$set(this.req, 'qcAgentid', '')
       this.$set(this.req, 'activityId', '')
       this.$set(this.req, 'departId', localStorage.getItem('departId'))
       this.$set(this.req, 'gradeId', '')
-      // } else if (this.searchType === '0') {
-      //   this.$set(this.req, 'contactTaskId', '')
-      //   this.$set(this.req, 'qcAgentid', localStorage.getItem('agentId'))
-      //   this.$set(this.req, 'contactTaskId', '')
-      //   this.$set(this.req, 'agentid', '')
-      //   this.$set(this.req, 'gradeId', '')
-      // }
     }).catch(error => {
       if (error.response.status !== 403) {
         console.log(error)
       }
     })
+    // 坐席
     checkPromission_sit(this.agentId).then(response => {
       this.n = 3
       this.c = true
@@ -607,6 +606,7 @@ export default {
         console.log(error)
       }
     })
+    // 质检组长
     checkPromission_qs(this.agentId).then(response => {
       this.n = 4
       this.d = true
@@ -629,6 +629,10 @@ export default {
         console.log(error)
       }
     })
+    this.getDepartIdByAgentId(localStorage.getItem('agentId'))
+    if (this.n === 2) {
+      this.getStaffNameByAgentId(localStorage.getItem('agentId'))
+    }
   },
   methods: {
     // 验证最小值
@@ -727,7 +731,7 @@ export default {
         // if (this.searchType === '1') {
         this.$set(this.req, 'contactTaskId', '')
         this.$set(this.req, 'qualityTaskId', '')
-        this.$set(this.req, 'qcAgentid', '')
+        this.$set(this.req, 'qcdepartId', '')
         this.$set(this.req, 'agentid', '')
         this.$set(this.req, 'activityId', '')
         this.$set(this.req, 'gradeId', '')
@@ -766,6 +770,16 @@ export default {
     getStaffNameByAgentId(agentId) {
       getStaffNameByAgentId(agentId).then(response => {
         localStorage.setItem('departId', response.data.data[0].departId)
+      })
+    },
+    // 查询部门id
+    getDepartIdByAgentId(agentid) {
+      getDepartIdByAgentId(agentid).then(response => {
+        if (this.n === 2) {
+          this.req.departId = response.data.data[0].departId
+        } else if (this.n === 4) {
+          this.req.qcdepartId = response.data.data[0].departId
+        }
       })
     },
     // 查询质检评分
@@ -1155,10 +1169,16 @@ export default {
 .el-table thead {
   color: #000 !important;
 }
-
+.min .el-form-item__content{
+  width:70px;
+}
+.max .el-form-item__content{
+  width:70px;
+}
 </style>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
+
 .el-table {
   border: 1px solid #ecebe9;
   thead th .cell {
