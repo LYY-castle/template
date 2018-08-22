@@ -753,7 +753,11 @@ export default {
         pageNo: 1
       },
       nameListsTable: [],
-      nameListsPageinfo: {},
+      nameListsPageinfo: {
+        pageNo: 1,
+        pageSize: 10,
+        totalCount: 0
+      },
       nameListExclude: {
         listId: '',
         listName: '',
@@ -1064,6 +1068,11 @@ export default {
           }
           if (response.data.pageInfo !== undefined && response.data.pageInfo) {
             this.nameListsPageinfo = response.data.pageInfo
+          } else {
+            this.nameListsPageinfo = {
+              pageNo: 1,
+              pageSize: 10,
+              totalCount: 0 }
           }
         }
       }).catch(error => {
