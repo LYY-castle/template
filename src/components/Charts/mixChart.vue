@@ -18,7 +18,7 @@
             range-separator="-"
             start-placeholder="开始时间"
             end-placeholder="结束时间"
-            format="yyyy-MM-dd HH:mm">
+            format="yyyy-MM-dd HH时">
           </el-date-picker>
         </el-form-item>
         <el-form-item v-show="formInline.time === 'day'" label="操作时间：">
@@ -869,6 +869,7 @@
             name: '通话时长(秒)',
             type: 'bar',
             stack: 'total',
+            barMaxWidth: 35,
             symbolSize: 10,
             symbol: 'circle',
             itemStyle: {
@@ -1105,6 +1106,7 @@
             name: '通话时长(秒)',
             type: 'bar',
             stack: 'total',
+            barMaxWidth: 35,
             symbolSize: 10,
             symbol: 'circle',
             itemStyle: {

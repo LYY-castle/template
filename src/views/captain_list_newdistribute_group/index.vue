@@ -121,6 +121,14 @@
             align="center"
             prop="departName"
             label="分配对象">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.departName }}</p>
+                <div slot="reference">
+                  {{ scope.row.departName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
