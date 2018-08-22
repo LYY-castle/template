@@ -81,7 +81,10 @@
             <el-button @click="editVisible=true;delReq.campaignId=scope.row.campaignId;getDeptByCampaignId(scope.row.campaignId);getMarksByCampaignId(scope.row.campaignId);getCampaignById(scope.row.campaignId);" type="text" size="small">修改</el-button>
             <el-button @click="delVisible=true;delReq.campaignId=scope.row.campaignId" type="text" size="small">删除</el-button>
             <el-button @click="changeVisible=true;delReq.campaignId=scope.row.campaignId;delReq.status=scope.row.status;" type="text" size="small">{{scope.row.status==='0'?'禁用':'启用'}}</el-button>
+            <div>
             <el-button @click="campaignName=scope.row.campaignName;nameListExclude.campaignId=scope.row.campaignId;nameLists.campaignId=scope.row.campaignId;addList=true;nameListExclude.pageNo = 1;nameLists.pageNo = 1;getNameLists(nameLists);getNameListExclude(nameListExclude)" type="text" size="small">添加名单</el-button>
+            <el-button @click="campaignName=scope.row.campaignName;nameLists.campaignId=scope.row.campaignId;removeVisible=true;nameLists.pageNo = 1;getNameLists(nameLists)" type="text" size="small">移除名单</el-button>
+            </div>
           </template>
           </el-table-column>
         </el-table>
@@ -506,6 +509,114 @@
         <el-button type="primary" @click="batchDelVisible = false;batchDelCampaigns(batchDelReq);">确 定</el-button>
       </div>
     </el-dialog>
+
+    <!-- 活动移除名单 -->
+     <el-dialog
+      top="5vh"
+      width="90%"
+      :visible.sync="removeVisible"
+      append-to-body>
+      <div slot="title" style="text-align: center;">
+        <el-button @click="removeVisible = false;" style="float:left;" icon="el-icon-arrow-left">返 回</el-button>
+        <h3 style="display:inline;">活动名称：{{campaignName}}</h3>
+      </div>
+      <el-row>
+        <el-row>
+          <h2 style="display:inline">名单列表</h2>
+          <el-pagination
+            background
+            @current-change="nameListChange"
+            :current-page=nameListsPageinfo.pageNo
+            :page-sizes="[10, 20, 30, 50]"
+            :page-size=nameListsPageinfo.pageSize
+            layout="total, prev, pager, next, jumper"
+            :total=nameListsPageinfo.totalCount style="text-align: right;float:right;">
+          </el-pagination>
+        </el-row>
+        <el-table
+          :data="nameListsTable"
+          border
+          @selection-change="removeListSelectionChange">
+          <el-table-column
+            align="center"
+            type="selection"
+            width="55">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="序号"
+            width="55">
+            <template
+              slot-scope="scope">
+              <div>{{scope.$index+(nameListsPageinfo.pageNo-1)*10+1}}</div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="listId"
+            label="名单编号">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="listName"
+            label="名单名称">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="listnameNumber"
+            label="名单数量">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="modifierName"
+            label="操作人">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="modifierTime"
+            label="操作时间">
+            <template 
+              slot-scope="scope">
+              <div>{{formatDateTime(scope.row.modifierTime)}}</div>
+            </template>
+          </el-table-column>
+           <el-table-column
+            align="center"
+            label="操作"
+            width="200">1
+          <template slot-scope="scope">
+            <el-button @click="removeListVisible=true;saveRemoveListId(scope.row.listId)" type="text" size="small">移除名单</el-button>
+          </template>
+          </el-table-column>
+        </el-table>
+      </el-row>
+      <div slot="footer" style="text-align: right;">
+        <el-button type="success" @click="batchListVisible=true;">批量移除名单</el-button>
+        <el-button type="danger" @click="removeVisible = false;">取 消</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
+      width="30%"
+      title="批量移除名单"
+      :visible.sync="batchListVisible"
+      append-to-body>
+      <span style="font-size:20px;">确定移除选定内容？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button @click="batchListVisible = false">取 消</el-button>
+        <el-button type="primary" @click="batchListVisible = false;removeList();">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
+      width="30%"
+      title="移除名单"
+      :visible.sync="removeListVisible"
+      append-to-body>
+      <span style="font-size:20px;">确定移除吗？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button @click="removeListVisible = false">取 消</el-button>
+        <el-button type="primary" @click="removeListVisible = false;removeList();">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -528,7 +639,8 @@ import {
   delCampaignById,
   showNameListsById,
   findNameListExcludeById,
-  assignCampaignAndList
+  assignCampaignAndList,
+  removeList
 } from '@/api/campaign_management'
 import { formatDateTime, clone } from '@/utils/tools'
 
@@ -574,6 +686,10 @@ export default {
           { required: true, message: '请选择活动组织', trigger: 'change' }
         ]
       },
+      removeListVisible: false, // 单个移除
+      batchListVisible: false, // 批量移除名单
+      removeLists: [], // 批量移除ids
+      removeVisible: false, // 移除名单
       detailVisible: false,
       delVisible: false, // 删除对话框显示隐藏
       editVisible: false, // 修改对话框显示隐藏
@@ -637,7 +753,11 @@ export default {
         pageNo: 1
       },
       nameListsTable: [],
-      nameListsPageinfo: {},
+      nameListsPageinfo: {
+        pageNo: 1,
+        pageSize: 10,
+        totalCount: 0
+      },
       nameListExclude: {
         listId: '',
         listName: '',
@@ -681,6 +801,20 @@ export default {
       if (this.$refs[formName] !== undefined) {
         this.$refs[formName].resetFields()
       }
+    },
+    removeList() {
+      if (this.removeLists.length <= 0) {
+        this.$message.error('请选择要移除的')
+        return
+      }
+      removeList(this.nameLists.campaignId, this.removeLists).then(response => {
+        if (response.data.code === 0) {
+          this.$message.success('操作成功')
+          this.removeVisible = false
+        } else {
+          this.$message.error(response.data.message)
+        }
+      })
     },
     submitForm(formName) {
       if (this.$refs[formName] !== undefined) {
@@ -893,6 +1027,16 @@ export default {
         this.addNameList.listIds.push(val[i].listId)
       }
     },
+    removeListSelectionChange(val) {
+      this.removeLists.length = 0
+      for (var i = 0; i < val.length; i++) {
+        this.removeLists.push(val[i].listId)
+      }
+    },
+    saveRemoveListId(id) {
+      this.removeLists.length = 0
+      this.removeLists.push(id)
+    },
     // 切换活动状态
     changeStatus(status) {
       if (status.status === '0') {
@@ -924,6 +1068,11 @@ export default {
           }
           if (response.data.pageInfo !== undefined && response.data.pageInfo) {
             this.nameListsPageinfo = response.data.pageInfo
+          } else {
+            this.nameListsPageinfo = {
+              pageNo: 1,
+              pageSize: 10,
+              totalCount: 0 }
           }
         }
       }).catch(error => {
