@@ -38,4 +38,22 @@
  }
  .el-table /deep/ th {
    background-color: #f7f5e6;
+   padding: 6px 0 ;
+ }
+ .el-button {
+   width: 80px;
+ }
+ .el-button--text {
+   width: auto;
+ }
+ .el-submenu {
+   border-bottom: 1px solid #ffffff;
+ }
+ .el-submenu__title {
+   height: 50px;
+   line-height: 50px;
+ }
+ .el-popover {
+   padding: 2px 10px;
+   min-width: 10px;
  }

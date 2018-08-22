@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-row>
         <el-form :inline="true" class="demo-form-inline" size="small">
-          <el-form-item>
+          <el-form-item label="活动名称:">
             <el-select v-model="formInline.campaignId" @change="selectActive">
               <el-option value="" label="请选择活动"></el-option>
               <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
@@ -54,6 +54,14 @@
             align="center"
             prop="listName"
             label="名单名称">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.listName }}</p>
+                <div slot="reference">
+                  {{ scope.row.listName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -69,6 +77,14 @@
             align="center"
             prop="modifierName"
             label="操作人">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.modifierName }}</p>
+                <div slot="reference">
+                  {{ scope.row.modifierName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -79,6 +95,7 @@
         <el-row style="margin-top:1%;">
           <el-col :span="22">
             <el-pagination
+              background
               @current-change="handleCurrentChange"
               :current-page.sync="pagination.pageNo"
               :page-size="pagination.pageSize"
