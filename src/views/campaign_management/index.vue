@@ -585,13 +585,13 @@
             label="操作"
             width="200">1
           <template slot-scope="scope">
-            <el-button @click="removeListVisible=true;saveListId(scope.row.listId)" type="text" size="small">移除名单</el-button>
+            <el-button @click="removeListVisible=true;saveRemoveListId(scope.row.listId)" type="text" size="small">移除名单</el-button>
           </template>
           </el-table-column>
         </el-table>
       </el-row>
       <div slot="footer" style="text-align: right;">
-        <el-button type="success" @click="batchListVisible=true;">移除名单</el-button>
+        <el-button type="success" @click="batchListVisible=true;">批量移除名单</el-button>
         <el-button type="danger" @click="removeVisible = false;">取 消</el-button>
       </div>
     </el-dialog>
@@ -608,7 +608,7 @@
     </el-dialog>
     <el-dialog
       width="30%"
-      title="批量移除名单"
+      title="移除名单"
       :visible.sync="removeListVisible"
       append-to-body>
       <span style="font-size:20px;">确定移除吗？</span>
@@ -1033,7 +1033,7 @@ export default {
         this.removeLists.push(val[i].listId)
       }
     },
-    saveListId(id) {
+    saveRemoveListId(id) {
       this.removeLists.length = 0
       this.removeLists.push(id)
     },
