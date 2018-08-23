@@ -34,7 +34,7 @@
             width="55">
             <template
               slot-scope="scope">
-              <div>{{scope.$index+(req.pageNo-1)*10+1}}</div>
+              <div>{{scope.$index+(req2.pageNo-1)*10+1}}</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -80,7 +80,7 @@
           <template slot-scope="scope">
             <el-button @click="editVisible=true;delReq.campaignId=scope.row.campaignId;getDeptByCampaignId(scope.row.campaignId);getMarksByCampaignId(scope.row.campaignId);getCampaignById(scope.row.campaignId);" type="text" size="small">修改</el-button>
             <el-button @click="delVisible=true;delReq.campaignId=scope.row.campaignId" type="text" size="small">删除</el-button>
-            <el-button @click="changeVisible=true;delReq.campaignId=scope.row.campaignId;delReq.status=scope.row.status;" type="text" size="small">{{scope.row.status==='0'?'禁用':'启用'}}</el-button>
+            <el-button @click="changeVisible=true;delReq.campaignId=scope.row.campaignId;delReq.status=scope.row.status" type="text" size="small">{{scope.row.status==='0'?'禁用':'启用'}}</el-button>
             <div>
             <el-button @click="campaignName=scope.row.campaignName;nameListExclude.campaignId=scope.row.campaignId;nameLists.campaignId=scope.row.campaignId;addList=true;nameListExclude.pageNo = 1;nameLists.pageNo = 1;getNameLists(nameLists);getNameListExclude(nameListExclude)" type="text" size="small">添加名单</el-button>
             <el-button @click="campaignName=scope.row.campaignName;nameLists.campaignId=scope.row.campaignId;removeVisible=true;nameLists.pageNo = 1;getNameLists(nameLists)" type="text" size="small">移除名单</el-button>
@@ -182,7 +182,7 @@
     </el-dialog>
     <el-dialog
       align:left
-      width="20%"
+      width="30%"
       title="活动信息详情"
       :visible.sync="detailVisible"
       append-to-body>
@@ -200,7 +200,7 @@
           <span>{{campaignDetail.listExpiryDate+'天'}}</span>
         </el-form-item>
         <el-form-item label="活动状态">
-          <span>{{campaignDetail.status===0?'无效':'有效'}}</span>
+          <span>{{campaignDetail.status==='1'?'无效':'有效'}}</span>
         </el-form-item>
         <el-form-item label="活动组织">
           <span>{{departName}}</span>
@@ -713,7 +713,8 @@ export default {
       summaryName: '', // 小结名称
       campaignName: '', // 活动名称
       delReq: {
-        campaignId: ''
+        campaignId: '',
+        productIds: []
       },
       batchDelReq: {
         campaignIds: []
@@ -885,6 +886,7 @@ export default {
           // 遍历查找对应产品名称
           this.productName = []
           this.departName = ''
+          console.log('8585:', this.campaignDetail.products)
           for (var i = 0; i < this.campaignDetail.products.length; i++) {
             list = this.campaignDetail.products[i]
             for (var j = 0; j < this.productData.length; j++) {
@@ -1044,12 +1046,20 @@ export default {
       } else {
         status.status = '0'
       }
-      changeCampaignStatus(status).then(response => {
+      findCampaignById(status.campaignId).then(response => {
         if (response.data.code === 0) {
-          this.$message.success(response.data.message)
-          this.findCampaignByConditions(this.req2)
-        } else {
-          this.$message(response.data.message)
+          status.productIds = response.data.data.products
+          changeCampaignStatus(status).then(response => {
+            if (response.data.code === 0) {
+              this.$message.success(response.data.message)
+              this.findCampaignByConditions(this.req2)
+            } else {
+              this.$message(response.data.message)
+            }
+          }).catch(error => {
+            console.log(error)
+            this.$message('操作失败')
+          })
         }
       }).catch(error => {
         console.log(error)
