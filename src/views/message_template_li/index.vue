@@ -428,7 +428,7 @@ export default {
             this.$message.success(response.data.message)
             this.findTemplateList(this.paginationReq)
           } else {
-            this.$message('删除失败')
+            this.$message(response.data.message)
           }
         }).catch(error => {
           console.log(error)
@@ -446,7 +446,7 @@ export default {
           this.editVisible = false
           this.findTemplateList(this.paginationReq)
         } else {
-          this.$message('修改失败')
+          this.$message(response.data.message)
         }
       }).catch(error => {
         console.error(error)
@@ -460,7 +460,7 @@ export default {
           this.delVisible = false
           this.findTemplateList(this.paginationReq)
         } else {
-          this.$message('删除失败')
+          this.$message(response.data.message)
         }
       }).catch(error => {
         console.error(error)

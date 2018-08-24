@@ -374,7 +374,7 @@ export default {
           this.editVisible = false
           this.getTemplateList(this.paginationReq)
         } else {
-          this.$message('修改失败')
+          this.$message(response.data.message)
         }
       }).catch(error => {
         console.error(error)
@@ -388,7 +388,7 @@ export default {
           this.delVisible = false
           this.getTemplateList(this.paginationReq)
         } else {
-          this.$message('删除失败')
+          this.$message(response.data.message)
         }
       }).catch(error => {
         console.error(error)
