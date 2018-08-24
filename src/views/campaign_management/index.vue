@@ -34,7 +34,7 @@
             width="55">
             <template
               slot-scope="scope">
-              <div>{{scope.$index+(req.pageNo-1)*10+1}}</div>
+              <div>{{scope.$index+(req2.pageNo-1)*10+1}}</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -51,9 +51,42 @@
           </el-table-column>
           <el-table-column
             align="center"
+            width="95"
             label="名单有效期">
             <template slot-scope="scope">
               <div>{{scope.row.listExpiryDate+'天'}}</div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="canContactNum"
+            label="拨打次数">
+            <template slot-scope="scope">
+              <div>{{scope.row.canContactNum==null?'':(scope.row.canContactNum+'次')}}</div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="products"
+            label="产品">
+            <template slot-scope="scope">
+             <span>{{(getProductName(scope.row.products)).join(",")}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="summaryId"
+            label="小结">
+            <template slot-scope="scope">
+             <span>{{getSummaryName(scope.row.summaryId)}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="departId"
+            label="活动部门">
+            <template slot-scope="scope">
+             <span>{{getDepartName(scope.row.departId)}}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -80,7 +113,7 @@
           <template slot-scope="scope">
             <el-button @click="editVisible=true;delReq.campaignId=scope.row.campaignId;getDeptByCampaignId(scope.row.campaignId);getMarksByCampaignId(scope.row.campaignId);getCampaignById(scope.row.campaignId);" type="text" size="small">修改</el-button>
             <el-button @click="delVisible=true;delReq.campaignId=scope.row.campaignId" type="text" size="small">删除</el-button>
-            <el-button @click="changeVisible=true;delReq.campaignId=scope.row.campaignId;delReq.status=scope.row.status;" type="text" size="small">{{scope.row.status==='0'?'禁用':'启用'}}</el-button>
+            <el-button @click="changeVisible=true;delReq.campaignId=scope.row.campaignId;delReq.status=scope.row.status" type="text" size="small">{{scope.row.status==='0'?'禁用':'启用'}}</el-button>
             <div>
             <el-button @click="campaignName=scope.row.campaignName;nameListExclude.campaignId=scope.row.campaignId;nameLists.campaignId=scope.row.campaignId;addList=true;nameListExclude.pageNo = 1;nameLists.pageNo = 1;getNameLists(nameLists);getNameListExclude(nameListExclude)" type="text" size="small">添加名单</el-button>
             <el-button @click="campaignName=scope.row.campaignName;nameLists.campaignId=scope.row.campaignId;removeVisible=true;nameLists.pageNo = 1;getNameLists(nameLists)" type="text" size="small">移除名单</el-button>
@@ -136,6 +169,9 @@
         <el-form-item label="名单有效期" prop="listExpiryDate">
           <el-input v-model="campaignDetail.listExpiryDate" size="small" placeholder="单位：天"></el-input>
         </el-form-item>
+        <el-form-item label="拨打次数" prop="canContactNum">
+          <el-input v-model="campaignDetail.canContactNum" size="small" placeholder="单位：次"></el-input>
+        </el-form-item>
         <el-form-item label="活动状态:" prop="status"> 
           <el-radio-group v-model="campaignDetail.status" size="small">
             <el-radio label='0' border>有效</el-radio>
@@ -182,7 +218,7 @@
     </el-dialog>
     <el-dialog
       align:left
-      width="20%"
+      width="30%"
       title="活动信息详情"
       :visible.sync="detailVisible"
       append-to-body>
@@ -199,8 +235,11 @@
         <el-form-item label="名单有效期">
           <span>{{campaignDetail.listExpiryDate+'天'}}</span>
         </el-form-item>
+        <el-form-item label="拨打次数">
+          <span>{{campaignDetail.canContactNum==null?'':(campaignDetail.canContactNum+'次')}}</span>
+        </el-form-item>
         <el-form-item label="活动状态">
-          <span>{{campaignDetail.status===0?'无效':'有效'}}</span>
+          <span>{{campaignDetail.status==='1'?'无效':'有效'}}</span>
         </el-form-item>
         <el-form-item label="活动组织">
           <span>{{departName}}</span>
@@ -256,6 +295,9 @@
         </el-form-item>
         <el-form-item label="名单有效期" prop="listExpiryDate">
           <el-input v-model="campaignDetail.listExpiryDate" size="small" placeholder="单位：天"></el-input>
+        </el-form-item>
+        <el-form-item label="拨打次数" prop="listExpiryDate">
+          <el-input v-model="campaignDetail.canContactNum" size="small" placeholder="单位：次"></el-input>
         </el-form-item>
         <el-form-item label="活动状态" prop="status">
           <el-radio-group v-model="campaignDetail.status" size="small">
@@ -658,6 +700,13 @@ export default {
         callback()
       }
     }
+    var checkCanContactNum = (eule, value, callback) => {
+      if (!/^\d+$/.test(value)) {
+        return callback(new Error('请输入数字'))
+      } else {
+        callback()
+      }
+    }
     return {
       rule: {
         campaignName: [
@@ -675,6 +724,10 @@ export default {
         listExpiryDate: [
           { required: true, message: '请输入名单有效期', trigger: 'change' },
           { validator: checkExpiryDate, trigger: 'change' }
+        ],
+        canContactNum: [
+          { required: true, message: '请输入拨打次数', trigger: 'change' },
+          { validator: checkCanContactNum, trigger: 'change' }
         ],
         status: [
           { required: true, message: '请选择活动状态', trigger: 'change' }
@@ -713,7 +766,8 @@ export default {
       summaryName: '', // 小结名称
       campaignName: '', // 活动名称
       delReq: {
-        campaignId: ''
+        campaignId: '',
+        productIds: []
       },
       batchDelReq: {
         campaignIds: []
@@ -738,6 +792,7 @@ export default {
         products: [],
         deptId: [],
         summaryId: [],
+        canContactNum: '',
         campaignName: '',
         listExpiryDate: '',
         status: '0',
@@ -856,6 +911,43 @@ export default {
           this.$message('操作失败')
         })
     },
+    // 得到产品名称
+    getProductName(productIds) {
+      var productNames = []
+      var list
+      for (var i = 0; i < productIds.length; i++) {
+        list = productIds[i]
+        for (var j = 0; j < this.productData.length; j++) {
+          if (list === this.productData[j].productId) {
+            if (this.productName.indexOf() === -1) {
+              productNames.push(this.productData[j].productName)
+            }
+          }
+        }
+      }
+      return productNames
+    },
+    // 得到部门名称
+    getDepartName(departId) {
+      var departName = ''
+      for (var a = 0; a < this.deptData.length; a++) {
+        if (this.deptData[a].id === parseInt(departId)) {
+          departName = this.deptData[a].departName
+        }
+      }
+      return departName
+    },
+    // 得到小结名称
+    getSummaryName(summaryId) {
+      var summaryName = ''
+      // 遍历查找对应小结
+      for (var c = 0; c < this.summaryData.length; c++) {
+        if (this.summaryData[c].summaryId === summaryId) {
+          summaryName = this.summaryData[c].summaryName
+        }
+      }
+      return summaryName
+    },
     // 删除活动信息
     delCampaign(campaignId) {
       delCampaignById(campaignId)
@@ -885,6 +977,7 @@ export default {
           // 遍历查找对应产品名称
           this.productName = []
           this.departName = ''
+          console.log('8585:', this.campaignDetail.products)
           for (var i = 0; i < this.campaignDetail.products.length; i++) {
             list = this.campaignDetail.products[i]
             for (var j = 0; j < this.productData.length; j++) {
@@ -1044,12 +1137,20 @@ export default {
       } else {
         status.status = '0'
       }
-      changeCampaignStatus(status).then(response => {
+      findCampaignById(status.campaignId).then(response => {
         if (response.data.code === 0) {
-          this.$message.success(response.data.message)
-          this.findCampaignByConditions(this.req2)
-        } else {
-          this.$message(response.data.message)
+          status.productIds = response.data.data.products
+          changeCampaignStatus(status).then(response => {
+            if (response.data.code === 0) {
+              this.$message.success(response.data.message)
+              this.findCampaignByConditions(this.req2)
+            } else {
+              this.$message(response.data.message)
+            }
+          }).catch(error => {
+            console.log(error)
+            this.$message('操作失败')
+          })
         }
       }).catch(error => {
         console.log(error)
