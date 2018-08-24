@@ -51,7 +51,7 @@
             </el-form-item>
           </el-form>
       </el-row>
-      
+
       <template>
       <el-row>
           <el-tabs @tab-click="handleClick" v-model="activeName" type="card">
@@ -70,7 +70,7 @@
           <el-table-column
             align="center"
             type="selection"
-            width="55">  
+            width="55">
           </el-table-column>
           <el-table-column
             align="center"
@@ -85,7 +85,12 @@
             align="center"
             label="客户姓名">
             <template slot-scope="scope">
-              <div>{{scope.row.customerName}}</div>
+              <el-popover trigger="hover" placement="right">
+                <p>{{scope.row.customerName}}</p>
+                <div slot="reference">
+                  {{scope.row.customerName}}
+                </div>
+              </el-popover>
             </template>
           </el-table-column>
           <el-table-column
@@ -104,11 +109,13 @@
           <el-table-column
             align="center"
             prop="distributeTime"
-            label="分配时间">
+            label="分配时间"
+            width="155">
           </el-table-column>
           <el-table-column
             align="center"
-            label="预约时间">
+            label="预约时间"
+            width="155">
             <template
               slot-scope="scope">
               <div>{{hasAppointTime(scope.row.appointTime)}}</div>
@@ -116,7 +123,8 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="最后联系时间">
+            label="最后联系时间"
+            width="155">
             <template slot-scope="scope">
               <div>{{hasLastContactTime(scope.row.lastContactTime)}}</div>
             </template>
@@ -130,7 +138,7 @@
           </template>
           </el-table-column>
         </el-table>
-      </el-col> 
+      </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
         <a href="#" @click="quickDialto();"><el-button type="primary">快速拨打勾选</el-button></a>
@@ -164,7 +172,7 @@
         <div>
           <img v-if="!hideDialTo" src="../../../static/images/dial_normal.png" alt="拨打" width="28px" height="28px" @click="dialTo(taskId,campaignId,isBlacklist,customerPhone)" style="cursor:pointer">
           <img v-if="hideDialTo" src="../../../static/images/dial_disable.png" alt="拨打" width="28px" height="28px"  style="cursor:default">
-        </div>  
+        </div>
       </el-col>
       <el-col :span="3"></el-col>
       <el-col :span="8">
@@ -198,7 +206,7 @@
             <b>接触记录<i class="el-icon-d-caret"></i></b>
           </template>
           <el-table
-          :data="contactRecord" 
+          :data="contactRecord"
           border>
           <el-table-column align="center" label="序号" width="55">
             <template slot-scope="scope">
@@ -225,7 +233,7 @@
           </el-table-column>
           <el-table-column align="center" label="被叫" width="" prop="calleeNumber">
           </el-table-column>
-          <el-table-column align="center" label="话后小结" width=""> 
+          <el-table-column align="center" label="话后小结" width="">
             <template slot-scope="scope">
               <div v-html="showSummarys(scope.row.summaryDetailInfos)"></div>
             </template>
@@ -245,7 +253,7 @@
           </template>
           <div>
             <el-tabs v-model="activeTab" type="card" @tab-click="">
-              <!-- 
+              <!--
                 v-if="this.productInfo.some(i => i=== this.car_insurance)"
                 v-if="this.productInfo.some(i => i === this.child_insurance)"
                 v-if="this.productInfo.some(i => i=== this.disease_insurance)"
@@ -255,7 +263,7 @@
                   <span>投保年龄：</span>
                     <el-input placeholder="25岁" size="medium" type="text" value="25岁" style="width:80px"></el-input>&nbsp;&nbsp;
                   <span>车辆座位：</span>
-                    <el-select v-model="car_insurance_seats"> 
+                    <el-select v-model="car_insurance_seats">
                       <el-option value="2" label="2座">2座</el-option>
                       <el-option value="3" label="3座">3座</el-option>
                       <el-option value="4" label="4座">4座</el-option>
@@ -271,7 +279,7 @@
                   <span>投保年龄：</span>
                     <el-input placeholder="3岁" size="medium" type="text" value="3岁" style="width:80px"></el-input>&nbsp;&nbsp;
                   <span>方案选择：</span>
-                    <el-select v-model="car_insurance_seats"> 
+                    <el-select v-model="car_insurance_seats">
                       <el-option value="1" label="方案1">方案1</el-option>
                       <el-option value="2" label="方案2">方案2</el-option>
                       <el-option value="3" label="方案3">方案3</el-option>
@@ -287,7 +295,7 @@
                   <span>投保年龄：</span>
                     <el-input placeholder="36岁" size="medium" type="text" value="36岁" style="width:80px"></el-input>&nbsp;&nbsp;
                   <span>方案选择：</span>
-                    <el-select v-model="car_insurance_seats"> 
+                    <el-select v-model="car_insurance_seats">
                       <el-option value="1" label="方案1">方案1</el-option>
                       <el-option value="2" label="方案2">方案2</el-option>
                       <el-option value="3" label="方案3">方案3</el-option>
@@ -317,7 +325,7 @@
               </el-col>
               <el-col :span="8" v-show="this.radio === '1'">
                 <span style="color:#F56C6C">*</span>请选择预约时间：
-                <el-date-picker 
+                <el-date-picker
                   v-model="appointTime"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   default-time="00:00:00"

@@ -18,7 +18,7 @@
             range-separator="-"
             start-placeholder="开始时间"
             end-placeholder="结束时间"
-            format="yyyy-MM-dd HH时">
+            format="yyyy-MM-dd HH">
           </el-date-picker>
         </el-form-item>
         <el-form-item v-show="formInline.time === 'day'" label="操作时间：">

@@ -2,10 +2,10 @@
   <div class="container">
       <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item prop="customerPhone">
+        <el-form-item prop="customerPhone" label="客户电话:">
           <el-input v-model="req.customerPhone" placeholder="客户电话"></el-input>
         </el-form-item>
-        <el-form-item  prop="modifierName">
+        <el-form-item  prop="modifierName" label="操作人员:">
           <el-input v-model="req.modifierName" placeholder="操作人员"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
@@ -25,7 +25,7 @@
                 default-time="00:00:00">
             </el-date-picker>
           </el-form-item>
-            <el-form-item>
+            <el-form-item label="活动名称:">
             <el-select v-model="req.campaignId" placeholder="选择活动">
               <el-option label="全部" value=""></el-option>
               <el-option v-for="item in campaignOptions" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
@@ -78,29 +78,35 @@
           <el-table-column
             align="center"
             label="操作人">
-             <template slot-scope="scope">
-              <div>{{(scope.row.modifierName == 0) ? '无':scope.row.modifierName}}</div>
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{(scope.row.modifierName == 0) ? '无':scope.row.modifierName}}</p>
+                <div slot="reference">
+                  {{(scope.row.modifierName == 0) ? '无':scope.row.modifierName}}
+                </div>
+              </el-popover>
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="modifyTime"
-            label="操作时间">
+            label="操作时间"
+            width="155">
           </el-table-column>
           <el-table-column
             align="center"
             label="操作"
-            width="200">1
+            width="200">
           <template slot-scope="scope">
             <el-button @click="editVisible=true;delReq.id=scope.row.id;getBlackListInfoById(scope.row.id);" type="text" size="small">修改</el-button>
             <el-button @click="delVisible=true;delReq.id=scope.row.id" type="text" size="small">删除</el-button>
           </template>
           </el-table-column>
         </el-table>
-      </el-col> 
+      </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;clearForm(noVisitCustomerDetail,'addCustomerForm');">创建免访客户</el-button>
+        <el-button type="success" size="small" @click="addVisible=true;clearForm(noVisitCustomerDetail,'addCustomerForm');">创建客户</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         <el-pagination
           v-if="pageShow"

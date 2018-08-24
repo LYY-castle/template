@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-row>
         <el-form :inline="true" class="demo-form-inline" size="small">
-          <el-form-item>
+          <el-form-item label="活动名称:">
             <el-select v-model="formInline.campaignId" placeholder="活动名称">
               <el-option value="" label="所有活动"></el-option>
               <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
@@ -19,7 +19,7 @@
               value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
-          <el-form-item>
+          <el-form-item label="名单名称:">
             <el-select v-model="formInline.listId" placeholder="名单">
               <el-option value="" label="所有名单"></el-option>
               <el-option v-for="item in nameList" :key="item.listName" :label="item.listName" :value="item.listId"></el-option>
@@ -34,8 +34,7 @@
           :header-row-style="headerRow"
           :data="tableData"
           tooltip-effect="dark"
-          border
-          style="width: 94%;">
+          border>
           <el-table-column
             width="55"
             align="center"
@@ -46,16 +45,40 @@
             align="center"
             prop="listId"
             label="名单编号">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.listId }}</p>
+                <div slot="reference">
+                  {{ scope.row.listId }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="listName"
             label="名单名称">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.listName }}</p>
+                <div slot="reference">
+                  {{ scope.row.listName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="campaignName"
             label="活动名称">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.campaignName }}</p>
+                <div slot="reference">
+                  {{ scope.row.campaignName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"

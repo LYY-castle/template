@@ -3,10 +3,10 @@
     <div class="filter-container">
       <el-row>
         <el-form :inline="true" class="demo-form-inline" size="small">
-          <el-form-item>
+          <el-form-item label="任务名称:">
             <el-input placeholder="任务名称" v-model="formInline.taskId"></el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item label="操作人员:">
             <el-input placeholder="操作人员" v-model="formInline.modifierName"></el-input>
           </el-form-item>
           <el-form-item label="完成状态:" prop="status">
@@ -71,31 +71,72 @@
           align="center"
           prop="taskName"
           label="任务名称">
+          <template slot-scope="scope">
+            <el-popover trigger="hover" placement="right">
+              <p>{{ scope.row.taskName }}</p>
+              <div slot="reference">
+                {{ scope.row.taskName }}
+              </div>
+            </el-popover>
+          </template>
         </el-table-column>
         <el-table-column
           align="center"
           prop="modifierName"
           label="操作人员">
+          <template slot-scope="scope">
+            <el-popover trigger="hover" placement="right">
+              <p>{{ scope.row.modifierName }}</p>
+              <div slot="reference">
+                {{ scope.row.modifierName }}
+              </div>
+            </el-popover>
+          </template>
         </el-table-column>
         <el-table-column
           align="center"
           prop="activityName"
           label="活动名称">
+          <template slot-scope="scope">
+            <el-popover trigger="hover" placement="right">
+              <p>{{ scope.row.activityName }}</p>
+              <div slot="reference">
+                {{ scope.row.activityName }}
+              </div>
+            </el-popover>
+          </template>
         </el-table-column>
         <el-table-column
           align="center"
           prop="contactStaffId"
           label="员工姓名">
+          <template slot-scope="scope">
+            <el-popover trigger="hover" placement="right">
+              <p>{{ scope.row.contactStaffId }}</p>
+              <div slot="reference">
+                {{ scope.row.contactStaffId }}
+              </div>
+            </el-popover>
+          </template>
         </el-table-column>
         <el-table-column
           align="center"
           prop="customerName"
           label="客户姓名">
+          <template slot-scope="scope">
+            <el-popover trigger="hover" placement="right">
+              <p>{{ scope.row.customerName }}</p>
+              <div slot="reference">
+                {{ scope.row.customerName }}
+              </div>
+            </el-popover>
+          </template>
         </el-table-column>
         <el-table-column
           align="center"
           prop="touchTime"
-          label="最近联系时间">
+          label="最近联系时间"
+          width="155">
         </el-table-column>
         <el-table-column
           align="center"
@@ -105,12 +146,14 @@
         <el-table-column
           align="center"
           prop="staffDistributeTime"
-          label="任务分配时间">
+          label="任务分配时间"
+          width="155">
         </el-table-column>
         <el-table-column
           align="center"
           prop="modifierTime"
-          label="任务修改时间">
+          label="任务修改时间"
+          width="155">
         </el-table-column>
         <el-table-column
           align="center"
@@ -124,7 +167,7 @@
       </el-table>
       </el-row>
       <el-row style="margin-top:1%;">
- 
+
         <el-col :span="22">
           <el-pagination
             @current-change="handleCurrentChange"
@@ -147,7 +190,7 @@
       </div>
       <div class="demo-ruleForm">接触记录</div>
       <el-row>
-       
+
       <el-table
               :header-row-style="headerRow"
               :data="contactRecordData"
@@ -227,7 +270,7 @@
                 prop="description"
                 label="小结备注">
               </el-table-column>
-        </el-table> 
+        </el-table>
       </el-row>
       <el-row style="margin-down:2%;margin-top:2%">
         <el-col style="width:25%">
@@ -254,10 +297,10 @@
               </el-card>
         </el-col>
         <el-col  style="margin-left:2%;width:73%;">
-                <el-tabs :data="orderData" 
-                        type="border-card" 
+                <el-tabs :data="orderData"
+                        type="border-card"
                         v-if="orderHide" style="min-height:223px">
-                <el-tab-pane 
+                <el-tab-pane
                   v-for="(item,index) in orderData"
                   :key="item.name"
                   :label="item.productName"
@@ -278,13 +321,13 @@
           </el-card>
 
             </el-col>
-            
+
       </el-row>
 
-        <el-tabs  type="border-card" 
+        <el-tabs  type="border-card"
                   style="width:100%;margin-top:2%;"
                   v-model="activeName">
-          <el-tab-pane 
+          <el-tab-pane
             v-for="(item,index) in gradeInfo"
             :label="item.gradeName"
             :name="item.gradeId">
@@ -325,7 +368,7 @@
                 <textarea v-model="comment[item.id]"></textarea>
               </el-col>
             </el-row>
-        
+
             <el-row>
               <el-col :span="2">
                 <label>质检得分：</label>
@@ -356,7 +399,7 @@
       </div>
       <div >接触记录</div>
       <el-row>
-       
+
       <el-table
               :header-row-style="headerRow"
               :data="contactRecordData"
@@ -436,7 +479,7 @@
                 prop="description"
                 label="小结备注">
               </el-table-column>
-        </el-table> 
+        </el-table>
       </el-row>
       <el-row style="margin-top:2%;margin-down:2%">
         <el-col style="width:25%">
@@ -462,12 +505,12 @@
                 </div>
               </el-card>
         </el-col>
-     
+
         <el-col  style="margin-left:2%;width:73%;">
-                <el-tabs :data="orderData" 
-                        type="border-card" 
+                <el-tabs :data="orderData"
+                        type="border-card"
                         v-if="orderHide" style="min-height:223px">
-                <el-tab-pane 
+                <el-tab-pane
                   v-for="(item,index) in orderData"
                   :key="item.name"
                   :label="item.productName"
@@ -489,11 +532,11 @@
 
             </el-col>
       </el-row>
-  
-        <el-tabs  type="border-card" 
+
+        <el-tabs  type="border-card"
                   style="width:100%;margin-top:2%;min-height:223px"
                   v-model="activeName">
-          <el-tab-pane 
+          <el-tab-pane
             v-for="(item,index) in gradeInfo"
             :label="item.gradeName"
             :name="item.gradeId">
@@ -534,7 +577,7 @@
                 <textarea v-model="comment[item.id]"></textarea>
               </el-col>
             </el-row>
-        
+
             <el-row>
               <el-col :span="2">
                 <label>质检得分：</label>

@@ -3,10 +3,10 @@
     <div class="filter-container">
       <el-row>
         <el-form :inline="true" class="demo-form-inline" size="small">
-          <el-form-item>
+          <el-form-item label="评分表名:">
             <el-input placeholder="评分表名（限长50字符）" v-model="formInline.gradeName" maxlength="50"></el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item label="操作人员:">
             <el-input placeholder="操作人员（限长45字符）" v-model="formInline.modifierName" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item label="操作时间：">
@@ -30,7 +30,6 @@
           ref="multipleTable"
           tooltip-effect="dark"
           border
-          style="width: 94%;"
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
@@ -57,21 +56,46 @@
             align="center"
             prop="gradeName"
             label="评分表名">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.gradeName }}</p>
+                <div slot="reference">
+                  {{ scope.row.gradeName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="modifier"
             label="操作人员">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.modifier }}</p>
+                <div slot="reference">
+                  {{ scope.row.modifier }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="updateTime"
-            label="操作时间">
+            label="操作时间"
+            width="155">
           </el-table-column>
           <el-table-column
             align="center"
             prop="description"
             label="备注">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.description }}</p>
+                <div slot="reference">
+                  {{ scope.row.description }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -91,6 +115,7 @@
         </el-col>
         <el-col :span="14">
           <el-pagination
+            background
             @current-change="handleCurrentChange"
             :current-page.sync="pagination.pageNo"
             :page-size="pagination.pageSize"
@@ -737,7 +762,7 @@
           this.queryGrade(response)
         })
       }
-  
+
     }
   }
 </script>

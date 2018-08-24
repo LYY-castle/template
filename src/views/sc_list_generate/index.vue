@@ -2,13 +2,13 @@
   <div class="container">
     <el-row margin-top:>
       <el-form :inline="true" size="small" >
-        <el-form-item>
+        <el-form-item label="名单编号:">
           <el-input v-model="req.listId" placeholder="名单编号" maxlength="20"></el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item label="名单名称:">
           <el-input v-model="req.listName" placeholder="名单名称" maxlength="50"></el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item label="操作人员:">
           <el-input v-model="req.modifierName" placeholder="操作人员" ></el-input>
         </el-form-item>
         <el-form-item label="操作时间:">
@@ -58,11 +58,27 @@
             align="center"
             prop="listId"
             label="名单编号">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.listId }}</p>
+                <div slot="reference">
+                  {{ scope.row.listId }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="listName"
             label="名单名称">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.listName }}</p>
+                <div slot="reference">
+                  {{ scope.row.listName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -73,11 +89,20 @@
             align="center"
             prop="modifierName"
             label="操作人">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.modifierName }}</p>
+                <div slot="reference">
+                  {{ scope.row.modifierName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="modifierTime"
-            label="操作时间">
+            label="操作时间"
+            width="155">
           </el-table-column>
           <el-table-column
             align="center"
@@ -97,7 +122,7 @@
           </template>
           </el-table-column>
         </el-table>
-      </el-col> 
+      </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
         <el-button type="success" size="small" @click="addVisible=true;addNamelist.listName='';getBatch(searchBatch);clearForm(searchBatch);searchBatch.validityStatus=0">新建名单</el-button>
@@ -239,7 +264,7 @@
             align="center"
             prop="modifierTime"
             label="操作时间">
-            <template 
+            <template
               slot-scope="scope">
               <div>{{scope.row.modifierTime}}</div>
             </template>
@@ -258,7 +283,7 @@
           :total=namelistPageInfo.totalCount style="text-align:right;float:left;">
         </el-pagination>
         <el-form :inline="true" size="small" :model="addNamelist" ref="addNamelist" :rules="rule">
-          <el-form-item prop="listName"> 
+          <el-form-item prop="listName">
             <el-input v-model="addNamelist.listName" placeholder="名单名称" maxlength="50"></el-input>
           </el-form-item>
           <el-form-item>
