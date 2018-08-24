@@ -51,9 +51,42 @@
           </el-table-column>
           <el-table-column
             align="center"
+            width="95"
             label="名单有效期">
             <template slot-scope="scope">
               <div>{{scope.row.listExpiryDate+'天'}}</div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="canContactNum"
+            label="拨打次数">
+            <template slot-scope="scope">
+              <div>{{scope.row.canContactNum==null?'':(scope.row.canContactNum+'次')}}</div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="products"
+            label="产品">
+            <template slot-scope="scope">
+             <span>{{(getProductName(scope.row.products)).join(",")}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="summaryId"
+            label="小结">
+            <template slot-scope="scope">
+             <span>{{getSummaryName(scope.row.summaryId)}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="departId"
+            label="活动部门">
+            <template slot-scope="scope">
+             <span>{{getDepartName(scope.row.departId)}}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -136,6 +169,9 @@
         <el-form-item label="名单有效期" prop="listExpiryDate">
           <el-input v-model="campaignDetail.listExpiryDate" size="small" placeholder="单位：天"></el-input>
         </el-form-item>
+        <el-form-item label="拨打次数" prop="canContactNum">
+          <el-input v-model="campaignDetail.canContactNum" size="small" placeholder="单位：次"></el-input>
+        </el-form-item>
         <el-form-item label="活动状态:" prop="status"> 
           <el-radio-group v-model="campaignDetail.status" size="small">
             <el-radio label='0' border>有效</el-radio>
@@ -199,6 +235,9 @@
         <el-form-item label="名单有效期">
           <span>{{campaignDetail.listExpiryDate+'天'}}</span>
         </el-form-item>
+        <el-form-item label="拨打次数">
+          <span>{{campaignDetail.canContactNum==null?'':(campaignDetail.canContactNum+'次')}}</span>
+        </el-form-item>
         <el-form-item label="活动状态">
           <span>{{campaignDetail.status==='1'?'无效':'有效'}}</span>
         </el-form-item>
@@ -256,6 +295,9 @@
         </el-form-item>
         <el-form-item label="名单有效期" prop="listExpiryDate">
           <el-input v-model="campaignDetail.listExpiryDate" size="small" placeholder="单位：天"></el-input>
+        </el-form-item>
+        <el-form-item label="拨打次数" prop="listExpiryDate">
+          <el-input v-model="campaignDetail.canContactNum" size="small" placeholder="单位：次"></el-input>
         </el-form-item>
         <el-form-item label="活动状态" prop="status">
           <el-radio-group v-model="campaignDetail.status" size="small">
@@ -658,6 +700,13 @@ export default {
         callback()
       }
     }
+    var checkCanContactNum = (eule, value, callback) => {
+      if (!/^\d+$/.test(value)) {
+        return callback(new Error('请输入数字'))
+      } else {
+        callback()
+      }
+    }
     return {
       rule: {
         campaignName: [
@@ -675,6 +724,10 @@ export default {
         listExpiryDate: [
           { required: true, message: '请输入名单有效期', trigger: 'change' },
           { validator: checkExpiryDate, trigger: 'change' }
+        ],
+        canContactNum: [
+          { required: true, message: '请输入拨打次数', trigger: 'change' },
+          { validator: checkCanContactNum, trigger: 'change' }
         ],
         status: [
           { required: true, message: '请选择活动状态', trigger: 'change' }
@@ -739,6 +792,7 @@ export default {
         products: [],
         deptId: [],
         summaryId: [],
+        canContactNum: '',
         campaignName: '',
         listExpiryDate: '',
         status: '0',
@@ -856,6 +910,43 @@ export default {
           console.log(error)
           this.$message('操作失败')
         })
+    },
+    // 得到产品名称
+    getProductName(productIds) {
+      var productNames = []
+      var list
+      for (var i = 0; i < productIds.length; i++) {
+        list = productIds[i]
+        for (var j = 0; j < this.productData.length; j++) {
+          if (list === this.productData[j].productId) {
+            if (this.productName.indexOf() === -1) {
+              productNames.push(this.productData[j].productName)
+            }
+          }
+        }
+      }
+      return productNames
+    },
+    // 得到部门名称
+    getDepartName(departId) {
+      var departName = ''
+      for (var a = 0; a < this.deptData.length; a++) {
+        if (this.deptData[a].id === parseInt(departId)) {
+          departName = this.deptData[a].departName
+        }
+      }
+      return departName
+    },
+    // 得到小结名称
+    getSummaryName(summaryId) {
+      var summaryName = ''
+      // 遍历查找对应小结
+      for (var c = 0; c < this.summaryData.length; c++) {
+        if (this.summaryData[c].summaryId === summaryId) {
+          summaryName = this.summaryData[c].summaryName
+        }
+      }
+      return summaryName
     },
     // 删除活动信息
     delCampaign(campaignId) {
