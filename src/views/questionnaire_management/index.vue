@@ -33,7 +33,7 @@
             <el-table-column align="center" type="selection" width="55"></el-table-column>
             <el-table-column align="center" label="序号" width="55">
               <template slot-scope="scope">
-                <div>{{scope.$index+(req.pageNo-1)*10+1}}</div>
+                <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
               </template>
             </el-table-column>
             <el-table-column align="center" label="问卷模板名称" width="350px" >
@@ -68,12 +68,13 @@
         <el-pagination
             v-if="pageShow"
             background
+            @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :current-page=pageInfo.pageNo
-            :page-sizes="[10, 20, 30, 50]"
-            :page-size=pageInfo.pageSize
-            layout="total, prev, pager, next, jumper"
-            :total=pageInfo.totalCount style="text-align: right;float:right;">
+            :current-page='pageInfo.pageNo'
+            :page-sizes="[10, 20, 30, 40, 50]"
+            :page-size='req.pageSize'
+            layout="total, sizes, prev, pager, next, jumper "
+            :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
       </el-row>
 
@@ -409,7 +410,8 @@ export default {
         modifier: '', // 操作人
         beginTime: '', // 操作时间开始
         afterTime: '', // 操作时间结束
-        pageNo: 1
+        pageNo: 1,
+        pageSize: 10
       },
       deleteReq: {
         id: ''
@@ -449,7 +451,8 @@ export default {
         modifier: '', // 操作人
         beginTime: '', // 操作时间开始
         afterTime: '', // 操作时间结束
-        pageNo: 1
+        pageNo: this.pageInfo.pageNo,
+        pageSize: this.pageInfo.pageSize
       }
     },
     // 添加单选
@@ -651,6 +654,13 @@ export default {
         }
       })
     },
+    // 页面显示条数
+    handleSizeChange(val) {
+      this.req.pageSize = val
+      this.req.pageNo = 1
+      this.pageInfo.pageNo = 1
+      this.searchByKeyWords(this.req)
+    },
     // 翻页
     handleCurrentChange(val) {
       this.req.pageNo = val
@@ -797,6 +807,8 @@ export default {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
             this.deleteVisiable = false
+            this.req.pageNo = 1
+            this.pageInfo.pageNo = 1
             this.searchByKeyWords(this.req)
           } else {
             this.$message.error(response.data.message)
@@ -821,6 +833,8 @@ export default {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
             this.batchdeleteVisiable = false
+            this.req.pageNo = 1
+            this.pageInfo.pageNo = 1
             this.searchByKeyWords(this.req)
           } else {
             this.$message.error(response.data.message)

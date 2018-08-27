@@ -26,8 +26,8 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="req2=clone(req);req.from=1;getNoduleByInfo(req)" icon="el-icon-search">查询</el-button>
-          <el-button type="danger" @click="clearForm(req)">重置</el-button>
+          <el-button type="primary" @click="req2=clone(req);req.pageNo=1;getNoduleByInfo(req)" icon="el-icon-search">查询</el-button>
+          <el-button type="danger" @click="reset">重置</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -48,7 +48,7 @@
             width="55">
             <template
               slot-scope="scope">
-              <div>{{scope.$index+(req2.from-1)*10+1}}</div>
+              <div>{{scope.$index+(req2.pageNo-1)*req2.pageSize+1}}</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -97,12 +97,13 @@
         <el-pagination
           v-if="pageShow"
           background
+          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page=pageInfo.pageNo
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size=pageInfo.pageSize
-          layout="total, prev, pager, next, jumper"
-          :total=pageInfo.totalCount style="text-align: right;float:right;">
+          :current-page='pageInfo.pageNo'
+          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-size='req2.pageSize'
+          layout="total, sizes, prev, pager, next, jumper "
+          :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
     </el-row>
     <el-dialog
@@ -278,14 +279,16 @@ export default {
         modify_name: '',
         startCreateTime: '',
         endCreateTime: '',
-        from: 1
+        pageNo: 1,
+        pageSize: 10
       },
       req2: {
         nodule_title: '',
         modify_name: '',
         startCreateTime: '',
         endCreateTime: '',
-        from: 1
+        pageNo: 1,
+        pageSize: 10
       },
       addSummary: {
         summaryName: '',
@@ -320,6 +323,24 @@ export default {
     this.initExpand()
   },
   methods: {
+    reset() {
+      this.req = {
+        nodule_title: '',
+        modify_name: '',
+        startCreateTime: '',
+        endCreateTime: '',
+        pageNo: this.pageInfo.pageNo,
+        pageSize: this.pageInfo.pageSize
+      }
+      this.req2 = {
+        nodule_title: '',
+        modify_name: '',
+        startCreateTime: '',
+        endCreateTime: '',
+        pageNo: this.pageInfo.pageNo,
+        pageSize: this.pageInfo.pageSize
+      }
+    },
     resetForm(formName) {
       if (this.$refs[formName] !== undefined) {
         this.$refs[formName].resetFields()
@@ -378,6 +399,8 @@ export default {
         .then(response => {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
+            this.req2.pageNo = 1
+            this.pageInfo.pageNo = 1
             this.getNoduleByInfo(this.req2)
           } else {
             this.$message(response.data.message)
@@ -407,7 +430,6 @@ export default {
       if (!this.validate) {
         return false
       }
-      console.log(summaryDetail)
       this.editVisible = false
       editNodule(summaryDetail)
         .then(response => {
@@ -456,6 +478,8 @@ export default {
           .then(response => {
             if (response.data.exchange.body.code === 0) {
               this.$message.success(response.data.exchange.body.message)
+              this.req2.pageNo = 1
+              this.pageInfo.pageNo = 1
               this.getNoduleByInfo(this.req2)
             } else {
               this.$message(this.$message(response.data.exchange.body.message))
@@ -475,15 +499,16 @@ export default {
       }
     },
     // 页面显示条数
-    // handleSizeChange(val) {
-    //   // console.log(`每页 ${val} 条`);
-    //   this.searchReq.pageSize = val
-    //   this.getNoduleByInfo(this.req2)
-    // },
+    handleSizeChange(val) {
+      this.req2.pageSize = val
+      this.req.pageSize = val
+      this.req2.pageNo = 1
+      this.pageInfo.pageNo = 1
+      this.getNoduleByInfo(this.req2)
+    },
     // 分页翻页功能
     handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`);
-      this.req2.from = val
+      this.req2.pageNo = val
       this.getNoduleByInfo(this.req2)
     },
     // tree------------------------

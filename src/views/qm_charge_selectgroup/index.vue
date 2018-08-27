@@ -17,7 +17,7 @@
         <el-table :data="tableData" border>
           <el-table-column align="center" label="序号" width="55">
             <template slot-scope="scope">
-              <div>{{scope.$index+(req.pageNo-1)*10+1}}</div>
+              <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
             </template>
           </el-table-column>
           <el-table-column align="center" label="活动编号" prop="campaignId"></el-table-column>
@@ -53,12 +53,13 @@
         <el-pagination
           v-if="pageShow"
           background
+          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page=pageInfo.pageNo
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size=pageInfo.pageSize
-          layout="total, prev, pager, next, jumper"
-          :total=pageInfo.totalCount style="text-align: right;float:right;">
+          :current-page='pageInfo.pageNo'
+          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-size='pageInfo.pageSize'
+          layout="total, sizes, prev, pager, next, jumper "
+          :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
     </el-row>
     
@@ -148,7 +149,7 @@ export default {
       gradeIds: [], // 选中的或回显的评分表id
       req: {
         campaignName: '',
-        pagesize: 10,
+        pageSize: 10,
         pageNo: 1
       },
       // 活动详情信息
@@ -282,6 +283,13 @@ export default {
       } else {
         return "<span style='color:red'>无效</span>"
       }
+    },
+    // 页面显示条数
+    handleSizeChange(val) {
+      this.req.pageNo = 1
+      this.req.pageSize = val
+      this.pageInfo.pageNo = 1
+      this.searchByCampaign(this.req)
     },
     // 翻页功能
     handleCurrentChange(val) {

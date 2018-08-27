@@ -78,7 +78,7 @@
             width="55">
             <template
               slot-scope="scope">
-              <div>{{scope.$index+(req.pageNo-1)*10+1}}</div>
+              <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -137,18 +137,19 @@
         <el-pagination
           v-if="pageShow"
           background
+          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page=pageInfo.pageNo
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size=pageInfo.pageSize
-          layout="total, prev, pager, next, jumper"
-          :total=pageInfo.totalCount style="text-align: right;float:right;">
+          :current-page='pageInfo.pageNo'
+          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-size='pageInfo.pageSize'
+          layout="total, sizes, prev, pager, next, jumper "
+          :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
     </el-row>
   </div>
 
   <!-- 客户详情 div层 -->
-  <div  v-else >
+  <div class='container' v-else>
     <el-row :gutter="20">
       <el-col :span="5" style="text-align:center">
         <br/>
@@ -454,7 +455,8 @@ export default {
         customerPhone: '',
         contactStatus: '0',
         status: '0',
-        pageNo: 1
+        pageNo: 1,
+        pageSize: 10
       },
       customerInfo: {
         customerName: '',
@@ -669,7 +671,13 @@ export default {
         return '无'
       }
     },
-
+    // 页面显示条数
+    handleSizeChange(val) {
+      this.req.pageSize = val
+      this.req.pageNo = 1
+      this.pageInfo.pageNo = 1
+      this.searchByKeyWords(this.req)
+    },
     // 分页翻页功能
     handleCurrentChange(val) {
       // console.log(`当前页: ${val}`);
@@ -685,7 +693,8 @@ export default {
       this.req.appointTimeEnd = ''
       this.req.customerName = ''
       this.req.customerPhone = ''
-      this.req.pageNo = 1
+      this.req.pageNo = this.pageInfo.pageNo
+      this.req.pageSize = this.pageInfo.pageSize
       if (this.activeName === 'firstDial') {
         this.req.contactStatus = '0'
         this.req.status = '0'

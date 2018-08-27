@@ -57,7 +57,7 @@
           <!-- </el-col> -->
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="req.from=1;findQualityResultByInfo(req);req2=clone(req);" icon="el-icon-search">查询</el-button>
+          <el-button type="primary" @click="req.pageNo=1;findQualityResultByInfo(req);req2=clone(req);" icon="el-icon-search">查询</el-button>
           <el-button type="danger" @click="resetForm('searchForm');">重置</el-button>
         </el-form-item>
       </el-form>
@@ -73,7 +73,7 @@
             width="55">
             <template
               slot-scope="scope">
-              <div>{{scope.$index+(req2.from-1)*10+1}}</div>
+              <div>{{scope.$index+(req2.pageNo-1)*req2.pageSize+1}}</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -167,7 +167,7 @@
             width="55">
             <template
               slot-scope="scope">
-              <div>{{scope.$index+(req2.from-1)*10+1}}</div>
+              <div>{{scope.$index+(req2.pageNo-1)*req2.pageSize+1}}</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -246,11 +246,12 @@
       <el-pagination
         v-if="pageShow"
         background
+        @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page=pageInfo.pageNo
-        :page-sizes="[10, 20, 30, 50]"
+        :page-sizes="[10, 20, 30, 40, 50]"
         :page-size=pageInfo.pageSize
-        layout="total, prev, pager, next, jumper"
+        layout="total, sizes, prev, pager, next, jumper "
         :total=pageInfo.totalCount style="text-align: right;float:right;">
       </el-pagination>
     </el-row>
@@ -535,14 +536,16 @@ export default {
       },
       // 查询 发送请求参数
       req: {
-        from: 1,
+        pageNo: 1,
+        pageSize: 10,
         start_time: '',
         end_time: '',
         max: null,
         min: null
       },
       req2: {
-        from: 1,
+        pageNo: 1,
+        pageSize: 10,
         start_time: '',
         end_time: '',
         max: null,
@@ -1151,15 +1154,17 @@ export default {
     //   }
     // },
     // 页面显示条数
-    // handleSizeChange(val) {
-    //   // console.log(`每页 ${val} 条`);
-    //   this.searchReq.pageSize = val
-    //   this.findQualityResultByInfo(this.req2)
-    // },
+    handleSizeChange(val) {
+      this.req2.pageSize = val
+      this.req.pageSize = val
+      this.req2.pageNo = 1
+      this.req.pageNo = 1
+      this.pageInfo.pageNo = 1
+      this.findQualityResultByInfo(this.req2)
+    },
     // 分页翻页功能
     handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`);
-      this.req2.from = val
+      this.req2.pageNo = val
       this.findQualityResultByInfo(this.req2)
     }
   }

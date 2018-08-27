@@ -55,7 +55,7 @@
             width="55">
             <template
               slot-scope="scope">
-              <div>{{scope.$index+(req.pageNo-1)*10+1}}</div>
+              <div>{{scope.$index+(paginationReq.pageNo-1)*paginationReq.pageSize+1}}</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -90,7 +90,7 @@
           <el-table-column
             align="center"
             label="操作"
-            width="200">1
+            width="200">
           <template slot-scope="scope">
             <el-button @click="editVisible=true;delReq.id=scope.row.id;getBlackListInfoById(scope.row.id);" type="text" size="small">修改</el-button>
             <el-button @click="delVisible=true;delReq.id=scope.row.id" type="text" size="small">删除</el-button>
@@ -105,12 +105,13 @@
         <el-pagination
           v-if="pageShow"
           background
+          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page=pageInfo.pageNo
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size=pageInfo.pageSize
-          layout="total, prev, pager, next, jumper"
-          :total=pageInfo.totalCount style="text-align: right;float:right;">
+          :current-page='pageInfo.pageNo'
+          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-size='pageInfo.pageSize'
+          layout="total, sizes, prev, pager, next, jumper "
+          :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
     </el-row>
     <!-- 新增免访客户 -->
@@ -286,7 +287,8 @@ export default {
         modifyTimeStart: '',
         modifyTimeEnd: '',
         campaignId: '',
-        pageNo: 1
+        pageNo: 1,
+        pageSize: 10
       },
       paginationReq: {
         customerPhone: '',
@@ -294,7 +296,8 @@ export default {
         modifyTimeStart: '',
         modifyTimeEnd: '',
         campaignId: '',
-        pageNo: 1
+        pageNo: 1,
+        pageSize: 10
       },
       delReq: {
         id: ''
@@ -328,7 +331,8 @@ export default {
         modifyTimeStart: '',
         modifyTimeEnd: '',
         campaignId: '',
-        pageNo: 1
+        pageNo: this.pageInfo.pageNo,
+        pageSize: this.pageInfo.pageSize
       }
     },
     findCampaigns() {
@@ -362,6 +366,15 @@ export default {
       for (var i = 0; i < val.length; i++) {
         this.batchDelReq.ids.push(val[i].id)
       }
+    },
+    // 页面显示条数
+    handleSizeChange(val) {
+      this.req.pageSize = val
+      this.req.pageNo = 1
+      this.paginationReq.pageSize = val
+      this.paginationReq.pageNo = 1
+      this.pageInfo.pageNo = 1
+      this.findNoVisitCustomers(this.paginationReq)
     },
     // 分页翻页功能
     handleCurrentChange(val) {

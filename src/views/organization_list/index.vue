@@ -30,11 +30,11 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="searchOrgan(formInline)">查询</el-button>
+            <el-button type="primary" @click="formInline.pageNo = 1;searchOrgan(formInline)">查询</el-button>
             <el-button type="danger" @click="reset">重置</el-button>
           </el-form-item>
         </el-form>
-        <el-table
+        <el-table 
           :header-row-style="headerRow"
           :data="tableData"
           ref="multipleTable"
@@ -54,7 +54,7 @@
             label="序号">
             <template
               slot-scope="scope">
-              <div>{{scope.$index+(pagination.pageNo-1)*10+1}}</div>
+              <div>{{scope.$index+(pagination.pageNo-1)*formInline.pageSize+1}}</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -114,10 +114,13 @@
         </el-col>
         <el-col :span="18">
           <el-pagination
+            background
+            @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page.sync="pagination.pageNo"
+            :page-sizes="[10, 20, 30, 40, 50]"
             :page-size="pagination.pageSize"
-            layout="total, prev, pager, next, jumper"
+            layout="total, sizes, prev, pager, next, jumper "
             :total="pagination.totalCount" style="text-align: right">
           </el-pagination>
         </el-col>
@@ -190,8 +193,8 @@
         timeValue: '',
         organData: {},
         pagination: {
-          pageNo: null,
           pageSize: null,
+          pageNo: null,
           totalCount: null,
           totalPage: null
         },
@@ -208,7 +211,8 @@
           parent_organ: '',
           startTime: '',
           stopTime: '',
-          from: 1,
+          pageNo: 1,
+          pageSize: 10,
           creator: ''
         },
         ruleForm: {
@@ -262,7 +266,9 @@
                 type: 'success',
                 duration: 3 * 1000
               })
-              findAllOrganGet().then(response => {
+              this.formInline.pageNo = 1
+              this.pagination.pageNo = 1
+              findAllOrganPost(this.formInline).then(response => {
                 this.queryOrgan(response)
               })
               this.refreshOrganTo()
@@ -301,9 +307,10 @@
             addOrganization(obj).then(response => {
               if (response.data.exchange.body.code === 1) {
                 this.dialogFormVisible = false
-                findAllOrganGet().then(response => {
+                findAllOrganPost(this.formInline).then(response => {
                   this.queryOrgan(response)
                 })
+
                 this.refreshOrganTo()
               } else {
                 Message({
@@ -346,7 +353,7 @@
             modifyOrgan(obj).then(response => {
               if (response.data.exchange.body.code === 1) {
                 this.dialogFormVisibleReverse = false
-                findAllOrganGet().then(response => {
+                findAllOrganPost(this.formInline).then(response => {
                   this.queryOrgan(response)
                 })
                 this.refreshOrganTo()
@@ -375,12 +382,12 @@
           startTime: '',
           stopTime: '',
           creator: '',
-          from: this.pagination.pageNo
+          pageNo: this.pagination.pageNo,
+          pageSize: this.pagination.pageSize
         }
       },
       handleSelectionChange(val) {
         this.multipleSelection = val
-        console.log(val)
       },
       deleteRow(row) {
         MessageBox.confirm('确定执行删除操作吗？', {
@@ -395,7 +402,9 @@
                 type: 'success',
                 duration: 3 * 1000
               })
-              findAllOrganGet().then(response => {
+              this.formInline.pageNo = 1
+              this.pagination.pageNo = 1
+              findAllOrganPost(this.formInline).then(response => {
                 this.queryOrgan(response)
               })
               this.refreshOrganTo()
@@ -468,12 +477,18 @@
         }
       },
       handleCurrentChange(val) {
-        this.formInline.from = val
+        this.formInline.pageNo = val
         this.formInline.startTime = this.timeValue[0]
         this.formInline.stopTime = this.timeValue[1]
         findAllOrganPost(this.formInline).then(response => {
           this.queryOrgan(response)
         })
+      },
+      handleSizeChange(val) {
+        this.pagination.pageNo = 1
+        this.formInline.pageNo = 1
+        this.formInline.pageSize = val
+        this.searchOrgan(this.formInline)
       },
       headerRow({ row, rowIndex }) {
         if (rowIndex === 0) {
@@ -504,7 +519,6 @@
       },
       searchOrgan(req) {
         // 根据老版本的逻辑 查询只能传分页页码的第一页
-        req.from = 1
         this.formInline.startTime = this.timeValue[0]
         this.formInline.stopTime = this.timeValue[1]
         findAllOrganPost(req).then(response => {
@@ -521,7 +535,7 @@
           startTime: '',
           stopTime: '',
           creator: '',
-          from: 1
+          pageNo: 1
         }).then(response => {
           this.queryOrgan(response)
         })

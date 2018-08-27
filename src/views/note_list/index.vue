@@ -18,7 +18,7 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" icon="el-icon-search" @click="req.page=1;searchByKeyWords(req)">筛选</el-button>
+            <el-button type="primary" icon="el-icon-search" @click="req.pageNo=1;searchByKeyWords(req)">筛选</el-button>
             <el-button type="danger"  @click="resetQueryCondition()" icon="el-icon-refresh">重置</el-button>
           </el-form-item>
         </el-form>
@@ -30,7 +30,7 @@
             <!-- <el-table-column align="center" type="selection" width="55"></el-table-column> -->
             <el-table-column align="center" label="序号" width="55">
               <template slot-scope="scope">
-                <div>{{scope.$index+(req.page-1)*10+1}}</div>
+                <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
               </template>
             </el-table-column>
             <!-- <el-table-column align="center" label="笔记编号" prop="noteid"></el-table-column> -->
@@ -65,12 +65,13 @@
         <el-pagination
             v-if="pageShow"
             background
+            @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :current-page=pageInfo.page_current
-            :page-sizes="[10, 20, 30, 50]"
-            :page-size=pageInfo.page_size
-            layout="total, prev, pager, next, jumper"
-            :total=pageInfo.note_total style="text-align: right;float:right;">
+            :current-page=pageInfo.pageNo
+            :page-sizes="[10, 20, 30, 40, 50]"
+            :page-size=pageInfo.pageSize
+            layout="total, sizes, prev, pager, next, jumper "
+            :total=pageInfo.totalCount style="text-align: right;float:right;">
         </el-pagination>
       </el-row>
 
@@ -188,7 +189,8 @@ export default {
       isListPage: '1', // 是否是主页
       uid: '', // 每次查询默认带上的参数
       req: {
-        page: 1,
+        pageNo: 1,
+        pageSize: 10,
         keyword: '',
         startat: '',
         endat: '',
@@ -242,7 +244,9 @@ export default {
           if (response.data.paging.note_total !== 0) {
             this.tableData = response.data.notes
             this.pageShow = true
-            this.pageInfo = response.data.paging
+            this.pageInfo.pageNo = response.data.paging.page_current
+            this.pageInfo.pageSize = response.data.paging.page_size
+            this.pageInfo.totalCount = response.data.paging.note_total
           } else {
             this.pageShow = false
             this.$message.error('无查询结果，请核对查询条件')
@@ -259,7 +263,9 @@ export default {
           if (response.data.paging.note_total !== 0) {
             this.tableData = response.data.notes
             this.pageShow = true
-            this.pageInfo = response.data.paging
+            this.pageInfo.pageNo = response.data.paging.page_current
+            this.pageInfo.pageSize = response.data.paging.page_size
+            this.pageInfo.totalCount = response.data.paging.note_total
           } else {
             this.tableData = response.data.notes
             this.pageShow = false
@@ -273,7 +279,8 @@ export default {
     resetQueryCondition() {
       this.timeValue = ''
       this.req = {
-        page: 1,
+        pageNo: this.pageInfo.pageNo,
+        pageSize: this.pageInfo.pageSize,
         keyword: '',
         startat: '',
         endat: ''
@@ -294,9 +301,16 @@ export default {
     // handleSelectionChange(val) {
 
     // },
+    // 页面显示条数
+    handleSizeChange(val) {
+      this.req.pageSize = val
+      this.req.pageNo = 1
+      this.pageInfo.pageNo = 1
+      this.searchByKeyWords(this.req)
+    },
     // 分页查询
     handleCurrentChange(val) {
-      this.req.page = val
+      this.req.pageNo = val
       this.searchByKeyWords(this.req)
     },
     // 判断笔记标题是否为空
@@ -416,6 +430,8 @@ export default {
         .then(response => {
           this.$message.success('删除成功')
           this.deleteVisiable = false
+          this.req.pageNo = 1
+          this.pageInfo.pageNo =
           this.searchByKeyWords(this.req)
         })
     }

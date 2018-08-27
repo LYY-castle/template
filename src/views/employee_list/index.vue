@@ -28,7 +28,7 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="searchStaff(formInline)">查询</el-button>
+            <el-button type="primary" @click="formInline.pageNo = 1;searchStaff(formInline)">查询</el-button>
             <el-button type="danger" @click="reset">重置</el-button>
           </el-form-item>
         </el-form>
@@ -52,7 +52,7 @@
           label="序号">
           <template
             slot-scope="scope">
-            <div>{{scope.$index+(pagination.pageNo-1)*10+1}}</div>
+            <div>{{scope.$index+(pagination.pageNo-1)*formInline.pageSize+1}}</div>
           </template>
         </el-table-column>
         <el-table-column
@@ -115,10 +115,13 @@
         </el-col>
         <el-col :span="18">
           <el-pagination
+            background
+            @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page.sync="pagination.pageNo"
+            :page-sizes="[10, 20, 30, 40, 50]"
             :page-size="pagination.pageSize"
-            layout="total, prev, pager, next, jumper"
+            layout="total, sizes, prev, pager, next, jumper "
             :total="pagination.totalCount" style="text-align: right">
           </el-pagination>
         </el-col>
@@ -329,8 +332,8 @@
         options: provinceAndCityData,
         timeValue: '',
         pagination: {
-          pageNo: null,
           pageSize: null,
+          pageNo: null,
           totalCount: null,
           totalPage: null
         },
@@ -347,7 +350,8 @@
           modifierName: '',
           startTime: '',
           stopTime: '',
-          from: 1,
+          pageNo: 1,
+          pageSize: 10,
           departName: ''
         },
         ruleForm: {
@@ -475,7 +479,9 @@
                 type: 'success',
                 duration: 3 * 1000
               })
-              query({ from: this.pagination.pageNo }).then(responseData => {
+              this.formInline.pageNo = 1
+              this.pagination.pageNo = 1
+              query(this.formInline).then(responseData => {
                 this.queryStaff(responseData)
                 this.pagination = responseData.data.pageInfo
               })
@@ -507,7 +513,7 @@
             addStaff(this.ruleForm).then(response => {
               if (response.data.code === 1) {
                 this.dialogFormVisible = false
-                query({ from: 1 }).then(responseData => {
+                query(this.formInline).then(responseData => {
                   this.queryStaff(responseData)
                   this.pagination = responseData.data.pageInfo
                 })
@@ -527,7 +533,7 @@
             edit(this.ruleFormReverse).then(response => {
               if (response.data.code === 1) {
                 this.dialogFormVisibleReverse = false
-                query({ from: this.pagination.pageNo }).then(responseData => {
+                query(this.formInline).then(responseData => {
                   this.queryStaff(responseData)
                   // this.pagination = responseData.data.pageInfo
                 })
@@ -551,7 +557,8 @@
           startTime: '',
           stopTime: '',
           departName: '',
-          from: this.pagination.pageNo
+          pageNo: this.pagination.pageNo,
+          pageSize: this.pagination.pageSize
         }
       },
       handleSelectionChange(val) {
@@ -571,8 +578,10 @@
                 type: 'success',
                 duration: 3 * 1000
               })
+              this.formInline.pageNo = 1
+              this.pagination.pageNo = 1
               // rows.splice(index, 1)
-              query({ from: this.pagination.pageNo }).then(responseData => {
+              query(this.formInline).then(responseData => {
                 this.queryStaff(responseData)
                 // this.pagination = responseData.data.pageInfo
               })
@@ -646,8 +655,14 @@
           updateTime: formatDateTime(this.staffData.updateTime)
         }
       },
+      handleSizeChange(val) {
+        this.pagination.pageNo = 1
+        this.formInline.pageNo = 1
+        this.formInline.pageSize = val
+        this.searchStaff(this.formInline)
+      },
       handleCurrentChange(val) {
-        this.formInline.from = val
+        this.formInline.pageNo = val
         this.formInline.startTime = this.timeValue[0]
         this.formInline.stopTime = this.timeValue[1]
         query(this.formInline).then(response => {
@@ -685,9 +700,9 @@
       },
       searchStaff(req) {
         // 根据老版本的逻辑 查询只能传分页页码的第一页
-        req.from = 1
-        req.startTime = this.timeValue ? this.timeValue[0]:''
-        req.stopTime = this.timeValue ? this.timeValue[1]:''
+        req.pageNo = 1
+        req.startTime = this.timeValue ? this.timeValue[0] : ''
+        req.stopTime = this.timeValue ? this.timeValue[1] : ''
         query(req).then(response => {
           this.queryStaff(response)
         })
@@ -701,7 +716,7 @@
           this.pagination = response.data.pageInfo
         })
       } else {
-        query({ from: 1 }).then(response => {
+        query({ pageNo: 1 }).then(response => {
           this.queryStaff(response)
         })
       }
@@ -710,11 +725,11 @@
       })
     },
     watch: {
-      $route(to, from) {
+      $route(to, pageNo) {
         // 判断url是否带参
         if (!to.query.departName) {
           this.formInline.departName = ''
-          query({ from: 1 }).then(response => {
+          query({ pageNo: 1 }).then(response => {
             this.queryStaff(response)
           })
         }

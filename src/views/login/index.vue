@@ -39,7 +39,6 @@
 // import { isvalidUsername } from '@/utils/validate'
 import { Message, MessageBox } from 'element-ui'
 import { loginValid } from '@/api/login'
-// import { getMenu } from '@/api/dashboard'
 // import getDynamicRouter from '@/router/dynamic-router'
 
 export default {

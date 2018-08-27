@@ -51,7 +51,7 @@
             width="55">
             <template
               slot-scope="scope">
-              <div>{{scope.$index+(req.pageNo-1)*10+1}}</div>
+              <div>{{scope.$index+(req2.pageNo-1)*req2.pageSize+1}}</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -113,12 +113,13 @@
         <el-pagination
           v-if="pageShow"
           background
+          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page=pageInfo.pageNo
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size=pageInfo.pageSize
-          layout="total, prev, pager, next, jumper"
-          :total=pageInfo.totalCount style="text-align: right;float:right;">
+          :current-page='pageInfo.pageNo'
+          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-size='pageInfo.pageSize'
+          layout="total, sizes, prev, pager, next, jumper "
+          :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
     </el-row>
     <el-dialog
@@ -340,7 +341,8 @@ export default {
         modifierName: '',
         startModifierTime: '',
         endModifierTime: '',
-        pageNo: 1
+        pageNo: 1,
+        pageSize: 10
       },
       req2: {
         customerName: '',
@@ -348,7 +350,8 @@ export default {
         modifierName: '',
         startModifierTime: '',
         endModifierTime: '',
-        pageNo: 1
+        pageNo: 1,
+        pageSize: 10
       },
       customerDetail: {
         customerName: '',
@@ -386,7 +389,8 @@ export default {
         modifierName: '',
         startModifierTime: '',
         endModifierTime: '',
-        pageNo: 1
+        pageNo: this.pageInfo.pageNo,
+        pageSize: this.pageInfo.pageSize
       }
     },
     autoFill() {
@@ -487,6 +491,8 @@ export default {
         .then(response => {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
+            this.req2.pageNo = 1
+            this.pageInfo.pageNo = 1
             this.searchCustomer(this.req2)
           } else {
             this.$message(response.data.messages)
@@ -575,6 +581,8 @@ export default {
         batchDelCustomer(batchDelReq.customerIds).then(response => {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
+            this.req2.pageNo = 1
+            this.pageInfo.pageNo = 1
             this.searchCustomer(this.req2)
           } else {
             this.$message('删除失败')
@@ -593,14 +601,16 @@ export default {
       }
     },
     // 页面显示条数
-    // handleSizeChange(val) {
-    //   // console.log(`每页 ${val} 条`);
-    //   this.searchReq.pageSize = val
-    //   this.searchCustomer(this.req2)
-    // },
+    handleSizeChange(val) {
+      this.req2.pageSize = val
+      this.req.pageSize = val
+      this.pageInfo.pageNo = 1
+      this.req.pageNo = 1
+      this.req2.pageNo = 1
+      this.searchCustomer(this.req2)
+    },
     // 分页翻页功能
     handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`);
       this.req2.pageNo = val
       this.searchCustomer(this.req2)
     }

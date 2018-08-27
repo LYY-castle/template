@@ -54,7 +54,7 @@
           align="center"
           label="序号">
           <template slot-scope="scope" >
-            <div>{{scope.$index+(formInline.from-1)*10+1}}</div>
+            <div>{{scope.$index+(formInline.pageNo-1)*formInline.pageSize+1}}</div>
           </template>
         </el-table-column>
         <el-table-column
@@ -127,10 +127,13 @@
  
         <el-col :span="22">
           <el-pagination
+            background
+            @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page.sync="pagination.pageNo"
             :page-size="pagination.pageSize"
-            layout="total, prev, pager, next, jumper"
+            :page-sizes="[10, 2, 30, 50]"
+            layout="total, sizes, prev, pager, next, jumper "
             :total="pagination.totalCount" style="text-align: right">
           </el-pagination>
         </el-col>
@@ -620,7 +623,8 @@
         gradeHide: false,
         formInline: {
           status: '0',
-          from: 1,
+          pageSize: 10,
+          pageNo: 1,
           start_time: '',
           end_time: '',
           staffId: '',
@@ -661,7 +665,7 @@
             if (response.data.code === 0) {
               this.dialogFormVisibleReverse = false
               this.formInline.status = '0'
-              this.searchTask({ })
+              this.searchTask(this.formInline)
             } else {
               this.$message(response.data.message)
             }
@@ -729,7 +733,7 @@
             if (response.data.code === 0) {
               this.dialogFormVisible = false
               this.formInline.status = '0'
-              this.searchTask({ })
+              this.searchTask(this.formInline)
             } else {
               this.$message(response.data.message)
             }
@@ -785,7 +789,7 @@
           taskId: '',
           modifierName: '',
           status: '0',
-          from: this.pagination.pageNo
+          pageNo: this.pagination.pageNo
         }
       },
       handleClickDetail(row) {
@@ -988,8 +992,20 @@
         this.getOrderInfo(row)
         this.getMarks(row, 0)
       },
+      handleSizeChange(val) {
+        this.formInline.pageSize = val
+        this.formInline.start_time = this.timeValue1[0]
+        this.formInline.end_time = this.timeValue1[1]
+        this.formInline.complete_start = this.timeValue2[0]
+        this.formInline.complete_end = this.timeValue2[1]
+        this.formInline.staffId = localStorage.getItem('agentId')
+        this.pagination.pageNo = 1
+        findQualityTaskByInfo(this.formInline).then(response => {
+          this.queryGradeList(response)
+        })
+      },
       handleCurrentChange(val) {
-        this.formInline.from = val
+        this.formInline.pageNo = val
         this.formInline.start_time = this.timeValue1[0]
         this.formInline.end_time = this.timeValue1[1]
         this.formInline.complete_start = this.timeValue2[0]
@@ -1038,7 +1054,7 @@
       },
       searchTask(req) {
         // 根据老版本的逻辑 查询只能传分页页码的第一页
-        req.from = 1
+        req.pageNo = 1
         req.start_time = this.timeValue1[0]
         req.end_time = this.timeValue1[1]
         req.complete_start = this.timeValue2[0]

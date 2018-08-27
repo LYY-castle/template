@@ -51,7 +51,7 @@
             width="55">
             <template
               slot-scope="scope">
-              <div>{{scope.$index+(pageInfo.pageNo-1)*10+1}}</div>
+              <div>{{scope.$index+(pageInfo.pageNo-1)*pageInfo.pageSize+1}}</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -100,17 +100,18 @@
       </el-col> 
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;addNamelist.listName='';getBatch(searchBatch);clearForm(searchBatch);searchBatch.validityStatus=0">新建名单</el-button>
+        <el-button type="success" size="small" @click="addVisible=true;addNamelist.listName='';namelistPageInfo.pageSize=10;searchBatch.pageSize=10;searchBatch.pageNo=1;getBatch(searchBatch);clearForm(searchBatch);searchBatch.validityStatus=0">新建名单</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         <el-pagination
           v-if="pageShow"
           background
+          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page=pageInfo.pageNo
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size=pageInfo.pageSize
-          layout="total, prev, pager, next, jumper"
-          :total=pageInfo.totalCount style="text-align: right;float:right;">
+          :current-page='pageInfo.pageNo'
+          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-size='pageInfo.pageSize'
+          layout="total, sizes, prev, pager, next, jumper "
+          :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
     </el-row>
     <el-dialog
@@ -177,8 +178,8 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="searchBatch2=clone(searchBatch);searchBatch.pageno=1;getBatch(searchBatch)" icon="el-icon-search">查询</el-button>
-            <el-button type="danger" @click="clearForm(searchBatch);searchBatch.validityStatus=0;searchBatch2=clone(searchBatch)">重置</el-button>
+            <el-button type="primary" @click="searchBatch2=clone(searchBatch);searchBatch.pageNo=1;getBatch(searchBatch)" icon="el-icon-search">查询</el-button>
+            <el-button type="danger" @click="clearForm2();searchBatch.validityStatus=0;searchBatch2=clone(searchBatch)">重置</el-button>
           </el-form-item>
         </el-form>
       </el-row>
@@ -198,7 +199,7 @@
             width="55">
             <template
               slot-scope="scope">
-              <div>{{scope.$index+(namelistPageInfo.pageNo-1)*10+1}}</div>
+              <div>{{scope.$index+(namelistPageInfo.pageNo-1)*namelistPageInfo.pageSize+1}}</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -248,14 +249,15 @@
       </el-row>
       <div slot="footer" style="text-align: right;">
         <el-pagination
-          v-if="pageShow"
+          v-if="pageShow2"
           background
+          @size-change="namelistSizeChange"
           @current-change="namelistPageChange"
-          :current-page=namelistPageInfo.pageNo
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size=namelistPageInfo.pageSize
-          layout="total, prev, pager, next, jumper"
-          :total=namelistPageInfo.totalCount style="text-align:right;float:left;">
+          :current-page='namelistPageInfo.pageNo'
+          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-size='namelistPageInfo.pageSize'
+          layout="total, sizes, prev, pager, next, jumper "
+          :total='namelistPageInfo.totalCount' style="text-align:right;float:left;">
         </el-pagination>
         <el-form :inline="true" size="small" :model="addNamelist" ref="addNamelist" :rules="rule">
           <el-form-item prop="listName"> 
@@ -319,6 +321,7 @@ export default {
       batchTableData: [], // 批次表格
       validate: true, // 验证不通过阻止发请求
       pageShow: false, // 分页显示隐藏
+      pageShow2: false, // 分页显示隐藏
       namelistDetail: {},
       delReq: {
         listId: ''
@@ -333,7 +336,8 @@ export default {
         modifierName: '',
         startCreateTime: '',
         endCreateTime: '',
-        pageNo: 1
+        pageNo: 1,
+        pageSize: 10
       },
       req2: {
         listId: '',
@@ -341,7 +345,8 @@ export default {
         modifierName: '',
         startCreateTime: '',
         endCreateTime: '',
-        pageNo: 1
+        pageNo: 1,
+        pageSize: 10
       },
       searchBatch: {
         batchId: '',
@@ -350,6 +355,7 @@ export default {
         createAuthor: '',
         startCreateTime: '',
         endCreateTime: '',
+        pageSize: 10,
         pageNo: 1
       },
       searchBatch2: {
@@ -359,6 +365,7 @@ export default {
         createAuthor: '',
         startCreateTime: '',
         endCreateTime: '',
+        pageSize: 10,
         pageNo: 1
       },
       addNamelist: {
@@ -401,13 +408,45 @@ export default {
     },
     // 清空重置
     clearForm(obj, formName) {
-      for (const key in obj) {
-        if (key !== 'pageNo') {
-          obj[key] = ''
-        }
+      this.req = {
+        listId: '',
+        listName: '',
+        modifierName: '',
+        startCreateTime: '',
+        endCreateTime: '',
+        pageNo: this.pageInfo.pageNo,
+        pageSize: this.pageInfo.pageSize
       }
-      if (this.$refs[formName] !== undefined) {
-        this.$refs[formName].resetFields()
+      this.req2 = {
+        listId: '',
+        listName: '',
+        modifierName: '',
+        startCreateTime: '',
+        endCreateTime: '',
+        pageNo: this.pageInfo.pageNo,
+        pageSize: this.pageInfo.pageSize
+      }
+    },
+    clearForm2() {
+      this.searchBatch = {
+        batchId: '',
+        batchName: '',
+        validityStatus: 0,
+        createAuthor: '',
+        startCreateTime: '',
+        endCreateTime: '',
+        pageSize: this.namelistPageInfo.pageSize,
+        pageNo: this.namelistPageInfo.pageNo
+      }
+      this.searchBatch2 = {
+        batchId: '',
+        batchName: '',
+        validityStatus: 0,
+        createAuthor: '',
+        startCreateTime: '',
+        endCreateTime: '',
+        pageSize: this.namelistPageInfo.pageSize,
+        pageNo: this.namelistPageInfo.pageNo
       }
     },
     // 查询名单信息
@@ -434,20 +473,22 @@ export default {
         })
     },
     getBatch(req) {
+      console.log(111)
+      console.log(req)
       queryBatch(req)
         .then(response => {
           if (response.data.code === 0) {
             if (response.data.data) {
               this.batchTableData = response.data.data
               this.namelistPageInfo = response.data.pageInfo
-              this.pageShow = true
+              this.pageShow2 = true
             } else {
               this.batchTableData = response.data.data
-              this.pageShow = false
+              this.pageShow2 = false
             }
           } else {
             this.$message(response.data.message)
-            this.pageShow = false
+            this.pageShow2 = false
           }
         })
         .catch(error => {
@@ -461,6 +502,8 @@ export default {
         .then(response => {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
+            this.req2.pageNo = 1
+            this.pageInfo.pageNo = 1
             this.searchNamelist(this.req2)
           } else {
             this.$message(response.data.message)
@@ -534,6 +577,8 @@ export default {
         batchDelList(batchDelReq.idlist).then(response => {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
+            this.req2.pageNo = 1
+            this.pageInfo.pageNo = 1
             this.searchNamelist(this.req2)
           } else {
             this.$message('删除失败')
@@ -558,18 +603,27 @@ export default {
       }
     },
     // 页面显示条数
-    // handleSizeChange(val) {
-    //   // console.log(`每页 ${val} 条`);
-    //   this.searchReq.pageSize = val
-    //   this.searchNamelist(this.req2)
-    // },
+    handleSizeChange(val) {
+      this.req.pageSize = val
+      this.req2.pageSize = val
+      this.req2.pageNo = 1
+      this.pageInfo.pageNo = 1
+      this.searchNamelist(this.req2)
+    },
+    namelistSizeChange(val) {
+      this.searchBatch.pageSize = val
+      this.searchBatch2.pageSize = val
+      this.searchBatch2.pageNo = 1
+      this.namelistPageInfo.pageNo = 1
+      this.getBatch(this.searchBatch2)
+    },
     // 分页翻页功能
     handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`);
       this.req2.pageNo = val
       this.searchNamelist(this.req2)
     },
     namelistPageChange(val) {
+      this.searchBatch2.pageSize = this.namelistPageInfo.pageSize
       this.searchBatch2.pageNo = val
       this.getBatch(this.searchBatch2)
     }

@@ -3,7 +3,7 @@
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
         <el-form-item>
-          <el-select v-model="req.campaignId" :placeholder="campData.length==0?'无活动':'请选择活动'" @change="req2=clone(req);resetForm('assignForm');req.pageNo=1;queryMainQualityList(req)">
+          <el-select v-model="req.campaignId" :placeholder="campData.length==0?'无活动':'请选择活动'" @change="req.pageNo=1;req.pageSize=10;req2=clone(req);resetForm('assignForm');queryMainQualityList(req)">
             <el-option
                 v-for="item in campData"
                 :key="item.activityId"
@@ -32,7 +32,7 @@
             width="55">
             <template
               slot-scope="scope">
-              <div>{{scope.$index+(req2.pageNo-1)*10+1}}</div>
+              <div>{{scope.$index+(req2.pageNo-1)*req2.pageSize+1}}</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -72,12 +72,13 @@
       <el-pagination
         v-if="pageShow"
         background
+        @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page=pageInfo.pageNo
-        :page-sizes="[10, 20, 30, 50]"
-        :page-size=pageInfo.pageSize
-        layout="total, prev, pager, next, jumper"
-        :total=pageInfo.totalCount style="text-align: right;float:right;">
+        :current-page='pageInfo.pageNo'
+        :page-sizes="[10, 20, 30, 40, 50]"
+        :page-size='pageInfo.pageSize'
+        layout="total, sizes, prev, pager, next, jumper "
+        :total='pageInfo.totalCount' style="text-align: right;float:right;">
       </el-pagination>
     </el-row>
     <el-row>
@@ -383,9 +384,12 @@ export default {
         console.log(error)
       })
     },
+    handleSizeChange(val) {
+      this.req2.pageSize = val
+      this.queryMainQualityList(this.req2)
+    },
     // 分页翻页功能
     handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`);
       this.req2.pageNo = val
       this.queryMainQualityList(this.req2)
     }
