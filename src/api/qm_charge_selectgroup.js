@@ -7,7 +7,7 @@ export function queryByCampaign(req) {
     data: {
       campaignName: req.campaignName,
       pageNo: req.pageNo,
-      pagesize: req.pagesize
+      pageSize: req.pageSize
     }
   })
 }

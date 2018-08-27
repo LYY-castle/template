@@ -37,8 +37,8 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;req2=clone(req);searchTask(req)" icon="el-icon-search">查询</el-button>
-          <el-button type="danger" @click="clearForm(req)">重置</el-button>
+          <el-button type="primary" @click="req.pageNo=1;sreq2=clone(req);searchTask(req)" icon="el-icon-search">查询</el-button>
+          <el-button type="danger" @click="reset">重置</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -59,7 +59,7 @@
             width="55">
             <template
               slot-scope="scope">
-              <div>{{scope.$index+(req2.pageNo-1)*10+1}}</div>
+              <div>{{scope.$index+(req2.pageNo-1)*req2.pageSize+1}}</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -130,14 +130,14 @@
         <el-button type="success" size="small" @click="addVisible=true;clearForm(getRecords);getRecords.getAll=1;recodeTable=[];pageShow=false;addTask.taskName=''">新建质检任务</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         <el-pagination
-          v-if="pageShow"
           background
+          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page=req2.pageNo
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size=pageInfo.pageSize
-          layout="total, prev, pager, next, jumper"
-          :total=pageInfo.totalCount style="text-align: right;float:right;">
+          :current-page='req2.pageNo'
+          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-size='pageInfo.pageSize'
+          layout="total, sizes, prev, pager, next, jumper "
+          :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
     </el-row>
     <el-dialog
@@ -179,7 +179,7 @@
       append-to-body>
       <div slot="title" style="text-align: center;">
         <el-button @click="addVisible = false;" style="float:left;" icon="el-icon-arrow-left">返 回</el-button>
-        <h3 style="display:inline;">新增质检任务</h3>
+        <h3 style="display:inline;">新建质检任务</h3>
       </div>
       <el-row>
         <el-form :inline="true" size="small" :model="getRecords" ref="addTask" :rules="rule">
@@ -279,11 +279,11 @@
         <el-pagination
           v-if="pageShow"
           background
-          :current-page=recodePage.pageNo
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size=recodePage.pageSize
+          :current-page='recodePage.pageNo'
+          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-size='recodePage.pageSize'
           layout="total"
-          :total=recodePage.totalCount style="text-align: right;float:left;">
+          :total='recodePage.totalCount' style="text-align: right;float:left;">
         </el-pagination>
         <el-form :inline="true" size="small"  :model="addTask" ref="addTask" :rules="rule">
           <el-form-item prop="taskName">
@@ -375,7 +375,8 @@ export default {
         modifierName: '',
         startModifierTime: '',
         endModifierTime: '',
-        pageNo: 1
+        pageNo: 1,
+        pageSize: 10
       },
       req2: {
         status: '',
@@ -384,7 +385,8 @@ export default {
         modifierName: '',
         startModifierTime: '',
         endModifierTime: '',
-        pageNo: 1
+        pageNo: 1,
+        pageSize: 10
       },
       getRecords: {
         campaign: '',
@@ -461,6 +463,28 @@ export default {
         }
       })
     },
+    reset() {
+      this.req = {
+        status: '',
+        activityId: '',
+        taskName: '',
+        modifierName: '',
+        startModifierTime: '',
+        endModifierTime: '',
+        pageNo: this.req2.pageNo,
+        pageSize: this.pageInfo.pageSize
+      }
+      this.req2 = {
+        status: '',
+        activityId: '',
+        taskName: '',
+        modifierName: '',
+        startModifierTime: '',
+        endModifierTime: '',
+        pageNo: this.req2.pageNo,
+        pageSize: this.pageInfo.pageSize
+      }
+    },
     // 清空重置
     clearForm(obj, formName) {
       for (const key in obj) {
@@ -522,6 +546,8 @@ export default {
         .then(response => {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
+            this.req2.pageNo = 1
+            this.pageInfo.pageNo = 1
             this.searchTask(this.req2)
           } else {
             this.$message(response.data.message)
@@ -641,7 +667,9 @@ export default {
         batchdel(batchDelReq).then(response => {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
-            this.searchTask(this.req)
+            this.req2.pageNo = 1
+            this.pageInfo.pageNo = 1
+            this.searchTask(this.req2)
           } else {
             this.$message(response.data.message)
           }
@@ -659,14 +687,15 @@ export default {
       }
     },
     // 页面显示条数
-    // handleSizeChange(val) {
-    //   // console.log(`每页 ${val} 条`);
-    //   this.searchReq.pageSize = val
-    //   this.searchTask(this.req)
-    // },
+    handleSizeChange(val) {
+      this.req2.pageSize = val
+      this.req.pageSize = val
+      this.req2.pageNo = 1
+      this.pageInfo.pageNo = 1
+      this.searchTask(this.req2)
+    },
     // 分页翻页功能
     handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`);
       this.req2.pageNo = val
       this.searchTask(this.req2)
     }

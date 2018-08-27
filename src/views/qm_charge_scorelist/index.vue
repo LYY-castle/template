@@ -42,7 +42,7 @@
             width="55">
               <template
               slot-scope="scope">
-              <div>{{scope.$index+(formInline.currentPage-1)*10+1}}</div>
+              <div>{{scope.$index+(formInline.pageNo-1)*formInline.pageSize+1}}</div>
               </template>
           </el-table-column>
           <el-table-column
@@ -116,10 +116,12 @@
         <el-col :span="14">
           <el-pagination
             background
+            @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page.sync="pagination.pageNo"
             :page-size="pagination.pageSize"
-            layout="total, prev, pager, next, jumper"
+            :page-sizes="[10, 20, 30, 40, 50]"
+            layout="total, sizes, prev, pager, next, jumper "
             :total="pagination.totalCount" style="text-align: right">
           </el-pagination>
         </el-col>
@@ -308,7 +310,8 @@
           modifierName: '',
           start_time: '',
           end_time: '',
-          currentPage: 1
+          pageNo: 1,
+          pageSize: 10
         },
         ruleForm: {
           gradeName: '',
@@ -431,7 +434,9 @@
         }).then(() => {
           deleteGradeFormByGradeId({ 'gradeId': row.gradeId }).then(response => {
             if (response.data.code === 0) {
-              this.searchGrade({})
+              this.formInline.pageNo = 1
+              this.pagination.pageNo = 1
+              this.searchGrade(this.formInline)
             } else {
               Message({
                 message: response.data.message,
@@ -501,7 +506,9 @@
         }).then(() => {
           deleteGradeFormByTeam({ 'chk_box': chk_box }).then(res => {
             if (res.data.code === 0) {
-              this.searchGrade({})
+              this.formInline.pageNo = 1
+              this.pagination.pageNo = 1
+              this.searchGrade(this.formInline)
             } else {
               Message({
                 message: res.data.message,
@@ -521,7 +528,7 @@
               if (response.data.code === 0) {
                 this.resetForm(formName)
                 this.dialogFormVisible = false
-                this.searchGrade({})
+                this.searchGrade(this.formInline)
               } else {
                 Message({
                   message: response.data.message,
@@ -548,7 +555,7 @@
               if (response.data.code === 0) {
                 this.resetFormReverse(formName)
                 this.dialogFormVisibleReverse = false
-                this.searchGrade({})
+                this.searchGrade(this.formInline)
               } else {
                 Message({
                   message: response.data.message,
@@ -615,7 +622,8 @@
           modifierName: '',
           start_time: '',
           end_time: '',
-          currentPage: this.pagination.pageNo
+          pageNo: this.pagination.pageNo,
+          pageSize: this.pagination.pageSize
         }
       },
       handleSelectionChange(val) {
@@ -713,8 +721,19 @@
         })
         // row已经包含了单个的数据
       },
+      // 页面显示条数
+      handleSizeChange(val) {
+        this.formInline.pageNo = 1
+        this.formInline.pageSize = val
+        this.formInline.start_time = this.timeValue[0]
+        this.formInline.end_time = this.timeValue[1]
+        this.pagination.pageNo = 1
+        findAllGradeForm(this.formInline).then(response => {
+          this.queryGrade(response)
+        })
+      },
       handleCurrentChange(val) {
-        this.formInline.currentPage = val
+        this.formInline.pageNo = val
         this.formInline.start_time = this.timeValue[0]
         this.formInline.end_time = this.timeValue[1]
         findAllGradeForm(this.formInline).then(response => {
@@ -753,7 +772,7 @@
       },
       searchGrade(req) {
         // 根据老版本的逻辑 查询只能传分页页码的第一页
-        req.currentPage = 1
+        req.pageNo = 1
         req.gradeName = this.formInline.gradeName
         req.modifierName = this.formInline.modifierName
         req.start_time = this.timeValue[0]

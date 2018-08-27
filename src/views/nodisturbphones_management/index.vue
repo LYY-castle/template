@@ -52,7 +52,7 @@
             width="55">
             <template
               slot-scope="scope">
-              <div>{{scope.$index+(req.pageNo-1)*10+1}}</div>
+              <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -101,12 +101,13 @@
         <el-pagination
           v-if="pageShow"
           background
+          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page=pageInfo.pageNo
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size=pageInfo.pageSize
-          layout="total, prev, pager, next, jumper"
-          :total=pageInfo.totalCount style="text-align: right;float:right;">
+          :current-page='pageInfo.pageNo'
+          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-size='pageInfo.pageSize'
+          layout="total, sizes, prev, pager, next, jumper "
+          :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
     </el-row>
     <!-- 新增免访号段 -->
@@ -171,7 +172,7 @@
         <el-form-item label="操作人员:" prop="modifier">
           <span>{{editNoDisturbPhonesDetail.modifier}}</span>
         </el-form-item>
-         <el-form-item label="操作时间:" prop="modifyTime">
+        <el-form-item label="操作时间:" prop="modifyTime">
           <span>{{formatDateTime(editNoDisturbPhonesDetail.modifyTime)}}</span>
         </el-form-item>
       </el-form>
@@ -234,7 +235,8 @@ export default {
         modifier: '', // 操作人
         queryStart: '', // 操作时间
         queryStop: '', // 操作时间
-        pageNo: 1
+        pageNo: 1,
+        pageSize: 10
       },
       paginationReq: {
         startNumber: '', // 号段
@@ -242,7 +244,8 @@ export default {
         modifier: '', // 操作人
         queryStart: '', // 操作时间
         queryStop: '', // 操作时间
-        pageNo: 1
+        pageNo: 1,
+        pageSize: 10
       }, // 记录上次查询条件
       addNoDisturbPhonesDetail: {
         startNumber: '', // 开始号段
@@ -280,7 +283,8 @@ export default {
         modifier: '', // 操作人
         queryStart: '', // 操作时间
         queryStop: '', // 操作时间
-        pageNo: 1
+        pageNo: this.pageInfo.pageNo,
+        pageSize: this.pageInfo.pageSize
       }
     },
     resetAdd() {
@@ -354,6 +358,8 @@ export default {
         batchdel(batchDelReq.ids).then(response => {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
+            this.paginationReq.pageNo = 1
+            this.pageInfo.pageNo = 1
             this.querynodisturbphones(this.paginationReq)
           } else {
             this.$message('删除失败')
@@ -386,6 +392,8 @@ export default {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
           this.delVisible = false
+          this.paginationReq.pageNo = 1
+          this.pageInfo.pageNo =
           this.querynodisturbphones(this.paginationReq)
         } else {
           this.$message('删除失败')
@@ -401,6 +409,15 @@ export default {
       for (var i = 0; i < val.length; i++) {
         this.batchDelReq.ids.push(val[i].id)
       }
+    },
+    // 页面显示条数
+    handleSizeChange(val) {
+      this.paginationReq.pageSize = val
+      this.paginationReq.pageNo = 1
+      this.req.pageSize = val
+      this.req.pageNo = 1
+      this.pageInfo.pageNo = 1
+      this.querynodisturbphones(this.paginationReq)
     },
     // 分页翻页功能
     handleCurrentChange(val) {
@@ -465,4 +482,3 @@ export default {
   }
 }
 </script>
-

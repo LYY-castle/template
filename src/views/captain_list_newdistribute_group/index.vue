@@ -42,7 +42,7 @@
             label="序号">
             <template
               slot-scope="scope">
-              <div>{{scope.$index+(pagination.pageNo-1)*10+1}}</div>
+              <div>{{scope.$index+(pagination.pageNo-1)*pagination.pageSize+1}}</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -96,10 +96,12 @@
           <el-col :span="22">
             <el-pagination
               background
+              @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
               :current-page.sync="pagination.pageNo"
               :page-size="pagination.pageSize"
-              layout="total, prev, pager, next, jumper"
+              :page-sizes="[10, 20, 30, 40, 50]"
+              layout="total, sizes, prev, pager, next, jumper "
               :total="pagination.totalCount" style="text-align: right">
             </el-pagination>
           </el-col>
@@ -190,16 +192,21 @@
           pageSize: null,
           totalCount: 0,
           totalPage: null
+        },
+        pageing: {
+          campaignId: null,
+          pageNo: 1,
+          pageSize: 10
         }
       }
     },
     methods: {
       selectActive(val) {
-        findCampaignNameListAssignInfo({
-          campaignId: val,
-          pageNo: 1,
-          pageSize: 10
-        }).then(response => {
+        this.pageing.campaignId = val
+        this.pageing.campaignId = val
+        this.pageing.pageNo = 1
+        this.pageing.pageSize = 10
+        findCampaignNameListAssignInfo(this.pageing).then(response => {
           if (response.data.code === 0) {
             this.tableData = response.data.data
             this.pagination = response.data.pageInfo
@@ -245,12 +252,35 @@
           }
         })
       },
+      handleSizeChange(val) {
+        this.pageing.campaignId = this.formInline.campaignId
+        this.pageing.pageSize = val
+        this.pageing.pageNo = 1
+        this.pagination.pageNo = 1
+        findCampaignNameListAssignInfo(this.pageing).then(response => {
+          if (response.data.code === 0) {
+            this.tableData = response.data.data
+            this.pagination = response.data.pageInfo
+            for (let i = 0; i <= this.tableData.length; i++) {
+              if (this.tableData[i]) {
+                this.tableData[i].modifierTime = formatDateTime(this.tableData[i].modifierTime)
+              }
+            }
+          } else {
+            this.tableData = []
+            this.tableData2 = []
+            Message({
+              message: response.data.message,
+              type: 'error',
+              duration: 3 * 1000
+            })
+          }
+        })
+      },
       handleCurrentChange(val) {
-        findCampaignNameListAssignInfo({
-          campaignId: this.formInline.campaignId,
-          pageNo: val,
-          pageSize: 10
-        }).then(response => {
+        this.pageing.campaignId = this.formInline.campaignId
+        this.pageing.pageNo = val
+        findCampaignNameListAssignInfo(this.pageing).then(response => {
           if (response.data.code === 0) {
             this.tableData = response.data.data
             this.pagination = response.data.pageInfo

@@ -194,7 +194,7 @@
           background
           @current-change="handleCurrentChange"
           :current-page=pageInfo.pageNo
-          :page-sizes="[10, 20, 30, 50]"
+          :page-sizes="[10, 20, 30, 40, 50]"
           :page-size=pageInfo.pageSize
           layout="total, prev, pager, next, jumper"
           :total=pageInfo.totalCount style="text-align: right;float:right;">

@@ -127,11 +127,12 @@
         <el-pagination
           v-if="pageShow"
           background
+          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page=pageInfo.pageNo
-          :page-sizes="[10, 20, 30, 50]"
+          :page-sizes="[10, 20, 30, 40, 50]"
           :page-size=pageInfo.pageSize
-          layout="total, prev, pager, next, jumper"
+          layout="total, sizes, prev, pager, next, jumper "
           :total=pageInfo.totalCount style="text-align: right;float:right;">
         </el-pagination>
     </el-row>
@@ -384,7 +385,7 @@
     isHaveManager,
     isHaveStaff,
     getAllStaffByDepartId,
-    getSummariesByCampaignId,
+    getSummariesByTaskId,
     getContactByGradeId,
     queryrecordbytaskid,
     getStaffNameByAgentId,
@@ -538,7 +539,7 @@
       },
       // 详情页面加载
       contactDetail() {
-        getSummariesByCampaignId(this.ids.campaignId).then(response => {
+        getSummariesByTaskId(this.ids.taskId).then(response => {
           if (response.data.code === 0) {
             this.detailInfo.summariesInfo = response.data.data
           }
@@ -665,10 +666,15 @@
             console.log(error)
           })
       },
-
+      // 页面显示条数
+      handleSizeChange(val) {
+        this.req.pageSize = val
+        this.req.pageNo = 1
+        this.pageInfo.pageNo = 1
+        this.searchByKeyWords(this.req)
+      },
       // 分页翻页功能
       handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`);
         this.req.pageNo = val
         this.searchByKeyWords(this.req)
       },

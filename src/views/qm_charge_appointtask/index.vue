@@ -3,7 +3,7 @@
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
         <el-form-item label="活动名称:">
-          <el-select v-model="req.campaignId" :placeholder="campData.length==0?'无活动':'请选择活动'" @change="submitAssign.data = ''.split('');resetForm('assignForm');req.pageNo=1;queryMainQualityList(req);countTaskAssignInfo(req)">
+          <el-select v-model="req.campaignId" :placeholder="campData.length==0?'无活动':'请选择活动'" @change="submitAssign.data = ''.split('');resetForm('assignForm');req.pageNo=1;req.pageSize=10;queryMainQualityList(req);countTaskAssignInfo(req)">
             <el-option
                 v-for="item in campData"
                 :key="item.activityId"
@@ -32,7 +32,7 @@
             width="55">
             <template
               slot-scope="scope">
-              <div>{{scope.$index+(req.pageNo-1)*10+1}}</div>
+              <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -89,12 +89,13 @@
       <el-pagination
         v-if="pageShow"
         background
+        @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page=pageInfo.pageNo
-        :page-sizes="[10, 20, 30, 50]"
-        :page-size=pageInfo.pageSize
-        layout="total, prev, pager, next, jumper"
-        :total=pageInfo.totalCount style="text-align: right;float:right;">
+        :current-page='pageInfo.pageNo'
+        :page-sizes="[10, 20, 30, 40, 50]"
+        :page-size='pageInfo.pageSize'
+        layout="total, sizes, prev, pager, next, jumper "
+        :total='pageInfo.totalCount' style="text-align: right;float:right;">
       </el-pagination>
       <el-form :inline="true" :rules="rule" :model="submitAssign" ref="assignForm">
         <el-form-item label="分配数量" prop="assignNum">
@@ -466,9 +467,12 @@ export default {
         console.log(error)
       })
     },
+    handleSizeChange(val) {
+      this.req.pageSize = val
+      this.queryMainQualityList(this.req)
+    },
     // 分页翻页功能
     handleCurrentChange(val) {
-      // console.log(`当前页: ${val}`);
       this.req.pageNo = val
       this.queryMainQualityList(this.req)
     }

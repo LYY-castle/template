@@ -9,7 +9,8 @@ export function queryByKeyWords(req) {
       modifier: req.modifier,
       beginTime: req.beginTime,
       afterTime: req.afterTime,
-      pageNo: req.pageNo
+      pageNo: req.pageNo,
+      pageSize: req.pageSize
     }
   })
 }

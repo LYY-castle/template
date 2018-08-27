@@ -26,7 +26,7 @@ export function findQualityResultByInfo(req) {
 export function getDepartIdByAgentId(agentId) {
   return request({
     url: 'employee/getStaffNameByAgentId',
-    params: agentId
+    params: { 'agentId': agentId }
   })
 }
 // 判断现场主管查询质检评分权限

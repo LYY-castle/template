@@ -48,7 +48,7 @@
             width="55">
             <template
               slot-scope="scope">
-              <div>{{scope.$index+(req.pageNo-1)*10+1}}</div>
+              <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
             </template>
           </el-table-column>
           <!-- <el-table-column
@@ -113,12 +113,13 @@
         <el-pagination
           v-if="pageShow"
           background
+          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page=pageInfo.pageNo
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size=pageInfo.pageSize
-          layout="total, prev, pager, next, jumper"
-          :total=pageInfo.totalCount style="text-align: right;float:right;">
+          :current-page='pageInfo.pageNo'
+          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-size='pageInfo.pageSize'
+          layout="total, sizes, prev, pager, next, jumper "
+          :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
     </el-row>
     <!-- 新建短信模板 -->
@@ -287,7 +288,8 @@ export default {
         modifier: '', // 操作人
         afterTime: '', // 操作时间
         beginTime: '', // 操作时间
-        pageNo: 1
+        pageNo: 1,
+        pageSize: 10
       },
       paginationReq: {
         name: '', // 模板名称
@@ -295,7 +297,8 @@ export default {
         modifier: '', // 操作人
         afterTime: '', // 操作时间
         beginTime: '', // 操作时间
-        pageNo: 1
+        pageNo: 1,
+        pageSize: 10
       }, // 记录上次查询条件
       addMessageTemplateDetail: {
         name: '', // 名字
@@ -339,7 +342,8 @@ export default {
         modifier: '', // 操作人
         afterTime: '', // 操作时间
         beginTime: '', // 操作时间
-        pageNo: 1
+        pageNo: this.paginationReq.pageNo,
+        pageSize: this.paginationReq.pageSize
       }
       this.timeValue = ''
     },
@@ -426,9 +430,11 @@ export default {
         delTemplateList(batchDelReq.ids).then(response => {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
+            this.paginationReq.pageNo = 1
+            this.pageInfo.pageNo = 1
             this.findTemplateList(this.paginationReq)
           } else {
-            this.$message('删除失败')
+            this.$message(response.data.message)
           }
         }).catch(error => {
           console.log(error)
@@ -446,7 +452,7 @@ export default {
           this.editVisible = false
           this.findTemplateList(this.paginationReq)
         } else {
-          this.$message('修改失败')
+          this.$message(response.data.message)
         }
       }).catch(error => {
         console.error(error)
@@ -458,9 +464,11 @@ export default {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
           this.delVisible = false
+          this.paginationReq.pageNo = 1
+          this.pageInfo.pageNo = 1
           this.findTemplateList(this.paginationReq)
         } else {
-          this.$message('删除失败')
+          this.$message(response.data.message)
         }
       }).catch(error => {
         console.error(error)
@@ -473,6 +481,15 @@ export default {
       for (var i = 0; i < val.length; i++) {
         this.batchDelReq.ids.push(val[i].id)
       }
+    },
+    // 页面显示条数
+    handleSizeChange(val) {
+      this.paginationReq.pageNo = 1
+      this.paginationReq.pageSize = val
+      this.req.pageNo = 1
+      this.req.pageSize = val
+      this.pageInfo.pageNo = 1
+      this.findTemplateList(this.paginationReq)
     },
     // 分页翻页功能
     handleCurrentChange(val) {

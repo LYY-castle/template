@@ -109,7 +109,7 @@
               </el-col>
             </el-form>
           </el-row>
-
+       
           <!-- <el-row style="height:40px;padding-top:15px;padding-right:15px;">
             <breadcrumb></breadcrumb>
           </el-row> -->
@@ -137,47 +137,125 @@
           <span>{{callee}}</span>
         </p>
         <p>
-          <b>原始主叫：</b>
+          <b>原主叫：</b>
           <span>{{orginCaller}}</span>
         </p>
       </el-col>
-      <el-col :span="6">
-        <p>
-          <b>用户：</b>
-          <span>{{userInfo.userName}}</span>
-        </p>
-        <p>
-          <b>工号：</b>
-          <span>{{userInfo.staffId}}</span>
-        </p>
-        <p>
-          <b>部门：</b>
-          <span>{{userInfo.departName}}</span>
-        </p>
+      <el-col :span="6" style="margin-top:15px;margin-left:12%">
+        <!-- 有未读信息 -->
+        <div v-show="messageNum > 0">
+          <el-badge v-model="messageNum" class="item" :max="10">
+            <el-tooltip placement="bottom">
+              <div slot="content">
+                您有{{messageNum}}条未读信息<br/>
+                今日未读：3 条<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;特提：2 条<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;特急：1 条<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;加急：0 条<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;普通：0 条<br/>
+              </div>
+              <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()"></el-button>
+            </el-tooltip>
+          </el-badge>
+        </div>
+        
+        <!-- 没有未读信息 -->
+        <div v-show="messageNum === '' || messageNum === 0">
+          <el-tooltip placement="bottom">
+            <div slot="content">
+              暂无未读信息
+            </div>
+            <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()"></el-button>
+          </el-tooltip>
+        </div>
       </el-col>
-      <el-col :span="3" style="margin-top:18px;">
-        <el-button type="primary" @click="logout" size="mini">注销</el-button>
+      <el-col :span="3"><div></div></el-col>
+      <el-col :span="3" style="margin-top:15px;margin-left:-10%">
+        <el-tooltip placement="bottom">
+        <div slot="content">设置</div>
+        <el-dropdown @command="handleCommand" trigger="click" >
+          <el-button icon="el-icon-setting"  type="info" circle></el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item disabled>
+              <span><b>工号：</b>{{userInfo.staffId}}</span><br/>
+              <span><b>用户：</b>{{userInfo.userName}}</span><br/>
+              <span><b>部门：</b>{{userInfo.departName}}</span><br/>
+            </el-dropdown-item>
+            <el-dropdown-item style="text-align:center" divided command="changePWD">
+              <i class="el-icon-edit-outline">  修改密码</i>
+            </el-dropdown-item>
+            <el-dropdown-item style="text-align:center" divided command="logout">
+              <i class="el-icon-circle-close">  注销用户</i>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+        </el-tooltip>
       </el-col>
     </el-col>
   </el-row>
   <el-row v-if="!havesoftphone">
-    <div style="display:inline-block;margin-left:1%;">
-     <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
-    </div>
-    <div style="float:right;margin-right:3%;">
-          <b>用户：</b>
-          <span>{{userInfo.userName}}</span>
-          &nbsp; &nbsp;
-          <b>工号：</b>
-          <span>{{userInfo.staffId}}</span>
-          &nbsp; &nbsp;
-          <b>部门：</b>
-          <span>{{userInfo.departName}}</span>
-          &nbsp; &nbsp; &nbsp;
-          <el-button type="primary" @click="logout" size="mini">注销</el-button>
-    </div>
-
+    <el-col :span="17" style="margin-top:0.2%;"></el-col>
+    <el-col :span="7" class="userInfo" style="margin-top:-7px;">
+      <el-col :span="6"></el-col>
+      <el-col :span="6"></el-col>
+      <el-col :span="6"  style="margin-top:18px;margin-left:62%">
+        <!-- 有未读信息 -->
+        <div v-show="messageNum > 0">
+          <el-badge v-model="messageNum" class="item" :max="10">
+            <el-tooltip placement="bottom">
+              <div slot="content">
+                您有{{messageNum}}条未读信息<br/>
+              </div>
+              <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()"></el-button>
+            </el-tooltip>
+          </el-badge>
+        </div>
+        
+        <!-- 没有未读信息 -->
+        <div v-show="messageNum === '' || messageNum === 0">
+          <el-tooltip placement="bottom">
+            <div slot="content">暂无未读信息</div>
+            <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()"></el-button>
+          </el-tooltip>
+        </div>
+      </el-col>
+      <el-col :span="3"></el-col>
+      <el-col :span="3" style="margin-top:18px;margin-left:-10%">
+        <el-dropdown @command="handleCommand" trigger="click" >
+          <el-button icon="el-icon-setting"  type="info" circle></el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item disabled>
+              <span><b>工号：</b>{{userInfo.staffId}}</span><br/>
+              <span><b>用户：</b>{{userInfo.userName}}</span><br/>
+              <span><b>部门：</b>{{userInfo.departName}}</span><br/>
+            </el-dropdown-item>
+            <el-dropdown-item style="text-align:center" divided command="changePWD">
+              <i class="el-icon-edit-outline">  修改密码</i>
+            </el-dropdown-item>
+            <el-dropdown-item style="text-align:center" divided command="logout">
+              <i class="el-icon-circle-close">  注销用户</i>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </el-col>
+    </el-col>
+  
   </el-row>
+
+  <el-dialog width="30%" title="修改密码" :visible.sync="changePwdVisiable" append-to-body>
+      <span style="color:red">*</span><span style="font-size:15px;">请输入旧密码：</span><br/>
+       <el-input type="password" placeholder="请输入旧密码" size="medium" v-model="changePWD.oldPassword" maxlength="20" clearable></el-input>
+      <span style="color:red">*</span><span style="font-size:15px;">请输入新密码：</span><br/>
+       <el-input type="password" placeholder="请输入新密码" size="medium" v-model="changePWD.newPassword" maxlength="20" clearable></el-input>
+      <span style="color:red">*</span><span style="font-size:15px;">请输入验证码：</span><br/>
+       <el-input type="text" placeholder="请输入验证码" size="medium" v-model="changePWD.validateCode" maxlength="4" style="width:70%" clearable></el-input>
+       <img style="position:relative;top:10px;" height="35" width="75"  :src="codeUrl" @click="getCode()">
+       <!-- <div>{{codeUrl}}</div> -->
+      <div slot="footer" class="dialog-footer" style="text-align: center;">
+        <el-button type="primary" @click="checkChangePWD(changePWD)">确定</el-button>
+        <el-button @click="changePwdVisiable = false">取消</el-button>
+      </div>
+  </el-dialog>
   </el-menu>
 
 </template>
@@ -190,6 +268,11 @@ import Hamburger from '@/components/Hamburger'
 import { getUserInfo } from '@/api/dashboard'
 import { Message } from 'element-ui'
 import { addComeContact, addDialContact, addAnswerContact, addHangupContact, getPhoneOwn, checkSoftphonePerm } from '@/api/navbar'
+import {
+  getMyUnreadMessages,
+  generateValidateCode,
+  changePassword
+} from '@/utils/tools'
 
 import cti from '@/utils/ctijs'
 var vm = null
@@ -247,7 +330,18 @@ export default {
         region: ''
       },
       navbar: 'navbar',
-      sidebarStatus: ''
+      sidebarStatus: '',
+      agentId: '', // 搜索带的参数 员工工号
+      timer: null, // 定时器timer
+      messageNum: '', // 消息/站内信的数量
+      changePwdVisiable: false, // 修改密码dialog
+      changePWD: {
+        staffId: '',
+        oldPassword: '',
+        newPassword: '',
+        validateCode: ''
+      },
+      codeUrl: ''
     }
   },
   components: {
@@ -265,6 +359,101 @@ export default {
     }
   },
   methods: {
+    // 修改密码
+    checkChangePWD(changePWD) {
+      if (changePWD.oldPassword === '') {
+        this.$message.error('请输入原密码！')
+        return
+      } else if (changePWD.newPassword === '') {
+        this.$message.error('请输入新密码！')
+        return
+      } else if (changePWD.oldPassword === changePWD.newPassword) {
+        this.$message.error('新密码与原密码一致，请尝试新的密码组合！')
+        return
+      } else if (changePWD.validateCode === '') {
+        this.$message.error('请输入验证码！')
+        return
+      } else {
+        changePassword(changePWD)
+          .then(res => {
+            if (res.data.code === 1) {
+              this.$message.success('修改成功！请妥善保存您的新密码')
+              this.changePwdVisiable = false
+              return
+            } else if (res.data.code === '0') {
+              // 验证码校验错误
+              this.$message.error(res.data.message)
+              // 重新生成验证码
+              this.getCode()
+              return
+            } else if (res.data.code === '2') {
+              // 验证码没写入redis 重新生成
+              this.$message.error('验证码过期，请重新输入！')
+              // 重新生成验证码
+              this.getCode()
+              return
+            } else if (res.data.code === 0) {
+              this.$message.error('原密码不正确！')
+              return
+            }
+          })
+      }
+    },
+    // 初次获取未读数量
+    firstgetUnreadMessages(agentId) {
+      getMyUnreadMessages(agentId)
+        .then(response1 => {
+          this.messageNum = response1.data.result.total_count
+        })
+    },
+    // 获取当前登录人所有类别的未读消息数量
+    getUnreadMessages(agentId) {
+      getMyUnreadMessages(agentId)
+        .then(response1 => {
+          if (response1.data.result.total_count - this.messageNum === 1) {
+            this.$notify({
+              title: '消息提示',
+              message: '收到一条新通知',
+              offset: 100,
+              type: 'success'
+            })
+          }
+          this.messageNum = response1.data.result.total_count
+          return
+        })
+    },
+    // 处理点击注销
+    handleCommand(command) {
+      if (command === 'logout') {
+      // 注销时清空定时器
+        clearInterval(this.timer)
+        this.logout()
+      } else if (command === 'changePWD') {
+        this.changePWD.staffId = localStorage.getItem('agentId')
+        this.changePWD.oldPassword = ''
+        this.changePWD.newPassword = ''
+        this.changePWD.validateCode = ''
+        // 生成验证码
+        generateValidateCode()
+          .then(res => {
+            this.codeUrl = `${res.data}`
+          })
+        this.changePwdVisiable = true
+      }
+    },
+    // 生成验证码
+    getCode() {
+      generateValidateCode()
+        .then(res => {
+          this.codeUrl = `${res.data}`
+        })
+    },
+    // 进入我的消息页
+    checkMessageList() {
+      this.$router.push({
+        name: 'notification_my.html'
+      })
+    },
     agentReady() {
       if (this.telephoneState === '就绪') {
         return
@@ -364,22 +553,30 @@ export default {
       } else {
         vm.dialNum = this.formInline.user
         const reg = /^([1-9][0-9]{2,10}|[0-9]{1,4}\-?[0-9]{1,4}\-?[0-9]{1,9})$/
-        if (reg.test(vm.dialNum)) {
-          const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
-          if (regex.test(vm.dialNum)) {
-            this.getPromise(vm.dialNum).then(function() {
-              cti.starttransfer(vm.dialNum, vm.formInline.DN)
-            })
-          } else {
-            cti.starttransfer(vm.dialNum, vm.formInline.DN)
-          }
-        } else {
+        if (vm.formInline.DN === vm.dialNum) {
           Message({
-            message: '号码不规范',
+            message: '不能三方给自己',
             type: 'error',
             duration: 1 * 1000
           })
-          return
+        } else {
+          if (reg.test(vm.dialNum)) {
+            const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
+            if (regex.test(vm.dialNum)) {
+              this.getPromise(vm.dialNum).then(function() {
+                cti.starttransfer(vm.dialNum, vm.formInline.DN)
+              })
+            } else {
+              cti.starttransfer(vm.dialNum, vm.formInline.DN)
+            }
+          } else {
+            Message({
+              message: '号码不规范',
+              type: 'error',
+              duration: 1 * 1000
+            })
+            return
+          }
         }
         this.oldtelephonestate = this.telephoneState
         this.telephoneState = '发起三方'
@@ -406,22 +603,30 @@ export default {
       } else {
         vm.dialNum = this.formInline.user
         const reg = /^([1-9][0-9]{2,10}|[0-9]{1,4}\-?[0-9]{1,4}\-?[0-9]{1,9})$/
-        if (reg.test(vm.dialNum)) {
-          const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
-          if (regex.test(vm.dialNum)) {
-            this.getPromise(vm.dialNum).then(function() {
-              cti.starttransfer(vm.dialNum, vm.formInline.DN)
-            })
-          } else {
-            cti.starttransfer(vm.dialNum, vm.formInline.DN)
-          }
-        } else {
+        if (vm.formInline.DN === vm.dialNum) {
           Message({
-            message: '号码不规范',
+            message: '不能转接给自己',
             type: 'error',
             duration: 1 * 1000
           })
-          return
+        } else {
+          if (reg.test(vm.dialNum)) {
+            const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
+            if (regex.test(vm.dialNum)) {
+              this.getPromise(vm.dialNum).then(function() {
+                cti.starttransfer(vm.dialNum, vm.formInline.DN)
+              })
+            } else {
+              cti.starttransfer(vm.dialNum, vm.formInline.DN)
+            }
+          } else {
+            Message({
+              message: '号码不规范',
+              type: 'error',
+              duration: 1 * 1000
+            })
+            return
+          }
         }
         this.oldtelephonestate = this.telephoneState
         this.telephoneState = '发起转接'
@@ -473,21 +678,29 @@ export default {
       const DN = this.formInline.DN
       vm.dialNum = this.formInline.user
       const reg = /^([1-9][0-9]{2,10}|[0-9]{1,4}\-?[0-9]{1,4}\-?[0-9]{1,9})$/
-      if (reg.test(vm.dialNum)) {
-        const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
-        if (regex.test(vm.dialNum)) {
-          this.getPromise(vm.dialNum).then(function() {
-            cti.makecall(DN, vm.dialNum)
-          })
-        } else {
-          cti.makecall(DN, vm.dialNum)
-        }
-      } else {
+      if (DN === vm.dialNum) {
         Message({
-          message: '号码不规范',
+          message: '不能拨打自己本身',
           type: 'error',
           duration: 1 * 1000
         })
+      } else {
+        if (reg.test(vm.dialNum)) {
+          const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
+          if (regex.test(vm.dialNum)) {
+            this.getPromise(vm.dialNum).then(function() {
+              cti.makecall(DN, vm.dialNum)
+            })
+          } else {
+            cti.makecall(DN, vm.dialNum)
+          }
+        } else {
+          Message({
+            message: '号码不规范',
+            type: 'error',
+            duration: 1 * 1000
+          })
+        }
       }
     },
     agentLogin() {
@@ -671,7 +884,7 @@ export default {
       }
     },
     onUpdateCallInfo(event, beforeOtherLegDN, afterOterLegDN, updateLine) {
-      console.log('事件：' + event + ',原通话的对方号码：' + beforeOtherLegDN + ',更新后通话的对方号码：' + afterOterLegDN + ',更新线路：' + updateLine)
+      console.log('事件：更新通话情况' + event + ',原通话的对方号码：' + beforeOtherLegDN + ',更新后通话的对方号码：' + afterOterLegDN + ',更新线路：' + updateLine)
     },
     on_queuecount(event, queuename, queuecount) {
       console.log('队列名：' + queuename + '，队列排队人数：' + queuecount + '人')
@@ -695,16 +908,26 @@ export default {
       })
       switch (hangupLine) {
         case 1:
-
-          vm.telephoneState = ''
-          vm.caller = ''
-          vm.callee = ''
-          vm.orginCaller = ''
-          vm.tran_Flagbit = '0'
-          vm.conf_Flagbit = '0'
-          vm.hold_Flagbit = '0'
-          vm.setbtnStatus('login')
-          cti.setAgentStatus(agentid, '14')
+          if (activeLineCount < 1) {
+            vm.telephoneState = ''
+            vm.caller = ''
+            vm.callee = ''
+            vm.orginCaller = ''
+            vm.tran_Flagbit = '0'
+            vm.conf_Flagbit = '0'
+            vm.hold_Flagbit = '0'
+            vm.setbtnStatus('login')
+            cti.setAgentStatus(agentid, '14')
+          } else {
+            // vm.telephoneState = ''
+            // vm.caller = ''
+            // vm.callee = ''
+            // vm.orginCaller = ''
+            vm.tran_Flagbit = '0'
+            vm.conf_Flagbit = '0'
+            vm.hold_Flagbit = '0'
+            vm.setbtnStatus('talking')
+          }
 
           break
         case 2:
@@ -727,6 +950,7 @@ export default {
           break
       }
       if (activeLineCount < 1) {
+        vm.orginCaller = ''
         clearInterval(interval)
       }
     },
@@ -757,7 +981,7 @@ export default {
         calleeid += ''
       }
       addDialContact({
-        'event': 'on_ringback_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': callerid, 'calleeid': calleeid, 'ori_ani': ori_ani, 'ringback_time': new Date(), 'callDirection': 0, 'global_taskId': vm.global_taskId
+        'event': 'on_ringback_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': callerid, 'calleeid': calleeid, 'ori_ani': ori_ani, 'ringback_time': new Date(), 'callDirection': 0, 'global_taskId': vm.global_taskId, 'activeLine': activeLine
       }).then(res => {
         console.log('写入拨出电话记录：' + res)
       }).catch(error => {
@@ -774,6 +998,7 @@ export default {
     on_ringing_event(event, agentid, DN, UUID, callerid, calleeid, ori_ani, other_leg_uuid, queueName, activeLine) {
       vm.caller = callerid
       vm.callee = calleeid
+      vm.orginCaller = ori_ani
       addComeContact({
         'event': 'on_ringing_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': callerid, 'calleeid': calleeid, 'ori_ani': ori_ani, 'other_leg_uuid': other_leg_uuid, 'ringing_time': new Date(), 'callDirection': 1
       }).then(res => {
@@ -790,9 +1015,7 @@ export default {
       }
     },
     on_reasonchange(event, agentId, DN, reasonCode) {
-      console.log('响应事件：' + event + ',员工工号：' + agentId + '，分机：' + DN + '，状态码：' + reasonCode)
-      this.reasonCode = reasonCode
-      localStorage.setItem('reasonCode', this.reasonCode)
+      console.log('响应事件：改变话机状态' + event + ',员工工号：' + agentId + '，分机：' + DN + '，状态码：' + reasonCode)
       switch (reasonCode) {
         case '-1':
           vm.islogin = false
@@ -854,7 +1077,23 @@ export default {
             clearInterval(interval)
             vm.times()
           }
-          vm.setbtnStatus('talking')
+
+          if (vm.reasonCode === '-101' && vm.orginCaller === 'ObservCall') { // 表示是班长监控功能，不能转接和三方
+            vm.dialCall = false // 不能拨打
+            vm.answerCall = false // 不能接听
+            vm.hangupCall = true // 可以挂断电话
+            vm.transCall1 = true
+            vm.transCall2 = false
+            vm.transCall3 = false // 不能转接
+            vm.confCall1 = true
+            vm.confCall2 = false
+            vm.confCall3 = false// 不能三方
+            vm.retrieveCall = false // 不能取回
+            vm.holdCall1 = false
+            vm.holdCall2 = true
+            vm.holdCall3 = false // 可以保持
+            vm.telephoneState = '班长监听'
+          }
           break
         case '-101':
           vm.islogin = true
@@ -864,7 +1103,22 @@ export default {
             clearInterval(interval)
             vm.times()
           }
-          vm.setbtnStatus('talking')
+
+          if (vm.orginCaller === 'WisperCall' || vm.orginCaller === 'IntrudeCall') { // 表示是强插或者耳语功能
+            vm.dialCall = false // 不能拨打
+            vm.answerCall = false // 不能接听
+            vm.hangupCall = true // 可以挂断电话
+            vm.transCall1 = true
+            vm.transCall2 = false
+            vm.transCall3 = false // 不能转接
+            vm.confCall1 = true
+            vm.confCall2 = false
+            vm.confCall3 = false// 不能三方
+            vm.retrieveCall = false // 不能取回
+            vm.holdCall1 = false
+            vm.holdCall2 = true
+            vm.holdCall3 = false // 可以保持
+          }
           break
         case '-2':
           vm.timeCount = ''
@@ -874,14 +1128,16 @@ export default {
           vm.setbtnStatus('logoff')
           break
       }
+      vm.reasonCode = reasonCode
+      localStorage.setItem('reasonCode', vm.reasonCode)
     },
     on_loginsucess(event, agentId, DN) {
-      console.log('响应事件：' + event + ',员工工号：' + agentId + '，分机：' + DN)
+      console.log('响应事件：登录成功' + event + ',员工工号：' + agentId + '，分机：' + DN)
       vm.islogin = true
       cti.setAgentStatus(agentId, '13')
     },
     on_error(event, errortype, errordescription) {
-      console.log('响应事件：' + event + ',错误原因：' + errortype + '，错误描述：' + errordescription)
+      console.log('响应事件：错误提示' + event + ',错误原因：' + errortype + '，错误描述：' + errordescription)
       vm.islogin = false
       vm.setbtnStatus('logoff')
     },
@@ -911,6 +1167,7 @@ export default {
       this.$store.dispatch('ToggleSideBar')
     },
     logout() {
+      vm.agentLogoff()
       this.$store.dispatch('LogOut').then((data) => {
         if (data.info) {
           this.$router.push({ path: '/login' })
@@ -946,6 +1203,16 @@ export default {
       this.userInfo.departName = res.data.departName
     }).catch(error => {
       console.log(error)
+    })
+    // 刚进页面获取未读消息数量
+    this.firstgetUnreadMessages(localStorage.getItem('agentId'))
+    // 每分钟更新未读消息数量
+    // this.timer = setInterval(() => {
+    //   this.getUnreadMessages(localStorage.getItem('agentId'))
+    // }, 30000)
+
+    this.$root.eventHub.$on('CHANGE_STATUS', () => {
+      this.getUnreadMessages(localStorage.getItem('agentId'))
     })
   }
 }

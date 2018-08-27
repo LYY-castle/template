@@ -69,12 +69,12 @@ export function hasOrderInfos(campaignId) {
   })
 }
 
-export function getSummaries(campaignId) {
+export function getSummaries(taskId) {
   return request({
-    url: '/dialtask/getSummariesByCampaignId',
+    url: '/dialtask/getSummariesByTaskId',
     method: 'get',
     params: {
-      campaignId: campaignId
+      taskId: taskId
     }
   })
 }
