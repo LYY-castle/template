@@ -137,7 +137,7 @@
           <span>{{callee}}</span>
         </p>
         <p>
-          <b>原始主叫：</b>
+          <b>原主叫：</b>
           <span>{{orginCaller}}</span>
         </p>
       </el-col>
@@ -364,22 +364,30 @@ export default {
       } else {
         vm.dialNum = this.formInline.user
         const reg = /^([1-9][0-9]{2,10}|[0-9]{1,4}\-?[0-9]{1,4}\-?[0-9]{1,9})$/
-        if (reg.test(vm.dialNum)) {
-          const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
-          if (regex.test(vm.dialNum)) {
-            this.getPromise(vm.dialNum).then(function() {
-              cti.starttransfer(vm.dialNum, vm.formInline.DN)
-            })
-          } else {
-            cti.starttransfer(vm.dialNum, vm.formInline.DN)
-          }
-        } else {
+        if (vm.formInline.DN === vm.dialNum) {
           Message({
-            message: '号码不规范',
+            message: '不能三方给自己',
             type: 'error',
             duration: 1 * 1000
           })
-          return
+        } else {
+          if (reg.test(vm.dialNum)) {
+            const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
+            if (regex.test(vm.dialNum)) {
+              this.getPromise(vm.dialNum).then(function() {
+                cti.starttransfer(vm.dialNum, vm.formInline.DN)
+              })
+            } else {
+              cti.starttransfer(vm.dialNum, vm.formInline.DN)
+            }
+          } else {
+            Message({
+              message: '号码不规范',
+              type: 'error',
+              duration: 1 * 1000
+            })
+            return
+          }
         }
         this.oldtelephonestate = this.telephoneState
         this.telephoneState = '发起三方'
@@ -406,22 +414,30 @@ export default {
       } else {
         vm.dialNum = this.formInline.user
         const reg = /^([1-9][0-9]{2,10}|[0-9]{1,4}\-?[0-9]{1,4}\-?[0-9]{1,9})$/
-        if (reg.test(vm.dialNum)) {
-          const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
-          if (regex.test(vm.dialNum)) {
-            this.getPromise(vm.dialNum).then(function() {
-              cti.starttransfer(vm.dialNum, vm.formInline.DN)
-            })
-          } else {
-            cti.starttransfer(vm.dialNum, vm.formInline.DN)
-          }
-        } else {
+        if (vm.formInline.DN === vm.dialNum) {
           Message({
-            message: '号码不规范',
+            message: '不能转接给自己',
             type: 'error',
             duration: 1 * 1000
           })
-          return
+        } else {
+          if (reg.test(vm.dialNum)) {
+            const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
+            if (regex.test(vm.dialNum)) {
+              this.getPromise(vm.dialNum).then(function() {
+                cti.starttransfer(vm.dialNum, vm.formInline.DN)
+              })
+            } else {
+              cti.starttransfer(vm.dialNum, vm.formInline.DN)
+            }
+          } else {
+            Message({
+              message: '号码不规范',
+              type: 'error',
+              duration: 1 * 1000
+            })
+            return
+          }
         }
         this.oldtelephonestate = this.telephoneState
         this.telephoneState = '发起转接'
@@ -473,21 +489,29 @@ export default {
       const DN = this.formInline.DN
       vm.dialNum = this.formInline.user
       const reg = /^([1-9][0-9]{2,10}|[0-9]{1,4}\-?[0-9]{1,4}\-?[0-9]{1,9})$/
-      if (reg.test(vm.dialNum)) {
-        const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
-        if (regex.test(vm.dialNum)) {
-          this.getPromise(vm.dialNum).then(function() {
-            cti.makecall(DN, vm.dialNum)
-          })
-        } else {
-          cti.makecall(DN, vm.dialNum)
-        }
-      } else {
+      if (DN === vm.dialNum) {
         Message({
-          message: '号码不规范',
+          message: '不能拨打自己本身',
           type: 'error',
           duration: 1 * 1000
         })
+      } else {
+        if (reg.test(vm.dialNum)) {
+          const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
+          if (regex.test(vm.dialNum)) {
+            this.getPromise(vm.dialNum).then(function() {
+              cti.makecall(DN, vm.dialNum)
+            })
+          } else {
+            cti.makecall(DN, vm.dialNum)
+          }
+        } else {
+          Message({
+            message: '号码不规范',
+            type: 'error',
+            duration: 1 * 1000
+          })
+        }
       }
     },
     agentLogin() {
@@ -671,7 +695,7 @@ export default {
       }
     },
     onUpdateCallInfo(event, beforeOtherLegDN, afterOterLegDN, updateLine) {
-      console.log('事件：' + event + ',原通话的对方号码：' + beforeOtherLegDN + ',更新后通话的对方号码：' + afterOterLegDN + ',更新线路：' + updateLine)
+      console.log('事件：更新通话情况' + event + ',原通话的对方号码：' + beforeOtherLegDN + ',更新后通话的对方号码：' + afterOterLegDN + ',更新线路：' + updateLine)
     },
     on_queuecount(event, queuename, queuecount) {
       console.log('队列名：' + queuename + '，队列排队人数：' + queuecount + '人')
@@ -695,16 +719,26 @@ export default {
       })
       switch (hangupLine) {
         case 1:
-
-          vm.telephoneState = ''
-          vm.caller = ''
-          vm.callee = ''
-          vm.orginCaller = ''
-          vm.tran_Flagbit = '0'
-          vm.conf_Flagbit = '0'
-          vm.hold_Flagbit = '0'
-          vm.setbtnStatus('login')
-          cti.setAgentStatus(agentid, '14')
+          if (activeLineCount < 1) {
+            vm.telephoneState = ''
+            vm.caller = ''
+            vm.callee = ''
+            vm.orginCaller = ''
+            vm.tran_Flagbit = '0'
+            vm.conf_Flagbit = '0'
+            vm.hold_Flagbit = '0'
+            vm.setbtnStatus('login')
+            cti.setAgentStatus(agentid, '14')
+          } else {
+            // vm.telephoneState = ''
+            // vm.caller = ''
+            // vm.callee = ''
+            // vm.orginCaller = ''
+            vm.tran_Flagbit = '0'
+            vm.conf_Flagbit = '0'
+            vm.hold_Flagbit = '0'
+            vm.setbtnStatus('talking')
+          }
 
           break
         case 2:
@@ -727,6 +761,7 @@ export default {
           break
       }
       if (activeLineCount < 1) {
+        vm.orginCaller = ''
         clearInterval(interval)
       }
     },
@@ -757,7 +792,7 @@ export default {
         calleeid += ''
       }
       addDialContact({
-        'event': 'on_ringback_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': callerid, 'calleeid': calleeid, 'ori_ani': ori_ani, 'ringback_time': new Date(), 'callDirection': 0, 'global_taskId': vm.global_taskId
+        'event': 'on_ringback_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': callerid, 'calleeid': calleeid, 'ori_ani': ori_ani, 'ringback_time': new Date(), 'callDirection': 0, 'global_taskId': vm.global_taskId, 'activeLine': activeLine
       }).then(res => {
         console.log('写入拨出电话记录：' + res)
       }).catch(error => {
@@ -774,6 +809,7 @@ export default {
     on_ringing_event(event, agentid, DN, UUID, callerid, calleeid, ori_ani, other_leg_uuid, queueName, activeLine) {
       vm.caller = callerid
       vm.callee = calleeid
+      vm.orginCaller = ori_ani
       addComeContact({
         'event': 'on_ringing_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': callerid, 'calleeid': calleeid, 'ori_ani': ori_ani, 'other_leg_uuid': other_leg_uuid, 'ringing_time': new Date(), 'callDirection': 1
       }).then(res => {
@@ -790,9 +826,7 @@ export default {
       }
     },
     on_reasonchange(event, agentId, DN, reasonCode) {
-      console.log('响应事件：' + event + ',员工工号：' + agentId + '，分机：' + DN + '，状态码：' + reasonCode)
-      this.reasonCode = reasonCode
-      localStorage.setItem('reasonCode', this.reasonCode)
+      console.log('响应事件：改变话机状态' + event + ',员工工号：' + agentId + '，分机：' + DN + '，状态码：' + reasonCode)
       switch (reasonCode) {
         case '-1':
           vm.islogin = false
@@ -854,7 +888,23 @@ export default {
             clearInterval(interval)
             vm.times()
           }
-          vm.setbtnStatus('talking')
+
+          if (vm.reasonCode === '-101' && vm.orginCaller === 'ObservCall') { // 表示是班长监控功能，不能转接和三方
+            vm.dialCall = false // 不能拨打
+            vm.answerCall = false // 不能接听
+            vm.hangupCall = true // 可以挂断电话
+            vm.transCall1 = true
+            vm.transCall2 = false
+            vm.transCall3 = false // 不能转接
+            vm.confCall1 = true
+            vm.confCall2 = false
+            vm.confCall3 = false// 不能三方
+            vm.retrieveCall = false // 不能取回
+            vm.holdCall1 = false
+            vm.holdCall2 = true
+            vm.holdCall3 = false // 可以保持
+            vm.telephoneState = '班长监听'
+          }
           break
         case '-101':
           vm.islogin = true
@@ -864,7 +914,22 @@ export default {
             clearInterval(interval)
             vm.times()
           }
-          vm.setbtnStatus('talking')
+
+          if (vm.orginCaller === 'WisperCall' || vm.orginCaller === 'IntrudeCall') { // 表示是强插或者耳语功能
+            vm.dialCall = false // 不能拨打
+            vm.answerCall = false // 不能接听
+            vm.hangupCall = true // 可以挂断电话
+            vm.transCall1 = true
+            vm.transCall2 = false
+            vm.transCall3 = false // 不能转接
+            vm.confCall1 = true
+            vm.confCall2 = false
+            vm.confCall3 = false// 不能三方
+            vm.retrieveCall = false // 不能取回
+            vm.holdCall1 = false
+            vm.holdCall2 = true
+            vm.holdCall3 = false // 可以保持
+          }
           break
         case '-2':
           vm.timeCount = ''
@@ -874,14 +939,16 @@ export default {
           vm.setbtnStatus('logoff')
           break
       }
+      vm.reasonCode = reasonCode
+      localStorage.setItem('reasonCode', vm.reasonCode)
     },
     on_loginsucess(event, agentId, DN) {
-      console.log('响应事件：' + event + ',员工工号：' + agentId + '，分机：' + DN)
+      console.log('响应事件：登录成功' + event + ',员工工号：' + agentId + '，分机：' + DN)
       vm.islogin = true
       cti.setAgentStatus(agentId, '13')
     },
     on_error(event, errortype, errordescription) {
-      console.log('响应事件：' + event + ',错误原因：' + errortype + '，错误描述：' + errordescription)
+      console.log('响应事件：错误提示' + event + ',错误原因：' + errortype + '，错误描述：' + errordescription)
       vm.islogin = false
       vm.setbtnStatus('logoff')
     },
@@ -911,6 +978,7 @@ export default {
       this.$store.dispatch('ToggleSideBar')
     },
     logout() {
+      vm.agentLogoff()
       this.$store.dispatch('LogOut').then((data) => {
         if (data.info) {
           this.$router.push({ path: '/login' })

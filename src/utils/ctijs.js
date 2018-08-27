@@ -131,7 +131,6 @@ export default (new (function() {
   function onMessage(evt) {
     //writeToScreen('<span style="color: blue;">RESPONSE: '+ evt.data+'</span>');
     EventObject.trigger('onmessage', [evt])
-
     var obj = JSON.parse(evt.data)
     console.log(obj)
     var event_name = obj.EventName
@@ -344,7 +343,6 @@ export default (new (function() {
   }
 
   function doSend(message) {
-
     waitForSocketConnection(wscti, function() {
       wscti.send(message)
     })

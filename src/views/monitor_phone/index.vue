@@ -3,64 +3,122 @@
     <div class="filter-container">
       <el-row>
         <div>
-          <label v-if="showTeam">小组成员在线情况</label>
-          <label v-if="!showTeam">各小组在线情况</label>
+          <label v-if="showStaff">小组成员在线情况</label>
+          <label v-if="showTeam">各小组在线综合情况</label>
         </div>
         <br/>
-        <el-col :span="3" style="margin-right:2%">
-          <el-card>
-            <div style="display:inline-block;text-align:center">
-              <div><img src="../../../static/images/monitoring_index/line-up.png" alt="总人数"></img></div>
-              <span style="float:right">总人数</span>
-            </div>
-            <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{formInline.totalCount}}</span>
-          </el-card>
-        </el-col>
-        <el-col :span="3" style="margin-right:2%">
-          <el-card>
-            <div style="display:inline-block;text-align:center">
-              <div><img src="../../../static/images/monitoring_index/online.png" alt="在线人数"></img></div>
-              <span style="float:right">在线人数</span>
-            </div>
-            <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{formInline.onlineCount}}</span>
-          </el-card>
-        </el-col>
-        <el-col :span="3" style="margin-right:2%">
-          <el-card>
-            <div style="display:inline-block;text-align:center">
-              <div><img src="../../../static/images/monitoring_index/working.png" alt="通话人数"></img></div>
-              <span style="float:right">通话人数</span>
-            </div>
-            <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{formInline.workingCount}}</span>
-          </el-card>
-        </el-col>
-        <el-col :span="3" style="margin-right:2%">
-          <el-card>
-            <div style="display:inline-block;text-align:center">
-              <div><img src="../../../static/images/monitoring_index/busy.png" alt="示忙人数"></img></div>
-              <span style="float:right">示忙人数</span>
-            </div>
-            <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{formInline.busyCount}}</span>
-          </el-card>
-        </el-col>
-        <el-col :span="3" style="margin-right:2%">
-          <el-card>
-            <div style="display:inline-block;text-align:center">
-              <div><img src="../../../static/images/monitoring_index/voice.png" alt="响铃人数"></img></div>
-              <span style="float:right">响铃人数</span>
-            </div>
-            <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{formInline.ringingCount}}</span>
-          </el-card>
-        </el-col>
-        <el-col :span="3" style="margin-right:2%">
-          <el-card>
-            <div style="display:inline-block;text-align:center">
-              <div><img src="../../../static/images/monitoring_index/free.png" alt="空闲人数"></img></div>
-              <span style="float:right">空闲人数</span>
-            </div>
-            <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{formInline.freeCount}}</span>
-          </el-card>
-        </el-col>
+        <div  v-if="showStaff">
+          <el-col :span="3" style="margin-right:2%">
+            <el-card>
+              <div style="display:inline-block;text-align:center">
+                <div><img src="../../../static/images/monitoring_index/line-up.png" alt="本组总数"></img></div>
+                <span style="float:right">本组总数</span>
+              </div>
+              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{formInline.totalCount}}</span>
+            </el-card>
+          </el-col>
+          <el-col :span="3" style="margin-right:2%">
+            <el-card>
+              <div style="display:inline-block;text-align:center">
+                <div><img src="../../../static/images/monitoring_index/online.png" alt="在线人数"></img></div>
+                <span style="float:right">在线人数</span>
+              </div>
+              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{formInline.onlineCount}}</span>
+            </el-card>
+          </el-col>
+          <el-col :span="3" style="margin-right:2%">
+            <el-card>
+              <div style="display:inline-block;text-align:center">
+                <div><img src="../../../static/images/monitoring_index/working.png" alt="通话人数"></img></div>
+                <span style="float:right">通话人数</span>
+              </div>
+              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{formInline.workingCount}}</span>
+            </el-card>
+          </el-col>
+          <el-col :span="3" style="margin-right:2%">
+            <el-card>
+              <div style="display:inline-block;text-align:center">
+                <div><img src="../../../static/images/monitoring_index/busy.png" alt="示忙人数"></img></div>
+                <span style="float:right">示忙人数</span>
+              </div>
+              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{formInline.busyCount}}</span>
+            </el-card>
+          </el-col>
+          <el-col :span="3" style="margin-right:2%">
+            <el-card>
+              <div style="display:inline-block;text-align:center">
+                <div><img src="../../../static/images/monitoring_index/voice.png" alt="响铃人数"></img></div>
+                <span style="float:right">响铃人数</span>
+              </div>
+              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{formInline.ringingCount}}</span>
+            </el-card>
+          </el-col>
+          <el-col :span="3" style="margin-right:2%">
+            <el-card>
+              <div style="display:inline-block;text-align:center">
+                <div><img src="../../../static/images/monitoring_index/free.png" alt="空闲人数"></img></div>
+                <span style="float:right">空闲人数</span>
+              </div>
+              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{formInline.freeCount}}</span>
+            </el-card>
+          </el-col>
+        </div>
+        <div  v-if="showTeam">
+          <el-col :span="3" style="margin-right:2%">
+            <el-card>
+              <div style="display:inline-block;text-align:center">
+                <div><img src="../../../static/images/monitoring_index/online.png" alt="在线人数"></img></div>
+                <span style="float:right">在线人数</span>
+              </div>
+              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{team.onlineCount}}</span>
+            </el-card>
+          </el-col>
+          <el-col :span="3" style="margin-right:2%">
+            <el-card>
+              <div style="display:inline-block;text-align:center">
+                <div><img src="../../../static/images/monitoring_index/working.png" alt="通话人数"></img></div>
+                <span style="float:right">通话人数</span>
+              </div>
+              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{team.workingCount}}</span>
+            </el-card>
+          </el-col>
+          <el-col :span="3" style="margin-right:2%">
+            <el-card>
+              <div style="display:inline-block;text-align:center">
+                <div><img src="../../../static/images/monitoring_index/busy.png" alt="示忙人数"></img></div>
+                <span style="float:right">示忙人数</span>
+              </div>
+              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{team.busyCount}}</span>
+            </el-card>
+          </el-col>
+          <el-col :span="3" style="margin-right:2%">
+            <el-card>
+              <div style="display:inline-block;text-align:center">
+                <div><img src="../../../static/images/monitoring_index/voice.png" alt="响铃人数"></img></div>
+                <span style="float:right">响铃人数</span>
+              </div>
+              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{team.ringingCount}}</span>
+            </el-card>
+          </el-col>
+          <el-col :span="3" style="margin-right:2%">
+            <el-card>
+              <div style="display:inline-block;text-align:center">
+                <div><img src="../../../static/images/monitoring_index/free.png" alt="空闲人数"></img></div>
+                <span style="float:right">空闲人数</span>
+              </div>
+              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{team.freeCount}}</span>
+            </el-card>
+          </el-col>
+          <!-- <el-col :span="3" style="margin-right:2%">
+            <el-card>
+              <div style="display:inline-block;text-align:center">
+                <div><img src="../../../static/images/monitoring_index/line-up.png" alt="排队人数"></img></div>
+                <span style="float:right">排队人数</span>
+              </div>
+              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{team.queueCount}}</span>
+            </el-card>
+          </el-col> -->
+        </div>
         <el-col :span="1" style="float:right">
           <div style="display:inline-block;text-align:center">
              <div><a><img src="../../../static/images/monitoring_index/refresh.png" alt="刷新" @click="refresh()"></img></a></div>
@@ -70,10 +128,10 @@
       </el-row>
       <el-row style="margin-top:3%">
         <div>
-          <label v-if="watchTeam">监控小组成员</label>
-          <label v-if="!watchTeam">监控各个小组</label>
+          <label v-if="showStaff">监控小组成员</label>
+          <label v-if="showTeam">监控各个小组</label>
         </div>
-        <div style="margin-top:1%">
+        <div style="margin-top:1%"  v-if="showStaff">
           <el-button :disabled="btnunIntrudeIn" @click="monitorIntrudeCall()">强插</el-button>
           <el-button :disabled="btnunListen" @click="monitorListenCall()">监听</el-button>
           <el-button :disabled="btnunWhisper" @click="monitorWisperCall()">耳语</el-button>
@@ -81,10 +139,10 @@
           <el-button :disabled="btnunForceFree" @click="monitorAvaiable()">强制示闲</el-button>
           <el-button :disabled="btnunForceBusy" @click="monitorBusy()">强制示忙</el-button>
           <el-button :disabled="btnunForceLogoff" @click="monitorforceLogoff()">强制登出</el-button>
+          <hr/>
         </div>
-        <hr/>
          <div style="margin-top:1%">
-              <el-col :span="5"  v-for="(item,index) in agentData" style="margin:1% 1%">
+              <el-col :span="5"  v-for="(item,index) in agentData" style="margin:1% 1%" v-if="showStaff">
                 <el-card >
                   <div>
                     <div style="display:inline-block">
@@ -112,7 +170,7 @@
                   <span><font>姓名：</font>{{item.staffName}}</span><br/>
                   <span><font>状态：</font>{{item.status}}</span><br/>
                   <span><font>队列：</font>{{item.queue}}</span><br/>
-                  <span><font>排队数：</font>{{item.queueCount}}</span><br/>
+                  <!-- <span><font>排队数：</font>{{item.queueCount}}</span><br/> -->
                   <span><font>状态更新时间：</font></span><br/>
                   <span style="margin-left:8%;margin-right:8%">{{item.updateTime}}</span><br/>
                   <span><font>状态持续时长：</font>{{item.statusCount}}</span><br/>
@@ -120,6 +178,18 @@
                   <span><font>今日呼出通话次数：</font>{{item.talkOutTimes}}次</span><br/>
                   <span><font>今日呼入通话时长：</font>{{item.comeinCount}}</span><br/>
                   <span><font>今日呼入通话次数：</font>{{item.comeinTimes}}次</span><br/>
+                </el-card>
+            </el-col>
+            <el-col :span="4"  v-for="(item,index) in organData" style="margin:1% 1%" v-if="showTeam">
+                <el-card >
+                  <span><font>组织名称：</font></span><br/>
+                  <div style="text-align:center">{{item.organName}}</div>
+                  <span><font>在线人数：</font>{{item.onlineCount}}人</span><br/>
+                  <span><font>通话人数：</font>{{item.talkingCount}}人</span><br/>
+                  <span><font>示忙人数：</font>{{item.busyCount}}人</span><br/>
+                  <span><font>响铃人数：</font>{{item.ringingCount}}人</span><br/>
+                  <span><font>空闲人数：</font>{{item.freeCount}}人</span><br/>
+                  <!-- <span><font>排队人数：</font>{{item.queueCount}}人</span><br/> -->
                 </el-card>
             </el-col>
         </div>
@@ -130,29 +200,35 @@
 
 <script>
   import { Message } from 'element-ui'
-  import { findNextAgentByNow, findStatusByAgentId } from '@/api/monitor_phone'
+  import { findNextAgentByNow, findStatusByAgentId, findNextOrganByNow, getDepartIdByAgentId, getAllChildrenOrgan } from '@/api/monitor_phone'
   import cti from '@/utils/monitorcti'
+  import { getDownInfoByCurrentUser } from '@/api/monitor_list_single'
+
 var baseinfo = null
   export default {
     name: 'monitor_phone',
     data() {
       return {
-        analysisAgentId: [],
-        analysisArr: [],
+        promise_arr: [],
+        departInfo: {}, // 部门id为key，其所有子部门下的agentid为key,对应reasoncode为value的map所组成的数组为value
+        departs: new Map(), // 部门id为key，其所有子部门的数组(包含自己)为value
+        analysisAgentId: [], // 被选中作为班长监控的对象agentid
+        analysisArr: [], // 被选中作为班长监控对象的reasoncode
         attentionList: [], // 选中操作对象checkbox
         interval: new Map(), // 定时器数组
-        reasoncodeMap: new Map(),
-        btnunIntrudeIn: true,
-        btnunListen: true,
-        btnunWhisper: true,
-        btnunIntrudeOut: true,
-        btnunForceFree: true,
-        btnunForceBusy: true,
-        btnunForceLogoff: true,
-        monitorID: '',
-        monitorDN: '',
-        showTeam: true,
-        formInline: {
+        reasoncodeMap: new Map(), // agentId为key,reasoncode为value
+        btnunIntrudeIn: true, // 班长监控强插按钮
+        btnunListen: true, // 班长监控监听按钮
+        btnunWhisper: true, // 班长监控耳语按钮
+        btnunIntrudeOut: true, // 班长监控强拆按钮
+        btnunForceFree: true, // 班长监控强制示闲按钮
+        btnunForceBusy: true, // 班长监控强制示忙按钮
+        btnunForceLogoff: true, // 班长监控强制登出按钮
+        monitorID: '', // 班长agentId
+        monitorDN: '', // 班长DN
+        showTeam: false, // 是否显示小组的情况
+        showStaff: false, // 是否显示小组成员的情况
+        formInline: {// 展示监控按钮上面的信息情况（小组成员）
           totalCount: 0,
           onlineCount: 0,
           workingCount: 0,
@@ -163,11 +239,37 @@ var baseinfo = null
           agentNext_map: new Map(), // 下属员工
           agentId: '' // 班长id
         },
-        watchTeam: true,
-        agentData: []
+        team: {// 展示监控按钮上面的信息情况（各个小组的情况）
+          queueCount: 0,
+          onlineCount: 0,
+          workingCount: 0,
+          busyCount: 0,
+          ringingCount: 0,
+          freeCount: 0,
+
+          organNext_map: new Map(), // 下属组织
+          leaderId: '' // 经理id
+        },
+        agentData: [], // 小组所有成员情况（默认展示为监控区的card元素）
+        organData: []// 各个小组情况（默认展示为监控区的card元素）
       }
     },
     methods: {
+      getPromise(departId) {
+        return new Promise(function(resolve, reject) {
+          getAllChildrenOrgan(departId).then(response => {
+            if (response.data.code === 1) {
+              const childArr = []
+              for (let i = 0; i < response.data.data.length; i++) {
+                childArr.push(response.data.data[i].id)
+              }
+              // childArr.splice(childArr.indexOf(obj.departId), 1)  不除去自己本身的组织
+              baseinfo.departs.set(departId, childArr)
+            }
+            resolve()
+          })
+        })
+      },
       refresh() {
         location.reload()
         this.$router.go(0)
@@ -395,57 +497,168 @@ var baseinfo = null
           }
         })
       },
-      ChangeSeat(agentid, DN, reasoncode) {
-        for (let i = 0; i < baseinfo.agentData.length; i++) {
-          if (baseinfo.agentData[i].agentId === agentid) {
-            baseinfo.reasoncodeMap.set(agentid, reasoncode)
-            baseinfo.setImg(agentid, reasoncode)
-            baseinfo.agentData[i].DN = DN
-            baseinfo.agentData[i].status = this.getStatus(reasoncode)
-            const dayTime = new Date()
-            const updateTime = (dayTime.getMonth() + 1 > 9 ? dayTime.getMonth() + 1 : '0' + (dayTime.getMonth() + 1)) + '/' + (dayTime.getDate() > 9 ? dayTime.getDate() : '0' + dayTime.getDate()) + '/' + (dayTime.getFullYear()) + ' ' + (dayTime.getHours() > 9 ? dayTime.getHours() : '0' + dayTime.getHours()) + ':' + (dayTime.getMinutes() > 9 ? dayTime.getMinutes() : '0' + dayTime.getMinutes()) + ':' + (dayTime.getSeconds() > 9 ? dayTime.getSeconds() : '0' + dayTime.getSeconds())
-            baseinfo.agentData[i].updateTime = updateTime
-
-            findStatusByAgentId(agentid).then(res => {
-              if (res.data.code === 0) {
-                baseinfo.agentData[i].talkOutCount = res.data.data.outCallTotalTime
-                baseinfo.agentData[i].talkOutTimes = parseInt(res.data.data.outCallTimes)
-                baseinfo.agentData[i].comeinCount = res.data.data.inCallTotalTime
-                baseinfo.agentData[i].comeinTimes = parseInt(res.data.data.inCallTimes)
-                baseinfo.$forceUpdate()
+      refreshLine() {
+        for (let j = 0; j < baseinfo.organData.length; j++) {
+          baseinfo.organData[j].talkingCount = 0
+          baseinfo.organData[j].busyCount = 0
+          baseinfo.organData[j].ringingCount = 0
+          baseinfo.organData[j].freeCount = 0
+          baseinfo.organData[j].queueCount = 0
+          baseinfo.organData[j].onlineCount = 0
+        }
+        baseinfo.team.onlineCount = 0
+        baseinfo.team.workingCount = 0
+        baseinfo.team.busyCount = 0
+        baseinfo.team.ringingCount = 0
+        baseinfo.team.freeCount = 0
+        baseinfo.team.queueCount = 0
+  
+        if (Object.keys(baseinfo.departInfo).length > 0) {
+          for (let i = 0; i < baseinfo.organData.length; i++) {
+            if (baseinfo.departInfo[baseinfo.organData[i].departId]) {
+              for (let j = 0; j < Object.values(baseinfo.departInfo[baseinfo.organData[i].departId]).length; j++) {
+                switch (Object.values(baseinfo.departInfo[baseinfo.organData[i].departId])[j]) {
+                  case '-100':
+                    baseinfo.organData[i].onlineCount++
+                    baseinfo.organData[i].talkingCount++
+                    baseinfo.team.workingCount++
+                    baseinfo.team.onlineCount++
+                    break// 来电通话
+                  case '-101':
+                    baseinfo.organData[i].onlineCount++
+                    baseinfo.organData[i].talkingCount++
+                    baseinfo.team.onlineCount++
+                    baseinfo.team.workingCount++
+                    break// 去电通话
+                  case '13':
+                    baseinfo.organData[i].onlineCount++
+                    baseinfo.organData[i].busyCount++
+                    baseinfo.team.onlineCount++
+                    baseinfo.team.busyCount++
+                    break// 示忙
+                  case '-3':
+                    baseinfo.organData[i].onlineCount++
+                    baseinfo.organData[i].ringingCount++
+                    baseinfo.team.onlineCount++
+                    baseinfo.team.ringingCount++
+                    break// 来电振铃
+                  case '0':
+                    baseinfo.organData[i].onlineCount++
+                    baseinfo.organData[i].freeCount++
+                    baseinfo.team.onlineCount++
+                    baseinfo.team.freeCount++
+                    break// 就绪
+                  case '-4':
+                    baseinfo.organData[i].onlineCount++
+                    baseinfo.organData[i].ringingCount++
+                    baseinfo.team.onlineCount++
+                    baseinfo.team.ringingCount++
+                    break // 去电回铃
+                  case '14':
+                    baseinfo.organData[i].onlineCount++
+                    baseinfo.organData[i].busyCount++
+                    baseinfo.team.onlineCount++
+                    baseinfo.team.busyCount++
+                    break// 后处理
+                  case '-1':
+                    break
+                  case '-2':
+                    break
+                  default:
+                    break// 默认未登录，不做处理
+                }
               }
-            })
-            if (baseinfo.interval.get(agentid)) { // 如果已经有了定时器，则先清除
-              clearInterval(baseinfo.interval.get(agentid))
             }
-            baseinfo.timesInterval(i, agentid)
           }
         }
-        baseinfo.changeCountLine()
+      },
+      handle(agentid, reasoncode) {
+        return new Promise(function(resolve, reject) {
+          getDepartIdByAgentId(agentid).then(res => {
+            if (res.data.data.length > 0) {
+              baseinfo.departs.forEach((value, key) => { // 遍历保存了的所有子部门id
+                if (value.indexOf(res.data.data[0].departId) > -1) { // 如果匹配到哪个部门的所有子集id，那么说明当前部门的key要增加一个员工的状态
+                  if (baseinfo.departInfo[key]) {
+                    baseinfo.departInfo[key][[agentid]] = reasoncode
+                  } else {
+                    baseinfo.departInfo[key] = { [agentid]: reasoncode }
+                  }
+                }
+              })
+            }
+            resolve()
+          })
+        })
+      },
+      ChangeSeat(agentid, DN, reasoncode) {
+        if (baseinfo.showStaff) {
+          for (let i = 0; i < baseinfo.agentData.length; i++) {
+            if (baseinfo.agentData[i].agentId === agentid) {
+              baseinfo.reasoncodeMap.set(agentid, reasoncode)
+              baseinfo.setImg(agentid, reasoncode)
+              baseinfo.agentData[i].DN = DN
+              baseinfo.agentData[i].status = this.getStatus(reasoncode)
+              const dayTime = new Date()
+              const updateTime = (dayTime.getMonth() + 1 > 9 ? dayTime.getMonth() + 1 : '0' + (dayTime.getMonth() + 1)) + '/' + (dayTime.getDate() > 9 ? dayTime.getDate() : '0' + dayTime.getDate()) + '/' + (dayTime.getFullYear()) + ' ' + (dayTime.getHours() > 9 ? dayTime.getHours() : '0' + dayTime.getHours()) + ':' + (dayTime.getMinutes() > 9 ? dayTime.getMinutes() : '0' + dayTime.getMinutes()) + ':' + (dayTime.getSeconds() > 9 ? dayTime.getSeconds() : '0' + dayTime.getSeconds())
+              baseinfo.agentData[i].updateTime = updateTime
+  
+              findStatusByAgentId(agentid).then(res => {
+                if (res.data.code === 0) {
+                  baseinfo.agentData[i].talkOutCount = res.data.data.outCallTotalTime
+                  baseinfo.agentData[i].talkOutTimes = parseInt(res.data.data.outCallTimes)
+                  baseinfo.agentData[i].comeinCount = res.data.data.inCallTotalTime
+                  baseinfo.agentData[i].comeinTimes = parseInt(res.data.data.inCallTimes)
+                  baseinfo.$forceUpdate()
+                }
+              })
+              if (baseinfo.interval.get(agentid)) { // 如果已经有了定时器，则先清除
+                clearInterval(baseinfo.interval.get(agentid))
+              }
+              baseinfo.timesInterval(i, agentid)
+            }
+          }
+          baseinfo.changeCountLine()
+        }
+        if (baseinfo.showTeam) {
+          baseinfo.handle(agentid, reasoncode).then(function() {
+            baseinfo.refreshLine()
+          })
+        }
       },
       removeSeat(DN, agentId) {
-        console.log(DN + ',' + agentId)
-        for (let i = 0; i < baseinfo.agentData.length; i++) {
-          if (baseinfo.agentData[i].agentId === agentId) {
-            baseinfo.agentData[i].status = this.getStatus('-2')
-            baseinfo.agentData[i].updateTime = '未得到更新数据'
-            baseinfo.agentData[i].queue = ''
-            baseinfo.agentData[i].DN = ''
-            baseinfo.setImg(agentId, '-2')
-            baseinfo.reasoncodeMap.forEach((value, key) => {
-              if (key === agentId) {
-                baseinfo.reasoncodeMap.set(key, '-2')
+        if (baseinfo.showStaff) {
+          for (let i = 0; i < baseinfo.agentData.length; i++) {
+            if (baseinfo.agentData[i].agentId === agentId) {
+              baseinfo.agentData[i].status = this.getStatus('-2')
+              baseinfo.agentData[i].updateTime = '未得到更新数据'
+              baseinfo.agentData[i].queue = ''
+              baseinfo.agentData[i].DN = ''
+              baseinfo.setImg(agentId, '-2')
+              baseinfo.reasoncodeMap.forEach((value, key) => {
+                if (key === agentId) {
+                  baseinfo.reasoncodeMap.set(key, '-2')
+                }
+              })
+              if (baseinfo.interval.get(agentId)) { // 如果已经有了定时器，则先清除
+                clearInterval(baseinfo.interval.get(agentId))
               }
-            })
-            if (baseinfo.interval.get(agentId)) { // 如果已经有了定时器，则先清除
-              clearInterval(baseinfo.interval.get(agentId))
+              baseinfo.agentData[i].statusCount = ''
             }
-            baseinfo.agentData[i].statusCount = ''
+          }
+          baseinfo.changeCountLine()
+        }
+        if (baseinfo.showTeam) {
+          if (Object.keys(baseinfo.departInfo).length > 0) {
+            baseinfo.handle(agentId, '-2').then(function() {
+              baseinfo.refreshLine()
+            })
           }
         }
-        baseinfo.changeCountLine()
       },
       on_reasonchange(event, agentid, DN, reasoncode) {
+        if ((DN === baseinfo.monitorDN || DN === '12345') && agentid === baseinfo.monitorID) {
+          return
+        }
         if (reasoncode === '-2') {
           this.removeSeat(DN, agentid)
         } else {
@@ -604,20 +817,27 @@ var baseinfo = null
         }
       },
       addSeat(agentid, DN, reasoncode, UpdateTime) {
-        for (let i = 0; i < baseinfo.agentData.length; i++) {
-          if (baseinfo.agentData[i].agentId === agentid) {
-            baseinfo.agentData[i].DN = DN
-            baseinfo.agentData[i].status = this.getStatus(reasoncode)
-            baseinfo.agentData[i].updateTime = UpdateTime
-            if (baseinfo.interval.get(agentid)) { // 如果已经有了定时器，则先清除
-              clearInterval(baseinfo.interval.get(agentid))
+        if (baseinfo.showStaff) {
+          for (let i = 0; i < baseinfo.agentData.length; i++) {
+            if (baseinfo.agentData[i].agentId === agentid) {
+              baseinfo.agentData[i].DN = DN
+              baseinfo.agentData[i].status = this.getStatus(reasoncode)
+              baseinfo.agentData[i].updateTime = UpdateTime
+              if (baseinfo.interval.get(agentid)) { // 如果已经有了定时器，则先清除
+                clearInterval(baseinfo.interval.get(agentid))
+              }
+              baseinfo.setImg(agentid, reasoncode)
+              baseinfo.timesInterval(i, agentid)
+              baseinfo.reasoncodeMap.set(agentid, reasoncode)
             }
-            baseinfo.setImg(agentid, reasoncode)
-            baseinfo.timesInterval(i, agentid)
-            baseinfo.reasoncodeMap.set(agentid, reasoncode)
           }
+          baseinfo.changeCountLine()
         }
-        baseinfo.changeCountLine()
+        if (baseinfo.showTeam) {
+          baseinfo.handle(agentid, reasoncode).then(function() {
+            baseinfo.refreshLine()
+          })
+        }
       },
       on_AgentStatusList(event, agentid, DN, reasoncode, UpdateTime) {
         if (agentid !== '') {
@@ -628,10 +848,11 @@ var baseinfo = null
         if (typeof baseinfo.monitorDN === 'undefined' || baseinfo.monitorDN === '' || baseinfo.monitorDN.trim() === '') {
           baseinfo.monitorDN = '12345'
         }
-        baseinfo.monitorID = localStorage.getItem('agentId')
         cti.login(baseinfo.monitorID, baseinfo.monitorDN)
         // cti.Send2wsCTIterval(this.monitorID)
-        baseinfo.setbtnStatus('login')
+        if (baseinfo.showStaff) {
+          baseinfo.setbtnStatus('login')
+        }
       },
       setbtnStatus(str) { // 设置按钮功能
         switch (str) {
@@ -691,61 +912,108 @@ var baseinfo = null
       NewSessionConnected(event) {
         this.setbtnStatus('logoff')
         this.monitorlogin()
+      },
+      checkStaffMonitorPromise() {
+        return new Promise(function(resolve, reject) {
+          getDownInfoByCurrentUser().then(response => {
+            if (response.data.code === 1) {
+              if (response.data.type) {
+                baseinfo.showStaff = true
+                baseinfo.showTeam = false
+              } else {
+                baseinfo.showStaff = false
+                baseinfo.showTeam = true
+              }
+            }
+            resolve()
+          })
+        })
       }
+
     },
     mounted() {
       baseinfo = this
-      findNextAgentByNow().then(res => {
-        if (res.data.code === 1) {
-          if (res.data.data.length > 0) {
-            var map = new Map()
-            for (var i = 0; i < res.data.data.length; i++) {
-              map.set(res.data.data[i][1], res.data.data[i][2])
-            }
-            baseinfo.monitorID = localStorage.getItem('agentId')
-            if (localStorage.getItem('DN')) {
-              baseinfo.monitorDN = localStorage.getItem('DN')
-            }
-            map.delete(baseinfo.monitorID)
-            baseinfo.agentNext_map = map
-            baseinfo.formInline.totalCount = baseinfo.agentNext_map.size
-            if (baseinfo.agentNext_map.size > 0) {
-              baseinfo.agentNext_map.forEach((value, key) => {
-                var obj = {}
-                obj.staffName = value
-                obj.agentId = key
-                obj.status = '登出'
-                obj.updateTime = '未得到更新数据'
-                baseinfo.agentData.push(obj)
-                obj.ringbackshow = false
-                obj.callout_talkingshow = false
-                obj.after_workingshow = false
-                obj.relaxshow = false
-                obj.readyshow = false
-                obj.lunchshow = false
-                obj.ringingshow = false
-                obj.comein_talkingshow = false
-                obj.loginoffshow = true
-                obj.busyshow = false
-              })
-              var ctiIP_Port = 'ws://119.27.179.175:9052/'
-              cti.connectCTI(ctiIP_Port)
-              for (let j = 0; j < baseinfo.agentData.length; j++) {
-                findStatusByAgentId(baseinfo.agentData[j].agentId).then((response) => {
-                  if (response.data.code === 0) {
-                    var data = response.data.data
-                    if (data) {
-                      baseinfo.agentData[j].talkOutCount = data.outCallTotalTime
-                      baseinfo.agentData[j].talkOutTimes = data.outCallTimes
-                      baseinfo.agentData[j].comeinCount = data.inCallTotalTime
-                      baseinfo.agentData[j].comeinTimes = data.inCallTimes
-                      this.$forceUpdate()
-                    }
+      baseinfo.monitorID = localStorage.getItem('agentId')
+      if (localStorage.getItem('DN')) {
+        baseinfo.monitorDN = localStorage.getItem('DN')
+      }
+      baseinfo.checkStaffMonitorPromise().then(function() {
+        if (baseinfo.showStaff) {
+          findNextAgentByNow().then(res => {
+            if (res.data.code === 1) {
+              if (res.data.data.length > 0) {
+                var map = new Map()
+                for (var i = 0; i < res.data.data.length; i++) {
+                  map.set(res.data.data[i][1], res.data.data[i][2])
+                }
+                map.delete(baseinfo.monitorID)
+                baseinfo.agentNext_map = map
+                baseinfo.formInline.totalCount = baseinfo.agentNext_map.size
+                if (baseinfo.agentNext_map.size > 0) {
+                  baseinfo.agentNext_map.forEach((value, key) => {
+                    var obj = {}
+                    obj.staffName = value
+                    obj.agentId = key
+                    obj.status = '登出'
+                    obj.updateTime = '未得到更新数据'
+                    baseinfo.agentData.push(obj)
+                    obj.ringbackshow = false
+                    obj.callout_talkingshow = false
+                    obj.after_workingshow = false
+                    obj.relaxshow = false
+                    obj.readyshow = false
+                    obj.lunchshow = false
+                    obj.ringingshow = false
+                    obj.comein_talkingshow = false
+                    obj.loginoffshow = true
+                    obj.busyshow = false
+                  })
+                  var ctiIP_Port = 'ws://119.27.179.175:9052/'
+                  cti.connectCTI(ctiIP_Port)
+                  for (let j = 0; j < baseinfo.agentData.length; j++) {
+                    findStatusByAgentId(baseinfo.agentData[j].agentId).then((response) => {
+                      if (response.data.code === 0) {
+                        var data = response.data.data
+                        if (data) {
+                          baseinfo.agentData[j].talkOutCount = data.outCallTotalTime
+                          baseinfo.agentData[j].talkOutTimes = data.outCallTimes
+                          baseinfo.agentData[j].comeinCount = data.inCallTotalTime
+                          baseinfo.agentData[j].comeinTimes = data.inCallTimes
+                          baseinfo.$forceUpdate()
+                        }
+                      }
+                    })
                   }
+                }
+              }
+            }
+          })
+        }
+        if (baseinfo.showTeam) {
+          findNextOrganByNow().then(res => {
+            if (res.data.code === 1) {
+              for (let i = 0; i < res.data.data.length; i++) {
+                const obj = {}
+                obj.departId = res.data.data[i].id
+                baseinfo.promise_arr.push(baseinfo.getPromise(obj.departId))
+                obj.organName = res.data.data[i].departName
+                obj.talkingCount = 0
+                obj.busyCount = 0
+                obj.ringingCount = 0
+                obj.freeCount = 0
+                obj.queueCount = 0
+                obj.onlineCount = 0
+  
+                baseinfo.organData.push(obj)
+              }
+              if (baseinfo.promise_arr.length > 0) {
+                Promise.all(baseinfo.promise_arr).then(function() {
+                  var ctiIP_Port = 'ws://119.27.179.175:9052/'
+                  cti.connectCTI(ctiIP_Port)
                 })
               }
             }
-          }
+          })
         }
       })
     }
