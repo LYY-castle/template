@@ -2,13 +2,13 @@
   <div class="container">
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item prop="contactTaskId" v-if="n==2||n==3">
-          <el-input v-model="req.contactTaskId" placeholder="坐席任务编号" maxlength="50"></el-input>
+        <el-form-item prop="contactTaskId" v-if="n==2||n==3" label="坐席编号:">
+          <el-input v-model="req.contactTaskId" placeholder="坐席任务编号" maxlength="50" v-if="n==2||n==3"></el-input>
         </el-form-item>
-        <el-form-item prop="qualityTaskId" v-if="n==1||n==4">
-          <el-input v-model="req.qualityTaskId" placeholder="质检任务编号" maxlength="50"></el-input>
+        <el-form-item prop="qualityTaskId" v-if="n==1||n==4" label="质检编号:">
+          <el-input v-model="req.qualityTaskId" placeholder="质检任务编号" maxlength="50" v-if="n==1||n==4"></el-input>
         </el-form-item>
-        <el-form-item v-if="n==1||n==4" prop="activityId">
+        <el-form-item v-if="n==1||n==4" prop="activityId" label="质检活动:">
           <el-select v-model="req.activityId" placeholder="质检活动">
             <el-option
                 v-for="item in campData"
@@ -18,7 +18,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item prop="gradeId">
+        <el-form-item prop="gradeId" label="质检评分:">
           <el-select v-model="req.gradeId" placeholder="质检评分表">
             <el-option
                 v-for="item in gradeForm"
@@ -28,13 +28,21 @@
             </el-option>
           </el-select>
         </el-form-item>
+<<<<<<< src/views/query_quality_mark/index.vue
+        <el-form-item prop="agentid" label="坐席工号:">
+          <el-input v-model="req.agentid" placeholder="坐席工号" maxlength="50" v-if="n==1||n==4"></el-input>
+        </el-form-item>
+        <el-form-item prop="qcAgentid" label="质检员工:">
+          <el-input v-model="req.qcAgentid" placeholder="质检员工号" maxlength="50" v-if="n==2||n==3"></el-input>
+=======
         <el-form-item prop="agentid" v-if="n==1||n==4">
           <el-input v-model="req.agentid" placeholder="坐席工号" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item prop="qcAgentid" v-if="n==2||n==3">
           <el-input v-model="req.qcAgentid" placeholder="质检员工号" maxlength="50"></el-input>
+>>>>>>> src/views/query_quality_mark/index.vue
         </el-form-item>
-        <el-form-item label="质检结束时间" prop="timeValue">
+        <el-form-item label="质检结束时间:" prop="timeValue">
           <el-date-picker
               v-model="timeValue"
               type="datetimerange"
@@ -121,7 +129,7 @@
           </el-table-column>
           <el-table-column
             align="center"
-            width="180"
+            width="155"
             prop="modifyTime"
             label="质检编辑时间">
           </el-table-column>
@@ -129,11 +137,27 @@
             align="center"
             prop="customerName"
             label="客户姓名">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.customerName }}</p>
+                <div slot="reference">
+                  {{ scope.row.customerName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="qualityStaffName"
             label="质检员姓名">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.qualityStaffName }}</p>
+                <div slot="reference">
+                  {{ scope.row.qualityStaffName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -144,6 +168,14 @@
             align="center"
             prop="contactStaffName"
             label="员工姓名">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.contactStaffName }}</p>
+                <div slot="reference">
+                  {{ scope.row.contactStaffName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -154,7 +186,7 @@
             </template>
           </el-table-column>
         </el-table>
-      </el-col> 
+      </el-col>
     </el-row>
     <el-row v-if="n==2||n==3">
       <el-col>
@@ -208,7 +240,7 @@
           </el-table-column>
           <el-table-column
             align="center"
-            width="180"
+            width="155"
             prop="modifyTime"
             label="质检编辑时间">
           </el-table-column>
@@ -216,6 +248,14 @@
             align="center"
             prop="customerName"
             label="客户姓名">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.customerName }}</p>
+                <div slot="reference">
+                  {{ scope.row.customerName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -226,11 +266,27 @@
             align="center"
             prop="qualityStaffName"
             label="质检员姓名">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.qualityStaffName }}</p>
+                <div slot="reference">
+                  {{ scope.row.qualityStaffName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="contactStaffName"
             label="坐席姓名">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.contactStaffName }}</p>
+                <div slot="reference">
+                  {{ scope.row.contactStaffName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -240,7 +296,7 @@
             </template>
           </el-table-column>
         </el-table>
-      </el-col> 
+      </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
       <el-pagination
@@ -261,7 +317,7 @@
         <h3 style="display:inline;">质检评分详情</h3>
       </div>
       <div>
-        <audio 
+        <audio
           autoplay="autoplay"
           controls="controls"
           preload="auto"
@@ -350,11 +406,11 @@
             prop="description"
             label="小结备注">
           </el-table-column>
-        </el-table> 
+        </el-table>
       </el-row>
       <el-row style="margin-down:2%;margin-top:2%">
         <el-col style="width:25%">
-          <el-card 
+          <el-card
             class="box-card"
             :data="customerData">
             <div slot="header" class="clearfix">
@@ -378,11 +434,11 @@
               </el-card>
         </el-col>
         <el-col  style="margin-left:2%;width:73%;">
-          <el-tabs 
-            :data="orderData" 
-            type="border-card" 
+          <el-tabs
+            :data="orderData"
+            type="border-card"
             v-if="orderHide" style="min-height:223px">
-            <el-tab-pane 
+            <el-tab-pane
               v-for="(item,index) in orderData"
               :key="item.name"
               :label="item.productName"
@@ -401,12 +457,12 @@
               无订单
             </div>
           </el-card>
-        </el-col>   
+        </el-col>
       </el-row>
-        <el-tabs  type="border-card" 
+        <el-tabs  type="border-card"
                   style="width:100%;margin-top:2%;"
                   v-model="activeName">
-          <el-tab-pane 
+          <el-tab-pane
             v-for="(item,index) in gradeInfo"
             :label="item.gradeName"
             :name="item.gradeId">
@@ -447,7 +503,7 @@
                 <div>{{comment[item.id]?comment[item.id]:'无'}}</div>
               </el-col>
             </el-row>
-        
+
             <el-row>
               <el-col :span="2">
                 <label>质检得分：</label>

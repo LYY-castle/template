@@ -3,26 +3,26 @@
     <div class="filter-container">
       <el-row>
         <el-form :inline="true" class="demo-form-inline" size="small">
-          <el-form-item>
+          <el-form-item label="操作时间：">
             <el-input placeholder="员工姓名（限长45字符）" v-model="formInline.staffName" maxlength="45"></el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item label="员工工号：">
             <el-input placeholder="员工工号（限长45字符）" v-model="formInline.angentId" maxlength="45"></el-input>
           </el-form-item>
-          <el-form-item>
-            <el-select v-model="formInline.status" placeholder="所属部门">
+          <el-form-item label="所有情况：">
+            <el-select v-model="formInline.status">
               <el-option label="所有情况" value=""></el-option>
               <el-option label="已停用" value="0"></el-option>
               <el-option label="启用中" value="1"></el-option>
               <el-option label="未启用" value="2"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item>
+          <el-form-item label="所属组织：">
             <el-select v-model="formInline.departName" placeholder="所属组织">
               <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item>
+          <el-form-item label="操作人员：">
             <el-input placeholder="操作人员（限长45字符）" v-model="formInline.creator" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item label="操作时间：">

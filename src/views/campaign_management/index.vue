@@ -2,7 +2,7 @@
   <div class="container campaignManagement">
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item prop="campaignName">
+        <el-form-item prop="campaignName" label="活动名称：">
           <el-input v-model="req.campaignName" placeholder="活动名称"></el-input>
         </el-form-item>
         <el-form-item label="活动状态" prop="status">
@@ -48,6 +48,14 @@
             align="center"
             prop="campaignName"
             label="活动名称">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.campaignName }}</p>
+                <div slot="reference">
+                  {{ scope.row.campaignName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -93,6 +101,14 @@
             align="center"
             prop="modifierName"
             label="操作人">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.modifierName }}</p>
+                <div slot="reference">
+                  {{ scope.row.modifierName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -104,6 +120,7 @@
           <el-table-column
             align="center"
             prop="modifyTime"
+            width="155"
             label="操作时间">
           </el-table-column>
           <el-table-column
@@ -121,7 +138,7 @@
           </template>
           </el-table-column>
         </el-table>
-      </el-col> 
+      </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
         <el-button type="success" size="small" @click="addVisible=true;clearForm(campaignDetail,'campaignDetail')">添加</el-button>
@@ -170,10 +187,14 @@
         <el-form-item label="名单有效期" prop="listExpiryDate">
           <el-input v-model="campaignDetail.listExpiryDate" size="small" placeholder="单位：天"></el-input>
         </el-form-item>
+<<<<<<< src/views/campaign_management/index.vue
+        <el-form-item label="活动状态:" prop="status">
+=======
         <el-form-item label="拨打次数" prop="canContactNum">
           <el-input v-model="campaignDetail.canContactNum" size="small" placeholder="单位：次"></el-input>
         </el-form-item>
         <el-form-item label="活动状态:" prop="status"> 
+>>>>>>> src/views/campaign_management/index.vue
           <el-radio-group v-model="campaignDetail.status" size="small">
             <el-radio label='0' border>有效</el-radio>
             <el-radio label='1' border>无效</el-radio>
@@ -199,7 +220,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="质检组织"> 
+        <el-form-item label="质检组织">
           <span v-for="item in qcdeptData" v-if="qcdeptData.length!==0">{{(qcdeptData.length===0)?'无':item+' , '}}</span>
           <span v-if="qcdeptData.length===0">无</span>
         </el-form-item>
@@ -453,7 +474,7 @@
             align="center"
             prop="modifierTime"
             label="操作时间">
-            <template 
+            <template
               slot-scope="scope">
               <div>{{formatDateTime(scope.row.modifierTime)}}</div>
             </template>
@@ -513,7 +534,7 @@
             align="center"
             prop="modifierTime"
             label="操作时间">
-            <template 
+            <template
               slot-scope="scope">
               <div>{{formatDateTime(scope.row.modifierTime)}}</div>
             </template>

@@ -87,11 +87,27 @@
             align="center"
             label="产品名称"
             prop="productName">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.productName }}</p>
+                <div slot="reference">
+                  {{ scope.row.productName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             label="客户姓名"
             prop="customerName">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.customerName }}</p>
+                <div slot="reference">
+                  {{ scope.row.customerName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -118,11 +134,19 @@
             label="员工姓名"
             width="110"
             prop="staffName">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.staffName }}</p>
+                <div slot="reference">
+                  {{ scope.row.staffName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             label="操作时间"
-            width="180"
+            width="155"
             prop="modifyTime">
           </el-table-column>
           <el-table-column
@@ -141,6 +165,14 @@
             align="center"
             label="订单备注"
             prop="description">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.description }}</p>
+                <div slot="reference">
+                  {{ scope.row.description }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"

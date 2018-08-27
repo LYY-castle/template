@@ -2,13 +2,13 @@
   <div class="container">
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item prop="batchId">
+        <el-form-item prop="batchId" label="批次号：">
           <el-input v-model="req.batchId" placeholder="批次号（限长20字符）" maxlength="20"></el-input>
         </el-form-item>
-        <el-form-item prop="batchName">
+        <el-form-item prop="batchName" label="批次名称：">
           <el-input v-model="req.batchName" placeholder="批次名称（限长100字符）" maxlength="100"></el-input>
         </el-form-item>
-        <el-form-item prop="validityStatus">
+        <el-form-item prop="validityStatus" label="有效性：">
           <el-select v-model="req.validityStatus" placeholder="有效性" style="width: 100%;">
           <el-option
               v-for="item in validity"
@@ -18,7 +18,7 @@
           </el-option>
         </el-select>
         </el-form-item>
-       <el-form-item prop="modifierName">
+       <el-form-item prop="modifierName" label="操作人员：">
           <el-input v-model="req.modifierName" placeholder="操作人员（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：" prop="startCreateTime">
@@ -29,7 +29,7 @@
               value-format="yyyy-MM-dd HH:mm:ss"
               default-time="00:00:00">
           </el-date-picker>
-        </el-form-item> 
+        </el-form-item>
         <el-form-item prop="endCreateTime">
           到
           <el-date-picker
@@ -56,12 +56,12 @@
           <el-table-column
             align="center"
             type="selection"
-            width="55">
+            width="40">
           </el-table-column>
           <el-table-column
             align="center"
             label="序号"
-            width="55">
+            width="50">
             <template
               slot-scope="scope">
               <div>{{scope.$index+(req2.pageNo-1)*req2.pageSize+1}}</div>
@@ -70,21 +70,39 @@
           <el-table-column
             align="center"
             prop="batchId"
+            width="150"
             label="批次号">
           </el-table-column>
           <el-table-column
             align="center"
             prop="batchName"
             label="批次名称">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.batchName }}</p>
+                <div slot="reference">
+                  {{ scope.row.batchName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="ascriptionName"
             label="客户归属">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.ascriptionName }}</p>
+                <div slot="reference">
+                  {{ scope.row.ascriptionName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="validityTime"
+            width="100"
             label="有效期">
           </el-table-column>
           <el-table-column
@@ -115,9 +133,17 @@
             align="center"
             prop="creatorName"
             label="操作人">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.creatorName }}</p>
+                <div slot="reference">
+                  {{ scope.row.creatorName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
-            width="200"
+            width="155"
             align="center"
             prop="creatorTime"
             label="操作时间">
@@ -132,13 +158,13 @@
           </template>
           </el-table-column>
         </el-table>
-      </el-col> 
+      </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
         <el-button type="success" size="small" @click="addVisible=true;batchSnapshot=[];fileList=[];resetForm('addBatch');clearUpload('upload');">添加</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
-        <el-button type="primary" size="small" @click="getTemp()" icon="el-icon-download">下载模板</el-button>
-        <el-button type="primary" size="small" @click="uploadVisible=true;changeUpload(1);clearUpload('upload');" icon="el-icon-upload2">上传模板</el-button>
+        <el-button type="primary" size="small" @click="getTemp()">下载模板</el-button>
+        <el-button type="primary" size="small" @click="uploadVisible=true;changeUpload(1);clearUpload('upload');">上传模板</el-button>
         <el-pagination
           v-if="pageShow"
           background
@@ -174,7 +200,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="可用性" prop="validityStatus"> 
+        <el-form-item label="可用性" prop="validityStatus">
           <el-radio-group v-model="batchDetail.validityStatus" size="small">
             <el-radio label='0' border>可用</el-radio>
             <el-radio label='1' border>不可用</el-radio>

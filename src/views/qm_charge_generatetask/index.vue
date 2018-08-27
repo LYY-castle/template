@@ -2,7 +2,7 @@
   <div class="container">
     <el-row margin-top:>
       <el-form :inline="true" size="small">
-        <el-form-item>
+        <el-form-item label="活动名称:">
           <el-select v-model="req.activityId" placeholder="对应活动" style="width: 100%;">
             <el-option value='' label="所有活动"></el-option>
             <el-option
@@ -13,10 +13,10 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item>
+        <el-form-item label="任务名称:">
           <el-input v-model="req.taskName" placeholder="任务名称" maxlength="45"></el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item label="操作人员:">
           <el-input v-model="req.modifierName" placeholder="操作人员" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
@@ -71,6 +71,14 @@
             align="center"
             prop="taskName"
             label="任务名称">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.taskName }}</p>
+                <div slot="reference">
+                  {{ scope.row.taskName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -88,10 +96,19 @@
             align="center"
             prop="modifierName"
             label="操作人">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.modifierName }}</p>
+                <div slot="reference">
+                  {{ scope.row.modifierName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
-            label="操作时间">
+            label="操作时间"
+            width="155">
             <template slot-scope="scope">
               <div>{{formatDateTime(scope.row.modifierTime)}}</div>
             </template>
@@ -107,7 +124,7 @@
           </template>
           </el-table-column>
         </el-table>
-      </el-col> 
+      </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
         <el-button type="success" size="small" @click="addVisible=true;clearForm(getRecords);getRecords.getAll=1;recodeTable=[];pageShow=false;addTask.taskName=''">新建质检任务</el-button>
@@ -145,7 +162,7 @@
         <el-form-item label="操作人">
           <span>{{taskDetail.modifierName}}</span>
         </el-form-item>
-        <el-form-item label="操作时间"> 
+        <el-form-item label="操作时间">
           <span>{{formatDateTime(taskDetail.modifierTime)}}</span>
         </el-form-item>
       </el-form>

@@ -36,18 +36,27 @@
                 <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
               </template>
             </el-table-column>
-            <el-table-column align="center" label="问卷模板名称" width="350px" >
+            <el-table-column align="center" label="问卷模板名称">
               <template slot-scope="scope">
-                <el-tooltip class="item" effect="dark" placement="top">
-                  <div slot="content">{{scope.row.name}}</div>
-                  <el-button type="text" size="medium" @click="checkDetail(scope.row.id)">{{scope.row.name}}</el-button>
-                </el-tooltip>
+                <el-popover trigger="hover" placement="right">
+                  <p>{{scope.row.name}}</p>
+                  <div slot="reference">
+                    <el-button type="text" size="medium" @click="checkDetail(scope.row.id)">{{scope.row.name}}</el-button>
+                  </div>
+                </el-popover>
               </template>
             </el-table-column>
             <el-table-column align="center" label="操作人" width="" prop="modifier">
-
+              <template slot-scope="scope">
+                <el-popover trigger="hover" placement="right">
+                  <p>{{scope.row.modifier}}</p>
+                  <div slot="reference">
+                    {{scope.row.modifier}}
+                  </div>
+                </el-popover>
+              </template>
             </el-table-column>
-            <el-table-column align="center" label="操作时间" width="" >
+            <el-table-column align="center" label="操作时间" width="155" >
               <template slot-scope="scope">
                 <div v-html="formatDateTime(scope.row.modifyTime)"></div>
               </template>
@@ -147,7 +156,7 @@
                         </div>
                       </el-form-item>
                     </div>
-                  
+
                   <!--  多选  -->
                   <h5 style="float:left" v-if="this.multiItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多选:</h5><br/>
                   <div style="margin-left:25%">
@@ -223,7 +232,7 @@
                     </div>
                     </el-form-item>
                   </div>
-                  
+
                   <!--  多选  -->
                   <h5 style="float:left" v-if="hasMulti===true">&nbsp;&nbsp;&nbsp;&nbsp;多选:</h5><br/>
                   <div style="margin-left:15%">
@@ -271,9 +280,9 @@
         <el-col :span="18" class="quest">
           <div style="text-align:center">
             <h2>{{this.questionnaireName}}&nbsp;
-              <el-tooltip class="item" effect="dark" content="修改问卷模板标题" placement="right-start">  
+              <el-tooltip class="item" effect="dark" content="修改问卷模板标题" placement="right-start">
                 <el-button type="primary" icon="el-icon-edit-outline" @click="editQuestionnaireName=true;" size="mini" circle></el-button>
-              </el-tooltip>  
+              </el-tooltip>
             </h2>
           </div><br/>
           <div style="margin-left:0">
@@ -301,7 +310,7 @@
                       </div>
                     </el-form-item>
                   </div>
-                  
+
                   <!--  多选  -->
                   <h5 style="float:left" v-if="this.multiItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多选:</h5><br/>
                   <div style="margin-left:25%">

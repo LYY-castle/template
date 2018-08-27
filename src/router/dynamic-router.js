@@ -29,8 +29,9 @@ export default (menuData) => {
         children[j].path = data[i].sub_menus[j].template
         children[j].name = data[i].sub_menus[j].template
         children[j].meta = {
-          title: data[i].sub_menus[j].title,
-          icon: 'user'
+          title: data[i].sub_menus[j].title
+          // ,
+          // icon: 'user'
         }
         children[j].component = () => import('@/views/' + data[i].sub_menus[j].template.substring(0, data[i].sub_menus[j].template.length - 5) + '/index')
       }

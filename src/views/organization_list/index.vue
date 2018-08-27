@@ -3,20 +3,20 @@
     <div class="filter-container">
       <el-row>
         <el-form :inline="true" class="demo-form-inline" size="small">
-          <el-form-item>
+          <el-form-item label="组织编号：">
             <el-input placeholder="组织编号（限长11字符）" v-model="formInline.organ_id" maxlength="11"></el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item label="组织名称：">
             <el-input placeholder="组织名称（限长45字符）" v-model="formInline.organ_name" maxlength="45"></el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item label="上级组织：">
             <el-select v-model="formInline.parent_organ" placeholder="上级组织">
               <el-option label="所有上级组织" value=""></el-option>
               <el-option label="一级组织" value="0"></el-option>
               <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item>
+          <el-form-item label="操作人员：">
             <el-input placeholder="操作人员（限长45字符）" v-model="formInline.creator" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item label="操作时间：">
@@ -40,7 +40,6 @@
           ref="multipleTable"
           tooltip-effect="dark"
           border
-          style="width: 94%;"
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
@@ -66,27 +65,59 @@
             align="center"
             prop="departName"
             label="组织名">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.departName }}</p>
+                <div slot="reference">
+                  {{ scope.row.departName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="upDepartName"
             label="上级组织">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.upDepartName }}</p>
+                <div slot="reference">
+                  {{ scope.row.upDepartName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="comment"
             label="备注">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.comment }}</p>
+                <div slot="reference">
+                  {{ scope.row.comment }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="modifier"
             label="操作人员">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.modifier }}</p>
+                <div slot="reference">
+                  {{ scope.row.modifier }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="updateTime"
             label="操作时间"
-            width="150">
+            width="155">
           </el-table-column>
           <el-table-column
             align="center"
@@ -429,7 +460,7 @@
           name: 'organization_list.html',
           query: { parent_organ: row.departName }
         })
-        this.refreshOrgan()
+        // this.refreshOrgan()
       },
       handleClickStaff(row) {
         this.$router.push({
@@ -547,6 +578,7 @@
       }
     },
     created() {
+      console.log(this.$route.query.parent_organ)
       if (this.$route.query.parent_organ) {
         this.refreshOrgan()
       } else {

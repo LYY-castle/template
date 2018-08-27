@@ -2,13 +2,13 @@
   <div class="container">
       <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item prop="startNumber">
+        <el-form-item prop="startNumber" label="开始号段:">
           <el-input v-model="req.startNumber" placeholder="开始号段"></el-input>
         </el-form-item>
-        <el-form-item  prop="endNumber">
+        <el-form-item  prop="endNumber" label="结束号段:">
           <el-input v-model="req.endNumber" placeholder="结束号段"></el-input>
         </el-form-item>
-        <el-form-item  prop="modifier">
+        <el-form-item  prop="modifier" label="操作人员:">
           <el-input v-model="req.modifier" placeholder="操作人员"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
@@ -66,10 +66,19 @@
             align="center"
             prop="modifier"
             label="操作人">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.modifier }}</p>
+                <div slot="reference">
+                  {{ scope.row.modifier }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
-            label="操作时间">
+            label="操作时间"
+            width="155">
             <template slot-scope="scope">
                 <div>{{formatDateTime(scope.row.modifyTime)}}</div>
             </template>
@@ -84,7 +93,7 @@
           </template>
           </el-table-column>
         </el-table>
-      </el-col> 
+      </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
         <el-button type="success" size="small" @click="addVisible=true;clearForm(addNoDisturbPhonesDetail,'addPhonesForm');">创建免访号段</el-button>
@@ -163,8 +172,7 @@
         <el-form-item label="操作人员:" prop="modifier">
           <span>{{editNoDisturbPhonesDetail.modifier}}</span>
         </el-form-item>
-        </el-form-item>
-         <el-form-item label="操作时间:" prop="modifyTime">
+        <el-form-item label="操作时间:" prop="modifyTime">
           <span>{{formatDateTime(editNoDisturbPhonesDetail.modifyTime)}}</span>
         </el-form-item>
       </el-form>
@@ -474,4 +482,3 @@ export default {
   }
 }
 </script>
-

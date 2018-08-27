@@ -2,10 +2,10 @@
   <div class="container">
     <el-row margin-top:>
       <el-form :inline="true" size="small">
-        <el-form-item>
+        <el-form-item label="小结标题:">
           <el-input v-model="req.nodule_title" placeholder="小结标题" maxlength="50"></el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item label="修改人:">
           <el-input v-model="req.modify_name" placeholder="修改人" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="修改时间：">
@@ -63,20 +63,45 @@
             align="center"
             prop="summaryName"
             label="小结名称">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.summaryName }}</p>
+                <div slot="reference">
+                  {{ scope.row.summaryName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="description"
             label="备注">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.description }}</p>
+                <div slot="reference">
+                  {{ scope.row.description }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="modifierName"
             label="修改人">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.modifierName }}</p>
+                <div slot="reference">
+                  {{ scope.row.modifierName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="modifyTime"
+            width="155"
             label="修改时间">
           </el-table-column>
           <el-table-column
@@ -89,7 +114,7 @@
           </template>
           </el-table-column>
         </el-table>
-      </el-col> 
+      </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
         <el-button type="success" size="small" @click="addVisible=true;clearForm(addSummary,'addSummary');setTree=[];">添加</el-button>

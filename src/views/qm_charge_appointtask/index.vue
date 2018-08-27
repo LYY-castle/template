@@ -2,7 +2,7 @@
   <div class="container">
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item>
+        <el-form-item label="活动名称:">
           <el-select v-model="req.campaignId" :placeholder="campData.length==0?'无活动':'请选择活动'" @change="submitAssign.data = ''.split('');resetForm('assignForm');req.pageNo=1;req.pageSize=10;queryMainQualityList(req);countTaskAssignInfo(req)">
             <el-option
                 v-for="item in campData"
@@ -44,6 +44,14 @@
             align="center"
             prop="qualityName"
             label="质检任务名称">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.qualityName }}</p>
+                <div slot="reference">
+                  {{ scope.row.qualityName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -59,14 +67,23 @@
             align="center"
             prop="modifierName"
             label="操作人">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.modifierName }}</p>
+                <div slot="reference">
+                  {{ scope.row.modifierName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="modifyTime"
-            label="操作时间">
+            label="操作时间"
+            width="155">
           </el-table-column>
         </el-table>
-      </el-col> 
+      </el-col>
     </el-row>
     <el-row style="margin-top:1%">
       <el-pagination
@@ -116,6 +133,14 @@
             align="center"
             prop="departName"
             label="分配对象">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.departName }}</p>
+                <div slot="reference">
+                  {{ scope.row.departName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -137,7 +162,7 @@
             label="本次分配数量">
             <template slot-scope="scope">
               <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="分配数量" style="width:50%"></el-input-number>
-            </template>  
+            </template>
           </el-table-column>
         </el-table>
         <el-table
@@ -155,6 +180,14 @@
             align="center"
             prop="staffName"
             label="分配对象">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.staffName }}</p>
+                <div slot="reference">
+                  {{ scope.row.staffName }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -181,10 +214,10 @@
             label="本次分配数量">
             <template slot-scope="scope">
               <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="分配数量" style="width:50%"></el-input-number>
-            </template>  
+            </template>
           </el-table-column>
         </el-table>
-      </el-col> 
+      </el-col>
     </el-row>
     <el-row>
       <el-button type="success" @click="submitForm('assignForm');">确 定</el-button>

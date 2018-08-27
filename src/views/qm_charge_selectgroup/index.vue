@@ -2,7 +2,7 @@
   <div class='container'>
     <el-row>
       <el-form :inline="true" size="small">
-        <el-form-item label="活动名称">
+        <el-form-item label="活动名称:">
           <el-input v-model="req.campaignName" placeholder="活动名称"></el-input>
         </el-form-item>
         <el-form-item>
@@ -11,7 +11,7 @@
         </el-form-item>
       </el-form>
     </el-row>
-    
+
     <el-row>
       <el-col>
         <el-table :data="tableData" border>
@@ -20,8 +20,18 @@
               <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="活动编号" prop="campaignId"></el-table-column>
-          <el-table-column align="center" label="活动名称" prop="activityName"></el-table-column>
+          <el-table-column align="center" label="活动编号" prop="campaignId">
+          </el-table-column>
+          <el-table-column align="center" label="活动名称" prop="activityName">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.activityName }}</p>
+                <div slot="reference">
+                  {{ scope.row.activityName }}
+                </div>
+              </el-popover>
+            </template>
+          </el-table-column>
           <el-table-column align="center" label="质检组织">
             <template slot-scope="scope">
               <div>{{showQmDepart(scope.row.departName)}}</div>
@@ -37,7 +47,16 @@
               <div>{{scope.row.listExpiryDate}}天</div>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="活动备注" prop="description"></el-table-column>
+          <el-table-column align="center" label="活动备注" prop="description">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.description }}</p>
+                <div slot="reference">
+                  {{ scope.row.description }}
+                </div>
+              </el-popover>
+            </template>
+          </el-table-column>
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
               <el-button type="text" @click="qcdept='';grade=[];assignParams.activityId=scope.row.campaignId;assignParams.activityName=scope.row.activityName;searchByCampaignId(scope.row.campaignId);searchQcDepts(scope.row.campaignId);searchGrades(scope.row.campaignId);"  v-if="scope.row.departName === null && scope.row.gradeNames === null">指定</el-button>
@@ -62,12 +81,12 @@
           :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
     </el-row>
-    
+
     <!-- 指定质检组织、评分表的dialog  -->
-    <el-dialog 
-    align:left  
+    <el-dialog
+    align:left
     width="30%"
-    title="指定质检组织/评分表" 
+    title="指定质检组织/评分表"
     :visible.sync="appointVisiable"
     append-to-body>
       <el-form label-width="100px">
@@ -95,9 +114,9 @@
               </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="评分表：">  
+        <el-form-item label="评分表：">
           <el-select v-model="grade" multiple placeholder="请选择评分表" clearable @change="selectMarks">
-            <el-option 
+            <el-option
             v-for="item in grades"
             :key="item.gradeId"
             :label="item.gradeName"

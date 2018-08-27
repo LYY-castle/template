@@ -3,18 +3,18 @@
     <div class="filter-container">
       <el-row>
         <el-form :inline="true" class="demo-form-inline" size="small">
-          <el-form-item>
+          <el-form-item label="员工姓名：">
             <el-input placeholder="员工姓名（上限45字符）" v-model="formInline.name" maxlength="45"></el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item label="员工工号：">
             <el-input placeholder="员工工号（上限45字符）" v-model="formInline.angentId" maxlength="45"></el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item label="所属部门：">
             <el-select v-model="formInline.departName" placeholder="所属部门">
               <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item>
+          <el-form-item label="操作人员：">
             <el-input placeholder="操作人员（上限45字符）" v-model="formInline.modifierName" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item label="操作时间：">
@@ -38,7 +38,6 @@
         ref="multipleTable"
         tooltip-effect="dark"
         border
-        style="width: 94%;"
         @selection-change="handleSelectionChange">
         <el-table-column
           align="center"
@@ -64,6 +63,14 @@
           align="center"
           prop="staffName"
           label="员工姓名">
+          <template slot-scope="scope">
+            <el-popover trigger="hover" placement="right">
+              <p>{{ scope.row.staffName }}</p>
+              <div slot="reference">
+                {{ scope.row.staffName }}
+              </div>
+            </el-popover>
+          </template>
         </el-table-column>
         <el-table-column
           align="center"
@@ -75,6 +82,14 @@
           align="center"
           prop="departName"
           label="所属组织">
+          <template slot-scope="scope">
+            <el-popover trigger="hover" placement="right">
+              <p>{{ scope.row.departName }}</p>
+              <div slot="reference">
+                {{ scope.row.departName }}
+              </div>
+            </el-popover>
+          </template>
         </el-table-column>
         <el-table-column
           align="center"
@@ -85,11 +100,20 @@
           align="center"
           prop="creator"
           label="操作人员">
+          <template slot-scope="scope">
+            <el-popover trigger="hover" placement="right">
+              <p>{{ scope.row.creator }}</p>
+              <div slot="reference">
+                {{ scope.row.creator }}
+              </div>
+            </el-popover>
+          </template>
         </el-table-column>
         <el-table-column
           align="center"
           prop="updateTime"
-          label="操作时间">
+          label="操作时间"
+          width="155">
         </el-table-column>
         <el-table-column
           align="center"
