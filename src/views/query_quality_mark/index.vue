@@ -28,19 +28,11 @@
             </el-option>
           </el-select>
         </el-form-item>
-<<<<<<< src/views/query_quality_mark/index.vue
-        <el-form-item prop="agentid" label="坐席工号:">
+        <el-form-item prop="agentid" v-if="n==1||n==4" label="坐席工号:">
           <el-input v-model="req.agentid" placeholder="坐席工号" maxlength="50" v-if="n==1||n==4"></el-input>
         </el-form-item>
-        <el-form-item prop="qcAgentid" label="质检员工:">
+        <el-form-item prop="qcAgentid" v-if="n==2||n==3" label="质检员工:">
           <el-input v-model="req.qcAgentid" placeholder="质检员工号" maxlength="50" v-if="n==2||n==3"></el-input>
-=======
-        <el-form-item prop="agentid" v-if="n==1||n==4">
-          <el-input v-model="req.agentid" placeholder="坐席工号" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item prop="qcAgentid" v-if="n==2||n==3">
-          <el-input v-model="req.qcAgentid" placeholder="质检员工号" maxlength="50"></el-input>
->>>>>>> src/views/query_quality_mark/index.vue
         </el-form-item>
         <el-form-item label="质检结束时间:" prop="timeValue">
           <el-date-picker

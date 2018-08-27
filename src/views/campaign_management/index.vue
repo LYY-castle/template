@@ -187,14 +187,10 @@
         <el-form-item label="名单有效期" prop="listExpiryDate">
           <el-input v-model="campaignDetail.listExpiryDate" size="small" placeholder="单位：天"></el-input>
         </el-form-item>
-<<<<<<< src/views/campaign_management/index.vue
-        <el-form-item label="活动状态:" prop="status">
-=======
         <el-form-item label="拨打次数" prop="canContactNum">
           <el-input v-model="campaignDetail.canContactNum" size="small" placeholder="单位：次"></el-input>
         </el-form-item>
-        <el-form-item label="活动状态:" prop="status"> 
->>>>>>> src/views/campaign_management/index.vue
+        <el-form-item label="活动状态:" prop="status">
           <el-radio-group v-model="campaignDetail.status" size="small">
             <el-radio label='0' border>有效</el-radio>
             <el-radio label='1' border>无效</el-radio>
@@ -647,7 +643,7 @@
             align="center"
             prop="modifierTime"
             label="操作时间">
-            <template 
+            <template
               slot-scope="scope">
               <div>{{formatDateTime(scope.row.modifierTime)}}</div>
             </template>
