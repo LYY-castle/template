@@ -109,7 +109,7 @@
               </el-col>
             </el-form>
           </el-row>
-
+       
           <!-- <el-row style="height:40px;padding-top:15px;padding-right:15px;">
             <breadcrumb></breadcrumb>
           </el-row> -->
@@ -141,43 +141,121 @@
           <span>{{orginCaller}}</span>
         </p>
       </el-col>
-      <el-col :span="6">
-        <p>
-          <b>用户：</b>
-          <span>{{userInfo.userName}}</span>
-        </p>
-        <p>
-          <b>工号：</b>
-          <span>{{userInfo.staffId}}</span>
-        </p>
-        <p>
-          <b>部门：</b>
-          <span>{{userInfo.departName}}</span>
-        </p>
+      <el-col :span="6" style="margin-top:15px;margin-left:12%">
+        <!-- 有未读信息 -->
+        <div v-show="messageNum > 0">
+          <el-badge v-model="messageNum" class="item" :max="10">
+            <el-tooltip placement="bottom">
+              <div slot="content">
+                您有{{messageNum}}条未读信息<br/>
+                今日未读：3 条<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;特提：2 条<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;特急：1 条<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;加急：0 条<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;普通：0 条<br/>
+              </div>
+              <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()"></el-button>
+            </el-tooltip>
+          </el-badge>
+        </div>
+        
+        <!-- 没有未读信息 -->
+        <div v-show="messageNum === '' || messageNum === 0">
+          <el-tooltip placement="bottom">
+            <div slot="content">
+              暂无未读信息
+            </div>
+            <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()"></el-button>
+          </el-tooltip>
+        </div>
       </el-col>
-      <el-col :span="3" style="margin-top:18px;">
-        <el-button type="primary" @click="logout" size="mini">注销</el-button>
+      <el-col :span="3"><div></div></el-col>
+      <el-col :span="3" style="margin-top:15px;margin-left:-10%">
+        <el-tooltip placement="bottom">
+        <div slot="content">设置</div>
+        <el-dropdown @command="handleCommand" trigger="click" >
+          <el-button icon="el-icon-setting"  type="info" circle></el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item disabled>
+              <span><b>工号：</b>{{userInfo.staffId}}</span><br/>
+              <span><b>用户：</b>{{userInfo.userName}}</span><br/>
+              <span><b>部门：</b>{{userInfo.departName}}</span><br/>
+            </el-dropdown-item>
+            <el-dropdown-item style="text-align:center" divided command="changePWD">
+              <i class="el-icon-edit-outline">  修改密码</i>
+            </el-dropdown-item>
+            <el-dropdown-item style="text-align:center" divided command="logout">
+              <i class="el-icon-circle-close">  注销用户</i>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+        </el-tooltip>
       </el-col>
     </el-col>
   </el-row>
   <el-row v-if="!havesoftphone">
-    <div style="display:inline-block;margin-left:1%;">
-     <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
-    </div>
-    <div style="float:right;margin-right:3%;">
-          <b>用户：</b>
-          <span>{{userInfo.userName}}</span>
-          &nbsp; &nbsp;
-          <b>工号：</b>
-          <span>{{userInfo.staffId}}</span>
-          &nbsp; &nbsp;
-          <b>部门：</b>
-          <span>{{userInfo.departName}}</span>
-          &nbsp; &nbsp; &nbsp;
-          <el-button type="primary" @click="logout" size="mini">注销</el-button>
-    </div>
-
+    <el-col :span="17" style="margin-top:0.2%;"></el-col>
+    <el-col :span="7" class="userInfo" style="margin-top:-7px;">
+      <el-col :span="6"></el-col>
+      <el-col :span="6"></el-col>
+      <el-col :span="6"  style="margin-top:18px;margin-left:62%">
+        <!-- 有未读信息 -->
+        <div v-show="messageNum > 0">
+          <el-badge v-model="messageNum" class="item" :max="10">
+            <el-tooltip placement="bottom">
+              <div slot="content">
+                您有{{messageNum}}条未读信息<br/>
+              </div>
+              <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()"></el-button>
+            </el-tooltip>
+          </el-badge>
+        </div>
+        
+        <!-- 没有未读信息 -->
+        <div v-show="messageNum === '' || messageNum === 0">
+          <el-tooltip placement="bottom">
+            <div slot="content">暂无未读信息</div>
+            <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()"></el-button>
+          </el-tooltip>
+        </div>
+      </el-col>
+      <el-col :span="3"></el-col>
+      <el-col :span="3" style="margin-top:18px;margin-left:-10%">
+        <el-dropdown @command="handleCommand" trigger="click" >
+          <el-button icon="el-icon-setting"  type="info" circle></el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item disabled>
+              <span><b>工号：</b>{{userInfo.staffId}}</span><br/>
+              <span><b>用户：</b>{{userInfo.userName}}</span><br/>
+              <span><b>部门：</b>{{userInfo.departName}}</span><br/>
+            </el-dropdown-item>
+            <el-dropdown-item style="text-align:center" divided command="changePWD">
+              <i class="el-icon-edit-outline">  修改密码</i>
+            </el-dropdown-item>
+            <el-dropdown-item style="text-align:center" divided command="logout">
+              <i class="el-icon-circle-close">  注销用户</i>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </el-col>
+    </el-col>
+  
   </el-row>
+
+  <el-dialog width="30%" title="修改密码" :visible.sync="changePwdVisiable" append-to-body>
+      <span style="color:red">*</span><span style="font-size:15px;">请输入旧密码：</span><br/>
+       <el-input type="password" placeholder="请输入旧密码" size="medium" v-model="changePWD.oldPassword" maxlength="20" clearable></el-input>
+      <span style="color:red">*</span><span style="font-size:15px;">请输入新密码：</span><br/>
+       <el-input type="password" placeholder="请输入新密码" size="medium" v-model="changePWD.newPassword" maxlength="20" clearable></el-input>
+      <span style="color:red">*</span><span style="font-size:15px;">请输入验证码：</span><br/>
+       <el-input type="text" placeholder="请输入验证码" size="medium" v-model="changePWD.validateCode" maxlength="4" style="width:70%" clearable></el-input>
+       <img style="position:relative;top:10px;" height="35" width="75"  :src="codeUrl" @click="getCode()">
+       <!-- <div>{{codeUrl}}</div> -->
+      <div slot="footer" class="dialog-footer" style="text-align: center;">
+        <el-button type="primary" @click="checkChangePWD(changePWD)">确定</el-button>
+        <el-button @click="changePwdVisiable = false">取消</el-button>
+      </div>
+  </el-dialog>
   </el-menu>
 
 </template>
@@ -190,6 +268,11 @@ import Hamburger from '@/components/Hamburger'
 import { getUserInfo } from '@/api/dashboard'
 import { Message } from 'element-ui'
 import { addComeContact, addDialContact, addAnswerContact, addHangupContact, getPhoneOwn, checkSoftphonePerm } from '@/api/navbar'
+import {
+  getMyUnreadMessages,
+  generateValidateCode,
+  changePassword
+} from '@/utils/tools'
 
 import cti from '@/utils/ctijs'
 var vm = null
@@ -247,7 +330,18 @@ export default {
         region: ''
       },
       navbar: 'navbar',
-      sidebarStatus: ''
+      sidebarStatus: '',
+      agentId: '', // 搜索带的参数 员工工号
+      timer: null, // 定时器timer
+      messageNum: '', // 消息/站内信的数量
+      changePwdVisiable: false, // 修改密码dialog
+      changePWD: {
+        staffId: '',
+        oldPassword: '',
+        newPassword: '',
+        validateCode: ''
+      },
+      codeUrl: ''
     }
   },
   components: {
@@ -265,6 +359,101 @@ export default {
     }
   },
   methods: {
+    // 修改密码
+    checkChangePWD(changePWD) {
+      if (changePWD.oldPassword === '') {
+        this.$message.error('请输入原密码！')
+        return
+      } else if (changePWD.newPassword === '') {
+        this.$message.error('请输入新密码！')
+        return
+      } else if (changePWD.oldPassword === changePWD.newPassword) {
+        this.$message.error('新密码与原密码一致，请尝试新的密码组合！')
+        return
+      } else if (changePWD.validateCode === '') {
+        this.$message.error('请输入验证码！')
+        return
+      } else {
+        changePassword(changePWD)
+          .then(res => {
+            if (res.data.code === 1) {
+              this.$message.success('修改成功！请妥善保存您的新密码')
+              this.changePwdVisiable = false
+              return
+            } else if (res.data.code === '0') {
+              // 验证码校验错误
+              this.$message.error(res.data.message)
+              // 重新生成验证码
+              this.getCode()
+              return
+            } else if (res.data.code === '2') {
+              // 验证码没写入redis 重新生成
+              this.$message.error('验证码过期，请重新输入！')
+              // 重新生成验证码
+              this.getCode()
+              return
+            } else if (res.data.code === 0) {
+              this.$message.error('原密码不正确！')
+              return
+            }
+          })
+      }
+    },
+    // 初次获取未读数量
+    firstgetUnreadMessages(agentId) {
+      getMyUnreadMessages(agentId)
+        .then(response1 => {
+          this.messageNum = response1.data.result.total_count
+        })
+    },
+    // 获取当前登录人所有类别的未读消息数量
+    getUnreadMessages(agentId) {
+      getMyUnreadMessages(agentId)
+        .then(response1 => {
+          if (response1.data.result.total_count - this.messageNum === 1) {
+            this.$notify({
+              title: '消息提示',
+              message: '收到一条新通知',
+              offset: 100,
+              type: 'success'
+            })
+          }
+          this.messageNum = response1.data.result.total_count
+          return
+        })
+    },
+    // 处理点击注销
+    handleCommand(command) {
+      if (command === 'logout') {
+      // 注销时清空定时器
+        clearInterval(this.timer)
+        this.logout()
+      } else if (command === 'changePWD') {
+        this.changePWD.staffId = localStorage.getItem('agentId')
+        this.changePWD.oldPassword = ''
+        this.changePWD.newPassword = ''
+        this.changePWD.validateCode = ''
+        // 生成验证码
+        generateValidateCode()
+          .then(res => {
+            this.codeUrl = `${res.data}`
+          })
+        this.changePwdVisiable = true
+      }
+    },
+    // 生成验证码
+    getCode() {
+      generateValidateCode()
+        .then(res => {
+          this.codeUrl = `${res.data}`
+        })
+    },
+    // 进入我的消息页
+    checkMessageList() {
+      this.$router.push({
+        name: 'notification_my.html'
+      })
+    },
     agentReady() {
       if (this.telephoneState === '就绪') {
         return
@@ -1014,6 +1203,16 @@ export default {
       this.userInfo.departName = res.data.departName
     }).catch(error => {
       console.log(error)
+    })
+    // 刚进页面获取未读消息数量
+    this.firstgetUnreadMessages(localStorage.getItem('agentId'))
+    // 每分钟更新未读消息数量
+    // this.timer = setInterval(() => {
+    //   this.getUnreadMessages(localStorage.getItem('agentId'))
+    // }, 30000)
+
+    this.$root.eventHub.$on('CHANGE_STATUS', () => {
+      this.getUnreadMessages(localStorage.getItem('agentId'))
     })
   }
 }

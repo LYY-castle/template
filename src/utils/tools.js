@@ -32,17 +32,7 @@ export function hideIdNumber(idNumber) {
     return idNumber.substring(0, 10) + '****' + idNumber.substring(14, 18)
   }
 }
-/**
-* 将秒数转化为 时分秒   sec --> hour:min:sec
-* @param result
-* @returns
-*/
-export function formatSeconds(result) {
-  var h = Math.floor(result / 3600) < 10 ? '0' + Math.floor(result / 3600) : Math.floor(result / 3600)
-  var m = Math.floor((result / 60 % 60)) < 10 ? '0' + Math.floor((result / 60 % 60)) : Math.floor((result / 60 % 60))
-  var s = Math.floor((result % 60)) < 10 ? '0' + Math.floor((result % 60)) : Math.floor((result % 60))
-  return (h + ':' + m + ':' + s)
-}
+
 export function checkNo(value) {
   const reg = /^[1-9]\d*$/
   if (value) {
@@ -89,6 +79,13 @@ export function clone(obj) {
 export function getRequestUser() {
   return request({
     url: '/login/getRequestUser',
+    method: 'post'
+  })
+}
+
+export function getUserDept() {
+  return request({
+    url: '/login/getUserNameAndId',
     method: 'post'
   })
 }
@@ -210,4 +207,59 @@ export function getIDCardInfo(idcard) {
     map.put('sex', 0)// 男
   }
   return map
+}
+
+export function getMyUnreadMessages(staffId) {
+  return request({
+    url: '/notification/getMyUnReadMessage',
+    method: 'get',
+    params: {
+      staffId: staffId
+    }
+  })
+}
+
+export function getStaffNameByAgentId(agentId) {
+  return request({
+    url: '/employee/getStaffNameByAgentId',
+    method: 'get',
+    params: {
+      agentId: agentId
+    }
+  })
+}
+
+export function getNextOrganlist() {
+  return request({
+    url: '/organization/findNextOrganByNow',
+    method: 'get'
+  })
+}
+
+export function getAllDeptsByCurrent() {
+  return request({
+    url: '/employee/getAllDeptsByCurrent',
+    method: 'get'
+  })
+}
+
+export function generateValidateCode() {
+  request.defaults.headers.common['Accept'] = 'image/webp,image/apng,image/*,*/*;q=0.8'
+  return request({
+    url: '/login/getValidateCode',
+    method: 'post'
+  })
+}
+
+export function changePassword(info) {
+  return request({
+    url: '/login/modifyPw',
+    method: 'post',
+    data: {
+      angentId: info.staffId,
+      oldPassword: info.oldPassword,
+      password: info.newPassword,
+      code: info.validateCode
+    }
+  })
 }
