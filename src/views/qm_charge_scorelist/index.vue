@@ -71,7 +71,7 @@
           <el-table-column
             align="center"
             prop="modifier"
-            label="操作人员">
+            label="操作人">
             <template slot-scope="scope">
               <el-popover trigger="hover" placement="right">
                 <p>{{ scope.row.modifier }}</p>

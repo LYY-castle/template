@@ -11,7 +11,7 @@
         <el-form-item label="操作人:">
           <el-input v-model="req.modifierName" placeholder="操作人" maxlength="50"></el-input>
         </el-form-item>
-        <el-form-item label="修改时间：">
+        <el-form-item label="操作时间：">
           <el-date-picker
               v-model="req.modifyTimeStart"
               type="datetime"
@@ -65,7 +65,7 @@
           <el-table-column
             align="center"
             prop="summaryName"
-            label="小结名称">
+            label="小结标题">
             <template slot-scope="scope">
               <el-popover trigger="hover" placement="right">
                 <p>{{ scope.row.summaryName }}</p>
@@ -91,7 +91,7 @@
           <el-table-column
             align="center"
             prop="modifierName"
-            label="修改人">
+            label="操作人">
             <template slot-scope="scope">
               <el-popover trigger="hover" placement="right">
                 <p>{{ scope.row.modifierName }}</p>
@@ -105,7 +105,7 @@
             align="center"
             prop="modifyTime"
             width="155"
-            label="修改时间">
+            label="操作时间">
           </el-table-column>
           <el-table-column
             align="center"

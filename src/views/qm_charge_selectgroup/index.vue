@@ -63,7 +63,7 @@
               <div>{{scope.row.listExpiryDate}}天</div>
             </template>
           </el-table-column>
-           <el-table-column align="center" label="活动操作人" prop="modifierName">
+           <el-table-column align="center" label="操作人" prop="modifierName">
               <template slot-scope="scope">
               <el-popover trigger="hover" placement="right">
                 <p>{{ scope.row.modifierName }}</p>
@@ -73,7 +73,7 @@
               </el-popover>
             </template>
           </el-table-column>
-           <el-table-column align="center" label="活动操作时间" prop="modifyTime">
+           <el-table-column align="center" label="操作时间" prop="modifyTime">
               <template slot-scope="scope">
               <el-popover trigger="hover" placement="right">
                 <p>{{ scope.row.modifyTime }}</p>
