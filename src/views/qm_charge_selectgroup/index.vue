@@ -3,7 +3,7 @@
     <el-row>
       <el-form :inline="true" size="small">
         <el-form-item prop="campaignId" label="活动编号：">
-          <el-input v-model="req.campaignId" placeholder="活动名称"></el-input>
+          <el-input v-model="req.campaignId" placeholder="活动编号"></el-input>
         </el-form-item>
         <el-form-item label="活动名称:">
           <el-input v-model="req.campaignName" placeholder="活动名称"></el-input>
@@ -16,14 +16,14 @@
               v-model="timeValue"
               type="datetimerange"
               range-separator="-"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
               value-format="yyyy-MM-dd HH:mm:ss">
           </el-date-picker>
         </el-form-item>
         <el-form-item>
           <el-button icon="el-icon-search" type="primary" @click="req.pageNo=1;searchByCampaign(req)">查询</el-button>
-          <el-button  type="danger" @click="timeValue=[],req.campaignName=''">重置</el-button>
+          <el-button  type="danger" @click="timeValue=[],resetReq()">重置</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -237,6 +237,17 @@ export default {
         return departName
       } else {
         return '未指定'
+      }
+    },
+    resetReq() {
+      this.req = {
+        campaignId: '',
+        campaignName: '',
+        modifierName: '',
+        modifyTimeStart: '',
+        modifyTimeEnd: '',
+        pageSize: 10,
+        pageNo: 1
       }
     },
     // 评分表显示

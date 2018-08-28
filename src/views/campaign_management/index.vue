@@ -3,7 +3,7 @@
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
         <el-form-item prop="campaignId" label="活动编号：">
-          <el-input v-model="req.campaignId" placeholder="活动名称"></el-input>
+          <el-input v-model="req.campaignId" placeholder="活动编号"></el-input>
         </el-form-item>
         <el-form-item prop="campaignName" label="活动名称：">
           <el-input v-model="req.campaignName" placeholder="活动名称"></el-input>
@@ -22,8 +22,8 @@
               v-model="timeValue"
               type="datetimerange"
               range-separator="-"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
               value-format="yyyy-MM-dd HH:mm:ss">
           </el-date-picker>
         </el-form-item>

@@ -11,16 +11,16 @@
         <el-form-item label="客户电话:">
           <el-input v-model="req.mobile" placeholder="客户电话(限长50字符)" maxlength="50"></el-input>
         </el-form-item>
-        <el-form-item label="操作人员:">
-          <el-input v-model="req.modifierName" placeholder="操作人员（限长50）字符" maxlength="50"></el-input>
+        <el-form-item label="操作人:">
+          <el-input v-model="req.modifierName" placeholder="操作人（限长50）字符" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
           <el-date-picker
               v-model="timeValue"
               type="datetimerange"
               range-separator="-"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
               value-format="yyyy-MM-dd HH:mm:ss">
           </el-date-picker>
         </el-form-item>

@@ -8,14 +8,14 @@
         <el-form-item label="小结标题:">
           <el-input v-model="req.summaryName" placeholder="小结标题" maxlength="50"></el-input>
         </el-form-item>
-        <el-form-item label="修改人:">
-          <el-input v-model="req.modifierName" placeholder="修改人" maxlength="50"></el-input>
+        <el-form-item label="操作人:">
+          <el-input v-model="req.modifierName" placeholder="操作人" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="修改时间：">
           <el-date-picker
               v-model="req.modifyTimeStart"
               type="datetime"
-              placeholder="开始日期"
+              placeholder="开始时间"
               value-format="yyyy-MM-dd hh:mm:ss"
               default-time="00:00:00">
           </el-date-picker>
@@ -23,7 +23,7 @@
           <el-date-picker
               v-model="req.modifyTimeEnd"
               type="datetime"
-              placeholder="结束日期"
+              placeholder="结束时间"
               value-format="yyyy-MM-dd hh:mm:ss"
               default-time="00:00:00">
           </el-date-picker>
