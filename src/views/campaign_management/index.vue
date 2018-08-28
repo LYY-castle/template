@@ -17,7 +17,7 @@
         <el-form-item prop="modifierName" label="操作人：">
           <el-input v-model="req.modifierName" placeholder="操作人"></el-input>
         </el-form-item>
-         <el-form-item label="操作时间：">
+        <el-form-item label="操作时间：">
           <el-date-picker
               v-model="timeValue"
               type="datetimerange"
@@ -973,7 +973,7 @@ export default {
     },
     // 查询活动信息
     findCampaignByConditions(req) {
-      if (this.timeValue !== null) {
+      if (this.timeValue !== null && typeof (this.timeValue) !== undefined && this.timeValue.length > 0) {
         req.modifyTimeStart = this.timeValue[0]
         req.modifyTimeEnd = this.timeValue[1]
       }
@@ -1007,12 +1007,14 @@ export default {
     getProductName(productIds) {
       var productNames = []
       var list
-      for (var i = 0; i < productIds.length; i++) {
-        list = productIds[i]
-        for (var j = 0; j < this.productData.length; j++) {
-          if (list === this.productData[j].productId) {
-            if (this.productName.indexOf() === -1) {
-              productNames.push(this.productData[j].productName)
+      if (productIds !== null && typeof (productIds) !== undefined && productIds.length > 0) {
+        for (var i = 0; i < productIds.length; i++) {
+          list = productIds[i]
+          for (var j = 0; j < this.productData.length; j++) {
+            if (list === this.productData[j].productId) {
+              if (this.productName.indexOf() === -1) {
+                productNames.push(this.productData[j].productName)
+              }
             }
           }
         }

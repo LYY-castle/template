@@ -3,6 +3,9 @@
     <div class="filter-container">
       <el-row>
         <el-form :inline="true" class="demo-form-inline" size="small">
+          <el-form-item label="评分编号:">
+            <el-input placeholder="评分编号" v-model="formInline.gradeId"></el-input>
+          </el-form-item>
           <el-form-item label="评分表名:">
             <el-input placeholder="评分表名（限长50字符）" v-model="formInline.gradeName" maxlength="50"></el-input>
           </el-form-item>
@@ -306,10 +309,11 @@
         tableData: [],
         multipleSelection: [],
         formInline: {
+          gradeId: '',
           gradeName: '',
           modifierName: '',
-          start_time: '',
-          end_time: '',
+          modifierTimeStart: '',
+          modifierTimeEnd: '',
           pageNo: 1,
           pageSize: 10
         },
@@ -618,10 +622,11 @@
       reset() {
         this.timeValue = ''
         this.formInline = {
+          gradeId: '',
           gradeName: '',
           modifierName: '',
-          start_time: '',
-          end_time: '',
+          modifierTimeStart: '',
+          modifierTimeEnd: '',
           pageNo: this.pagination.pageNo,
           pageSize: this.pagination.pageSize
         }

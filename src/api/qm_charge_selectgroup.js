@@ -4,11 +4,7 @@ export function queryByCampaign(req) {
   return request({
     url: '/quality/queryCampaignByCondetions',
     method: 'post',
-    data: {
-      campaignName: req.campaignName,
-      pageNo: req.pageNo,
-      pageSize: req.pageSize
-    }
+    data: req
   })
 }
 
