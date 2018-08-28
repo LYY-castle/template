@@ -871,9 +871,12 @@ export default {
     // 时间戳转年月日时分秒
     formatDateTime: formatDateTime,
     clearForm(obj, formName) {
+      console.log(this.$refs[formName])
       for (var key in obj) {
         if (key === 'products' || key === 'productIds') {
           obj[key] = []
+        } else {
+          obj[key] = ''
         }
       }
       if (this.$refs[formName] !== undefined) {

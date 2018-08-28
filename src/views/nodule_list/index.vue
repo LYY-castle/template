@@ -486,7 +486,7 @@ export default {
             this.$message.success(response.data.message)
             this.getNoduleByInfo(this.req2)
           } else {
-            this.$message('添加失败')
+            this.$message(response.data.message)
           }
         })
         .catch(error => {

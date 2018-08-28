@@ -143,7 +143,7 @@
             align="center"
             label="回收数量">
             <template slot-scope="scope">
-              <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="回收数量" style="width:50%"></el-input-number>
+              <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="回收数量" style="width:130px;"></el-input-number>
             </template>
           </el-table-column>
         </el-table>
@@ -195,7 +195,7 @@
             align="center"
             label="回收数量">
             <template slot-scope="scope">
-              <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="回收数量" style="width:50%"></el-input-number>
+              <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="回收数量" style="width:130px;"></el-input-number>
             </template>
           </el-table-column>
         </el-table>

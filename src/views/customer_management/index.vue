@@ -87,6 +87,11 @@
           </el-table-column>
           <el-table-column
             align="center"
+            prop="source"
+            label="客户来源">
+          </el-table-column>
+          <el-table-column
+            align="center"
             prop="modifierName"
             label="操作人">
             <template slot-scope="scope">

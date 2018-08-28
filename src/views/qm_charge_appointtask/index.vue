@@ -161,7 +161,7 @@
             align="center"
             label="本次分配数量">
             <template slot-scope="scope">
-              <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="分配数量" style="width:50%"></el-input-number>
+              <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="分配数量" style="width:130px;"></el-input-number>
             </template>
           </el-table-column>
         </el-table>
@@ -213,7 +213,7 @@
             align="center"
             label="本次分配数量">
             <template slot-scope="scope">
-              <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="分配数量" style="width:50%"></el-input-number>
+              <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="分配数量" style="width:130px;"></el-input-number>
             </template>
           </el-table-column>
         </el-table>
@@ -364,7 +364,7 @@ export default {
     // 分配对象表格多选
     handleSelectionChange2(val) {
       this.multipleSelection = val
-      this.submitAssign.data.length = 0
+      this.submitAssign.data = []
       this.assignNum()
     },
     // 将分配数量平均分配

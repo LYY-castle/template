@@ -115,7 +115,7 @@
             prop="contactRecordUrl"
             label="录音">
             <template slot-scope="scope">
-              <a v-if="scope.row.contactRecordUrl" style="color:#63B0FF" :title="scope.row.contactRecordUrl">查看</a>
+              <a v-if="scope.row.contactRecordUrl" style="color:#63B0FF" :title="scope.row.contactRecordUrl" @click="recodingContent=scope.row.contactRecordUrl;recodeVisible=true">查看</a>
               <div v-if="!scope.row.contactRecordUrl">无</div>
             </template>
           </el-table-column>
@@ -226,7 +226,7 @@
             prop="contactRecordUrl"
             label="录音">
             <template slot-scope="scope">
-              <a v-if="scope.row.contactRecordUrl" style="color:#63B0FF" :title="scope.row.contactRecordUrl">查看</a>
+              <a v-if="scope.row.contactRecordUrl" style="color:#63B0FF" :title="scope.row.contactRecordUrl" @click="recodingContent=scope.row.contactRecordUrl;recodeVisible=true">查看</a>
               <div v-if="!scope.row.contactRecordUrl">无</div>
             </template>
           </el-table-column>
@@ -507,6 +507,16 @@
           </el-tab-pane>
         </el-tabs>
     </el-dialog>
+    <el-dialog
+        width="30%"
+        title="录音详情"
+        :visible.sync="recodeVisible"
+        append-to-body>
+      <div>{{recodingContent}}</div>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button type="primary" @click="recodeVisible = false;">返 回</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -540,6 +550,8 @@ export default {
   name: 'qmSearchquailitymark',
   data() {
     return {
+      recodingContent: '',
+      recodeVisible: false,
       n: 0,
       a: false,
       b: false,

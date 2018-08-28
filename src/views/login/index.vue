@@ -154,6 +154,7 @@ export default {
     }
   },
   created() {
+    this.$store.dispatch('delAllViews')
     loginValid().then(response => {
       if (response.data.code === '0') {
         Message({
