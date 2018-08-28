@@ -630,9 +630,9 @@
         this.ruleFormReverseDetail = {
           id: row.id,
           staffName: row.staffName,
-          origin: isJson(row.origin) ? CodeToText[JSON.parse(row.origin)[0]] + CodeToText[JSON.parse(row.origin)[1]] : row.origin,
+          origin: isJson(row.origin) && row.origin ? CodeToText[JSON.parse(row.origin)[0]] + CodeToText[JSON.parse(row.origin)[1]] : row.origin,
           idNumber: row.idNumber,
-          sex: row.sex.toString(),
+          sex: row.sex ? row.sex.toString() : '',
           birthday: row.birthday,
           departName: row.departName,
           userPhone: row.userPhone,
@@ -650,9 +650,9 @@
             this.ruleFormReverse = {
               id: data.id,
               staffName: data.staffName,
-              origin: isJson(data.origin) ? JSON.parse(data.origin) : ['000000', '000000'],
+              origin: isJson(data.origin) && data.origin ? JSON.parse(data.origin) : ['000000', '000000'],
               idNumber: data.idNumber,
-              sex: data.sex.toString(),
+              sex: data.sex ? data.sex.toString() : '',
               birthday: data.birthday,
               departName: data.departName,
               userPhone: data.userPhone,
@@ -668,7 +668,7 @@
         this.ruleFormReverse = {
           id: this.staffData.id,
           staffName: this.staffData.staffName,
-          origin: isJson(this.staffData.origin) ? JSON.parse(this.staffData.origin) : ['000000', '000000'],
+          origin: isJson(this.staffData.origin) && this.staffData.origin ? JSON.parse(this.staffData.origin) : ['000000', '000000'],
           idNumber: this.staffData.idNumber,
           sex: this.staffData.sex.toString(),
           birthday: this.staffData.birthday,
