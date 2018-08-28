@@ -90,6 +90,15 @@ export function getUserDept() {
   })
 }
 
+export function isJson(data) {
+  try {
+    JSON.parse(data);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
 export function verify(str, reg) {
   if (str !== null) {
     if (str.indexOf(reg) + 1 > 0) {

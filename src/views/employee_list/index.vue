@@ -295,7 +295,7 @@
   import { queryDepts, query, deleteStaff, addStaff, queryone, edit, deleteAllStaff } from '@/api/employee_list'
   import { Message, MessageBox } from 'element-ui'
   import { provinceAndCityData, CodeToText } from 'element-china-area-data'
-  import { formatDateTime } from '@/utils/tools'
+  import { formatDateTime, isJson } from '@/utils/tools'
 
   export default {
     name: 'employee_list',
@@ -630,7 +630,7 @@
         this.ruleFormReverseDetail = {
           id: row.id,
           staffName: row.staffName,
-          origin: CodeToText[JSON.parse(row.origin)[0]] + CodeToText[JSON.parse(row.origin)[1]],
+          origin: isJson(row.origin) ? CodeToText[JSON.parse(row.origin)[0]] + CodeToText[JSON.parse(row.origin)[1]] : row.origin,
           idNumber: row.idNumber,
           sex: row.sex.toString(),
           birthday: row.birthday,
@@ -650,7 +650,7 @@
             this.ruleFormReverse = {
               id: data.id,
               staffName: data.staffName,
-              origin: JSON.parse(data.origin),
+              origin: isJson(data.origin) ? JSON.parse(data.origin) : ['000000', '000000'],
               idNumber: data.idNumber,
               sex: data.sex.toString(),
               birthday: data.birthday,
@@ -668,7 +668,7 @@
         this.ruleFormReverse = {
           id: this.staffData.id,
           staffName: this.staffData.staffName,
-          origin: JSON.parse(this.staffData.origin),
+          origin: isJson(this.staffData.origin) ? JSON.parse(this.staffData.origin) : ['000000', '000000'],
           idNumber: this.staffData.idNumber,
           sex: this.staffData.sex.toString(),
           birthday: this.staffData.birthday,
