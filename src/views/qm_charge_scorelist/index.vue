@@ -3,11 +3,14 @@
     <div class="filter-container">
       <el-row>
         <el-form :inline="true" class="demo-form-inline" size="small">
+          <el-form-item label="评分编号:">
+            <el-input placeholder="评分编号" v-model="formInline.gradeId"></el-input>
+          </el-form-item>
           <el-form-item label="评分表名:">
             <el-input placeholder="评分表名（限长50字符）" v-model="formInline.gradeName" maxlength="50"></el-input>
           </el-form-item>
-          <el-form-item label="操作人员:">
-            <el-input placeholder="操作人员（限长45字符）" v-model="formInline.modifierName" maxlength="45"></el-input>
+          <el-form-item label="操作人:">
+            <el-input placeholder="操作人（限长45字符）" v-model="formInline.modifierName" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item label="操作时间：">
             <el-date-picker
@@ -21,7 +24,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="searchGrade(formInline)">查询</el-button>
-            <el-button type="danger" @click="reset">清空</el-button>
+            <el-button type="danger" @click="reset">重置</el-button>
           </el-form-item>
         </el-form>
         <el-table
@@ -68,7 +71,7 @@
           <el-table-column
             align="center"
             prop="modifier"
-            label="操作人员">
+            label="操作人">
             <template slot-scope="scope">
               <el-popover trigger="hover" placement="right">
                 <p>{{ scope.row.modifier }}</p>
@@ -236,9 +239,9 @@
         </el-card>
         </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确 定</el-button>
         <el-button type="danger" @click="resetFormReverse('ruleFormReverse')">重置</el-button>
-        <el-button @click="resetFormReverse('ruleFormReverse');dialogFormVisibleReverse = false">返 回</el-button>
+        <el-button @click="resetFormReverse('ruleFormReverse');dialogFormVisibleReverse = false">取消</el-button>
+        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确 定</el-button>
       </div>
     </el-dialog>
       <el-dialog title="查看评分表" :visible.sync="dialogFormVisibleDetail" width="60%" @close="resetFormDetail('dialogFormVisibleDetail')" append-to-body>
@@ -306,10 +309,11 @@
         tableData: [],
         multipleSelection: [],
         formInline: {
+          gradeId: '',
           gradeName: '',
           modifierName: '',
-          start_time: '',
-          end_time: '',
+          modifierTimeStart: '',
+          modifierTimeEnd: '',
           pageNo: 1,
           pageSize: 10
         },
@@ -618,10 +622,11 @@
       reset() {
         this.timeValue = ''
         this.formInline = {
+          gradeId: '',
           gradeName: '',
           modifierName: '',
-          start_time: '',
-          end_time: '',
+          modifierTimeStart: '',
+          modifierTimeEnd: '',
           pageNo: this.pagination.pageNo,
           pageSize: this.pagination.pageSize
         }

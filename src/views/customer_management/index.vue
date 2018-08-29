@@ -2,22 +2,25 @@
   <div class="container">
     <el-row margin-top:>
       <el-form :inline="true" size="small">
+        <el-form-item label="客户编号:">
+          <el-input v-model="req.customerId" placeholder="客户编号" maxlength="50"></el-input>
+        </el-form-item>
         <el-form-item label="客户姓名:">
           <el-input v-model="req.customerName" placeholder="客户姓名（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="客户电话:">
-          <el-input v-model="req.customerPhone" placeholder="客户电话(限长50字符)" maxlength="50"></el-input>
+          <el-input v-model="req.mobile" placeholder="客户电话(限长50字符)" maxlength="50"></el-input>
         </el-form-item>
-        <el-form-item label="操作人员:">
-          <el-input v-model="req.modifierName" placeholder="操作人员（限长50）字符" maxlength="50"></el-input>
+        <el-form-item label="操作人:">
+          <el-input v-model="req.modifierName" placeholder="操作人（限长50）字符" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
           <el-date-picker
               v-model="timeValue"
               type="datetimerange"
               range-separator="-"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
               value-format="yyyy-MM-dd HH:mm:ss">
           </el-date-picker>
         </el-form-item>
@@ -53,6 +56,11 @@
               slot-scope="scope">
               <div>{{scope.$index+(req2.pageNo-1)*req2.pageSize+1}}</div>
             </template>
+          </el-table-column>
+            <el-table-column
+            align="center"
+            prop="customerId"
+            label="客户编号">
           </el-table-column>
           <el-table-column
             align="center"
@@ -349,8 +357,9 @@ export default {
       },
       // 查询 发送请求参数
       req: {
+        customerId: '',
         customerName: '',
-        customerPhone: '',
+        mobile: '',
         modifierName: '',
         startModifierTime: '',
         endModifierTime: '',

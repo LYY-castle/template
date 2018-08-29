@@ -2,18 +2,34 @@
   <div class="container campaignManagement">
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
+        <el-form-item prop="campaignId" label="活动编号：">
+          <el-input v-model="req.campaignId" placeholder="活动编号"></el-input>
+        </el-form-item>
         <el-form-item prop="campaignName" label="活动名称：">
           <el-input v-model="req.campaignName" placeholder="活动名称"></el-input>
         </el-form-item>
-        <el-form-item label="活动状态" prop="status">
+        <el-form-item label="活动状态：" prop="status">
           <el-radio-group v-model="req.status" size="small">
             <el-radio label='0'>有效</el-radio>
             <el-radio label='1'>无效</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item prop="modifierName" label="操作人：">
+          <el-input v-model="req.modifierName" placeholder="操作人"></el-input>
+        </el-form-item>
+        <el-form-item label="操作时间：">
+          <el-date-picker
+              v-model="timeValue"
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
+              value-format="yyyy-MM-dd HH:mm:ss">
+          </el-date-picker>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="req.pageNo=1;findCampaignByConditions(req);req2=clone(req)" icon="el-icon-search">查询</el-button>
-          <el-button type="danger" @click="resetForm('searchForm');">重置</el-button>
+          <el-button type="danger" @click="timeValue=[],resetReq('searchForm');">重置</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -39,7 +55,8 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="活动编号">
+            label="活动编号"
+             width="105">
             <template slot-scope="scope">
               <el-button type="text" size="small" @click="detailVisible=true;getDeptByCampaignId(scope.row.campaignId);getMarksByCampaignId(scope.row.campaignId);getCampaignById(scope.row.campaignId);">{{scope.row.campaignId}}</el-button>
             </template>
@@ -765,6 +782,7 @@ export default {
           { required: true, message: '请选择活动组织', trigger: 'change' }
         ]
       },
+      timeValue: [],
       removeListVisible: false, // 单个移除
       batchListVisible: false, // 批量移除名单
       removeLists: [], // 批量移除ids
@@ -802,14 +820,22 @@ export default {
       },
       // 查询 发送请求参数
       req: {
+        campaignId: '',
         campaignName: '',
         status: '0',
+        modifierName: '',
+        modifyTimeStart: '',
+        modifyTimeEnd: '',
         pageSize: 10,
         pageNo: 1
       },
       req2: {
+        campaignId: '',
         campaignName: '',
         status: '0',
+        modifierName: '',
+        modifyTimeStart: '',
+        modifyTimeEnd: '',
         pageSize: 10,
         pageNo: 1
       },
@@ -885,14 +911,34 @@ export default {
     },
     reset() {
       this.req = {
+        campaignId: '',
         campaignName: '',
         status: '0',
+        modifierName: '',
+        modifyTimeStart: '',
+        modifyTimeEnd: '',
         pageSize: 10,
         pageNo: 1
       }
       this.req2 = {
+        campaignId: '',
         campaignName: '',
         status: '0',
+        modifierName: '',
+        modifyTimeStart: '',
+        modifyTimeEnd: '',
+        pageSize: 10,
+        pageNo: 1
+      }
+    },
+    resetReq() {
+      this.req = {
+        campaignId: '',
+        campaignName: '',
+        status: '0',
+        modifierName: '',
+        modifyTimeStart: '',
+        modifyTimeEnd: '',
         pageSize: 10,
         pageNo: 1
       }
@@ -930,6 +976,10 @@ export default {
     },
     // 查询活动信息
     findCampaignByConditions(req) {
+      if (this.timeValue !== null && typeof (this.timeValue) !== undefined && this.timeValue.length > 0) {
+        req.modifyTimeStart = this.timeValue[0]
+        req.modifyTimeEnd = this.timeValue[1]
+      }
       queryCampaign(req)
         .then(response => {
           if (response.data.code === 0) {
@@ -960,12 +1010,14 @@ export default {
     getProductName(productIds) {
       var productNames = []
       var list
-      for (var i = 0; i < productIds.length; i++) {
-        list = productIds[i]
-        for (var j = 0; j < this.productData.length; j++) {
-          if (list === this.productData[j].productId) {
-            if (this.productName.indexOf() === -1) {
-              productNames.push(this.productData[j].productName)
+      if (productIds !== null && typeof (productIds) !== undefined && productIds.length > 0) {
+        for (var i = 0; i < productIds.length; i++) {
+          list = productIds[i]
+          for (var j = 0; j < this.productData.length; j++) {
+            if (list === this.productData[j].productId) {
+              if (this.productName.indexOf() === -1) {
+                productNames.push(this.productData[j].productName)
+              }
             }
           }
         }

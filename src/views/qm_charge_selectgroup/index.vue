@@ -2,12 +2,28 @@
   <div class='container'>
     <el-row>
       <el-form :inline="true" size="small">
+        <el-form-item prop="campaignId" label="活动编号：">
+          <el-input v-model="req.campaignId" placeholder="活动编号"></el-input>
+        </el-form-item>
         <el-form-item label="活动名称:">
           <el-input v-model="req.campaignName" placeholder="活动名称"></el-input>
         </el-form-item>
+        <el-form-item prop="modifierName" label="操作人：">
+          <el-input v-model="req.modifierName" placeholder="操作人"></el-input>
+        </el-form-item>
+        <el-form-item label="操作时间：">
+          <el-date-picker
+              v-model="timeValue"
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
+              value-format="yyyy-MM-dd HH:mm:ss">
+          </el-date-picker>
+        </el-form-item>
         <el-form-item>
-          <el-button icon="el-icon-search" type="primary" @click="req.pageNo=1;searchByCampaign(req)">筛选</el-button>
-          <el-button  type="danger" @click="req.campaignName=''">重置</el-button>
+          <el-button icon="el-icon-search" type="primary" @click="req.pageNo=1;searchByCampaign(req)">查询</el-button>
+          <el-button  type="danger" @click="timeValue=[],resetReq()">重置</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -45,6 +61,26 @@
           <el-table-column align="center" label="名单有效期">
             <template slot-scope="scope">
               <div>{{scope.row.listExpiryDate}}天</div>
+            </template>
+          </el-table-column>
+           <el-table-column align="center" label="操作人" prop="modifierName">
+              <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.modifierName }}</p>
+                <div slot="reference">
+                  {{ scope.row.modifierName }}
+                </div>
+              </el-popover>
+            </template>
+          </el-table-column>
+           <el-table-column align="center" label="操作时间" prop="modifyTime">
+              <template slot-scope="scope">
+              <el-popover trigger="hover" placement="right">
+                <p>{{ scope.row.modifyTime }}</p>
+                <div slot="reference">
+                  {{ scope.row.modifyTime }}
+                </div>
+              </el-popover>
             </template>
           </el-table-column>
           <el-table-column align="center" label="活动备注" prop="description">
@@ -166,8 +202,13 @@ export default {
       qcdeptId: '', // 选中的或回显的质检组织id
       grade: [], //  选中的或回显的评分表
       gradeIds: [], // 选中的或回显的评分表id
+      timeValue: [],
       req: {
+        campaignId: '',
         campaignName: '',
+        modifierName: '',
+        modifyTimeStart: '',
+        modifyTimeEnd: '',
         pageSize: 10,
         pageNo: 1
       },
@@ -198,6 +239,17 @@ export default {
         return '未指定'
       }
     },
+    resetReq() {
+      this.req = {
+        campaignId: '',
+        campaignName: '',
+        modifierName: '',
+        modifyTimeStart: '',
+        modifyTimeEnd: '',
+        pageSize: 10,
+        pageNo: 1
+      }
+    },
     // 评分表显示
     showGradenames(gradeNames) {
       if (gradeNames !== null && gradeNames.length > 0) {
@@ -225,6 +277,10 @@ export default {
     },
     // 综合查询
     searchByCampaign(req) {
+      if (this.timeValue !== null && typeof (this.timeValue) !== undefined && this.timeValue.length > 0) {
+        req.modifyTimeStart = this.timeValue[0]
+        req.modifyTimeEnd = this.timeValue[1]
+      }
       queryByCampaign(req)
         .then(response => {
           if (response.data.code === 0) {

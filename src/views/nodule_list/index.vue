@@ -2,25 +2,28 @@
   <div class="container">
     <el-row margin-top:>
       <el-form :inline="true" size="small">
+        <el-form-item label="小结编号:">
+          <el-input v-model="req.summaryId" placeholder="小结编号" maxlength="50"></el-input>
+        </el-form-item>
         <el-form-item label="小结标题:">
-          <el-input v-model="req.nodule_title" placeholder="小结标题" maxlength="50"></el-input>
+          <el-input v-model="req.summaryName" placeholder="小结标题" maxlength="50"></el-input>
         </el-form-item>
-        <el-form-item label="修改人:">
-          <el-input v-model="req.modify_name" placeholder="修改人" maxlength="50"></el-input>
+        <el-form-item label="操作人:">
+          <el-input v-model="req.modifierName" placeholder="操作人" maxlength="50"></el-input>
         </el-form-item>
-        <el-form-item label="修改时间：">
+        <el-form-item label="操作时间：">
           <el-date-picker
-              v-model="req.startCreateTime"
+              v-model="req.modifyTimeStart"
               type="datetime"
-              placeholder="开始日期"
+              placeholder="开始时间"
               value-format="yyyy-MM-dd hh:mm:ss"
               default-time="00:00:00">
           </el-date-picker>
           到
           <el-date-picker
-              v-model="req.endCreateTime"
+              v-model="req.modifyTimeEnd"
               type="datetime"
-              placeholder="结束日期"
+              placeholder="结束时间"
               value-format="yyyy-MM-dd hh:mm:ss"
               default-time="00:00:00">
           </el-date-picker>
@@ -62,7 +65,7 @@
           <el-table-column
             align="center"
             prop="summaryName"
-            label="小结名称">
+            label="小结标题">
             <template slot-scope="scope">
               <el-popover trigger="hover" placement="right">
                 <p>{{ scope.row.summaryName }}</p>
@@ -88,7 +91,7 @@
           <el-table-column
             align="center"
             prop="modifierName"
-            label="修改人">
+            label="操作人">
             <template slot-scope="scope">
               <el-popover trigger="hover" placement="right">
                 <p>{{ scope.row.modifierName }}</p>
@@ -102,7 +105,7 @@
             align="center"
             prop="modifyTime"
             width="155"
-            label="修改时间">
+            label="操作时间">
           </el-table-column>
           <el-table-column
             align="center"
@@ -300,18 +303,20 @@ export default {
       },
       // 查询 发送请求参数
       req: {
-        nodule_title: '',
-        modify_name: '',
-        startCreateTime: '',
-        endCreateTime: '',
+        summaryId: '',
+        summaryName: '',
+        modifierName: '',
+        modifyTimeStart: '',
+        modifyTimeEnd: '',
         pageNo: 1,
         pageSize: 10
       },
       req2: {
-        nodule_title: '',
-        modify_name: '',
-        startCreateTime: '',
-        endCreateTime: '',
+        summaryId: '',
+        summaryName: '',
+        modifierName: '',
+        modifyTimeStart: '',
+        modifyTimeEnd: '',
         pageNo: 1,
         pageSize: 10
       },
@@ -350,18 +355,20 @@ export default {
   methods: {
     reset() {
       this.req = {
-        nodule_title: '',
-        modify_name: '',
-        startCreateTime: '',
-        endCreateTime: '',
+        summaryId: '',
+        summaryName: '',
+        modifierName: '',
+        modifyTimeStart: '',
+        modifyTimeEnd: '',
         pageNo: this.pageInfo.pageNo,
         pageSize: this.pageInfo.pageSize
       }
       this.req2 = {
-        nodule_title: '',
-        modify_name: '',
-        startCreateTime: '',
-        endCreateTime: '',
+        summaryId: '',
+        summaryName: '',
+        modifierName: '',
+        modifyTimeStart: '',
+        modifyTimeEnd: '',
         pageNo: this.pageInfo.pageNo,
         pageSize: this.pageInfo.pageSize
       }
