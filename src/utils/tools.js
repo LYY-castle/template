@@ -272,3 +272,15 @@ export function changePassword(info) {
     }
   })
 }
+
+/**
+* 将秒数转化为 时分秒   sec --> hour:min:sec
+* @param result
+* @returns
+*/
+export function formatSeconds(result) {
+  var h = Math.floor(result / 3600) < 10 ? '0' + Math.floor(result / 3600) : Math.floor(result / 3600)
+  var m = Math.floor((result / 60 % 60)) < 10 ? '0' + Math.floor((result / 60 % 60)) : Math.floor((result / 60 % 60))
+  var s = Math.floor((result % 60)) < 10 ? '0' + Math.floor((result % 60)) : Math.floor((result % 60))
+  return (h + ':' + m + ':' + s)
+}
