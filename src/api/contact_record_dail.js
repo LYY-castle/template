@@ -30,7 +30,8 @@ export function queryByKeyWords(req) {
       currentPage: req.pageNo,
       pageSize: req.pageSize,
       departId: req.departId,
-      agentid: req.agentid
+      agentid: req.agentid,
+      status: req.status === '-1' ? null : req.status
 
     }
   })

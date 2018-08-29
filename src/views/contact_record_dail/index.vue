@@ -5,6 +5,7 @@
       <el-form :inline="true" size="small">
         <el-form-item label="活动名称：" prop="campaignId">
           <el-select placeholder="请选择活动"  @change="selectOneCampaign(campaignId)" v-model="campaignId">
+            <el-option label="所有情况" value=""></el-option>
             <el-option
             v-for="item in campaigns"
             :label="item.campaignName"
@@ -48,14 +49,21 @@
               value-format="yyyy-MM-dd HH:mm:ss"
               default-time="00:00:00">
           </el-date-picker>
-          <el-form-item label="通话时长：">
+          <el-form-item label="接通状态：">
+            <el-radio-group v-model="req.status"  @change="changeChoice()">
+              <el-radio-button label="-1">所有情况</el-radio-button>
+              <el-radio-button label="1">已接通</el-radio-button>
+              <el-radio-button label="0">未接通</el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="通话时长：" v-if="showTalkTime">
             <el-input v-model="req.stime" style="width:80px" @change="checkNo(req.stime)" onkeypress="return event.keyCode>=48&&event.keyCode<=57" :maxlength="3"></el-input>
             至
             <el-input v-model="req.etime" style="width:80px" @change="checkNo(req.stime)" onkeypress="return event.keyCode>=48&&event.keyCode<=57" :maxlength="3"></el-input>分钟
           </el-form-item>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="el-icon-search" @click="req.pageNo=1;searchByKeyWords(req);">筛选</el-button>
+          <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req);">查询</el-button>
           <el-button type="danger" @click="campaignId='';clearForm(req);putAllcamps();">重置</el-button>
         </el-form-item>
       </el-form>
@@ -402,6 +410,7 @@
 
     data() {
       return {
+        showTalkTime: true,
         detailVisible: false, // 订单详情展示开关
         isMainPage: true, // 显示或隐藏详情页面
         requestFail: false, // 请求失败
@@ -457,7 +466,8 @@
           departId: '',
           agentid: '',
           pageSize: 10,
-          pageNo: 1
+          pageNo: 1,
+          status: -1
 
         }
       }
@@ -487,9 +497,9 @@
         .then(response => {
           if (response.data.code === 0) {
             this.campaigns = response.data.data
-            for (var i = 0; i < this.campaigns.length; i++) {
-              this.req.campaign.push(this.campaigns[i].campaignId)
-            }
+            // for (var i = 0; i < this.campaigns.length; i++) {
+            //   this.req.campaign.push(this.campaigns[i].campaignId)
+            // }
             this.searchByKeyWords(this.req)
           }
         })
@@ -497,8 +507,33 @@
           console.log(error)
         })
     },
-
+    created() {
+      this.req.startTime = typeof (this.$route.query.sTime) === 'undefined' ? '' : this.$route.query.sTime
+      this.req.endTime = typeof (this.$route.query.eTime) === 'undefined' ? '' : this.$route.query.eTime
+      if (typeof (this.$route.query.callStatu) === 'undefined') {
+        this.req.status = '-1'
+      } else {
+        if (this.$route.query.callStatu === 1) {
+          this.req.status = '1'
+        } else {
+          this.req.status = '0'
+        }
+      }
+      this.staffInfo.agentid = localStorage.getItem('agentId')
+      this.req.agentid = localStorage.getItem('agentId')
+      this.req.pageNo = 1
+    },
     methods: {
+      changeChoice() {
+        switch (this.req.status) {
+          case '-1':this.showTalkTime = true
+            break
+          case '0':this.showTalkTime = false
+            break
+          case '1':this.showTalkTime = true
+            break
+        }
+      },
       // 跳转到别的组件
       transferParameters(taskId, campaignId, customerId, customerPhone) {
         queryTaskByTaskId(taskId).then(response => {
@@ -536,6 +571,11 @@
             this.requestFail = true
           }
         })
+        // 如果拥有两个权限，则只给主管权限
+        if (this.isManager && this.isStaff) {
+          this.isManager = true
+          this.isStaff = false
+        }
       },
       // 详情页面加载
       contactDetail() {
@@ -547,7 +587,6 @@
         getContactByGradeId(this.ids.recordId).then(response => {
           if (response.data.code === 0) {
             this.detailInfo.contactInfo = response.data.data
-            console.log(response.data.data)
             // this.checkedSummaryKeys(response.data.data.summaryDetailInfos)
             const a = response.data.data.summaryDetailInfos.map(function(item, index) {
               if (item) {
