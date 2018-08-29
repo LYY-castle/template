@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="container">
     <!-- 列表管理 -->
-    <div class="container" style="padding:0 20px;" v-show="isListPage==='1'">
+    <div v-show="isListPage==='1'">
       <el-row><br/>
         <el-form :inline="true" size="small">
           <el-form-item label="笔记标题">
@@ -97,7 +97,7 @@
     <!-- 列表管理end -->
 
     <!-- 新建笔记 -->
-    <div class="container" style="padding:0 20px;" v-show="isListPage==='2'">
+    <div v-show="isListPage==='2'">
       <div style="text-align:center">
         <h3>{{noteTitle}}</h3>
         <quill-editor
@@ -115,7 +115,7 @@
     <!-- 新建笔记end -->
 
     <!-- 笔记详情 -->
-    <div class="container" style="padding:0 20px;" v-show="isListPage==='3'">
+    <div  v-show="isListPage==='3'">
       <div style="text-align:center">
         <h3>{{noteDetail.title}}&nbsp;&nbsp;</h3>
         <quill-editor
@@ -129,7 +129,7 @@
     <!-- 笔记详情end -->
 
     <!-- 修改笔记 -->
-    <div class="container" style="padding:0 20px;" v-show="isListPage==='4'">
+    <div v-show="isListPage==='4'">
       <div style="text-align:center">
         <h3>{{editDetail.title}}
           <el-tooltip class="item" effect="dark" content="修改笔记标题" placement="right-start">  

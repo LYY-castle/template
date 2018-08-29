@@ -143,16 +143,14 @@
       </el-col>
       <el-col :span="6" style="margin-top:15px;margin-left:12%">
         <!-- 有未读信息 -->
-        <div v-show="messageNum > 0">
-          <el-badge v-model="messageNum" class="item" :max="10">
+        <div v-show="msgNum_all > 0">
+          <el-badge v-model="msgNum_all" class="item" :max="99">
             <el-tooltip placement="bottom">
               <div slot="content">
-                您有{{messageNum}}条未读信息<br/>
-                今日未读：3 条<br/>
-                &nbsp;&nbsp;&nbsp;&nbsp;特提：2 条<br/>
-                &nbsp;&nbsp;&nbsp;&nbsp;特急：1 条<br/>
-                &nbsp;&nbsp;&nbsp;&nbsp;加急：0 条<br/>
-                &nbsp;&nbsp;&nbsp;&nbsp;普通：0 条<br/>
+                您有{{msgNum_all}}条未读信息<br/><br/>
+                今日消息：{{msgNum_today_all}} 条<br/>
+                <!-- 未读特提：{{msgNum_sm}} 条<br/>
+                未读特急：{{msgNum_eu}} 条<br/> -->
               </div>
               <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()"></el-button>
             </el-tooltip>
@@ -160,10 +158,13 @@
         </div>
         
         <!-- 没有未读信息 -->
-        <div v-show="messageNum === '' || messageNum === 0">
+        <div v-show="msgNum_all === '' || msgNum_all === 0">
           <el-tooltip placement="bottom">
             <div slot="content">
-              暂无未读信息
+              您有{{msgNum_all}}条未读信息<br/><br/>
+              今日消息：{{msgNum_today_all}} 条<br/>
+              <!-- 未读特提：{{msgNum_sm}} 条<br/>
+              未读特急：{{msgNum_eu}} 条<br/> -->
             </div>
             <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()"></el-button>
           </el-tooltip>
@@ -200,11 +201,14 @@
       <el-col :span="6"></el-col>
       <el-col :span="6"  style="margin-top:18px;margin-left:62%">
         <!-- 有未读信息 -->
-        <div v-show="messageNum > 0">
-          <el-badge v-model="messageNum" class="item" :max="10">
+        <div v-show="msgNum_all > 0">
+          <el-badge v-model="msgNum_all" class="item" :max="99">
             <el-tooltip placement="bottom">
               <div slot="content">
-                您有{{messageNum}}条未读信息<br/>
+                您有{{msgNum_all}}条未读信息<br/><br/>
+                今日消息：{{msgNum_today_all}} 条<br/>
+                <!-- 未读特提：{{msgNum_sm}} 条<br/>
+                未读特急：{{msgNum_eu}} 条<br/> -->
               </div>
               <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()"></el-button>
             </el-tooltip>
@@ -212,9 +216,14 @@
         </div>
         
         <!-- 没有未读信息 -->
-        <div v-show="messageNum === '' || messageNum === 0">
+        <div v-show="msgNum_all === '' || msgNum_all === 0">
           <el-tooltip placement="bottom">
-            <div slot="content">暂无未读信息</div>
+            <div slot="content">
+              您有{{msgNum_all}}条未读信息<br/><br/>
+              今日消息：{{msgNum_today_all}} 条<br/>
+              <!-- 未读特提：{{msgNum_sm}} 条<br/>
+              未读特急：{{msgNum_eu}} 条<br/> -->
+            </div>
             <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()"></el-button>
           </el-tooltip>
         </div>
@@ -273,7 +282,6 @@ import {
   generateValidateCode,
   changePassword
 } from '@/utils/tools'
-
 import cti from '@/utils/ctijs'
 var vm = null
 var interval = null
@@ -333,7 +341,8 @@ export default {
       sidebarStatus: '',
       agentId: '', // 搜索带的参数 员工工号
       timer: null, // 定时器timer
-      messageNum: '', // 消息/站内信的数量
+      msgNum_all: '', // 未读消息总数量
+      msgNum_today_all: '', // 今日消息总数（已读+未读）
       changePwdVisiable: false, // 修改密码dialog
       changePWD: {
         staffId: '',
@@ -403,22 +412,29 @@ export default {
     firstgetUnreadMessages(agentId) {
       getMyUnreadMessages(agentId)
         .then(response1 => {
-          this.messageNum = response1.data.result.total_count
+          this.msgNum_all = response1.data.result.total_unread_count
+          this.msgNum_today_all = response1.data.result.today_total_count
+          // this.msgNum_sm = response1.data.result.today_special_mentioned_count
+          // this.msgNum_eu = response1.data.result.today_extra_urgent_count
+          return
         })
     },
     // 获取当前登录人所有类别的未读消息数量
     getUnreadMessages(agentId) {
       getMyUnreadMessages(agentId)
         .then(response1 => {
-          if (response1.data.result.total_count - this.messageNum === 1) {
+          if (response1.data.result.total_unread_count - this.msgNum_all >= 1) {
             this.$notify({
               title: '消息提示',
-              message: '收到一条新通知',
+              message: '收到新通知',
               offset: 100,
               type: 'success'
             })
           }
-          this.messageNum = response1.data.result.total_count
+          this.msgNum_all = response1.data.result.total_unread_count // 总共未读
+          this.msgNum_today_all = response1.data.result.today_total_count
+          // this.msgNum_sm = response1.data.result.today_special_mentioned_count
+          // this.msgNum_eu = response1.data.result.today_extra_urgent_count
           return
         })
     },
@@ -1207,9 +1223,9 @@ export default {
     // 刚进页面获取未读消息数量
     this.firstgetUnreadMessages(localStorage.getItem('agentId'))
     // 每分钟更新未读消息数量
-    // this.timer = setInterval(() => {
-    //   this.getUnreadMessages(localStorage.getItem('agentId'))
-    // }, 30000)
+    this.timer = setInterval(() => {
+      this.getUnreadMessages(localStorage.getItem('agentId'))
+    }, 45000)
 
     this.$root.eventHub.$on('CHANGE_STATUS', () => {
       this.getUnreadMessages(localStorage.getItem('agentId'))
@@ -1277,6 +1293,9 @@ export default {
 </style>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
+.el-button{
+  width:auto;
+}
 p{
   margin:0;
 }

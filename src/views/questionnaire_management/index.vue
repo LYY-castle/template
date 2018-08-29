@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class='container'>
     <!-- 管理主页div -->
-    <div class="container" style="padding:0 20px;" v-show="isMainPage===true && isDetail === false">
+    <div  v-show="isMainPage===true && isDetail === false">
       <el-row>
         <el-form :inline="true" size="small">
           <el-form-item label="问卷模板名称">
@@ -118,7 +118,7 @@
     </div>
 
     <!-- 新建问卷div -->
-    <div class='container' style="padding:0 20px;" v-show="isMainPage===false && isDetail === false">
+    <div  v-show="isMainPage===false && isDetail === false">
       <div class="fixedButton"><br/>
         <el-button @click="addSingleCheck();" type="primary" size="medium" round icon="el-icon-plus">单选</el-button>
         <el-button @click="addMultiCheck();" type="primary" size="medium" round icon="el-icon-plus">多选</el-button>
@@ -207,7 +207,7 @@
     </div>
 
     <!-- 问卷详情div -->
-    <div  class='container' style="padding:0 20px;" v-show="isMainPage===true && isDetail===true">
+    <div  v-show="isMainPage===true && isDetail===true">
       <div style="text-align:center">
         <h2>{{this.oneDetails.name}}</h2>
         <!-- <span>
@@ -268,7 +268,7 @@
     </div>
 
     <!-- 修改问卷div -->
-    <div class='container' style="padding:0 20px;" v-show="isMainPage===false && isDetail===true">
+    <div v-show="isMainPage===false && isDetail===true">
       <div class="fixedButton"><br/>
         <el-button @click="addSingleCheck();" type="primary" size="medium" round icon="el-icon-plus">单选</el-button>
         <el-button @click="addMultiCheck();" type="primary" size="medium" round icon="el-icon-plus">多选</el-button>
