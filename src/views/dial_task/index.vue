@@ -157,7 +157,7 @@
   </div>
 
   <!-- 客户详情 div层 -->
-  <div class='container' v-else>
+  <div v-else>
     <el-row :gutter="20">
       <el-col :span="5" style="text-align:center">
         <br/>
@@ -326,11 +326,14 @@
               </el-col>
               <el-col :span="8" v-show="this.radio === '1'">
                 <span style="color:#F56C6C">*</span>请选择预约时间：
+                <span><b>T + </b></span>
+                <el-input style="width:100px" type="text" v-model="addDays" 
+                onkeyup="if(! /^d+$/.test(this.addDays)){this.addDays='';}"></el-input>
                 <el-date-picker
                   v-model="appointTime"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   default-time="00:00:00"
-                  type="datetime">
+                  type="datetime" style="width:55%">
                 </el-date-picker>
               </el-col>
             </el-row>
@@ -402,6 +405,7 @@ export default {
 
   data() {
     return {
+      addDays: '',
       interval: null,
       canContact: 1,
       hideDialTo: false, // 判断超出拨打次数限制时是否将图标置灰
@@ -763,6 +767,9 @@ export default {
         this.isLastContactTime = false
         this.radio = ''
         this.recordId = ''
+        this.activeTab = ''
+        this.canContact = 1
+        this.addDays = ''
         this.summary_description = ''
         this.appointTime = ''
         this.selectedSummarys = []
@@ -800,10 +807,13 @@ export default {
         this.campaignId = this.campaignIds[0]
         this.isBlacklist = this.isBlacklists[0]
         this.customerId = this.customerIds[0]
+        this.canContact = 1
+        this.addDays = ''
         this.showDetailInfos(this.taskIds[0], this.campaignIds[0], this.customerIds[0], this.isBlacklists[0], null)
         if (this.taskIds.length > 1) {
           this.showAutoDial = true
         }
+        this.activeTab = ''
         this.activeNames = ['1', '2', '3', '4']
         this.autoDialNext = false
         this.showSendMessage = false
@@ -1106,6 +1116,7 @@ export default {
                       this.recordId = ''
                       this.summary_description = ''
                       this.canContact = 1
+                      this.addDays = ''
                       this.appointTime = ''
                       this.selectedSummarys = []
                       this.hideDialTo = false
@@ -1119,6 +1130,7 @@ export default {
                       this.appointTime = ''
                       this.selectedSummarys = []
                       this.canContact = 1
+                      this.addDays = ''
                       this.hideDialTo = false
                       this.isLastContactTime = false
                       this.taskIds = []
@@ -1164,6 +1176,20 @@ export default {
       }
     }
   },
+
+  watch: {
+    // 预约时间显示T+
+    addDays: function(val, oldval) {
+      if (parseInt(val)) {
+        var days = parseInt(val)
+        var ms = days * 86400000
+        var appointTimeMs = new Date().getTime() + ms
+        this.appointTime = formatDateTime(appointTimeMs)
+      } else {
+        this.appointTime = ''
+      }
+    }
+  },
   // 模板编译/挂载之后
   mounted() {
     this.getParametersFromContactRecordDail()
@@ -1180,7 +1206,6 @@ export default {
   },
   // 离开时清除定时器
   destroyed: function() {
-    console.log('i m leaving dial page')
     clearInterval(this.interval)
   }
 }

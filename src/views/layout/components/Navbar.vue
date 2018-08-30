@@ -724,13 +724,16 @@ export default {
       const DN = this.formInline.DN
       if (agentId !== null && DN !== null && DN !== '') {
         cti.login(agentId, this.formInline.DN, '518', '1', '0')
-        if (this.reasonCode === '-1' || this.reasonCode === '-2') {
+        // ToDo 待修改
+        setTimeout(() => {
+          if (this.reasonCode === '-1' || this.reasonCode === '-2') {
           // localStorage.setItem('callerDN', null)
-          localStorage.setItem('DN', null)
-        } else {
+            localStorage.setItem('DN', null)
+          } else {
           // localStorage.setItem('callerDN', DN)
-          localStorage.setItem('DN', DN)
-        }
+            localStorage.setItem('DN', DN)
+          }
+        }, 1000)
       }
     },
     agentLogoff() {
