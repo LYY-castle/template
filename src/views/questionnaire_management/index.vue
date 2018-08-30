@@ -72,8 +72,8 @@
       </el-row>
 
       <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="questionnaireName='';questionnaireTitleVisiable=true" icon="el-icon-plus">新建问卷模板</el-button>
-        <el-button type="danger" size="small" @click="isSelectIds(batchdel.ids)" icon="el-icon-minus">批量删除</el-button>
+        <el-button type="success" size="small" @click="questionnaireName='';questionnaireTitleVisiable=true" >新建模板</el-button>
+        <el-button type="danger" size="small" @click="isSelectIds(batchdel.ids)" >批量删除</el-button>
         <el-pagination
             v-if="pageShow"
             background

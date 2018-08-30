@@ -113,7 +113,7 @@
       </el-row>
       <el-row style="margin-top:1%;">
         <el-col :span="10">
-          <el-button type="primary" size="small" @click="addGrade()">新增评分表</el-button>
+          <el-button type="primary" size="small" @click="addGrade()">新建</el-button>
           <el-button type="danger" size="small" @click="deleteAll()">批量删除</el-button>
         </el-col>
         <el-col :span="14">

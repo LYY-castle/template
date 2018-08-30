@@ -16,7 +16,7 @@
         <!-- 下属是部门 -->
         <el-form-item label="员工姓名：" prop="angentId" v-if="isManager">
           <el-select placeholder=""  v-model="req.agentid">
-            <el-option label="隶属人员" value=""></el-option>
+            <el-option label="所有员工" value=""></el-option>
             <el-option
             v-for="item in staffs"
             :label="item.staffName"
@@ -513,6 +513,7 @@
       if (typeof (this.$route.query.callStatu) === 'undefined') {
         this.req.status = '-1'
       } else {
+        this.req.agentid = localStorage.getItem('agentId')
         if (this.$route.query.callStatu === 1) {
           this.req.status = '1'
         } else {
@@ -520,7 +521,6 @@
         }
       }
       this.staffInfo.agentid = localStorage.getItem('agentId')
-      this.req.agentid = localStorage.getItem('agentId')
       this.req.pageNo = 1
     },
     methods: {

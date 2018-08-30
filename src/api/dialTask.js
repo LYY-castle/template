@@ -160,3 +160,13 @@ export function updateRecordInfo(recordId, taskStatus, nodules, noduledesc) {
     }
   })
 }
+
+export function getSummariesByAgentId(agentId) {
+  return request({
+    url: '/nodule/getNodulesByAgentId',
+    method: 'get',
+    params: {
+      agentId: agentId
+    }
+  })
+}

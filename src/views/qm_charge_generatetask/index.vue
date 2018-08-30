@@ -127,7 +127,7 @@
       </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;clearForm(getRecords);getRecords.getAll=1;recodeTable=[];pageShow=false;addTask.taskName=''">新建质检任务</el-button>
+        <el-button type="success" size="small" @click="addVisible=true;clearForm(getRecords);getRecords.getAll=1;recodeTable=[];pageShow=false;addTask.taskName=''">新建</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         <el-pagination
           background

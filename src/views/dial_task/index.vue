@@ -38,6 +38,38 @@
                     default-time="00:00:00">
                 </el-date-picker>
             </el-form-item><br/>
+            <el-form-item label="操作时间：">
+                <el-date-picker
+                    v-model="req.modifyTimeStart"
+                    type="datetime"
+                    placeholder="开始时间"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+                    default-time="00:00:00">
+                </el-date-picker>
+                到
+                <el-date-picker
+                    v-model="req.modifyTimeEnd"
+                    type="datetime"
+                    placeholder="结束时间"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+                    default-time="00:00:00">
+                </el-date-picker>
+            </el-form-item>
+             <el-form-item label="任务状态：">
+                <el-select v-model="req.status" placeholder="请选择">
+                  <el-option 
+                    v-for="item in taskStatusOptions"
+                    :key="item.value"
+                    :value="item.value"
+                    :label="item.label">
+
+                  </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="拨打次数：">
+                <el-input v-model="req.contactedNum" maxlength="4" min="0" type="number"></el-input>
+            </el-form-item>
+            <br/>
 
             <el-form-item label="客户姓名：">
                 <el-input v-model="req.customerName" placeholder="客户姓名（限长50字符）" maxlength="50"></el-input>
@@ -45,21 +77,33 @@
             <el-form-item label="客户电话：">
                 <el-input v-model="req.customerPhone" placeholder="客户电话（限长50字符）" maxlength="50"></el-input>
             </el-form-item>
+      
+            <el-form-item label="话后小结：">
+                <el-select v-model="req.summaryId">
+                  <el-option 
+                    v-for="item in summariesInfo"
+                    :key="item.id"
+                    :value="item.id"
+                    :label="item.name">
+
+                  </el-option>
+                </el-select>
+            </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)" icon="el-icon-search">筛选</el-button>
+                <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
                 <el-button type="danger" @click="clearForm(req)">重置</el-button>
             </el-form-item>
           </el-form>
       </el-row>
 
-      <template>
+      <!-- <template>
       <el-row>
           <el-tabs @tab-click="handleClick" v-model="activeName" type="card">
             <el-tab-pane name='firstDial' label='首拨名单'></el-tab-pane>
             <el-tab-pane name='orderDial' label='预约名单'></el-tab-pane>
           </el-tabs>
       </el-row>
-      </template>
+      </template> -->
 
       <el-row>
       <el-col>
@@ -108,6 +152,27 @@
           </el-table-column>
           <el-table-column
             align="center"
+            label="任务状态">
+            <template
+              slot-scope="scope">
+              <div>{{getTaskStatus(scope.row.status)}}</div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="拨打次数"
+            prop="contactedNum">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="话后小结">
+            <template
+              slot-scope="scope">
+              <div>{{getSummariesDetail(scope.row.summaries)}}</div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
             prop="distributeTime"
             label="分配时间"
             width="155">
@@ -131,17 +196,30 @@
           </el-table-column>
           <el-table-column
             align="center"
+            label="操作时间"
+            width="155">
+            <template slot-scope="scope">
+              <div>{{hasLastContactTime(scope.row.modifyTime)}}</div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="description"
+            label="描述">
+          </el-table-column>
+          <el-table-column
+            align="center"
             label="操作"
             width="100">
           <template slot-scope="scope">
-            <a href="#" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone)" size="small" type="text"><img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</a>
+            <a href="#" v-if="showStatus(scope.row.status)" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone)" size="small" type="text"><img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</a>
           </template>
           </el-table-column>
         </el-table>
       </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
-        <a href="#" @click="quickDialto();"><el-button type="primary">快速拨打勾选</el-button></a>
+        <a href="#" @click="quickDialto();"><el-button type="primary" size="small">快速拨打</el-button></a>
         <el-pagination
           v-if="pageShow"
           background
@@ -364,7 +442,7 @@
         <el-checkbox v-if="showAutoDial===true" checked="checked" v-model="autoDialNext">完成后显示下一个客户</el-checkbox>
         <el-checkbox v-if="showSendMessage === true && campaignType !== 'RECRUIT'" v-model="sendMessage" checked="checked">发送支付短信</el-checkbox>
         <a href="#" @click="generateRecord()"><el-button type="success" size="medium" >完成</el-button></a>
-        <el-button type="primary" size="medium" @click="returnList()">返回列表</el-button>
+        <el-button type="primary" size="small" @click="returnList()" >返回列表</el-button>
       </div>
     </el-row>
   </div>
@@ -397,8 +475,10 @@ import {
   checkDialTimes,
   queryOneTask,
   updateTaskStatus,
-  updateRecordInfo
+  updateRecordInfo,
+  getSummariesByAgentId
 } from '@/api/dialTask' // 接口
+var vm = null
 
 export default {
   name: 'dialTask',
@@ -406,6 +486,26 @@ export default {
   data() {
     return {
       addDays: '',
+      summariesInfo: [], // 小结下拉选择
+      taskStatusOptions: [{// 任务状态选项框
+        value: '',
+        label: '所有情况'
+      }, {
+        value: '0',
+        label: '首拨'
+      }, {
+        value: '1',
+        label: '预约'
+      }, {
+        value: '2',
+        label: '成功'
+      }, {
+        value: '3',
+        label: '失败'
+      }, {
+        value: '4',
+        label: '过期'
+      }],
       interval: null,
       canContact: 1,
       hideDialTo: false, // 判断超出拨打次数限制时是否将图标置灰
@@ -463,9 +563,13 @@ export default {
         distributeTimeEnd: '',
         appointTimeStart: '',
         appointTimeEnd: '',
+        modifyTimeStart: '',
+        modifyTimeEnd: '',
         customerName: '',
         customerPhone: '',
         contactStatus: '0',
+        contactedNum: '',
+        summaryId: '',
         status: '0',
         pageNo: 1,
         pageSize: 10
@@ -483,6 +587,46 @@ export default {
     }
   },
   methods: {
+    showStatus(obj) {
+      if (obj === '1' || obj === '0') {
+        return true
+      } else {
+        return false
+      }
+    },
+    getSummariesDetail(obj) {
+      let summaries = ''
+      if (obj !== null) {
+        for (let i = 0; i < obj.length; i++) {
+          summaries += obj[i].name + ','
+        }
+        if (summaries.length > 0) {
+          summaries = summaries.substring(0, summaries.length - 1)
+        }
+      }
+      return summaries
+    },
+    getTaskStatus(str) {
+      let status = '首拨'
+      switch (str) {
+        case '0':
+          status = '首拨'
+          break
+        case '1':
+          status = '预约'
+          break
+        case '2':
+          status = '成功'
+          break
+        case '3':
+          status = '失败'
+          break
+        case '4':
+          status = '过期'
+          break
+      }
+      return status
+    },
     // 点击拨打图标触发事件
     dialTo(taskId, campaignId, isBlacklist, customerPhone) {
       this.hideDialTo = true
@@ -621,6 +765,11 @@ export default {
               this.tableData = response.data.data
               this.pageInfo = response.data.pageInfo
               this.pageShow = true
+              if (!this.isDialTask) {
+                // console.log(response.data.data)
+                const data = response.data.data[0]
+                this.changeToCustomerDetail(data.taskId, data.campaignId, data.customerId, data.isBlacklist, data.customerPhone)
+              }
             } else {
               this.$message = '无查询结果，请核对查询条件'
               this.tableData = response.data.data
@@ -703,17 +852,22 @@ export default {
       this.req.distributeTimeEnd = ''
       this.req.appointTimeStart = ''
       this.req.appointTimeEnd = ''
+      this.req.modifyTimeStart = ''
+      this.req.modifyTimeEnd = ''
       this.req.customerName = ''
       this.req.customerPhone = ''
       this.req.pageNo = this.pageInfo.pageNo
       this.req.pageSize = this.pageInfo.pageSize
-      if (this.activeName === 'firstDial') {
-        this.req.contactStatus = '0'
-        this.req.status = '0'
-      } else {
-        this.req.contactStatus = ''
-        this.req.status = '1'
-      }
+      this.req.status = ''
+      this.req.contactedNum = ''
+      this.req.summaryId = ''
+      // if (this.activeName === 'firstDial') {
+      //   this.req.contactStatus = '0'
+      //   this.req.status = '0'
+      // } else {
+      //   this.req.contactStatus = ''
+      //   this.req.status = '1'
+      // }
     },
     // 时间戳转年月日时分秒
     formatDateTime: formatDateTime,
@@ -725,28 +879,30 @@ export default {
       this.isBlacklists.length = 0
       this.customerIds.length = 0
       for (var i = 0; i < val.length; i++) {
-        this.taskIds.push(val[i].taskId)
-        this.campaignIds.push(val[i].campaignId)
-        this.isBlacklists.push(val[i].isBlacklist)
-        this.customerIds.push(val[i].customerId)
+        if (val[i].status === '0' || val[i].status === '1') {
+          this.taskIds.push(val[i].taskId)
+          this.campaignIds.push(val[i].campaignId)
+          this.isBlacklists.push(val[i].isBlacklist)
+          this.customerIds.push(val[i].customerId)
+        }
       }
     },
     // tab点击时触发的事件
-    handleClick(tab, event) {
-      if (tab.name === 'firstDial') {
-        // 点击了首拨名单
-        this.req.contactStatus = 0
-        this.req.status = 0
-        this.req.pageNo = 1
-        this.searchByKeyWords(this.req)
-      } else {
-        // 点击了预约名单
-        this.req.contactStatus = ''
-        this.req.status = 1
-        this.req.pageNo = 1
-        this.searchByKeyWords(this.req)
-      }
-    },
+    // handleClick(tab, event) {
+    //   if (tab.name === 'firstDial') {
+    //     // 点击了首拨名单
+    //     this.req.contactStatus = 0
+    //     this.req.status = 0
+    //     this.req.pageNo = 1
+    //     this.searchByKeyWords(this.req)
+    //   } else {
+    //     // 点击了预约名单
+    //     this.req.contactStatus = ''
+    //     this.req.status = 1
+    //     this.req.pageNo = 1
+    //     this.searchByKeyWords(this.req)
+    //   }
+    // },
     // 跳转拨打页面
     changeToCustomerDetail(taskId, campaignId, customerId, isBlacklist, customerPhone) {
       this.customerPhone = customerPhone
@@ -796,7 +952,7 @@ export default {
     // 快速拨打勾选
     quickDialto() {
       if (this.taskIds.length === 0) {
-        this.$message.error('您还未选中任务，请先选择任务.')
+        this.$message.error('您还未选中任务，或选中的任务不包含首拨或预约')
       } else {
         // this.$message('跳转到拨打详情页')
         // console.log('linn:' + this.taskIds[0])
@@ -1174,9 +1330,20 @@ export default {
         // 点击拨打图标触发事件
         this.changeToCustomerDetail(taskId, campaignId, customerId, isBlacklist, customerPhone)
       }
+    },
+    handle(obj) {
+      for (let i = 0; i < obj.length; i++) {
+        if (obj[i].summaryDetailInfos === null) {
+          var nodeObj = {}
+          nodeObj.id = obj[i].id
+          nodeObj.name = obj[i].name
+          vm.summariesInfo.push(nodeObj)
+        } else {
+          vm.handle(obj[i].summaryDetailInfos)
+        }
+      }
     }
   },
-
   watch: {
     // 预约时间显示T+
     addDays: function(val, oldval) {
@@ -1190,8 +1357,19 @@ export default {
       }
     }
   },
+  created() {
+    if (this.$route.query.dialstatus) { // 说明是页面跳转过来的
+      if (typeof this.$route.query.isDialTask === 'undefined') { // 说明是跳查询页面
+        this.req.status = this.$route.query.dialstatus
+      } else { // 说明是跳拨打页面
+        this.isDialTask = this.$route.query.isDialTask
+        this.req.status = this.$route.query.dialstatus
+      }
+    }
+  },
   // 模板编译/挂载之后
   mounted() {
+    vm = this
     this.getParametersFromContactRecordDail()
     this.searchByKeyWords(this.req)
     getStaffNameById(localStorage.getItem('agentId'))
@@ -1203,6 +1381,20 @@ export default {
     this.interval = setInterval(() => {
       this.editDialToStatus()
     }, 2000)
+    getSummariesByAgentId(localStorage.getItem('agentId')).then(response => {
+      vm.summariesInfo = [] // 清空小结节点
+      if (response.data.code === 0) {
+        if (response.data.data.length > 0) {
+          vm.summariesInfo.push({ 'id': '', 'name': '' })
+          this.handle(response.data.data)
+        } else {
+          vm.summariesInfo.push({ 'id': '', 'name': '拉取小结失败' })
+        }
+      }
+    }).catch(error => {
+      console.log(error)
+      vm.summariesInfo.push({ 'id': '', 'name': '拉取小结失败' })
+    })
   },
   // 离开时清除定时器
   destroyed: function() {

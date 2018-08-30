@@ -309,12 +309,10 @@
         <h3 style="display:inline;">质检评分详情</h3>
       </div>
       <div>
-        <audio
-          autoplay="autoplay"
-          controls="controls"
-          preload="auto"
-          src="addScopeUrl">
-        </audio>
+            <audio 
+                  controls="controls"
+                  v-bind:src="addScopeUrl">
+          </audio>
       </div>
       <el-row>
         <el-table
@@ -550,6 +548,7 @@ export default {
   name: 'qmSearchquailitymark',
   data() {
     return {
+      addScopeUrl: '',
       recodingContent: '',
       recodeVisible: false,
       n: 0,
@@ -1065,13 +1064,14 @@ export default {
     },
     /** 获取通话记录 */
     getContactRecord(row) {
-      console.log(11)
-      console.log(row)
+      // console.log(11)
+      // console.log(row)
       queryrecordbytaskid({ 'taskId': row.contactTaskId, 'campaignId': row.campaignId }).then(response => {
         if (response.data.code === 0) {
           this.contactRecordData = response.data.data
           for (var i in this.contactRecordData) {
-            if (row.recordId === this.contactRecordData[i].recordId) { // 截取当前通话记录
+            if (row.contactRecordId === this.contactRecordData[i].recordId) { // 截取当前通话记录
+              console.log(this.contactRecordData[i].soundRecordUrl)
               this.addScopeUrl = this.contactRecordData[i].soundRecordUrl === null ? '' : this.contactRecordData[i].soundRecordUrl
               this.taskId = row.recordId
             }
@@ -1154,7 +1154,7 @@ export default {
     /** 获取评分表信息 */
     getMarks(row, type) {
       this.gradeInfo = []
-      console.log(row)
+      // console.log(row)
       getMarksByTaskId({ 'taskId': row.qualityTaskId }).then(response => {
         if (response.data.code === 0) {
           var data = response.data.data
@@ -1200,6 +1200,7 @@ export default {
       this.getMarks(row, 1)
     },
     cleanInfo() {
+      this.addScopeUrl = ''
       this.gradeInfo = []
       this.totalAmountMap = new Map()
       this.totalAmount = new Map()

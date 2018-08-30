@@ -185,10 +185,9 @@
     <el-dialog title="开始质检评分" :visible.sync="dialogFormVisible" width="80%" @close="cleanInfo()" append-to-body>
       <div >正在对：{{taskId}} 进行操作</div>
       <div >
-          <audio autoplay="autoplay"
-                 controls="controls"
-                  preload="auto"
-                  src="addScopeUrl">
+          <audio 
+                  controls="controls"
+                  v-bind:src="addScopeUrl">
           </audio>
       </div>
       <div class="demo-ruleForm">接触记录</div>
@@ -394,10 +393,9 @@
     <el-dialog title="修改质检评分" :visible.sync="dialogFormVisibleReverse" width="80%"  @close="cleanInfo()" append-to-body>
       <div>正在对：{{taskId}} 进行操作</div>
       <div >
-          <audio autoplay="autoplay"
-                 controls="controls"
-                  preload="auto"
-                  src="addScopeUrl">
+          <audio 
+                  controls="controls"
+                  v-bind:src="addScopeUrl">
           </audio>
       </div>
       <div >接触记录</div>
@@ -849,6 +847,7 @@
         this.getMarks(row, 1)
       },
       cleanInfo() {
+        this.addScopeUrl = ''
         this.gradeInfo = []
         this.totalAmountMap = new Map()
         this.totalAmount = new Map()
@@ -858,6 +857,7 @@
       /** 获取通话记录 */
       getContactRecord(row) {
         queryrecordbytaskid({ 'taskId': row.contactTaskId, 'campaignId': row.activityId }).then(response => {
+          console.log(response)
           if (response.data.code === 0) {
             this.contactRecordData = response.data.data
             for (var i in this.contactRecordData) {
