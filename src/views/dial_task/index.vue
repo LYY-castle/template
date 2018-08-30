@@ -718,6 +718,7 @@ export default {
         cti.makecall(localStorage.getItem('DN'), customerPhone)
         setTimeout(() => {
           this.getRecordId(taskId, campaignId)
+          localStorage.removeItem('global_taskId')
         }, 3000)
       } else {
         this.$message.error('请重新登录话机！')
@@ -1399,6 +1400,7 @@ export default {
   // 离开时清除定时器
   destroyed: function() {
     clearInterval(this.interval)
+    localStorage.removeItem('global_taskId')
   }
 }
 </script>
