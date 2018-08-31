@@ -8,8 +8,8 @@
         <el-form-item prop="batchName" label="批次名称：">
           <el-input v-model="req.batchName" placeholder="批次名称（限长100字符）" maxlength="100"></el-input>
         </el-form-item>
-        <el-form-item prop="validityStatus" label="有效性：">
-          <el-select v-model="req.validityStatus" placeholder="有效性" style="width: 100%;">
+        <el-form-item prop="validityStatus" label="状态：">
+          <el-select v-model="req.validityStatus" placeholder="状态" style="width: 100%;">
           <el-option
               v-for="item in validity"
               :key="item.val"
@@ -18,14 +18,14 @@
           </el-option>
         </el-select>
         </el-form-item>
-       <el-form-item prop="modifierName" label="操作人员：">
-          <el-input v-model="req.modifierName" placeholder="操作人员（限长50字符）" maxlength="50"></el-input>
+       <el-form-item prop="modifierName" label="操作人：">
+          <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：" prop="startCreateTime">
           <el-date-picker
               v-model="req.startCreateTime"
               type="datetime"
-              placeholder="开始日期"
+              placeholder="开始时间"
               value-format="yyyy-MM-dd HH:mm:ss"
               default-time="00:00:00">
           </el-date-picker>
@@ -35,13 +35,13 @@
           <el-date-picker
               v-model="req.endCreateTime"
               type="datetime"
-              placeholder="结束日期"
+              placeholder="结束时间"
               value-format="yyyy-MM-dd HH:mm:ss"
               default-time="00:00:00">
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;req2=clone(req);getBatch(req);" icon="el-icon-search">查询</el-button>
+          <el-button type="primary" @click="req.pageNo=1;req2=clone(req);getBatch(req);">查询</el-button>
           <el-button type="danger" @click="clearForm();req2=clone(req);">重置</el-button>
         </el-form-item>
       </el-form>
@@ -70,33 +70,25 @@
           <el-table-column
             align="center"
             prop="batchId"
-            width="150"
-            label="批次号">
+            label="批次号"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
             prop="batchName"
-            label="批次名称">
+            label="批次名称"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.batchName }}</p>
-                <div slot="reference">
-                  {{ scope.row.batchName }}
-                </div>
-              </el-popover>
+              {{ scope.row.batchName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="ascriptionName"
-            label="客户归属">
+            label="客户归属"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.ascriptionName }}</p>
-                <div slot="reference">
-                  {{ scope.row.ascriptionName }}
-                </div>
-              </el-popover>
+              {{ scope.row.ascriptionName }}
             </template>
           </el-table-column>
           <el-table-column
@@ -132,14 +124,10 @@
           <el-table-column
             align="center"
             prop="creatorName"
-            label="操作人">
+            label="操作人"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.creatorName }}</p>
-                <div slot="reference">
-                  {{ scope.row.creatorName }}
-                </div>
-              </el-popover>
+              {{ scope.row.creatorName }}
             </template>
           </el-table-column>
           <el-table-column
@@ -161,7 +149,7 @@
       </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;batchSnapshot=[];fileList=[];resetForm('addBatch');clearUpload('upload');">添加</el-button>
+        <el-button type="success" size="small" @click="addVisible=true;batchSnapshot=[];fileList=[];resetForm('addBatch');clearUpload('upload');">新建</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         <el-button type="primary" size="small" @click="getTemp()">下载模板</el-button>
         <el-button type="primary" size="small" @click="uploadVisible=true;changeUpload(1);clearUpload('upload');">上传模板</el-button>
@@ -206,7 +194,7 @@
             <el-radio label='1' border>不可用</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="操作人员" prop="modifierName">
+        <el-form-item label="操作人" prop="modifierName">
           <span>{{batchDetail.modifierName}}</span>
         </el-form-item>
         <el-form-item label="操作时间" prop="modifierTime">
@@ -226,9 +214,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button type="danger" @click="getDetailById(delReq.batchId)">重 置</el-button>
-        <el-button @click="editVisible = false;">取 消</el-button>
-        <el-button type="primary" @click="submitForm('editBatch');editBatch(batchDetail);">确 定</el-button>
+        <el-button size="small" type="danger" @click="getDetailById(delReq.batchId)">重 置</el-button>
+        <el-button size="small" @click="editVisible = false;">取 消</el-button>
+        <el-button size="small" type="primary" @click="submitForm('editBatch');editBatch(batchDetail);">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -255,7 +243,7 @@
         :before-upload="beforeUpload"
         :auto-upload="false">
         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload()">上传到服务器</el-button>
+        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload()">上传</el-button>
         <div slot="tip" class="el-upload__tip">上传文件只能是 xls、xlsx格式，大小不能超过10MB</div>
       </el-upload>
     </el-dialog>
@@ -266,8 +254,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除此内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="delVisible = false">取 消</el-button>
-        <el-button type="primary" @click="delVisible = false;delBatch(delReq);">确 定</el-button>
+        <el-button size="small" @click="delVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="delVisible = false;delBatch(delReq);">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -288,14 +276,14 @@
       append-to-body>
       <div slot="title" style="text-align: center;">
         <el-button @click="addVisible = false;" style="float:left;" icon="el-icon-arrow-left">返 回</el-button>
-        <h3 style="display:inline;">添加批次</h3>
+        <h3 style="display:inline;">新建批次</h3>
       </div>
       <el-row>
         <el-form :inline="true" size="small" :model="addReq" ref="addBatch" :rules="rule">
-          <el-form-item prop="batchName">
+          <el-form-item prop="batchName" label="批次名称:">
             <el-input v-model="addReq.batchName" placeholder="批次名称（限长100字符）" maxlength="100"></el-input>
           </el-form-item>
-           <el-form-item prop="ascriptionId">
+           <el-form-item prop="ascriptionId" label="客户归属:">
             <el-select v-model="addReq.ascriptionId" placeholder="客户归属" style="width: 100%;">
               <el-option
                   v-for="item in ascrislistData"
@@ -305,7 +293,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item prop="validityTime">
+          <el-form-item prop="validityTime" label="有效时间:">
             <el-date-picker
                 v-model="addReq.validityTime"
                 type="datetime"
@@ -314,11 +302,11 @@
                 default-time="00:00:00">
             </el-date-picker>
           </el-form-item>
-           <el-form-item prop="description">
+           <el-form-item prop="description" label="备注:">
             <el-input v-model="addReq.description" placeholder="备注（限长200字符）" maxlength="200"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="uploadVisible=true;changeUpload(2);" icon="el-icon-upload2">上传导入文件</el-button>
+            <el-button type="primary" @click="uploadVisible=true;changeUpload(2);">上传文件</el-button>
           </el-form-item>
         </el-form>
       </el-row>
@@ -374,8 +362,8 @@
         </el-table>
       </el-row>
       <div slot="footer" style="text-align: right;">
-        <el-button type="success" @click="submitForm('addBatch');addBatchList(addReq);">确认导入</el-button>
-        <el-button type="danger" @click="addVisible = false;">取 消</el-button>
+        <el-button size="small" type="success" @click="submitForm('addBatch');addBatchList(addReq);">确认导入</el-button>
+        <el-button size="small" type="danger" @click="addVisible = false;">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -404,7 +392,7 @@ export default {
       detailVisible: false,
       delVisible: false, // 删除对话框显示隐藏
       editVisible: false, // 修改对话框显示隐藏
-      addVisible: false, // 添加对话框显示隐藏
+      addVisible: false, // 新建对话框显示隐藏
       batchDelVisible: false, // 批量删除对话框显示隐藏
       uploadVisible: false, // 上传模版
       tableData: [], // 表格数据

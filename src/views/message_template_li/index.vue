@@ -2,16 +2,16 @@
   <div class="container" >
       <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item prop="name">
+        <el-form-item prop="name" label="模板名称:">
           <el-input v-model="req.name" placeholder="模板名称"></el-input>
         </el-form-item>
-        <el-form-item>
-          <el-select v-model="req.groupId" placeholder="模板组">
+        <el-form-item label="归属模板组:">
+          <el-select v-model="req.groupId" placeholder="归属模板组">
             <el-option label="全部" value=""></el-option>
             <el-option v-for="item in messageOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item  prop="modifier">
+        <el-form-item  prop="modifier" label="操作人:">
           <el-input v-model="req.modifier" placeholder="操作人"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
@@ -25,7 +25,7 @@
             </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;paginationReq=cloneData(req);findTemplateList(req);" icon="el-icon-search">查询</el-button>
+          <el-button type="primary" @click="req.pageNo=1;paginationReq=cloneData(req);findTemplateList(req);">查询</el-button>
           <el-button type="danger" @click="reset();">重置</el-button>
         </el-form-item>
       </el-form>
@@ -58,23 +58,25 @@
           </el-table-column> -->
           <el-table-column
             align="center"
-            label="模板名称">
+            label="模板名称"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-             <el-button type="text" size="small" @click="detailVisible=true;delReq.id=scope.row.id;getTemplateById(scope.row.id);">{{scope.row.name}}</el-button> 
+              <a @click="detailVisible=true;delReq.id=scope.row.id;getTemplateById(scope.row.id);">{{scope.row.name}}</a>
             </template>
           </el-table-column>
           <el-table-column
             align="center"
-            label="归属模板组">
+            label="归属模板组"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-                <div>{{formatData(scope.row.groupId)}}</div>
+                {{formatData(scope.row.groupId)}}
             </template>
           </el-table-column>
           <el-table-column
             align="left"
             label="模板内容"
             prop="content"
-            :show-overflow-tooltip='true'>
+            :show-overflow-tooltip="true">
           </el-table-column>
           <!-- <el-table-column
             align="center"
@@ -84,31 +86,34 @@
           <el-table-column
             align="center"
             label="操作人"
-            prop="modifier">
+            prop="modifier"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
             label="操作时间"
             prop="id"
-            width="190">
+            width="155"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-                <div>{{formatDateTime(scope.row.modifyTime)}}</div>
+                {{formatDateTime(scope.row.modifyTime)}}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             label="操作"
-            width="100px">
+            width="100"
+            :show-overflow-tooltip="true">
           <template slot-scope="scope">
             <el-button @click="editVisible=true;delReq.id=scope.row.id;getTemplateById(scope.row.id);" type="text" size="small">修改</el-button>
             <el-button @click="delVisible=true;delReq.id=scope.row.templateid" type="text" size="small">删除</el-button>
           </template>
           </el-table-column>
         </el-table>
-      </el-col> 
+      </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;resetAdd(addMessageTemplateDetail);">新建短信模板</el-button>
+        <el-button type="success" size="small" @click="addVisible=true;resetAdd(addMessageTemplateDetail);">新建</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         <el-pagination
           v-if="pageShow"
@@ -265,7 +270,7 @@ export default {
       editVisible: false, // 修改对话框显示隐藏
       batchDelVisible: false, // 批量删除对话框显示隐藏
       validate: true, // 验证不通过阻止发请求
-      addVisible: false, // 添加对话框显示隐藏
+      addVisible: false, // 新建对话框显示隐藏
       pageShow: false, // 分页显示隐藏
       timeValue: '', // 操作时间
       messageMap: {}, // 存所有的模板
@@ -402,7 +407,7 @@ export default {
         console.error(error)
       })
     },
-    // 新增
+    // 新建
     addTemplate(obj) {
       if (!this.validate) {
         return

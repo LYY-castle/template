@@ -13,12 +13,12 @@
         >
           <el-menu-item index="0" @click="dialogFormVisible = true">
             <i class="el-icon-plus"></i>
-            <span slot="title">新增顶级目录</span>
+            <span slot="title">新建顶级目录</span>
           </el-menu-item>
           <sidebar-item1 :routes="parentArr"></sidebar-item1>
         </el-menu>
       </el-scrollbar>
-      <el-dialog title="新增目录" :visible.sync="dialogFormVisible" append-to-body>
+      <el-dialog title="新建目录" :visible.sync="dialogFormVisible" append-to-body>
         <el-form :model="form">
           <el-form-item label="目录名称" label-width="120px">
             <el-input v-model="form.name" auto-complete="off"></el-input>

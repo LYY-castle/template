@@ -2,7 +2,7 @@
   <div class="container">
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item label="活动名称:">
+        <el-form-item label="质检任务名称:">
           <el-select v-model="req.campaignId" :placeholder="campData.length==0?'无活动':'请选择活动'" @change="submitAssign.data = ''.split('');resetForm('assignForm');req.pageNo=1;req.pageSize=10;queryMainQualityList(req);countTaskAssignInfo(req)">
             <el-option
                 v-for="item in campData"
@@ -38,19 +38,16 @@
           <el-table-column
             align="center"
             prop="qualityId"
-            label="质检任务编号">
+            label="质检任务编号"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
             prop="qualityName"
-            label="质检任务名称">
+            label="质检任务名称"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.qualityName }}</p>
-                <div slot="reference">
-                  {{ scope.row.qualityName }}
-                </div>
-              </el-popover>
+              {{ scope.row.qualityName }}
             </template>
           </el-table-column>
           <el-table-column
@@ -66,14 +63,10 @@
           <el-table-column
             align="center"
             prop="modifierName"
-            label="操作人">
+            label="操作人"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.modifierName }}</p>
-                <div slot="reference">
-                  {{ scope.row.modifierName }}
-                </div>
-              </el-popover>
+              {{ scope.row.modifierName }}
             </template>
           </el-table-column>
           <el-table-column
@@ -132,14 +125,10 @@
           <el-table-column
             align="center"
             prop="departName"
-            label="分配对象">
+            label="分配对象"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.departName }}</p>
-                <div slot="reference">
-                  {{ scope.row.departName }}
-                </div>
-              </el-popover>
+              {{ scope.row.departName }}
             </template>
           </el-table-column>
           <el-table-column
@@ -179,14 +168,10 @@
           <el-table-column
             align="center"
             prop="staffName"
-            label="分配对象">
+            label="分配对象"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.staffName }}</p>
-                <div slot="reference">
-                  {{ scope.row.staffName }}
-                </div>
-              </el-popover>
+              {{ scope.row.staffName }}
             </template>
           </el-table-column>
           <el-table-column

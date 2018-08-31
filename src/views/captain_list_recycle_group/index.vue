@@ -10,7 +10,7 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="confirm(formInline)">确认回收</el-button>
+            <el-button type="primary" :loading="loading" @click="confirm(formInline)">确认回收</el-button>
           </el-form-item>
         </el-form>
         <el-table
@@ -19,7 +19,6 @@
           ref="multipleTable"
           tooltip-effect="dark"
           border
-          style="width: 94%;"
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
@@ -39,19 +38,16 @@
           <el-table-column
             align="center"
             prop="listId"
+            :show-overflow-tooltip="true"
             label="名单编号">
           </el-table-column>
           <el-table-column
             align="center"
             prop="listName"
-            label="名单名称">
+            label="名单名称"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.listName }}</p>
-                <div slot="reference">
-                  {{ scope.row.listName }}
-                </div>
-              </el-popover>
+              {{ scope.row.listName }}
             </template>
           </el-table-column>
           <el-table-column
@@ -67,21 +63,17 @@
           <el-table-column
             align="center"
             prop="modifierName"
-            label="操作人">
+            label="操作人"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.modifierName }}</p>
-                <div slot="reference">
-                  {{ scope.row.modifierName }}
-                </div>
-              </el-popover>
+              {{ scope.row.modifierName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="modifierTime"
             label="操作时间"
-            width="150">
+            width="155">
           </el-table-column>
         </el-table>
         <el-row style="margin-top:1%;">
@@ -104,7 +96,7 @@
           ref="multipleTable"
           tooltip-effect="dark"
           border
-          style="width: 94%;margin-top:2%;"
+          style="margin-top:2%;"
           @selection-change="handleSelectionChange2"
           v-show="type===0">
           <el-table-column
@@ -115,14 +107,10 @@
           <el-table-column
             align="center"
             prop="departName"
-            label="回收对象">
+            label="回收对象"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.departName }}</p>
-                <div slot="reference">
-                  {{ scope.row.departName }}
-                </div>
-              </el-popover>
+              {{ scope.row.departName }}
             </template>
           </el-table-column>
           <el-table-column
@@ -154,7 +142,7 @@
           ref="multipleTable"
           tooltip-effect="dark"
           border
-          style="width: 94%;margin-top:2%;"
+          style="margin-top:2%;"
           @selection-change="handleSelectionChange2"
           v-show="type===1">
           <el-table-column
@@ -165,14 +153,10 @@
           <el-table-column
             align="center"
             prop="departName"
-            label="回收对象">
+            label="回收对象"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.departName }}</p>
-                <div slot="reference">
-                  {{ scope.row.departName }}
-                </div>
-              </el-popover>
+              {{ scope.row.departName }}
             </template>
           </el-table-column>
           <el-table-column
@@ -219,6 +203,7 @@
     name: 'captain_list_recycle_group',
     data() {
       return {
+        loading: false,
         type: '',
         totalNum: 0,
         multipleSelection2: [],
@@ -405,6 +390,7 @@
           data: data,
           type: String(this.type)
         }).then(response => {
+          this.loading = false
           if (response.data.code === 0) {
             this.selectActive(this.formInline.campaignId)
           } else {
@@ -439,6 +425,7 @@
             }
           })
           if (boolArr.indexOf(false) === -1) {
+            this.loading = true
             this.valiNum()
           } else {
             Message({

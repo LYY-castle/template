@@ -28,8 +28,8 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;findCampaignByConditions(req);req2=clone(req)" icon="el-icon-search">查询</el-button>
-          <el-button type="danger" @click="timeValue=[],resetReq('searchForm');">重置</el-button>
+          <el-button size="small" type="primary" @click="req.pageNo=1;findCampaignByConditions(req);req2=clone(req)">查询</el-button>
+          <el-button size="small" type="danger" @click="timeValue=[],resetReq('searchForm');">重置</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -42,12 +42,12 @@
           <el-table-column
             align="center"
             type="selection"
-            width="55">
+            width="50">
           </el-table-column>
           <el-table-column
             align="center"
             label="序号"
-            width="55">
+            width="50">
             <template
               slot-scope="scope">
               <div>{{scope.$index+(req2.pageNo-1)*req2.pageSize+1}}</div>
@@ -56,30 +56,26 @@
           <el-table-column
             align="center"
             label="活动编号"
-             width="105">
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="detailVisible=true;getDeptByCampaignId(scope.row.campaignId);getMarksByCampaignId(scope.row.campaignId);getCampaignById(scope.row.campaignId);">{{scope.row.campaignId}}</el-button>
+              <a @click="detailVisible=true;getDeptByCampaignId(scope.row.campaignId);getMarksByCampaignId(scope.row.campaignId);getCampaignById(scope.row.campaignId);">{{scope.row.campaignId}}</a>
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="campaignName"
-            label="活动名称">
+            label="活动名称"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.campaignName }}</p>
-                <div slot="reference">
-                  {{ scope.row.campaignName }}
-                </div>
-              </el-popover>
+              {{ scope.row.campaignName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
-            width="95"
-            label="名单有效期">
+            label="有效期"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <div>{{scope.row.listExpiryDate+'天'}}</div>
+              {{scope.row.listExpiryDate+'天'}}
             </template>
           </el-table-column>
           <el-table-column
@@ -93,43 +89,42 @@
           <el-table-column
             align="center"
             prop="products"
-            label="产品">
+            label="产品"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-             <span>{{(getProductName(scope.row.products)).join(",")}}</span>
+             {{(getProductName(scope.row.products)).join(",")}}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="summaryId"
-            label="小结">
+            label="小结"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-             <span>{{getSummaryName(scope.row.summaryId)}}</span>
+             {{getSummaryName(scope.row.summaryId)}}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="departId"
-            label="活动部门">
+            label="活动部门"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-             <span>{{getDepartName(scope.row.departId)}}</span>
+             {{getDepartName(scope.row.departId)}}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="modifierName"
-            label="操作人">
+            label="操作人"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.modifierName }}</p>
-                <div slot="reference">
-                  {{ scope.row.modifierName }}
-                </div>
-              </el-popover>
+              {{ scope.row.modifierName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
-            label="有效性">
+            label="状态">
             <template slot-scope="scope">
               <div>{{(scope.row.status == 0) ? '有效':'无效'}}</div>
             </template>
@@ -137,28 +132,26 @@
           <el-table-column
             align="center"
             prop="modifyTime"
-            width="155"
-            label="操作时间">
+            label="操作时间"
+            width="155">
           </el-table-column>
           <el-table-column
             align="center"
             label="操作"
-            width="200">1
+            width="300">
           <template slot-scope="scope">
             <el-button @click="editVisible=true;delReq.campaignId=scope.row.campaignId;getDeptByCampaignId(scope.row.campaignId);getMarksByCampaignId(scope.row.campaignId);getCampaignById(scope.row.campaignId);" type="text" size="small">修改</el-button>
             <el-button @click="delVisible=true;delReq.campaignId=scope.row.campaignId" type="text" size="small">删除</el-button>
             <el-button @click="changeVisible=true;delReq.campaignId=scope.row.campaignId;delReq.status=scope.row.status" type="text" size="small">{{scope.row.status==='0'?'禁用':'启用'}}</el-button>
-            <div>
-            <el-button @click="campaignName=scope.row.campaignName;nameListExclude.campaignId=scope.row.campaignId;nameLists.campaignId=scope.row.campaignId;addList=true;nameLists.pageSize=10;nameListExclude.pageSize=10;nameListExclude.pageNo = 1;nameLists.pageNo = 1;getNameLists(nameLists);getNameListExclude(nameListExclude)" type="text" size="small">添加名单</el-button>
+            <el-button @click="campaignName=scope.row.campaignName;nameListExclude.campaignId=scope.row.campaignId;nameLists.campaignId=scope.row.campaignId;addList=true;nameLists.pageSize=10;nameListExclude.pageSize=10;nameListExclude.pageNo = 1;nameLists.pageNo = 1;getNameLists(nameLists);getNameListExclude(nameListExclude)" type="text" size="small">新建名单</el-button>
             <el-button @click="campaignName=scope.row.campaignName;nameLists.campaignId=scope.row.campaignId;removeVisible=true;nameLists.pageNo = 1;getNameLists(nameLists)" type="text" size="small">移除名单</el-button>
-            </div>
           </template>
           </el-table-column>
         </el-table>
       </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;clearForm(campaignDetail,'campaignDetail')">添加</el-button>
+        <el-button type="success" size="small" @click="addVisible=true;clearForm(campaignDetail,'campaignDetail')">新建</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         <el-pagination
           background
@@ -246,9 +239,9 @@
       </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button type="danger" @click="getCampaignById(delReq.campaignId)">重 置</el-button>
-        <el-button @click="editVisible = false;">取 消</el-button>
-        <el-button type="primary" @click="submitForm('editCampaign');editCampaign(campaignDetail)">确 定</el-button>
+        <el-button size="small" type="danger" @click="getCampaignById(delReq.campaignId)">重 置</el-button>
+        <el-button size="small" @click="editVisible = false;">取 消</el-button>
+        <el-button size="small" type="primary" @click="submitForm('editCampaign');editCampaign(campaignDetail)">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -295,13 +288,13 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button @click="detailVisible = false">返 回</el-button>
+        <el-button size='small' @click="detailVisible = false">返 回</el-button>
       </div>
     </el-dialog>
     <el-dialog
       align:left
       width="30%"
-      title="添加活动"
+      title="新建活动"
       :visible.sync="addVisible"
       append-to-body>
       <el-form :rules="rule" :model="campaignDetail" ref="campaignDetail" label-width="100px">
@@ -365,9 +358,9 @@
       </el-form-item>
       </el-form>
         <div slot="footer" style="text-align: right;">
-          <el-button type="danger" @click="resetForm('campaignDetail');">重 置</el-button>
-          <el-button @click="addVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitForm('campaignDetail');addCampaign(campaignDetail);">确 定</el-button>
+          <el-button size="small" type="danger" @click="resetForm('campaignDetail');">重 置</el-button>
+          <el-button size="small" @click="addVisible = false">取 消</el-button>
+          <el-button size="small" type="primary" @click="submitForm('campaignDetail');addCampaign(campaignDetail);">确 定</el-button>
         </div>
     </el-dialog>
     <el-dialog
@@ -377,8 +370,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除此内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="delVisible = false">取 消</el-button>
-        <el-button type="primary" @click="delVisible = false;delCampaign(delReq);">确 定</el-button>
+        <el-button size="small" @click="delVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="delVisible = false;delCampaign(delReq);">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -388,8 +381,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除选定内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="batchDelVisible = false">取 消</el-button>
-        <el-button type="primary" @click="batchDelVisible = false;batchDelCampaigns(batchDelReq);">确 定</el-button>
+        <el-button size="small" @click="batchDelVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="batchDelVisible = false;batchDelCampaigns(batchDelReq);">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -398,8 +391,8 @@
       append-to-body>
       <span style="font-size:20px;">确定切换活动状态吗？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="changeVisible = false">取 消</el-button>
-        <el-button type="primary" @click="changeVisible = false;changeStatus(delReq);">确 定</el-button>
+        <el-button size="small" @click="changeVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="changeVisible = false;changeStatus(delReq);">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -423,7 +416,7 @@
             <el-date-picker
                 v-model="nameListExclude.startCreateTime"
                 type="datetime"
-                placeholder="开始日期"
+                placeholder="开始时间"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 default-time="00:00:00">
             </el-date-picker>
@@ -431,13 +424,13 @@
             <el-date-picker
                 v-model="nameListExclude.endCreateTime"
                 type="datetime"
-                placeholder="结束日期"
+                placeholder="结束时间"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 default-time="00:00:00">
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="nameListExclude.pageNo=1;nameLists.pageNo=1;getNameLists(nameLists);getNameListExclude(nameListExclude)" icon="el-icon-search">查询</el-button>
+            <el-button type="primary" @click="nameListExclude.pageNo=1;nameLists.pageNo=1;getNameLists(nameLists);getNameListExclude(nameListExclude)">查询</el-button>
           </el-form-item>
         </el-form>
       </el-row>
@@ -568,8 +561,8 @@
         </el-pagination>
       </el-row>
       <div slot="footer" style="text-align: right;">
-        <el-button type="success" @click="addCampaignAndList(addNameList);">添 加</el-button>
-        <el-button type="danger" @click="addList = false;">取 消</el-button>
+        <el-button size="small" type="success" @click="addCampaignAndList(addNameList);">添 加</el-button>
+        <el-button size="small" type="danger" @click="addList = false;">取 消</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -579,8 +572,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除此内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="delVisible = false">取 消</el-button>
-        <el-button type="primary" @click="delVisible = false;delCampaign(delReq);">确 定</el-button>
+        <el-button size="small" @click="delVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="delVisible = false;delCampaign(delReq);">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -590,8 +583,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除选定内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="batchDelVisible = false">取 消</el-button>
-        <el-button type="primary" @click="batchDelVisible = false;batchDelCampaigns(batchDelReq);">确 定</el-button>
+        <el-button size="small" @click="batchDelVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="batchDelVisible = false;batchDelCampaigns(batchDelReq);">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -676,8 +669,8 @@
         </el-table>
       </el-row>
       <div slot="footer" style="text-align: right;">
-        <el-button type="success" @click="batchListVisible=true;">批量移除名单</el-button>
-        <el-button type="danger" @click="removeVisible = false;">取 消</el-button>
+        <el-button size="small" type="success" @click="batchListVisible=true;">批量移除</el-button>
+        <el-button size="small" type="danger" @click="removeVisible = false;">取 消</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -790,7 +783,7 @@ export default {
       detailVisible: false,
       delVisible: false, // 删除对话框显示隐藏
       editVisible: false, // 修改对话框显示隐藏
-      addVisible: false, // 添加对话框显示隐藏
+      addVisible: false, // 新建对话框显示隐藏
       batchDelVisible: false, // 批量删除对话框显示隐藏
       changeVisible: false, // 切换个状态对话框显示隐藏
       addList: false,
@@ -855,7 +848,7 @@ export default {
       }, // 活动详情
       // 分页数据
       pageInfo: {},
-      // 添加名单
+      // 新建名单
       nameLists: {
         campaignId: '',
         pageSize: 10,
@@ -1169,7 +1162,7 @@ export default {
         }
       })
     },
-    // 添加活动
+    // 新建活动
     addCampaign(campaignDetail) {
       if (!this.validate) {
         return false
@@ -1184,7 +1177,7 @@ export default {
           this.$message(response.data.message)
         }
       }).catch(error => {
-        this.$message('添加失败')
+        this.$message('新建失败')
         console.log(error)
       })
     },
@@ -1258,7 +1251,7 @@ export default {
         this.$message('操作失败')
       })
     },
-    // 添加名单
+    // 新建名单
     // 查询已选名单列表
     getNameLists(campaignId) {
       showNameListsById(campaignId).then(response => {
@@ -1307,7 +1300,7 @@ export default {
         this.$message('操作失败')
       })
     },
-    // 提交添加名单
+    // 提交新建名单
     addCampaignAndList(addNameList) {
       addNameList.campaignId = this.nameLists.campaignId
       assignCampaignAndList(addNameList).then(response => {
@@ -1337,7 +1330,7 @@ export default {
       this.findCampaignByConditions(this.req2)
     },
     // 可选名单---------------------------------
-    // 添加名单分页
+    // 新建名单分页
     nameListExcludeChange(val) {
       this.nameListExclude.pageNo = val
       this.getNameListExclude(this.nameListExclude)

@@ -127,28 +127,26 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="客户姓名">
+            label="客户姓名"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{scope.row.customerName}}</p>
-                <div slot="reference">
-                  {{scope.row.customerName}}
-                </div>
-              </el-popover>
+              {{scope.row.customerName}}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
-            label="客户电话">
+            label="客户电话"
+            :show-overflow-tooltip="true">
             <template
               slot-scope="scope">
-              <div>{{hideMobile(scope.row.customerPhone)}}</div>
+              {{hideMobile(scope.row.customerPhone)}}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             label="地区"
-            prop="customerAddress">
+            prop="customerAddress"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
@@ -219,7 +217,11 @@
       </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
-        <a href="#" @click="quickDialto();"><el-button type="primary" size="small">快速拨打</el-button></a>
+      <el-form :inline="true" size="small">
+        <el-form-item>
+          <el-button type="primary" @click="quickDialto();">快速拨打</el-button>
+        </el-form-item>
+      </el-form>
         <el-pagination
           v-if="pageShow"
           background
@@ -535,7 +537,7 @@ export default {
       hasProductInfo: false, // 是否有产品的标志
       productInfo: [], // 需要展示的产品的id
       selectedProduct: {}, // 选中的需要生成的产品信息
-      productDetailId: '', // 添加/生成产品详细id
+      productDetailId: '', // 新建/生成产品详细id
       insurancePay_car: '3500', // 车险费用
       insurancePay_child: '80', // 儿童险费用
       insurancePay_ill: '2800', // 重疾险费用
@@ -1067,7 +1069,7 @@ export default {
         // 生成完整接触记录及小结
         // 判断任务状态radio  2：成功 3：失败  1：预约
         if (this.radio === '2' && this.campaignType !== 'RECRUIT') {
-          // 说明任务状态为成功 判断是否需要添加产品、生成订单
+          // 说明任务状态为成功 判断是否需要新建产品、生成订单
           if (this.activeTab !== '0') {
           // 选择了产品
             switch (this.activeTab) {
@@ -1081,7 +1083,7 @@ export default {
                 this.selectedProduct.insuredPhone = this.customerInfo.mobile
                 this.selectedProduct.insuredSex = getIDCardInfo(this.idNumber).get('sex')
                 this.selectedProduct.productId = 'P20180101000002'
-                // 添加产品
+                // 新建产品
                 addNewProduct(this.selectedProduct)
                   .then(response => {
                     if (response.data.code === 0) {
@@ -1134,7 +1136,7 @@ export default {
                 this.selectedProduct.insuredPhone = this.customerInfo.mobile
                 this.selectedProduct.insuredSex = getIDCardInfo(this.idNumber).get('sex')
                 this.selectedProduct.productId = 'P20180101000003'
-                // 添加产品
+                // 新建产品
                 addNewProduct(this.selectedProduct)
                   .then(response => {
                     if (response.data.code === 0) {
@@ -1172,7 +1174,7 @@ export default {
                           }
                         })
                     } else {
-                      // 添加产品出错
+                      // 新建产品出错
                       this.$message.error('出错啦...请稍后重试！')
                       return
                     }
@@ -1189,7 +1191,7 @@ export default {
                 this.selectedProduct.insuredPhone = this.customerInfo.mobile
                 this.selectedProduct.insuredSex = getIDCardInfo(this.idNumber).get('sex')
                 this.selectedProduct.productId = 'P20180101000004'
-                // 添加产品
+                // 新建产品
                 addNewProduct(this.selectedProduct)
                   .then(response => {
                     if (response.data.code === 0) {
@@ -1227,7 +1229,7 @@ export default {
                           }
                         })
                     } else {
-                      // 添加产品出错
+                      // 新建产品出错
                       this.$message.error('出错啦...请稍后重试！')
                       return
                     }

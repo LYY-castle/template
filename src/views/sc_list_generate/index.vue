@@ -29,8 +29,8 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="req2=clone(req);req.pageNo=1;searchNamelist(req)" icon="el-icon-search">查询</el-button>
-          <el-button type="danger" @click="clearForm(req);req2=clone(req);">重置</el-button>
+          <el-button type="primary" @click="req2=clone(req);req.pageNo=1;searchNamelist(req)">查询</el-button>
+          <el-button size="small" type="danger" @click="clearForm(req);req2=clone(req);">重置</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -57,45 +57,34 @@
           <el-table-column
             align="center"
             prop="listId"
-            label="名单编号">
+            label="名单编号"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.listId }}</p>
-                <div slot="reference">
-                  {{ scope.row.listId }}
-                </div>
-              </el-popover>
+              {{ scope.row.listId }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="listName"
-            label="名单名称">
+            label="名单名称"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.listName }}</p>
-                <div slot="reference">
                   {{ scope.row.listName }}
-                </div>
-              </el-popover>
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="listnameNumber"
+            :show-overflow-tooltip="true"
             label="名单数量">
           </el-table-column>
           <el-table-column
             align="center"
             prop="modifierName"
+            :show-overflow-tooltip="true"
             label="操作人">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.modifierName }}</p>
-                <div slot="reference">
                   {{ scope.row.modifierName }}
-                </div>
-              </el-popover>
             </template>
           </el-table-column>
           <el-table-column
@@ -125,7 +114,7 @@
       </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;addNamelist.listName='';namelistPageInfo.pageSize=10;searchBatch.pageSize=10;searchBatch.pageNo=1;getBatch(searchBatch);clearForm(searchBatch);searchBatch.validityStatus=0">新建名单</el-button>
+        <el-button type="success" size="small" @click="addVisible=true;addNamelist.listName='';namelistPageInfo.pageSize=10;searchBatch.pageSize=10;searchBatch.pageNo=1;getBatch(searchBatch);clearForm(searchBatch);searchBatch.validityStatus=0">新建</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         <el-pagination
           v-if="pageShow"
@@ -155,7 +144,7 @@
         <el-form-item label="名单数量" prop="listnameNumber">
           <span>{{namelistDetail.listnameNumber}}</span>
         </el-form-item>
-        <el-form-item label="操作人员" prop="modifierName">
+        <el-form-item label="操作人" prop="modifierName">
           <span>{{namelistDetail.modifierName}}</span>
         </el-form-item>
         <el-form-item label="操作时间" prop="modifierTime">
@@ -163,9 +152,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button type="danger" @click="searchByListId(delReq);">重 置</el-button>
-        <el-button @click="editVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editNamelist()">确 定</el-button>
+        <el-button size="small" type="danger" @click="searchByListId(delReq);">重 置</el-button>
+        <el-button size="small" @click="editVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="editNamelist()">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -174,8 +163,8 @@
       :visible.sync="addVisible"
       append-to-body>
       <div slot="title" style="text-align: center;">
-        <el-button @click="addVisible = false;" style="float:left;" icon="el-icon-arrow-left">返 回</el-button>
-        <h3 style="display:inline;text-align:center;">添加名单</h3>
+        <el-button size="small" @click="addVisible = false;" style="float:left;" icon="el-icon-arrow-left">返 回</el-button>
+        <h3 style="display:inline;text-align:center;">新建名单</h3>
       </div>
       <el-row>
         <el-form :inline="true" size="small">
@@ -189,7 +178,7 @@
             <el-date-picker
                 v-model="searchBatch.startCreateTime"
                 type="datetime"
-                placeholder="开始日期"
+                placeholder="开始时间"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 default-time="00:00:00">
             </el-date-picker>
@@ -197,14 +186,14 @@
             <el-date-picker
                 v-model="searchBatch.endCreateTime"
                 type="datetime"
-                placeholder="结束日期"
+                placeholder="结束时间"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 default-time="00:00:00">
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="searchBatch2=clone(searchBatch);searchBatch.pageNo=1;getBatch(searchBatch)" icon="el-icon-search">查询</el-button>
-            <el-button type="danger" @click="clearForm2();searchBatch.validityStatus=0;searchBatch2=clone(searchBatch)">重置</el-button>
+            <el-button size="small" type="primary" @click="searchBatch2=clone(searchBatch);searchBatch.pageNo=1;getBatch(searchBatch)">查询</el-button>
+            <el-button size="small" type="danger" @click="clearForm2();searchBatch.validityStatus=0;searchBatch2=clone(searchBatch)">重置</el-button>
           </el-form-item>
         </el-form>
       </el-row>
@@ -230,27 +219,32 @@
           <el-table-column
             align="center"
             prop="batchId"
-            label="批次号">
+            label="批次号"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
             prop="batchName"
-            label="批次名称">
+            label="批次名称"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
             prop="validityTime"
-            label="有效期">
+            label="有效期"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
             prop="customerNumber"
-            label="导入数量">
+            label="导入数量"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
             prop="successNumber"
-            label="可用数量">
+            label="可用数量"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
@@ -264,6 +258,7 @@
           <el-table-column
             align="center"
             prop="modifierTime"
+            width="155"
             label="操作时间">
             <template
               slot-scope="scope">
@@ -289,8 +284,8 @@
             <el-input v-model="addNamelist.listName" placeholder="名单名称" maxlength="50"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="success" @click="submitForm('addNamelist');newNamelist(addNamelist)">确 定</el-button>
-            <el-button @click="addVisible = false;">取 消</el-button>
+            <el-button size="small" type="success" @click="submitForm('addNamelist');newNamelist(addNamelist)">确 定</el-button>
+            <el-button size="small" @click="addVisible = false;">取 消</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -302,8 +297,8 @@
       append-to-body>
     <span style="font-size:20px;">确定删除选定内容？</span>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button @click="batchDelVisible = false">取 消</el-button>
-      <el-button type="primary" @click="batchDelVisible = false;batchDelNamelist(batchDelReq);">确 定</el-button>
+      <el-button size="small" @click="batchDelVisible = false">取 消</el-button>
+      <el-button size="small" type="primary" @click="batchDelVisible = false;batchDelNamelist(batchDelReq);">确 定</el-button>
     </div>
     </el-dialog>
     <el-dialog
@@ -313,8 +308,8 @@
       append-to-body>
     <span style="font-size:20px;">确定删除此内容？</span>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button @click="delVisible = false">取 消</el-button>
-      <el-button type="primary" @click="delVisible = false;delNamelist(delReq);">确 定</el-button>
+      <el-button size="small" @click="delVisible = false">取 消</el-button>
+      <el-button size="small" type="primary" @click="delVisible = false;delNamelist(delReq);">确 定</el-button>
     </div>
     </el-dialog>
   </div>
@@ -340,7 +335,7 @@ export default {
       detailVisible: false,
       delVisible: false, // 删除对话框显示隐藏
       editVisible: false, // 修改对话框显示隐藏
-      addVisible: false, // 添加对话框显示隐藏
+      addVisible: false, // 新建对话框显示隐藏
       batchDelVisible: false, // 批量删除对话框显示隐藏
       tableData: [], // 表格数据
       batchTableData: [], // 批次表格
@@ -569,7 +564,7 @@ export default {
         console.log(error)
       })
     },
-    // 添加名单
+    // 新建名单
     newNamelist(addReq) {
       if (!this.validate) {
         this.$message.error('请输入名单名称')
@@ -587,10 +582,10 @@ export default {
             this.searchNamelist(this.req2)
           }, 500)
         } else {
-          this.$message('添加失败')
+          this.$message('新建失败')
         }
       }).catch(error => {
-        this.$message('添加失败')
+        this.$message('新建失败')
         console.log(error)
       })
     },

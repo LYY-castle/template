@@ -44,27 +44,19 @@
           <el-table-column
             align="center"
             prop="departName"
-            label="组织名">
+            label="组织名"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.departName }}</p>
-                <div slot="reference">
-                  {{ scope.row.departName }}
-                </div>
-              </el-popover>
+              {{ scope.row.departName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="campaignName"
-            label="活动名称">
+            label="活动名称"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.campaignName }}</p>
-                <div slot="reference">
-                  {{ scope.row.campaignName }}
-                </div>
-              </el-popover>
+              {{ scope.row.campaignName }}
             </template>
           </el-table-column>
           <el-table-column

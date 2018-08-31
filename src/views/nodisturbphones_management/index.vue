@@ -8,14 +8,14 @@
         <el-form-item  prop="endNumber" label="结束号段:">
           <el-input v-model="req.endNumber" placeholder="结束号段"></el-input>
         </el-form-item>
-        <el-form-item  prop="modifier" label="操作人员:">
-          <el-input v-model="req.modifier" placeholder="操作人员"></el-input>
+        <el-form-item  prop="modifier" label="操作人:">
+          <el-input v-model="req.modifier" placeholder="操作人"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
             <el-date-picker
                 v-model="req.queryStart"
                 type="datetime"
-                placeholder="开始日期"
+                placeholder="开始时间"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 default-time="00:00:00">
             </el-date-picker>
@@ -23,13 +23,13 @@
             <el-date-picker
                 v-model="req.queryStop"
                 type="datetime"
-                placeholder="结束日期"
+                placeholder="结束时间"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 default-time="00:00:00">
             </el-date-picker>
           </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;paginationReq=cloneData(req);querynodisturbphones(req);" icon="el-icon-search">查询</el-button>
+          <el-button type="primary" @click="req.pageNo=1;paginationReq=cloneData(req);querynodisturbphones(req);">查询</el-button>
           <el-button type="danger" @click="reset();">重置</el-button>
         </el-form-item>
       </el-form>
@@ -57,22 +57,19 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="开始号段 ~ 结束号段">
+            label="开始号段 ~ 结束号段"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-             <div>{{scope.row.startNumber+"~"+scope.row.endNumber}}</div>
+             {{scope.row.startNumber+"~"+scope.row.endNumber}}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="modifier"
-            label="操作人">
+            label="操作人"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.modifier }}</p>
-                <div slot="reference">
-                  {{ scope.row.modifier }}
-                </div>
-              </el-popover>
+              {{ scope.row.modifier }}
             </template>
           </el-table-column>
           <el-table-column
@@ -96,7 +93,7 @@
       </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;clearForm(addNoDisturbPhonesDetail,'addPhonesForm');">创建免访号段</el-button>
+        <el-button type="success" size="small" @click="addVisible=true;clearForm(addNoDisturbPhonesDetail,'addPhonesForm');">新建</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         <el-pagination
           v-if="pageShow"
@@ -110,11 +107,11 @@
           :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
     </el-row>
-    <!-- 新增免访号段 -->
+    <!-- 新建免访号段 -->
      <el-dialog
       align:left
       width="30%"
-      title="新增免访号段"
+      title="新建免访号段"
       :visible.sync="addVisible"
       append-to-body>
       <el-form :rules="rule" :model="addNoDisturbPhonesDetail" ref="addPhonesForm" label-width="100px">
@@ -169,7 +166,7 @@
         <el-form-item label="结束号段:" prop="endNumber">
              <el-input v-model="editNoDisturbPhonesDetail.endNumber" size="small" @blur.native="formatNum(editNoDisturbPhonesDetail.endNumber,'endNumber')"></el-input>
         </el-form-item>
-        <el-form-item label="操作人员:" prop="modifier">
+        <el-form-item label="操作人:" prop="modifier">
           <span>{{editNoDisturbPhonesDetail.modifier}}</span>
         </el-form-item>
         <el-form-item label="操作时间:" prop="modifyTime">
@@ -213,7 +210,7 @@ export default {
       editVisible: false, // 修改对话框显示隐藏
       batchDelVisible: false, // 批量删除对话框显示隐藏
       validate: true, // 验证不通过阻止发请求
-      addVisible: false, // 添加对话框显示隐藏
+      addVisible: false, // 新建对话框显示隐藏
       pageShow: false, // 分页显示隐藏
       blur: false,
       rule: {
@@ -331,7 +328,7 @@ export default {
         console.error(error)
       })
     },
-    // 新增
+    // 新建
     addNoDisturbZones(obj) {
       if (!this.validate) {
         return
@@ -344,7 +341,7 @@ export default {
           this.resetAdd()
           this.querynodisturbphones(this.req)
         } else {
-          this.$message('添加失败')
+          this.$message('新建失败')
         }
       }).catch(error => {
         console.error(error)

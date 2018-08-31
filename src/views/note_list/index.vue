@@ -5,9 +5,9 @@
       <el-row><br/>
         <el-form :inline="true" size="small">
           <el-form-item label="笔记标题">
-            <el-input type="text" v-model="req.keyword" size="medium" placeholder="笔记标题"></el-input>
+            <el-input type="text" v-model="req.keyword" placeholder="笔记标题"></el-input>
           </el-form-item>
-          <el-form-item label="最近修改时间">
+          <el-form-item label="最近操作时间">
             <el-date-picker
                 v-model="timeValue"
                 type="datetimerange"
@@ -18,8 +18,8 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" icon="el-icon-search" @click="req.pageNo=1;searchByKeyWords(req)">筛选</el-button>
-            <el-button type="danger"  @click="resetQueryCondition()" icon="el-icon-refresh">重置</el-button>
+            <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
+            <el-button type="danger"  @click="resetQueryCondition()">重置</el-button>
           </el-form-item>
         </el-form>
       </el-row>
@@ -34,17 +34,17 @@
               </template>
             </el-table-column>
             <!-- <el-table-column align="center" label="笔记编号" prop="noteid"></el-table-column> -->
-            <el-table-column align="center" label="笔记标题">
+            <el-table-column align="center" label="笔记标题" :show-overflow-tooltip="true">
               <template slot-scope="scope">
-                <el-button @click="queryOne(scope.row.noteid,scope.row.userid)" type="text" size="medium">{{scope.row.title}}</el-button>
+                <a @click="queryOne(scope.row.noteid,scope.row.userid)">{{scope.row.title}}</a>
               </template>
             </el-table-column>
-            <el-table-column align="center" label="创建时间">
+            <el-table-column align="center" label="新建时间">
               <template slot-scope="scope">
                 <div v-html="formatDateTime(scope.row.createdat)"></div>
               </template>
             </el-table-column>
-            <el-table-column align="center" label="最近修改时间">
+            <el-table-column align="center" label="最近操作时间">
               <template slot-scope="scope">
                 <div v-html="formatDateTime(scope.row.updatedat)"></div>
               </template>
@@ -60,7 +60,7 @@
       </el-row>
 
       <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="noteTitle='';noteTitleVisiable=true" icon="el-icon-plus">新建笔记</el-button>
+        <el-button type="success" size="small" @click="noteTitle='';noteTitleVisiable=true">新建</el-button>
         <!-- <el-button type="danger" size="small" @click="" icon="el-icon-minus">批量删除</el-button> -->
         <el-pagination
             v-if="pageShow"
@@ -101,9 +101,9 @@
       <div style="text-align:center">
         <h3>{{noteTitle}}</h3>
         <quill-editor
-        v-model="content" 
-        ref="myQuillEditor" 
-        :options="editorOption" 
+        v-model="content"
+        ref="myQuillEditor"
+        :options="editorOption"
         style="white-space:pre"
         @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
         @change="onEditorChange($event)"
@@ -119,11 +119,11 @@
       <div style="text-align:center">
         <h3>{{noteDetail.title}}&nbsp;&nbsp;</h3>
         <quill-editor
-        :content="noteDetail.content" 
+        :content="noteDetail.content"
         style="white-space:pre"
-        ref="myQuillEditor" 
+        ref="myQuillEditor"
         :options="editorOption"></quill-editor><br/><br/><br/><br/>
-        <el-button type="primary" round @click="noteDetail.title='';isListPage='1';noteDetail.content=null" size="medium">返回列表</el-button>
+        <el-button type="primary" round @click="noteDetail.title='';isListPage='1';noteDetail.content=null">返回列表</el-button>
       </div>
     </div>
     <!-- 笔记详情end -->
@@ -132,13 +132,13 @@
     <div v-show="isListPage==='4'">
       <div style="text-align:center">
         <h3>{{editDetail.title}}
-          <el-tooltip class="item" effect="dark" content="修改笔记标题" placement="right-start">  
+          <el-tooltip class="item" effect="dark" content="修改笔记标题" placement="right-start">
             <el-button type="primary" icon="el-icon-edit-outline" @click="editNoteTitleVisiable=true" size="mini" circle></el-button>
-          </el-tooltip>  
+          </el-tooltip>
         </h3>
         <quill-editor
-        v-model="editDetail.content" 
-        ref="myQuillEditor" 
+        v-model="editDetail.content"
+        ref="myQuillEditor"
         style="white-space:pre"
         :options="editorOption"
         @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"

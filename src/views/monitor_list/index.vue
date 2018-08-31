@@ -44,40 +44,28 @@
           <el-table-column
             align="center"
             prop="listId"
-            label="名单编号">
+            label="名单编号"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.listId }}</p>
-                <div slot="reference">
-                  {{ scope.row.listId }}
-                </div>
-              </el-popover>
+              {{ scope.row.listId }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="listName"
-            label="名单名称">
+            label="名单名称"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.listName }}</p>
-                <div slot="reference">
-                  {{ scope.row.listName }}
-                </div>
-              </el-popover>
+              {{ scope.row.listName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="campaignName"
-            label="活动名称">
+            label="活动名称"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.campaignName }}</p>
-                <div slot="reference">
-                  {{ scope.row.campaignName }}
-                </div>
-              </el-popover>
+              {{ scope.row.campaignName }}
             </template>
           </el-table-column>
           <el-table-column

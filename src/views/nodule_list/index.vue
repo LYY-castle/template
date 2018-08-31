@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <el-row margin-top:>
+    <el-row>
       <el-form :inline="true" size="small">
         <el-form-item label="小结编号:">
           <el-input v-model="req.summaryId" placeholder="小结编号" maxlength="50"></el-input>
@@ -9,7 +9,7 @@
           <el-input v-model="req.summaryName" placeholder="小结标题" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="操作人:">
-          <el-input v-model="req.modifierName" placeholder="操作人" maxlength="50"></el-input>
+          <el-input v-model="req.modify_name" placeholder="操作人" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
           <el-date-picker
@@ -29,7 +29,7 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="req2=clone(req);req.pageNo=1;getNoduleByInfo(req)" icon="el-icon-search">查询</el-button>
+          <el-button type="primary" @click="req2=clone(req);req.pageNo=1;getNoduleByInfo(req)">查询</el-button>
           <el-button type="danger" @click="reset">重置</el-button>
         </el-form-item>
       </el-form>
@@ -57,48 +57,37 @@
           <el-table-column
             align="center"
             prop="summaryId"
-            label="小结编号">
+            label="小结编号"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="detailVisible=true;delReq.noduleId=scope.row.summaryId;findNoduleByNoduleId(delReq);">{{scope.row.summaryId}}</el-button>
+              <a @click="detailVisible=true;delReq.noduleId=scope.row.summaryId;findNoduleByNoduleId(delReq);">{{scope.row.summaryId}}</a>
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="summaryName"
-            label="小结标题">
+            label="小结标题"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.summaryName }}</p>
-                <div slot="reference">
-                  {{ scope.row.summaryName }}
-                </div>
-              </el-popover>
+              {{ scope.row.summaryName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="description"
-            label="备注">
+            label="备注"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.description }}</p>
-                <div slot="reference">
-                  {{ scope.row.description }}
-                </div>
-              </el-popover>
+              {{ scope.row.description }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="modifierName"
-            label="操作人">
+            label="操作人"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.modifierName }}</p>
-                <div slot="reference">
-                  {{ scope.row.modifierName }}
-                </div>
-              </el-popover>
+              {{ scope.row.modifierName }}
             </template>
           </el-table-column>
           <el-table-column
@@ -120,7 +109,7 @@
       </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;clearForm(addSummary,'addSummary');setTree=[];">添加</el-button>
+        <el-button type="success" size="small" @click="addVisible=true;clearForm(addSummary,'addSummary');setTree=[];">新建</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         <el-pagination
           v-if="pageShow"
@@ -149,7 +138,7 @@
         </el-form-item>
         <div class="expand">
           <div>
-            <el-button @click="handleAddTop">添加小结</el-button>
+            <el-button size="small" @click="handleAddTop">新建小结</el-button>
             <el-tree class="expand-tree"
             key="tree-one"
             ref="treeOne"
@@ -165,9 +154,9 @@
         </div>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button type="danger" @click="findNoduleByNoduleId(delReq)">重 置</el-button>
-        <el-button @click="editVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('editNodule');editNodule(summaryDetail)">确 定</el-button>
+        <el-button size="small" type="danger" @click="findNoduleByNoduleId(delReq)">重 置</el-button>
+        <el-button size="small" @click="editVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="submitForm('editNodule');editNodule(summaryDetail)">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -200,13 +189,13 @@
         </div>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button @click="detailVisible = false">返 回</el-button>
+        <el-button size="small" @click="detailVisible = false">返 回</el-button>
       </div>
     </el-dialog>
     <el-dialog
       align:left
       width="30%"
-      title="添加小结"
+      title="新建小结"
       :visible.sync="addVisible"
       append-to-body>
       <el-form :rules="rule" :model="addSummary" ref="addSummary" label-width="100px">
@@ -218,7 +207,7 @@
         </el-form-item>
         <div class="expand">
           <div>
-            <el-button @click="handleAddTop">添加小结</el-button>
+            <el-button size="small" @click="handleAddTop">新建小结</el-button>
             <el-tree class="expand-tree"
             key="tree-three"
             ref="treeThree"
@@ -234,9 +223,9 @@
         </div>
       </el-form>
         <div slot="footer" style="text-align: right;">
-          <el-button type="danger" @click="resetForm('addSummary');setTree=[]">重 置</el-button>
-          <el-button @click="addVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitForm('addSummary');addNodule(addSummary);">确 定</el-button>
+          <el-button size="small" type="danger" @click="resetForm('addSummary');setTree=[]">重 置</el-button>
+          <el-button size="small" @click="addVisible = false">取 消</el-button>
+          <el-button size="small" type="primary" @click="submitForm('addSummary');addNodule(addSummary);">确 定</el-button>
         </div>
       </el-dialog>
     <el-dialog
@@ -246,8 +235,8 @@
       append-to-body>
     <span style="font-size:20px;">确定删除此内容？</span>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button @click="delVisible = false">取 消</el-button>
-      <el-button type="primary" @click="delVisible = false;delNoduleByNoduleId(delReq);">确 定</el-button>
+      <el-button size="small" @click="delVisible = false">取 消</el-button>
+      <el-button size="small" type="primary" @click="delVisible = false;delNoduleByNoduleId(delReq);">确 定</el-button>
     </div>
   </el-dialog>
   <el-dialog
@@ -257,8 +246,8 @@
     append-to-body>
     <span style="font-size:20px;">确定删除选定内容？</span>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button @click="batchDelVisible = false">取 消</el-button>
-      <el-button type="primary" @click="batchDelVisible = false;delNodulesByNoduleIds(batchDelReq);">确 定</el-button>
+      <el-button size="small" @click="batchDelVisible = false">取 消</el-button>
+      <el-button size="small" type="primary" @click="batchDelVisible = false;delNodulesByNoduleIds(batchDelReq);">确 定</el-button>
     </div>
   </el-dialog>
   </div>
@@ -290,7 +279,7 @@ export default {
       detailVisible: false,
       delVisible: false, // 删除对话框显示隐藏
       editVisible: false, // 修改对话框显示隐藏
-      addVisible: false, // 添加对话框显示隐藏
+      addVisible: false, // 新建对话框显示隐藏
       batchDelVisible: false, // 批量删除对话框显示隐藏
       tableData: [], // 表格数据
       validate: true, // 验证不通过阻止发请求
@@ -335,10 +324,10 @@ export default {
       // 分页数据
       pageInfo: {},
       // tree-----------------------
-      // maxexpandId: api.maxexpandId, // 新增节点开始id
-      // non_maxexpandId: api.maxexpandId, // 新增节点开始id(不更改)
+      // maxexpandId: api.maxexpandId, // 新建节点开始id
+      // non_maxexpandId: api.maxexpandId, // 新建节点开始id(不更改)
       isLoadingTree: false, // 是否加载节点树
-      setTree: [], // 添加窗口 节点树数据
+      setTree: [], // 新建窗口 节点树数据
       setTree1: [], // 详情窗口 节点树数据
       setTree2: [], // 修改窗口 节点树数据
       defaultProps: {
@@ -476,13 +465,13 @@ export default {
           console.log(error)
         })
     },
-    // 添加小结
+    // 新建小结
     addNodule(addSummary) {
       if (!this.validate) {
         return false
       }
       if (this.setTree.length === 0) {
-        this.$message.error('请添加小结')
+        this.$message.error('请新建小结')
         return false
       }
       addSummary.summaryDetailInfos = this.setTree
@@ -497,7 +486,7 @@ export default {
           }
         })
         .catch(error => {
-          this.$message('添加失败')
+          this.$message('新建失败')
           console.log(error)
         })
     },
@@ -576,18 +565,18 @@ export default {
         }
       })
     },
-    // 新增节点
+    // 新建节点
     handleAddTop() {
       this.setTree.push({
         // id: ++this.maxexpandId,
-        name: '新增小结',
+        name: '新建小结',
         // pid: '',
         isEdit: false,
         summaryDetailInfos: []
       })
       this.setTree2.push({
         // id: ++this.maxexpandId,
-        name: '新增小结',
+        name: '新建小结',
         // pid: '',
         isEdit: false,
         summaryDetailInfos: []
@@ -602,10 +591,10 @@ export default {
       if (d.summaryDetailInfos === null) {
         d.summaryDetailInfos = []
       }
-      // 添加数据
+      // 新建数据
       d.summaryDetailInfos.push({
         // id: ++this.maxexpandId,
-        name: '新增小结',
+        name: '新建小结',
         // pid: d.id,
         isEdit: false,
         summaryDetailInfos: []
@@ -623,7 +612,7 @@ export default {
         this.$message.error('此节点有子级，不可删除！')
         return false
       } else {
-        // 新增节点直接删除，否则要询问是否删除
+        // 新建节点直接删除，否则要询问是否删除
         const delNode = () => {
           const list = n.parent.data.summaryDetailInfos || n.parent.data // 节点同级数据
           let _index = 99999 // 要删除的index
@@ -653,7 +642,7 @@ export default {
               return false
             })
         }
-        // 判断是否新增
+        // 判断是否新建
         d.id > this.non_maxexpandId ? delNode() : isDel()
       }
     }

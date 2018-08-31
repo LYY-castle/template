@@ -925,7 +925,7 @@ export default {
       addHangupContact({
         'event': 'on_hangup_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID
       }).then(res => {
-        console.log('新增挂断电话的记录：' + res)
+        console.log('新建挂断电话的记录：' + res)
       }).catch(error => {
         console.log('error:' + error)
       })

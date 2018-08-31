@@ -22,7 +22,7 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button icon="el-icon-search" type="primary" @click="req.pageNo=1;searchByCampaign(req)">查询</el-button>
+          <el-button type="primary" @click="req.pageNo=1;searchByCampaign(req)">查询</el-button>
           <el-button  type="danger" @click="timeValue=[],resetReq()">重置</el-button>
         </el-form-item>
       </el-form>
@@ -36,61 +36,41 @@
               <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="活动编号" prop="campaignId">
+          <el-table-column align="center" label="活动编号" prop="campaignId" :show-overflow-tooltip="true">
           </el-table-column>
-          <el-table-column align="center" label="活动名称" prop="activityName">
+          <el-table-column align="center" label="活动名称" prop="activityName" :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.activityName }}</p>
-                <div slot="reference">
-                  {{ scope.row.activityName }}
-                </div>
-              </el-popover>
+              {{ scope.row.activityName }}
             </template>
           </el-table-column>
-          <el-table-column align="center" label="质检组织">
+          <el-table-column align="center" label="质检组织" :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <div>{{showQmDepart(scope.row.departName)}}</div>
+              {{showQmDepart(scope.row.departName)}}
             </template>
           </el-table-column>
-          <el-table-column align="center" label="评分表">
+          <el-table-column align="center" label="评分表" :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <div>{{showGradenames(scope.row.gradeNames)}}</div>
+              {{showGradenames(scope.row.gradeNames)}}
             </template>
           </el-table-column>
-          <el-table-column align="center" label="名单有效期">
+          <el-table-column align="center" label="名单有效期" :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <div>{{scope.row.listExpiryDate}}天</div>
+              {{scope.row.listExpiryDate}}天
             </template>
           </el-table-column>
            <el-table-column align="center" label="操作人" prop="modifierName">
               <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.modifierName }}</p>
-                <div slot="reference">
                   {{ scope.row.modifierName }}
-                </div>
-              </el-popover>
             </template>
           </el-table-column>
            <el-table-column align="center" label="操作时间" prop="modifyTime">
               <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.modifyTime }}</p>
-                <div slot="reference">
                   {{ scope.row.modifyTime }}
-                </div>
-              </el-popover>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="活动备注" prop="description">
+          <el-table-column align="center" label="活动备注" prop="description" :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.description }}</p>
-                <div slot="reference">
-                  {{ scope.row.description }}
-                </div>
-              </el-popover>
+              {{ scope.row.description }}
             </template>
           </el-table-column>
           <el-table-column align="center" label="操作">

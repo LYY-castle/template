@@ -25,7 +25,7 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;searchCustomer(req);req2=clone(req);" icon="el-icon-search">查询</el-button>
+          <el-button type="primary" @click="req.pageNo=1;searchCustomer(req);req2=clone(req);">查询</el-button>
           <el-button type="danger" @click="reset();req2=clone(req)">重置</el-button>
         </el-form-item>
         <!-- <el-form-item>
@@ -64,14 +64,16 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="客户姓名">
+            label="客户姓名"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="detailVisible=true;delReq.customerId=scope.row.customerId;searchByCustomerId(delReq);">{{scope.row.customerName}}</el-button>
+              <a @click="detailVisible=true;delReq.customerId=scope.row.customerId;searchByCustomerId(delReq);">{{scope.row.customerName}}</a>
             </template>
           </el-table-column>
           <el-table-column
             align="center"
-            label="性别">
+            label="性别"
+            width="55">
             <template
               slot-scope="scope">
               <div>{{showSex(scope.row.sex)}}</div>
@@ -79,18 +81,19 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="客户电话">
+            label="客户电话" :show-overflow-tooltip="true">
             <template
               slot-scope="scope">
-              <div>{{hideMobile(scope.row.mobile)}}</div>
+              {{hideMobile(scope.row.mobile)}}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
-            label="身份证">
+            label="身份证"
+            :show-overflow-tooltip="true">
             <template
               slot-scope="scope">
-              <div>{{hideIdNumber(scope.row.idNumber)}}</div>
+              {{hideIdNumber(scope.row.idNumber)}}
             </template>
           </el-table-column>
           <el-table-column
@@ -101,25 +104,22 @@
           <el-table-column
             align="center"
             prop="modifierName"
-            label="操作人">
+            label="操作人"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.modifierName }}</p>
-                <div slot="reference">
-                  {{ scope.row.modifierName }}
-                </div>
-              </el-popover>
+              {{ scope.row.modifierName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="modifierTime"
+            width="155"
             label="操作时间">
           </el-table-column>
           <el-table-column
             align="center"
             label="操作"
-            width="100">1
+            width="100">
           <template slot-scope="scope">
             <el-button @click="editVisible=true;delReq.customerId=scope.row.customerId;searchByCustomerId(delReq);" type="text" size="small">修改</el-button>
             <el-button @click="delVisible=true;delReq.customerId=scope.row.customerId" type="text" size="small">删除</el-button>
@@ -129,7 +129,7 @@
       </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;clearForm(customerDetail,'customerDetail');">添加</el-button>
+        <el-button type="success" size="small" @click="addVisible=true;clearForm(customerDetail,'customerDetail');">新建</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         <el-pagination
           v-if="pageShow"
@@ -175,7 +175,7 @@
         <el-form-item label="客户地址" prop="resideAddress">
           <el-input v-model="customerReverseDetail.resideAddress" size="small" placeholder="上限200字符" maxlength="200"></el-input>
         </el-form-item>
-        <el-form-item label="操作人员">
+        <el-form-item label="操作人">
           <span>{{customerReverseDetail.modifierName}}</span>
         </el-form-item>
         <el-form-item label="操作时间">
@@ -213,7 +213,7 @@
         <el-form-item label="客户地址">
           <span>{{showAddress(customerReverseDetail.resideAddress)}}</span>
         </el-form-item>
-        <el-form-item label="操作人员">
+        <el-form-item label="操作人">
           <span>{{customerReverseDetail.modifierName}}</span>
         </el-form-item>
         <el-form-item label="操作时间">
@@ -227,7 +227,7 @@
     <el-dialog
       align:left
       width="30%"
-      title="新增客户"
+      title="新建客户"
       :visible.sync="addVisible"
       append-to-body>
       <el-form :rules="rule" :model="customerDetail" ref="customerDetail" label-width="100px">
@@ -326,7 +326,7 @@ export default {
       detailVisible: false,
       delVisible: false, // 删除对话框显示隐藏
       editVisible: false, // 修改对话框显示隐藏
-      addVisible: false, // 添加对话框显示隐藏
+      addVisible: false, // 新建对话框显示隐藏
       batchDelVisible: false, // 批量删除对话框显示隐藏
       tableData: [], // 表格数据
       validate: true, // 验证不通过阻止发请求
@@ -576,7 +576,7 @@ export default {
         console.log(error)
       })
     },
-    // 添加客户
+    // 新建客户
     addCustomer(customerDetail) {
       if (!this.validate) {
         return false
@@ -590,7 +590,7 @@ export default {
           this.$message(response.data.message)
         }
       }).catch(error => {
-        this.$message('添加失败')
+        this.$message('新建失败')
         console.log(error)
       })
     },

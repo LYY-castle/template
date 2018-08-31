@@ -5,14 +5,14 @@
         <el-form-item prop="customerPhone" label="客户电话:">
           <el-input v-model="req.customerPhone" placeholder="客户电话"></el-input>
         </el-form-item>
-        <el-form-item  prop="modifierName" label="操作人员:">
-          <el-input v-model="req.modifierName" placeholder="操作人员"></el-input>
+        <el-form-item  prop="modifierName" label="操作人:">
+          <el-input v-model="req.modifierName" placeholder="操作人"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
           <el-date-picker
                 v-model="req.modifyTimeStart"
                 type="datetime"
-                placeholder="开始日期"
+                placeholder="开始时间"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 default-time="00:00:00">
           </el-date-picker>
@@ -20,7 +20,7 @@
           <el-date-picker
                 v-model="req.modifyTimeEnd"
                 type="datetime"
-                placeholder="结束日期"
+                placeholder="结束时间"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 default-time="00:00:00">
           </el-date-picker>
@@ -32,7 +32,7 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;paginationReq=cloneData(req);findNoVisitCustomers(req);" icon="el-icon-search">查询</el-button>
+          <el-button type="primary" @click="req.pageNo=1;paginationReq=cloneData(req);findNoVisitCustomers(req);">查询</el-button>
           <el-button type="danger" @click="resetReq();">重置</el-button>
         </el-form-item>
       </el-form>
@@ -60,31 +60,27 @@
           </el-table-column>
           <el-table-column
                 align="center"
-                label="客户电话">
+                label="客户电话"
+                :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="detailVisible=true;delReq.id=scope.row.id;getBlackListInfoById(scope.row.id);">{{hideMobile(scope.row.customerPhone)}}</el-button>
+              <a @click="detailVisible=true;delReq.id=scope.row.id;getBlackListInfoById(scope.row.id);">{{hideMobile(scope.row.customerPhone)}}</a>
             </template>
           </el-table-column>
           <el-table-column
                 align="center"
                 prop="effectiveDate"
-                label="生效时间">
+                label="生效时间" :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
                 align="center"
                 prop="expiryDate"
-                label="失效时间">
+                label="失效时间" :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
                 align="center"
-                label="操作人">
+                label="操作人" :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{(scope.row.modifierName == 0) ? '无':scope.row.modifierName}}</p>
-                <div slot="reference">
-                  {{(scope.row.modifierName == 0) ? '无':scope.row.modifierName}}
-                </div>
-              </el-popover>
+              {{(scope.row.modifierName == 0) ? '无':scope.row.modifierName}}
             </template>
           </el-table-column>
           <el-table-column
@@ -106,7 +102,7 @@
       </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
-      <el-button type="success" size="small" @click="addVisible=true;clearForm(noVisitCustomerDetail,'addCustomerForm');">创建免访客户</el-button>
+      <el-button type="success" size="small" @click="addVisible=true;clearForm(noVisitCustomerDetail,'addCustomerForm');">新建</el-button>
       <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
       <el-pagination
             v-if="pageShow"
@@ -120,11 +116,11 @@
             :total='pageInfo.totalCount' style="text-align: right;float:right;">
       </el-pagination>
     </el-row>
-    <!-- 新增免访客户 -->
+    <!-- 新建免访客户 -->
     <el-dialog
           align:left
           width="30%"
-          title="新增免访客户"
+          title="新建免访客户"
           :visible.sync="addVisible"
           append-to-body>
       <el-form :rules="rule" :model="noVisitCustomerDetail" ref="addCustomerForm" label-width="100px">
@@ -215,9 +211,8 @@
                 value-format="yyyy-MM-dd">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="操作人员:" prop="modifierName">
+        <el-form-item label="操作人:" prop="modifierName">
           <span>{{editNoVisitCustomerDetail.modifierName}}</span>
-        </el-form-item>
         </el-form-item>
         <el-form-item label="操作时间:" prop="modifyTime">
           <span>{{editNoVisitCustomerDetail.modifyTime}}</span>
@@ -249,9 +244,8 @@
         <el-form-item label="失效时间:" prop="expiryDate">
           <span>{{editNoVisitCustomerDetail.expiryDate}}</span>
         </el-form-item>
-        <el-form-item label="操作人员:" prop="modifierName">
+        <el-form-item label="操作人:" prop="modifierName">
           <span>{{editNoVisitCustomerDetail.modifierName}}</span>
-        </el-form-item>
         </el-form-item>
         <el-form-item label="操作时间:" prop="modifyTime">
           <span>{{editNoVisitCustomerDetail.modifyTime}}</span>
@@ -275,7 +269,7 @@
         editVisible: false, // 修改对话框显示隐藏
         batchDelVisible: false, // 批量删除对话框显示隐藏
         validate: true, // 验证不通过阻止发请求
-        addVisible: false, // 添加对话框显示隐藏
+        addVisible: false, // 新建对话框显示隐藏
         pageShow: false, // 分页显示隐藏
         rule: {
           campaignIds: [{ required: true, message: '请选择活动', trigger: 'blur' }],
@@ -432,10 +426,10 @@
             this.findNoVisitCustomers(this.paginationReq)
             this.addVisible = false
           } else {
-            this.$message('添加失败')
+            this.$message('新建失败')
           }
         }).catch(error => {
-          this.$message('添加失败')
+          this.$message('新建失败')
           console.log(error)
         })
       },

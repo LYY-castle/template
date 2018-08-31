@@ -424,11 +424,11 @@ var baseinfo = null
       },
       change(agentId, type) {
         if (type) { // 如果选中了坐席
-          if (baseinfo.attentionList.indexOf(agentId) === -1) { // 如果之前没有添加这个坐席，则需要增加这个坐席的工号
+          if (baseinfo.attentionList.indexOf(agentId) === -1) { // 如果之前没有新建这个坐席，则需要增加这个坐席的工号
             baseinfo.attentionList.push(agentId)
           }
         } else { // 如果取消选中坐席
-          if (baseinfo.attentionList.indexOf(agentId) > -1) { // 如果之前没添加过这个坐席，则需要删除这个坐席的工号
+          if (baseinfo.attentionList.indexOf(agentId) > -1) { // 如果之前没新建过这个坐席，则需要删除这个坐席的工号
             baseinfo.attentionList.splice(baseinfo.attentionList.indexOf(agentId), 1)
           }
         }

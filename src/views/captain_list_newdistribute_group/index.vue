@@ -19,7 +19,7 @@
             <el-radio v-model="formInline.radio" label="1">平均分配</el-radio>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="confirm(formInline)">确认分配</el-button>
+            <el-button type="primary" :loading="loading" @click="confirm(formInline)">确认分配</el-button>
           </el-form-item>
         </el-form>
         <el-table
@@ -28,7 +28,6 @@
           ref="multipleTable"
           tooltip-effect="dark"
           border
-          style="width: 94%;"
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
@@ -48,19 +47,16 @@
           <el-table-column
             align="center"
             prop="listId"
-            label="名单编号">
+            label="名单编号"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
             prop="listName"
-            label="名单名称">
+            label="名单名称"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.listName }}</p>
-                <div slot="reference">
-                  {{ scope.row.listName }}
-                </div>
-              </el-popover>
+              {{ scope.row.listName }}
             </template>
           </el-table-column>
           <el-table-column
@@ -76,20 +72,17 @@
           <el-table-column
             align="center"
             prop="modifierName"
-            label="操作人">
+            label="操作人"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.modifierName }}</p>
-                <div slot="reference">
-                  {{ scope.row.modifierName }}
-                </div>
-              </el-popover>
+              {{ scope.row.modifierName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="modifierTime"
-            label="操作时间">
+            label="操作时间"
+            width="155">
           </el-table-column>
         </el-table>
         <el-row style="margin-top:1%;">
@@ -112,7 +105,7 @@
           ref="multipleTable"
           tooltip-effect="dark"
           border
-          style="width: 94%;margin-top:2%;"
+          style="margin-top:2%;"
           @selection-change="handleSelectionChange2">
           <el-table-column
             align="center"
@@ -122,14 +115,10 @@
           <el-table-column
             align="center"
             prop="departName"
-            label="分配对象">
+            label="分配对象"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.departName }}</p>
-                <div slot="reference">
-                  {{ scope.row.departName }}
-                </div>
-              </el-popover>
+              {{ scope.row.departName }}
             </template>
           </el-table-column>
           <el-table-column
@@ -170,6 +159,7 @@
     name: 'captain_list_newdistribute_group',
     data() {
       return {
+        loading: false,
         type: '',
         totalNum: 0,
         noUseNumLabel: '',
@@ -400,6 +390,7 @@
               data.push(obj)
             }
           }
+          this.loading = true
           assignTaskInfo({
             assignNum: String(this.formInline.num),
             assignType: this.formInline.radio,
@@ -408,6 +399,7 @@
             data: data,
             type: this.type
           }).then(response => {
+            this.loading = false
             if (response.data.code === 0) {
               this.selectActive(this.formInline.campaignId)
               this.formInline.num = ''

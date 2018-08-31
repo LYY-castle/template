@@ -57,7 +57,7 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)" icon="el-icon-search">筛选</el-button>
+                <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
           <el-button type="danger" @click="clearForm(req)">重置</el-button>
         </el-form-item>
       </el-form>
@@ -80,69 +80,60 @@
           <el-table-column
             align="center"
             label="订单编号"
-            width="180">
+            width="180"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-button type="text" size="medium" @click="detailVisiable=true;searchByOrderId(scope.row.orderId)">{{scope.row.orderId}}</el-button>
+              <a @click="detailVisiable=true;searchByOrderId(scope.row.orderId)">{{scope.row.orderId}}</a>
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             label="产品名称"
-            prop="productName">
+            prop="productName"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.productName }}</p>
-                <div slot="reference">
-                  {{ scope.row.productName }}
-                </div>
-              </el-popover>
+                {{ scope.row.productName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             label="客户姓名"
-            prop="customerName">
+            prop="customerName"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.customerName }}</p>
-                <div slot="reference">
-                  {{ scope.row.customerName }}
-                </div>
-              </el-popover>
+              {{ scope.row.customerName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             label="客户电话"
-            width="100">
+            width="100"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <div>{{hideMobile(scope.row.customerPhone)}}</div>
+              {{hideMobile(scope.row.customerPhone)}}
             </template>
           </el-table-column>
           <el-table-column
-            align="center"
-            label="所属活动">
-            <template slot-scope="scope">
-              <div>{{showCampaignName(scope.row.campaignId)}}</div>
-            </template>
+          align="center"
+          label="所属活动"
+          :show-overflow-tooltip="true">
+          <template slot-scope="scope">
+            {{showCampaignName(scope.row.campaignId)}}
+          </template>
           </el-table-column>
           <el-table-column
             align="center"
             label="员工工号"
-            prop="staffId">
+            prop="staffId"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
             label="员工姓名"
-            width="110"
-            prop="staffName">
+            prop="staffName"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.staffName }}</p>
-                <div slot="reference">
-                  {{ scope.row.staffName }}
-                </div>
-              </el-popover>
+              {{ scope.row.staffName }}
             </template>
           </el-table-column>
           <el-table-column
@@ -154,7 +145,8 @@
           <el-table-column
             align="center"
             label="合计金额(元)"
-            prop="totalAmount">
+            prop="totalAmount"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
@@ -166,14 +158,10 @@
           <el-table-column
             align="center"
             label="订单备注"
-            prop="description">
+            prop="description"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.description }}</p>
-                <div slot="reference">
-                  {{ scope.row.description }}
-                </div>
-              </el-popover>
+              {{ scope.row.description }}
             </template>
           </el-table-column>
           <el-table-column
@@ -224,7 +212,7 @@
         <el-form-item label="客户电话">
           <span v-text="hideMobile(orderDetail.customerPhone)"></span>
         </el-form-item>
-        <el-form-item label="创建时间">
+        <el-form-item label="新建时间">
           <span>{{orderDetail.createTime}}</span>
         </el-form-item>
         <el-form-item label="订单状态">
@@ -266,7 +254,7 @@
         <el-form-item label="客户电话">
           <el-input type="text" v-model="orderDetail.customerPhone" size="small"></el-input>
         </el-form-item>
-        <el-form-item label="创建时间">
+        <el-form-item label="新建时间">
           <span>{{orderDetail.createTime}}</span>
         </el-form-item>
         <el-form-item label="订单状态">

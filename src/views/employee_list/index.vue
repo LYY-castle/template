@@ -9,13 +9,13 @@
           <el-form-item label="员工工号：">
             <el-input placeholder="员工工号（上限45字符）" v-model="formInline.angentId" maxlength="45"></el-input>
           </el-form-item>
-          <el-form-item label="所属部门：">
-            <el-select v-model="formInline.departName" placeholder="所属部门">
+          <el-form-item label="所属组织：">
+            <el-select v-model="formInline.departName" placeholder="所属组织">
               <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="操作人员：">
-            <el-input placeholder="操作人员（上限45字符）" v-model="formInline.modifierName" maxlength="45"></el-input>
+          <el-form-item label="操作人：">
+            <el-input placeholder="操作人（上限45字符）" v-model="formInline.modifierName" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item label="操作时间：">
             <el-date-picker
@@ -57,19 +57,16 @@
         <el-table-column
           align="center"
           prop="angentId"
-          label="员工工号">
+          label="员工工号"
+          :show-overflow-tooltip="true">
         </el-table-column>
         <el-table-column
           align="center"
           prop="staffName"
-          label="员工姓名">
+          label="员工姓名"
+          :show-overflow-tooltip="true">
           <template slot-scope="scope">
-            <el-popover trigger="hover" placement="right">
-              <p>{{ scope.row.staffName }}</p>
-              <div slot="reference">
-                {{ scope.row.staffName }}
-              </div>
-            </el-popover>
+            <a @click="handleClickDetail(scope.row)">{{scope.row.staffName}}</a>
           </template>
         </el-table-column>
         <el-table-column
@@ -81,32 +78,25 @@
         <el-table-column
           align="center"
           prop="departName"
-          label="所属组织">
+          label="所属组织"
+          :show-overflow-tooltip="true">
           <template slot-scope="scope">
-            <el-popover trigger="hover" placement="right">
-              <p>{{ scope.row.departName }}</p>
-              <div slot="reference">
-                {{ scope.row.departName }}
-              </div>
-            </el-popover>
+            {{ scope.row.departName }}
           </template>
         </el-table-column>
         <el-table-column
           align="center"
           prop="userPhone"
-          label="联系方式">
+          label="联系方式"
+          :show-overflow-tooltip="true">
         </el-table-column>
         <el-table-column
           align="center"
           prop="creator"
-          label="操作人员">
+          label="操作人"
+          :show-overflow-tooltip="true">
           <template slot-scope="scope">
-            <el-popover trigger="hover" placement="right">
-              <p>{{ scope.row.creator }}</p>
-              <div slot="reference">
-                {{ scope.row.creator }}
-              </div>
-            </el-popover>
+            {{ scope.row.creator }}
           </template>
         </el-table-column>
         <el-table-column
@@ -120,7 +110,6 @@
           label="操作"
           width="180">
           <template slot-scope="scope">
-            <el-button @click="handleClickDetail(scope.row)" type="text" size="small">详情</el-button>
             <el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
             <el-button
               @click.native.prevent="deleteRow(scope.$index, tableData)"
@@ -134,7 +123,7 @@
       </el-row>
       <el-row style="margin-top:1%;">
         <el-col :span="4">
-          <el-button type="success" size="small"  @click="addStaff">新增</el-button>
+          <el-button type="success" size="small"  @click="addStaff">新建</el-button>
           <el-button type="danger" size="small" @click="deleteAll">批量删除</el-button>
         </el-col>
         <el-col :span="18">
@@ -151,7 +140,7 @@
         </el-col>
       </el-row>
     </div>
-    <el-dialog title="添加员工" :visible.sync="dialogFormVisible" width="30%" @close="resetForm('ruleForm')" append-to-body>
+    <el-dialog title="新建员工" :visible.sync="dialogFormVisible" width="30%" @close="resetForm('ruleForm')" append-to-body>
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="姓名:" prop="staffName">
           <el-input v-model="ruleForm.staffName" maxlength="45" placeholder="上限45字符"></el-input>
@@ -237,7 +226,7 @@
         <el-form-item label="联系方式" prop="userPhone">
           <el-input v-model="ruleFormReverse.userPhone" maxlength="20" placeholder="上限20字符"></el-input>
         </el-form-item>
-        <el-form-item label="操作人员" prop="modifier">
+        <el-form-item label="操作人" prop="modifier">
           <span>{{ruleFormReverse.modifier}}</span>
         </el-form-item>
         <el-form-item label="操作时间">
@@ -277,7 +266,7 @@
         <el-form-item label="联系方式">
           <span>{{ruleFormReverseDetail.userPhone}}</span>
         </el-form-item>
-        <el-form-item label="操作人员">
+        <el-form-item label="操作人">
           <span>{{ruleFormReverseDetail.modifier}}</span>
         </el-form-item>
         <el-form-item label="操作时间">

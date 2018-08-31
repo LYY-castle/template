@@ -3,13 +3,13 @@
     <div class="filter-container">
       <el-row>
         <el-form :inline="true" class="demo-form-inline" size="small">
-          <el-form-item label="操作时间：">
+          <el-form-item label="员工姓名：">
             <el-input placeholder="员工姓名（限长45字符）" v-model="formInline.staffName" maxlength="45"></el-input>
           </el-form-item>
-          <el-form-item label="员工工号：">
-            <el-input placeholder="员工工号（限长45字符）" v-model="formInline.angentId" maxlength="45"></el-input>
+          <el-form-item label="系统账号：">
+            <el-input placeholder="系统账号（限长45字符）" v-model="formInline.angentId" maxlength="45"></el-input>
           </el-form-item>
-          <el-form-item label="所有情况：">
+          <el-form-item label="账号状态：">
             <el-select v-model="formInline.status">
               <el-option label="所有情况" value=""></el-option>
               <el-option label="已停用" value="0"></el-option>
@@ -22,8 +22,8 @@
               <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="操作人员：">
-            <el-input placeholder="操作人员（限长45字符）" v-model="formInline.creator" maxlength="45"></el-input>
+          <el-form-item label="操作人：">
+            <el-input placeholder="操作人（限长45字符）" v-model="formInline.creator" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item label="操作时间：">
             <el-date-picker
@@ -65,50 +65,40 @@
           <el-table-column
             align="center"
             prop="agentId"
-            label="系统账号">
+            label="系统账号"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
             prop="staffName"
-            label="姓名">
+            label="姓名"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.staffName }}</p>
-                <div slot="reference">
-                  {{ scope.row.staffName }}
-                </div>
-              </el-popover>
+              {{ scope.row.staffName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="departName"
-            label="所属组织">
+            label="所属组织"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.departName }}</p>
-                <div slot="reference">
-                  {{ scope.row.departName }}
-                </div>
-              </el-popover>
+              {{ scope.row.departName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="statusZH"
-            label="账号状态">
+            label="账号状态"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
             prop="modifier"
-            label="操作人员">
+            label="操作人"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.modifier }}</p>
-                <div slot="reference">
-                  {{ scope.row.modifier }}
-                </div>
-              </el-popover>
+              {{ scope.row.modifier }}
             </template>
           </el-table-column>
           <el-table-column

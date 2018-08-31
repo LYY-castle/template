@@ -77,9 +77,9 @@
                 <div>{{scope.$index+(req.pageNo-1)*10+1}}</div>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="客户姓名">
+          <el-table-column align="center" label="客户姓名" :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-button type="text" @click="transferParameters(scope.row.taskId, scope.row.campaignId,scope.row.customerId,scope.row.customerPhone)" size="medium">{{scope.row.customerName}}</el-button>
+              <a @click="transferParameters(scope.row.taskId, scope.row.campaignId,scope.row.customerId,scope.row.customerPhone)" size="medium">{{scope.row.customerName}}</a>
             </template>
           </el-table-column>
           <el-table-column align="center" label="联系电话">
@@ -87,24 +87,24 @@
               <div>{{hideMobile(scope.row.customerPhone)}}</div>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="归属活动">
+          <el-table-column align="center" label="活动名称" :show-overflow-tooltip="true">
               <template slot-scope="scope">
-                <div>{{showCampaignName(scope.row.campaignId)}}</div>
+                {{showCampaignName(scope.row.campaignId)}}
               </template>
           </el-table-column>
-          <el-table-column align="center" label="员工姓名">
+          <el-table-column align="center" label="员工姓名" :show-overflow-tooltip="true">
             <template slot-scope="scope">
-                <div>{{scope.row.staffName}}</div>
+                {{scope.row.staffName}}
             </template>
           </el-table-column>
-          <el-table-column align="center" label="最近联系时间">
+          <el-table-column align="center" label="最近联系时间" :show-overflow-tooltip="true">
             <template slot-scope="scope">
-                <div>{{scope.row.hangUpTime}}</div>
+                {{scope.row.hangUpTime}}
             </template>
           </el-table-column>
-          <el-table-column align="center" label="预约时间">
+          <el-table-column align="center" label="预约时间" :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <div>{{showAppointTime(scope.row.appointTime)}}</div>
+              {{showAppointTime(scope.row.appointTime)}}
             </template>
           </el-table-column>
           <el-table-column align="center" label="主叫">
@@ -176,7 +176,7 @@
                <el-form-item  label="员工工号：" prop="contactInfo.staffId">
                 <span>{{detailInfo.contactInfo.staffId}}</span>
               </el-form-item>
-              
+
                 <el-form-item  label="话后小结：">
                   <el-tree
                     ref = "tree"
@@ -246,7 +246,7 @@
               </el-form-item>
             </div>
           </el-col>
-      </el-form> 
+      </el-form>
     </el-row>
     <div slot="footer" style="text-align: right;">
           <el-button type="danger" @click="resetDetai();contactDetail()">重 置</el-button>
@@ -262,19 +262,19 @@
                 <div>{{item.$index+1}}</div>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="记录编号">
+          <el-table-column align="center" label="记录编号" :show-overflow-tooltip="true">
             <template slot-scope="item">
-              <el-button type="text" @click="ids.recordId=item.row.recordId;resetDetai();contactDetail()" size="medium">{{item.row.recordId}}</el-button>
+              <a @click="ids.recordId=item.row.recordId;resetDetai();contactDetail()" size="medium">{{item.row.recordId}}</a>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="拨打时间" prop="callTime">
+          <el-table-column align="center" label="拨打时间" prop="callTime" :show-overflow-tooltip="true">
             <template slot-scope="item">
-              <div>{{item.row.callTime}}</div>
+              {{item.row.callTime}}
             </template>
-          </el-table-column> 
-          <el-table-column align="center" label="接听时间">
+          </el-table-column>
+          <el-table-column align="center" label="接听时间" :show-overflow-tooltip="true">
              <template slot-scope="item">
-                <div>{{item.row.answerTime==null?'无':item.row.answerTime}}</div>
+                {{item.row.answerTime==null?'无':item.row.answerTime}}
             </template>
           </el-table-column>
           <el-table-column align="center" label="通话时长" prop="talkTime">
@@ -297,16 +297,16 @@
                 <div>{{item.row.callDirection==1?item.row.calleeNumber:hideMobile(item.row.calleeNumber)}}</div>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="话后小结" >
+          <el-table-column align="center" label="话后小结" :show-overflow-tooltip="true">
             <template slot-scope="item">
-              <div>{{showSummaryInfo(item.row.summaryDetailInfos)}}</div>
+              {{showSummaryInfo(item.row.summaryDetailInfos)}}
             </template>
           </el-table-column>
-          <el-table-column align="center" label="小结备注">
+          <el-table-column align="center" label="小结备注" :show-overflow-tooltip="true">
             <template slot-scope="item">
-              <div>{{item.row.description==null||item.row.description==''?'无':item.row.description}}</div>
+              {{item.row.description==null||item.row.description==''?'无':item.row.description}}
             </template>
-          </el-table-column> 
+          </el-table-column>
         </el-table>
       </el-col>
     </el-row>
@@ -319,23 +319,23 @@
                 <div>{{scope.$index+1}}</div>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="订单编号">
+          <el-table-column align="center" label="订单编号" :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-button type="text" @click="detailVisible=true;orderId=scope.row.orderId;quertOrderDetail()" size="medium">{{scope.row.orderId}}</el-button>
+              <a @click="detailVisible=true;orderId=scope.row.orderId;quertOrderDetail()" size="medium">{{scope.row.orderId}}</a>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="产品名称" prop="productName">
+          <el-table-column align="center" label="产品名称" prop="productName" :show-overflow-tooltip="true">
           </el-table-column>
-          <el-table-column align="center" label="创建时间" prop="createTime">
+          <el-table-column align="center" label="新建时间" prop="createTime" :show-overflow-tooltip="true">
           </el-table-column>
-          <el-table-column align="center" label="订单状态" >
+          <el-table-column align="center" label="订单状态" :show-overflow-tooltip="true">
             <template slot-scope="scope">
               <div>{{scope.row.status == 0 ? "未完成": "已完成"}}</div>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="订单金额" prop="totalAmount">
+          <el-table-column align="center" label="订单金额" prop="totalAmount" :show-overflow-tooltip="true">
           </el-table-column>
-          <el-table-column align="center" label="订单描述" prop="description">
+          <el-table-column align="center" label="订单描述" prop="description" :show-overflow-tooltip="true">
             <template slot-scope="scope">
               <div>{{scope.row.description==null||scope.row.description==''?'无':scope.row.description}}</div>
             </template>
@@ -360,7 +360,7 @@
         <el-form-item label="订单编号：" prop="orderId">
           <span>{{orderDetailInfo.orderId}}</span>
         </el-form-item>
-        <el-form-item label="创建时间：" prop="createTime">
+        <el-form-item label="新建时间：" prop="createTime">
           <span>{{orderDetailInfo.createTime}}</span>
         </el-form-item>
         <el-form-item label="订单状态：">
@@ -497,7 +497,7 @@
         .catch(error => {
           console.log(error)
         })
-  
+
       getAllCamps()
         .then(response => {
           if (response.data.code === 0) {
@@ -855,10 +855,10 @@
           this.req.campaign.push(this.campaigns[i].campaignId)
         }
       }
-  
+
     },
     watch: {}
-  
+
   }
 
 </script>

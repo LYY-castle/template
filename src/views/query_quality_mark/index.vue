@@ -5,7 +5,7 @@
         <el-form-item prop="contactTaskId" v-if="n==2||n==3" label="坐席编号:">
           <el-input v-model="req.contactTaskId" placeholder="坐席任务编号" maxlength="50" v-if="n==2||n==3"></el-input>
         </el-form-item>
-        <el-form-item prop="qualityTaskId" v-if="n==1||n==4" label="质检编号:">
+        <el-form-item prop="qualityTaskId" v-if="n==1||n==4" label="质检任务编号:">
           <el-input v-model="req.qualityTaskId" placeholder="质检任务编号" maxlength="50" v-if="n==1||n==4"></el-input>
         </el-form-item>
         <el-form-item v-if="n==1||n==4" prop="activityId" label="质检活动:">
@@ -18,7 +18,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item prop="gradeId" label="质检评分:">
+        <el-form-item prop="gradeId" label="质检评分表:">
           <el-select v-model="req.gradeId" placeholder="质检评分表">
             <el-option
                 v-for="item in gradeForm"
@@ -39,8 +39,8 @@
               v-model="timeValue"
               type="datetimerange"
               range-separator="-"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
               value-format="yyyy-MM-dd HH:mm:ss">
           </el-date-picker>
         </el-form-item>
@@ -57,7 +57,7 @@
           <!-- </el-col> -->
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;findQualityResultByInfo(req);req2=clone(req);" icon="el-icon-search">查询</el-button>
+          <el-button type="primary" @click="req.pageNo=1;findQualityResultByInfo(req);req2=clone(req);">查询</el-button>
           <el-button type="danger" @click="resetForm('searchForm');">重置</el-button>
         </el-form-item>
       </el-form>
@@ -78,35 +78,40 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="质检评分编号">
+            label="质检评分编号"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="handleClickDetail(scope.row);">{{scope.row.gradeId}}</el-button>
+              <a @click="handleClickDetail(scope.row);">{{scope.row.gradeId}}</a>
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="qualityTaskId"
             width="120"
+            :show-overflow-tooltip="true"
             label="质检任务编号">
           </el-table-column>
           <el-table-column
             align="center"
-            label="质检活动">
+            label="质检活动"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <div>{{scope.row.campaignId == null ? '' : map_activity.get(scope.row.campaignId)}}</div>
+              {{scope.row.campaignId == null ? '' : map_activity.get(scope.row.campaignId)}}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="gradeName"
+            :show-overflow-tooltip="true"
             label="质检评分表">
           </el-table-column>
           <el-table-column
             align="center"
             width="55"
-            label="分数">
+            label="分数"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <div>{{scope.row.branch==null?0:scope.row.branch}}</div>
+              {{scope.row.branch==null?0:scope.row.branch}}
             </template>
           </el-table-column>
           <el-table-column
@@ -123,58 +128,49 @@
             align="center"
             width="155"
             prop="modifyTime"
+            :show-overflow-tooltip="true"
             label="质检编辑时间">
           </el-table-column>
           <el-table-column
             align="center"
             prop="customerName"
+            :show-overflow-tooltip="true"
             label="客户姓名">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.customerName }}</p>
-                <div slot="reference">
-                  {{ scope.row.customerName }}
-                </div>
-              </el-popover>
+              {{ scope.row.customerName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="qualityStaffName"
+            :show-overflow-tooltip="true"
             label="质检员姓名">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.qualityStaffName }}</p>
-                <div slot="reference">
-                  {{ scope.row.qualityStaffName }}
-                </div>
-              </el-popover>
+              {{ scope.row.qualityStaffName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="contactStaffId"
+            :show-overflow-tooltip="true"
             label="坐席工号">
           </el-table-column>
           <el-table-column
             align="center"
             prop="contactStaffName"
+            :show-overflow-tooltip="true"
             label="员工姓名">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.contactStaffName }}</p>
-                <div slot="reference">
-                  {{ scope.row.contactStaffName }}
-                </div>
-              </el-popover>
+              {{ scope.row.contactStaffName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="modifierTime"
+            :show-overflow-tooltip="true"
             label="备注">
             <template slot-scope="scope">
-              <div>{{scope.row.complete==0?'草稿':(scope.row.complete==1?'已完成':'')}}</div>
+             {{scope.row.complete==0?'草稿':(scope.row.complete==1?'已完成':'')}}
             </template>
           </el-table-column>
         </el-table>
@@ -196,20 +192,23 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="质检评分编号">
+            label="质检评分编号"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="handleClickDetail(scope.row)">{{scope.row.gradeId}}</el-button>
+              <a @click="handleClickDetail(scope.row)">{{scope.row.gradeId}}</a>
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="contactTaskId"
             width="170"
+            :show-overflow-tooltip="true"
             label="坐席任务编号">
           </el-table-column>
           <el-table-column
             align="center"
             prop="gradeName"
+            :show-overflow-tooltip="true"
             label="质检评分表">
           </el-table-column>
           <el-table-column
@@ -234,57 +233,48 @@
             align="center"
             width="155"
             prop="modifyTime"
+            :show-overflow-tooltip="true"
             label="质检编辑时间">
           </el-table-column>
           <el-table-column
             align="center"
             prop="customerName"
+            :show-overflow-tooltip="true"
             label="客户姓名">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.customerName }}</p>
-                <div slot="reference">
-                  {{ scope.row.customerName }}
-                </div>
-              </el-popover>
+              {{ scope.row.customerName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="qualityStaffId"
+            :show-overflow-tooltip="true"
             label="质检员工号">
           </el-table-column>
           <el-table-column
             align="center"
             prop="qualityStaffName"
+            :show-overflow-tooltip="true"
             label="质检员姓名">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.qualityStaffName }}</p>
-                <div slot="reference">
-                  {{ scope.row.qualityStaffName }}
-                </div>
-              </el-popover>
+              {{ scope.row.qualityStaffName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="contactStaffName"
+            :show-overflow-tooltip="true"
             label="坐席姓名">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.contactStaffName }}</p>
-                <div slot="reference">
-                  {{ scope.row.contactStaffName }}
-                </div>
-              </el-popover>
+              {{ scope.row.contactStaffName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
-            label="备注">
+            label="备注"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <div>{{scope.row.complete==0?'草稿':(scope.row.complete==1?'已完成':'')}}</div>
+              {{scope.row.complete==0?'草稿':(scope.row.complete==1?'已完成':'')}}
             </template>
           </el-table-column>
         </el-table>
@@ -332,68 +322,81 @@
             width="80"
             align="center"
             prop="staffId"
+            :show-overflow-tooltip="true"
             label="坐席工号">
           </el-table-column>
           <el-table-column
             align="center"
             prop="DN"
+            :show-overflow-tooltip="true"
             label="分机号码">
           </el-table-column>
           <el-table-column
             width="160"
             align="center"
             prop="recordId"
+            :show-overflow-tooltip="true"
             label="记录编号">
           </el-table-column>
           <el-table-column
-            width="160"
+            width="155"
             align="center"
             prop="callTime"
+            :show-overflow-tooltip="true"
             label="拨打时间">
           </el-table-column>
           <el-table-column
             align="center"
             prop="answerTime"
+            :show-overflow-tooltip="true"
             label="接听时间">
           </el-table-column>
           <el-table-column
             align="center"
             prop="talkTime"
+            :show-overflow-tooltip="true"
             label="通话时长">
           </el-table-column>
           <el-table-column
             align="center"
             prop="callDirection"
+            :show-overflow-tooltip="true"
             label="呼叫方向">
           </el-table-column>
           <el-table-column
             align="center"
             prop="originNumber"
+            :show-overflow-tooltip="true"
             label="原始主叫">
           </el-table-column>
           <el-table-column
             align="center"
             prop="callerNumber"
+            :show-overflow-tooltip="true"
             label="主叫号码">
           </el-table-column>
           <el-table-column
             align="center"
             prop="calleeNumber"
+            :show-overflow-tooltip="true"
             label="被叫号码">
           </el-table-column>
           <el-table-column
             align="center"
             prop="taskStatus"
+            :show-overflow-tooltip="true"
             label="任务状态">
           </el-table-column>
           <el-table-column
             align="center"
             prop="summaryDetailInfos"
+            :show-overflow-tooltip="true"
             label="话后小结">
           </el-table-column>
           <el-table-column
             align="center"
             prop="description"
+            :show-overflow-tooltip="true"
             label="小结备注">
           </el-table-column>
         </el-table>

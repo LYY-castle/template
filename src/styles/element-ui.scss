@@ -36,6 +36,16 @@
    overflow:hidden;
    text-overflow: ellipsis;
  }
+ .el-table td /deep/ div.cell .el-popover__reference p.rap{
+   white-space: nowrap;
+   overflow:hidden;
+   text-overflow: ellipsis;
+   color: #409eff;
+   cursor: pointer;
+ }
+ .el-table .cell.el-tooltip a{
+   color: #409eff;
+ }
  .el-table /deep/ th {
    background-color: #f7f5e6;
    padding: 6px 0 ;
@@ -56,4 +66,8 @@
  .el-popover {
    padding: 0px 10px;
    min-width: 10px;
+   line-height: 0.4;
+ }
+ .el-tooltip__popper {
+   left: 15%
  }

@@ -3,7 +3,7 @@
     <el-row>
       <el-form :inline="true" size="small">
         <el-form-item label="活动名称:">
-          <el-select v-model="req.activityId" placeholder="对应活动" style="width: 100%;">
+          <el-select v-model="req.activityId" placeholder="活动名称" style="width: 100%;">
             <el-option value='' label="所有活动"></el-option>
             <el-option
                 v-for="item in campsData"
@@ -16,14 +16,14 @@
         <el-form-item label="任务名称:">
           <el-input v-model="req.taskName" placeholder="任务名称" maxlength="45"></el-input>
         </el-form-item>
-        <el-form-item label="操作人员:">
-          <el-input v-model="req.modifierName" placeholder="操作人员" maxlength="50"></el-input>
+        <el-form-item label="操作人:">
+          <el-input v-model="req.modifierName" placeholder="操作人" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
           <el-date-picker
               v-model="req.startModifierTime"
               type="datetime"
-              placeholder="开始日期"
+              placeholder="开始时间"
               value-format="yyyy-MM-dd HH:mm:ss"
               default-time="00:00:00">
           </el-date-picker>
@@ -31,7 +31,7 @@
           <el-date-picker
               v-model="req.endModifierTime"
               type="datetime"
-              placeholder="结束日期"
+              placeholder="结束时间"
               value-format="yyyy-MM-dd HH:mm:ss"
               default-time="00:00:00">
           </el-date-picker>
@@ -65,26 +65,24 @@
           <el-table-column
             align="center"
             prop="taskId"
-            label="任务编号">
+            label="任务编号"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
             prop="taskName"
-            label="任务名称">
+            label="任务名称"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.taskName }}</p>
-                <div slot="reference">
-                  {{ scope.row.taskName }}
-                </div>
-              </el-popover>
+              {{ scope.row.taskName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
-            label="对应活动">
+            label="活动名称"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <div>{{scope.row.activityId == '0'|| scope.row.activityId == null?'无':scope.row.activityName}}</div>
+              {{scope.row.activityId == '0'|| scope.row.activityId == null?'无':scope.row.activityName}}
             </template>
           </el-table-column>
           <el-table-column
@@ -95,14 +93,10 @@
           <el-table-column
             align="center"
             prop="modifierName"
-            label="操作人">
+            label="操作人"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.modifierName }}</p>
-                <div slot="reference">
-                  {{ scope.row.modifierName }}
-                </div>
-              </el-popover>
+              {{ scope.row.modifierName }}
             </template>
           </el-table-column>
           <el-table-column
@@ -153,7 +147,7 @@
         <el-form-item label="任务名称" prop="taskName">
           <el-input v-model="taskDetail.taskName" size="small" maxlength="45"></el-input>
         </el-form-item>
-        <el-form-item label="对应活动">
+        <el-form-item label="活动名称">
           <span>{{taskDetail.activityName}}</span>
         </el-form-item>
         <el-form-item label="接触记录数量">
@@ -179,12 +173,12 @@
       append-to-body>
       <div slot="title" style="text-align: center;">
         <el-button @click="addVisible = false;" style="float:left;" icon="el-icon-arrow-left">返 回</el-button>
-        <h3 style="display:inline;">新建质检任务</h3>
+        <h3 style="display:inline;">新建</h3>
       </div>
       <el-row>
         <el-form :inline="true" size="small" :model="getRecords" ref="addTask" :rules="rule">
-          <el-form-item>
-            <el-select v-model="getRecords.campaign" placeholder="对应活动" @change="getActivityName" style="width: 100%;">
+          <el-form-item label="活动名称:">
+            <el-select v-model="getRecords.campaign" placeholder="活动名称" @change="getActivityName" style="width: 100%;">
               <el-option
                   v-for="item in campsData"
                   :key="item.campaignId"
@@ -193,14 +187,14 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item>
+          <el-form-item label="客户姓名:">
             <el-input v-model="getRecords.customerName" size="small" placeholder="客户姓名" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item label="拨打时间：">
             <el-date-picker
                 v-model="getRecords.startTime"
                 type="datetime"
-                placeholder="开始日期"
+                placeholder="开始时间"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 default-time="00:00:00">
             </el-date-picker>
@@ -208,7 +202,7 @@
             <el-date-picker
                 v-model="getRecords.endTime"
                 type="datetime"
-                placeholder="结束日期"
+                placeholder="结束时间"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 default-time="00:00:00">
             </el-date-picker>
@@ -218,7 +212,7 @@
             到
             <el-input v-model="getRecords.etime" size="small" style="width:15%" type="number"></el-input>
             分钟
-            <el-button type="primary" @click="getRecordsByConditions(getRecords)" icon="el-icon-search">查询</el-button>
+            <el-button type="primary" @click="getRecordsByConditions(getRecords)">查询</el-button>
             <el-button type="danger" @click="clearForm(getRecords);getRecords.getAll=1;">重置</el-button>
           </el-form-item>
         </el-form>
@@ -230,47 +224,55 @@
           <el-table-column
             align="center"
             prop="recordId"
-            label="接触历史编号">
+            label="接触历史编号"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
             prop="staffId"
-            label="员工工号">
+            label="员工工号"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
-            label="分机号">
+            label="分机号"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <div>{{scope.row.callDirection == "0" ? scope.row.callerNumber : scope.row.calleeNumber}}</div>
+              {{scope.row.callDirection == "0" ? scope.row.callerNumber : scope.row.calleeNumber}}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="customerName"
-            label="客户姓名">
+            label="客户姓名"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
-            label="联系电话">
+            label="联系电话"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <div>{{hideMobile(scope.row.customerPhone)}}</div>
+              {{hideMobile(scope.row.customerPhone)}}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="hangUpTime"
-            label="最近联系时间">
+            label="最近联系时间"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
             prop="talkTime"
-            label="通话时长">
+            label="通话时长"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
-            label="话后小结">
+            label="话后小结"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <div>{{summary(scope.row.summaryDetailInfos)}}</div>
+              {{summary(scope.row.summaryDetailInfos)}}
             </template>
           </el-table-column>
         </el-table>
@@ -351,11 +353,11 @@ export default {
       detailVisible: false,
       delVisible: false, // 删除对话框显示隐藏
       editVisible: false, // 修改对话框显示隐藏
-      addVisible: false, // 添加对话框显示隐藏
+      addVisible: false, // 新建对话框显示隐藏
       batchDelVisible: false, // 批量删除对话框显示隐藏
       removeVisible: false, // 移除对应活动
       tableData: [], // 表格数据
-      recodeTable: [], // 添加页面表格
+      recodeTable: [], // 新建页面表格
       validate: true, // 验证不通过阻止发请求
       pageShow: false, // 分页显示隐藏
       campsData: [], // 所有活动
@@ -590,7 +592,7 @@ export default {
         console.log(error)
       })
     },
-    // 添加页面 查询
+    // 新建页面 查询
     getRecordsByConditions(req) {
       if (req.campaign) {
         findRecordsByConditions(req).then(response => {
@@ -630,7 +632,7 @@ export default {
       })
       this.addTask.activityName = obj.campaignName
     },
-    // 添加质检任务
+    // 新建质检任务
     addTasks(addTask) {
       addTask.activityId = this.getRecords.campaign
       addTask.customerName = this.getRecords.customerName
@@ -651,10 +653,10 @@ export default {
             this.$message.success(response.data.message)
             this.searchTask(this.req2)
           } else {
-            this.$message('添加失败')
+            this.$message('新建失败')
           }
         }).catch(error => {
-          this.$message('添加失败')
+          this.$message('新建失败')
           console.log(error)
         })
       }

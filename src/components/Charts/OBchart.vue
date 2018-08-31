@@ -63,22 +63,22 @@
       <el-table-column
         align="center"
         prop="new_first_dial_task_count"
-        label="新增首拨数量">
+        label="新建首拨数量">
       </el-table-column>
       <el-table-column
         align="center"
         prop="new_success_contact_task_count"
-        label="新增成功数量">
+        label="新建成功数量">
       </el-table-column>
       <el-table-column
         align="center"
         prop="new_fail_contact_task_count"
-        label="新增失败数量">
+        label="新建失败数量">
       </el-table-column>
       <el-table-column
         align="center"
         prop="new_appoint_contact_task_count"
-        label="新增预约数量">
+        label="新建预约数量">
       </el-table-column>
     </el-table>
     <el-row style="margin-top:1%;">
@@ -221,7 +221,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['新增首拨数量', '新增成功数量', '新增失败数量', '新增预约数量']
+            data: ['新建首拨数量', '新建成功数量', '新建失败数量', '新建预约数量']
           },
           calculable: true,
           xAxis: [{
@@ -293,7 +293,7 @@
           //   end: 35
           // }],
           series: [{
-            name: '新增首拨数量',
+            name: '新建首拨数量',
             type: 'bar',
             stack: 'total',
             barMaxWidth: 35,
@@ -315,7 +315,7 @@
             },
             data: this.new_first_dial_task_count
           }, {
-            name: '新增成功数量',
+            name: '新建成功数量',
             type: 'bar',
             stack: 'total',
             barMaxWidth: 35,
@@ -334,7 +334,7 @@
             },
             data: this.new_success_contact_task_count
           }, {
-            name: '新增失败数量',
+            name: '新建失败数量',
             type: 'bar',
             stack: 'total',
             symbolSize: 10,
@@ -355,7 +355,7 @@
             },
             data: this.new_fail_contact_task_count
           }, {
-            name: '新增预约数量',
+            name: '新建预约数量',
             type: 'bar',
             stack: 'total',
             symbolSize: 10,

@@ -2,7 +2,7 @@
   <div class="container">
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item label="活动名称:">
+        <el-form-item label="质检任务名称:">
           <el-select v-model="req.campaignId" :placeholder="campData.length==0?'无活动':'请选择活动'" @change="req.pageNo=1;req.pageSize=10;req2=clone(req);resetForm('assignForm');queryMainQualityList(req)">
             <el-option
                 v-for="item in campData"
@@ -38,49 +38,45 @@
           <el-table-column
             align="center"
             prop="qualityId"
+            :show-overflow-tooltip="true"
             label="质检任务编号">
           </el-table-column>
           <el-table-column
             align="center"
             prop="qualityName"
+            :show-overflow-tooltip="true"
             label="质检任务名称">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.qualityName }}</p>
-                <div slot="reference">
-                  {{ scope.row.qualityName }}
-                </div>
-              </el-popover>
+              {{ scope.row.qualityName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="noAssignNum"
+            :show-overflow-tooltip="true"
             label="未分配总数量">
           </el-table-column>
           <el-table-column
             align="center"
             prop="totalNum"
+            :show-overflow-tooltip="true"
             label="质检总数量">
           </el-table-column>
           <el-table-column
             align="center"
             prop="modifierName"
+            :show-overflow-tooltip="true"
             label="操作人">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.modifierName }}</p>
-                <div slot="reference">
-                  {{ scope.row.modifierName }}
-                </div>
-              </el-popover>
+              {{ scope.row.modifierName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="modifyTime"
             label="操作时间"
-            width="155">
+            width="155"
+            :show-overflow-tooltip="true">
           </el-table-column>
         </el-table>
       </el-col>
@@ -114,33 +110,33 @@
           <el-table-column
             align="center"
             prop="departName"
+            :show-overflow-tooltip="true"
             label="回收对象">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.departName }}</p>
-                <div slot="reference">
-                  {{ scope.row.departName }}
-                </div>
-              </el-popover>
+              {{ scope.row.departName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="noUseNum"
+            :show-overflow-tooltip="true"
             label="可回收数量">
           </el-table-column>
           <el-table-column
             align="center"
             prop="useNum"
+            :show-overflow-tooltip="true"
             label="已使用数量">
           </el-table-column>
           <el-table-column
             align="center"
             prop="totalNum"
+            :show-overflow-tooltip="true"
             label="总数量">
           </el-table-column>
           <el-table-column
             align="center"
+            :show-overflow-tooltip="true"
             label="回收数量">
             <template slot-scope="scope">
               <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="回收数量" style="width:130px;"></el-input-number>
@@ -161,34 +157,34 @@
           <el-table-column
             align="center"
             prop="staffName"
+            :show-overflow-tooltip="true"
             label="回收对象">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.staffName }}</p>
-                <div slot="reference">
-                  {{ scope.row.staffName }}
-                </div>
-              </el-popover>
+              {{ scope.row.staffName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="noCompleteNum"
+            :show-overflow-tooltip="true"
             label="可回收数量">
           </el-table-column>
           <el-table-column
             align="center"
             prop="temporaryNum"
+            :show-overflow-tooltip="true"
             label="暂存数量">
           </el-table-column>
           <el-table-column
             align="center"
             prop="completeNum"
+            :show-overflow-tooltip="true"
             label="已使用数量">
           </el-table-column>
           <el-table-column
             align="center"
             prop="totalNum"
+            :show-overflow-tooltip="true"
             label="总数量">
           </el-table-column>
           <el-table-column

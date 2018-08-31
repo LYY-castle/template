@@ -58,7 +58,7 @@
       </el-submenu>
 
     </template>
-    <el-dialog title="新增目录" :visible.sync="dialogFormVisible" append-to-body>
+    <el-dialog title="新建目录" :visible.sync="dialogFormVisible" append-to-body>
       <el-form :model="form">
         <el-form-item label="目录名称" label-width="120px">
           <el-input v-model="form.name" auto-complete="off"></el-input>

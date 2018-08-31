@@ -6,8 +6,8 @@
           <el-form-item label="任务名称:">
             <el-input placeholder="任务名称" v-model="formInline.taskId"></el-input>
           </el-form-item>
-          <el-form-item label="操作人员:">
-            <el-input placeholder="操作人员" v-model="formInline.modifierName"></el-input>
+          <el-form-item label="操作人:">
+            <el-input placeholder="操作人" v-model="formInline.modifierName"></el-input>
           </el-form-item>
           <el-form-item label="完成状态:" prop="status">
             <el-radio-group v-model="formInline.status">
@@ -60,76 +60,58 @@
         <el-table-column
           align="center"
           prop="recordId"
+          :show-overflow-tooltip="true"
           label="接触历史编号">
         </el-table-column>
         <el-table-column
           align="center"
           prop="contactTaskId"
+          :show-overflow-tooltip="true"
           label="接触任务id">
         </el-table-column>
         <el-table-column
           align="center"
           prop="taskName"
+          :show-overflow-tooltip="true"
           label="任务名称">
           <template slot-scope="scope">
-            <el-popover trigger="hover" placement="right">
-              <p>{{ scope.row.taskName }}</p>
-              <div slot="reference">
-                {{ scope.row.taskName }}
-              </div>
-            </el-popover>
+            {{ scope.row.taskName }}
           </template>
         </el-table-column>
         <el-table-column
           align="center"
           prop="modifierName"
-          label="操作人员">
+          label="操作人"
+          :show-overflow-tooltip="true">
           <template slot-scope="scope">
-            <el-popover trigger="hover" placement="right">
-              <p>{{ scope.row.modifierName }}</p>
-              <div slot="reference">
-                {{ scope.row.modifierName }}
-              </div>
-            </el-popover>
+            {{ scope.row.modifierName }}
           </template>
         </el-table-column>
         <el-table-column
           align="center"
           prop="activityName"
+          :show-overflow-tooltip="true"
           label="活动名称">
           <template slot-scope="scope">
-            <el-popover trigger="hover" placement="right">
-              <p>{{ scope.row.activityName }}</p>
-              <div slot="reference">
-                {{ scope.row.activityName }}
-              </div>
-            </el-popover>
+            {{ scope.row.activityName }}
           </template>
         </el-table-column>
         <el-table-column
           align="center"
           prop="contactStaffId"
-          label="员工姓名">
+          label="员工姓名"
+          :show-overflow-tooltip="true">
           <template slot-scope="scope">
-            <el-popover trigger="hover" placement="right">
-              <p>{{ scope.row.contactStaffId }}</p>
-              <div slot="reference">
-                {{ scope.row.contactStaffId }}
-              </div>
-            </el-popover>
+            {{ scope.row.contactStaffId }}
           </template>
         </el-table-column>
         <el-table-column
           align="center"
           prop="customerName"
-          label="客户姓名">
+          label="客户姓名"
+          :show-overflow-tooltip="true">
           <template slot-scope="scope">
-            <el-popover trigger="hover" placement="right">
-              <p>{{ scope.row.customerName }}</p>
-              <div slot="reference">
-                {{ scope.row.customerName }}
-              </div>
-            </el-popover>
+            {{ scope.row.customerName }}
           </template>
         </el-table-column>
         <el-table-column
@@ -141,6 +123,7 @@
         <el-table-column
           align="center"
           prop="status"
+          :show-overflow-tooltip="true"
           label="完成情况">
         </el-table-column>
         <el-table-column
@@ -152,7 +135,7 @@
         <el-table-column
           align="center"
           prop="modifierTime"
-          label="任务修改时间"
+          label="任务操作时间"
           width="155">
         </el-table-column>
         <el-table-column
@@ -210,66 +193,79 @@
               <el-table-column
                 align="center"
                 prop="staffId"
+                :show-overflow-tooltip="true"
                 label="坐席工号">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="DN"
+                :show-overflow-tooltip="true"
                 label="分机号码">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="recordId"
+                :show-overflow-tooltip="true"
                 label="记录编号">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="callTime"
+                :show-overflow-tooltip="true"
                 label="拨打时间">
               </el-table-column>
               <el-table-column
                 align="center"
+                :show-overflow-tooltip="true"
                 prop="answerTime"
                 label="接听时间">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="talkTime"
+                :show-overflow-tooltip="true"
                 label="通话时长">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="callDirection"
+                :show-overflow-tooltip="true"
                 label="呼叫方向">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="originNumber"
+                :show-overflow-tooltip="true"
                 label="原始主叫">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="callerNumber"
+                :show-overflow-tooltip="true"
                 label="主叫号码">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="calleeNumber"
+                :show-overflow-tooltip="true"
                 label="被叫号码">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="taskStatus"
+                :show-overflow-tooltip="true"
                 label="任务状态">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="summaryDetailInfos"
+                :show-overflow-tooltip="true"
                 label="话后小结">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="description"
+                :show-overflow-tooltip="true"
                 label="小结备注">
               </el-table-column>
         </el-table>
@@ -413,71 +409,85 @@
                 width="55"
                 align="center"
                 type="index"
+                :show-overflow-tooltip="true"
                 label="序号">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="staffId"
+                :show-overflow-tooltip="true"
                 label="坐席工号">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="DN"
+                :show-overflow-tooltip="true"
                 label="分机号码">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="recordId"
+                :show-overflow-tooltip="true"
                 label="记录编号">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="callTime"
+                :show-overflow-tooltip="true"
                 label="拨打时间">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="answerTime"
+                :show-overflow-tooltip="true"
                 label="接听时间">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="talkTime"
+                :show-overflow-tooltip="true"
                 label="通话时长">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="callDirection"
+                :show-overflow-tooltip="true"
                 label="呼叫方向">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="originNumber"
+                :show-overflow-tooltip="true"
                 label="原始主叫">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="callerNumber"
+                :show-overflow-tooltip="true"
                 label="主叫号码">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="calleeNumber"
+                :show-overflow-tooltip="true"
                 label="被叫号码">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="taskStatus"
+                :show-overflow-tooltip="true"
                 label="任务状态">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="summaryDetailInfos"
+                :show-overflow-tooltip="true"
                 label="话后小结">
               </el-table-column>
               <el-table-column
                 align="center"
                 prop="description"
+                :show-overflow-tooltip="true"
                 label="小结备注">
               </el-table-column>
         </el-table>

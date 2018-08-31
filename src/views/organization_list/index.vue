@@ -6,8 +6,8 @@
           <el-form-item label="组织编号：">
             <el-input placeholder="组织编号（限长11字符）" v-model="formInline.organ_id" maxlength="11"></el-input>
           </el-form-item>
-          <el-form-item label="组织名称：">
-            <el-input placeholder="组织名称（限长45字符）" v-model="formInline.organ_name" maxlength="45"></el-input>
+          <el-form-item label="组织名：">
+            <el-input placeholder="组织名（限长45字符）" v-model="formInline.organ_name" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item label="上级组织：">
             <el-select v-model="formInline.parent_organ" placeholder="上级组织">
@@ -16,8 +16,8 @@
               <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="操作人员：">
-            <el-input placeholder="操作人员（限长45字符）" v-model="formInline.creator" maxlength="45"></el-input>
+          <el-form-item label="操作人：">
+            <el-input placeholder="操作人（限长45字符）" v-model="formInline.creator" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item label="操作时间：">
             <el-date-picker
@@ -34,7 +34,7 @@
             <el-button type="danger" @click="reset">重置</el-button>
           </el-form-item>
         </el-form>
-        <el-table 
+        <el-table
           :header-row-style="headerRow"
           :data="tableData"
           ref="multipleTable"
@@ -59,58 +59,43 @@
           <el-table-column
             align="center"
             prop="number"
-            label="组织编号">
+            label="组织编号"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
             prop="departName"
-            label="组织名">
+            label="组织名"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.departName }}</p>
-                <div slot="reference">
-                  {{ scope.row.departName }}
-                </div>
-              </el-popover>
+              {{ scope.row.departName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="upDepartName"
-            label="上级组织">
+            label="上级组织"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.upDepartName }}</p>
-                <div slot="reference">
-                  {{ scope.row.upDepartName }}
-                </div>
-              </el-popover>
+              {{ scope.row.upDepartName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="comment"
-            label="备注">
+            label="备注"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.comment }}</p>
-                <div slot="reference">
-                  {{ scope.row.comment }}
-                </div>
-              </el-popover>
+              {{ scope.row.comment }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="modifier"
-            label="操作人员">
+            label="操作人"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.modifier }}</p>
-                <div slot="reference">
-                  {{ scope.row.modifier }}
-                </div>
-              </el-popover>
+              {{ scope.row.modifier }}
             </template>
           </el-table-column>
           <el-table-column
@@ -140,7 +125,7 @@
       </el-row>
       <el-row style="margin-top:1%;">
         <el-col :span="4">
-          <el-button type="success" size="small"  @click="dialogFormVisible = true">新增</el-button>
+          <el-button type="success" size="small"  @click="dialogFormVisible = true">新建</el-button>
           <el-button type="danger" size="small" @click="deleteAll">批量删除</el-button>
         </el-col>
         <el-col :span="18">
@@ -157,7 +142,7 @@
         </el-col>
       </el-row>
     </div>
-    <el-dialog title="新增组织" :visible.sync="dialogFormVisible" width="30%" @close="resetForm('ruleForm')" append-to-body>
+    <el-dialog title="新建组织" :visible.sync="dialogFormVisible" width="30%" @close="resetForm('ruleForm')" append-to-body>
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="组织名" prop="departName">
           <el-input v-model="ruleForm.departName" placeholder="上限45字符" maxlength="45"></el-input>
@@ -195,10 +180,10 @@
         <el-form-item label="备注">
           <el-input type="textarea" v-model="ruleFormReverse.comment" placeholder="上限255字符" maxlength="255"></el-input>
         </el-form-item>
-        <el-form-item label="创建人">
+        <el-form-item label="新建人">
           <span>{{ruleFormReverse.creator}}</span>
         </el-form-item>
-        <el-form-item label="创建时间">
+        <el-form-item label="新建时间">
           <span>{{ruleFormReverse.createTime}}</span>
         </el-form-item>
       </el-form>

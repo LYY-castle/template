@@ -50,60 +50,50 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="评分编号">
+            label="评分编号"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="handleClickDetail(scope.row)">{{scope.row.gradeId}}</el-button>
+              <a @click="handleClickDetail(scope.row)">{{scope.row.gradeId}}</a>
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="gradeName"
-            label="评分表名">
+            label="评分表名"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.gradeName }}</p>
-                <div slot="reference">
-                  {{ scope.row.gradeName }}
-                </div>
-              </el-popover>
+              {{ scope.row.gradeName }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="modifier"
-            label="操作人">
+            label="操作人"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.modifier }}</p>
-                <div slot="reference">
-                  {{ scope.row.modifier }}
-                </div>
-              </el-popover>
+              {{ scope.row.modifier }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="updateTime"
             label="操作时间"
-            width="155">
+            width="155"
+            :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
             prop="description"
-            label="备注">
+            label="备注"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="right">
-                <p>{{ scope.row.description }}</p>
-                <div slot="reference">
-                  {{ scope.row.description }}
-                </div>
-              </el-popover>
+              {{ scope.row.description }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             label="操作"
-            width="250">
+            width="150">
             <template slot-scope="scope">
               <el-button @click="handleClick(scope.row)" type="text" size="small"> 修改</el-button>
               <el-button @click="handleDelete(scope.row)" type="text" size="small">删除</el-button>
@@ -130,7 +120,7 @@
         </el-col>
       </el-row>
     </div>
-    <el-dialog title="新增评分表" :visible.sync="dialogFormVisible" width="60%" @close="resetForm('ruleForm')" append-to-body>
+    <el-dialog title="新建评分表" :visible.sync="dialogFormVisible" width="60%" @close="resetForm('ruleForm')" append-to-body>
       <el-form :model="ruleForm" ref="ruleForm" label-width="150px" class="demo-ruleForm">
         <el-row>
           <el-col :span="17">
@@ -143,7 +133,7 @@
           <textarea v-model='ruleForm.description' placeholder="此处填写评分表简单描述，上限100字符" maxlength="100" cols="63" rows="4">{{ruleForm.description}}</textarea>
         </el-form-item>
          <el-form-item>
-          <el-button size="mini" type="primary" @click="add">添加评分题目</el-button>
+          <el-button size="mini" type="primary" @click="add">新建</el-button>
         </el-form-item>
         <el-card class="box-card" v-for="(item, index) in ruleForm.gradeTitles">
           <el-row>
@@ -158,7 +148,7 @@
           </el-row>
           <el-row>
             <el-form-item>
-              <el-button size="mini" type="primary" @click="addChoice(index)">添加评分选项</el-button>
+              <el-button size="mini" type="primary" @click="addChoice(index)">新建</el-button>
             </el-form-item>
             <div v-for="(node, index1) in item.gradeOptions">
                 <el-row>
@@ -181,9 +171,9 @@
         </el-card>
         </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
         <el-button type="danger" @click="resetForm('ruleForm')">重置</el-button>
-        <el-button @click="resetForm('ruleForm');dialogFormVisible = false">返 回</el-button>
+        <el-button @click="resetForm('ruleForm');dialogFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
       </div>
     </el-dialog>
       <el-dialog title="修改评分表" :visible.sync="dialogFormVisibleReverse" width="60%" @close="resetFormReverse('ruleFormReverse');dialogFormVisibleReverse=false" append-to-body>
@@ -199,7 +189,7 @@
           <textarea v-model='ruleFormReverse.description' placeholder="此处填写评分表简单描述，上限100字符" maxlength="100" cols="63" rows="4">{{ruleFormReverse.description}}</textarea>
         </el-form-item>
          <el-form-item>
-          <el-button size="mini" type="primary" @click="addReverse">添加评分题目</el-button>
+          <el-button size="mini" type="primary" @click="addReverse">新建</el-button>
         </el-form-item>
         <el-card class="box-card" v-for="(item, index) in ruleFormReverse.gradeTitles"  v-if="ruleFormReverse.gradeTitles[index].isDelete!=='1'">
           <el-row >
@@ -215,7 +205,7 @@
           </el-row>
           <el-row>
             <el-form-item>
-              <el-button size="mini" type="primary" @click="addReverseChoice(index)">添加评分选项</el-button>
+              <el-button size="mini" type="primary" @click="addReverseChoice(index)">新建</el-button>
             </el-form-item>
             <div v-for="(node, index1) in item.gradeOptions" v-if="node.isDelete!=='1'">
                 <el-row>
