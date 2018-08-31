@@ -351,7 +351,7 @@
               this.pageShow = false
             }
           } else {
-            this.$message(response.data.messages)
+            this.$message.error(response.data.messages)
             this.tableData = response.data.data
             this.pageShow = false
           }
@@ -426,10 +426,10 @@
             this.findNoVisitCustomers(this.paginationReq)
             this.addVisible = false
           } else {
-            this.$message('新建失败')
+            this.$message.error('新建失败')
           }
         }).catch(error => {
-          this.$message('新建失败')
+          this.$message.error('新建失败')
           console.log(error)
         })
       },
@@ -445,11 +445,11 @@
               this.req.pageNo = 1
               this.findNoVisitCustomers(this.paginationReq)
             } else {
-              this.$message('删除失败')
+              this.$message.error('删除失败')
             }
           }).catch(error => {
             console.log(error)
-            this.$message('删除失败')
+            this.$message.error('删除失败')
           })
         }
       },
@@ -470,11 +470,11 @@
             this.findNoVisitCustomers(this.paginationReq)
             this.editVisible = false
           } else {
-            this.$message('修改失败')
+            this.$message.error('修改失败')
           }
         }).catch(error => {
           console.log(error)
-          this.$message('修改失败')
+          this.$message.error('修改失败')
         })
       },
       delBlackListInfo(id) {
@@ -486,11 +486,11 @@
             this.findNoVisitCustomers(this.paginationReq)
             this.delVisible = false
           } else {
-            this.$message('删除失败')
+            this.$message.error('删除失败')
           }
         }).catch(error => {
           console.log(error)
-          this.$message('删除失败')
+          this.$message.error('删除失败')
         })
       },
       // 克隆数据

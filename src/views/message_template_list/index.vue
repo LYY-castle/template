@@ -315,7 +315,7 @@ export default {
             this.pageShow = false
           }
         } else {
-          this.$message(response.data.messages)
+          this.$message.error(response.data.messages)
           this.tableData = response.data.data
           this.pageShow = false
         }
@@ -349,7 +349,7 @@ export default {
           this.getAllTemplateGroup()
           this.getTemplateList(this.req)
         } else {
-          this.$message(response.data.message)
+          this.$message.error(response.data.message)
         }
       }).catch(error => {
         console.error(error)
@@ -383,7 +383,7 @@ export default {
           this.editVisible = false
           this.getTemplateList(this.paginationReq)
         } else {
-          this.$message(response.data.message)
+          this.$message.error(response.data.message)
         }
       }).catch(error => {
         console.error(error)
@@ -399,7 +399,7 @@ export default {
           this.pageInfo.pageNo = 1
           this.getTemplateList(this.paginationReq)
         } else {
-          this.$message(response.data.message)
+          this.$message.error(response.data.message)
         }
       }).catch(error => {
         console.error(error)

@@ -19,6 +19,7 @@ export function queryByKeyWords(req) {
     url: '/contact/getContactList',
     method: 'post',
     data: {
+      customerId: req.customerId,
       campaigns: req.campaign,
       customerName: req.customerName,
       caller: req.caller,
@@ -32,7 +33,6 @@ export function queryByKeyWords(req) {
       departId: req.departId,
       agentid: req.agentid,
       status: req.status === '-1' ? null : req.status
-
     }
   })
 }

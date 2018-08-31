@@ -2,6 +2,12 @@
   <div class="container">
     <el-row>
       <el-form :inline="true" size="small">
+        <el-form-item label="任务编号:">
+          <el-input v-model="req.taskId" placeholder="任务编号" maxlength="45"></el-input>
+        </el-form-item>
+        <el-form-item label="任务名称:">
+          <el-input v-model="req.taskName" placeholder="任务名称" maxlength="45"></el-input>
+        </el-form-item>
         <el-form-item label="活动名称:">
           <el-select v-model="req.activityId" placeholder="活动名称" style="width: 100%;">
             <el-option value='' label="所有活动"></el-option>
@@ -13,15 +19,12 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="任务名称:">
-          <el-input v-model="req.taskName" placeholder="任务名称" maxlength="45"></el-input>
-        </el-form-item>
         <el-form-item label="操作人:">
           <el-input v-model="req.modifierName" placeholder="操作人" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
           <el-date-picker
-              v-model="req.startModifierTime"
+              v-model="req.startTime"
               type="datetime"
               placeholder="开始时间"
               value-format="yyyy-MM-dd HH:mm:ss"
@@ -29,7 +32,7 @@
           </el-date-picker>
           到
           <el-date-picker
-              v-model="req.endModifierTime"
+              v-model="req.stopTime"
               type="datetime"
               placeholder="结束时间"
               value-format="yyyy-MM-dd HH:mm:ss"
@@ -371,22 +374,24 @@ export default {
       },
       // 查询 发送请求参数
       req: {
+        taskId: '',
         status: '',
         activityId: '',
         taskName: '',
         modifierName: '',
-        startModifierTime: '',
-        endModifierTime: '',
+        startTime: '',
+        stopTime: '',
         pageNo: 1,
         pageSize: 10
       },
       req2: {
+        taskId: '',
         status: '',
         activityId: '',
         taskName: '',
         modifierName: '',
-        startModifierTime: '',
-        endModifierTime: '',
+        startTime: '',
+        stopTime: '',
         pageNo: 1,
         pageSize: 10
       },
@@ -467,22 +472,24 @@ export default {
     },
     reset() {
       this.req = {
+        taskId: '',
         status: '',
         activityId: '',
         taskName: '',
         modifierName: '',
-        startModifierTime: '',
-        endModifierTime: '',
+        startTime: '',
+        stopTime: '',
         pageNo: this.req2.pageNo,
         pageSize: this.pageInfo.pageSize
       }
       this.req2 = {
+        taskId: '',
         status: '',
         activityId: '',
         taskName: '',
         modifierName: '',
-        startModifierTime: '',
-        endModifierTime: '',
+        startTime: '',
+        stopTime: '',
         pageNo: this.req2.pageNo,
         pageSize: this.pageInfo.pageSize
       }
@@ -508,6 +515,7 @@ export default {
     },
     // 查询质检任务信息
     searchTask(req) {
+      console.log('55555555555', req)
       queryTask(req)
         .then(response => {
           if (response.data.code === 0) {

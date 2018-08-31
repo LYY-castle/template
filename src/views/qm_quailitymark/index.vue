@@ -3,8 +3,11 @@
     <div class="filter-container">
       <el-row>
         <el-form :inline="true" class="demo-form-inline" size="small">
+          <el-form-item label="接触历史编号:">
+            <el-input placeholder="接触历史编号" v-model="formInline.contactRecord"></el-input>
+          </el-form-item>
           <el-form-item label="任务名称:">
-            <el-input placeholder="任务名称" v-model="formInline.taskId"></el-input>
+            <el-input placeholder="任务名称" v-model="formInline.taskName"></el-input>
           </el-form-item>
           <el-form-item label="操作人:">
             <el-input placeholder="操作人" v-model="formInline.modifierName"></el-input>
@@ -67,7 +70,7 @@
           align="center"
           prop="contactTaskId"
           :show-overflow-tooltip="true"
-          label="接触任务id">
+          label="接触任务编号">
         </el-table-column>
         <el-table-column
           align="center"
@@ -81,7 +84,7 @@
         <el-table-column
           align="center"
           prop="modifierName"
-          label="操作人"
+          label="操作人">
           :show-overflow-tooltip="true">
           <template slot-scope="scope">
             {{ scope.row.modifierName }}
@@ -99,7 +102,7 @@
         <el-table-column
           align="center"
           prop="contactStaffId"
-          label="员工姓名"
+          label="员工工号">
           :show-overflow-tooltip="true">
           <template slot-scope="scope">
             {{ scope.row.contactStaffId }}
@@ -135,7 +138,7 @@
         <el-table-column
           align="center"
           prop="modifierTime"
-          label="任务操作时间"
+          label="操作时间"
           width="155">
         </el-table-column>
         <el-table-column
@@ -673,15 +676,16 @@
         orderHide: false,
         gradeHide: false,
         formInline: {
+          contactRecord: '',
           status: '0',
           pageSize: 10,
           pageNo: 1,
-          start_time: '',
-          end_time: '',
+          assignStart: '',
+          assignStop: '',
           staffId: '',
-          taskId: '',
-          complete_start: '',
-          complete_end: '',
+          taskName: '',
+          doneStart: '',
+          doneStop: '',
           modifierName: ''
         },
         handleSelectionChange(val) {
@@ -839,10 +843,12 @@
         this.timeValue1 = ''
         this.timeValue2 = ''
         this.formInline = {
-          taskId: '',
+          contactRecord: '',
+          taskName: '',
           modifierName: '',
           status: '0',
-          pageNo: this.pagination.pageNo
+          pageNo: (isNaN(this.pagination.pageNo) ? 1 : this.pagination.pageNo),
+          pageSize: (isNaN(this.pagination.pageSize) ? 1 : this.pagination.pageSize)
         }
       },
       handleClickDetail(row) {
@@ -1049,10 +1055,10 @@
       },
       handleSizeChange(val) {
         this.formInline.pageSize = val
-        this.formInline.start_time = this.timeValue1[0]
-        this.formInline.end_time = this.timeValue1[1]
-        this.formInline.complete_start = this.timeValue2[0]
-        this.formInline.complete_end = this.timeValue2[1]
+        this.formInline.assignStart = this.timeValue1[0]
+        this.formInline.assignStop = this.timeValue1[1]
+        this.formInline.doneStart = this.timeValue2[0]
+        this.formInline.doneStop = this.timeValue2[1]
         this.formInline.staffId = localStorage.getItem('agentId')
         this.pagination.pageNo = 1
         findQualityTaskByInfo(this.formInline).then(response => {
@@ -1061,10 +1067,10 @@
       },
       handleCurrentChange(val) {
         this.formInline.pageNo = val
-        this.formInline.start_time = this.timeValue1[0]
-        this.formInline.end_time = this.timeValue1[1]
-        this.formInline.complete_start = this.timeValue2[0]
-        this.formInline.complete_end = this.timeValue2[1]
+        this.formInline.assignStart = this.timeValue1[0]
+        this.formInline.assignStop = this.timeValue1[1]
+        this.formInline.doneStart = this.timeValue2[0]
+        this.formInline.doneStop = this.timeValue2[1]
         this.formInline.staffId = localStorage.getItem('agentId')
         findQualityTaskByInfo(this.formInline).then(response => {
           this.queryGradeList(response)
@@ -1108,20 +1114,20 @@
         }
       },
       searchTask(req) {
-        // 根据老版本的逻辑 查询只能传分页页码的第一页
+        console.log('9999', req)
         req.pageNo = 1
-        req.start_time = this.timeValue1[0]
-        req.end_time = this.timeValue1[1]
-        req.complete_start = this.timeValue2[0]
-        req.complete_end = this.timeValue2[1]
+        req.assignStart = this.timeValue1[0]
+        req.assignStop = this.timeValue1[1]
+        req.doneStart = this.timeValue2[0]
+        req.doneStop = this.timeValue2[1]
         req.staffId = localStorage.getItem('agentId')
         req.status = this.formInline.status
+        console.log('888', req)
         findQualityTaskByInfo(req).then(response => {
           this.queryGradeList(response)
         })
       },
       queryrecordbytaskid(req) {
-        // 根据老版本的逻辑 查询只能传分页页码的第一页
         findQualityTaskByInfo(req).then(response => {
           this.queryGradeList(response)
         })

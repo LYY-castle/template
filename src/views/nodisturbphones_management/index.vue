@@ -308,7 +308,7 @@ export default {
             this.pageShow = false
           }
         } else {
-          this.$message(response.data.messages)
+          this.$message.error(response.data.messages)
           this.tableData = response.data.data
           this.pageShow = false
         }
@@ -341,7 +341,7 @@ export default {
           this.resetAdd()
           this.querynodisturbphones(this.req)
         } else {
-          this.$message('新建失败')
+          this.$message.error('新建失败')
         }
       }).catch(error => {
         console.error(error)
@@ -359,7 +359,7 @@ export default {
             this.pageInfo.pageNo = 1
             this.querynodisturbphones(this.paginationReq)
           } else {
-            this.$message('删除失败')
+            this.$message.error('删除失败')
           }
         }).catch(error => {
           console.log(error)
@@ -377,7 +377,7 @@ export default {
           this.editVisible = false
           this.querynodisturbphones(this.paginationReq)
         } else {
-          this.$message('修改失败')
+          this.$message.error('修改失败')
         }
       }).catch(error => {
         console.error(error)
@@ -393,7 +393,7 @@ export default {
           this.pageInfo.pageNo =
           this.querynodisturbphones(this.paginationReq)
         } else {
-          this.$message('删除失败')
+          this.$message.error('删除失败')
         }
       }).catch(error => {
         console.error(error)

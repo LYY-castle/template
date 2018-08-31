@@ -3,6 +3,9 @@
   <div class='container' v-if="isMainPage===true">
     <el-row>
       <el-form :inline="true" size="small">
+         <el-form-item label="客户编号：">
+          <el-input placeholder="客户编号" v-model="req.customerId"></el-input>
+        </el-form-item>
         <el-form-item label="活动名称：" prop="campaignId">
           <el-select placeholder="请选择活动"  @change="selectOneCampaign(campaignId)" v-model="campaignId">
             <el-option label="所有情况" value=""></el-option>
@@ -14,9 +17,9 @@
           </el-select>
         </el-form-item>
         <!-- 下属是部门 -->
-        <el-form-item label="员工姓名：" prop="angentId" v-if="isManager">
+        <el-form-item label="操作人：" prop="angentId" v-if="isManager">
           <el-select placeholder=""  v-model="req.agentid">
-            <el-option label="所有员工" value=""></el-option>
+            <el-option label="本部门人员" value=""></el-option>
             <el-option
             v-for="item in staffs"
             :label="item.staffName"
@@ -32,7 +35,7 @@
         </el-form-item>
         <el-form-item label="被叫：">
           <el-input placeholder="被叫号码(上限20字符)" maxlength="20" v-model="req.callee"></el-input>
-        </el-form-item><br/>
+        </el-form-item>
         <el-form-item label="联系时间：">
           <el-date-picker
               v-model="req.startTime"
@@ -49,7 +52,8 @@
               value-format="yyyy-MM-dd HH:mm:ss"
               default-time="00:00:00">
           </el-date-picker>
-          <el-form-item label="接通状态：">
+        </el-form-item>
+         <el-form-item label="接通状态：">
             <el-radio-group v-model="req.status"  @change="changeChoice()">
               <el-radio-button label="-1">所有情况</el-radio-button>
               <el-radio-button label="1">已接通</el-radio-button>
@@ -61,10 +65,9 @@
             至
             <el-input v-model="req.etime" style="width:80px" @change="checkNo(req.stime)" onkeypress="return event.keyCode>=48&&event.keyCode<=57" :maxlength="3"></el-input>分钟
           </el-form-item>
-        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req);">查询</el-button>
-          <el-button type="danger" @click="campaignId='';clearForm(req);putAllcamps();">重置</el-button>
+          <el-button type="danger" @click="campaignId='';resetReq();putAllcamps();">重置</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -75,6 +78,11 @@
           <el-table-column align="center" label="序号" width="55">
             <template slot-scope="scope">
                 <div>{{scope.$index+(req.pageNo-1)*10+1}}</div>
+            </template>
+          </el-table-column>
+            <el-table-column align="center" label="客户编号" width="135">
+            <template slot-scope="scope">
+                <div>{{scope.row.customerId}}</div>
             </template>
           </el-table-column>
           <el-table-column align="center" label="客户姓名" :show-overflow-tooltip="true">
@@ -92,7 +100,7 @@
                 {{showCampaignName(scope.row.campaignId)}}
               </template>
           </el-table-column>
-          <el-table-column align="center" label="员工姓名" :show-overflow-tooltip="true">
+          <el-table-column align="center" label="操作人" :show-overflow-tooltip="true">
             <template slot-scope="scope">
                 {{scope.row.staffName}}
             </template>
@@ -460,6 +468,7 @@
         campaignId: '', // select框选中的活动id
         // 查询条件
         req: {
+          customerId: '',
           customerName: '',
           campaign: [],
           caller: '',
@@ -537,6 +546,25 @@
             break
           case '1':this.showTalkTime = true
             break
+        }
+      },
+      resetReq() {
+        this.showTalkTime = true
+        this.req = {
+          customerId: '',
+          customerName: '',
+          campaign: [],
+          caller: '',
+          callee: '',
+          startTime: '',
+          endTime: '',
+          stime: '',
+          etime: '',
+          departId: '',
+          agentid: localStorage.getItem('agentId'),
+          pageSize: 10,
+          pageNo: 1,
+          status: -1
         }
       },
       // 跳转到别的组件
@@ -656,7 +684,7 @@
         var nodules = this.$refs.tree.getCheckedKeys(true)
         var description = this.detailInfo.contactInfo.description
         if (Date.parse(appointTime) - Date.parse(new Date()) < 0) {
-          this.$message('预约时间不能比现在早！')
+          this.$message.error('预约时间不能比现在早！')
           return
         }
         if (this.originalStatus == null || this.originalStatus === '') {
@@ -664,15 +692,15 @@
         } else {
           if (this.originalStatus !== taskStatus) {
             if (this.originalStatus === '2' && (taskStatus === '1' || taskStatus === '3') && this.detailInfo.orderInfo.length > 0) {
-              this.$message('请您先删除订单再修改任务状态!')
+              this.$message.error('请您先删除订单再修改任务状态!')
               return
             }
             if (this.originalStatus === '3' && (taskStatus === '2')) {
-              this.$message('非法操作!')
+              this.$message.error('非法操作!')
               return
             }
             if (this.originalStatus === '1' && (taskStatus === '2')) {
-              this.$message('非法操作!')
+              this.$message.error('非法操作!')
               return
             }
             this.updateStatusOrNodule(taskId, taskStatus, appointTime, recordId, nodules, description)
@@ -685,9 +713,9 @@
                 if (response.data.code === 0) {
                   this.searchByKeyWords(this.req)
                   this.isMainPage = true
-                  this.$message('修改成功')
+                  this.$message.success('修改成功')
                 } else {
-                  this.$message(response.data.message)
+                  this.$message.error(response.data.message)
                 }
               })
             }
@@ -701,13 +729,13 @@
               if (response.data.code === 0) {
                 this.searchByKeyWords(this.req)
                 this.isMainPage = true
-                this.$message('修改成功')
+                this.$message.success('修改成功')
               } else {
-                this.$message(response.data.message)
+                this.$message.error(response.data.message)
               }
             })
           } else {
-            this.$message(response.data.message)
+            this.$message.error(response.data.message)
           }
         })
       },
@@ -772,9 +800,9 @@
               console.log(error)
             })
         } else if (this.isForbidden.forbiddenManager && this.isForbidden.forbiddenStaff) {
-          this.$message('没权限操作该页面！')
+          this.$message.error('没权限操作该页面！')
         } else {
-          this.$message('系统繁忙！')
+          this.$message.error('系统繁忙！')
         }
       },
       // 显示活动名称
