@@ -1,6 +1,6 @@
  <template>
   <div class="container">
-    <el-row margin-top:>
+    <el-row>
       <el-form :inline="true" size="small">
         <el-form-item label="活动名称:">
           <el-select v-model="req.activityId" placeholder="对应活动" style="width: 100%;">
@@ -37,7 +37,7 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;sreq2=clone(req);searchTask(req)" icon="el-icon-search">查询</el-button>
+          <el-button type="primary" @click="req.pageNo=1;req2=clone(req);searchTask(req)">查询</el-button>
           <el-button type="danger" @click="reset">重置</el-button>
         </el-form-item>
       </el-form>

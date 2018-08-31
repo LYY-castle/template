@@ -195,7 +195,11 @@
     </el-col>
   </el-row>
   <el-row v-if="!havesoftphone">
-    <el-col :span="17" style="margin-top:0.2%;"></el-col>
+    <el-col :span="17" style="margin-top:0.2%;">
+      <el-col :span="1" style="margin-left:1%;">
+        <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
+      </el-col>
+    </el-col>
     <el-col :span="7" class="userInfo" style="margin-top:-7px;">
       <el-col :span="6"></el-col>
       <el-col :span="6"></el-col>

@@ -281,7 +281,7 @@
           <div style="text-align:center">
             <h2>{{this.questionnaireName}}&nbsp;
               <el-tooltip class="item" effect="dark" content="修改问卷模板标题" placement="right-start">
-                <el-button type="primary" icon="el-icon-edit-outline" @click="editQuestionnaireName=true;" size="mini" circle></el-button>
+                <el-button type="primary" @click="editQuestionnaireName=true;" size="mini" circle icon="el-icon-edit"></el-button>
               </el-tooltip>
             </h2>
           </div><br/>
