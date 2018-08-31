@@ -423,7 +423,7 @@ export default {
     getUnreadMessages(agentId) {
       getMyUnreadMessages(agentId)
         .then(response1 => {
-          if (response1.data.result.total_unread_count - this.msgNum_all >= 1) {
+          if (response1.data.result && response1.data.result.total_unread_count - this.msgNum_all >= 1) {
             this.$notify({
               title: '消息提示',
               message: '收到新通知',

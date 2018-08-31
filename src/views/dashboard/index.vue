@@ -22,7 +22,7 @@ export default {
     ])
   },
   mounted() {
-    var promise = new Promise(resolve => {
+    const promise = new Promise(resolve => {
       getMenu(localStorage.getItem('agentId')).then(response => {
         const data = response.data
         // 存到session storage
@@ -30,6 +30,7 @@ export default {
         // 存到store里面
         this.$store.dispatch('SetMenu', getDynamicRouter(data))
         this.$router.addRoutes(getDynamicRouter(data))
+        resolve()
       }).catch(error => {
         if (error.response.status === 403) {
           sessionStorage.setItem('getMenu', '')
@@ -38,10 +39,12 @@ export default {
         }
         console.error(error)
       })
-      resolve()
     })
     promise.then(() => {
-      this.$router.push({ name: 'ord_workingset.html' })
+      const menu = sessionStorage.getItem('getMenu')
+      if (menu && menu.indexOf('ord_workingset.html') > 0) {
+        this.$router.push({ name: 'ord_workingset.html' })
+      }
     })
   }
 }
