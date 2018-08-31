@@ -122,6 +122,11 @@
                 <div>{{scope.row.talkTime}}</div>
             </template>
           </el-table-column>
+          <el-table-column align="center" label="话后小结">
+             <template slot-scope="scope">
+                <div>{{showSummarys(scope.row.summaryDetailInfos)}}</div>
+            </template>
+          </el-table-column>
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
               <el-button type="text" @click="isMainPage=false;detailInfo.recordInfo=[],detailInfo.orderInfo=[];ids.campaignId=scope.row.campaignId;ids.recordId=scope.row.recordId;ids.taskId=scope.row.taskId;ids.agentId=scope.row.staffId;ids.customerId=scope.row.customerId;contactDetail()" size="medium">详情</el-button>
@@ -575,6 +580,19 @@
         if (this.isManager && this.isStaff) {
           this.isManager = true
           this.isStaff = false
+        }
+      },
+      // 显示小结信息
+      showSummarys(nodules) {
+        if (nodules !== null && nodules.length > 0) {
+          var names = ''
+          for (var i = 0; i < nodules.length; i++) {
+            names += nodules[i].name + '/'
+          }
+          names = names.substr(0, (names.length - 1))
+          return names
+        } else {
+          return '无'
         }
       },
       // 详情页面加载
