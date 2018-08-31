@@ -704,6 +704,7 @@
         } else {
           editQCGradeRecord({ 'gradeRecord': gradeRecord }).then(response => {
             if (response.data.code === 0) {
+              this.comment = []
               this.dialogFormVisibleReverse = false
               this.formInline.status = '0'
               this.searchTask(this.formInline)
@@ -772,6 +773,7 @@
         } else {
           addQCGradeRecord({ 'gradeRecord': gradeRecord }).then(response => {
             if (response.data.code === 0) {
+              this.comment = []
               this.dialogFormVisible = false
               this.formInline.status = '0'
               this.searchTask(this.formInline)
@@ -848,6 +850,7 @@
       },
       cleanInfo() {
         this.addScopeUrl = ''
+        this.comment = []
         this.gradeInfo = []
         this.totalAmountMap = new Map()
         this.totalAmount = new Map()
@@ -857,7 +860,6 @@
       /** 获取通话记录 */
       getContactRecord(row) {
         queryrecordbytaskid({ 'taskId': row.contactTaskId, 'campaignId': row.activityId }).then(response => {
-          console.log(response)
           if (response.data.code === 0) {
             this.contactRecordData = response.data.data
             for (var i in this.contactRecordData) {
