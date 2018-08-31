@@ -527,8 +527,7 @@ import {
   checkPromission_qc, // 质检员
   checkPromission_charge, // 现场主管
   checkPromission_sit, // 坐席
-  checkPromission_qs, // 质检主管
-  getDepartIdByAgentId// 查找部门id
+  checkPromission_qs // 质检主管
 } from '@/api/qm_searchquailitymark'
 import {
   queryrecordbytaskid,
@@ -570,23 +569,6 @@ export default {
       timeValue: [],
       // searchType: '1',
       campaignmap: this.findQmCampaign(),
-      // rule: {
-      //   customerName: [
-      //     { required: true, message: '请输入客户名称', trigger: 'blur' }
-      //   ],
-      //   idNumber: [
-      //     { required: true, message: '请输入身份证号码', trigger: 'blur' },
-      //     { pattern: /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/, message: '请输入正确的身份证号码' }
-      //   ],
-      //   sex: [
-      //     { required: true, message: '请选择客户性别', trigger: 'blur' },
-      //     { validator: checkSex, trigger: 'change' }
-      //   ],
-      //   mobile: [
-      //     { required: true, message: '请输入手机号码', trigger: 'blur' },
-      //     { pattern: /^([1][3,4,5,7,8][0-9]{9}|0\d{2,3}-\d{7,8}|\d{1,20})$/, message: '请输入正确的电话号码' }
-      //   ]
-      // },
       delReq: {
         customerId: ''
       },
@@ -647,7 +629,7 @@ export default {
       this.$set(this.req, 'contactTaskId', '')
       this.$set(this.req, 'qcAgentid', '')
       this.$set(this.req, 'activityId', '')
-      this.$set(this.req, 'departId', localStorage.getItem('departId'))
+      this.$set(this.req, 'departId', parseInt(localStorage.getItem('departId')))
       this.$set(this.req, 'gradeId', '')
     }).catch(error => {
       if (error.response.status !== 403) {
@@ -679,19 +661,13 @@ export default {
       this.$set(this.req, 'agentid', '')
       this.$set(this.req, 'activityId', '')
       this.$set(this.req, 'gradeId', '')
-      // } else if (this.searchType === '0') {
-      //   this.$set(this.req, 'contactTaskId', '')
-      //   this.$set(this.req, 'qcAgentid', localStorage.getItem('agentId'))
-      //   this.$set(this.req, 'qualityTaskId', '')
-      //   this.$set(this.req, 'agentid', '')
-      //   this.$set(this.req, 'gradeId', '')
-      // }
+      this.$set(this.req, 'qcdepartId', parseInt(localStorage.getItem('departId')))
     }).catch(error => {
       if (error.response.status !== 403) {
         console.log(error)
       }
     })
-    this.getDepartIdByAgentId(localStorage.getItem('agentId'))
+    // this.getDepartIdByAgentId(localStorage.getItem('agentId'))
     if (this.n === 2) {
       this.getStaffNameByAgentId(localStorage.getItem('agentId'))
     }
@@ -774,15 +750,8 @@ export default {
         this.$set(this.req, 'contactTaskId', '')
         this.$set(this.req, 'qcAgentid', '')
         this.$set(this.req, 'activityId', '')
-        this.$set(this.req, 'departId', localStorage.getItem('departId'))
+        this.$set(this.req, 'departId', parseInt(localStorage.getItem('departId')))
         this.$set(this.req, 'gradeId', '')
-        // } else if (this.searchType === '0') {
-        //   this.$set(this.req, 'contactTaskId', '')
-        //   this.$set(this.req, 'qcAgentid', localStorage.getItem('agentId'))
-        //   this.$set(this.req, 'contactTaskId', '')
-        //   this.$set(this.req, 'agentid', '')
-        //   this.$set(this.req, 'gradeId', '')
-        // }
       } else if (this.n === 3) {
         this.$set(this.req, 'contactTaskId', '')
         this.$set(this.req, 'qcAgentid', '')
@@ -797,13 +766,7 @@ export default {
         this.$set(this.req, 'agentid', '')
         this.$set(this.req, 'activityId', '')
         this.$set(this.req, 'gradeId', '')
-        // } else if (this.searchType === '0') {
-        //   this.$set(this.req, 'contactTaskId', '')
-        //   this.$set(this.req, 'qcAgentid', localStorage.getItem('agentId'))
-        //   this.$set(this.req, 'qualityTaskId', '')
-        //   this.$set(this.req, 'agentid', '')
-        //   this.$set(this.req, 'gradeId', '')
-        // }
+        this.$set(this.req, 'qcdepartId', parseInt(localStorage.getItem('departId')))
       }
     },
     submitForm(formName) {
@@ -832,16 +795,6 @@ export default {
     getStaffNameByAgentId(agentId) {
       getStaffNameByAgentId(agentId).then(response => {
         localStorage.setItem('departId', response.data.data[0].departId)
-      })
-    },
-    // 查询部门id
-    getDepartIdByAgentId(agentid) {
-      getDepartIdByAgentId(agentid).then(response => {
-        if (this.n === 2) {
-          this.req.departId = response.data.data[0].departId
-        } else if (this.n === 4) {
-          this.req.qcdepartId = response.data.data[0].departId
-        }
       })
     },
     // 查询质检评分
@@ -875,29 +828,6 @@ export default {
     },
     // 查询质检评分
     findQualityResultByInfo(req) {
-      // if (this.n) {
-      //   switch (this.n) {
-      //     case 1:
-      //       console.log('质检员')
-      //       this.req = clone(req)
-      //       break
-      //     case 2:
-      //       console.log('团队长')
-      //       break
-      //     case 3:
-      //       console.log('坐席')
-      //       this.req = clone(req)
-      //       break
-      //     case 4:
-      //       console.log(4)
-      //       console.log('质检组长')
-      //       break
-      //     case 5:
-      //       break
-      //     default:
-      //       this.$message('你没有权限操作此页面')
-      //   }
-      // }
       if (this.a === false && this.b === false && this.c === false && this.d === false) {
         this.$message.error('没有权限操作此页面')
       }

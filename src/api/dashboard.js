@@ -21,7 +21,7 @@ export function findContactHistory() {
 }
 export function getUserInfo() {
   return request({
-    url: '/login/getMenu',
-    method: 'post'
+    url: '/login/getUserInfo',
+    method: 'get'
   })
 }

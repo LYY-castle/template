@@ -2,8 +2,8 @@
   <div class="container">
     <!--<div class="dashboard-text">name:{{name}}</div>-->
     <!--<div class="dashboard-text">roles:<span v-for='role in roles' :key='role'>{{role}}</span></div>-->
-    <div class="dashboard-text">欢迎登陆本系统</div>
-    <div class="dashboard-text">123</div>
+    <!--<div class="dashboard-text">欢迎登陆本系统</div>
+    <div class="dashboard-text">123</div>-->
   </div>
 </template>
 
@@ -22,20 +22,26 @@ export default {
     ])
   },
   mounted() {
-    getMenu(localStorage.getItem('agentId')).then(response => {
-      const data = response.data
-      // 存到session storage
-      sessionStorage.setItem('getMenu', JSON.stringify(data))
-      // 存到store里面
-      this.$store.dispatch('SetMenu', getDynamicRouter(data))
-      this.$router.addRoutes(getDynamicRouter(data))
-    }).catch(error => {
-      if (error.response.status === 403) {
-        sessionStorage.setItem('getMenu', '')
-        this.$store.dispatch('SetMenu', [])
-        this.$router.addRoutes(getDynamicRouter(''))
-      }
-      console.error(error)
+    var promise = new Promise(resolve => {
+      getMenu(localStorage.getItem('agentId')).then(response => {
+        const data = response.data
+        // 存到session storage
+        sessionStorage.setItem('getMenu', JSON.stringify(data))
+        // 存到store里面
+        this.$store.dispatch('SetMenu', getDynamicRouter(data))
+        this.$router.addRoutes(getDynamicRouter(data))
+      }).catch(error => {
+        if (error.response.status === 403) {
+          sessionStorage.setItem('getMenu', '')
+          this.$store.dispatch('SetMenu', [])
+          this.$router.addRoutes(getDynamicRouter(''))
+        }
+        console.error(error)
+      })
+      resolve()
+    })
+    promise.then(() => {
+      this.$router.push({ name: 'ord_workingset.html' })
     })
   }
 }

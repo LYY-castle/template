@@ -1,5 +1,12 @@
 import request from '@/utils/request'
 
+export function getDepartId() {
+  return request({
+    url: '/login/getUserNameAndId',
+    method: 'post'
+  })
+}
+
 export function queryByKeyWords(req) {
   return request({
     url: '/order/goquery',
@@ -10,8 +17,20 @@ export function queryByKeyWords(req) {
 
 export function getAllCamps() {
   return request({
-    url: '/campaign/findCampaignByUser',
+    url: '/campaign/campaigns/record',
     method: 'get'
+  })
+}
+
+export function checkManager(agentId) {
+  return request({
+    url: `auth/users/${agentId}/perms/-depart-order-query/GET`
+  })
+}
+
+export function checkStaff(agentId) {
+  return request({
+    url: `auth/users/${agentId}/perms/-staff-order-query/GET`
   })
 }
 

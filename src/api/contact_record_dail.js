@@ -9,7 +9,7 @@ export function getDepartId() {
 
 export function getAllCamps() {
   return request({
-    url: '/campaign/findCampaignByUser',
+    url: '/campaign/campaigns/record',
     method: 'get'
   })
 }

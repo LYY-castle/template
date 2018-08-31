@@ -1198,18 +1198,6 @@ export default {
   mounted() {
     vm = this
     const agentId = localStorage.getItem('agentId')
-    // const menu = []
-    // getMenu().then(res => {
-    //   menu = res.data.data.map(function(item, index) {
-    //     return item.parent_menu_name
-    //   })
-    //   this.havesoftphone = (menu.indexOf('软电话') > -1)
-    //   if (this.havesoftphone) {
-    //     cti.connectCTI('ws://119.27.179.175:9050/')
-    //   }
-    // }).catch(error => {
-    //   console.log(error)
-    // })
     checkSoftphonePerm(agentId).then(res => {
       this.havesoftphone = true
       cti.connectCTI('ws://119.27.179.175:9050/')
@@ -1217,7 +1205,8 @@ export default {
       console.log(error)
     })
     getUserInfo().then(res => {
-      this.userInfo.userName = res.data.staffName
+      localStorage.setItem('departId', res.data.departId)
+      this.userInfo.userName = res.data.agentName
       this.userInfo.staffId = res.data.agentId
       this.userInfo.departName = res.data.departName
     }).catch(error => {
