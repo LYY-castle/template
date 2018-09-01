@@ -1325,13 +1325,11 @@ export default {
       const customerPhone = this.$route.query.customerPhone
       const customerId = this.$route.query.customerId
       if (typeof taskId !== 'undefined' && typeof campaignId !== 'undefined' && typeof customerId !== 'undefined' && typeof isBlacklist !== 'undefined' && typeof customerPhone !== 'undefined') {
-        console.log('taskId', taskId)
-        console.log('campaignId', campaignId)
-        console.log('isBlacklist', isBlacklist)
-        console.log('customerPhone', customerPhone)
         this.isDialTask = false
         // 点击拨打图标触发事件
         this.changeToCustomerDetail(taskId, campaignId, customerId, isBlacklist, customerPhone)
+      } else {
+        this.searchByKeyWords(this.req)
       }
     },
     handle(obj) {
@@ -1374,7 +1372,6 @@ export default {
   mounted() {
     vm = this
     this.getParametersFromContactRecordDail()
-    this.searchByKeyWords(this.req)
     getStaffNameById(localStorage.getItem('agentId'))
       .then(res => {
         if (res.data.code === 1) {
