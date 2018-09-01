@@ -919,6 +919,7 @@ export default {
         this.campaignId = campaignId
         this.isBlacklist = isBlacklist
         this.customerId = customerId
+        this.showAutoDial = false
         this.activeNames = ['1', '2', '3', '4']
         this.autoDialNext = false
         this.showSendMessage = false

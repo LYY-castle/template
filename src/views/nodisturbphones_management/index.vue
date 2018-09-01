@@ -425,7 +425,7 @@ export default {
     // 清空重置
     clearForm(obj, formName) {
       for (const key in obj) {
-        if (key !== 'pageNo') {
+        if (key !== 'pageNo' && key !== 'pageSize') {
           obj[key] = ''
         }
       }

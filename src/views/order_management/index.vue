@@ -407,7 +407,7 @@
 
     // 组件挂载时
     mounted() {
-      this.checkPermission().then(() =>{
+      this.checkPermission().then(() => {
         this.searchByKeyWords(this.req)
       })
       this.getAllCampsByStaff()

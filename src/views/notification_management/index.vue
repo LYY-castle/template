@@ -109,7 +109,7 @@
       </el-row>
 
       <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="flagCheck=true;addNotificationVisiable=true;getAllDepts();selectedDepts.length=0;newnotification.title='';newnotification.emergency_degree=1;newnotification.body='';releaseNow=true;autoSelectSubdept=false" icon="el-icon-plus">新建消息</el-button>
+        <el-button type="success" size="small" @click="flagCheck=true;addNotificationVisiable=true;getAllDepts();selectedDepts.length=0;newnotification.title='';newnotification.emergency_degree=1;newnotification.body='';releaseNow=true;autoSelectSubdept=false">新建</el-button>
         <el-pagination
             v-if="pageShow"
             background

@@ -400,12 +400,10 @@
 <script>
   import { formatDateTime, checkNo, hideIdNumber, hideMobile, formatSeconds } from '@/utils/tools' // 格式化时间
   import {
-    getDepartId,
     getAllCamps,
     queryByKeyWords,
     isHaveManager,
     isHaveStaff,
-    getAllStaffByDepartId,
     getSummariesByTaskId,
     getContactByGradeId,
     queryrecordbytaskid,
@@ -430,6 +428,9 @@
         orderId: '', // 订单Id
         orderDetailInfo: {}, // 订单详情
         originalStatus: '',
+        oriQueryStatus: '-1',
+        oriSTime: '',
+        oriETime: '',
         defaultProps: {
           children: 'summaryDetailInfos',
           label: 'name'
@@ -450,10 +451,6 @@
           agentId: '',
           customerId: ''
         },
-        isForbidden: {
-          forbiddenManager: false, // 没有主管权限
-          forbiddenStaff: false// 没有员工权限
-        }, // 判断是否能操作页面
         isManager: false, // 是主管
         isStaff: false, // 普通员工
         staffInfo: {
@@ -481,40 +478,20 @@
           agentid: '',
           pageSize: 10,
           pageNo: 1,
-          status: -1
+          status: '-1'
 
         }
       }
     },
 
     mounted() {
-      // this.getDepartIdByStaff()
-      // 获得部门id
-      getDepartId()
-        .then(response => {
-          this.staffInfo.agentid = response.data.agentid
-          this.staffInfo.departId = response.data.departId
-          new Promise((resolve, reject) => {
-            getAllStaffByDepartId(this.staffInfo.departId).then(response => {
-              this.staffs = response.data.data
-              resolve()
-            })
-          })
-          localStorage.setItem('departId', response.data.departId)
-          this.$forceUpdate()
-        })
-        .catch(error => {
-          console.log(error)
-        })
-
+      this.checkPermission().then(() => {
+        this.searchByKeyWords(this.req)
+      })
       getAllCamps()
         .then(response => {
           if (response.data.code === 0) {
             this.campaigns = response.data.data
-            // for (var i = 0; i < this.campaigns.length; i++) {
-            //   this.req.campaign.push(this.campaigns[i].campaignId)
-            // }
-            this.searchByKeyWords(this.req)
           }
         })
         .catch(error => {
@@ -522,19 +499,27 @@
         })
     },
     created() {
-      this.req.startTime = typeof (this.$route.query.sTime) === 'undefined' ? '' : this.$route.query.sTime
-      this.req.endTime = typeof (this.$route.query.eTime) === 'undefined' ? '' : this.$route.query.eTime
+      if (typeof (this.$route.query.sTime) !== 'undefined') {
+        this.req.startTime = this.$route.query.sTime
+        this.oriSTime = this.$route.query.sTime
+      }
+      if (typeof (this.$route.query.eTime) !== 'undefined') {
+        this.req.endTime = this.$route.query.eTime
+        this.oriETime = this.$route.query.eTime
+      }
       if (typeof (this.$route.query.callStatu) === 'undefined') {
         this.req.status = '-1'
       } else {
         this.req.agentid = localStorage.getItem('agentId')
         if (this.$route.query.callStatu === 1) {
           this.req.status = '1'
+          this.oriQueryStatus = '1'
         } else {
           this.req.status = '0'
+          this.oriQueryStatus = '0'
         }
+        this.staffInfo.agentid = localStorage.getItem('agentId')
       }
-      this.staffInfo.agentid = localStorage.getItem('agentId')
       this.req.pageNo = 1
     },
     methods: {
@@ -556,15 +541,15 @@
           campaign: [],
           caller: '',
           callee: '',
-          startTime: '',
-          endTime: '',
+          startTime: this.oriSTime,
+          endTime: this.oriETime,
           stime: '',
           etime: '',
           departId: '',
           agentid: localStorage.getItem('agentId'),
           pageSize: 10,
           pageNo: 1,
-          status: -1
+          status: this.oriQueryStatus
         }
       },
       // 跳转到别的组件
@@ -583,32 +568,20 @@
           console.log(error)
         })
       },
-      async isHavePermissions() {
+      async checkPermission() {
         // 判断主管
-        await isHaveManager(this.staffInfo.agentid).then(response => {
+        await isHaveManager(localStorage.getItem('agentId')).then(response => {
           this.isManager = true
-        }).catch(error => {
-          if (error.response.status === 403) {
-            this.isForbidden.forbiddenManager = true
-          } else {
-            this.requestFail = true
-          }
+        }).catch(() => {
+          this.isManager = false
         })
         // 判断员工
-        await isHaveStaff(this.staffInfo.agentid).then(response => {
+        await isHaveStaff(localStorage.getItem('agentId')).then(response => {
           this.isStaff = true
-        }).catch(error => {
-          if (error.response.status === 403) {
-            this.isForbidden.forbiddenStaff = true
-          } else {
-            this.requestFail = true
-          }
-        })
-        // 如果拥有两个权限，则只给主管权限
-        if (this.isManager && this.isStaff) {
-          this.isManager = true
+        }).catch(() => {
           this.isStaff = false
-        }
+        })
+        return true
       },
       // 显示小结信息
       showSummarys(nodules) {
@@ -777,33 +750,30 @@
       },
 
       // 综合查询
-      async searchByKeyWords(req) {
-        await this.isHavePermissions()
-        if (this.isStaff || this.isManager) {
+      searchByKeyWords(req) {
+        if (this.isManager) {
           this.req.departId = localStorage.getItem('departId')
-          if (this.isStaff && this.isManager === false) {
-            this.req.agentid = this.staffInfo.agentid
-          }
-          queryByKeyWords(req)
-            .then(response => {
-              if (response.data.code === 0) {
-                this.tableData = response.data.data
-                this.pageShow = true
-                this.pageInfo = response.data.pageInfo
-              } else {
-                this.tableData = response.data.data
-                this.pageShow = false
-                this.$message.error = '无查询结果，请核对查询条件'
-              }
-            })
-            .catch(error => {
-              console.log(error)
-            })
-        } else if (this.isForbidden.forbiddenManager && this.isForbidden.forbiddenStaff) {
-          this.$message.error('没权限操作该页面！')
+        } else if (this.isStaff) {
+          this.req.agentid = this.staffInfo.agentid
         } else {
-          this.$message.error('系统繁忙！')
+          this.$message.error('您无法操作该页面，请联系管理员！')
+          return
         }
+        queryByKeyWords(req)
+          .then(response => {
+            if (response.data.code === 0) {
+              this.tableData = response.data.data
+              this.pageShow = true
+              this.pageInfo = response.data.pageInfo
+            } else {
+              this.tableData = response.data.data
+              this.pageShow = false
+              this.$message.error('无查询结果，请核对查询条件')
+            }
+          })
+          .catch(error => {
+            console.log(error)
+          })
       },
       // 显示活动名称
       showCampaignName(campaignId) {
