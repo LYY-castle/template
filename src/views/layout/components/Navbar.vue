@@ -416,8 +416,8 @@ export default {
     firstgetUnreadMessages(agentId) {
       getMyUnreadMessages(agentId)
         .then(response1 => {
-          this.msgNum_all = response1.data.result.total_unread_count
-          this.msgNum_today_all = response1.data.result.today_total_count
+          this.msgNum_all = response1.data.result ? response1.data.result.total_unread_count : 0
+          this.msgNum_today_all = response1.data.result ? response1.data.result.today_total_count : 0
           // this.msgNum_sm = response1.data.result.today_special_mentioned_count
           // this.msgNum_eu = response1.data.result.today_extra_urgent_count
           return
@@ -435,11 +435,10 @@ export default {
               type: 'success'
             })
           }
-          this.msgNum_all = response1.data.result.total_unread_count // 总共未读
-          this.msgNum_today_all = response1.data.result.today_total_count
+          this.msgNum_all = response1.data.result ? response1.data.result.total_unread_count : 0 // 总共未读
+          this.msgNum_today_all = response1.data.result ? response1.data.result.today_total_count : 0 // 今日总量
           // this.msgNum_sm = response1.data.result.today_special_mentioned_count
           // this.msgNum_eu = response1.data.result.today_extra_urgent_count
-          return
         })
     },
     // 处理点击注销
