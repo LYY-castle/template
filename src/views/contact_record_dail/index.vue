@@ -125,6 +125,11 @@
                 <div>{{hideMobile(scope.row.calleeNumber)}}</div>
               </template>
           </el-table-column>
+          <el-table-column align="center" label="状态">
+            <template slot-scope="scope">
+              <div v-html="showStatus(scope.row.status)"></div>
+            </template>
+          </el-table-column>
           <el-table-column align="center" label="通话时长">
              <template slot-scope="scope">
                 <div>{{scope.row.talkTime}}</div>
@@ -582,6 +587,14 @@
           this.isStaff = false
         })
         return true
+      },
+      // 显示状态
+      showStatus(status) {
+        if (status === '1') {
+          return '<span style=\'color:#409EFF\'>接通</span>'
+        } else {
+          return '<span style=\'color:#f56c6c\'>未接通</span>'
+        }
       },
       // 显示小结信息
       showSummarys(nodules) {
