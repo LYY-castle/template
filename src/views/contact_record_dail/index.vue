@@ -67,7 +67,7 @@
           </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req);">查询</el-button>
-          <el-button type="danger" @click="campaignId='';resetReq();putAllcamps();">重置</el-button>
+          <el-button type="danger" @click="campaignId='';resetReq();">重置</el-button>
         </el-form-item>
       </el-form>
     </el-row>
@@ -846,14 +846,7 @@
         var data = {}
         data = JSON.parse(JSON.stringify(obj))
         return data
-      },
-      putAllcamps() {
-        this.req.campaign = []
-        for (var i = 0; i < this.campaigns.length; i++) {
-          this.req.campaign.push(this.campaigns[i].campaignId)
-        }
       }
-
     },
     watch: {}
 
