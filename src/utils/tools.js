@@ -92,11 +92,11 @@ export function getUserDept() {
 
 export function isJson(data) {
   try {
-    JSON.parse(data);
+    JSON.parse(data)
   } catch (e) {
-    return false;
+    return false
   }
-  return true;
+  return true
 }
 
 export function verify(str, reg) {
@@ -284,3 +284,4 @@ export function formatSeconds(result) {
   var s = Math.floor((result % 60)) < 10 ? '0' + Math.floor((result % 60)) : Math.floor((result % 60))
   return (h + ':' + m + ':' + s)
 }
+

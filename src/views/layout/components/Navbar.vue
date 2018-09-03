@@ -684,11 +684,8 @@ export default {
     getPromise(num) {
       return new Promise(function(resolve, reject) {
         getPhoneOwn(num).then(res => {
-          if (res.data.data[0].zipCode === '518000' && res.data.data[0].areaCode === '0755') { // 深圳市邮编518000，区号0755
-            vm.dialNum = '9' + vm.formInline.user
-          } else {
-            vm.dialNum = '90' + vm.formInline.user
-          }
+          console.log(res)
+          vm.dialNum = res.data
           resolve()
         })
       })

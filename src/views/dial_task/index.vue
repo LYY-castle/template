@@ -709,22 +709,27 @@ export default {
       // console.log('2,' + localStorage.getItem('callerDN'))
       const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
       if (regex.test(customerPhone)) {
-        if (!getPhoneOwn(customerPhone)) {
-          customerPhone = '90' + customerPhone
+        getPhoneOwn(customerPhone).then(res => {
+          if (localStorage.getItem('DN') !== null && localStorage.getItem('DN') !== '') {
+            cti.makecall(localStorage.getItem('DN'), res.data)
+            setTimeout(() => {
+              this.getRecordId(taskId, campaignId)
+            }, 3000)
+          } else {
+            this.$message.error('请重新登录话机！')
+            return
+          }
+        })
+      } else { // console.log('dialTo:' + customerPhone)
+        if (localStorage.getItem('DN') !== null && localStorage.getItem('DN') !== '') {
+          cti.makecall(localStorage.getItem('DN'), customerPhone)
+          setTimeout(() => {
+            this.getRecordId(taskId, campaignId)
+          }, 3000)
         } else {
-          customerPhone = '90' + customerPhone
+          this.$message.error('请重新登录话机！')
+          return
         }
-      }
-      // console.log('dialTo:' + customerPhone)
-      if (localStorage.getItem('DN') !== null && localStorage.getItem('DN') !== '') {
-        cti.makecall(localStorage.getItem('DN'), customerPhone)
-        setTimeout(() => {
-          this.getRecordId(taskId, campaignId)
-          localStorage.removeItem('global_taskId')
-        }, 3000)
-      } else {
-        this.$message.error('请重新登录话机！')
-        return
       }
     },
     // 获取新生成的接触记录信息
