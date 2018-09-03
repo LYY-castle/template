@@ -339,14 +339,12 @@ export default {
       temp_content = verify(temp_content, '<p>')
       temp_content = verify(temp_content, '</p>')
       temp_content = verify(temp_content, '<br>')
-      console.log(temp_content)
       if (temp_content === '' || temp_content === null || temp_content.split(' ').join('').length === 0) {
         this.$message.error('笔记内容不能为空！')
         return
       } else {
         this.note_item.title = this.noteTitle
         this.note_item.content = this.content
-        console.log(this.content)
         addNotes(this.note_item, this.uid)
           .then(response => {
             if (response.data) {

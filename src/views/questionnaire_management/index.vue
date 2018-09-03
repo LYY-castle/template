@@ -110,9 +110,9 @@
     <!-- 新建问卷div -->
     <div  v-show="isMainPage===false && isDetail === false">
       <div class="fixedButton"><br/>
-        <el-button @click="addSingleCheck();" type="primary" size="medium" round>单选</el-button>
-        <el-button @click="addMultiCheck();" type="primary" size="medium" round>多选</el-button>
-        <el-button @click="addFillBlank();" type="primary" size="medium" round>填空</el-button>
+        <el-button @click="addSingleCheck();" type="primary" size="small">单选</el-button>
+        <el-button @click="addMultiCheck();" type="primary" size="small" >多选</el-button>
+        <el-button @click="addFillBlank();" type="primary" size="small">填空</el-button>
       </div>
       <hr/>
       <el-row type="flex">
@@ -129,19 +129,19 @@
                       <el-form-item v-for="(item,index) in singelItems">
                         <el-input v-model="item.name" placeholder="标题(45个字符内)" style="width:480px" clearable maxlength="45"></el-input>
                         <el-tooltip class="item" effect="dark" content="点击删除该单选题" placement="right-start">
-                          <el-button class="myButton" size="medium" @click="removeSingle(index)"  circle></el-button>
+                          <el-button class="myButton" size="medium" icon="el-icon-error" @click="removeSingle(index)"  circle></el-button>
                         </el-tooltip>
                         <div v-for="(a,radioIndex) in item.options">
                           <el-radio label="1" name="1"  disabled>
                             <el-input type="text" placeholder='选项(45个字符内)' style="width:456px" v-model="a.content" clearable maxlength="45"></el-input>
                           </el-radio>
                           <el-tooltip class="item" effect="dark" content="点击删除该单选项" placement="right-start">
-                            <el-button class="myButton" size="small" @click="removeRadio(item.options,radioIndex)" circle></el-button>
+                            <el-button class="myButton" size="small" icon="el-icon-minus" @click="removeRadio(item.options,radioIndex)" circle></el-button>
                           </el-tooltip>
                         </div>
                         <div style="margin-left:20%">
                           <el-tooltip class="item" effect="dark" content="新建一个单选项" placement="right-start">
-                            <el-button class="myButton" size="mini" @click="addRadio(item.options)" circle ></el-button>
+                            <el-button class="myButton" size="mini" icon="el-icon-plus" @click="addRadio(item.options)" circle ></el-button>
                           </el-tooltip>
                         </div>
                       </el-form-item>
@@ -153,19 +153,19 @@
                     <el-form-item v-for="(item,index) in multiItems">
                       <el-input v-model="item.name" placeholder="标题(45个字符内)" style="width:480px" clearable maxlength="45"></el-input>
                       <el-tooltip class="item" effect="dark" content="点击删除该多选题" placement="right-start">
-                        <el-button class="myButton" size="medium" @click="removeMulti(index)"  circle></el-button>
+                        <el-button class="myButton" size="medium" icon="el-icon-error" @click="removeMulti(index)"  circle></el-button>
                       </el-tooltip>
                       <div v-for="(a,checkboxIndex) in item.options">
                         <el-checkbox disabled checked>
                         <el-input type="text" placeholder='选项(45个字符内)' style="width:456px;" v-model="a.content" clearable maxlength="45"></el-input>
                         <el-tooltip class="item" effect="dark" content="点击删除该多选项" placement="right-start">
-                          <el-button class="myButton" size="small" @click="removeCheckbox(item.options,checkboxIndex)" circle></el-button>
+                          <el-button class="myButton" size="small" icon="el-icon-minus" @click="removeCheckbox(item.options,checkboxIndex)" circle></el-button>
                         </el-tooltip>
                       </el-checkbox>
                       </div>
                       <div style="margin-left:20%">
                         <el-tooltip class="item" effect="dark" content="新建一个多选项" placement="right-start">
-                          <el-button class="myButton" size="small" @click="addCheckbox(item.options)" circle></el-button>
+                          <el-button class="myButton" size="small" icon="el-icon-plus" @click="addCheckbox(item.options)" circle></el-button>
                         </el-tooltip>
                       </div>
                     </el-form-item>
@@ -187,8 +187,8 @@
                 </el-form>
                 <br/>
                 <div style="margin-left:40%">
-                  <el-button type="success" size="medium" @click="makeQuestionnaire(questionnaireName,singelItems,multiItems,fillBlanks)" icon="el-icon-check">生成问卷</el-button>
-                  <el-button type="primary" size="medium" @click="isMainPage=true;isDetail=false;questionnaireName='';singelItems=[];multiItems=[];fillBlanks=[]">取消</el-button>
+                  <el-button type="success" size="small" @click="makeQuestionnaire(questionnaireName,singelItems,multiItems,fillBlanks)">生成</el-button>
+                  <el-button type="primary" size="small" @click="isMainPage=true;isDetail=false;questionnaireName='';singelItems=[];multiItems=[];fillBlanks=[]">取消</el-button>
                 </div>
           </div>
         </el-col>

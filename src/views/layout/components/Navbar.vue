@@ -438,6 +438,7 @@ export default {
             this.msgNum_today_all = response1.data.result ? response1.data.result.today_total_count : 0 // 今日总量
             // this.msgNum_sm = response1.data.result.today_special_mentioned_count
             // this.msgNum_eu = response1.data.result.today_extra_urgent_count
+            return
           }
         })
     },

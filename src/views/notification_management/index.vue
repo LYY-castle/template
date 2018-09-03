@@ -39,8 +39,8 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" icon="el-icon-search" @click="req.pageNo=1;searchByKeyWords(req)">筛选</el-button>
-            <el-button type="danger"  @click="resetQueryCondition()" icon="el-icon-refresh">重置</el-button>
+            <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
+            <el-button type="danger"  @click="resetQueryCondition()">重置</el-button>
           </el-form-item>
         </el-form>
       </el-row>
