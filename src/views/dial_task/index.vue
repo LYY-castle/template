@@ -256,7 +256,7 @@
         </div>
       </el-col>
       <el-col :span="3"></el-col>
-      <el-col :span="8">
+      <el-col :span="8" v-if="!isRecruit">
         <br/>
        <div>
          <label>性别：</label><span v-text="showSex(customerInfo.sex)"></span>
@@ -268,13 +268,34 @@
          <label>地址：</label><span v-text="customerInfo.resideAddress"></span>
        </div>
       </el-col>
-      <el-col :span="8">
+      <el-col :span="8" v-if="isRecruit">
+        <br/>
+       <div>
+         <label>性别：</label><span v-text="showSex(customerInfo.sex)"></span>
+       </div><br/>
+       <div>
+         <label>来源：</label><span v-text="customerInfo.source"></span>
+       </div><br/>
+       <div>
+         <label>备注：</label><span v-text="customerInfo.comment"></span>
+       </div>
+      </el-col>
+      <el-col :span="8" v-if="!isRecruit">
         <br/>
         <div>
          <label>身份证：</label><span v-text="customerInfo.idNumber"></span>
        </div><br/>
        <div>
          <label>持卡类型：</label><span v-text="customerInfo.bankCardType"></span>
+       </div>
+      </el-col>
+      <el-col :span="8" v-if="isRecruit">
+        <br/>
+        <div>
+         <label>身份证：</label><span v-text="customerInfo.idNumber"></span>
+       </div><br/>
+       <div>
+         <label>地址：</label><span v-text="customerInfo.resideAddress"></span>
        </div>
       </el-col>
     </el-row>
@@ -328,7 +349,7 @@
         </el-collapse-item>
 
         <!-- 产品信息 -->
-        <el-collapse-item name="2" v-if="hasProductInfo===true && campaignType !== 'RECRUIT'">
+        <el-collapse-item name="2" v-if="hasProductInfo===true && !isRecruit">
           <template slot="title">
             <b>产品信息<i class="el-icon-d-caret"></i></b>
           </template>
@@ -487,6 +508,7 @@ export default {
 
   data() {
     return {
+      isRecruit: false,
       addDays: '',
       summariesInfo: [], // 小结下拉选择
       taskStatusOptions: [{// 任务状态选项框
@@ -583,7 +605,9 @@ export default {
         bankCard: '',
         idNumber: '',
         resideAddress: '',
-        bankCardType: ''
+        bankCardType: '',
+        comment: '',
+        source: ''
       },
       idNumber: ''
     }
@@ -999,6 +1023,11 @@ export default {
         .then(res1 => {
           if (res1.data.code === 0) {
             this.campaignType = res1.data.data.campaignTypeInfo.code
+            if (this.campaignType === 'RECRUIT') {
+              this.isRecruit = true
+            } else {
+              this.isRecruit = false
+            }
           }
         })
       // 获取客户基本信息

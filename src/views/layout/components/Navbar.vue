@@ -136,10 +136,10 @@
           <b>被叫：</b>
           <span>{{callee}}</span>
         </p>
-        <p>
+        <!-- <p>
           <b>原主叫：</b>
           <span>{{orginCaller}}</span>
-        </p>
+        </p> -->
       </el-col>
       <el-col :span="6" style="margin-top:15px;margin-left:12%">
         <!-- 有未读信息 -->
