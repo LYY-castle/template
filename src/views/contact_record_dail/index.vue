@@ -77,7 +77,7 @@
         <el-table :data="tableData" border>
           <el-table-column align="center" label="序号" width="55">
             <template slot-scope="scope">
-                <div>{{scope.$index+(req.pageNo-1)*10+1}}</div>
+                <div>{{scope.$index+(req.pageNo-1)*(req.pageSize)+1}}</div>
             </template>
           </el-table-column>
             <el-table-column align="center" label="客户编号" width="135">
@@ -259,7 +259,7 @@
           <el-button @click="isMainPage = true">取 消</el-button>
           <el-button type="primary" @click="editVisible=true">修改</el-button>
     </div>
-  <div class="el-icon-info">相关接触记录列表</div>
+  <div class="el-icon-info title-class">相关接触记录列表</div>
   <el-row>
       <el-col>
         <el-table :data="detailInfo.recordInfo" border>
@@ -316,7 +316,7 @@
         </el-table>
       </el-col>
     </el-row>
-  <div class="el-icon-info">订单信息</div>
+  <div class="el-icon-info title-class">订单信息</div>
     <el-row>
       <el-col>
         <el-table :data="detailInfo.orderInfo" border>
@@ -440,11 +440,14 @@
 <style lang='scss' scoped>
 audio {
     width: 250px;
-    height: 45px;
+    height: 50px;
 }
-.span-class{
-  width: 80px;
-  height: 40px;
+.title-class{
+  margin-top: 10px;
+  margin-bottom: 22px;
+}
+.el-form-item{
+  
 }
 </style>
 
@@ -748,7 +751,7 @@ audio {
             } else {
               generateRecord(recordId, nodules, description).then(response => {
                 if (response.data.code === 0) {
-                  this.searchByKeyWords(this.req)
+                  // this.searchByKeyWords(this.req)
                   this.editVisible = false
                   this.resetDetai()// 刷新
                   this.contactDetail()// 刷新
@@ -766,8 +769,10 @@ audio {
           if (response.data.code === 0) {
             generateRecord(recordId, nodules, description).then(response => {
               if (response.data.code === 0) {
-                this.searchByKeyWords(this.req)
-                this.isMainPage = true
+                // this.searchByKeyWords(this.req)
+                this.editVisible = false
+                this.resetDetai()// 刷新
+                this.contactDetail()// 刷新
                 this.$message.success('修改成功')
               } else {
                 this.$message.error(response.data.message)
