@@ -447,7 +447,7 @@ audio {
   margin-bottom: 22px;
 }
 .el-form-item{
-  
+  margin-bottom: 0px;
 }
 </style>
 
