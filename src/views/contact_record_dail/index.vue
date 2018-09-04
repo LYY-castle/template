@@ -170,27 +170,27 @@
         <el-form  :model="detailInfo" ref="contactDetailForm" label-width="90px">
           <el-col :span="5">
             <div class="grid-content bg-purple">
-              <el-form-item label="接触编号:" prop="contactInfo.recordId">
+              <el-form-item label="接触编号:" prop="contactInfo.recordId" class="el-form-div">
                 <span>{{detailInfo.contactInfo.recordId}}</span>
               </el-form-item>
-              <el-form-item  label="通话时长:" prop="contactInfo.talkTime">
+              <el-form-item  label="通话时长:" prop="contactInfo.talkTime" class="el-form-div">
                 <span>{{formatSeconds(detailInfo.contactInfo.talkTime)}}</span>
               </el-form-item>
-              <el-form-item  label="小结备注:" prop="contactInfo.description" size="small">
+              <el-form-item  label="小结备注:" prop="contactInfo.description"  class="el-form-div">
                 <div style='width:80px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;' :title="detailInfo.contactInfo.description?detailInfo.contactInfo.description:'无'">{{detailInfo.contactInfo.description?detailInfo.contactInfo.description:"无"}}</div>
               </el-form-item>
             </div>
           </el-col>
           <el-col :span="4">
             <div class="grid-content bg-purple">
-              <el-form-item  label="员工姓名:">
+              <el-form-item  label="员工姓名:" class="el-form-div">
                 <span>{{detailInfo.staffInfo.staffName}}</span>
               </el-form-item>
-               <el-form-item  label="员工工号:" prop="contactInfo.staffId">
+               <el-form-item  label="员工工号:" prop="contactInfo.staffId" class="el-form-div">
                 <span>{{detailInfo.contactInfo.staffId}}</span>
               </el-form-item>
 
-                <el-form-item  label="话后小结:">
+                <el-form-item  label="话后小结:" class="el-form-div">
                    <div  style='width:80px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;' :title="showSummaryInfo(detailInfo.contactInfo.summaryDetailInfos)">{{showSummaryInfo(detailInfo.contactInfo.summaryDetailInfos)}}</div>
                   <!-- <el-tree
                     ref = "tree"
@@ -214,41 +214,41 @@
             </div>
           </el-col> -->
           <el-col :span="4">
-             <el-form-item  label="主叫号码:" prop="contactInfo.callerNumber">
+             <el-form-item  label="主叫号码:" prop="contactInfo.callerNumber" class="el-form-div">
                 <span>{{detailInfo.contactInfo.callerNumber}}</span>
               </el-form-item>
-              <el-form-item   label="被叫号码:" prop="contactInfo.calleeNumber">
+              <el-form-item   label="被叫号码:" prop="contactInfo.calleeNumber" class="el-form-div">
                   <span>{{hideMobile(detailInfo.contactInfo.calleeNumber)}}</span>
               </el-form-item>
-              <el-form-item  label="客户姓名:" prop="contactInfo.customerName" size="small">
+              <el-form-item  label="客户姓名:" prop="contactInfo.customerName" size="small" class="el-form-div">
                 <span>{{detailInfo.contactInfo.customerName}}</span>
               </el-form-item>
           </el-col>
           <el-col :span="5">
             <div class="grid-content bg-purple">
-              <el-form-item label="拨打时间:" prop="contactInfo.callTime">
+              <el-form-item label="拨打时间:" prop="contactInfo.callTime" class="el-form-div">
                 <span>{{detailInfo.contactInfo.callTime}}</span>
               </el-form-item>
-              <el-form-item  label="接听时间:" prop="contactInfo.answerTime">
+              <el-form-item  label="接听时间:" prop="contactInfo.answerTime" class="el-form-div">
                 <span>{{(detailInfo.contactInfo.answerTime)== null?'无':(detailInfo.contactInfo.answerTime)}}</span>
               </el-form-item>
-               <el-form-item  label="身份证号:" prop="customerInfo.idNumber">
+               <el-form-item  label="身份证号:" prop="customerInfo.idNumber" class="el-form-div">
                 <span>{{hideIdNumber(detailInfo.customerInfo.idNumber)}}</span>
               </el-form-item>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="grid-content bg-purple">
-               <el-form-item  label="任务状态:">
+               <el-form-item  label="任务状态:" class="el-form-div">
                   <span v-if="detailInfo.dialTaskInfo.status=='2'">成功</span>
                   <span v-if="detailInfo.dialTaskInfo.status=='3'">失败</span>
                   <span v-if="detailInfo.dialTaskInfo.status=='1'">预约</span>
                </el-radio-group>
               </el-form-item>
-              <el-form-item  label="预约时间:" prop="dialTaskInfo.appointTime"  v-if="detailInfo.dialTaskInfo.status=='1'" >
+              <el-form-item  label="预约时间:" prop="dialTaskInfo.appointTime"  v-if="detailInfo.dialTaskInfo.status=='1'"  class="el-form-div">
                 <span>{{detailInfo.dialTaskInfo.appointTime?detailInfo.dialTaskInfo.appointTime:'无'}}</span>
               </el-form-item>
-              <el-form-item  label="电话录音:" prop="contactInfo.soundRecordUrl">
+              <el-form-item  label="电话录音:" prop="contactInfo.soundRecordUrl" class="el-form-div">
                 <audio v-bind:src="detailInfo.contactInfo.soundRecordUrl" controls="controls" style="height:40"></audio>
               </el-form-item>
             </div>
@@ -446,7 +446,7 @@ audio {
   margin-top: 10px;
   margin-bottom: 22px;
 }
-.el-form-item{
+.el-form-div{
   margin-bottom: 0px;
 }
 </style>
