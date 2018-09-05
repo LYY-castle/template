@@ -78,11 +78,13 @@
             prop="content"
             :show-overflow-tooltip="true">
           </el-table-column>
-          <!-- <el-table-column
+          <el-table-column
             align="center"
-            label="模板类型"
-            prop="type">
-          </el-table-column> -->
+            label="审核状态">
+             <template slot-scope="scope">
+                {{showStatus(scope.row.examine)}}
+            </template>
+          </el-table-column>
           <el-table-column
             align="center"
             label="操作人"
@@ -339,6 +341,15 @@ export default {
   //   this.getTemplateList(this.req)
   // },
   methods: {
+    showStatus(status) {
+      if (status === '2') {
+        return '审核通过'
+      } else if (status === '3') {
+        return '审核不通过'
+      } else {
+        return '待审核'
+      }
+    },
     // 重置查询框内容
     reset() {
       this.req = {
