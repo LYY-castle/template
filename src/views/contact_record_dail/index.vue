@@ -257,7 +257,7 @@
     </el-row>
     <div slot="footer" style="text-align: right;">
           <el-button @click="isMainPage = true">取 消</el-button>
-          <el-button type="primary" @click="editVisible=true">修改</el-button>
+          <el-button type="primary" @click="edit();editVisible=true">修改</el-button>
     </div>
   <div class="el-icon-info title-class">相关接触记录列表</div>
   <el-row>
@@ -418,8 +418,8 @@
             ref = "tree"
             :data="detailInfo.summariesInfo"
             show-checkbox
-            node-key="id"
             :default-checked-keys="keys"
+            node-key="id"
             default-expand-all
             :props="defaultProps">
           </el-tree>
@@ -467,7 +467,8 @@ audio {
     querycustomerbyid,
     updateTaskStatus,
     generateRecord,
-    quertOrderDetail
+    quertOrderDetail,
+    getStaffByDepartId
   } from '@/api/contact_record_dail' // api接口引用
 
   export default {
@@ -541,6 +542,16 @@ audio {
     },
 
     mounted() {
+      new Promise((resolve, reject) => {
+        getStaffByDepartId(localStorage.getItem('departId')).then(response => {
+          const lists = response.data.dataAll
+          this.staffs = []
+          lists.forEach(element => {
+            this.staffs.push({ 'staffName': element[2], 'angentId': element[1] })
+          })
+          resolve()
+        })
+      })
       this.checkPermission().then(() => {
         this.searchByKeyWords(this.req)
       })
@@ -579,6 +590,13 @@ audio {
       this.req.pageNo = 1
     },
     methods: {
+      edit() {
+        this.editVisible = true
+        console.log('tree', this.$refs.tree)
+        if (this.$refs.tree) {
+          this.$refs.tree.setCheckedKeys(this.keys)
+        }
+      },
       changeChoice() {
         switch (this.req.status) {
           case '-1':this.showTalkTime = true
@@ -602,7 +620,7 @@ audio {
           stime: '',
           etime: '',
           departId: '',
-          agentid: localStorage.getItem('agentId'),
+          agentid: '',
           pageSize: 10,
           pageNo: 1,
           status: this.oriQueryStatus
@@ -681,7 +699,12 @@ audio {
             })
             this.keys = []
             this.keys = a
-            // this.$refs.tree.setCheckedKeys(a)
+            // if (a && a.length > 0) {
+            //   for (var i in a) {
+            //     this.$set(this.keys, i, a[i])
+            //   }
+            // }
+            console.log('1111111111', this.keys)
           }
         })
         queryrecordbytaskid(this.ids.taskId, this.ids.campaignId).then(response => {
@@ -717,6 +740,7 @@ audio {
         })
       },
       checkEdit() {
+        console.log('3333333333333', this.keys)
         var taskId = this.ids.taskId
         var taskStatus = this.detailInfo.dialTaskInfo.status
         var appointTime = this.detailInfo.dialTaskInfo.appointTime
@@ -752,9 +776,9 @@ audio {
               generateRecord(recordId, nodules, description).then(response => {
                 if (response.data.code === 0) {
                   // this.searchByKeyWords(this.req)
-                  this.editVisible = false
                   this.resetDetai()// 刷新
                   this.contactDetail()// 刷新
+                  this.editVisible = false
                   this.$message.success('修改成功')
                 } else {
                   this.$message.error(response.data.message)
@@ -770,9 +794,9 @@ audio {
             generateRecord(recordId, nodules, description).then(response => {
               if (response.data.code === 0) {
                 // this.searchByKeyWords(this.req)
-                this.editVisible = false
                 this.resetDetai()// 刷新
                 this.contactDetail()// 刷新
+                this.editVisible = false
                 this.$message.success('修改成功')
               } else {
                 this.$message.error(response.data.message)

@@ -37,11 +37,11 @@ export function queryByKeyWords(req) {
   })
 }
 // 部门员工
-export function getAllStaffByDepartId(id) {
+export function getStaffByDepartId(id) {
   return request({
-    url: '/employee/getAllStaffByDepartId',
+    url: '/employee/getStaffByDepartId',
     method: 'get',
-    params: { 'ids': id }
+    params: { 'departId': id }
   })
 }
 // 判断组接触历史权限
