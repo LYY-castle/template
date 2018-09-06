@@ -108,8 +108,8 @@
         @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
         @change="onEditorChange($event)"
         ></quill-editor><br/><br/><br/><br/>
-        <el-button type="success" round @click="generateNote();" size="medium" icon="el-icon-check">新建笔记</el-button>
-        <el-button type="primary" round @click="noteTitle='';isListPage='1';content=null" size="medium">取消</el-button>
+        <el-button type="success" @click="generateNote();" size="medium">确定</el-button>
+        <el-button type="primary" @click="noteTitle='';isListPage='1';content=null" size="medium">取消</el-button>
       </div>
     </div>
     <!-- 新建笔记end -->
@@ -133,7 +133,7 @@
       <div style="text-align:center">
         <h3>{{editDetail.title}}
           <el-tooltip class="item" effect="dark" content="修改笔记标题" placement="right-start">
-            <el-button type="primary" icon="el-icon-edit-outline" @click="editNoteTitleVisiable=true" size="mini" circle></el-button>
+            <el-button type="default" icon="el-icon-edit-outline" @click="editNoteTitleVisiable=true" size="small"  style="width:50px"></el-button>
           </el-tooltip>
         </h3>
         <quill-editor
@@ -144,8 +144,8 @@
         @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
         @change="onEditorChange($event)"
         ></quill-editor><br/><br/><br/><br/>
-        <el-button type="success" round @click="modifyNote();" size="medium" icon="el-icon-check">修改笔记</el-button>
-        <el-button type="primary" round @click="editDetail.title='';isListPage='1';editDetail.content=null" size="medium">取消</el-button>
+        <el-button type="success"  @click="modifyNote();" size="medium">修改</el-button>
+        <el-button type="primary"  @click="editDetail.title='';isListPage='1';editDetail.content=null" size="medium">取消</el-button>
       </div>
     </div>
     <!-- 修改笔记 end-->

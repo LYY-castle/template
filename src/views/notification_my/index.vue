@@ -38,8 +38,8 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" icon="el-icon-search" @click="req.pageNo=1;searchByKeyWords(req)">筛选</el-button>
-            <el-button type="danger"  @click="resetQueryCondition()" icon="el-icon-refresh">重置</el-button>
+            <el-button type="primary"  @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
+            <el-button type="danger"  @click="resetQueryCondition()" >重置</el-button>
           </el-form-item>
         </el-form>
       </el-row>
@@ -276,6 +276,8 @@ export default {
             this.currentPage = response.data.pageNo
             this.totalCount = response.data.total_count
             this.pageSize = response.data.pageSize
+            // 同时更新右上角的状态
+            this.$root.eventHub.$emit('SET_FIRSTSTATUS')
           }
         })
     },
@@ -289,8 +291,8 @@ export default {
               // 说明阅读更新状态成功
               // 更新列表里的阅读状态
               this.searchByKeyWords(this.req)
-              // TODO  更新右上角的状态
-              this.$root.eventHub.$emit('CHANGE_STATUS')
+              // 更新右上角的状态
+              this.$root.eventHub.$emit('SET_FIRSTSTATUS')
             }
           })
       }
@@ -313,8 +315,8 @@ export default {
             // 说明阅读更新状态成功
             // 更新列表里的阅读状态
             this.searchByKeyWords(this.req)
-            // TODO  更新右上角的状态
-            this.$root.eventHub.$emit('CHANGE_STATUS')
+            //  更新右上角的状态
+            this.$root.eventHub.$emit('SET_FIRSTSTATUS')
           }
         })
     },

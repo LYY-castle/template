@@ -4,15 +4,6 @@
     <div>
       <el-row>
         <el-form :inline="true" size="small">
-          <el-form-item label="发布状态：">
-              <el-select v-model.trim="req.status" placeholder="请选择" clearable size="small" >
-                  <el-option
-                    v-for="item in options"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-              </el-select>
-          </el-form-item>
           <el-form-item label="级别：">
               <el-select v-model.trim="req.emergency_degree" placeholder="请选择" clearable size="small" >
                   <el-option
@@ -21,12 +12,6 @@
                     :value="item.value">
                   </el-option>
               </el-select>
-          </el-form-item><br/>
-          <el-form-item label="关键字：">
-            <el-input type="text" v-model.trim="req.key_text" size="small" placeholder="关键字(上限20字符)" maxlength="20"></el-input>
-          </el-form-item>
-          <el-form-item label="标题：">
-            <el-input type="text" v-model.trim="req.title" size="small" placeholder="消息通知标题(上限20字符)" maxlength="20" style="width:250px"></el-input>
           </el-form-item>
           <el-form-item label="发布时间：">
             <el-date-picker
@@ -37,6 +22,12 @@
                 end-placeholder="发布结束时间"
                 value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
+          </el-form-item><br/>
+          <el-form-item label="关键字：">
+            <el-input type="text" v-model.trim="req.key_text" size="small" placeholder="关键字(上限20字符)" maxlength="20"></el-input>
+          </el-form-item>
+          <el-form-item label="标题：">
+            <el-input type="text" v-model.trim="req.title" size="small" placeholder="消息通知标题(上限20字符)" maxlength="20" style="width:250px"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
@@ -46,6 +37,13 @@
       </el-row>
 
       <el-row>
+        <el-tabs @tab-click="handleTabClick" v-model="activeNames" type="card">
+          <el-tab-pane name="releaseNotifications" label="发布箱"></el-tab-pane>
+          <el-tab-pane name="draftbox" label="草稿箱"></el-tab-pane>
+        </el-tabs>
+      </el-row>
+
+      <el-row v-if="activeNames==='releaseNotifications'">
         <el-col>
           <el-table :data="tableData" border>
             <el-table-column align="center" label="序号" width="55">
@@ -73,7 +71,7 @@
                 </template>
             </el-table-column>
 
-            <el-table-column align="center" label="级别">
+            <el-table-column align="center" label="级别" width="80px">
                 <template slot-scope="scope">
                   <div v-html="showEmergencyDegree(scope.row.emergency_degree)"></div>
                 </template>
@@ -81,27 +79,70 @@
 
             <el-table-column align="center" label="发布人">
                 <template slot-scope="scope">
-                  <div v-html="showReleaser(scope.row.updated_by_realname)"></div>
+                  <div v-html="showReleaser(scope.row.status,scope.row.updated_by_realname)"></div>
                 </template>
             </el-table-column>
 
-            <el-table-column align="center" label="阅读状态(已读/总人数)" width="170px">
+            <el-table-column align="center" label="阅读状态(已读/总人数)" width="165px">
                 <template slot-scope="scope">
                   <div v-html="showReadNumbers(scope.row.status,scope.row.readed_count,scope.row.all_read_count)"></div>
                 </template>
             </el-table-column>
 
-            <el-table-column align="center" label="发布时间" width="200px">
+            <el-table-column align="center" label="发布时间" width="200px" >
+             <template slot-scope="scope">
+               <div v-html="showReleaseTime(scope.row.status,scope.row.release_time)"></div>
+             </template>
+            </el-table-column>
+
+            <el-table-column align="center" label="操作">
+              <template slot-scope="scope">
+                <el-button type="text" icon="el-icon-document" size="medium" @click="notificationDetail={};detailVisiable=true;queryOne(scope.row.notification_id,1)">详情</el-button>
+                <el-button type="text" icon="el-icon-back" size="medium" @click="recallVisiable=true;recallId=scope.row.notification_id">撤回</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-col>
+      </el-row>
+
+      <el-row v-if="activeNames==='draftbox'">
+        <el-col>
+          <el-table :data="tableData" border>
+            <el-table-column align="center" label="序号" width="55">
+              <template slot-scope="scope">
+                <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
+              </template>
+            </el-table-column>
+
+            <el-table-column align="center" label="消息通知标题">
+              <template slot-scope="scope">
+                <el-button @click="notificationDetail={};detailVisiable=true;queryOne(scope.row.notification_id,1)" type="text" size="medium">{{scope.row.title}}</el-button>
+              </template>
+            </el-table-column>
+
+            <el-table-column align="center" label="接收用户/部门">
                 <template slot-scope="scope">
-                  <div v-html="showReleaseTime(scope.row.release_time)"></div>
+                  <div v-html="showReceivers(scope.row.receiver_user_realnames,scope.row.receiver_dept_names)"></div>
+                </template>
+            </el-table-column>
+
+            <el-table-column align="center" label="发布状态">
+                <template slot-scope="scope">
+                  <div v-html="showStatus(scope.row.status)">
+                  </div>
+                </template>
+            </el-table-column>
+
+            <el-table-column align="center" label="级别" width="80px">
+                <template slot-scope="scope">
+                  <div v-html="showEmergencyDegree(scope.row.emergency_degree)"></div>
                 </template>
             </el-table-column>
 
             <el-table-column align="center" label="操作">
               <template slot-scope="scope">
-                <el-button type="text" icon="el-icon-edit" size="medium" @click="editnotificationDetail={};editNotificationVisiable=true;queryOne(scope.row.notification_id,2);releaseNow=true;editNotification_id=scope.row.notification_id" v-show="scope.row.status===1 ">修改</el-button>
-                <el-button type="text" icon="el-icon-document" size="medium" @click="notificationDetail={};detailVisiable=true;queryOne(scope.row.notification_id,1)" v-show="scope.row.status===2 || scope.row.status === 3">详情</el-button>
-                <el-button type="text"  size="medium" @click="delVisiable=true;deleteId=scope.row.notification_id" v-show="scope.row.status===1">删除</el-button>
+                <el-button type="text" icon="el-icon-edit" size="medium" @click="editnotificationDetail={};editNotificationVisiable=true;queryOne(scope.row.notification_id,2);releaseNow=true;editNotification_id=scope.row.notification_id">修改</el-button>
+                <el-button type="text"  size="medium" @click="delVisiable=true;deleteId=scope.row.notification_id">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -201,10 +242,10 @@
             <div v-html="showStatus(notificationDetail.status)"></div>
           </el-form-item>
           <el-form-item label="发布人：">
-            <div v-html="showReleaser(notificationDetail.updated_by_realname)"></div>
+            <div v-html="showReleaser(notificationDetail.status,notificationDetail.updated_by_realname)"></div>
           </el-form-item>
           <el-form-item label="发布时间：">
-            <div v-html="showReleaseTime(notificationDetail.release_time)"></div>
+            <div v-html="showReleaseTime(notificationDetail.status,notificationDetail.release_time)"></div>
           </el-form-item>
         </el-form>
         <br/>
@@ -272,6 +313,20 @@
           <el-button @click="delVisiable=false;">取消</el-button>
         </div>
     </el-dialog>
+
+    <!-- 撤回消息dialog -->
+    <el-dialog
+      align:left
+      width="30%"
+      title="撤回提示"
+      :visible.sync="recallVisiable"
+      append-to-body>
+        <span style="font-size:15px;">确认撤回该条消息通知？</span>
+        <div slot="footer" style="text-align: center;">
+          <el-button @click="recallOneNotification(recallId)" type="primary">确认</el-button>
+          <el-button @click="recallVisiable=false;">取消</el-button>
+        </div>
+    </el-dialog>
     </div>
   </div>
 </template>
@@ -295,13 +350,15 @@ import {
   releaseNotification,
   queryOneNotification,
   editNotification,
-  deleteOneNotification
+  deleteOneNotification,
+  recallNotification
 } from '@/api/notification_management'
 export default {
   name: 'notification_management',
 
   data() {
     return {
+      activeNames: 'releaseNotifications', // tabs的显示页
       autoSelectSubdept: false, // 自动关联子部门
       deptsProps: {
         id: 'id',
@@ -319,6 +376,8 @@ export default {
       editNotificationVisiable: false, // 修改消息通知dialog
       delVisiable: false, // 删除消息通知dialog
       deleteId: '', // 执行删除的id
+      recallVisiable: false, // 撤回消息通知dialog
+      recallId: '', // 执行撤回的id
       newnotification: {// 新建消息通知实体
         title: '',
         body: '',
@@ -342,25 +401,6 @@ export default {
       // receiverType: '1', // 接收主体
       allemployees: [], // 所有员工
       releaseNow: true, // 新建时判断是否保存并发布的标志
-      // 发布状态
-      options: [
-        {
-          label: '',
-          value: ''
-        },
-        {
-          label: '未发布',
-          value: '1'
-        },
-        {
-          label: '已发布',
-          value: '2'
-        },
-        {
-          label: '已失效',
-          value: '3'
-        }
-      ],
       // 级别
       options1: [
         {
@@ -385,7 +425,7 @@ export default {
         }
       ],
       req: {
-        status: '', // 发布状态
+        status: '2', // 发布状态  默认查询已发布的
         emergency_degree: '', // 类别
         key_text: '', // 关键字
         title: '', // 标题
@@ -405,6 +445,20 @@ export default {
   },
 
   methods: {
+    // tab点击时触发的事件
+    handleTabClick(tab, event) {
+      if (tab.name === 'releaseNotifications') {
+        // 点击了已发布
+        this.req.status = '2'
+        this.req.pageNo = 1
+        this.searchByKeyWords(this.req)
+      } else if (tab.name === 'draftbox') {
+        // 点击了草稿箱
+        this.req.status = '1'
+        this.req.pageNo = 1
+        this.searchByKeyWords(this.req)
+      }
+    },
     sendSelectedIds(data, checked, ischildSelected) {
       // if (checked && !data.subDeparts) {
       if (checked) {
@@ -582,6 +636,7 @@ export default {
         .then(response => {
           if (response.data.error === null && response.data.result === true) {
             this.$message.success('删除成功！')
+            this.req.pageNo = 1
             this.searchByKeyWords(this.req)
             this.deleteId = ''
             this.delVisiable = false
@@ -589,6 +644,29 @@ export default {
             this.$message.error(response.data.error)
             this.deleteId = ''
             this.delVisiable = false
+          }
+        })
+    },
+    // 撤回
+    recallOneNotification(id) {
+      recallNotification(id)
+        .then(response => {
+          if (response.data) {
+            if (response.data.error === null) {
+              this.$message.success('撤回成功！')
+              this.req.pageNo = 1
+              this.searchByKeyWords(this.req)
+              this.recallId = ''
+              this.recallVisiable = false
+            } else {
+              this.$message.error(response.data.error)
+              this.recallId = ''
+              this.recallVisiable = false
+            }
+          } else {
+            this.$message.error('出错啦...请稍后重试')
+            this.recallId = ''
+            this.recallVisiable = false
           }
         })
     },
@@ -692,19 +770,19 @@ export default {
       }
     },
     // 展示发布时间
-    showReleaseTime(time) {
-      if (time) {
+    showReleaseTime(status, time) {
+      if (status === 2 && time) {
         return formatDateTime(time)
       } else {
         return '无'
       }
     },
     // 展示发布人
-    showReleaser(releaser) {
-      if (!releaser) {
-        return '无'
-      } else {
+    showReleaser(status, releaser) {
+      if (status === 2 && releaser) {
         return releaser
+      } else {
+        return '无'
       }
     },
     // 展示消息通知类别
@@ -730,17 +808,14 @@ export default {
     },
     // 重置查询条件
     resetQueryCondition() {
-      this.timeValue = ''
-      this.req = {
-        status: '', // 发布状态
-        emergency_degree: '', // 类别
-        key_text: '', // 关键字
-        title: '', // 标题
-        start_release_time: '', // 发布开始时间
-        end_release_time: '', // 发布结束时间
-        pageNo: 1, // 当前页数
-        pageSize: this.pageSize // 每页数量
-      }
+      this.timeValue = '' //
+      this.req.emergency_degree = '' // 类别
+      this.req.key_text = '' // 关键字
+      this.req.title = '' // 标题
+      this.req.start_release_time = '' // 发布开始时间
+      this.req.end_release_time = '' // 发布结束时间
+      this.req.pageNo = 1 // 当前页数
+      this.req.pageSize = this.pageSize // 每页数量
     },
     // 页面显示条数
     handleSizeChange(val) {

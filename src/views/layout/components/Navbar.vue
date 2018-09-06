@@ -418,8 +418,6 @@ export default {
         .then(response1 => {
           this.msgNum_all = response1.data.result ? response1.data.result.total_unread_count : 0
           this.msgNum_today_all = response1.data.result ? response1.data.result.today_total_count : 0
-          // this.msgNum_sm = response1.data.result.today_special_mentioned_count
-          // this.msgNum_eu = response1.data.result.today_extra_urgent_count
           return
         })
     },
@@ -434,12 +432,9 @@ export default {
               offset: 100,
               type: 'success'
             })
-            this.msgNum_all = response1.data.result ? response1.data.result.total_unread_count : 0 // 总共未读
-            this.msgNum_today_all = response1.data.result ? response1.data.result.today_total_count : 0 // 今日总量
-            // this.msgNum_sm = response1.data.result.today_special_mentioned_count
-            // this.msgNum_eu = response1.data.result.today_extra_urgent_count
-            return
           }
+          this.msgNum_all = response1.data.result ? response1.data.result.total_unread_count : 0
+          this.msgNum_today_all = response1.data.result ? response1.data.result.today_total_count : 0 // 今日总量
         })
     },
     // 处理点击注销
@@ -447,6 +442,7 @@ export default {
       if (command === 'logout') {
       // 注销时清空定时器
         clearInterval(this.timer)
+        this.timer = null
         this.logout()
       } else if (command === 'changePWD') {
         this.changePWD.staffId = localStorage.getItem('agentId')
@@ -1219,9 +1215,14 @@ export default {
     this.timer = setInterval(() => {
       this.getUnreadMessages(localStorage.getItem('agentId'))
     }, 45000)
+    this.timer = null
+
+    this.$root.eventHub.$on('SET_FIRSTSTATUS', () => {
+      this.firstgetUnreadMessages(localStorage.getItem('agentId'))
+    })
 
     this.$root.eventHub.$on('CHANGE_STATUS', () => {
-      this.getUnreadMessages(localStorage.getItem('agentId'))
+      this.firstgetUnreadMessages(localStorage.getItem('agentId'))
     })
   }
 }

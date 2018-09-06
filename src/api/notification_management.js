@@ -71,3 +71,13 @@ export function deleteOneNotification(notification_id) {
     }
   })
 }
+
+export function recallNotification(notification_id) {
+  return request({
+    url: '/notification/recallById',
+    method: 'get',
+    params: {
+      notification_id: notification_id
+    }
+  })
+}

@@ -260,9 +260,9 @@
     <!-- 修改问卷div -->
     <div v-show="isMainPage===false && isDetail===true">
       <div class="fixedButton"><br/>
-        <el-button @click="addSingleCheck();" type="primary" size="medium" round>单选</el-button>
-        <el-button @click="addMultiCheck();" type="primary" size="medium" round>多选</el-button>
-        <el-button @click="addFillBlank();" type="primary" size="medium" round>填空</el-button>
+        <el-button @click="addSingleCheck();" type="primary" size="medium">单选</el-button>
+        <el-button @click="addMultiCheck();" type="primary" size="medium">多选</el-button>
+        <el-button @click="addFillBlank();" type="primary" size="medium">填空</el-button>
       </div>
       <hr/>
       <el-row type="flex">
@@ -271,7 +271,7 @@
           <div style="text-align:center">
             <h2>{{this.questionnaireName}}&nbsp;
               <el-tooltip class="item" effect="dark" content="修改问卷模板标题" placement="right-start">
-                <el-button type="primary" @click="editQuestionnaireName=true;" size="mini" circle icon="el-icon-edit"></el-button>
+                <el-button type="default" @click="editQuestionnaireName=true;" size="small" icon="el-icon-edit" style="width:50px"></el-button>
               </el-tooltip>
             </h2>
           </div><br/>
