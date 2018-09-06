@@ -26,7 +26,7 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="search(formInline)">查询</el-button>
+            <el-button type="primary" @click="search(formInline,0)">查询</el-button>
             <el-button type="danger" @click="reset">重置</el-button>
           </el-form-item>
         </el-form>
@@ -40,6 +40,9 @@
             align="center"
             type="index"
             label="序号">
+            <template slot-scope="scope">
+                <div>{{scope.$index+(pageInfo.pageNo-1)*pageInfo.pageSize+1}}</div>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -73,6 +76,12 @@
             prop="totalNum"
             label="名单总量">
           </el-table-column>
+          <!-- <el-table-column
+            align="center"
+            prop="modifyTime"
+            width="155"
+            label="收到名单时间">
+          </el-table-column> -->
           <el-table-column
             align="center"
             prop="assignedNum"
@@ -105,6 +114,19 @@
           </el-table-column>
         </el-table>
       </el-row>
+      <el-row style="margin-top:5px;">
+          <el-pagination
+            v-if="pageShow"
+            background
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page='pageInfo.pageNo'
+            :page-sizes="[10, 20, 30, 40, 50]"
+            :page-size='pageInfo.pageSize'
+            layout="total, sizes, prev, pager, next, jumper "
+            :total='pageInfo.totalCount' style="text-align: right;float:right;">
+          </el-pagination>
+      </el-row>
     </div>
   </div>
 </template>
@@ -118,6 +140,12 @@
     name: 'monitor_list',
     data() {
       return {
+        pageShow: true,
+        pageInfo: {
+          pageNo: 0,
+          pageSize: 10,
+          totalCount: 0
+        },
         nameListName: [],
         contactList: [],
         nameListId: [],
@@ -136,6 +164,19 @@
       }
     },
     methods: {
+      // 分页翻页功能
+      handleCurrentChange(val) {
+        this.formInline.pageNo = val
+        this.search(this.formInline, 1)
+      },
+      // 页面显示条数
+      handleSizeChange(val) {
+        this.formInline.pageSize = val
+        this.formInline.pageNo = 1
+        this.pageInfo.pageNo = 1
+        this.pageInfo.pageSize = val
+        this.search(this.formInline, 1)
+      },
       headerRow({ row, rowIndex }) {
         if (rowIndex === 0) {
           return 'color:black'
@@ -165,13 +206,21 @@
           })
         }
       },
-      search(req) {
-        getListUsingByListId({
-          starttime: this.receiveTimeValue ? this.receiveTimeValue[0] : '',
-          endtime: this.receiveTimeValue ? this.receiveTimeValue[1] : '',
-          campaignId: req.campaignId ? req.campaignId : this.campaignIdList.join(','),
-          listId: req.listId ? req.listId : this.contactList.join(',')
-        }).then(res => {
+      search(req, type) {
+        const obj = {}
+        obj.starttime = this.receiveTimeValue ? this.receiveTimeValue[0] : ''
+        obj.endtime = this.receiveTimeValue ? this.receiveTimeValue[1] : ''
+        obj.campaignId = req.campaignId ? req.campaignId : this.campaignIdList.join(',')
+        obj.listId = req.listId ? req.listId : ''
+        obj.starttime = this.receiveTimeValue ? this.receiveTimeValue[0] : ''
+        if (type === 0) {
+          obj.pageNo = 1
+        } else {
+          obj.pageNo = req.pageNo === '' ? 1 : req.pageNo
+        }
+        obj.pageSize = this.pageInfo.pageSize === '' ? 10 : this.pageInfo.pageSize
+        getListUsingByListId(obj).then(res => {
+          this.pageInfo = res.data.pageInfo
           this.queryStaff(res)
         })
       },
@@ -202,7 +251,7 @@
           })
           contactFindAllNameList().then(res => {
             this.contactList = res.data.data
-            if (this.contactList && this.contactList.length !== 0 ) {
+            if (this.contactList && this.contactList.length !== 0) {
               for (let i = 0; i <= this.contactList.length; i++) {
                 if (this.contactList[i] && (this.nameListId.indexOf(this.contactList[i]) !== -1)) {
                   if (response.data.data[i]) {
