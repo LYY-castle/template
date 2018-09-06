@@ -11,6 +11,14 @@
             <el-option v-for="item in messageOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item  prop="examine" label="审核状态:"> 
+          <el-select v-model="req.examine">
+            <el-option label="全部" value=""></el-option>
+            <el-option label="待审核" value="1"></el-option>
+            <el-option label="审核通过" value="2"></el-option>
+            <el-option label="审核不通过" value="3"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item  prop="modifier" label="操作人:">
           <el-input v-model="req.modifier" placeholder="操作人"></el-input>
         </el-form-item>
@@ -233,6 +241,9 @@
         <el-form-item label="模板签名：" prop="autograph">
           <span>{{editTemplateDetail.autograph}}</span>
         </el-form-item>
+        <el-form-item label="审核状态：" prop="autograph">
+          <span>{{showStatus(editTemplateDetail.examine)}}</span>
+        </el-form-item>
         <el-form-item label="归属模板组：" prop="groupId">
           <span>{{formatData(editTemplateDetail.groupId)}}</span>
         </el-form-item>
@@ -292,6 +303,7 @@ export default {
       req: {
         name: '', // 模板名称
         groupId: '', // 上级模板Id
+        examine: '',
         modifier: '', // 操作人
         afterTime: '', // 操作时间
         beginTime: '', // 操作时间
@@ -301,6 +313,7 @@ export default {
       paginationReq: {
         name: '', // 模板名称
         groupId: '', // 上级模板Id
+        examine: '',
         modifier: '', // 操作人
         afterTime: '', // 操作时间
         beginTime: '', // 操作时间
@@ -346,8 +359,10 @@ export default {
         return '审核通过'
       } else if (status === '3') {
         return '审核不通过'
-      } else {
+      } else if (status === '1') {
         return '待审核'
+      } else {
+        return ''
       }
     },
     // 重置查询框内容
@@ -355,6 +370,7 @@ export default {
       this.req = {
         startNumber: '', // 号段
         endNumber: '', // 号段
+        examine: '',
         modifier: '', // 操作人
         afterTime: '', // 操作时间
         beginTime: '', // 操作时间
