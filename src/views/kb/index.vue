@@ -1,5 +1,5 @@
 <template>
-  <el-row class="tac" style="margin-top: 1%">
+  <el-row class="tac">
     <el-col :span="5">
       <el-scrollbar wrapClass="scrollbar-wrapper">
         <el-menu

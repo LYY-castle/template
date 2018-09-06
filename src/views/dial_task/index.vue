@@ -57,7 +57,7 @@
             </el-form-item>
              <el-form-item label="任务状态：">
                 <el-select v-model="req.status" placeholder="请选择">
-                  <el-option 
+                  <el-option
                     v-for="item in taskStatusOptions"
                     :key="item.value"
                     :value="item.value"
@@ -77,10 +77,10 @@
             <el-form-item label="客户电话：">
                 <el-input v-model="req.customerPhone" placeholder="客户电话（限长50字符）" maxlength="50"></el-input>
             </el-form-item>
-      
+
             <el-form-item label="话后小结：">
                 <el-select v-model="req.summaryId">
-                  <el-option 
+                  <el-option
                     v-for="item in summariesInfo"
                     :key="item.id"
                     :value="item.id"
@@ -211,8 +211,15 @@
             :show-overflow-tooltip="true"
             width="100">
           <template slot-scope="scope">
-            <a href="#" v-if="showStatus(scope.row.status,scope.row.isBlacklist,scope.row.isNodisturb)" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone)" size="small" type="text"><img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</a>
-            <el-tooltip v-if="!showStatus(scope.row.status,scope.row.isBlacklist,scope.row.isNodisturb)" class="item" effect="dark" content="该号码为免访客户或处于免访号段中!" placement="top-start">
+            <a href="#" v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb)" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone)" size="small" type="text">
+              <img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</a>
+            <el-tooltip v-else-if="!showStatus(scope.row.status)" class="item" effect="dark"  content="该状态不能拨打" placement="top-start">
+              <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
+            </el-tooltip>
+            <el-tooltip v-else-if="!checkBlacklist(scope.row.isBlacklist)" class="item" effect="dark"  content="该号码为免访客户" placement="top-start">
+              <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
+            </el-tooltip>
+            <el-tooltip v-else-if="!checkNodisturb(scope.row.isNodisturb)" class="item" effect="dark"  content="该号码处于免访号段中" placement="top-start">
               <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
             </el-tooltip>
           </template>
@@ -432,7 +439,7 @@
               <el-col :span="8" v-show="this.radio === '1'">
                 <span style="color:#F56C6C">*</span>请选择预约时间：
                 <span><b>T + </b></span>
-                <el-input style="width:100px" type="text" v-model="addDays" 
+                <el-input style="width:100px" type="text" v-model="addDays"
                 onkeyup="if(! /^d+$/.test(this.addDays)){this.addDays='';}"></el-input>
                 <el-date-picker
                   v-model="appointTime"
@@ -617,12 +624,14 @@ export default {
     }
   },
   methods: {
-    showStatus(status, isBlacklist, isNodisturb) {
-      if ((status === '1' || status === '0') && isBlacklist === '0' && isNodisturb === '0') {
-        return true
-      } else {
-        return false
-      }
+    showStatus(status) {
+      return status === '1' || status === '0'
+    },
+    checkBlacklist(isBlacklist) {
+      return isBlacklist === '0'
+    },
+    checkNodisturb(isNodisturb) {
+      return isNodisturb === '0'
     },
     getSummariesDetail(obj) {
       let summaries = ''
@@ -923,22 +932,6 @@ export default {
         }
       }
     },
-    // tab点击时触发的事件
-    // handleClick(tab, event) {
-    //   if (tab.name === 'firstDial') {
-    //     // 点击了首拨名单
-    //     this.req.contactStatus = 0
-    //     this.req.status = 0
-    //     this.req.pageNo = 1
-    //     this.searchByKeyWords(this.req)
-    //   } else {
-    //     // 点击了预约名单
-    //     this.req.contactStatus = ''
-    //     this.req.status = 1
-    //     this.req.pageNo = 1
-    //     this.searchByKeyWords(this.req)
-    //   }
-    // },
     // 跳转拨打页面
     changeToCustomerDetail(taskId, campaignId, customerId, isBlacklist, customerPhone) {
       this.customerPhone = customerPhone
@@ -1424,15 +1417,15 @@ export default {
       vm.summariesInfo = [] // 清空小结节点
       if (response.data.code === 0) {
         if (response.data.data.length > 0) {
-          vm.summariesInfo.push({ 'id': '', 'name': '' })
+          vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
           this.handle(response.data.data)
         } else {
-          vm.summariesInfo.push({ 'id': '', 'name': '拉取小结失败' })
+          vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
         }
       }
     }).catch(error => {
       console.log(error)
-      vm.summariesInfo.push({ 'id': '', 'name': '拉取小结失败' })
+      vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
     })
   },
   // 离开时清除定时器
