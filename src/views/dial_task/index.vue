@@ -208,9 +208,13 @@
           <el-table-column
             align="center"
             label="操作"
+            :show-overflow-tooltip="true"
             width="100">
           <template slot-scope="scope">
-            <a href="#" v-if="showStatus(scope.row.status)" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone)" size="small" type="text"><img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</a>
+            <a href="#" v-if="showStatus(scope.row.status,scope.row.isBlacklist,scope.row.isNodisturb)" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone)" size="small" type="text"><img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</a>
+            <el-tooltip v-if="!showStatus(scope.row.status,scope.row.isBlacklist,scope.row.isNodisturb)" class="item" effect="dark" content="该号码为免访客户或处于免访号段中!" placement="top-start">
+              <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
+            </el-tooltip>
           </template>
           </el-table-column>
         </el-table>
@@ -613,8 +617,8 @@ export default {
     }
   },
   methods: {
-    showStatus(obj) {
-      if (obj === '1' || obj === '0') {
+    showStatus(status, isBlacklist, isNodisturb) {
+      if ((status === '1' || status === '0') && isBlacklist === '0' && isNodisturb === '0') {
         return true
       } else {
         return false
@@ -911,7 +915,7 @@ export default {
       this.isBlacklists.length = 0
       this.customerIds.length = 0
       for (var i = 0; i < val.length; i++) {
-        if (val[i].status === '0' || val[i].status === '1') {
+        if ((val[i].status === '0' || val[i].status === '1') && val[i].isBlacklist !== '1' && val[i].isNodisturb !== '1') {
           this.taskIds.push(val[i].taskId)
           this.campaignIds.push(val[i].campaignId)
           this.isBlacklists.push(val[i].isBlacklist)
@@ -985,7 +989,7 @@ export default {
     // 快速拨打勾选
     quickDialto() {
       if (this.taskIds.length === 0) {
-        this.$message.error('您还未选中任务，或选中的任务不包含首拨或预约')
+        this.$message.error('您还未选中任务，或选中的任务未包含可拨打客户')
       } else {
         // this.$message('跳转到拨打详情页')
         // console.log('linn:' + this.taskIds[0])
