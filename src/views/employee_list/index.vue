@@ -149,7 +149,7 @@
           <el-input v-model="ruleForm.idNumber" placeholder="上限45字符" maxlength="45" @change="autoFill()"></el-input>
         </el-form-item>
         <el-form-item label="性别:" prop="sex">
-          <el-radio-group v-model="ruleForm.sex">
+          <el-radio-group v-model="ruleForm.sex" size="small">
             <el-radio-button label="1">男</el-radio-button>
             <el-radio-button label="0">女</el-radio-button>
           </el-radio-group>
@@ -197,7 +197,7 @@
           <el-input v-model="ruleFormReverse.idNumber" placeholder="上限45字符" maxlength="45" @change="autoFillReverse()"></el-input>
         </el-form-item>
         <el-form-item label="性别" prop="sex">
-          <el-radio-group v-model="ruleFormReverse.sex">
+          <el-radio-group v-model="ruleFormReverse.sex" size="small">
             <el-radio-button label="1">男</el-radio-button>
             <el-radio-button label="0">女</el-radio-button>
           </el-radio-group>
@@ -619,9 +619,9 @@
         this.ruleFormReverseDetail = {
           id: row.id,
           staffName: row.staffName,
-          origin: isJson(row.origin) && row.origin ? CodeToText[JSON.parse(row.origin)[0]] + CodeToText[JSON.parse(row.origin)[1]] : row.origin,
+          origin: isJson(row.origin) && row.origin ? CodeToText[JSON.parse(row.origin)[0]] + (typeof CodeToText[JSON.parse(row.origin)[1]] === 'undefined' ? '' : CodeToText[JSON.parse(row.origin)[1]]) : row.origin,
           idNumber: row.idNumber,
-          sex: row.sex ? row.sex.toString() : '',
+          sex: typeof row.sex === 'undefined' || row.sex === null ? '' : row.sex.toString(),
           birthday: row.birthday,
           departName: row.departName,
           userPhone: row.userPhone,
@@ -636,12 +636,13 @@
           if (response.data.code === 1) {
             const data = response.data.data
             this.staffData = data
+            console.log(data.origin)
             this.ruleFormReverse = {
               id: data.id,
               staffName: data.staffName,
               origin: isJson(data.origin) && data.origin ? JSON.parse(data.origin) : ['000000', '000000'],
               idNumber: data.idNumber,
-              sex: data.sex ? data.sex.toString() : '',
+              sex: typeof data.sex === 'undefined' || data.sex === null ? '' : data.sex.toString(),
               birthday: data.birthday,
               departName: data.departName,
               userPhone: data.userPhone,
@@ -659,7 +660,7 @@
           staffName: this.staffData.staffName,
           origin: isJson(this.staffData.origin) && this.staffData.origin ? JSON.parse(this.staffData.origin) : ['000000', '000000'],
           idNumber: this.staffData.idNumber,
-          sex: this.staffData.sex.toString(),
+          sex: typeof this.staffData.sex === 'undefined' || this.staffData.sex === null ? '' : this.staffData.sex.toString(),
           birthday: this.staffData.birthday,
           departName: this.staffData.departName,
           userPhone: this.staffData.userPhone,

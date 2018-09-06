@@ -381,6 +381,16 @@
 
           </el-tab-pane>
         </el-tabs>
+      <div style="margin-top:5px">
+        <label>评分等级：</label>
+        <el-rate
+          v-model="gradeRate"
+          show-text
+          :max=4
+          :texts="['差','中','良','优']"
+          style="margin-left:1%">
+        </el-rate>
+      </div>
       <div slot="footer" class="dialog-footer" style="text-align:center">
        <el-button type="primary" @click="toAddQCGradeRecord(1)">完成质检</el-button>
         <el-button @click="toAddQCGradeRecord(0)">存草稿</el-button>
@@ -603,6 +613,16 @@
 
           </el-tab-pane>
         </el-tabs>
+      <div style="margin-top:5px">
+        <label>评分等级：</label>
+        <el-rate
+          v-model="gradeRate"
+          show-text
+          :max=4
+          :texts="['差','中','良','优']"
+          style="margin-left:1%">
+        </el-rate>
+      </div>
       <div slot="footer" class="dialog-footer" style="text-align:center">
        <el-button type="primary" @click="toEditQCGradeRecord(1)">完成质检</el-button>
         <el-button @click="toEditQCGradeRecord(0)">存草稿</el-button>
@@ -620,6 +640,8 @@
     name: 'qm_quailitymark',
     data() {
       return {
+        gradeArr: ['差', '中', '良', '优'],
+        gradeRate: 0,
         taskId: '',
         row: {},
         activeName: '',
@@ -638,6 +660,7 @@
         timeValue1: '',
         timeValue2: '',
         pagination: {
+  
           pageNo: null,
           pageSize: null,
           totalCount: null,
@@ -732,6 +755,7 @@
       },
       getGradeRecord(value, type) {
         var gradeRecord = {}
+        gradeRecord.gradeRate = parseInt(this.gradeRate)
         gradeRecord.gradeRecordId = this.gradeRecordId
         gradeRecord.complete = value
         if (type === 0) {
@@ -768,6 +792,9 @@
         return gradeRecord
       },
       checkChoose() {
+        if (this.totalCheckMap.size < 1) {
+          return false
+        }
         var checkedNum = 0
         var chooseNum = 0
         this.totalCheckMap.forEach((value, key) => {
@@ -865,6 +892,7 @@
         this.getMarks(row, 1)
       },
       cleanInfo() {
+        this.gradeRate = 0
         this.addScopeUrl = ''
         this.comment = []
         this.gradeInfo = []
@@ -934,8 +962,14 @@
             this.customerData.idNumber = data.idNumber === null ? '' : repalceString(data.idNumber, 11, 4, '*')
             this.customerData.mobile = data.mobile === null ? '' : repalceString(data.mobile, 4, 4, '*')
           } else {
+            this.customerData.bankCard = ''
+            this.customerData.customerName = ''
+            this.customerData.source = ''
+            this.customerData.idNumber = ''
+            this.customerData.mobile = ''
             this.$message(response.data.message)
           }
+          this.$forceUpdate()
         }).catch(error => {
           console.log(error)
         })
@@ -1002,6 +1036,11 @@
           this.totalCheck = new Map()
           if (response.data.code === 0) {
             this.gradeRecordId = response.data.data.gradeRecordId
+            if (response.data.data.gradeRate) {
+              this.gradeRate = parseInt(response.data.data.gradeRate)
+            } else {
+              this.gradeRate = 0
+            }
             var obj = response.data.data.markResults
             for (var i = 0; i < obj.length; i++) {
               for (var j = 0; j < this.gradeInfo.length; j++) {
@@ -1032,6 +1071,7 @@
                 }
               }
             }
+            this.$forceUpdate()
           } else {
             this.$message(response.data.message)
           }
@@ -1114,7 +1154,6 @@
         }
       },
       searchTask(req) {
-        console.log('9999', req)
         req.pageNo = 1
         req.assignStart = this.timeValue1[0]
         req.assignStop = this.timeValue1[1]
@@ -1122,7 +1161,6 @@
         req.doneStop = this.timeValue2[1]
         req.staffId = localStorage.getItem('agentId')
         req.status = this.formInline.status
-        console.log('888', req)
         findQualityTaskByInfo(req).then(response => {
           this.queryGradeList(response)
         })
