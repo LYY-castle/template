@@ -51,15 +51,15 @@
             </el-table-column>
             <el-table-column align="center" label="操作">
               <template slot-scope="scope">
-                <el-button type="text" icon="el-icon-edit" size="medium" @click="showEditNote(scope.row.noteid,scope.row.userid)">修改</el-button>
-                <el-button type="text" size="medium" @click="deleteVisiable=true;del_noteid=scope.row.noteid;del_uid=scope.row.userid">删除</el-button>
+                <el-button type="text" size="small" @click="showEditNote(scope.row.noteid,scope.row.userid)">修改</el-button>
+                <el-button type="text" size="small" @click="deleteVisiable=true;del_noteid=scope.row.noteid;del_uid=scope.row.userid">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
         </el-col>
       </el-row>
 
-      <el-row style="margin-top:5px;">
+      <el-row style="margin-top:1%;">
         <el-button type="success" size="small" @click="noteTitle='';noteTitleVisiable=true">新建</el-button>
         <!-- <el-button type="danger" size="small" @click="" icon="el-icon-minus">批量删除</el-button> -->
         <el-pagination
@@ -107,23 +107,29 @@
         style="white-space:pre"
         @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
         @change="onEditorChange($event)"
-        ></quill-editor><br/><br/><br/><br/>
-        <el-button type="success" @click="generateNote();" size="medium">确定</el-button>
-        <el-button type="primary" @click="noteTitle='';isListPage='1';content=null" size="medium">取消</el-button>
+        ></quill-editor>
+        <el-row style="margin-top:1%">
+          <el-button type="success" @click="generateNote();" size="small">确定</el-button>
+          <el-button type="primary" @click="noteTitle='';isListPage='1';content=null" size="small">取消</el-button>
+        </el-row>
       </div>
     </div>
     <!-- 新建笔记end -->
 
     <!-- 笔记详情 -->
     <div  v-show="isListPage==='3'">
-      <div style="text-align:center">
-        <h3>{{noteDetail.title}}&nbsp;&nbsp;</h3>
-        <quill-editor
-        :content="noteDetail.content"
+      <div>
+        <h3 style="text-align:center">{{noteDetail.title}}&nbsp;&nbsp;</h3>
+        <!-- <quill-editor
         style="white-space:pre"
         ref="myQuillEditor"
-        :options="editorOption"></quill-editor><br/><br/><br/><br/>
-        <el-button type="primary" round @click="noteDetail.title='';isListPage='1';noteDetail.content=null">返回列表</el-button>
+        :options="editorOption"></quill-editor> -->
+        <div v-html="noteDetail.content" class="note-content">
+
+        </div>
+        <el-row style="margin-top:1%;text-align:center;">
+          <el-button type="primary" @click="noteDetail.title='';isListPage='1';noteDetail.content=null">返回列表</el-button>
+        </el-row>
       </div>
     </div>
     <!-- 笔记详情end -->
@@ -133,7 +139,7 @@
       <div style="text-align:center">
         <h3>{{editDetail.title}}
           <el-tooltip class="item" effect="dark" content="修改笔记标题" placement="right-start">
-            <el-button type="default" icon="el-icon-edit-outline" @click="editNoteTitleVisiable=true" size="small"  style="width:50px"></el-button>
+            <el-button style="font-size:16px;" type="text" icon="el-icon-edit-outline" @click="editNoteTitleVisiable=true" size="mini" circle></el-button>
           </el-tooltip>
         </h3>
         <quill-editor
@@ -143,9 +149,11 @@
         :options="editorOption"
         @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
         @change="onEditorChange($event)"
-        ></quill-editor><br/><br/><br/><br/>
-        <el-button type="success"  @click="modifyNote();" size="medium">修改</el-button>
-        <el-button type="primary"  @click="editDetail.title='';isListPage='1';editDetail.content=null" size="medium">取消</el-button>
+        ></quill-editor>
+        <el-row style="margin-top:1%;">
+          <el-button type="success" @click="modifyNote();" size="small">确定</el-button>
+          <el-button type="primary" @click="editDetail.title='';isListPage='1';editDetail.content=null" size="small">取消</el-button>
+        </el-row>
       </div>
     </div>
     <!-- 修改笔记 end-->
@@ -164,11 +172,28 @@
   </div>
 </template>
 
-<style lang='scss' scoped>
-  .quill-editor {
-        height: 450px;
-    }
+<style rel="stylesheet/scss" lang="scss" scoped>
+  // .quill-editor {
+  //   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  // }
+  .note-content{
+    white-space:pre;
+    width:100%;
+    min-height:442px;
+    border: 1px solid #ccc;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
 </style>
+<style rel="stylesheet/scss" lang="scss">
+  .ql-container{
+    min-height: 400px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+  .ql-toolbar{
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+</style>
+
 
 <script>
 import { formatDateTime } from '@/utils/tools' // 格式化时间
