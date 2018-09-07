@@ -24,9 +24,25 @@ export function reportAgent(obj) {
   })
 }
 
-export function oBTaskReportStatistics(obj) {
+export function obstatistics(obj) {
   return request({
-    url: '/obreport/obtaskstatistics',
+    url: '/obreport/departOrStaff/statistics',
+    method: 'get',
+    params: obj
+  })
+}
+
+export function obtotalAgent(obj) {
+  return request({
+    url: '/obreport/agent/total/statistics',
+    method: 'get',
+    params: obj
+  })
+}
+
+export function obreportAgent(obj) {
+  return request({
+    url: '/obreport/agent/statistics',
     method: 'get',
     params: obj
   })

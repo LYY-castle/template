@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%;height: 90%">
+  <div style="width: 100%;height: 90%" v-if="departPermission">
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
         <el-form-item>
@@ -110,7 +110,7 @@
         </el-select>
       </el-form-item>
     </el-form>
-    <div :class="className" id="time" style="height: 100%;width: 100%;"></div>
+    <div :class="className" :id="time" style="height: 100%;width: 100%;"></div>
     <div style="margin-top: 1%">
       <el-row>
         <el-pagination
@@ -225,6 +225,162 @@
       </div>
     </div>
   </div>
+  <div style="width: 100%;height: 90%" v-else-if="staffPermission">
+    <el-row>
+      <el-form :inline="true" class="demo-form-inline" size="small">
+        <el-form-item>
+          <el-select v-model="formInline.time">
+            <el-option label="天" value="day"></el-option>
+            <el-option label="小时" value="hour"></el-option>
+            <el-option label="周" value="week"></el-option>
+            <el-option label="月" value="month"></el-option>
+            <el-option label="年" value="year"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-show="formInline.time === 'hour'" label="操作时间：">
+          <el-date-picker
+            v-model="timeValue"
+            type="datetimerange"
+            range-separator="-"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            format="yyyy-MM-dd HH">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item v-show="formInline.time === 'day'" label="操作时间：">
+          <el-date-picker
+            v-model="timeValue"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            format="yyyy-MM-dd">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item v-show="formInline.time === 'week'" label="操作时间：">
+          <el-date-picker
+            v-model="timeValue[0]"
+            type="week"
+            format="yyyy 第 WW 周"
+            placeholder="开始周">
+          </el-date-picker>
+          <span>-</span>
+          <el-date-picker
+            v-model="timeValue[1]"
+            type="week"
+            format="yyyy 第 WW 周"
+            placeholder="结束周">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item v-show="formInline.time === 'month'" label="操作时间：">
+          <el-date-picker
+            v-model="timeValue[0]"
+            type="month"
+            placeholder="开始月"
+            format="yyyy-MM">
+          </el-date-picker>
+          <span>-</span>
+          <el-date-picker
+            v-model="timeValue[1]"
+            type="month"
+            placeholder="结束月"
+            format="yyyy-MM">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item v-show="formInline.time === 'year'" label="操作时间：">
+          <el-date-picker
+            v-model="timeValue[0]"
+            type="year"
+            placeholder="开始年"
+            format="yyyy">
+          </el-date-picker>
+          <span>-</span>
+          <el-date-picker
+            v-model="timeValue[1]"
+            type="year"
+            placeholder="结束年"
+            format="yyyy">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="search1(staffAgentid)">查询</el-button>
+          <el-button type="danger" @click="reset">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </el-row>
+    <div :class="className" :id="time" style="height: 100%;width: 100%;"></div>
+    <div style="margin-top: 1%">
+      <el-row>
+        <el-pagination
+          background
+          @current-change="handleCurrentChangeStaff1"
+          :current-page.sync="paginationStaffPage.pageNo"
+          :page-size="paginationStaffPage.pageSize"
+          layout="total, prev, pager, next, jumper"
+          :total="paginationStaffPage.totalCount" style="text-align: right">
+        </el-pagination>
+      </el-row>
+    </div>
+    <div style="margin-top: 1%">
+      <h3>员工表详情</h3>
+      <el-table
+        :header-row-style="headerRow"
+        :data="tableDataAgent"
+        ref="multipleTable"
+        tooltip-effect="dark"
+        :span-method="arraySpanMethod"
+        border
+        style="width: 100%;">
+        <el-table-column
+          align="center"
+          prop="agent_id"
+          label="下属员工">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="time_dimension"
+          label="日期">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="online_time_duration"
+          label="在线时长(秒)">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="free_time_duration"
+          label="空闲时长(秒)">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="busy_time_duration"
+          label="示忙时长(秒)">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="call_time_duration"
+          label="通话时长(秒)">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="calls_number"
+          label="通话次数">
+        </el-table-column>
+      </el-table>
+        <el-row style="margin-top:1%;">
+          <div @click="page(item,index)">
+            <el-pagination
+              background
+              @current-change="handleCurrentChangeAgent"
+              :current-page.sync="paginationAgent.pageNo"
+              :page-size="paginationAgent.pageSize"
+              layout="total, prev, pager, next, jumper"
+              :total="paginationAgent.totalCount" style="text-align: right">
+            </el-pagination>
+          </div>
+        </el-row>
+      </div>
+  </div>
 </template>
 
 <script>
@@ -232,6 +388,7 @@
   import resize from './mixins/resize'
   import { statistics, getAllStaffByDepartId, getDepartId, totalAgent, reportAgent } from '@/api/ctiReport'
   import { Message } from 'element-ui'
+  import { permsdepart, permsstaff } from '@/api/reportPermission'
 
   export default {
     mixins: [resize],
@@ -243,6 +400,10 @@
       id: {
         type: String,
         default: 'chart'
+      },
+      time: {
+        type: String,
+        default: 'time'
       },
       width: {
         type: String,
@@ -260,6 +421,8 @@
     // },
     data() {
       return {
+        departPermission: false,
+        staffPermission: false,
         contentIndex: 0,
         currentIndex: null,
         timeOptions: [],
@@ -283,6 +446,12 @@
           totalCount: null,
           totalPage: null
         },
+        paginationAgent: {
+          pageNo: null,
+          pageSize: null,
+          totalCount: null,
+          totalPage: null
+        },
         paginationStaff: [],
         pageNo: [],
         pageSize: [],
@@ -296,6 +465,7 @@
         },
         tableData: [],
         tableData1: [],
+        tableDataAgent: [],
         online_time_duration: [],
         free_time_duration: [],
         busy_time_duration: [],
@@ -311,18 +481,33 @@
         busy_time_durationAgent: [],
         call_time_durationAgent: [],
         calls_numberAgent: [],
-        agentTime: []
+        agentTime: [],
+        staffAgentid: null
       }
     },
     mounted() {
       getDepartId().then(res => {
-        getAllStaffByDepartId(res.data.departId).then(response => {
-          this.staffOptions = response.data.data
-          this.formInline.agent_dn = response.data.data.map(function(item, index) {
-            return item.angentId
+        this.staffAgentid = res.data.agentid
+        permsdepart(res.data.agentid).then(r => {
+          this.departPermission = true
+          this.staffPermission = false
+          getAllStaffByDepartId(res.data.departId).then(response => {
+            this.staffOptions = response.data.data
+            this.formInline.agent_dn = response.data.data.map(function(item, index) {
+              return item.angentId
+            })
+            this.formInline.staff = response.data.data[0].angentId
+            this.search(0)
           })
-          this.formInline.staff = response.data.data[0].angentId
-          this.search(0)
+        }).catch((error) => {
+          console.log(error)
+          permsstaff(res.data.agentid).then(re => {
+            this.departPermission = false
+            this.staffPermission = true
+            this.search1(res.data.agentid)
+          }).catch((err) => {
+            console.log(err)
+          })
         })
       })
     },
@@ -346,9 +531,9 @@
     methods: {
       arraySpanMethod({ row, column, rowIndex, columnIndex }) {
         if (columnIndex === 0) { //  表示第一列合并行
-          if (rowIndex % this.formInline.agent_dn.length === 0) {
+          if (rowIndex % 10 === 0) {
             return {
-              rowspan: this.formInline.agent_dn.length,
+              rowspan: 10,
               colspan: 1
             }
           } else {
@@ -388,6 +573,9 @@
       handleCurrentChangeStaff(val) {
         this.agentChange(this.formInline.staff, val)
       },
+      handleCurrentChangeStaff1(val) {
+        this.agentChange(this.staffAgentid, val)
+      },
       page(val, index) {
         this.currentIndex = index
       },
@@ -404,6 +592,21 @@
           this.pageSize.splice(this.currentIndex, 1, response.data.pageSize)
           this.totalCount.splice(this.currentIndex, 1, response.data.total_count)
           this.tableData.splice(this.currentIndex, 1, response.data.result)
+        })
+      },
+      handleCurrentChangeAgent(val) {
+        reportAgent({
+          time_dimension: this.formInline.time,
+          agent_id: this.staffAgentid,
+          start_time: Date.parse(this.timeValueClone[0]),
+          end_time: Date.parse(this.timeValueClone[1]),
+          pageNo: val,
+          pageSize: this.paginationAgent.pageSize
+        }).then(response => {
+          this.tableDataAgent = response.data.result
+          this.paginationAgent.pageNo = response.data.pageNo
+          this.paginationAgent.pageSize = response.data.pageSize
+          this.paginationAgent.totalCount = response.data.total_count
         })
       },
       searchStaff() {
@@ -424,6 +627,21 @@
           this.tableData.push(response.data.result)
           this.contentIndex++
           this.searchStaff()
+        })
+      },
+      searchAgentStaff(val) {
+        reportAgent({
+          time_dimension: this.formInline.time,
+          agent_id: val,
+          start_time: Date.parse(this.timeValueClone[0]),
+          end_time: Date.parse(this.timeValueClone[1]),
+          pageNo: 1,
+          pageSize: 10
+        }).then(response => {
+          this.tableDataAgent = response.data.result
+          this.paginationAgent.pageNo = response.data.pageNo
+          this.paginationAgent.pageSize = response.data.pageSize
+          this.paginationAgent.totalCount = response.data.total_count
         })
       },
       initChart() {
@@ -1276,6 +1494,19 @@
           })
           this.timeValueClone = this.timeValue
           this.teamData(val)
+        }
+      },
+      search1(val) {
+        if (this.timeValue[0] > this.timeValue[1]) {
+          Message({
+            message: '开始时间不能大于结束时间',
+            type: 'error',
+            duration: 3 * 1000
+          })
+        } else {
+          this.timeValueClone = this.timeValue
+          this.agentChange(val)
+          this.searchAgentStaff(val)
         }
       },
       reset() {

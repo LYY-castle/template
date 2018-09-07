@@ -109,7 +109,7 @@
               </el-col>
             </el-form>
           </el-row>
-       
+
           <!-- <el-row style="height:40px;padding-top:15px;padding-right:15px;">
             <breadcrumb></breadcrumb>
           </el-row> -->
@@ -156,7 +156,7 @@
             </el-tooltip>
           </el-badge>
         </div>
-        
+
         <!-- 没有未读信息 -->
         <div v-show="msgNum_all === '' || msgNum_all === 0">
           <el-tooltip placement="bottom">
@@ -218,7 +218,7 @@
             </el-tooltip>
           </el-badge>
         </div>
-        
+
         <!-- 没有未读信息 -->
         <div v-show="msgNum_all === '' || msgNum_all === 0">
           <el-tooltip placement="bottom">
@@ -252,7 +252,7 @@
         </el-dropdown>
       </el-col>
     </el-col>
-  
+
   </el-row>
 
   <el-dialog width="30%" title="修改密码" :visible.sync="changePwdVisiable" append-to-body>
@@ -287,6 +287,7 @@ import {
   changePassword
 } from '@/utils/tools'
 import cti from '@/utils/ctijs'
+import getDynamicRouter from '@/router/dynamic-router'
 var vm = null
 var interval = null
 export default {
@@ -467,8 +468,17 @@ export default {
     },
     // 进入我的消息页
     checkMessageList() {
+      let messagePath = ''
+      const messageRouter = getDynamicRouter(JSON.parse(sessionStorage.getItem('getMenu')))
+      for (let i = 0; i < messageRouter.length; i++) {
+        for (let j = 0; j < messageRouter[i].children.length; j++) {
+          if (messageRouter[i].children[j].name === 'notification_my.html') {
+            messagePath = messageRouter[i].path + '/' + messageRouter[i].children[j].name
+          }
+        }
+      }
       this.$router.push({
-        name: 'notification_my.html'
+        path: messagePath
       })
     },
     agentReady() {
