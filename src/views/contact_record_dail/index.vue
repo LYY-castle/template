@@ -488,6 +488,7 @@ audio {
         oriQueryStatus: '-1',
         oriSTime: '',
         oriETime: '',
+        oriAgentId: '',
         defaultProps: {
           children: 'summaryDetailInfos',
           label: 'name'
@@ -536,7 +537,6 @@ audio {
           pageSize: 10,
           pageNo: 1,
           status: '-1'
-
         }
       }
     },
@@ -585,6 +585,7 @@ audio {
           this.req.status = '0'
           this.oriQueryStatus = '0'
         }
+        this.oriAgentId = localStorage.getItem('agentId')
         this.staffInfo.agentid = localStorage.getItem('agentId')
       }
       this.req.pageNo = 1
@@ -620,7 +621,7 @@ audio {
           stime: '',
           etime: '',
           departId: '',
-          agentid: '',
+          agentid: this.oriAgentId,
           pageSize: 10,
           pageNo: 1,
           status: this.oriQueryStatus
@@ -672,7 +673,6 @@ audio {
           for (var i = 0; i < nodules.length; i++) {
             names.push(nodules[i].name)
           }
-          console.log('names:', names)
           names = names.join('，')
           return names
         } else {
@@ -699,12 +699,6 @@ audio {
             })
             this.keys = []
             this.keys = a
-            // if (a && a.length > 0) {
-            //   for (var i in a) {
-            //     this.$set(this.keys, i, a[i])
-            //   }
-            // }
-            console.log('1111111111', this.keys)
           }
         })
         queryrecordbytaskid(this.ids.taskId, this.ids.campaignId).then(response => {
@@ -740,7 +734,6 @@ audio {
         })
       },
       checkEdit() {
-        console.log('3333333333333', this.keys)
         var taskId = this.ids.taskId
         var taskStatus = this.detailInfo.dialTaskInfo.status
         var appointTime = this.detailInfo.dialTaskInfo.appointTime
@@ -849,7 +842,7 @@ audio {
         if (this.isManager) {
           this.req.departId = localStorage.getItem('departId')
         } else if (this.isStaff) {
-          this.req.agentid = this.staffInfo.agentid
+          this.req.agentid = localStorage.getItem('agentId')
         } else {
           this.$message.error('您无法操作该页面，请联系管理员！')
           return
