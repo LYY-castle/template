@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <el-row margin-top:>
+    <el-row>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item label="质检任务名称:">
+        <el-form-item label="活动名称:">
           <el-select v-model="req.campaignId" :placeholder="campData.length==0?'无活动':'请选择活动'" @change="submitAssign.data = ''.split('');resetForm('assignForm');req.pageNo=1;req.pageSize=10;queryMainQualityList(req);countTaskAssignInfo(req)">
             <el-option
                 v-for="item in campData"
