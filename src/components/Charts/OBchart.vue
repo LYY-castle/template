@@ -339,28 +339,23 @@
         </el-table-column>
         <el-table-column
           align="center"
-          prop="online_time_duration"
-          label="在线时长(秒)">
+          prop="new_first_dial_task_count"
+          label="新增首拨数量">
         </el-table-column>
         <el-table-column
           align="center"
-          prop="free_time_duration"
-          label="空闲时长(秒)">
+          prop="new_success_contact_task_count"
+          label="新增成功数量">
         </el-table-column>
         <el-table-column
           align="center"
-          prop="busy_time_duration"
-          label="示忙时长(秒)">
+          prop="new_fail_contact_task_count"
+          label="新增失败数量">
         </el-table-column>
         <el-table-column
           align="center"
-          prop="call_time_duration"
-          label="通话时长(秒)">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="calls_number"
-          label="通话次数">
+          prop="new_appoint_contact_task_count"
+          label="新增预约数量">
         </el-table-column>
       </el-table>
       <el-row style="margin-top:1%;">
