@@ -39,7 +39,7 @@
               <el-col :span="4" style="height:30px;">
                 <el-form-item class="txtDN" size="mini">
                   <el-col :span="22"  prop="DN">
-                    <el-input v-model="formInline.DN" placeholder="分机号">{{formInline.DN}}</el-input>
+                    <el-input v-model="formInline.DN" placeholder="分机号" :disabled="disabledDN">{{formInline.DN}}</el-input>
                   </el-col>
                   <el-col :span="2">
                     <el-button type="primary" size="mini" style="margin-left:50%;" v-if="!islogin" @click="agentLogin()">登入</el-button>
@@ -293,6 +293,7 @@ export default {
   name: 'layout',
   data() {
     return {
+      disabledDN: false, // 默认不禁用电话号码框
       dialNum: '',
       reasonCode: '',
       bolConnected: false,
@@ -1039,6 +1040,7 @@ export default {
           vm.telephoneState = '登出'
           clearInterval(interval)
           vm.setbtnStatus('logoff')
+          vm.disabledDN = false
           break
         case '0':
           vm.islogin = true
@@ -1054,6 +1056,12 @@ export default {
           vm.agentState4 = false
           vm.formInline.region = '就绪'
           vm.setbtnStatus('login')
+          if (vm.formInline.DN === DN) {
+            vm.disabledDN = true
+          } else {
+            vm.disabledDN = false
+            vm.formInline.DN = DN
+          }
           break
         case '13':
           vm.islogin = true
@@ -1069,6 +1077,12 @@ export default {
           vm.agentState4 = false
           vm.formInline.region = '示忙'
           vm.setbtnStatus('login')
+          if (vm.formInline.DN === DN) {
+            vm.disabledDN = true
+          } else {
+            vm.disabledDN = false
+            vm.formInline.DN = DN
+          }
           break
         case '14':
           vm.islogin = true
@@ -1084,6 +1098,12 @@ export default {
           vm.agentState4 = true
           vm.formInline.region = '后处理'
           vm.setbtnStatus('login')
+          if (vm.formInline.DN === DN) {
+            vm.disabledDN = true
+          } else {
+            vm.disabledDN = false
+            vm.formInline.DN = DN
+          }
           break
         case '-100':
           vm.islogin = true
@@ -1110,6 +1130,12 @@ export default {
             vm.holdCall3 = false // 可以保持
             vm.telephoneState = '班长监听'
           }
+          if (vm.formInline.DN === DN) {
+            vm.disabledDN = true
+          } else {
+            vm.disabledDN = false
+            vm.formInline.DN = DN
+          }
           break
         case '-101':
           vm.islogin = true
@@ -1135,6 +1161,12 @@ export default {
             vm.holdCall2 = true
             vm.holdCall3 = false // 可以保持
           }
+          if (vm.formInline.DN === DN) {
+            vm.disabledDN = true
+          } else {
+            vm.disabledDN = false
+            vm.formInline.DN = DN
+          }
           break
         case '-2':
           vm.timeCount = ''
@@ -1142,6 +1174,7 @@ export default {
           clearInterval(interval)
           vm.islogin = false
           vm.setbtnStatus('logoff')
+          vm.disabledDN = false
           break
       }
       vm.reasonCode = reasonCode
