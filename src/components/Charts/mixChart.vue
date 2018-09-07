@@ -110,7 +110,7 @@
         </el-select>
       </el-form-item>
     </el-form>
-    <div :class="className" id="time" style="height: 100%;width: 100%;"></div>
+    <div :class="className" :id="time" style="height: 100%;width: 100%;"></div>
     <div style="margin-top: 1%">
       <el-row>
         <el-pagination
@@ -500,13 +500,14 @@
             this.search(0)
           })
         }).catch((error) => {
-            permsstaff(res.data.agentid).then(re => {
-              this.departPermission = false
-              this.staffPermission = true
-              this.search1(res.data.agentid)
-            }).catch((err) => {
-              console.log(err)
-            })
+          console.log(error)
+          permsstaff(res.data.agentid).then(re => {
+            this.departPermission = false
+            this.staffPermission = true
+            this.search1(res.data.agentid)
+          }).catch((err) => {
+            console.log(err)
+          })
         })
       })
     },
