@@ -10,7 +10,7 @@
   import Chart from '@/components/Charts/OBchart'
 
   export default {
-    name: 'mixChart',
+    name: 'OBChart',
     components: { Chart }
   }
 </script>

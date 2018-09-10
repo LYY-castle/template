@@ -101,7 +101,7 @@
         </el-pagination>
       </el-row>
     </div>
-    <el-form :inline="true" class="demo-form-inline" size="small" style="margin-top: 10px">
+    <el-form :inline="true" class="demo-form-inline" size="small" style="margin: 10px 0">
       <el-form-item label="时间选项:" style="margin-bottom: 0">
         <el-select v-model="formInline.time_dimension" @change="timeChange">
           <el-option v-for="item in timeOptions" :key="item" :label="item" :value="item"></el-option>
@@ -109,7 +109,7 @@
       </el-form-item>
     </el-form>
     <div :class="className" id="staff" style="height: 100%;width: 100%;"></div>
-    <el-form :inline="true" class="demo-form-inline" size="small" style="margin-top: 10px">
+    <el-form :inline="true" class="demo-form-inline" size="small" style="margin: 10px 0">
       <el-form-item label="员工选项:" style="margin-bottom: 0">
         <el-select v-model="formInline.staff" @change="agentChange">
           <el-option v-for="item in staffOptions" :key="item.angentId" :label="item.angentId" :value="item.angentId"></el-option>
@@ -183,7 +183,7 @@
           <el-table-column
             align="center"
             prop="time_dimension"
-            label="日期">
+            label="时间段">
           </el-table-column>
           <el-table-column
             align="center"
@@ -318,24 +318,18 @@
       </el-row>
     </div>
     <div style="margin-top: 1%">
-      <h3>员工表详情</h3>
+      <h3>详情表</h3>
       <el-table
         :header-row-style="headerRow"
         :data="tableDataAgent"
         ref="multipleTable"
         tooltip-effect="dark"
-        :span-method="arraySpanMethod"
         border
         style="width: 100%;">
         <el-table-column
           align="center"
-          prop="agent_id"
-          label="下属员工">
-        </el-table-column>
-        <el-table-column
-          align="center"
           prop="time_dimension"
-          label="日期">
+          label="时间段">
         </el-table-column>
         <el-table-column
           align="center"
@@ -662,7 +656,7 @@
             top: '20',
             textStyle: {
               color: '#fff',
-              fontSize: '22'
+              fontSize: '14'
             },
             subtextStyle: {
               color: '#90979c',
@@ -717,26 +711,6 @@
             data: xData
           }],
           yAxis: [{
-            type: 'value',
-            name: '次数',
-            splitLine: {
-              show: false
-            },
-            axisLine: {
-              lineStyle: {
-                color: '#90979c'
-              }
-            },
-            axisTick: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
-            },
-            splitArea: {
-              show: false
-            }
-          }, {
             type: 'value',
             name: '次数',
             splitLine: {
@@ -847,11 +821,10 @@
             data: this.new_fail_contact_task_count
           }, {
             name: '新增预约数量',
-            type: 'line',
-            // stack: 'total',
-            // barMaxWidth: 35,
+            type: 'bar',
+            stack: 'total',
+            barMaxWidth: 35,
             symbolSize: 10,
-            yAxisIndex: 1,
             symbol: 'circle',
             itemStyle: {
               normal: {
@@ -876,7 +849,7 @@
         this.chartStaff.setOption({
           backgroundColor: '#344b58',
           title: {
-            text: '单个时间OB报表',
+            text: '单个时间各员工OB任务报表',
             x: '20',
             top: '20',
             textStyle: {
@@ -935,26 +908,6 @@
             data: this.formInline.agent_dn
           }],
           yAxis: [{
-            type: 'value',
-            name: '次数',
-            splitLine: {
-              show: false
-            },
-            axisLine: {
-              lineStyle: {
-                color: '#90979c'
-              }
-            },
-            axisTick: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
-            },
-            splitArea: {
-              show: false
-            }
-          }, {
             type: 'value',
             name: '次数',
             splitLine: {
@@ -1065,11 +1018,10 @@
             data: this.new_fail_contact_task_countTime
           }, {
             name: '新增预约数量',
-            type: 'line',
-            // stack: 'total',
-            // barMaxWidth: 35,
+            type: 'bar',
+            stack: 'total',
+            barMaxWidth: 35,
             symbolSize: 10,
-            yAxisIndex: 1,
             symbol: 'circle',
             itemStyle: {
               normal: {
@@ -1094,7 +1046,7 @@
         this.chartTime.setOption({
           backgroundColor: '#344b58',
           title: {
-            text: '单个员工OB报表',
+            text: '单个员工各时间段OB任务报表',
             x: '20',
             top: '20',
             textStyle: {
@@ -1153,26 +1105,6 @@
             data: this.agentTime
           }],
           yAxis: [{
-            type: 'value',
-            name: '次数',
-            splitLine: {
-              show: false
-            },
-            axisLine: {
-              lineStyle: {
-                color: '#90979c'
-              }
-            },
-            axisTick: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
-            },
-            splitArea: {
-              show: false
-            }
-          }, {
             type: 'value',
             name: '次数',
             splitLine: {
@@ -1283,11 +1215,10 @@
             data: this.new_fail_contact_task_countAgent
           }, {
             name: '新增预约数量',
-            type: 'line',
-            // stack: 'total',
-            // barMaxWidth: 35,
+            type: 'bar',
+            stack: 'total',
+            barMaxWidth: 35,
             symbolSize: 10,
-            yAxisIndex: 1,
             symbol: 'circle',
             itemStyle: {
               normal: {
