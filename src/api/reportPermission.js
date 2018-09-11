@@ -27,3 +27,17 @@ export function permsobstaff(id) {
     method: 'get'
   })
 }
+
+export function permsorderdepart(id) {
+  return request({
+    url: '/auth/users/' + id + '/perms/-depart-order-report/GET',
+    method: 'get'
+  })
+}
+
+export function permsorderstaff(id) {
+  return request({
+    url: '/auth/users/' + id + '/perms/-staff-order-report/GET',
+    method: 'get'
+  })
+}
