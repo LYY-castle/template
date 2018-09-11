@@ -1,6 +1,6 @@
 <template>
   <div class="container" >
-      <el-row margin-top:>
+    <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
         <el-form-item prop="name" label="模板名称:">
           <el-input v-model="req.name" placeholder="模板名称"></el-input>

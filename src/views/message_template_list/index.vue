@@ -161,11 +161,11 @@
         <el-button type="primary" @click="delVisible = false;delTemplateGroup(delReq.id);">确 定</el-button>
       </div>
     </el-dialog>
-      <!-- 修改免访客户 -->
+      <!-- 修改模板组 -->
       <el-dialog
       align:left
       width="30%"
-      title="修改免访号段"
+      title="修改模板组"
       :visible.sync="editVisible"
       append-to-body>
       <el-form :rules="rule" :model="editTemplateGroupDetail" ref="editTemplateGroupDeForm" label-width="120px">
