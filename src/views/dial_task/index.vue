@@ -730,18 +730,21 @@ export default {
     },
     // 定时监控设置能否继续拨打的状态
     editDialToStatus() {
-      var reasonCode = localStorage.getItem('reasonCode')
+      const reasonCode = localStorage.getItem('reasonCode')
       if (reasonCode === '-1' || reasonCode === '-2' || reasonCode === '-3' || reasonCode === '-4' || reasonCode === '') {
         this.hideDialTo = true
       } else if ((reasonCode === '0' || reasonCode === '14') && this.canContact === 0) {
         this.hideDialTo = true
         // clearInterval(this.interval)
+      } else if (reasonCode === '-101' || reasonCode === '-100') {
+        this.hideDialTo = true
       } else {
         this.hideDialTo = false
       }
     },
     // 调用cti拨打功能
     normalDial(taskId, campaignId, customerPhone) {
+      this.hideDialTo = true
       // console.log('1,' + localStorage.getItem('DN'))
       // console.log('2,' + localStorage.getItem('callerDN'))
       const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/

@@ -445,6 +445,8 @@ export default {
       // 注销时清空定时器
         clearInterval(this.timer)
         this.timer = null
+        clearInterval(interval)
+        interval = null
         this.logout()
       } else if (command === 'changePWD') {
         this.changePWD.staffId = localStorage.getItem('agentId')
@@ -713,9 +715,11 @@ export default {
           const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
           if (regex.test(vm.dialNum)) {
             this.getPromise(vm.dialNum).then(function() {
+              vm.dialCall = false
               cti.makecall(DN, vm.dialNum)
             })
           } else {
+            vm.dialCall = false
             cti.makecall(DN, vm.dialNum)
           }
         } else {
@@ -1043,12 +1047,20 @@ export default {
     },
     on_reasonchange(event, agentId, DN, reasonCode) {
       console.log('响应事件：改变话机状态' + event + ',员工工号：' + agentId + '，分机：' + DN + '，状态码：' + reasonCode)
+      let info = {}
+      if (typeof localStorage.getItem(agentId) !== 'undefined' && localStorage.getItem(agentId) !== null) {
+        info = JSON.parse(localStorage.getItem(agentId))
+      }
+      info.DN = DN
+      info.reasonCode = reasonCode
+      localStorage.setItem(agentId, JSON.stringify(info))
       switch (reasonCode) {
         case '-1':
           vm.islogin = false
           vm.timeCount = ''
           vm.telephoneState = '登出'
           clearInterval(interval)
+          localStorage.removeItem(agentId)
           vm.setbtnStatus('logoff')
           vm.disabledDN = false
           break
@@ -1182,6 +1194,7 @@ export default {
           vm.timeCount = ''
           vm.telephoneState = '登出'
           clearInterval(interval)
+          localStorage.removeItem(agentId)
           vm.islogin = false
           vm.setbtnStatus('logoff')
           vm.disabledDN = false
