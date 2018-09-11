@@ -116,32 +116,40 @@
         </el-col>
 
 
-    <el-col :span="7" class="userInfo" style="margin-top:-7px;">
+    <el-col :span="7" class="userInfo">
       <el-col :span="6">
-        <p>
+        <p style="text-overflow:ellipsis;white-space:nowrap;overflow:hidden;width:100%;">
           <b>状态：</b>
-          <span>{{telephoneState}}</span>
+          <el-popover trigger="hover" placement="left" :content="telephoneState" style="cursor:pointer">
+            <span slot="reference">{{telephoneState}}</span>
+          </el-popover>
         </p>
-        <p>
+        <p style="text-overflow:ellipsis;white-space:nowrap;overflow:hidden;width:100%;">
           <b>时长：</b>
-          <span>{{timeCount}}</span>
+          <el-popover trigger="hover" placement="left" :content="timeCount" style="cursor:pointer">
+            <span slot="reference">{{timeCount}}</span>
+          </el-popover>
         </p>
       </el-col>
       <el-col :span="6">
-        <p>
+        <p style="text-overflow:ellipsis;white-space:nowrap;overflow:hidden;width:100%;">
           <b>主叫：</b>
-          <span>{{caller}}</span>
+          <el-popover trigger="hover" placement="left" :content="caller" style="cursor:pointer">
+            <span slot="reference">{{caller}}</span>
+          </el-popover>
         </p>
-        <p>
+        <p style="text-overflow:ellipsis;white-space:nowrap;overflow:hidden;width:100%;">
           <b>被叫：</b>
-          <span>{{callee}}</span>
+          <el-popover trigger="hover" placement="left" :content="callee" style="cursor:pointer">
+            <span slot="reference">{{callee}}</span>
+          </el-popover>
         </p>
         <!-- <p>
           <b>原主叫：</b>
           <span>{{orginCaller}}</span>
         </p> -->
       </el-col>
-      <el-col :span="6" style="margin-top:15px;margin-left:12%">
+      <el-col :span="6" style="margin-top:5px;margin-left:12%">
         <!-- 有未读信息 -->
         <div v-show="msgNum_all > 0">
           <el-badge v-model="msgNum_all" class="item" :max="99">
@@ -171,7 +179,7 @@
         </div>
       </el-col>
       <el-col :span="3"><div></div></el-col>
-      <el-col :span="3" style="margin-top:15px;margin-left:-10%">
+      <el-col :span="3" style="margin-top:5px;margin-left:-10%">
         <el-tooltip placement="bottom">
         <div slot="content">设置</div>
         <el-dropdown @command="handleCommand" trigger="click" >
@@ -203,7 +211,7 @@
     <el-col :span="7" class="userInfo" style="margin-top:-7px;">
       <el-col :span="6"></el-col>
       <el-col :span="6"></el-col>
-      <el-col :span="6"  style="margin-top:18px;margin-left:62%">
+      <el-col :span="6"  style="margin-top:13px;margin-left:62%">
         <!-- 有未读信息 -->
         <div v-show="msgNum_all > 0">
           <el-badge v-model="msgNum_all" class="item" :max="99">
@@ -233,7 +241,7 @@
         </div>
       </el-col>
       <el-col :span="3"></el-col>
-      <el-col :span="3" style="margin-top:18px;margin-left:-10%">
+      <el-col :span="3" style="margin-top:13px;margin-left:-10%">
         <el-dropdown @command="handleCommand" trigger="click" >
           <el-button icon="el-icon-setting"  type="info" circle></el-button>
           <el-dropdown-menu slot="dropdown">
@@ -1284,7 +1292,6 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
-
 .navbar{
   width:100%;
   .el-form-item{

@@ -63,11 +63,13 @@
    height: 50px;
    line-height: 50px;
  }
- .el-popover {
-   padding: 0px 10px;
-   min-width: 10px;
-   line-height: 0.4;
- }
  .el-tooltip__popper {
    left: 15%
  }
+ .el-popover--plain {
+  padding:0;
+}
+ .el-popover {
+  padding:5px;
+}
+
