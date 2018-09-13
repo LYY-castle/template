@@ -15,7 +15,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="时间维度:">
-          <el-select v-model="formInline.time">
+          <el-select v-model="formInline.time" @change="time_dimensionChange">
             <el-option label="天" value="day"></el-option>
             <el-option label="小时" value="hour"></el-option>
             <el-option label="周" value="week"></el-option>
@@ -233,7 +233,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="时间维度:">
-          <el-select v-model="formInline.time">
+          <el-select v-model="formInline.time" @change="time_dimensionChange">
             <el-option label="天" value="day"></el-option>
             <el-option label="小时" value="hour"></el-option>
             <el-option label="周" value="week"></el-option>
@@ -380,6 +380,7 @@
   import { findCampaignByUser } from '@/api/monitor_list_single'
   import { hasOrderInfos } from '@/api/dialTask'
   import { findAllProduct } from '@/api/campaign'
+  import moment from 'moment'
 
   export default {
     mixins: [resize],
@@ -427,7 +428,7 @@
         chartTime: null,
         obj: {},
         timeValueClone: [],
-        timeValue: [new Date(new Date() - 7 * 24 * 3600 * 1000), new Date()],
+        timeValue: [new Date(new Date(new Date().toLocaleDateString()).getTime() - 7 * 24 * 3600 * 1000), new Date(new Date(new Date().toLocaleDateString()).getTime())],
         pagination: {
           pageNo: null,
           pageSize: null,
@@ -527,6 +528,56 @@
       this.chartTime = null
     },
     methods: {
+      getStartTimestamp(timeStr, type) {
+        let startTime
+        if (type) {
+          switch (type) {
+            case 'hour':
+              startTime = moment(timeStr, 'x')
+              break
+            case 'day':
+              startTime = moment(timeStr, 'x')
+              break
+            case 'week':
+              startTime = moment(timeStr, 'x')
+              break
+            case 'month':
+              startTime = moment(timeStr, 'x')
+              break
+            case 'year':
+              startTime = moment(timeStr, 'x')
+              break
+          }
+        } else {
+          return
+        }
+        return startTime.valueOf()
+      },
+      getEndTimestamp(timeStr, type) {
+        let endTime
+        if (type) {
+          switch (type) {
+            case 'hour':
+              endTime = moment(timeStr, 'x').add(1, 'hours').subtract(1, 'ms')
+              break
+            case 'day':
+              endTime = moment(timeStr, 'x').add(1, 'days').subtract(1, 'ms')
+              break
+            case 'week':
+              endTime = moment(timeStr, 'x').add(1, 'weeks').subtract(1, 'ms')
+              break
+            case 'month':
+              endTime = moment(timeStr, 'x').add(1, 'months').subtract(1, 'ms')
+              break
+            case 'year':
+              endTime = moment(timeStr, 'x').add(1, 'years').subtract(1, 'ms')
+              break
+          }
+        } else {
+          return
+        }
+        return endTime.valueOf()
+      },
       arraySpanMethod({ row, column, rowIndex, columnIndex }) {
         if (columnIndex === 0) { //  表示第一列合并行
           if (rowIndex % 10 === 0) {
@@ -582,8 +633,8 @@
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: this.formInline.agent_dn[this.currentIndex],
-          start_time: Date.parse(this.timeValueClone[0]),
-          end_time: Date.parse(this.timeValueClone[1]),
+          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
+          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
           pageNo: val,
           pageSize: this.pageSize[this.currentIndex]
         }).then(response => {
@@ -599,8 +650,8 @@
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: this.staffAgentid,
-          start_time: Date.parse(this.timeValueClone[0]),
-          end_time: Date.parse(this.timeValueClone[1]),
+          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
+          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
           pageNo: val,
           pageSize: this.paginationAgent.pageSize
         }).then(response => {
@@ -619,8 +670,8 @@
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: this.formInline.agent_dn[this.contentIndex],
-          start_time: Date.parse(this.timeValueClone[0]),
-          end_time: Date.parse(this.timeValueClone[1]),
+          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
+          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
           pageNo: 1,
           pageSize: 5
         }).then(response => {
@@ -638,8 +689,8 @@
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: val,
-          start_time: Date.parse(this.timeValueClone[0]),
-          end_time: Date.parse(this.timeValueClone[1]),
+          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
+          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
           pageNo: 1,
           pageSize: 10
         }).then(response => {
@@ -1285,6 +1336,9 @@
           }
         })
       },
+      time_dimensionChange(val) {
+        this.timeValue = []
+      },
       timeChange(val) {
         orderreportAgent({
           product_id: this.formInline.product,
@@ -1292,8 +1346,8 @@
           time_dimension: this.formInline.time,
           agent_id: this.formInline.agent_dn.join(','),
           time: val,
-          start_time: Date.parse(this.timeValueClone[0]),
-          end_time: Date.parse(this.timeValueClone[1])
+          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
+          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
         }).then(response => {
           if (response.data.result.length) {
             this.countTime = response.data.result.map(function(item, index) {
@@ -1315,8 +1369,8 @@
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: val,
-          start_time: Date.parse(this.timeValueClone[0]),
-          end_time: Date.parse(this.timeValueClone[1]),
+          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
+          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
           pageNo: page || 1,
           pageSize: 8
         }).then(response => {
@@ -1349,8 +1403,8 @@
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: this.formInline.agent_dn.join(','),
-          start_time: Date.parse(this.timeValue[0]),
-          end_time: Date.parse(this.timeValue[1]), // val || val === 'search' ? this.timeValue[1] :
+          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
+          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time), // val || val === 'search' ? this.timeValue[1] :
           pageNo: val && val !== 'search' ? this.formInline.from : 1,
           pageSize: 10
         }).then(response => {
@@ -1390,6 +1444,7 @@
             duration: 3 * 1000
           })
         } else {
+          this.timeValueClone = this.timeValue
           this.pageNo = []
           this.pageSize = []
           this.totalCount = []
@@ -1400,12 +1455,11 @@
             campaign_id: this.formInline.campaignId,
             time_dimension: this.formInline.time,
             agent_id: this.formInline.agent_dn.join(','),
-            start_time: Date.parse(this.timeValue[0]),
-            end_time: Date.parse(this.timeValue[1])
+            start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
+            end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
           }).then(response => {
             this.tableData1 = response.data.result
           })
-          this.timeValueClone = this.timeValue
           this.teamData(val)
         }
       },
@@ -1428,7 +1482,7 @@
         this.formInline.campaignIdClone = ''
         this.formInline.from = 1
         this.formInline.time = 'day'
-        this.timeValue = [new Date(new Date() - 7 * 24 * 3600 * 1000), new Date()]
+        this.timeValue = [new Date(new Date(new Date().toLocaleDateString()).getTime() - 7 * 24 * 3600 * 1000), new Date(new Date(new Date().toLocaleDateString()).getTime())]
       }
     }
     // watch: {
