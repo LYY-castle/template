@@ -452,6 +452,8 @@ export default {
       if (command === 'logout') {
       // 注销时清空定时器
         clearInterval(this.timer)
+        sessionStorage.removeItem('isDialTask')
+        sessionStorage.removeItem('quickDialto')
         this.timer = null
         clearInterval(interval)
         interval = null

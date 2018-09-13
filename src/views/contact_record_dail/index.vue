@@ -632,6 +632,7 @@ audio {
         queryTaskByTaskId(taskId).then(response => {
           if (response.data.code === 0) {
             const isBlacklist = response.data.data.isBlacklist
+            sessionStorage.setItem('isDialTask', false)
             this.$router.push({
               name: 'dial_task.html',
               query: {// 通过query 传递参数

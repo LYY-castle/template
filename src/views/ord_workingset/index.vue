@@ -213,6 +213,7 @@ export default {
         name: 'dial_task.html',
         query: { 'dialstatus': status, 'isDialTask': false }
       })
+      sessionStorage.removeItem('isDialTask')
     },
     changeToDailInfo(str) {
       const startTime = new Date(new Date().setHours(0, 0, 0, 0))
@@ -258,6 +259,8 @@ export default {
         name: 'dial_task.html',
         query: { 'dialstatus': status }
       })
+      sessionStorage.removeItem('isDialTask')
+      sessionStorage.removeItem('quickDialto')
     }
   }
 }

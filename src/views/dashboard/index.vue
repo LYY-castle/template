@@ -8,6 +8,22 @@
 </template>
 
 <script>
+const constantRouterMap = [
+  { path: '/login', component: '@/views/login/index', hidden: true },
+  { path: '/404', component: '@/views/404', hidden: true },
+  { path: '/', redirect: '/login' },
+  {
+    path: '/dashboard',
+    redirect: '/dashboard/index',
+    name: 'Dashboard',
+    hidden: true,
+    children: [{
+      path: 'index',
+      component: '@/views/dashboard/index'
+    }]
+  },
+  { path: '*', redirect: '/404', hidden: true }
+]
 import { mapGetters } from 'vuex'
 import { getMenu } from '@/api/dashboard'
 // import Layout from '../layout/Layout'
@@ -21,6 +37,7 @@ export default {
       'roles'
     ])
   },
+
   mounted() {
     const promise = new Promise(resolve => {
       getMenu(localStorage.getItem('agentId')).then(response => {
@@ -30,6 +47,12 @@ export default {
         // 存到store里面
         this.$store.dispatch('SetMenu', getDynamicRouter(data))
         this.$router.addRoutes(getDynamicRouter(data))
+        this.$set(this.$router.options, 'routes', getDynamicRouter(data))
+        for (let i = 0; i < constantRouterMap.length; i++) {
+          this.$router.options.routes.push(constantRouterMap[i])
+        }
+        this.$router.options.routes.concat(constantRouterMap)
+        console.log(this.$router.options.routes)
         resolve()
       }).catch(error => {
         if (error.response.status === 403) {

@@ -211,15 +211,15 @@
             :show-overflow-tooltip="true"
             width="100">
           <template slot-scope="scope">
-            <a href="#" v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb)" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone)" size="small" type="text">
+            <a href="#" v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb)" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);" size="small" type="text">
               <img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</a>
-            <el-tooltip v-else-if="!showStatus(scope.row.status)" class="item" effect="dark"  content="该状态不能拨打" placement="top-start">
+            <el-tooltip v-else-if="!showStatus(scope.row.status)" class="item" effect="dark"  content="该状态不能拨打" placement="left-start">
               <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
             </el-tooltip>
-            <el-tooltip v-else-if="!checkBlacklist(scope.row.isBlacklist)" class="item" effect="dark"  content="该号码为免访客户" placement="top-start">
+            <el-tooltip v-else-if="!checkBlacklist(scope.row.isBlacklist)" class="item" effect="dark"  content="该号码为免访客户" placement="left-start">
               <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
             </el-tooltip>
-            <el-tooltip v-else-if="!checkNodisturb(scope.row.isNodisturb)" class="item" effect="dark"  content="该号码处于免访号段中" placement="top-start">
+            <el-tooltip v-else-if="!checkNodisturb(scope.row.isNodisturb)" class="item" effect="dark"  content="该号码处于免访号段中" placement="left-start">
               <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
             </el-tooltip>
           </template>
@@ -475,7 +475,7 @@
       <div style="text-align:center">
         <el-checkbox v-if="showAutoDial===true" checked="checked" v-model="autoDialNext">完成后显示下一个客户</el-checkbox>
         <el-checkbox v-if="showSendMessage === true && campaignType !== 'RECRUIT'" v-model="sendMessage" checked="checked">发送支付短信</el-checkbox>
-        <a href="#" @click="generateRecord()"><el-button type="success" size="medium" >完成</el-button></a>
+        <a href="#" @click="generateRecord()"><el-button type="success" size="small" >完成</el-button></a>
         <el-button type="primary" size="small" @click="returnList()" >返回列表</el-button>
       </div>
     </el-row>
@@ -779,6 +779,7 @@ export default {
           if (response.data.code === 0) {
             if (response.data.data && response.data.pageInfo.totalCount !== 0) {
               this.recordId = response.data.data[0].recordId
+              sessionStorage.setItem('recordId', this.recordId)
               this.contactRecord = response.data.data
             }
           }
@@ -937,6 +938,7 @@ export default {
     },
     // 跳转拨打页面
     changeToCustomerDetail(taskId, campaignId, customerId, isBlacklist, customerPhone) {
+      this.$store.dispatch('setDetail', [taskId, campaignId, customerId, isBlacklist, customerPhone])
       this.customerPhone = customerPhone
       // 调用方法判断是否在免访号段内
       this.inNodisturbPhones(customerPhone)
@@ -955,7 +957,7 @@ export default {
         this.hideDialTo = false
         this.isLastContactTime = false
         this.radio = ''
-        this.recordId = ''
+        // this.recordId = ''
         this.activeTab = ''
         this.canContact = 1
         this.addDays = ''
@@ -964,8 +966,10 @@ export default {
         this.selectedSummarys = []
         this.showDetailInfos(taskId, campaignId, customerId, isBlacklist, customerPhone)
         this.isDialTask = false
+        sessionStorage.setItem('isDialTask', this.isDialTask)
       } else {
         this.$message.error('该客户在黑名单或免访号段中,无法拨打!')
+        this.returnList()
       }
     },
     // 验证是否在免访号段内
@@ -987,6 +991,7 @@ export default {
       if (this.taskIds.length === 0) {
         this.$message.error('您还未选中任务，或选中的任务未包含可拨打客户')
       } else {
+        sessionStorage.setItem('quickDialto', true)
         // this.$message('跳转到拨打详情页')
         // console.log('linn:' + this.taskIds[0])
         // console.log('linn:' + this.campaignIds[0])
@@ -996,6 +1001,7 @@ export default {
         this.campaignId = this.campaignIds[0]
         this.isBlacklist = this.isBlacklists[0]
         this.customerId = this.customerIds[0]
+        this.$store.dispatch('setDetails', [this.taskIds, this.campaignIds, this.isBlacklists, this.customerIds])
         this.canContact = 1
         this.addDays = ''
         this.showDetailInfos(this.taskIds[0], this.campaignIds[0], this.customerIds[0], this.isBlacklists[0], null)
@@ -1014,6 +1020,7 @@ export default {
         this.selectedSummarys = []
         this.hideDialTo = false
         this.isDialTask = false
+        sessionStorage.setItem('isDialTask', this.isDialTask)
       }
     },
     // 展示拨打页面详情
@@ -1149,6 +1156,8 @@ export default {
                               message: '成功生成订单',
                               type: 'success'
                             })
+                            sessionStorage.removeItem('isDialTask')
+                            sessionStorage.removeItem('recordId')
                           } else {
                             this.$message.error(res.data.message)
                             return
@@ -1202,6 +1211,8 @@ export default {
                               message: '成功生成订单',
                               type: 'success'
                             })
+                            sessionStorage.removeItem('isDialTask')
+                            sessionStorage.removeItem('recordId')
                           } else {
                             // 生成订单出错
                             this.$message.error(res.data.message)
@@ -1257,6 +1268,8 @@ export default {
                               message: '成功生成订单',
                               type: 'success'
                             })
+                            sessionStorage.removeItem('isDialTask')
+                            sessionStorage.removeItem('recordId')
                           } else {
                             // 生成订单出错
                             this.$message.error(res.data.message)
@@ -1334,6 +1347,8 @@ export default {
                       this.showAutoDial = false
                       this.searchByKeyWords(this.req)
                       this.isDialTask = true
+                      sessionStorage.removeItem('isDialTask')
+                      sessionStorage.removeItem('recordId')
                     }
                   } else {
                     this.$message.error(res1.data.message)
@@ -1351,6 +1366,8 @@ export default {
     // 返回列表
     returnList() {
       this.isDialTask = true
+      sessionStorage.removeItem('isDialTask')
+      sessionStorage.removeItem('quickDialto')
       this.searchByKeyWords(this.req)
     },
     getParametersFromContactRecordDail() {
@@ -1359,12 +1376,21 @@ export default {
       const isBlacklist = this.$route.query.isBlacklist
       const customerPhone = this.$route.query.customerPhone
       const customerId = this.$route.query.customerId
-      if (typeof taskId !== 'undefined' && typeof campaignId !== 'undefined' && typeof customerId !== 'undefined' && typeof isBlacklist !== 'undefined' && typeof customerPhone !== 'undefined') {
+      if (taskId && campaignId && customerId && isBlacklist && customerPhone) {
         this.isDialTask = false
         // 点击拨打图标触发事件
         this.changeToCustomerDetail(taskId, campaignId, customerId, isBlacklist, customerPhone)
+      } else if (sessionStorage.getItem('isDialTask')) { // 判断是否显示拨打界面
+        this.taskId = this.$store.state.dialTask.taskId
+        this.campaignId = this.$store.state.dialTask.campaignId
+        this.customerId = this.$store.state.dialTask.customerId
+        this.isBlacklist = this.$store.state.dialTask.isBlacklist
+        this.customerPhone = this.$store.state.dialTask.customerPhone
+        // console.log(this.$store.state.dialTask)
+        this.changeToCustomerDetail(this.taskId, this.campaignId, this.customerId, this.isBlacklist, this.customerPhone)
       } else {
         this.searchByKeyWords(this.req)
+        // this.returnList()
       }
     },
     handle(obj) {
@@ -1399,6 +1425,7 @@ export default {
         this.req.status = this.$route.query.dialstatus
       } else { // 说明是跳拨打页面
         this.isDialTask = this.$route.query.isDialTask
+        // sessionStorage.setItem('isDialTask', this.isDialTask)
         this.req.status = this.$route.query.dialstatus
       }
     }
@@ -1406,7 +1433,22 @@ export default {
   // 模板编译/挂载之后
   mounted() {
     vm = this
-    this.getParametersFromContactRecordDail()
+    // 通话记录变量
+    if (sessionStorage.getItem('recordId')) {
+      this.recordId = sessionStorage.getItem('recordId')
+    } else {
+      this.recordId = ''
+    }
+    // 判断是 快速拨打 还是 拨打
+    if (sessionStorage.getItem('quickDialto') && sessionStorage.getItem('isDialTask')) {
+      this.taskIds = this.$store.state.dialTask.taskIds
+      this.campaignIds = this.$store.state.dialTask.campaignIds
+      this.customerIds = this.$store.state.dialTask.customerIds
+      this.isBlacklists = this.$store.state.dialTask.isBlacklists
+      this.quickDialto()
+    } else {
+      this.getParametersFromContactRecordDail()
+    }
     getStaffNameById(localStorage.getItem('agentId'))
       .then(res => {
         if (res.data.code === 1) {
@@ -1430,11 +1472,13 @@ export default {
       console.log(error)
       vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
     })
+    // this.req = this.$store.state.dialTask.req
   },
   // 离开时清除定时器
   destroyed: function() {
     clearInterval(this.interval)
     localStorage.removeItem('global_taskId')
+    // this.$store.dispatch('setReq', this.req)
   }
 }
 </script>
