@@ -225,7 +225,7 @@
       title="失败详情"
       :visible.sync="detailVisible"
       append-to-body>
-      <div>{{failDetail}}</div>
+      <div class="overfl">{{failDetail}}</div>
       <div slot="footer" style="text-align: right;">
         <el-button @click="detailVisible = false">返 回</el-button>
       </div>
@@ -777,5 +777,9 @@ export default {
 }
 .el-form-item {
   margin-bottom: 20px;
+}
+.overfl{
+  word-wrap: break-word;
+  word-break: normal;
 }
 </style>
