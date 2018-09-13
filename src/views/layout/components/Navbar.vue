@@ -1280,7 +1280,7 @@ export default {
     // 每分钟更新未读消息数量
     this.timer = setInterval(() => {
       this.getUnreadMessages(localStorage.getItem('agentId'))
-    }, 45000)
+    }, 4500000)
     this.timer = null
 
     this.$root.eventHub.$on('SET_FIRSTSTATUS', () => {
@@ -1371,9 +1371,9 @@ p{
 .navbar {
   line-height: 50px;
   border-radius: 0px !important;
-  box-shadow: 0 0 5px #888;
+  // box-shadow: 0 0 5px #888;
   margin-bottom:0px;
-  position:fixed;
+  // position:fixed;
   z-index:999;
   // .hamburger-container {
   //   line-height: 58px;

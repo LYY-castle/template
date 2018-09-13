@@ -285,3 +285,13 @@ export function formatSeconds(result) {
   return (h + ':' + m + ':' + s)
 }
 
+/**
+ * 将数组中的两个元素交换位置
+ * @param {*} arr
+ * @param {*} index1
+ * @param {*} index2
+ */
+export function swapArray(arr, index1, index2) {
+  arr[index1] = arr.splice(index2, 1, arr[index1])[0]
+  return arr
+}

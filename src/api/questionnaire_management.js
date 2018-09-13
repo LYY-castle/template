@@ -5,6 +5,7 @@ export function queryByKeyWords(req) {
     url: '/questionnaire/query',
     method: 'get',
     params: {
+      accurate: req.accurate,
       name: req.name,
       modifier: req.modifier,
       beginTime: req.beginTime,
@@ -15,7 +16,18 @@ export function queryByKeyWords(req) {
   })
 }
 
-export function generateQuestionnaire(questionnaireName, singleItems, multiItems, fillBlanks) {
+export function checkByQuestionnaireName(questionnaireName, accurate) {
+  return request({
+    url: '/questionnaire/query',
+    method: 'get',
+    params: {
+      name: questionnaireName,
+      accurate: accurate
+    }
+  })
+}
+
+export function generateQuestionnaire(questionnaireName, singleItems, multiItems, fillBlanks, multiBlanks) {
   return request({
     url: '/questionnaire/generate',
     method: 'post',
@@ -23,7 +35,8 @@ export function generateQuestionnaire(questionnaireName, singleItems, multiItems
       questionnaireName: questionnaireName,
       singleItems: singleItems,
       multiItems: multiItems,
-      fillBlanks: fillBlanks
+      fillBlanks: fillBlanks,
+      multiBlanks: multiBlanks
     }
   })
 }
@@ -58,7 +71,7 @@ export function queryOneQuestionnaire(id) {
   })
 }
 
-export function modifyQuestionnaire(editQuestionnaireId, questionnaireName, singleItems, multiItems, fillBlanks) {
+export function modifyQuestionnaire(editQuestionnaireId, questionnaireName, singleItems, multiItems, fillBlanks, multiBlanks) {
   return request({
     url: '/questionnaire/modifyQuestionnaire',
     method: 'post',
@@ -67,7 +80,8 @@ export function modifyQuestionnaire(editQuestionnaireId, questionnaireName, sing
       questionnaireName: questionnaireName,
       singleItems: singleItems,
       multiItems: multiItems,
-      fillBlanks: fillBlanks
+      fillBlanks: fillBlanks,
+      multiBlanks: multiBlanks
     }
   })
 }
