@@ -7,10 +7,10 @@
 </template>
 
 <script>
-  import Chart from '@/components/Charts/OBchart'
+  import Chart from '@/components/Charts/orderChart'
 
   export default {
-    name: 'OBChart',
+    name: 'orderChart',
     components: { Chart }
   }
 </script>

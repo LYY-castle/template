@@ -48,6 +48,30 @@ export function obreportAgent(obj) {
   })
 }
 
+export function orderstatistics(obj) {
+  return request({
+    url: '/orderReport/departOrStaff/statistics',
+    method: 'get',
+    params: obj
+  })
+}
+
+export function ordertotalAgent(obj) {
+  return request({
+    url: '/orderReport/agent/total/statistics',
+    method: 'get',
+    params: obj
+  })
+}
+
+export function orderreportAgent(obj) {
+  return request({
+    url: '/orderReport/agent/statistics',
+    method: 'get',
+    params: obj
+  })
+}
+
 export function getAllStaffByDepartId(id) {
   return request({
     url: '/employee/getAllStaffByDepartId',

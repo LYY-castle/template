@@ -2,7 +2,19 @@
   <div style="width: 100%;height: 90%" v-if="departPermission">
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
-        <el-form-item>
+        <el-form-item label="活动名称:">
+          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange">
+            <el-option value="" label="所有活动"></el-option>
+            <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="产品名称:">
+          <el-select v-model="formInline.productClone" placeholder="产品名称">
+            <el-option value="" label="所有产品"></el-option>
+            <el-option v-for="item in productList" :key="item.productId" :label="item.productName" :value="item.productId"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="时间维度:">
           <el-select v-model="formInline.time" @change="time_dimensionChange">
             <el-option label="天" value="day"></el-option>
             <el-option label="小时" value="hour"></el-option>
@@ -97,7 +109,7 @@
         </el-pagination>
       </el-row>
     </div>
-    <el-form :inline="true" class="demo-form-inline" size="small" style="margin-top: 10px">
+    <el-form :inline="true" class="demo-form-inline" size="small" style="margin: 10px 0">
       <el-form-item label="时间选项:" style="margin-bottom: 0">
         <el-select v-model="formInline.time_dimension" @change="timeChange">
           <el-option v-for="item in timeOptions" :key="item" :label="item" :value="item"></el-option>
@@ -105,7 +117,7 @@
       </el-form-item>
     </el-form>
     <div :class="className" id="staff" style="height: 100%;width: 100%;"></div>
-    <el-form :inline="true" class="demo-form-inline" size="small" style="margin-top: 10px">
+    <el-form :inline="true" class="demo-form-inline" size="small" style="margin: 10px 0">
       <el-form-item label="员工选项:" style="margin-bottom: 0">
         <el-select v-model="formInline.staff" @change="agentChange">
           <el-option v-for="item in staffOptions" :key="item.angentId" :label="item.angentId" :value="item.angentId"></el-option>
@@ -132,6 +144,7 @@
         :data="tableData1"
         ref="multipleTable"
         tooltip-effect="dark"
+        :summary-method="getSummaryMethod"
         show-summary
         border
         style="width: 100%;">
@@ -142,28 +155,18 @@
         </el-table-column>
         <el-table-column
           align="center"
-          prop="online_time_duration"
-          label="在线时长(秒)">
+          prop="count"
+          label="订单数量">
         </el-table-column>
         <el-table-column
           align="center"
-          prop="free_time_duration"
-          label="空闲时长(秒)">
+          prop="total_amount"
+          label="订单总金额">
         </el-table-column>
         <el-table-column
           align="center"
-          prop="busy_time_duration"
-          label="示忙时长(秒)">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="call_time_duration"
-          label="通话时长(秒)">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="calls_number"
-          label="通话次数">
+          prop="avg_amount"
+          label="订单平均金额">
         </el-table-column>
       </el-table>
       <h3>员工表详情</h3>
@@ -184,32 +187,22 @@
           <el-table-column
             align="center"
             prop="time_dimension"
-            label="日期">
+            label="时间段">
           </el-table-column>
           <el-table-column
             align="center"
-            prop="online_time_duration"
-            label="在线时长(秒)">
+            prop="count"
+            label="订单数量">
           </el-table-column>
           <el-table-column
             align="center"
-            prop="free_time_duration"
-            label="空闲时长(秒)">
+            prop="total_amount"
+            label="订单总金额">
           </el-table-column>
           <el-table-column
             align="center"
-            prop="busy_time_duration"
-            label="示忙时长(秒)">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="call_time_duration"
-            label="通话时长(秒)">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="calls_number"
-            label="通话次数">
+            prop="avg_amount"
+            label="订单平均金额">
           </el-table-column>
         </el-table>
         <el-row style="margin-top:1%;">
@@ -230,7 +223,19 @@
   <div style="width: 100%;height: 90%" v-else-if="staffPermission">
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
-        <el-form-item>
+        <el-form-item label="活动名称:">
+          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange">
+            <el-option value="" label="所有活动"></el-option>
+            <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="产品名称:">
+          <el-select v-model="formInline.productClone" placeholder="产品名称">
+            <el-option value="" label="所有产品"></el-option>
+            <el-option v-for="item in productList" :key="item.productId" :label="item.productName" :value="item.productId"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="时间维度:">
           <el-select v-model="formInline.time" @change="time_dimensionChange">
             <el-option label="天" value="day"></el-option>
             <el-option label="小时" value="hour"></el-option>
@@ -326,73 +331,60 @@
       </el-row>
     </div>
     <div style="margin-top: 1%">
-      <h3>员工表详情</h3>
+      <h3>详情表</h3>
       <el-table
         :header-row-style="headerRow"
         :data="tableDataAgent"
         ref="multipleTable"
         tooltip-effect="dark"
-        :span-method="arraySpanMethod"
         border
         style="width: 100%;">
         <el-table-column
           align="center"
-          prop="agent_id"
-          label="下属员工">
-        </el-table-column>
-        <el-table-column
-          align="center"
           prop="time_dimension"
-          label="日期">
+          label="时间段">
         </el-table-column>
         <el-table-column
           align="center"
-          prop="online_time_duration"
-          label="在线时长(秒)">
+          prop="count"
+          label="订单数量">
         </el-table-column>
         <el-table-column
           align="center"
-          prop="free_time_duration"
-          label="空闲时长(秒)">
+          prop="total_amount"
+          label="订单总金额">
         </el-table-column>
         <el-table-column
           align="center"
-          prop="busy_time_duration"
-          label="示忙时长(秒)">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="call_time_duration"
-          label="通话时长(秒)">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="calls_number"
-          label="通话次数">
+          prop="avg_amount"
+          label="订单平均金额">
         </el-table-column>
       </el-table>
-        <el-row style="margin-top:1%;">
-          <div @click="page(item,index)">
-            <el-pagination
-              background
-              @current-change="handleCurrentChangeAgent"
-              :current-page.sync="paginationAgent.pageNo"
-              :page-size="paginationAgent.pageSize"
-              layout="total, prev, pager, next, jumper"
-              :total="paginationAgent.totalCount" style="text-align: right">
-            </el-pagination>
-          </div>
-        </el-row>
-      </div>
+      <el-row style="margin-top:1%;">
+        <div @click="page(item,index)">
+          <el-pagination
+            background
+            @current-change="handleCurrentChangeAgent"
+            :current-page.sync="paginationAgent.pageNo"
+            :page-size="paginationAgent.pageSize"
+            layout="total, prev, pager, next, jumper"
+            :total="paginationAgent.totalCount" style="text-align: right">
+          </el-pagination>
+        </div>
+      </el-row>
+    </div>
   </div>
 </template>
 
 <script>
   import echarts from 'echarts'
   import resize from './mixins/resize'
-  import { statistics, getAllStaffByDepartId, getDepartId, totalAgent, reportAgent } from '@/api/ctiReport'
+  import { orderstatistics, getAllStaffByDepartId, getDepartId, ordertotalAgent, orderreportAgent } from '@/api/ctiReport'
   import { Message } from 'element-ui'
-  import { permsdepart, permsstaff } from '@/api/reportPermission'
+  import { permsorderdepart, permsorderstaff } from '@/api/reportPermission'
+  import { findCampaignByUser } from '@/api/monitor_list_single'
+  import { hasOrderInfos } from '@/api/dialTask'
+  import { findAllProduct } from '@/api/campaign'
   import moment from 'moment'
 
   export default {
@@ -426,6 +418,12 @@
     // },
     data() {
       return {
+        week: {
+          firstDayOfWeek: 1
+        },
+        allProductList: [],
+        productList: [],
+        activeNameList: [],
         departPermission: false,
         staffPermission: false,
         contentIndex: 0,
@@ -462,41 +460,42 @@
         pageSize: [],
         totalCount: [],
         formInline: {
+          campaignId: '',
+          campaignIdClone: '',
           agent_dn: [],
           from: 1,
           time: 'day',
           staff: '',
-          time_dimension: ''
+          time_dimension: '',
+          productClone: '',
+          product: ''
         },
         tableData: [],
         tableData1: [],
         tableDataAgent: [],
-        online_time_duration: [],
-        free_time_duration: [],
-        busy_time_duration: [],
-        call_time_duration: [],
-        calls_number: [],
-        online_time_durationTime: [],
-        free_time_durationTime: [],
-        busy_time_durationTime: [],
-        call_time_durationTime: [],
-        calls_numberTime: [],
-        online_time_durationAgent: [],
-        free_time_durationAgent: [],
-        busy_time_durationAgent: [],
-        call_time_durationAgent: [],
-        calls_numberAgent: [],
+        count: [],
+        total_amount: [],
+        avg_amount: [],
+        countTime: [],
+        total_amountTime: [],
+        avg_amountTime: [],
+        countAgent: [],
+        total_amountAgent: [],
+        avg_amountAgent: [],
         agentTime: [],
-        staffAgentid: null,
-        week: {
-          firstDayOfWeek: 1
-        }
+        staffAgentid: null
       }
     },
     mounted() {
+      findCampaignByUser().then(response => {
+        this.activeNameList = response.data.data
+      })
+      findAllProduct().then(res => {
+        this.allProductList = res.data.data
+      })
       getDepartId().then(res => {
         this.staffAgentid = res.data.agentid
-        permsdepart(res.data.agentid).then(r => {
+        permsorderdepart(res.data.agentid).then(r => {
           this.departPermission = true
           this.staffPermission = false
           getAllStaffByDepartId(res.data.departId).then(response => {
@@ -509,7 +508,7 @@
           })
         }).catch((error) => {
           console.log(error)
-          permsstaff(res.data.agentid).then(re => {
+          permsorderstaff(res.data.agentid).then(re => {
             this.departPermission = false
             this.staffPermission = true
             this.search1(res.data.agentid)
@@ -537,6 +536,30 @@
       this.chartTime = null
     },
     methods: {
+      getSummaryMethod({ columns, data }) {
+        const sums = []
+        columns.forEach((column, index) => {
+          if (index === 0) {
+            sums[index] = '合计'
+            return
+          }
+          const values = data.map(item => Number(item[column.property]))
+          if (index < columns.length - 1) {
+            sums[index] = values.reduce((prev, curr) => {
+              const value = Number(curr)
+              if (!isNaN(value)) {
+                return prev + curr
+              } else {
+                return prev
+              }
+            }, 0)
+          } else {
+            sums[index] = sums[index - 1] / sums[index - 2] ? sums[index - 1] / sums[index - 2] : 0
+            sums[index] = sums[index].toFixed(2)
+          }
+        })
+        return sums
+      },
       getStartTimestamp(timeStr, type) {
         let startTime
         if (type) {
@@ -638,7 +661,8 @@
         this.currentIndex = index
       },
       handleCurrentChange1(val) {
-        reportAgent({
+        orderreportAgent({
+          campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: this.formInline.agent_dn[this.currentIndex],
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
@@ -653,7 +677,9 @@
         })
       },
       handleCurrentChangeAgent(val) {
-        reportAgent({
+        orderreportAgent({
+          product_id: this.formInline.product,
+          campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: this.staffAgentid,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
@@ -671,7 +697,9 @@
         if (this.contentIndex >= this.formInline.agent_dn.length) {
           return this.tableData
         }
-        reportAgent({
+        orderreportAgent({
+          product_id: this.formInline.product,
+          campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: this.formInline.agent_dn[this.contentIndex],
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
@@ -688,7 +716,9 @@
         })
       },
       searchAgentStaff(val) {
-        reportAgent({
+        orderreportAgent({
+          product_id: this.formInline.product,
+          campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: val,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
@@ -716,12 +746,12 @@
         this.chart.setOption({
           backgroundColor: '#344b58',
           title: {
-            text: 'CTI报表',
+            text: '订单报表',
             x: '20',
             top: '20',
             textStyle: {
               color: '#fff',
-              fontSize: '22'
+              fontSize: '14'
             },
             subtextStyle: {
               color: '#90979c',
@@ -750,7 +780,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['在线时长(秒)', '空闲时长(秒)', '示忙时长(秒)', '通话时长(秒)', '通话次数']
+            data: ['订单数量', '订单总金额', '订单平均金额']
           },
           calculable: true,
           xAxis: [{
@@ -777,7 +807,7 @@
           }],
           yAxis: [{
             type: 'value',
-            name: '时长(秒)',
+            name: '数量/笔',
             splitLine: {
               show: false
             },
@@ -797,7 +827,7 @@
             }
           }, {
             type: 'value',
-            name: '通话次数',
+            name: '金额/元',
             splitLine: {
               show: false
             },
@@ -843,7 +873,7 @@
             end: 35
           }],
           series: [{
-            name: '在线时长(秒)',
+            name: '订单数量',
             type: 'bar',
             stack: 'total',
             barMaxWidth: 35,
@@ -863,12 +893,17 @@
                 }
               }
             },
-            data: this.online_time_duration
+            data: this.count
           }, {
-            name: '空闲时长(秒)',
-            type: 'bar',
-            stack: 'total',
-            barMaxWidth: 35,
+            name: '订单总金额',
+            // type: 'bar',
+            // stack: 'total',
+            // barMaxWidth: 35,
+            type: 'line',
+            // stack: 'total',
+            yAxisIndex: 1,
+            symbolSize: 10,
+            symbol: 'circle',
             itemStyle: {
               normal: {
                 color: 'rgba(148,204,209,1)',
@@ -882,13 +917,17 @@
                 }
               }
             },
-            data: this.free_time_duration
+            data: this.total_amount
           }, {
-            name: '示忙时长(秒)',
-            type: 'bar',
-            stack: 'total',
+            name: '订单平均金额',
+            // type: 'bar',
+            // stack: 'total',
+            // symbolSize: 10,
+            // barMaxWidth: 35,
+            type: 'line',
+            // stack: 'total',
+            yAxisIndex: 1,
             symbolSize: 10,
-            barMaxWidth: 35,
             symbol: 'circle',
             itemStyle: {
               normal: {
@@ -903,48 +942,8 @@
                 }
               }
             },
-            data: this.busy_time_duration
-          }, {
-            name: '通话时长(秒)',
-            type: 'bar',
-            stack: 'total',
-            symbolSize: 10,
-            barMaxWidth: 35,
-            symbol: 'circle',
-            itemStyle: {
-              normal: {
-                color: 'rgba(252,0,0,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.call_time_duration }, {
-            name: '通话次数',
-            type: 'line',
-            // stack: 'total',
-            yAxisIndex: 1,
-            symbolSize: 10,
-            symbol: 'circle',
-            itemStyle: {
-              normal: {
-                color: 'rgba(152,230,48,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'top',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.calls_number }
+            data: this.avg_amount
+          }
           ]
         })
       },
@@ -954,7 +953,7 @@
         this.chartStaff.setOption({
           backgroundColor: '#344b58',
           title: {
-            text: '单个时间CTI报表',
+            text: '单个时间各员工订单报表',
             x: '20',
             top: '20',
             textStyle: {
@@ -988,7 +987,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['在线时长(秒)', '空闲时长(秒)', '示忙时长(秒)', '通话时长(秒)', '通话次数']
+            data: ['订单数量', '订单总金额', '订单平均金额']
           },
           calculable: true,
           xAxis: [{
@@ -1014,7 +1013,7 @@
           }],
           yAxis: [{
             type: 'value',
-            name: '时长(秒)',
+            name: '数量/笔',
             splitLine: {
               show: false
             },
@@ -1034,7 +1033,7 @@
             }
           }, {
             type: 'value',
-            name: '通话次数',
+            name: '金额/元',
             splitLine: {
               show: false
             },
@@ -1080,7 +1079,7 @@
             end: 35
           }],
           series: [{
-            name: '在线时长(秒)',
+            name: '订单数量',
             type: 'bar',
             stack: 'total',
             barMaxWidth: 35,
@@ -1100,12 +1099,16 @@
                 }
               }
             },
-            data: this.online_time_durationTime
+            data: this.countTime
           }, {
-            name: '空闲时长(秒)',
-            type: 'bar',
-            stack: 'total',
-            barMaxWidth: 35,
+            name: '订单总金额',
+            // type: 'bar',
+            // stack: 'total',
+            // barMaxWidth: 35,
+            type: 'line',
+            symbol: 'circle',
+            // stack: 'total',
+            yAxisIndex: 1,
             itemStyle: {
               normal: {
                 color: 'rgba(148,204,209,1)',
@@ -1119,13 +1122,16 @@
                 }
               }
             },
-            data: this.free_time_durationTime
+            data: this.total_amountTime
           }, {
-            name: '示忙时长(秒)',
-            type: 'bar',
-            stack: 'total',
+            name: '订单平均金额',
+            // type: 'bar',
+            // stack: 'total',
             symbolSize: 10,
-            barMaxWidth: 35,
+            // barMaxWidth: 35,
+            type: 'line',
+            // stack: 'total',
+            yAxisIndex: 1,
             symbol: 'circle',
             itemStyle: {
               normal: {
@@ -1140,48 +1146,8 @@
                 }
               }
             },
-            data: this.busy_time_durationTime
-          }, {
-            name: '通话时长(秒)',
-            type: 'bar',
-            stack: 'total',
-            barMaxWidth: 35,
-            symbolSize: 10,
-            symbol: 'circle',
-            itemStyle: {
-              normal: {
-                color: 'rgba(252,0,0,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.call_time_durationTime }, {
-            name: '通话次数',
-            type: 'line',
-            // stack: 'total',
-            yAxisIndex: 1,
-            symbolSize: 10,
-            symbol: 'circle',
-            itemStyle: {
-              normal: {
-                color: 'rgba(152,230,48,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'top',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.calls_numberTime }
+            data: this.avg_amountTime
+          }
           ]
         })
       },
@@ -1191,7 +1157,7 @@
         this.chartTime.setOption({
           backgroundColor: '#344b58',
           title: {
-            text: '单个员工CTI报表',
+            text: '单个员工各时间段订单报表',
             x: '20',
             top: '20',
             textStyle: {
@@ -1225,7 +1191,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['在线时长(秒)', '空闲时长(秒)', '示忙时长(秒)', '通话时长(秒)', '通话次数']
+            data: ['订单数量', '订单总金额', '订单平均金额']
           },
           calculable: true,
           xAxis: [{
@@ -1251,7 +1217,7 @@
           }],
           yAxis: [{
             type: 'value',
-            name: '时长(秒)',
+            name: '数量/笔',
             splitLine: {
               show: false
             },
@@ -1271,7 +1237,7 @@
             }
           }, {
             type: 'value',
-            name: '通话次数',
+            name: '金额/元',
             splitLine: {
               show: false
             },
@@ -1317,7 +1283,7 @@
             end: 35
           }],
           series: [{
-            name: '在线时长(秒)',
+            name: '订单数量',
             type: 'bar',
             stack: 'total',
             barMaxWidth: 35,
@@ -1337,12 +1303,17 @@
                 }
               }
             },
-            data: this.online_time_durationAgent
+            data: this.countAgent
           }, {
-            name: '空闲时长(秒)',
-            type: 'bar',
-            stack: 'total',
-            barMaxWidth: 35,
+            name: '订单总金额',
+            // type: 'bar',
+            // stack: 'total',
+            // barMaxWidth: 35,
+            type: 'line',
+            symbol: 'circle',
+            // stack: 'total',
+            yAxisIndex: 1,
+            symbolSize: 10,
             itemStyle: {
               normal: {
                 color: 'rgba(148,204,209,1)',
@@ -1356,13 +1327,16 @@
                 }
               }
             },
-            data: this.free_time_durationAgent
+            data: this.total_amountAgent
           }, {
-            name: '示忙时长(秒)',
-            type: 'bar',
-            stack: 'total',
+            name: '订单平均金额',
+            // type: 'bar',
+            // stack: 'total',
             symbolSize: 10,
-            barMaxWidth: 35,
+            // barMaxWidth: 35,
+            type: 'line',
+            // stack: 'total',
+            yAxisIndex: 1,
             symbol: 'circle',
             itemStyle: {
               normal: {
@@ -1377,56 +1351,30 @@
                 }
               }
             },
-            data: this.busy_time_durationAgent
-          }, {
-            name: '通话时长(秒)',
-            type: 'bar',
-            stack: 'total',
-            barMaxWidth: 35,
-            symbolSize: 10,
-            symbol: 'circle',
-            itemStyle: {
-              normal: {
-                color: 'rgba(252,0,0,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.call_time_durationAgent }, {
-            name: '通话次数',
-            type: 'line',
-            // stack: 'total',
-            yAxisIndex: 1,
-            symbolSize: 10,
-            symbol: 'circle',
-            itemStyle: {
-              normal: {
-                color: 'rgba(152,230,48,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'top',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.calls_numberAgent }
+            data: this.avg_amountAgent
+          }
           ]
+        })
+      },
+      campaignChange(val) {
+        this.productList = []
+        hasOrderInfos(val).then(res => {
+          if (res.data.data) {
+            for (let i = 0; i < this.allProductList.length; i++) {
+              if (res.data.data.indexOf(this.allProductList[i].productId) !== -1) {
+                this.productList.push(this.allProductList[i])
+              }
+            }
+          }
         })
       },
       time_dimensionChange(val) {
         this.timeValue = []
       },
       timeChange(val) {
-        reportAgent({
+        orderreportAgent({
+          product_id: this.formInline.product,
+          campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: this.formInline.agent_dn.join(','),
           time: val,
@@ -1434,27 +1382,23 @@
           end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
         }).then(response => {
           if (response.data.result.length) {
-            this.calls_numberTime = response.data.result.map(function(item, index) {
-              return item.calls_number
+            this.countTime = response.data.result.map(function(item, index) {
+              return item.count
             })
-            this.online_time_durationTime = response.data.result.map(function(item, index) {
-              return item.online_time_duration
+            this.total_amountTime = response.data.result.map(function(item, index) {
+              return item.total_amount
             })
-            this.free_time_durationTime = response.data.result.map(function(item, index) {
-              return item.free_time_duration
-            })
-            this.busy_time_durationTime = response.data.result.map(function(item, index) {
-              return item.busy_time_duration
-            })
-            this.call_time_durationTime = response.data.result.map(function(item, index) {
-              return item.call_time_duration
+            this.avg_amountTime = response.data.result.map(function(item, index) {
+              return item.avg_amount
             })
             this.initChart1()
           }
         })
       },
       agentChange(val, page) {
-        reportAgent({
+        orderreportAgent({
+          product_id: this.formInline.product,
+          campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: val,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
@@ -1463,20 +1407,14 @@
           pageSize: 8
         }).then(response => {
           if (response.data.result.length) {
-            this.calls_numberAgent = response.data.result.map(function(item, index) {
-              return item.calls_number
+            this.countAgent = response.data.result.map(function(item, index) {
+              return item.count
             })
-            this.online_time_durationAgent = response.data.result.map(function(item, index) {
-              return item.online_time_duration
+            this.total_amountAgent = response.data.result.map(function(item, index) {
+              return item.total_amount
             })
-            this.free_time_durationAgent = response.data.result.map(function(item, index) {
-              return item.free_time_duration
-            })
-            this.busy_time_durationAgent = response.data.result.map(function(item, index) {
-              return item.busy_time_duration
-            })
-            this.call_time_durationAgent = response.data.result.map(function(item, index) {
-              return item.call_time_duration
+            this.avg_amountAgent = response.data.result.map(function(item, index) {
+              return item.avg_amount
             })
             this.agentTime = response.data.result.map(function(item, index) {
               return item.time_dimension
@@ -1492,30 +1430,26 @@
         })
       },
       teamData(val) {
-        statistics({
+        orderstatistics({
+          product_id: this.formInline.product,
+          campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: this.formInline.agent_dn.join(','),
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
-          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
+          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time), // val || val === 'search' ? this.timeValue[1] :
           pageNo: val && val !== 'search' ? this.formInline.from : 1,
           pageSize: 10
         }).then(response => {
           this.obj = response.data
           if (this.obj.result.length) {
-            this.calls_number = this.obj.result.map(function(item, index) {
-              return item.calls_number
+            this.count = this.obj.result.map(function(item, index) {
+              return item.count
             })
-            this.online_time_duration = this.obj.result.map(function(item, index) {
-              return item.online_time_duration
+            this.total_amount = this.obj.result.map(function(item, index) {
+              return item.total_amount
             })
-            this.free_time_duration = this.obj.result.map(function(item, index) {
-              return item.free_time_duration
-            })
-            this.busy_time_duration = this.obj.result.map(function(item, index) {
-              return item.busy_time_duration
-            })
-            this.call_time_duration = this.obj.result.map(function(item, index) {
-              return item.call_time_duration
+            this.avg_amount = this.obj.result.map(function(item, index) {
+              return item.avg_amount
             })
             this.initChart()
           }
@@ -1541,7 +1475,7 @@
           this.timeValue[1] = Date.parse(this.timeValue[1]) - 24 * 3600 * 1000
           this.timeValue[1] = new Date(this.timeValue[1])
         }
-        if (this.timeValueClone[0] > this.timeValueClone[1]) {
+        if (this.timeValue[0] > this.timeValue[1]) {
           Message({
             message: '开始时间不能大于结束时间',
             type: 'error',
@@ -1552,7 +1486,11 @@
           this.pageNo = []
           this.pageSize = []
           this.totalCount = []
-          totalAgent({
+          this.formInline.product = this.formInline.productClone
+          this.formInline.campaignId = this.formInline.campaignIdClone
+          ordertotalAgent({
+            product_id: this.formInline.product,
+            campaign_id: this.formInline.campaignId,
             time_dimension: this.formInline.time,
             agent_id: this.formInline.agent_dn.join(','),
             start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
@@ -1577,12 +1515,16 @@
             duration: 3 * 1000
           })
         } else {
+          this.formInline.product = this.formInline.productClone
+          this.formInline.campaignId = this.formInline.campaignIdClone
           this.timeValueClone = this.timeValue
           this.agentChange(val)
           this.searchAgentStaff(val)
         }
       },
       reset() {
+        this.formInline.campaignIdClone = ''
+        this.formInline.productClone = ''
         this.formInline.from = 1
         this.formInline.time = 'day'
         this.timeValue = [new Date(new Date(new Date().toLocaleDateString()).getTime() - 7 * 24 * 3600 * 1000), new Date(new Date(new Date().toLocaleDateString()).getTime())]
