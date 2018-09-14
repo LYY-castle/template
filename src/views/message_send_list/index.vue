@@ -124,7 +124,7 @@
           label="短信模板"
           :rules="{ required: true, message: '请选择短信模板', trigger: 'change' }">
           <el-input size="small" v-model="dynamicValidateForm.name" readonly="true" placeholder="请选择短信模板">
-             <el-button slot="append" icon="el-icon-search"  @click.prevent="messageVisible=true;findTemplateList()"></el-button>
+             <el-button slot="append" icon="el-icon-search"  @click.prevent="messageVisible=true;radio='';resetMessageReq();findTemplateList()"></el-button>
           </el-input>
         </el-form-item>
         <el-form-item
@@ -132,7 +132,7 @@
           label="短信内容"
           :rules="{ required: true, message: '短信内容不能为空', trigger: 'blur' }">
           <el-input type="textarea" v-model="dynamicValidateForm.text"></el-input>
-          <span><span style="color:red">*</span>短信内容只允许更改{}里面的内容，其他地方不允许改变！</span>
+          <span><span style="color:red">*</span>短信内容只允许更改{}里面的内容，修改其他地方无效!</span>
         </el-form-item>
         <el-form-item
           v-for="(domain, index) in dynamicValidateForm.domains"
@@ -149,7 +149,7 @@
         <el-form-item>
           <el-button @click="addDomain">新增号码</el-button>
           <el-button type="primary" @click="validate('dynamicValidateForm')">发送</el-button>
-          <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
+          <el-button type="danger" @click="resetForm('dynamicValidateForm')">重置</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -160,6 +160,34 @@
       title="选择短信模板"
       :visible.sync="messageVisible"
       append-to-body>
+       <el-form :inline="true" size="small" :model="messageReq" ref="searchForm">
+        <el-form-item prop="name" label="模板名称:">
+          <el-input v-model="messageReq.name" placeholder="模板名称"></el-input>
+        </el-form-item>
+        <el-form-item label="归属模板组:">
+          <el-select v-model="messageReq.groupId" placeholder="归属模板组">
+            <el-option label="全部" value=""></el-option>
+            <el-option v-for="item in messageOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item  prop="modifier" label="操作人:">
+          <el-input v-model="messageReq.modifier" placeholder="操作人"></el-input>
+        </el-form-item>
+        <el-form-item label="操作时间：">
+             <el-date-picker
+              v-model="timeMessage"
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
+              value-format="yyyy-MM-dd HH:mm:ss">
+            </el-date-picker>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="messageReq.pageNo=1;findTemplateList(messageReq);">查询</el-button>
+          <el-button type="danger" @click="resetMessageReq();">重置</el-button>
+        </el-form-item>
+      </el-form>
        <!-- 表格 -->
     <el-row>
       <el-col>
@@ -275,19 +303,27 @@ export default {
         ]
       },
       radio: '',
+      messageOptions: {},
       messagePageShow: true,
       messageVisible: false,
-      messageReq: {
-        examine: '2',
-        pageNo: 1,
-        pageSize: 10
-      },
       messagePageInfo: {},
       messageTableData: [],
       messageMap: {},
       sendVisible: false,
       pageShow: true,
+      timeMessage: [],
       pageInfo: {},
+      // 查询 发送请求参数
+      messageReq: {
+        examine: '2',
+        name: '', // 模板名称
+        groupId: '', // 上级模板Id
+        modifier: '', // 操作人
+        afterTime: '', // 操作时间
+        beginTime: '', // 操作时间
+        pageNo: 1,
+        pageSize: 10
+      },
       req: {
         templateid: '',
         templateName: '',
@@ -405,6 +441,12 @@ export default {
       })
     },
     findTemplateList() {
+      this.messageReq.beginTime = ''
+      this.messageReq.afterTime = ''
+      if (this.timeMessage) {
+        this.messageReq.beginTime = this.timeMessage[0]
+        this.messageReq.afterTime = this.timeMessage[1]
+      }
       findTemplateList(this.messageReq).then(response => {
         if (response.data.code === 0) {
           this.messageTableData = response.data.data
@@ -439,6 +481,19 @@ export default {
         pageSize: 10
       }
       this.timeValue = []
+    },
+    resetMessageReq() {
+      this.messageReq = {
+        examine: '2',
+        name: '', // 模板名称
+        groupId: '', // 上级模板Id
+        modifier: '', // 操作人
+        afterTime: '', // 操作时间
+        beginTime: '', // 操作时间
+        pageNo: 1,
+        pageSize: 10
+      }
+      this.timeMessage = []
     },
     formatData(id) {
       console.log('id:', id)
