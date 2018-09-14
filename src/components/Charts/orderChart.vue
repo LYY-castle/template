@@ -1475,12 +1475,6 @@
           this.timeValue[1] = Date.parse(this.timeValue[1]) - 24 * 3600 * 1000
           this.timeValue[1] = new Date(this.timeValue[1])
         }
-        if (this.formInline.time === 'week') {
-          this.timeValue[0] = Date.parse(this.timeValue[0]) - 7 * 24 * 3600 * 1000
-          this.timeValue[0] = new Date(this.timeValue[0])
-          this.timeValue[1] = Date.parse(this.timeValue[1]) - 7 * 24 * 3600 * 1000
-          this.timeValue[1] = new Date(this.timeValue[1])
-        }
         if (this.timeValue[0] > this.timeValue[1]) {
           Message({
             message: '开始时间不能大于结束时间',
@@ -1512,12 +1506,6 @@
           this.timeValue[0] = Date.parse(this.timeValue[0]) - 24 * 3600 * 1000
           this.timeValue[0] = new Date(this.timeValue[0])
           this.timeValue[1] = Date.parse(this.timeValue[1]) - 24 * 3600 * 1000
-          this.timeValue[1] = new Date(this.timeValue[1])
-        }
-        if (this.formInline.time === 'week') {
-          this.timeValue[0] = Date.parse(this.timeValue[0]) - 7 * 24 * 3600 * 1000
-          this.timeValue[0] = new Date(this.timeValue[0])
-          this.timeValue[1] = Date.parse(this.timeValue[1]) - 7 * 24 * 3600 * 1000
           this.timeValue[1] = new Date(this.timeValue[1])
         }
         if (this.timeValue[0] > this.timeValue[1]) {
