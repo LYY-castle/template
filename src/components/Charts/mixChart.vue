@@ -36,14 +36,16 @@
             v-model="timeValue[0]"
             type="week"
             format="yyyy 第 WW 周"
-            placeholder="开始周">
+            placeholder="开始周"
+            :picker-options="week">
           </el-date-picker>
           <span>-</span>
           <el-date-picker
             v-model="timeValue[1]"
             type="week"
             format="yyyy 第 WW 周"
-            placeholder="结束周">
+            placeholder="结束周"
+            :picker-options="week">
           </el-date-picker>
         </el-form-item>
         <el-form-item v-show="formInline.time === 'month'" label="操作时间：">
@@ -262,14 +264,16 @@
             v-model="timeValue[0]"
             type="week"
             format="yyyy 第 WW 周"
-            placeholder="开始周">
+            placeholder="开始周"
+            :picker-options="week">
           </el-date-picker>
           <span>-</span>
           <el-date-picker
             v-model="timeValue[1]"
             type="week"
             format="yyyy 第 WW 周"
-            placeholder="结束周">
+            placeholder="结束周"
+            :picker-options="week">
           </el-date-picker>
         </el-form-item>
         <el-form-item v-show="formInline.time === 'month'" label="操作时间：">
@@ -483,7 +487,10 @@
         call_time_durationAgent: [],
         calls_numberAgent: [],
         agentTime: [],
-        staffAgentid: null
+        staffAgentid: null,
+        week: {
+          firstDayOfWeek: 1
+        }
       }
     },
     mounted() {

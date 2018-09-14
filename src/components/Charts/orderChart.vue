@@ -48,14 +48,16 @@
             v-model="timeValue[0]"
             type="week"
             format="yyyy 第 WW 周"
-            placeholder="开始周">
+            placeholder="开始周"
+            :picker-options="week">
           </el-date-picker>
           <span>-</span>
           <el-date-picker
             v-model="timeValue[1]"
             type="week"
             format="yyyy 第 WW 周"
-            placeholder="结束周">
+            placeholder="结束周"
+            :picker-options="week">
           </el-date-picker>
         </el-form-item>
         <el-form-item v-show="formInline.time === 'month'" label="操作时间：">
@@ -142,6 +144,7 @@
         :data="tableData1"
         ref="multipleTable"
         tooltip-effect="dark"
+        :summary-method="getSummaryMethod"
         show-summary
         border
         style="width: 100%;">
@@ -266,14 +269,16 @@
             v-model="timeValue[0]"
             type="week"
             format="yyyy 第 WW 周"
-            placeholder="开始周">
+            placeholder="开始周"
+            :picker-options="week">
           </el-date-picker>
           <span>-</span>
           <el-date-picker
             v-model="timeValue[1]"
             type="week"
             format="yyyy 第 WW 周"
-            placeholder="结束周">
+            placeholder="结束周"
+            :picker-options="week">
           </el-date-picker>
         </el-form-item>
         <el-form-item v-show="formInline.time === 'month'" label="操作时间：">
@@ -413,6 +418,9 @@
     // },
     data() {
       return {
+        week: {
+          firstDayOfWeek: 1
+        },
         allProductList: [],
         productList: [],
         activeNameList: [],
@@ -528,6 +536,29 @@
       this.chartTime = null
     },
     methods: {
+      getSummaryMethod({ columns, data }) {
+        const sums = []
+        columns.forEach((column, index) => {
+          if (index === 0) {
+            sums[index] = '合计'
+            return
+          }
+          const values = data.map(item => Number(item[column.property]))
+          if (index < columns.length - 1) {
+            sums[index] = values.reduce((prev, curr) => {
+              const value = Number(curr)
+              if (!isNaN(value)) {
+                return prev + curr
+              } else {
+                return prev
+              }
+            }, 0)
+          } else {
+            sums[index] = sums[index - 1] / sums[index - 2] ? sums[index - 1] / sums[index - 2] : 0
+          }
+        })
+        return sums
+      },
       getStartTimestamp(timeStr, type) {
         let startTime
         if (type) {
@@ -714,7 +745,7 @@
         this.chart.setOption({
           backgroundColor: '#344b58',
           title: {
-            text: 'order报表',
+            text: '订单报表',
             x: '20',
             top: '20',
             textStyle: {
@@ -921,7 +952,7 @@
         this.chartStaff.setOption({
           backgroundColor: '#344b58',
           title: {
-            text: '单个时间各员工order报表',
+            text: '单个时间各员工订单报表',
             x: '20',
             top: '20',
             textStyle: {
@@ -1125,7 +1156,7 @@
         this.chartTime.setOption({
           backgroundColor: '#344b58',
           title: {
-            text: '单个员工各时间段order报表',
+            text: '单个员工各时间段订单报表',
             x: '20',
             top: '20',
             textStyle: {
@@ -1480,6 +1511,7 @@
       },
       reset() {
         this.formInline.campaignIdClone = ''
+        this.formInline.productClone = ''
         this.formInline.from = 1
         this.formInline.time = 'day'
         this.timeValue = [new Date(new Date(new Date().toLocaleDateString()).getTime() - 7 * 24 * 3600 * 1000), new Date(new Date(new Date().toLocaleDateString()).getTime())]
