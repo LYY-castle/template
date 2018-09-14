@@ -1,40 +1,40 @@
 import request from '@/utils/request'
-export function queryProductList(obj) {
+export function queryTemplateList(obj) {
   return request({
-    url: '/productServer/queryProductList',
+    url: '/productServer/queryTemplateList',
     method: 'get',
     params: obj
   })
 }
-export function createProductInfo(obj) {
+export function createTemplateInfo(obj) {
   return request({
-    url: '/productServer/createProductInfo',
+    url: '/productServer/createTemplateInfo',
     method: 'post',
     data: obj
   })
 }
-export function updateProductInfo(obj) {
+export function updateTemplateInfo(obj) {
   return request({
-    url: '/productServer/updateProductInfo',
+    url: '/productServer/updateTemplateInfo',
     method: 'post',
     data: obj
   })
 }
-export function deleteProductInfo(id) {
+export function deleteTemplateInfo(id) {
   return request({
-    url: '/productServer/deleteProductInfo/' + id,
+    url: '/productServer/deleteTemplateInfo/' + id,
     method: 'post'
   })
 }
-export function queryProductInfo(id) {
+export function queryTemplateInfo(id) {
   return request({
-    url: '/productServer/queryProductInfo/' + id,
+    url: '/productServer/queryTemplateInfo/' + id,
     method: 'get'
   })
 }
-export function deleteProductInfos(ids) {
+export function deleteTemplateInfos(ids) {
   return request({
-    url: '/productServer/deleteProductInfo/',
+    url: '/productServer/deleteTemplateInfo/',
     method: 'post',
     data: ids
   })
