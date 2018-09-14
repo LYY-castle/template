@@ -555,6 +555,7 @@
             }, 0)
           } else {
             sums[index] = sums[index - 1] / sums[index - 2] ? sums[index - 1] / sums[index - 2] : 0
+            sums[index].toFixed(2)
           }
         })
         return sums
@@ -806,7 +807,7 @@
           }],
           yAxis: [{
             type: 'value',
-            name: '数量',
+            name: '数量/件',
             splitLine: {
               show: false
             },
@@ -826,7 +827,7 @@
             }
           }, {
             type: 'value',
-            name: '金额',
+            name: '金额/元',
             splitLine: {
               show: false
             },
@@ -1012,7 +1013,7 @@
           }],
           yAxis: [{
             type: 'value',
-            name: '数量',
+            name: '数量/件',
             splitLine: {
               show: false
             },
@@ -1032,7 +1033,7 @@
             }
           }, {
             type: 'value',
-            name: '金额',
+            name: '金额/元',
             splitLine: {
               show: false
             },
@@ -1216,7 +1217,7 @@
           }],
           yAxis: [{
             type: 'value',
-            name: '数量',
+            name: '数量/件',
             splitLine: {
               show: false
             },
@@ -1236,7 +1237,7 @@
             }
           }, {
             type: 'value',
-            name: '金额',
+            name: '金额/元',
             splitLine: {
               show: false
             },
@@ -1468,6 +1469,12 @@
         })
       },
       search(val) {
+        if (this.formInline.time === 'week') {
+          this.timeValue[0] = Date.parse(this.timeValue[0]) - 7 * 24 * 3600 * 1000
+          this.timeValue[0] = new Date(this.timeValue[0])
+          this.timeValue[1] = Date.parse(this.timeValue[1]) - 7 * 24 * 3600 * 1000
+          this.timeValue[1] = new Date(this.timeValue[1])
+        }
         if (this.timeValue[0] > this.timeValue[1]) {
           Message({
             message: '开始时间不能大于结束时间',
@@ -1495,6 +1502,12 @@
         }
       },
       search1(val) {
+        if (this.formInline.time === 'week') {
+          this.timeValue[0] = Date.parse(this.timeValue[0]) - 7 * 24 * 3600 * 1000
+          this.timeValue[0] = new Date(this.timeValue[0])
+          this.timeValue[1] = Date.parse(this.timeValue[1]) - 7 * 24 * 3600 * 1000
+          this.timeValue[1] = new Date(this.timeValue[1])
+        }
         if (this.timeValue[0] > this.timeValue[1]) {
           Message({
             message: '开始时间不能大于结束时间',
