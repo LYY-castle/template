@@ -146,27 +146,27 @@
           </el-select>
         </el-form-item>
          <el-form-item
-          v-for="item in addProduct.productPropertyList"
+          v-for="item in addProduct.propertyInfos"
           :label="item.propertyName"
           :key="item.key">
-          <el-input v-model="item.propertyValue" v-if="item.templateType==='text'" readonly="true"></el-input><el-button @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='text'">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='text'">删除</el-button>
-          <el-input type="textarea" v-model="item.propertyValue" v-if="item.templateType==='textarea'" readonly="true"></el-input><el-button @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='textarea'">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='textarea'">删除</el-button>
-          <el-select v-model="item.propertyType" readonly="true" style="width: 100%;" v-if="item.templateType==='radio'" >
+          <el-input v-model="item.propertyValue" v-if="item.templateType==='text'" readonly="true" style="width: 50%;"></el-input><el-button @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='text'" style="width: 20%;margin-left: 10px;">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='text'" style="width: 20%;">删除</el-button>
+          <el-input type="textarea" v-model="item.propertyValue" v-if="item.templateType==='textarea'" readonly="true"  style="width: 50%;"></el-input><el-button @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='textarea'" style="width: 20%;margin-left: 10px;">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='textarea'" style="width: 20%;">删除</el-button>
+          <el-select v-model="item.propertyType" readonly="true" style="width: 50%;" v-if="item.templateType==='radio'" >
             <el-option
                 v-for="tag in item.propertyValue"
                 :label="tag"
                 :value="tag"
                 :disabled="true">
             </el-option>
-          </el-select><el-button  @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='radio'">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='radio'">删除</el-button>
-          <el-select multiple v-model="item.propertyType" readonly="true"  style="width: 100%;" v-if="item.templateType==='checkbox'" >
+          </el-select><el-button  @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='radio'" style="width: 20%;margin-left: 10px;">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='radio'" style="width: 20%;">删除</el-button>
+          <el-select multiple v-model="item.propertyType" readonly="true"  style="width: 50%;" v-if="item.templateType==='checkbox'" >
             <el-option
                 v-for="tag in item.propertyValue"
                 :label="tag"
                 :value="tag"
                 :disabled="true">
             </el-option>
-          </el-select><el-button @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='checkbox'">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='checkbox'">删除</el-button>
+          </el-select><el-button @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='checkbox'"  style="width: 20%;margin-left: 10px;">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='checkbox'"  style="width: 20%;">删除</el-button>
         </el-form-item>
         <el-form-item label="产品备注" prop="description">
           <el-input type="textarea" v-model="addProduct.description" size="small"></el-input>
@@ -186,7 +186,7 @@
       title="修改产品"
       :visible.sync="modifyVisible"
       append-to-body>
-      <el-form :rules="rules" :model="addProduct" ref="refAddProduct" label-width="100px">
+      <el-form :rules="rules" :model="addProduct" ref="refUpateProduct" label-width="100px">
         <el-form-item label="产品名称" prop="productName">
           <el-input v-model="addProduct.productName" size="small"></el-input>
         </el-form-item>
@@ -205,27 +205,27 @@
           </el-select>
         </el-form-item>
          <el-form-item
-          v-for="item in addProduct.productPropertyList"
+          v-for="item in addProduct.propertyInfos"
           :label="item.propertyName"
           :key="item.key">
-          <el-input v-model="item.propertyValue" v-if="item.templateType==='text'" readonly="true"></el-input><el-button @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='text'">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='text'">删除</el-button>
-          <el-input type="textarea" v-model="item.propertyValue" v-if="item.templateType==='textarea'" readonly="true"></el-input><el-button @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='textarea'">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='textarea'">删除</el-button>
-          <el-select v-model="item.propertyType" readonly="true" style="width: 100%;" v-if="item.templateType==='radio'" >
+          <el-input v-model="item.propertyValue" v-if="item.templateType==='text'" readonly="true" style="width: 50%;"></el-input><el-button @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='text'" style="width: 20%;margin-left: 10px;">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='text'" style="width: 20%;">删除</el-button>
+          <el-input type="textarea" v-model="item.propertyValue" v-if="item.templateType==='textarea'" readonly="true" style="width: 50%;"></el-input><el-button @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='textarea'" style="width: 20%;margin-left: 10px;">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='textarea'" style="width: 20%;">删除</el-button>
+          <el-select v-model="item.propertyType" readonly="true" style="width: 50%;" v-if="item.templateType==='radio'" >
             <el-option
                 v-for="tag in item.propertyValue"
                 :label="tag"
                 :value="tag"
                 :disabled="true">
             </el-option>
-          </el-select><el-button  @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='radio'">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='radio'">删除</el-button>
-          <el-select multiple v-model="item.propertyType" readonly="true"  style="width: 100%;" v-if="item.templateType==='checkbox'" >
+          </el-select><el-button  @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='radio'" style="width: 20%;margin-left: 10px;">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='radio'" style="width: 20%;">删除</el-button>
+          <el-select multiple v-model="item.propertyType" readonly="true"  style="width: 50%;" v-if="item.templateType==='checkbox'" >
             <el-option
                 v-for="tag in item.propertyValue"
                 :label="tag"
                 :value="tag"
                 :disabled="true">
             </el-option>
-          </el-select><el-button @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='checkbox'">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='checkbox'">删除</el-button>
+          </el-select><el-button @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='checkbox'" style="width: 20%;margin-left: 10px;">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='checkbox'" style="width: 20%;">删除</el-button>
         </el-form-item>
         <el-form-item label="产品备注" prop="description">
           <el-input type="textarea" v-model="addProduct.description" size="small"></el-input>
@@ -235,7 +235,7 @@
           <el-button size="small" type="danger" @click="queryTemplateInfo(templateId);">重 置</el-button>
           <el-button size="small" @click="modifyVisible = false">取 消</el-button>
           <el-button @click="resetProductPropertyInfo();propertyVisible=true">新增属性</el-button>
-          <el-button size="small" type="primary" @click="createTemplateInfo('refAddProduct')">确 定</el-button>
+          <el-button size="small" type="primary" @click="modifyDialog('refUpateProduct')">确 定</el-button>
         </div>
     </el-dialog>
     <!-- 新增属性 -->
@@ -306,7 +306,7 @@
           :rules="{
             required: true, message: '不能为空', trigger: 'blur'
           }" v-if="productPropertyInfo.templateType==='radio'||productPropertyInfo.templateType==='checkbox'||productPropertyInfo.templateType==='select'">
-          <el-input v-model="domain.value"></el-input><el-button @click.prevent="removeDomain(domain)">删除</el-button>
+          <el-input v-model="domain.value" style="width: 70%;"></el-input><el-button @click.prevent="removeDomain(domain)" style="width: 20%;margin-left: 10px;">删除</el-button>
         </el-form-item>
          <el-form-item label="属性排序" prop="sort">
           <el-input  v-model="productPropertyInfo.sort" size="small"></el-input>
@@ -390,7 +390,7 @@
           :rules="{
             required: true, message: '域名不能为空', trigger: 'blur'
           }" v-if="modifyProductPropertyInfo.templateType==='radio'||modifyProductPropertyInfo.templateType==='checkbox'||modifyProductPropertyInfo.templateType==='select'">
-          <el-input v-model="domain.value"></el-input><el-button @click="removeModifyDomain(domain)">删除</el-button>
+          <el-input v-model="domain.value" style="width: 70%;"></el-input><el-button @click="removeModifyDomain(domain)" style="width: 20%;margin-left: 10px;">删除</el-button>
         </el-form-item>
          <el-form-item label="属性排序" prop="sort">
           <el-input  v-model="modifyProductPropertyInfo.sort" size="small"></el-input>
@@ -430,10 +430,22 @@
         <el-button type="primary" @click="delVisible = false;deleteTemplateInfo(templateId);">确 定</el-button>
       </div>
     </el-dialog>
+        <!-- 修改 -->
+      <el-dialog
+      width="30%"
+      title="修改"
+      :visible.sync="modifyDialogVisible"
+      append-to-body>
+      <span style="font-size:20px;">确定修改吗？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button @click="modifyDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="modifyDialogVisible = false;updateTemplateInfo();">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-import { queryTemplateList, queryTemplateInfo, deleteTemplateInfos, deleteTemplateInfo, queryProductTypes, createTemplateInfo } from '@/api/product_management'
+import { queryTemplateList, queryTemplateInfo, deleteTemplateInfos, deleteTemplateInfo, queryProductTypes, createTemplateInfo, updateTemplateInfo } from '@/api/product_management'
 export default {
   name: 'productManagement',
   data() {
@@ -481,6 +493,7 @@ export default {
           { required: true, message: '不能为空', trigger: 'blur' }
         ]
       },
+      modifyDialogVisible: false,
       modifyVisible: false,
       modifyPropertyVisible: false,
       propertyVisible: false,
@@ -508,7 +521,7 @@ export default {
         price: '',
         productTypeId: '',
         description: '',
-        productPropertyList: []
+        propertyInfos: []
       },
       productPropertyInfo: {
         isRequired: '', // 是否必填 0否 1是
@@ -573,18 +586,45 @@ export default {
       })
     },
     queryTemplateInfo() {
-      queryTemplateInfo(this.templateId).then(response => {
+      queryProductTypes().then(response => {
         if (response.data.code === 0) {
-          this.addProduct = response.data.data
-          this.modifyVisible = true
+          this.ProductType = response.data.data
+          queryTemplateInfo(this.templateId).then(response => {
+            if (response.data.code === 0) {
+              this.addProduct = response.data.data
+              this.addProduct.productTypeId = response.data.data.productTypeInfo.productTypeId
+              if (this.addProduct.propertyInfos) {
+                for (let index = 0; index < this.addProduct.propertyInfos.length; index++) {
+                  if (this.addProduct.propertyInfos[index].propertyValue && (this.addProduct.propertyInfos[index].templateType === 'radio' || this.addProduct.propertyInfos[index].templateType === 'checkbox')) {
+                    this.addProduct.propertyInfos[index].propertyValue = JSON.parse(this.addProduct.propertyInfos[index].propertyValue)
+                  }
+                }
+              }
+              this.modifyVisible = true
+            } else {
+              this.$message.error(response.data.message)
+            }
+          })
         } else {
           this.$message.error(response.data.message)
         }
+      }).catch(error => {
+        console.log(error)
       })
     },
     createTemplateInfo(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          if (this.addProduct.propertyInfos) {
+            for (let index = 0; index < this.addProduct.propertyInfos.length; index++) {
+              if (!this.addProduct.propertyInfos[index].propertyType) {
+                this.addProduct.propertyInfos[index].propertyType = ''
+              }
+              if (this.addProduct.propertyInfos[index].propertyValue instanceof Array) {
+                this.addProduct.propertyInfos[index].propertyValue = JSON.stringify(this.addProduct.propertyInfos[index].propertyValue)
+              }
+            }
+          }
           createTemplateInfo(this.addProduct).then(response => {
             if (response.data.code === 0) {
               this.$message.success(response.data.message)
@@ -599,6 +639,38 @@ export default {
         } else {
           this.$message.error('请检查是否填写正确')
         }
+      })
+    },
+    modifyDialog(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.modifyDialogVisible = true
+        } else {
+          this.$message.error('请检查是否填写正确')
+        }
+      })
+    },
+    updateTemplateInfo() {
+      if (this.addProduct.propertyInfos) {
+        for (let index = 0; index < this.addProduct.propertyInfos.length; index++) {
+          if (!this.addProduct.propertyInfos[index].propertyType) {
+            this.addProduct.propertyInfos[index].propertyType = ''
+          }
+          if (this.addProduct.propertyInfos[index].propertyValue instanceof Array) {
+            this.addProduct.propertyInfos[index].propertyValue = JSON.stringify(this.addProduct.propertyInfos[index].propertyValue)
+          }
+        }
+      }
+      updateTemplateInfo(this.addProduct).then(response => {
+        if (response.data.code === 0) {
+          this.$message.success(response.data.message)
+          this.queryTemplateList()
+          this.modifyVisible = false
+        } else {
+          this.$message.error(response.data.message)
+        }
+      }).catch(error => {
+        console.log(error)
       })
     },
     queryProductTypes() {
@@ -679,7 +751,7 @@ export default {
             sort: this.productPropertyInfo.sort, // 显示排序
             templateType: this.productPropertyInfo.templateType // 模板类型
           }
-          this.addProduct.productPropertyList.push(obj)
+          this.addProduct.propertyInfos.push(obj)
           this.propertyVisible = false
         } else {
           this.$message.error('请检查是否填写正确')
@@ -693,7 +765,7 @@ export default {
         price: '',
         productTypeId: '',
         description: '',
-        productPropertyList: []
+        propertyInfos: []
       }
     },
     resetReq() {
@@ -760,9 +832,9 @@ export default {
       }
     },
     removeItem(item) {
-      var index = this.addProduct.productPropertyList.indexOf(item)
+      var index = this.addProduct.propertyInfos.indexOf(item)
       if (index !== -1) {
-        this.addProduct.productPropertyList.splice(index, 1)
+        this.addProduct.propertyInfos.splice(index, 1)
       }
     },
     modifyItem(item) {
@@ -775,7 +847,7 @@ export default {
           })
         })
       }
-      this.modifyId = this.addProduct.productPropertyList.indexOf(item)
+      this.modifyId = this.addProduct.propertyInfos.indexOf(item)
     },
     addDomain() {
       this.productPropertyInfo.domains.push({
@@ -822,7 +894,7 @@ export default {
             sort: this.modifyProductPropertyInfo.sort, // 显示排序
             templateType: this.modifyProductPropertyInfo.templateType // 模板类型
           }
-          this.addProduct.productPropertyList.splice(this.modifyId, 1, obj)
+          this.addProduct.propertyInfos.splice(this.modifyId, 1, obj)
           this.modifyId = ''
           this.modifyPropertyVisible = false
         } else {
@@ -839,7 +911,7 @@ export default {
     },
     resetModifyProductPropertyInfo() {
       this.modifyProductPropertyInfo = {}
-      var obj = this.addProduct.productPropertyList[this.modifyId]
+      var obj = this.addProduct.propertyInfos[this.modifyId]
       this.modifyProductPropertyInfo = JSON.parse(JSON.stringify(obj))
       if (this.modifyProductPropertyInfo.templateType === 'radio' || this.modifyProductPropertyInfo.templateType === 'checkbox' || this.modifyProductPropertyInfo.templateType === 'select') {
         this.modifyProductPropertyInfo.domains = []
