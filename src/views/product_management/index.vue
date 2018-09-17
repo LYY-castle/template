@@ -319,7 +319,7 @@
           <el-button size="small" type="danger" @click="resetProductPropertyInfo();">重 置</el-button>
           <el-button size="small" @click="propertyVisible = false">取 消</el-button>
           <el-button @click="addDomain()" v-if="productPropertyInfo.templateType==='radio'||productPropertyInfo.templateType==='checkbox'||productPropertyInfo.templateType==='select'">新增属性值</el-button>
-          <el-button size="small" type="primary" @click="submitForm('refAddProduct');addProductPropertyInfo('refProperty');">确 定</el-button>
+          <el-button size="small" type="primary" @click="addProductPropertyInfo('refProperty');">确 定</el-button>
         </div>
     </el-dialog>
     <!-- 修改产品属性 -->
@@ -403,7 +403,7 @@
           <el-button size="small" type="danger" @click="resetModifyProductPropertyInfo();">重 置</el-button>
           <el-button size="small" @click="modifyPropertyVisible = false">取 消</el-button>
           <el-button @click="addModifyDomain()" v-if="modifyProductPropertyInfo.templateType==='radio'||modifyProductPropertyInfo.templateType==='checkbox'||modifyProductPropertyInfo.templateType==='select'">新增属性值</el-button>
-          <el-button size="small" type="primary" @click="submitForm('refAddProduct');modifyProductProperty('refModifyProperty');">确 定</el-button>
+          <el-button size="small" type="primary" @click="modifyProductProperty('refModifyProperty');">确 定</el-button>
         </div>
     </el-dialog>
       <!-- 批量删除 -->
@@ -599,6 +599,8 @@ export default {
                     this.addProduct.propertyInfos[index].propertyValue = JSON.parse(this.addProduct.propertyInfos[index].propertyValue)
                   }
                 }
+              } else {
+                this.addProduct.propertyInfos = []
               }
               this.modifyVisible = true
             } else {
@@ -755,7 +757,6 @@ export default {
           this.propertyVisible = false
         } else {
           this.$message.error('请检查是否填写正确')
-          return false
         }
       })
     },
