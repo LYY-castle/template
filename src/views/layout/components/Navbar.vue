@@ -21,138 +21,145 @@
         </el-dropdown-menu>
       </el-dropdown> -->
     <!-- </div> -->
-
-  <el-row v-if="havesoftphone">
-    <!-- logo预留 -->
-    <!-- <el-col :span="2">
-      123
-    </el-col> -->
-
-    <!-- <el-col :span="16" style="margin-top:1.4%;"> -->
-
-        <el-col :span="17" style="margin-top:0.2%;">
-          <el-row style="height:30px;">
-            <el-col :span="1" style="margin-left:1%;">
-              <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
-            </el-col>
+  <el-row>
+     <!-- logo及按钮 -->
+    <el-col :span="3">
+      <div id="logo">
+        <router-link to="/dashboard">
+          <img src="../../../../static/images/logo.png">
+        </router-link>
+      </div>
+    </el-col>
+    <el-col :span="21" class="navbar-form-container">
+      <el-col :span="1" class="hamburger">
+        <hamburger style="margin-top:35px;" class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
+      </el-col>
+      <el-col :span="23">
+        <!-- 表单 -->
+        <el-row style="width:100%;height:75px;" v-if="havesoftphone">
+          <!-- 分机号和状态选项 -->
+          <div class="navbar-forms">
             <el-form :inline="true" size="mini">
-              <el-col :span="4" style="height:30px;">
-                <el-form-item class="txtDN" size="mini">
-                  <el-col :span="22"  prop="DN">
-                    <el-input v-model="formInline.DN" placeholder="分机号" :disabled="disabledDN">{{formInline.DN}}</el-input>
-                  </el-col>
-                  <el-col :span="2">
-                    <el-button type="primary" size="mini" style="margin-left:50%;" v-if="!islogin" @click="agentLogin()">登入</el-button>
-                    <el-button type="primary" size="mini" style="margin-left:50%;" v-if="islogin" @click="agentLogoff()">登出</el-button>
-                  </el-col>
-                </el-form-item>
-                <!-- <el-form-item style="margin-top:.5%;display:inline;"> -->
-                  <!-- <el-button type="primary" size="mini">登入</el-button> -->
-                <!-- </el-form-item> -->
-              </el-col>
-
-              <el-col :span="4" style="padding-top:0.6%;height:30px;">
-                <div style="display:inline-block;width:16%;">
-                  <img src="../../../../static/images/nologin_state.png" title="未登录" style="width:100%;" v-if="agentState1">
-                  <img src="../../../../static/images/busy_normal.png" title="示忙" style="width:100%;" v-if="agentState2">
-                  <img src="../../../../static/images/agentStat38_allReady.png" title="就绪" style="width:100%;" v-if="agentState3">
-                  <img src="../../../../static/images/back_state.png" title="坐席状态" style="width:100%;" v-if="agentState4">
-                </div>
-                <el-form-item class="state_now">
-                  <el-select v-model="formInline.region" placeholder="示忙" @change="changeState()">
-                    <el-option label="就绪" value="0"></el-option>
-                    <el-option label="示忙" value="13"></el-option>
-                    <el-option label="后处理" value="14"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-
-              <el-col :span="5" style="height:30px;">
-                <div style="display:inline-block;width:16%;">
-                  <img src="../../../../static/images/answer_disable.png" title="接听(不可用)" style="cursor:pointer;width:100%;" v-if="!answerCall">
-                  <img src="../../../../static/images/answer_normal.gif" title="接听" style="cursor:pointer;width:100%;" v-if="answerCall" @click="agentanswercall()">
-                </div>
-                <el-form-item class="numberBox">
-                  <el-col :span="24">
-                    <el-input v-model="formInline.user" size="mini"></el-input>
-                  </el-col>
-                </el-form-item>
-              </el-col>
-              <el-col :span="9" style="height:30px;">
-                <div style="display:inline-block;width:8%;">
-                  <img src="../../../../static/images/dial_disable.png" title="拨号(不可用)" style="cursor:pointer;width:100%;" v-if="!dialCall">
-                  <img src="../../../../static/images/dial_normal.png" title="拨号" style="cursor:pointer;width:100%;" v-if="dialCall" @click="agentdialout()">
-                </div>
-                <div style="display:inline-block;width:8%;">
-                  <img src="../../../../static/images/hold_disable.png" title="保持(不可用)" style="cursor:pointer;width:100%;" v-if="holdCall1">
-                  <img src="../../../../static/images/hold_normal.png" title="保持" style="cursor:pointer;width:100%;" v-if="holdCall2" @click="agenthold()">
-                  <img src="../../../../static/images/holding_state.gif" title="保持" style="cursor:pointer;width:100%;" v-if="holdCall3"  @click="agenthold()">
-                </div>
-                <div style="display:inline-block;width:8%;">
-                  <img src="../../../../static/images/trans_disable.png" title="转接(不可用)" style="cursor:pointer;width:100%;" v-if="transCall1">
-                  <img src="../../../../static/images/trans_normal.png" title="转接" style="cursor:pointer;width:100%;" v-if="transCall2" @click="agentstarttransfer()">
-                  <img src="../../../../static/images/comtrans_normal.gif" title="转接中" style="cursor:pointer;width:100%;" v-if="transCall3" @click="agentstarttransfer()">
-                </div>
-                <div style="display:inline-block;width:8%;">
-                  <img src="../../../../static/images/conf_disable.png" title="三方(不可用)" style="cursor:pointer;width:100%;" v-if="confCall1">
-                  <img src="../../../../static/images/conf_normal.png" title="三方" style="cursor:pointer;width:100%;" v-if="confCall2" @click="agentstartconffer()">
-                  <img src="../../../../static/images/comconf_normal.gif" title="三方" style="cursor:pointer;width:100%;" v-if="confCall3" @click="agentstartconffer()">
-                </div>
-                <div style="display:inline-block;width:8%;">
-                  <img src="../../../../static/images/retrieve_disable.png" title="取回(不可用)" style="cursor:pointer;width:100%;" v-if="!retrieveCall">
-                  <img src="../../../../static/images/retrieve_normal.png" title="取回" style="cursor:pointer;width:100%;" v-if="retrieveCall" @click=" agentretrieve()">
-                </div>
-                <div style="display:inline-block;width:8%;">
-                  <img src="../../../../static/images/hangup_disable.png" title="挂断(不可用)" style="cursor:pointer;width:100%;" v-if="!hangupCall">
-                  <img src="../../../../static/images/hangup_normal.png" title="挂断" style="cursor:pointer;width:100%;" v-if="hangupCall" @click="agenthangup()">
-                </div>
-              </el-col>
+              <el-popover trigger="click" placement="bottom">
+                <el-form :inline="true" size="mini" style="padding-top:20px;">
+                  <!-- 分机号登入 -->
+                  <el-form-item class="txtDN" size="mini" style="width:70px;"> 
+                    <el-input v-model="formInline.DN" placeholder="分机号">{{formInline.DN}}</el-input>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="primary" size="mini" style="display:inline;" v-if="!islogin" @click="agentLogin()">登入</el-button>
+                    <el-button type="primary" size="mini" style="display:inline;" v-if="islogin" @click="agentLogoff()">登出</el-button>
+                  </el-form-item>
+                </el-form>
+                <img slot="reference" src="../../../../static/images/enter_disable.png" title="登入" class="img-all icon-container" style="width:53px;">
+              </el-popover>
+              <!-- 状态 -->
+              <el-dropdown trigger="click" placement="bottom" @command="changeState">
+                <img src="../../../../static/images/nologin_state.png" title="未登录" class="img-all" v-if="agentState1">
+                <img src="../../../../static/images/busy_normal.png" title="示忙"  class="img-all" v-if="agentState2">
+                <img src="../../../../static/images/agentStat38_allReady.png" title="就绪"  class="img-all" v-if="agentState3">
+                <img src="../../../../static/images/back_state.png" title="坐席状态"  class="img-all" v-if="agentState4">
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="0">就绪</el-dropdown-item>
+                  <el-dropdown-item command="13">示忙</el-dropdown-item>
+                  <el-dropdown-item command="14">后处理</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+              <!-- 号码输入框 -->
+              <img src="../../../../static/images/answer_disable.png" title="接听(不可用)"  class="img-all" v-if="!answerCall" style="width:53px;">
+              <img src="../../../../static/images/answer_normal.gif" title="接听"  class="img-all" v-if="answerCall" @click="agentanswercall()" style="width:53px;">
+              <el-form-item class="numberBox">
+                <!-- <el-col :span="24"> -->
+                  <el-input v-model="formInline.user" size="mini"></el-input>
+                <!-- </el-col> -->
+              </el-form-item>
             </el-form>
-          </el-row>
-
-          <!-- <el-row style="height:40px;padding-top:15px;padding-right:15px;">
-            <breadcrumb></breadcrumb>
-          </el-row> -->
-        </el-col>
-
-
-    <el-col :span="7" class="userInfo">
-      <el-col :span="6">
-        <p style="text-overflow:ellipsis;white-space:nowrap;overflow:hidden;width:100%;">
-          <b>状态：</b>
-          <el-popover trigger="hover" placement="left" :content="telephoneState" style="cursor:pointer">
-            <span slot="reference">{{telephoneState}}</span>
-          </el-popover>
-        </p>
-        <p style="text-overflow:ellipsis;white-space:nowrap;overflow:hidden;width:100%;">
-          <b>时长：</b>
-          <el-popover trigger="hover" placement="left" :content="timeCount" style="cursor:pointer">
-            <span slot="reference">{{timeCount}}</span>
-          </el-popover>
-        </p>
-      </el-col>
-      <el-col :span="6">
-        <p style="text-overflow:ellipsis;white-space:nowrap;overflow:hidden;width:100%;">
-          <b>主叫：</b>
-          <el-popover trigger="hover" placement="left" :content="caller" style="cursor:pointer">
-            <span slot="reference">{{caller}}</span>
-          </el-popover>
-        </p>
-        <p style="text-overflow:ellipsis;white-space:nowrap;overflow:hidden;width:100%;">
-          <b>被叫：</b>
-          <el-popover trigger="hover" placement="left" :content="callee" style="cursor:pointer">
-            <span slot="reference">{{callee}}</span>
-          </el-popover>
-        </p>
-        <!-- <p>
-          <b>原主叫：</b>
-          <span>{{orginCaller}}</span>
-        </p> -->
-      </el-col>
-      <el-col :span="6" style="margin-top:5px;margin-left:12%">
-        <!-- 有未读信息 -->
-        <div v-show="msgNum_all > 0">
-          <el-badge v-model="msgNum_all" class="item" :max="99">
+          </div>
+          <div class="navbar-buttons">
+            <div style="float:left;margin-left:5px;" class="icon-container">
+              <img src="../../../../static/images/dial_disable.png" title="拨号(不可用)" class="img-all" v-if="!dialCall">
+              <img src="../../../../static/images/dial_normal.png" title="拨号"  class="img-all" v-if="dialCall" @click="agentdialout()">
+            </div>
+            <div style="float:left;margin-left:5px;" class="icon-container">
+              <img src="../../../../static/images/hold_disable.png" title="保持(不可用)" class="img-all" v-if="holdCall1">
+              <img src="../../../../static/images/hold_normal.png" title="保持" class="img-all" v-if="holdCall2" @click="agenthold()">
+              <img src="../../../../static/images/holding_state.gif" title="保持" class="img-all" v-if="holdCall3"  @click="agenthold()">
+            </div>
+            <div style="float:left;margin-left:5px;" class="icon-container">
+              <img src="../../../../static/images/trans_disable.png" title="转接(不可用)" class="img-all" v-if="transCall1">
+              <img src="../../../../static/images/trans_normal.png" title="转接" class="img-all" v-if="transCall2" @click="agentstarttransfer()">
+              <img src="../../../../static/images/comtrans_normal.gif" title="转接中" class="img-all" v-if="transCall3" @click="agentstarttransfer()">
+            </div>
+            <div style="float:left;margin-left:5px;" class="icon-container">
+              <img src="../../../../static/images/conf_disable.png" title="三方(不可用)" class="img-all" v-if="confCall1">
+              <img src="../../../../static/images/conf_normal.png" title="三方" class="img-all" v-if="confCall2" @click="agentstartconffer()">
+              <img src="../../../../static/images/comconf_normal.gif" title="三方" class="img-all" v-if="confCall3" @click="agentstartconffer()">
+            </div>
+            <div style="float:left;margin-left:5px;" class="icon-container">
+              <img src="../../../../static/images/retrieve_disable.png" title="取回(不可用)" class="img-all" v-if="!retrieveCall">
+              <img src="../../../../static/images/retrieve_normal.png" title="取回" class="img-all" v-if="retrieveCall" @click=" agentretrieve()">
+            </div>
+            <div style="float:left;margin-left:5px;" class="icon-container">
+              <img src="../../../../static/images/hangup_disable.png" title="挂断(不可用)" class="img-all" v-if="!hangupCall">
+              <img src="../../../../static/images/hangup_normal.png" title="挂断" class="img-all" v-if="hangupCall" @click="agenthangup()">
+            </div>
+          </div>
+          <span style="float:left" class="line"></span>
+          <div class="status-container">
+            <div style="clear:both;diaplay:inline-block;">
+              <b>状态：</b>
+              <el-popover trigger="hover" placement="bottom" :content="telephoneState">
+                <span slot="reference">{{telephoneState}}</span>
+              </el-popover>
+            </div>
+            <br>
+            <div style="clear:both;display:inline-block;margin-top:32px;">
+              <b>时长：</b>
+              <el-popover trigger="hover" placement="bottom" :content="timeCount">
+                <span slot="reference">{{timeCount}}</span>
+              </el-popover>
+            </div>
+          </div>
+          <div class="status-container call">
+              <div style="clear:both;display:inline-block;">
+                <b>主叫：</b>
+                <el-popover trigger="hover" placement="bottom" :content="caller">
+                  <span slot="reference">{{caller}}</span>
+                </el-popover>
+              </div>
+            <br>
+              <div style="clear:both;display:inline-block;margin-top:32px;">
+                <b>被叫：</b>
+                <el-popover trigger="hover" placement="bottom" :content="callee">
+                  <span slot="reference">{{callee}}</span>
+                </el-popover>
+              </div>
+            <!-- <br>
+              <div style="clear:both;display:inline-block;margin-top:23.5px;">
+                <b>原主叫：</b>
+                <el-popover trigger="hover" placement="bottom" :content="orginCaller">
+                  <span slot="reference">{{orginCaller}}</span>
+                </el-popover>
+              </div>
+            <br> -->
+          </div>
+          <span style="float:left" class="line"></span>
+          <!-- 有未读信息 -->
+          <div v-show="msgNum_all > 0" class="message">
+            <el-badge v-model="msgNum_all" class="item" :max="99">
+              <el-tooltip placement="bottom">
+                <div slot="content">
+                  您有{{msgNum_all}}条未读信息<br/><br/>
+                  今日消息：{{msgNum_today_all}} 条<br/>
+                  <!-- 未读特提：{{msgNum_sm}} 条<br/>
+                  未读特急：{{msgNum_eu}} 条<br/> -->
+                </div>
+                <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()" class="icon-size"></el-button>
+              </el-tooltip>
+            </el-badge>
+          </div>
+          <!-- 没有未读信息 -->
+          <div v-show="msgNum_all === '' || msgNum_all === 0" class="message">
             <el-tooltip placement="bottom">
               <div slot="content">
                 您有{{msgNum_all}}条未读信息<br/><br/>
@@ -160,108 +167,104 @@
                 <!-- 未读特提：{{msgNum_sm}} 条<br/>
                 未读特急：{{msgNum_eu}} 条<br/> -->
               </div>
-              <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()"></el-button>
+              <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()" class="icon-size"></el-button>
             </el-tooltip>
-          </el-badge>
-        </div>
-
-        <!-- 没有未读信息 -->
-        <div v-show="msgNum_all === '' || msgNum_all === 0">
-          <el-tooltip placement="bottom">
-            <div slot="content">
-              您有{{msgNum_all}}条未读信息<br/><br/>
-              今日消息：{{msgNum_today_all}} 条<br/>
-              <!-- 未读特提：{{msgNum_sm}} 条<br/>
-              未读特急：{{msgNum_eu}} 条<br/> -->
-            </div>
-            <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()"></el-button>
+          </div>
+          <!-- 用户 -->
+          <el-tooltip placement="bottom" class="user">
+            <div slot="content">用户信息</div>
+            <el-dropdown @command="handleCommand" trigger="click" >
+              <el-button type="info" circle><svg-icon icon-class="user" class="icon-size"/></el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item disabled>
+                  <span><b>工号：</b>{{userInfo.staffId}}</span><br/>
+                  <span><b>用户：</b>{{userInfo.userName}}</span><br/>
+                  <span><b>部门：</b>{{userInfo.departName}}</span><br/>
+                </el-dropdown-item>
+                <el-dropdown-item style="text-align:center" divided command="changePWD">
+                  <i class="el-icon-edit-outline">  修改密码</i>
+                </el-dropdown-item>
+                <el-dropdown-item style="text-align:center" divided command="logout">
+                  <i class="el-icon-circle-close">  注销用户</i>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </el-tooltip>
-        </div>
-      </el-col>
-      <el-col :span="3"><div></div></el-col>
-      <el-col :span="3" style="margin-top:5px;margin-left:-10%">
-        <el-tooltip placement="bottom">
-        <div slot="content">设置</div>
-        <el-dropdown @command="handleCommand" trigger="click" >
-          <el-button icon="el-icon-setting"  type="info" circle></el-button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item disabled>
-              <span><b>工号：</b>{{userInfo.staffId}}</span><br/>
-              <span><b>用户：</b>{{userInfo.userName}}</span><br/>
-              <span><b>部门：</b>{{userInfo.departName}}</span><br/>
-            </el-dropdown-item>
-            <el-dropdown-item style="text-align:center" divided command="changePWD">
-              <i class="el-icon-edit-outline">  修改密码</i>
-            </el-dropdown-item>
-            <el-dropdown-item style="text-align:center" divided command="logout">
-              <i class="el-icon-circle-close">  注销用户</i>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-        </el-tooltip>
-      </el-col>
-    </el-col>
-  </el-row>
-  <el-row v-if="!havesoftphone">
-    <el-col :span="17" style="margin-top:0.2%;">
-      <el-col :span="1" style="margin-left:1%;">
-        <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
-      </el-col>
-    </el-col>
-    <el-col :span="7" class="userInfo" style="margin-top:-7px;">
-      <el-col :span="6"></el-col>
-      <el-col :span="6"></el-col>
-      <el-col :span="6"  style="margin-top:13px;margin-left:62%">
-        <!-- 有未读信息 -->
-        <div v-show="msgNum_all > 0">
-          <el-badge v-model="msgNum_all" class="item" :max="99">
-            <el-tooltip placement="bottom">
-              <div slot="content">
-                您有{{msgNum_all}}条未读信息<br/><br/>
-                今日消息：{{msgNum_today_all}} 条<br/>
-                <!-- 未读特提：{{msgNum_sm}} 条<br/>
-                未读特急：{{msgNum_eu}} 条<br/> -->
+        </el-row>
+
+        <el-row v-if="!havesoftphone" style="height:75px;">
+          <el-col :span="17" style="margin-top:0.2%;">
+            <!-- <el-col :span="1" style="margin-left:-7px;">
+              <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
+            </el-col> -->
+          </el-col>
+          <el-col :span="7" class="userInfo" style="margin-top:-7px;">
+            <el-col :span="6"></el-col>
+            <el-col :span="6"></el-col>
+            <el-col :span="6"  style="margin-top:18px;margin-left:62%">
+              <!-- 有未读信息 -->
+              <div v-show="msgNum_all > 0">
+                <el-badge v-model="msgNum_all" class="item" :max="99">
+                  <el-tooltip placement="bottom">
+                    <div slot="content">
+                      您有{{msgNum_all}}条未读信息<br/><br/>
+                      今日消息：{{msgNum_today_all}} 条<br/>
+                      <!-- 未读特提：{{msgNum_sm}} 条<br/>
+                      未读特急：{{msgNum_eu}} 条<br/> -->
+                    </div>
+                    <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()" style="font-size:30px;"></el-button>
+                  </el-tooltip>
+                </el-badge>
               </div>
-              <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()"></el-button>
-            </el-tooltip>
-          </el-badge>
-        </div>
 
-        <!-- 没有未读信息 -->
-        <div v-show="msgNum_all === '' || msgNum_all === 0">
-          <el-tooltip placement="bottom">
-            <div slot="content">
-              您有{{msgNum_all}}条未读信息<br/><br/>
-              今日消息：{{msgNum_today_all}} 条<br/>
-              <!-- 未读特提：{{msgNum_sm}} 条<br/>
-              未读特急：{{msgNum_eu}} 条<br/> -->
-            </div>
-            <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()"></el-button>
-          </el-tooltip>
-        </div>
-      </el-col>
-      <el-col :span="3"></el-col>
-      <el-col :span="3" style="margin-top:13px;margin-left:-10%">
-        <el-dropdown @command="handleCommand" trigger="click" >
-          <el-button icon="el-icon-setting"  type="info" circle></el-button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item disabled>
-              <span><b>工号：</b>{{userInfo.staffId}}</span><br/>
-              <span><b>用户：</b>{{userInfo.userName}}</span><br/>
-              <span><b>部门：</b>{{userInfo.departName}}</span><br/>
-            </el-dropdown-item>
-            <el-dropdown-item style="text-align:center" divided command="changePWD">
-              <i class="el-icon-edit-outline">  修改密码</i>
-            </el-dropdown-item>
-            <el-dropdown-item style="text-align:center" divided command="logout">
-              <i class="el-icon-circle-close">  注销用户</i>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+              <!-- 没有未读信息 -->
+              <div v-show="msgNum_all === '' || msgNum_all === 0">
+                <el-tooltip placement="bottom">
+                  <div slot="content">
+                    您有{{msgNum_all}}条未读信息<br/><br/>
+                    今日消息：{{msgNum_today_all}} 条<br/>
+                    <!-- 未读特提：{{msgNum_sm}} 条<br/>
+                    未读特急：{{msgNum_eu}} 条<br/> -->
+                  </div>
+                  <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()" style="font-size:30px;"></el-button>
+                </el-tooltip>
+              </div>
+            </el-col>
+            <el-col :span="3"></el-col>
+            <el-col :span="3" style="margin-top:18px;margin-left:-25px;">
+              <!-- 用户 -->
+              <el-dropdown @command="handleCommand" trigger="click" >
+                <el-button type="info" circle><svg-icon icon-class="user" style="font-size:30px;"/></el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item disabled>
+                    <span><b>工号：</b>{{userInfo.staffId}}</span><br/>
+                    <span><b>用户：</b>{{userInfo.userName}}</span><br/>
+                    <span><b>部门：</b>{{userInfo.departName}}</span><br/>
+                  </el-dropdown-item>
+                  <el-dropdown-item style="text-align:center" divided command="changePWD">
+                    <i class="el-icon-edit-outline">  修改密码</i>
+                  </el-dropdown-item>
+                  <el-dropdown-item style="text-align:center" divided command="logout">
+                    <i class="el-icon-circle-close">  注销用户</i>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </el-col>
+          </el-col>
+
+        </el-row>
+
+        <!-- tab -->
+        <el-row>
+          <el-col :span="20">
+            <tags-view></tags-view>
+          </el-col>  
+        </el-row>
+
       </el-col>
     </el-col>
-
   </el-row>
+  
 
   <el-dialog width="30%" title="修改密码" :visible.sync="changePwdVisiable" append-to-body>
       <span style="color:red">*</span><span style="font-size:15px;">请输入旧密码：</span><br/>
@@ -283,6 +286,7 @@
 
 <script>
 
+import TagsView from './TagsView'
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
@@ -369,7 +373,8 @@ export default {
   },
   components: {
     Breadcrumb,
-    Hamburger
+    Hamburger,
+    TagsView
   },
   computed: {
     ...mapGetters([
@@ -1294,8 +1299,195 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
+#logo{
+  width:210px;
+  background:#263445
+}
+#logo img{
+  width:100%;
+  // margin:4.4px 0;
+}
+// .icon-container{
+//   width:50px;
+// }
+// .hamburger{
+//   margin-left:-2px;
+// }
+// .navbar-form-container{
+//   margin-left:-48px;
+//   position:relative;
+// }
+.line{
+  margin-top:15px;
+  padding:23px 0;
+  border-left:2px solid #000;
+  border-right:2px solid #8B8B8B;
+}
+.numberBox{
+  width:43%;
+  margin-top:13px;
+}
+// .numberBox .el-form-item__content{
+  // width:55%;
+  // margin-top:4%;
+// }
+.icon-container-status{
+  margin-top:-8px;
+}
+.navbar-buttons{
+  float:left;
+  // margin-left:20px;
+  margin-right:20px;
+  margin-top:11px;
+}
+.navbar-forms{
+  float:left;
+  padding-top:12px;
+}
+.icon-size{
+  font-size:30px;
+}
+// .status-container div{
+//   text-overflow: ellipsis; 
+//   white-space:nowrap;
+// }
+.status-container{
+  float:left;
+  width:150px;
+  height: 75px;
+  // padding-top: 15px;
+  padding-top: 23px;
+  text-overflow: ellipsis; 
+  white-space:nowrap;
+  overflow: hidden;
+  margin-left:20px;
+  margin-right:21px;
+}
+.status-container.call{
+  width:270px;
+}
+.message{
+  float:left;
+  margin-left:50px;
+  margin-right:25px;
+  margin-top:9px;
+}
+.user{
+  float:left;
+  margin-top:10px;
+}
+ @media screen and (min-width: 1281px) and (max-width:1367px){
+  .message{
+    float:left;
+    margin-right:10px;
+    margin-top:17px;
+    margin-left:22px;
+  }
+  .user{
+    float:left;
+    margin-top:18px;
+  }
+  .status-container{
+    font-size:14px;
+    width:107px;
+    margin-right:7px;
+    margin-left:20px;
+  }
+  .status-container.call{
+    width:150px;
+  }
+  .icon-size{
+    font-size:15px;
+  }
+  #logo{
+    width:154px;
+    background:#263445
+  }
+  #logo img{
+    margin:14.9px 0;
+  }
+  // .icon-container{
+  //   margin-top:10px;
+  //   width:39px;
+  // }
+  .icon-container-status{
+    margin-top:-4px;
+  }
+  .numberBox{
+    // width:25%;
+    margin-top:12px;
+  }
+  .navbar-buttons{
+    margin-left:4px;
+    margin-top:12px;
+  }
+  .navbar-forms{
+    width:324px;
+  }
+}
+@media all and (min-width:1024px) and (max-width:1280px)  {
+  .message{
+    margin-right:10px;
+    margin-top:19px;
+    margin-left:20px;
+  }
+  .user{
+    margin-top:19px;
+  }
+  .status-container{
+    font-size:14px;
+    width:107px;
+    margin-right:7px;
+    margin-left:7px;
+  }
+  .status-container.call{
+    width:120px;
+  }
+  .icon-size{
+    font-size:25px;
+  }
+  .el-button.is-circle {
+    border-radius: 50%;
+    padding: 7px;
+  }
+  #logo{
+    width:137px;
+    background:#263445
+  }
+  #logo img{
+    margin:19px 0;
+  }
+  // .icon-container{
+  //   margin-top:-2px;
+  //   width:39px;
+  // }
+  .navbar-buttons{
+    margin-left:4px;
+    margin-top:11px;
+  }
+  .navbar-forms{
+    width:321px;
+  }
+}
+// @media all and (min-width:400px) and (max-width:1023px)  {  
+  
+// }
+.img-all{
+  cursor:pointer;width:100%;
+  border-radius:5px;
+  border:3px solid #909399;
+}
+.img-all:hover{
+  transition:box-shadow .5s;
+  box-shadow: 0px 0px 5px 2px #888;
+}
 .navbar{
   width:100%;
+  height:109px;
+  line-height:0 !important;
+  border-radius: 0px !important;
+  -webkit-box-shadow: 0 4px 5px #888;
+  box-shadow:  0 4px 5px #888;
   .el-form-item{
     margin-bottom:0;
     height:30px;
@@ -1315,7 +1507,7 @@ export default {
   }
   .txtDN .el-form-item__content{
     margin-top:3%;
-    width:53% !important;
+    // width:53% !important;
   }
   .txtDN label{
     margin-bottom:4%;
@@ -1328,13 +1520,7 @@ export default {
     // margin-top:1%;
     width:55%;
   }
-  .numberBox .el-form-item__content{
-    // width:55%;
-    margin-top:4%;
-  }
-  .numberBox{
-    width:65%;
-  }
+  
   .userInfo{
     div{
       line-height:29px;
@@ -1371,10 +1557,11 @@ p{
 .navbar {
   line-height: 50px;
   border-radius: 0px !important;
-  // box-shadow: 0 0 5px #888;
   margin-bottom:0px;
-  // position:fixed;
+  position:fixed;
   z-index:999;
+  width:100%;
+  background:#F8F8F8;
   // .hamburger-container {
   //   line-height: 58px;
   //   height: 50px;
@@ -1411,4 +1598,3 @@ p{
   }
 }
 </style>
-
