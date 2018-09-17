@@ -1305,7 +1305,7 @@ export default {
 }
 #logo img{
   width:100%;
-  // margin:4.4px 0;
+  margin:4.4px 0;
 }
 // .icon-container{
 //   width:50px;
@@ -1404,7 +1404,7 @@ export default {
     background:#263445
   }
   #logo img{
-    margin:14.9px 0;
+    margin:17.9px 0;
   }
   // .icon-container{
   //   margin-top:10px;
@@ -1455,7 +1455,7 @@ export default {
     background:#263445
   }
   #logo img{
-    margin:19px 0;
+    margin:22px 0;
   }
   // .icon-container{
   //   margin-top:-2px;
