@@ -32,26 +32,25 @@ export default {
 .hamburger {
 	display: inline-block;
 	cursor: pointer;
-	width: 40px;
-	height: 40px;
-	transform: rotate(90deg);
+	width: 26px;
+	height: 26px;
+	transform:translate(-50%,0) rotate(90deg);
 	transition: .38s;
 	transform-origin: 50% 50%;
 }
 .hamburger.is-active {
-	transform: rotate(0deg);
+	transform:translate(-50%,0) rotate(0deg);
 }
 @media screen and (min-width: 1281px) and (max-width:1367px){
   .hamburger{
-    width: 35px;
-	  height: 35px;
+    width: 26px;
+	  height: 26px;
   }
 }
 @media all and (min-width:1024px) and (max-width:1280px)  {
   .hamburger{
-    margin-left:-5px;
-    width: 35px;
-	  height: 35px;
+    width: 26px;
+	  height: 26px;
   }
 }
 </style>

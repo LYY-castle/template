@@ -119,7 +119,7 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
 .tags-view-container {
   position:fixed;
-  width:84.4%;
+  width:97.2%;
   z-index:999;
   .tags-view-wrapper {
     background: #F8F8F8;
@@ -137,7 +137,7 @@ export default {
       margin-left: 5px;
       margin-top: 4px;
       &:first-of-type {
-        margin-left: 0;
+        margin-left: 20px;
       }
       &.active {
         background-color: #42b983;
