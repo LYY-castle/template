@@ -98,7 +98,7 @@
       </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="sendVisible=true;dynamicValidateForm.name='';">发送短信</el-button>
+        <el-button type="success" size="small" @click="sendVisible=true;dynamicValidateForm.name='';resetForm('dynamicValidateForm')">发送短信</el-button>
         <el-pagination
           v-if="pageShow"
           background
@@ -146,7 +146,7 @@
           <el-input v-model="domain.value" size="small" style="width:82%"></el-input>
           <el-button type="error" size="small" @click.prevent="removeDomain(domain)">删除</el-button>
         </el-form-item>
-        <el-form-item>
+        <el-form-item style="text-align: right;">
           <el-button @click="addDomain">新增号码</el-button>
           <el-button type="primary" @click="validate('dynamicValidateForm')">发送</el-button>
           <el-button type="danger" @click="resetForm('dynamicValidateForm')">重置</el-button>
@@ -256,8 +256,6 @@
       </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="danger" @click="radio='';messageVisible=false">取消</el-button>
-        <el-button @click="selectedMessage()">确定</el-button>
         <el-pagination
           v-if="messagePageShow"
           background
@@ -269,6 +267,10 @@
           layout="total, sizes, prev, pager, next, jumper "
           :total='messagePageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
+    </el-row>
+    <el-row style="text-align: right; margin-top:10px">
+      <el-button type="danger" @click="radio='';messageVisible=false">取消</el-button>
+      <el-button @click="selectedMessage()">确定</el-button>
     </el-row>
     </el-dialog>
      <!-- 发送 -->
