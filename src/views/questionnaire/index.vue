@@ -215,7 +215,7 @@
                 </div>
                 <div class="lastbuttons" >
                   <div style="margin-top:8px">
-                    <el-button type="primary" size="small" @click="completeFillQuestionnaire(templateId,oneDetails.name);">完成</el-button>
+                    <el-button type="primary" size="small" @click="completeFillQuestionnaire(templateId,oneDetails.name);" v-if="showComplete===true">完成</el-button>
                     <el-button type="default" size="small" @click="pagePosition='1'">返回</el-button><br/><br/>
                   </div>
                 </div>
@@ -511,7 +511,8 @@ export default {
       deleteVisiable: false, // 删除提示dialog
       batchdeletVisiable: false, // 批量删除提示dialog
       deleteRecordId: '', // 需要删除记录的id
-      batchDeleteIds: [] // 批量删除的ids
+      batchDeleteIds: [], // 批量删除的ids
+      showComplete: true // 是否完成
     }
   },
 
@@ -627,6 +628,7 @@ export default {
         this.$message.error('请先选择问卷模板！')
         return
       } else {
+        this.showComplete = true
         this.fillQuestionnaire(id)
       }
     },
@@ -675,6 +677,7 @@ export default {
     },
     // 完成问卷填写
     completeFillQuestionnaire(templateId, templateName) {
+      this.showComplete = false
       this.hasBlanksOrNot(this.show_singleItems, this.show_multiItems, this.show_fillBlanks, this.show_multiBlanks, this.selectOption_single, this.selectOption_multi, this.selectOption_blanks, this.selectOption_multiblanks)
       // console.log(this.singleCheck, this.multiCheck, this.blanksCheck, this.multiblanksCheck)
       if (this.singleCheck === true &&
@@ -742,6 +745,7 @@ export default {
                 this.$message.success(response.data.message)
                 this.getQuestionnaireRecords(this.req2)
                 this.pagePosition = '1'
+                this.showComplete = true
               } else {
                 this.$message.error(response.data.message)
               }
