@@ -534,26 +534,10 @@
     methods: {
       getStartTimestamp(timeStr, type) {
         let startTime
-        if (type) {
-          switch (type) {
-            case 'hour':
-              startTime = moment(timeStr, 'x')
-              break
-            case 'day':
-              startTime = moment(timeStr, 'x')
-              break
-            case 'week':
-              startTime = moment(timeStr, 'x')
-              break
-            case 'month':
-              startTime = moment(timeStr, 'x')
-              break
-            case 'year':
-              startTime = moment(timeStr, 'x')
-              break
-          }
+        if (type === 'hour') {
+          startTime = moment(timeStr, 'x').minute(0).second(0).millisecond(0)
         } else {
-          return
+          startTime = moment(timeStr, 'x')
         }
         return startTime.valueOf()
       },
@@ -562,7 +546,7 @@
         if (type) {
           switch (type) {
             case 'hour':
-              endTime = moment(timeStr, 'x').add(1, 'hours').subtract(1, 'ms')
+              endTime = moment(timeStr, 'x').minute(0).second(0).millisecond(0).add(1, 'hours').subtract(1, 'ms')
               break
             case 'day':
               endTime = moment(timeStr, 'x').add(1, 'days').subtract(1, 'ms')
