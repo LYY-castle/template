@@ -303,9 +303,10 @@
           label="属性值"
           :key="domain.key"
           :prop="'domains.' + index + '.value'"
-          :rules="{
-            required: true, message: '不能为空', trigger: 'blur'
-          }" v-if="productPropertyInfo.templateType==='radio'||productPropertyInfo.templateType==='checkbox'||productPropertyInfo.templateType==='select'">
+          :rules="[
+          {required: true, message: '不能为空', trigger: 'blur'},
+          { min: 0, max: 50, message: '超过长度', trigger: 'blur' }
+          ]" v-if="productPropertyInfo.templateType==='radio'||productPropertyInfo.templateType==='checkbox'||productPropertyInfo.templateType==='select'">
           <el-input v-model="domain.value" style="width: 70%;"></el-input><el-button @click.prevent="removeDomain(domain)" style="width: 20%;margin-left: 10px;">删除</el-button>
         </el-form-item>
          <el-form-item label="属性排序" prop="sort">
@@ -387,9 +388,10 @@
           label="属性值"
           :key="domain.key"
           :prop="'domains.' + index + '.value'"
-          :rules="{
-            required: true, message: '域名不能为空', trigger: 'blur'
-          }" v-if="modifyProductPropertyInfo.templateType==='radio'||modifyProductPropertyInfo.templateType==='checkbox'||modifyProductPropertyInfo.templateType==='select'">
+          :rules="[
+          {required: true, message: '不能为空', trigger: 'blur' },
+          { min: 0, max: 50, message: '超过长度', trigger: 'blur' }
+          ]" v-if="modifyProductPropertyInfo.templateType==='radio'||modifyProductPropertyInfo.templateType==='checkbox'||modifyProductPropertyInfo.templateType==='select'">
           <el-input v-model="domain.value" style="width: 70%;"></el-input><el-button @click="removeModifyDomain(domain)" style="width: 20%;margin-left: 10px;">删除</el-button>
         </el-form-item>
          <el-form-item label="属性排序" prop="sort">
@@ -490,7 +492,8 @@ export default {
           { required: true, message: '不能为空', trigger: 'change' }
         ],
         propertyValue: [
-          { required: true, message: '不能为空', trigger: 'blur' }
+          { required: true, message: '不能为空', trigger: 'blur' },
+          { min: 0, max: 50, message: '超过长度', trigger: 'blur' }
         ]
       },
       modifyDialogVisible: false,
@@ -619,7 +622,7 @@ export default {
         if (valid) {
           if (this.addProduct.propertyInfos) {
             for (let index = 0; index < this.addProduct.propertyInfos.length; index++) {
-              if (!this.addProduct.propertyInfos[index].propertyType) {
+              if (this.addProduct.propertyInfos[index].propertyType instanceof Array) {
                 this.addProduct.propertyInfos[index].propertyType = ''
               }
               if (this.addProduct.propertyInfos[index].propertyValue instanceof Array) {
@@ -627,6 +630,7 @@ export default {
               }
             }
           }
+          console.log('this.addProduct', this.addProduct)
           createTemplateInfo(this.addProduct).then(response => {
             if (response.data.code === 0) {
               this.$message.success(response.data.message)
@@ -655,7 +659,7 @@ export default {
     updateTemplateInfo() {
       if (this.addProduct.propertyInfos) {
         for (let index = 0; index < this.addProduct.propertyInfos.length; index++) {
-          if (!this.addProduct.propertyInfos[index].propertyType) {
+          if (this.addProduct.propertyInfos[index].propertyType instanceof Array) {
             this.addProduct.propertyInfos[index].propertyType = ''
           }
           if (this.addProduct.propertyInfos[index].propertyValue instanceof Array) {
