@@ -526,6 +526,12 @@
 .question .el-input__inner:hover{
   background:rgb(253, 249, 205);
 }
+.question .el-textarea__inner:focus{
+  background:rgb(253, 249, 205);
+}
+.question .el-textarea__inner:hover{
+  background:rgb(253, 249, 205);
+}
 </style>
 
 <style rel='stylesheet/scss' lang="scss" scoped>
@@ -828,7 +834,6 @@ export default {
         this.$message.error('未选择任何类型！')
         return
       } else {
-        console.log(singelItems)
         // 判断是否还有未填项
         this.hasBlanksOrNot(singelItems, multiItems, fillBlanks, multiBlanks)
         if (
