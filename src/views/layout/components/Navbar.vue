@@ -26,7 +26,7 @@
     <el-col :span="3">
       <div id="logo">
         <router-link to="/dashboard">
-          <img src="../../../../static/images/logo.png">
+          <img src="../../../../static/images/Logo.png">
         </router-link>
       </div>
     </el-col>
@@ -281,7 +281,6 @@
       </div>
   </el-dialog>
   </el-menu>
-
 </template>
 
 <script>
