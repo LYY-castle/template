@@ -119,7 +119,7 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
 .tags-view-container {
   position:fixed;
-  width:97.2%;
+  width:89%;
   z-index:999;
   .tags-view-wrapper {
     background: #F8F8F8;
