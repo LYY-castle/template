@@ -311,7 +311,7 @@
 </style>
 
 <script>
-  import {rule} from '@/utils/validate' // 校验工具
+  import { rule } from '@/utils/validate' // 校验工具
   import {
     checkManager,
     checkStaff,

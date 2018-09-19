@@ -118,15 +118,12 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 .tags-view-container {
-  // position:fixed;
-  width:100%;
+  position:fixed;
+  width:89%;
   z-index:999;
-  // margin-top:54px;
   .tags-view-wrapper {
-    background: #fff;
+    background: #F8F8F8;
     height: 34px;
-    border-bottom: 1px solid #d8dce5;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);
     .tags-view-item {
       display: inline-block;
       position: relative;
@@ -140,7 +137,7 @@ export default {
       margin-left: 5px;
       margin-top: 4px;
       &:first-of-type {
-        margin-left: 15px;
+        margin-left: 20px;
       }
       &.active {
         background-color: #42b983;
@@ -195,7 +192,11 @@ export default {
       text-align: center;
       transition: all .3s cubic-bezier(.645, .045, .355, 1);
       transform-origin: 100% 50%;
+      background-color: #b4bccc;
+      color: #fff;
       &:before {
+        font-weight:bold;
+        font-size:16px;
         transform: scale(.6);
         display: inline-block;
         vertical-align: -3px;

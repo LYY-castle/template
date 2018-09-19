@@ -29,6 +29,6 @@ export default {
 
 <style rel="stylesheet/scss">
   .container{
-    padding:20px 20px;
+    padding:120px 20px 0 20px ;
   }
 </style>

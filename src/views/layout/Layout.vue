@@ -1,10 +1,10 @@
 <template>
   <div class="app-wrapper" :class="classObj">
     <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside"></div>
+    <navbar></navbar>
     <sidebar class="sidebar-container"></sidebar>
     <div class="main-container">
-      <navbar></navbar>
-      <tags-view></tags-view>
+      <!-- <tags-view></tags-view> -->
       <app-main></app-main>
     </div>
   </div>
@@ -68,31 +68,44 @@ export default {
   /* .main-container{
       transform: scale3d(1, 1, 1);
   } */
+  navbar{
+    z-index:200;
+  }
   #app .sidebar-container {
-    /* width: 210px!important; */
-    width: 11%!important;
+    /* margin-top:109px; */
+    width: 210px !important;
+    z-index:100;
   }
   #app .main-container {
     /* margin-left: 210px; */
     margin-left: 11%;
   }
-  @media screen and (min-width: 1200px) {
+  @media screen and (min-width: 1281px) and (max-width:1367px){
+    #app .sidebar-container {
+      width: 154px !important;
+    }
     #app .sidebar-container span{
       font-size:12px;
     }
     #app .sidebar-container .svg-icon {
-    margin-right: 0;
-}
+      margin-right: 0;
+    }
   }
-  @media all and (min-width:1024px) and (max-width:1199px)  {
+  @media all and (min-width:1024px) and (max-width:1280px)  {
+    #app .sidebar-container {
+      width: 137px !important;
+    }
     #app .sidebar-container span{
       font-size:10px;
     }
     #app .sidebar-container .svg-icon {
     margin-right: 0;
-}
+    }
   }
   @media all and (min-width:400px) and (max-width:1023px)  {  
+    #app .sidebar-container {
+      width: 137px !important;
+    }
     #app .sidebar-container span{
       font-size:8px;
     }
