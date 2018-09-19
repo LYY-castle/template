@@ -258,9 +258,9 @@
         <el-form-item label="英文名称" prop="propertyKey">
           <el-input v-model="productPropertyInfo.propertyKey" size="small"></el-input>
         </el-form-item>
-        <el-form-item label="属性值是否输入" prop="showOrInput">
+        <el-form-item label="值是否自定义" prop="showOrInput">
           <el-select v-model="productPropertyInfo.showOrInput" style="width: 100%;" @change="resetProperty()">
-            <el-option value="" label="请选择属性值是否输入"></el-option>
+            <el-option value="" label="请选择属性值是否自定义"></el-option>
             <el-option value="0" label="是"></el-option>
             <el-option value="1" label="否"></el-option>
           </el-select>
@@ -285,17 +285,17 @@
         <el-form-item label="模板类型" prop="templateType" v-if="productPropertyInfo.showOrInput==='1'">
           <el-select v-model="productPropertyInfo.templateType" style="width: 100%;">
             <el-option value="" label="请选择模板类型"></el-option>
-            <el-option value="text" label="文本"></el-option>
-            <el-option value="textarea" label="文本域"></el-option>
+            <el-option value="text" label="短文本"></el-option>
+            <el-option value="textarea" label="长文本"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="模板类型" prop="templateType" v-if="productPropertyInfo.showOrInput==='0'">
-          <el-select v-model="productPropertyInfo.templateType" style="width: 100%;">
+          <el-select v-model="productPropertyInfo.templateType" style="width: 100%;"  @change="changeResetProductProperty()">
             <el-option value="" label="请选择模板类型"></el-option>
-            <el-option value="text" label="文本"></el-option>
+            <el-option value="text" label="短文本"></el-option>
             <el-option value="radio" label="单选"></el-option>
             <el-option value="checkbox" label="多选"></el-option>
-            <el-option value="textarea" label="文本域"></el-option>
+            <el-option value="textarea" label="长文本"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="属性值" prop="propertyValue" v-if="productPropertyInfo.showOrInput==='0'&&productPropertyInfo.templateType==='text'">
@@ -316,7 +316,7 @@
         </el-form-item>
         <el-form-item
             v-for="(domain, index) in productPropertyInfo.domains"
-            label="属性值"
+            :label="'属性值'+(index+1)"
             :key="domain.key"
             :prop="'domains.' + index + '.value'"
             :rules="[
@@ -346,9 +346,9 @@
         <el-form-item label="英文名称" prop="propertyKey">
           <el-input v-model="modifyProductPropertyInfo.propertyKey" size="small"></el-input>
         </el-form-item>
-        <el-form-item label="属性值是否输入" prop="showOrInput">
+        <el-form-item label="值是否自定义" prop="showOrInput">
           <el-select v-model="modifyProductPropertyInfo.showOrInput" style="width: 100%;" @change="resetProperty()">
-            <el-option value="" label="请选择属性值是否输入"></el-option>
+            <el-option value="" label="请选择属性值是否自定义"></el-option>
             <el-option value="0" label="是"></el-option>
             <el-option value="1" label="否"></el-option>
           </el-select>
@@ -373,17 +373,17 @@
         <el-form-item label="模板类型" prop="templateType" v-if="modifyProductPropertyInfo.showOrInput==='1'">
           <el-select v-model="modifyProductPropertyInfo.templateType" style="width: 100%;">
             <el-option value="" label="请选择模板类型"></el-option>
-            <el-option value="text" label="文本"></el-option>
-            <el-option value="textarea" label="文本域"></el-option>
+            <el-option value="text" label="短文本"></el-option>
+            <el-option value="textarea" label="长文本"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="模板类型" prop="templateType" v-if="modifyProductPropertyInfo.showOrInput==='0'">
           <el-select v-model="modifyProductPropertyInfo.templateType" style="width: 100%;"  @change="changeResetModifyProperty()">
             <el-option value="" label="请选择模板类型"></el-option>
-            <el-option value="text" label="文本"></el-option>
+            <el-option value="text" label="短文本"></el-option>
             <el-option value="radio" label="单选"></el-option>
             <el-option value="checkbox" label="多选"></el-option>
-            <el-option value="textarea" label="文本域"></el-option>
+            <el-option value="textarea" label="长文本"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="属性值" prop="propertyValue" v-if="modifyProductPropertyInfo.showOrInput==='0'&&modifyProductPropertyInfo.templateType==='text'">
@@ -404,7 +404,7 @@
          </el-form-item>
         <el-form-item
           v-for="(domain, index) in modifyProductPropertyInfo.domains"
-          label="属性值"
+          :label="'属性值'+(index+1)"
           :key="domain.key"
           :prop="'domains.' + index + '.value'"
           :rules="[
@@ -741,8 +741,12 @@ export default {
       })
     },
     resetForm(formName) {
-      if (this.$refs[formName] !== undefined) {
-        this.$refs[formName].resetFields()
+      this.addProduct = {
+        productName: '',
+        price: '',
+        productTypeId: '',
+        description: '',
+        propertyInfos: []
       }
     },
     submitForm(formName) {
@@ -931,18 +935,28 @@ export default {
       this.modifyProductPropertyInfo.propertyValue = ''
       this.modifyProductPropertyInfo.domains = []
       this.modifyProductPropertyInfo.domains.push({
-        value: ''
+        value: '',
+        key: Date.now()
+      })
+    },
+    changeResetProductProperty() {
+      this.productPropertyInfo.propertyValue = ''
+      this.productPropertyInfo.domains = []
+      this.productPropertyInfo.domains.push({
+        value: '',
+        key: Date.now()
       })
     },
     resetModifyProductPropertyInfo() {
-      this.modifyProductPropertyInfo = {}
+      this.modifyProductPropertyInfo = ''
       var obj = this.addProduct.propertyInfos[this.modifyId]
       this.modifyProductPropertyInfo = JSON.parse(JSON.stringify(obj))
       if (this.modifyProductPropertyInfo.templateType === 'radio' || this.modifyProductPropertyInfo.templateType === 'checkbox' || this.modifyProductPropertyInfo.templateType === 'select') {
         this.modifyProductPropertyInfo.domains = []
         this.modifyProductPropertyInfo.propertyValue.forEach(element => {
           this.modifyProductPropertyInfo.domains.push({
-            value: element
+            value: element,
+            key: Date.now() + '' + Math.random()
           })
         })
       }
