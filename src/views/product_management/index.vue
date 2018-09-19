@@ -145,7 +145,14 @@
             </el-option>
           </el-select>
         </el-form-item>
-         <el-form-item
+        <el-form-item label="产品备注" prop="description">
+          <el-input type="textarea" v-model="addProduct.description" size="small"></el-input>
+        </el-form-item>
+        <!-- 新增属性 -->
+        <el-form-item label="属性">
+          <el-button type="success" @click="resetProductPropertyInfo();propertyVisible=true">新增</el-button>
+        </el-form-item>
+        <el-form-item
           v-for="item in addProduct.propertyInfos"
           :label="item.propertyName"
           :key="item.key">
@@ -168,14 +175,10 @@
             </el-option>
           </el-select><el-button @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='checkbox'"  style="width: 20%;margin-left: 10px;">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='checkbox'"  style="width: 20%;">删除</el-button>
         </el-form-item>
-        <el-form-item label="产品备注" prop="description">
-          <el-input type="textarea" v-model="addProduct.description" size="small"></el-input>
-        </el-form-item>
       </el-form>
         <div slot="footer" style="text-align: right;">
           <el-button size="small" type="danger" @click="resetForm('refAddProduct');">重 置</el-button>
           <el-button size="small" @click="addVisible = false">取 消</el-button>
-          <el-button @click="resetProductPropertyInfo();propertyVisible=true">新增属性</el-button>
           <el-button size="small" type="primary" @click="createTemplateInfo('refAddProduct')">确 定</el-button>
         </div>
     </el-dialog>
@@ -204,7 +207,14 @@
             </el-option>
           </el-select>
         </el-form-item>
-         <el-form-item
+        <el-form-item label="产品备注" prop="description">
+          <el-input type="textarea" v-model="addProduct.description" size="small"></el-input>
+        </el-form-item>
+        <!-- 新增属性 -->
+        <el-form-item label="属性">
+          <el-button type="success" @click="resetProductPropertyInfo();propertyVisible=true">新增</el-button>
+        </el-form-item>
+        <el-form-item
           v-for="item in addProduct.propertyInfos"
           :label="item.propertyName"
           :key="item.key">
@@ -227,14 +237,10 @@
             </el-option>
           </el-select><el-button @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='checkbox'" style="width: 20%;margin-left: 10px;">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='checkbox'" style="width: 20%;">删除</el-button>
         </el-form-item>
-        <el-form-item label="产品备注" prop="description">
-          <el-input type="textarea" v-model="addProduct.description" size="small"></el-input>
-        </el-form-item>
       </el-form>
         <div slot="footer" style="text-align: right;">
           <el-button size="small" type="danger" @click="queryTemplateInfo(templateId);">重 置</el-button>
           <el-button size="small" @click="modifyVisible = false">取 消</el-button>
-          <el-button @click="resetProductPropertyInfo();propertyVisible=true">新增属性</el-button>
           <el-button size="small" type="primary" @click="modifyDialog('refUpateProduct')">确 定</el-button>
         </div>
     </el-dialog>
@@ -298,28 +304,31 @@
         <el-form-item label="属性值" prop="propertyValue" v-if="productPropertyInfo.showOrInput==='0'&&productPropertyInfo.templateType==='textarea'">
           <el-input type="textarea" v-model="productPropertyInfo.propertyValue" size="small"></el-input>
         </el-form-item>
-        <el-form-item
-          v-for="(domain, index) in productPropertyInfo.domains"
-          label="属性值"
-          :key="domain.key"
-          :prop="'domains.' + index + '.value'"
-          :rules="[
-          {required: true, message: '不能为空', trigger: 'blur'},
-          { min: 0, max: 50, message: '超过长度', trigger: 'blur' }
-          ]" v-if="productPropertyInfo.templateType==='radio'||productPropertyInfo.templateType==='checkbox'||productPropertyInfo.templateType==='select'">
-          <el-input v-model="domain.value" style="width: 70%;"></el-input><el-button @click.prevent="removeDomain(domain)" style="width: 20%;margin-left: 10px;">删除</el-button>
-        </el-form-item>
          <el-form-item label="属性排序" prop="sort">
           <el-input  v-model="productPropertyInfo.sort" size="small"></el-input>
         </el-form-item> 
         <el-form-item label="属性备注" prop="mark">
           <el-input type="textarea" v-model="productPropertyInfo.mark" size="small"></el-input>
         </el-form-item>
+        <!-- 新增属性值 -->
+        <el-form-item label="属性值"  v-if="productPropertyInfo.templateType==='radio'||productPropertyInfo.templateType==='checkbox'||productPropertyInfo.templateType==='select'">
+          <el-button type="success" @click="addDomain()" v-if="productPropertyInfo.templateType==='radio'||productPropertyInfo.templateType==='checkbox'||productPropertyInfo.templateType==='select'">新增</el-button>
+        </el-form-item>
+        <el-form-item
+            v-for="(domain, index) in productPropertyInfo.domains"
+            label="属性值"
+            :key="domain.key"
+            :prop="'domains.' + index + '.value'"
+            :rules="[
+            {required: true, message: '不能为空', trigger: 'blur'},
+            { min: 0, max: 50, message: '超过长度', trigger: 'blur' }
+            ]" v-if="productPropertyInfo.templateType==='radio'||productPropertyInfo.templateType==='checkbox'||productPropertyInfo.templateType==='select'">
+            <el-input v-model="domain.value" style="width: 70%;"></el-input><el-button @click.prevent="removeDomain(domain)" style="width: 20%;margin-left: 10px;">删除</el-button>
+        </el-form-item>
       </el-form>
         <div slot="footer" style="text-align: right;">
           <el-button size="small" type="danger" @click="resetProductPropertyInfo();">重 置</el-button>
           <el-button size="small" @click="propertyVisible = false">取 消</el-button>
-          <el-button @click="addDomain()" v-if="productPropertyInfo.templateType==='radio'||productPropertyInfo.templateType==='checkbox'||productPropertyInfo.templateType==='select'">新增属性值</el-button>
           <el-button size="small" type="primary" @click="addProductPropertyInfo('refProperty');">确 定</el-button>
         </div>
     </el-dialog>
@@ -383,6 +392,16 @@
         <el-form-item label="属性值" prop="propertyValue" v-if="modifyProductPropertyInfo.showOrInput==='0'&&modifyProductPropertyInfo.templateType==='textarea'">
           <el-input type="textarea" v-model="modifyProductPropertyInfo.propertyValue" size="small"></el-input>
         </el-form-item>
+         <el-form-item label="属性排序" prop="sort">
+          <el-input  v-model="modifyProductPropertyInfo.sort" size="small"></el-input>
+        </el-form-item>
+        <el-form-item label="属性备注" prop="mark">
+          <el-input type="textarea" v-model="modifyProductPropertyInfo.mark" size="small"></el-input>
+        </el-form-item>
+        <!-- 新增属性值 -->
+        <el-form-item label="属性值" v-if="modifyProductPropertyInfo.templateType==='radio'||modifyProductPropertyInfo.templateType==='checkbox'||modifyProductPropertyInfo.templateType==='select'">
+          <el-button type="success" @click="addModifyDomain()" v-if="modifyProductPropertyInfo.templateType==='radio'||modifyProductPropertyInfo.templateType==='checkbox'||modifyProductPropertyInfo.templateType==='select'">新增</el-button>
+         </el-form-item>
         <el-form-item
           v-for="(domain, index) in modifyProductPropertyInfo.domains"
           label="属性值"
@@ -394,17 +413,10 @@
           ]" v-if="modifyProductPropertyInfo.templateType==='radio'||modifyProductPropertyInfo.templateType==='checkbox'||modifyProductPropertyInfo.templateType==='select'">
           <el-input v-model="domain.value" style="width: 70%;"></el-input><el-button @click="removeModifyDomain(domain)" style="width: 20%;margin-left: 10px;">删除</el-button>
         </el-form-item>
-         <el-form-item label="属性排序" prop="sort">
-          <el-input  v-model="modifyProductPropertyInfo.sort" size="small"></el-input>
-        </el-form-item>
-        <el-form-item label="属性备注" prop="mark">
-          <el-input type="textarea" v-model="modifyProductPropertyInfo.mark" size="small"></el-input>
-        </el-form-item>
       </el-form>
         <div slot="footer" style="text-align: right;">
           <el-button size="small" type="danger" @click="resetModifyProductPropertyInfo();">重 置</el-button>
           <el-button size="small" @click="modifyPropertyVisible = false">取 消</el-button>
-          <el-button @click="addModifyDomain()" v-if="modifyProductPropertyInfo.templateType==='radio'||modifyProductPropertyInfo.templateType==='checkbox'||modifyProductPropertyInfo.templateType==='select'">新增属性值</el-button>
           <el-button size="small" type="primary" @click="modifyProductProperty('refModifyProperty');">确 定</el-button>
         </div>
     </el-dialog>
@@ -451,6 +463,13 @@ import { queryTemplateList, queryTemplateInfo, deleteTemplateInfos, deleteTempla
 export default {
   name: 'productManagement',
   data() {
+    var validNum = (eule, value, callback) => {
+      if (value < 1) {
+        return callback(new Error('输入值不能小于1'))
+      } else {
+        callback()
+      }
+    }
     return {
       rules: {
         productName: [
@@ -476,7 +495,8 @@ export default {
         ],
         propertyLength: [
           { required: true, message: '不能为空', trigger: 'blur' },
-          { pattern: /^[0-9]*$/, message: '请输入数字' }
+          { pattern: /^[0-9]*$/, message: '请输入数字' },
+          { validator: validNum, trigger: 'blur' }
         ],
         propertyType: [
           { required: true, message: '不能为空', trigger: 'change' }
