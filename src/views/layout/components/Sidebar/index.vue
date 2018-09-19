@@ -4,7 +4,7 @@
       <hamburger :class="hamburger" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
     </div>
     <el-menu
-      style="margin-top:35px;"
+      style="margin-top:144px;z-index:1;"
       mode="vertical"
       :show-timeout="200"
       :default-active="$route.path"
@@ -67,7 +67,7 @@ export default {
     border-bottom:1px solid #fff;
     position: fixed;
     top:109px;
-    z-index:999;
+    z-index:9999;
     transition: width .3s;
   }
   div.hamberger-bar .opened{
@@ -88,27 +88,27 @@ export default {
     left: 50%;
     transform: translate(0,-50%);
   }
-    @media screen and (min-width: 1281px) and (max-width:1367px){
-      div.hamberger-bar svg{
-        top: 3px;
-      }
-      div.hamberger-bar .opened{
-        width:154px;
-      }
-      div.hamberger-bar .closed{
-        width:36px;
-      }
-    }
-    @media all and (min-width:1024px) and (max-width:1280px)  {
-      div.hamberger-bar svg{
+  @media screen and (min-width: 1281px) and (max-width:1367px){
+    div.hamberger-bar svg{
       top: 3px;
-      }
-      div.hamberger-bar .opened{
-        width:137px;
-      }
-      div.hamberger-bar .closed{
-        width:36px;
-      }
     }
+    div.hamberger-bar .opened{
+      width:154px;
+    }
+    div.hamberger-bar .closed{
+      width:36px;
+    }
+  }
+  @media all and (min-width:1024px) and (max-width:1280px)  {
+    div.hamberger-bar svg{
+    top: 3px;
+    }
+    div.hamberger-bar .opened{
+      width:137px;
+    }
+    div.hamberger-bar .closed{
+      width:36px;
+    }
+  }
 </style>
 

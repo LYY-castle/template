@@ -52,11 +52,11 @@
               </el-popover>
               <!-- 状态 -->
               <el-dropdown trigger="click" placement="bottom" @command="changeState">
-                <img src="../../../../static/images/nologin_state.png" title="未登录" class="img-all" v-show="agentState1">
-                <img src="../../../../static/images/busy_normal.png" title="示忙"  class="img-all" v-show="agentState2">
-                <img src="../../../../static/images/agentStat38_allReady.png" title="就绪"  class="img-all" v-show="agentState3">
-                <img src="../../../../static/images/back_state.png" title="坐席状态"  class="img-all" v-show="agentState4">
-                <el-dropdown-menu slot="dropdown">
+                <img src="../../../../static/images/nologin_state.png" title="未登录" class="img-all" v-if="agentState1">
+                <img src="../../../../static/images/busy_normal.png" title="示忙"  class="img-all" v-else-if="agentState2">
+                <img src="../../../../static/images/agentStat38_allReady.png" title="就绪"  class="img-all" v-else-if="agentState3">
+                <img src="../../../../static/images/back_state.png" title="坐席状态"  class="img-all" v-else-if="agentState4">
+                <el-dropdown-menu slot="dropdown" @click="aaa"> 
                   <el-dropdown-item command="0">就绪</el-dropdown-item>
                   <el-dropdown-item command="13">示忙</el-dropdown-item>
                   <el-dropdown-item command="14">后处理</el-dropdown-item>
@@ -389,6 +389,9 @@ export default {
     }
   },
   methods: {
+    aaa() {
+      console.log(111)
+    },
     // 修改密码
     checkChangePWD(changePWD) {
       if (changePWD.oldPassword === '') {
@@ -1407,7 +1410,7 @@ export default {
  @media screen and (min-width: 1281px) and (max-width:1367px){
   .message{
     float:left;
-    margin-right:10px;
+    margin-right:5px;
     margin-top:11px;
     margin-left:22px;
   }
@@ -1490,7 +1493,7 @@ export default {
     height:78.55px;
   }
   .message{
-    margin-right:10px;
+    margin-right:3px;
     margin-top:9px;
     margin-left:20px;
   }
@@ -1542,8 +1545,8 @@ export default {
   height:109px;
   line-height:0 !important;
   border-radius: 0px !important;
-  -webkit-box-shadow: 0 4px 5px #888;
-  box-shadow:  0 4px 5px #888;
+  // -webkit-box-shadow: 0 4px 5px #888;
+  // box-shadow:  0 4px 5px #888;
   .el-form-item{
     margin-bottom:0;
     height:30px;

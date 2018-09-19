@@ -68,9 +68,13 @@ export default {
   /* .main-container{
       transform: scale3d(1, 1, 1);
   } */
+  navbar{
+    z-index:200;
+  }
   #app .sidebar-container {
-    margin-top:109px;
+    /* margin-top:109px; */
     width: 210px !important;
+    z-index:100;
   }
   #app .main-container {
     /* margin-left: 210px; */
