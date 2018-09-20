@@ -1283,7 +1283,6 @@ export default {
       this.$store.commit('OPEN_SIDEBAR')
       this.toggleSideBar()
     }
-    this.toggleSideBar()// logo和菜单缩放
     checkSoftphonePerm(agentId).then(res => {
       this.havesoftphone = true
       cti.connectCTI('ws://119.27.179.175:9050/')
@@ -1430,7 +1429,7 @@ export default {
     width:150px;
   }
   .icon-size{
-    font-size:30px;
+    font-size:15px;
   }
   #logo{
     width:154px;
@@ -1513,7 +1512,7 @@ export default {
     width:120px;
   }
   .icon-size{
-    font-size:30px;
+    font-size:25px;
   }
   .el-button.is-circle {
     border-radius: 50%;
