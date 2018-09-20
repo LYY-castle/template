@@ -152,7 +152,7 @@
         <el-button type="success" size="small" @click="addVisible=true;batchSnapshot=[];fileList=[];resetForm('addBatch');clearUpload('upload');">新建</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         <el-button type="primary" size="small" @click="getTemp()">下载模板</el-button>
-        <el-button type="primary" size="small" @click="uploadVisible=true;changeUpload(1);clearUpload('upload');">上传模板</el-button>
+        <!-- <el-button type="primary" size="small" @click="uploadVisible=true;changeUpload(1);clearUpload('upload');">上传模板</el-button> -->
         <el-pagination
           v-if="pageShow"
           background
@@ -503,6 +503,7 @@ export default {
     // 下载模版
     getTemp() {
       window.location.href = `/api/v1/batch/downloadtemp?token=Bearer ${this.token}`
+      // window.location.href = `http://localhost:8090/batch/downloadtemp?token=Bearer ${this.token}`
     },
     // 上传
     // 验证上传文件的格式及大小
