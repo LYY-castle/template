@@ -305,7 +305,7 @@
           <el-input type="textarea" v-model="productPropertyInfo.propertyValue" size="small"></el-input>
         </el-form-item>
          <el-form-item label="属性排序" prop="sort">
-          <el-input  v-model="productPropertyInfo.sort" size="small"></el-input>
+          <el-input  v-model="productPropertyInfo.sort" size="small" placeholder="该属性在该产品所有属性的展示顺序"></el-input>
         </el-form-item> 
         <el-form-item label="属性备注" prop="mark">
           <el-input type="textarea" v-model="productPropertyInfo.mark" size="small"></el-input>
@@ -393,7 +393,7 @@
           <el-input type="textarea" v-model="modifyProductPropertyInfo.propertyValue" size="small"></el-input>
         </el-form-item>
          <el-form-item label="属性排序" prop="sort">
-          <el-input  v-model="modifyProductPropertyInfo.sort" size="small"></el-input>
+          <el-input  v-model="modifyProductPropertyInfo.sort" size="small" placeholder="该属性在该产品所有属性的展示顺序"></el-input>
         </el-form-item>
         <el-form-item label="属性备注" prop="mark">
           <el-input type="textarea" v-model="modifyProductPropertyInfo.mark" size="small"></el-input>
@@ -769,6 +769,10 @@ export default {
             this.productPropertyInfo.domains.forEach(element => {
               this.productPropertyInfo.propertyValue.push(element.value)
             })
+            if (this.productPropertyInfo.propertyValue.length < 2) {
+              this.$message.error('值的个数不能小于2')
+              return
+            }
           }
           const obj = { isRequired: this.productPropertyInfo.isRequired, // 是否必填 0否 1是
             mark: this.productPropertyInfo.mark, // 属性说明
@@ -911,6 +915,10 @@ export default {
             this.modifyProductPropertyInfo.domains.forEach(element => {
               this.modifyProductPropertyInfo.propertyValue.push(element.value)
             })
+            if (this.modifyProductPropertyInfo.propertyValue.length < 2) {
+              this.$message.error('值的个数不能小于2')
+              return
+            }
           }
           const obj = { isRequired: this.modifyProductPropertyInfo.isRequired, // 是否必填 0否 1是
             mark: this.modifyProductPropertyInfo.mark, // 属性说明
