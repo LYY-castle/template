@@ -170,3 +170,9 @@ export function getSummariesByAgentId(agentId) {
     }
   })
 }
+export function findCampaignByUser() {
+  return request({
+    url: '/campaign/findCampaignByUser',
+    method: 'get'
+  })
+}

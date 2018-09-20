@@ -89,6 +89,17 @@
                   </el-option>
                 </el-select>
             </el-form-item>
+            <el-form-item label="活动：">
+                <el-select v-model="req.campaignId">
+                  <el-option
+                    v-for="item in campaignsInfo"
+                    :key="item.campaignId"
+                    :value="item.campaignId"
+                    :label="item.campaignName">
+
+                  </el-option>
+                </el-select>
+            </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
                 <el-button type="danger" @click="clearForm(req)">重置</el-button>
@@ -147,6 +158,15 @@
             label="地区"
             prop="customerAddress"
             :show-overflow-tooltip="true">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="所属活动"
+            :show-overflow-tooltip="true">
+            <template
+              slot-scope="scope">
+              {{showCampaign(scope.row.campaignId)}}
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -510,7 +530,8 @@ import {
   queryOneTask,
   updateTaskStatus,
   updateRecordInfo,
-  getSummariesByAgentId
+  getSummariesByAgentId,
+  findCampaignByUser
 } from '@/api/dialTask' // 接口
 var vm = null
 
@@ -522,6 +543,7 @@ export default {
       isRecruit: false,
       addDays: '',
       summariesInfo: [], // 小结下拉选择
+      campaignsInfo: [], // 活动下拉选择
       taskStatusOptions: [{// 任务状态选项框
         value: '',
         label: '所有情况'
@@ -624,6 +646,14 @@ export default {
     }
   },
   methods: {
+    showCampaign(info) {
+      for (let i = 0; i < vm.campaignsInfo.length; i++) {
+        if (vm.campaignsInfo[i].campaignId === info) {
+          return vm.campaignsInfo[i].campaignName
+        }
+      }
+      return ''
+    },
     showStatus(status) {
       return status === '1' || status === '0'
     },
@@ -1471,6 +1501,18 @@ export default {
     }).catch(error => {
       console.log(error)
       vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
+    })
+    findCampaignByUser().then(res => {
+      if (res.data.code === 0) {
+        vm.campaignsInfo.push({ campaignId: '', campaignName: '所有活动' })
+        if (res.data.data.length > 0) {
+          for (let i = 0; i < res.data.data.length; i++) {
+            vm.campaignsInfo.push({ campaignId: res.data.data[i].campaignId, campaignName: res.data.data[i].campaignName })
+          }
+        }
+      } else {
+        vm.campaignsInfo.push({ campaignId: '', campaignName: '所有活动' })
+      }
     })
     // this.req = this.$store.state.dialTask.req
   },
