@@ -118,7 +118,8 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 .tags-view-container {
-  position:fixed;
+  position: absolute;
+  top:75px;
   width:89%;
   z-index:999;
   .tags-view-wrapper {

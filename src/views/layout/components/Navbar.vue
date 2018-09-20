@@ -1405,20 +1405,22 @@ export default {
 }
 .user{
   float:left;
+  margin-right:25px;
   margin-top:10px;
 }
  @media screen and (min-width: 1281px) and (max-width:1367px){
-  .message{
-    float:left;
-    margin-right:5px;
-    margin-top:11px;
-    margin-left:22px;
-  }
-  .user{
-    float:left;
-    margin-top:12px;
-  }
-  .status-container{
+   .message{
+     float:left;
+     margin-right:5px;
+     margin-top:18px;
+     margin-left:22px;
+   }
+   .user{
+     float:left;
+     margin-right:5px;
+     margin-top:19px;
+   }
+   .status-container{
     font-size:14px;
     width:107px;
     margin-right:7px;
@@ -1494,11 +1496,12 @@ export default {
   }
   .message{
     margin-right:3px;
-    margin-top:9px;
+    margin-top:19px;
     margin-left:20px;
   }
   .user{
-    margin-top:10px;
+    margin-right:3px;
+    margin-top:20px;
   }
   .status-container{
     font-size:14px;

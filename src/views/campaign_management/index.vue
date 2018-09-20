@@ -188,9 +188,9 @@
           <el-select v-model="campaignDetail.products" multiple placeholder="请选择产品" style="width: 100%;">
             <el-option
                 v-for="item in productData"
-                :key="item.productId"
+                :key="item.templateId"
                 :label="item.productName"
-                :value="item.productId">
+                :value="item.templateId">
             </el-option>
           </el-select>
         </el-form-item>
@@ -315,9 +315,9 @@
           <el-select v-model="campaignDetail.products" multiple placeholder="请选择产品" style="width: 100%;">
             <el-option
                 v-for="item in productData"
-                :key="item.productId"
+                :key="item.templateId"
                 :label="item.productName"
-                :value="item.productId">
+                :value="item.templateId">
             </el-option>
           </el-select>
         </el-form-item>
@@ -1007,7 +1007,7 @@ export default {
         for (var i = 0; i < productIds.length; i++) {
           list = productIds[i]
           for (var j = 0; j < this.productData.length; j++) {
-            if (list === this.productData[j].productId) {
+            if (list === this.productData[j].templateId) {
               if (this.productName.indexOf() === -1) {
                 productNames.push(this.productData[j].productName)
               }
@@ -1073,7 +1073,7 @@ export default {
           for (var i = 0; i < this.campaignDetail.products.length; i++) {
             list = this.campaignDetail.products[i]
             for (var j = 0; j < this.productData.length; j++) {
-              if (list === this.productData[j].productId) {
+              if (list === this.productData[j].templateId) {
                 if (this.productName.indexOf() === -1) {
                   this.productName.push(this.productData[j].productName)
                 }
