@@ -86,3 +86,11 @@ export function getDepartId() {
     method: 'post'
   })
 }
+
+export function departAgents(id) {
+  return request({
+    url: '/orderReport/departAgents',
+    method: 'get',
+    params: { 'depart_id': id }
+  })
+}

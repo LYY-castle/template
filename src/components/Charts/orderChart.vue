@@ -118,9 +118,14 @@
     </el-form>
     <div :class="className" id="staff" style="height: 100%;width: 100%;"></div>
     <el-form :inline="true" class="demo-form-inline" size="small" style="margin: 10px 0">
-      <el-form-item label="员工选项:" style="margin-bottom: 0">
+      <el-form-item label="部门选项:" style="margin-bottom: 0" v-if="statistics_type === 'depart'">
         <el-select v-model="formInline.staff" @change="agentChange">
-          <el-option v-for="item in staffOptions" :key="item.angentId" :label="item.angentId" :value="item.angentId"></el-option>
+          <el-option v-for="item in staffOptions" :key="item.depart_id" :label="item.depart_name" :value="item.depart_id"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="员工选项:" style="margin-bottom: 0" v-else>
+        <el-select v-model="formInline.staff" @change="agentChange">
+          <el-option v-for="item in staffOptions" :key="item" :label="item" :value="item"></el-option>
         </el-select>
       </el-form-item>
     </el-form>
@@ -150,8 +155,10 @@
         style="width: 100%;">
         <el-table-column
           align="center"
-          prop="agent_id"
-          label="下属员工">
+          :label="statistics_type === 'depart'?'下属部门':'下属员工'">
+          <template slot-scope="scope">
+            {{statistics_type === 'depart'?scope.row.depart_name:scope.row.agent_id}}
+          </template>
         </el-table-column>
         <el-table-column
           align="center"
@@ -169,7 +176,7 @@
           label="订单平均金额">
         </el-table-column>
       </el-table>
-      <h3>员工表详情</h3>
+      <h3>{{statistics_type === 'depart'?'下属部门详情':'下属员工详情'}}</h3>
       <div style="margin-top:1%;" v-for="(item, index) in staffOptions">
         <el-table
           :header-row-style="headerRow"
@@ -181,8 +188,10 @@
           style="width: 100%;">
           <el-table-column
             align="center"
-            prop="agent_id"
-            label="下属员工">
+            :label="statistics_type === 'depart'?'下属部门':'下属员工'">
+            <template slot-scope="scope">
+              {{statistics_type === 'depart'?scope.row.depart_name:scope.row.agent_id}}
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -379,7 +388,7 @@
 <script>
   import echarts from 'echarts'
   import resize from './mixins/resize'
-  import { orderstatistics, getAllStaffByDepartId, getDepartId, ordertotalAgent, orderreportAgent } from '@/api/ctiReport'
+  import { orderstatistics, departAgents, getDepartId, ordertotalAgent, orderreportAgent } from '@/api/ctiReport'
   import { Message } from 'element-ui'
   import { permsorderdepart, permsorderstaff } from '@/api/reportPermission'
   import { findCampaignByUser } from '@/api/monitor_list_single'
@@ -418,6 +427,8 @@
     // },
     data() {
       return {
+        statistics_type: '',
+        departId: '',
         week: {
           firstDayOfWeek: 1
         },
@@ -468,7 +479,8 @@
           staff: '',
           time_dimension: '',
           productClone: '',
-          product: ''
+          product: '',
+          agent_dnName: []
         },
         tableData: [],
         tableData1: [],
@@ -495,15 +507,28 @@
       })
       getDepartId().then(res => {
         this.staffAgentid = res.data.agentid
+        this.departId = res.data.departId
         permsorderdepart(res.data.agentid).then(r => {
           this.departPermission = true
           this.staffPermission = false
-          getAllStaffByDepartId(res.data.departId).then(response => {
-            this.staffOptions = response.data.data
-            this.formInline.agent_dn = response.data.data.map(function(item, index) {
-              return item.angentId
-            })
-            this.formInline.staff = response.data.data[0].angentId
+          departAgents(res.data.departId).then(response => {
+            this.statistics_type = response.data.result.statistics_type
+            if (response.data.result.statistics_type === 'depart') {
+              this.staffOptions = response.data.result.sub_departs
+              this.formInline.staff = response.data.result.sub_departs[0].depart_id
+              this.formInline.agent_dn = response.data.result.sub_departs.map(function(item, index) {
+                return item.depart_id
+              })
+              this.formInline.agent_dnName = response.data.result.sub_departs.map(function(item, index) {
+                return item.depart_name
+              })
+            } else {
+              this.staffOptions = response.data.result.agent_ids
+              this.formInline.staff = response.data.result.agent_ids[0]
+              this.formInline.agent_dn = response.data.result.agent_ids.map(function(item, index) {
+                return item.angentId
+              })
+            }
             this.search(0)
           })
         }).catch((error) => {
@@ -646,6 +671,8 @@
       },
       handleCurrentChange1(val) {
         orderreportAgent({
+          statistics_type: this.statistics_type,
+          depart_id: this.departId,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: this.formInline.agent_dn[this.currentIndex],
@@ -662,6 +689,8 @@
       },
       handleCurrentChangeAgent(val) {
         orderreportAgent({
+          statistics_type: this.statistics_type,
+          depart_id: this.departId,
           product_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
@@ -682,6 +711,8 @@
           return this.tableData
         }
         orderreportAgent({
+          statistics_type: this.statistics_type,
+          depart_id: this.departId,
           product_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
@@ -701,6 +732,8 @@
       },
       searchAgentStaff(val) {
         orderreportAgent({
+          statistics_type: this.statistics_type,
+          depart_id: this.departId,
           product_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
@@ -993,7 +1026,7 @@
             axisLabel: {
               interval: 'auto'
             },
-            data: this.formInline.agent_dn
+            data: this.statistics_type === 'depart' ? this.formInline.agent_dnName : this.formInline.agent_dn
           }],
           yAxis: [{
             type: 'value',
@@ -1357,6 +1390,8 @@
       },
       timeChange(val) {
         orderreportAgent({
+          statistics_type: this.statistics_type,
+          depart_id: this.departId,
           product_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
@@ -1381,6 +1416,8 @@
       },
       agentChange(val, page) {
         orderreportAgent({
+          statistics_type: this.statistics_type,
+          depart_id: this.departId,
           product_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
@@ -1415,6 +1452,8 @@
       },
       teamData(val) {
         orderstatistics({
+          statistics_type: this.statistics_type,
+          depart_id: this.departId,
           product_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
@@ -1473,6 +1512,8 @@
           this.formInline.product = this.formInline.productClone
           this.formInline.campaignId = this.formInline.campaignIdClone
           ordertotalAgent({
+            statistics_type: this.statistics_type,
+            depart_id: this.departId,
             product_id: this.formInline.product,
             campaign_id: this.formInline.campaignId,
             time_dimension: this.formInline.time,
