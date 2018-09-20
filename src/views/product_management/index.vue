@@ -258,11 +258,11 @@
         <el-form-item label="英文名称" prop="propertyKey">
           <el-input v-model="productPropertyInfo.propertyKey" size="small"></el-input>
         </el-form-item>
-        <el-form-item label="值是否自定义" prop="showOrInput">
+        <el-form-item label="输入或展示" prop="showOrInput">
           <el-select v-model="productPropertyInfo.showOrInput" style="width: 100%;" @change="resetProperty()">
-            <el-option value="" label="请选择属性值是否自定义"></el-option>
-            <el-option value="0" label="是"></el-option>
-            <el-option value="1" label="否"></el-option>
+            <el-option value="" label="请选择输入或展示"></el-option>
+            <el-option value="1" label="输入"></el-option>
+            <el-option value="0" label="展示"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="属性值长度" prop="propertyLength" v-if="productPropertyInfo.showOrInput==='1'">
@@ -346,11 +346,11 @@
         <el-form-item label="英文名称" prop="propertyKey">
           <el-input v-model="modifyProductPropertyInfo.propertyKey" size="small"></el-input>
         </el-form-item>
-        <el-form-item label="值是否自定义" prop="showOrInput">
+        <el-form-item label="输入或展示" prop="showOrInput">
           <el-select v-model="modifyProductPropertyInfo.showOrInput" style="width: 100%;" @change="resetProperty()">
-            <el-option value="" label="请选择属性值是否自定义"></el-option>
-            <el-option value="0" label="是"></el-option>
-            <el-option value="1" label="否"></el-option>
+            <el-option value="" label="请选择输入或展示"></el-option>
+            <el-option value="1" label="输入"></el-option>
+            <el-option value="0" label="展示"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="属性值长度" prop="propertyLength" v-if="modifyProductPropertyInfo.showOrInput==='1'">
@@ -972,4 +972,3 @@ export default {
   }
 }
 </script>
-  
