@@ -112,9 +112,14 @@
     </el-form>
     <div :class="className" id="staff" style="height: 100%;width: 100%;"></div>
     <el-form :inline="true" class="demo-form-inline" size="small" style="margin: 10px 0">
-      <el-form-item label="员工选项:" style="margin-bottom: 0">
+      <el-form-item label="部门选项:" style="margin-bottom: 0" v-if="statistics_type === 'depart'">
         <el-select v-model="formInline.staff" @change="agentChange">
-          <el-option v-for="item in staffOptions" :key="item.angentId" :label="item.angentId" :value="item.angentId"></el-option>
+          <el-option v-for="item in staffOptions" :key="item.depart_id" :label="item.depart_name" :value="item.depart_id"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="员工选项:" style="margin-bottom: 0" v-else>
+        <el-select v-model="formInline.staff" @change="agentChange">
+          <el-option v-for="item in staffOptions" :key="item" :label="item" :value="item"></el-option>
         </el-select>
       </el-form-item>
     </el-form>
@@ -143,8 +148,10 @@
         style="width: 100%;">
         <el-table-column
           align="center"
-          prop="agent_id"
-          label="下属员工">
+          :label="statistics_type === 'depart'?'下属部门':'下属员工'">
+          <template slot-scope="scope">
+            {{statistics_type === 'depart'?scope.row.depart_name:scope.row.agent_id}}
+          </template>
         </el-table-column>
         <el-table-column
           align="center"
@@ -167,7 +174,7 @@
           label="新增预约数量">
         </el-table-column>
       </el-table>
-      <h3>员工表详情</h3>
+      <h3>{{statistics_type === 'depart'?'下属部门详情':'下属员工详情'}}</h3>
       <div style="margin-top:1%;" v-for="(item, index) in staffOptions">
         <el-table
           :header-row-style="headerRow"
@@ -179,8 +186,10 @@
           style="width: 100%;">
           <el-table-column
             align="center"
-            prop="agent_id"
-            label="下属员工">
+            :label="statistics_type === 'depart'?'下属部门':'下属员工'">
+            <template slot-scope="scope">
+              {{statistics_type === 'depart'?scope.row.depart_name:scope.row.agent_id}}
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -381,7 +390,7 @@
 <script>
   import echarts from 'echarts'
   import resize from './mixins/resize'
-  import { obstatistics, getAllStaffByDepartId, getDepartId, obtotalAgent, obreportAgent } from '@/api/ctiReport'
+  import { obstatistics, departAgents, getDepartId, obtotalAgent, obreportAgent } from '@/api/ctiReport'
   import { Message } from 'element-ui'
   import { permsobdepart, permsobstaff } from '@/api/reportPermission'
   import { findCampaignByUser } from '@/api/monitor_list_single'
@@ -418,6 +427,8 @@
     // },
     data() {
       return {
+        statistics_type: '',
+        departId: '',
         week: {
           firstDayOfWeek: 1
         },
@@ -464,7 +475,8 @@
           from: 1,
           time: 'day',
           staff: '',
-          time_dimension: ''
+          time_dimension: '',
+          agent_dnName: []
         },
         tableData: [],
         tableData1: [],
@@ -491,15 +503,28 @@
       })
       getDepartId().then(res => {
         this.staffAgentid = res.data.agentid
+        this.departId = res.data.departId
         permsobdepart(res.data.agentid).then(r => {
           this.departPermission = true
           this.staffPermission = false
-          getAllStaffByDepartId(res.data.departId).then(response => {
-            this.staffOptions = response.data.data
-            this.formInline.agent_dn = response.data.data.map(function(item, index) {
-              return item.angentId
-            })
-            this.formInline.staff = response.data.data[0].angentId
+          departAgents(res.data.departId).then(response => {
+            this.statistics_type = response.data.result.statistics_type
+            if (response.data.result.statistics_type === 'depart') {
+              this.staffOptions = response.data.result.sub_departs
+              this.formInline.staff = response.data.result.sub_departs[0].depart_id
+              this.formInline.agent_dn = response.data.result.sub_departs.map(function(item, index) {
+                return item.depart_id
+              })
+              this.formInline.agent_dnName = response.data.result.sub_departs.map(function(item, index) {
+                return item.depart_name
+              })
+            } else {
+              this.staffOptions = response.data.result.agent_ids
+              this.formInline.staff = response.data.result.agent_ids[0]
+              this.formInline.agent_dn = response.data.result.agent_ids.map(function(item, index) {
+                return item.angentId
+              })
+            }
             this.search(0)
           })
         }).catch((error) => {
@@ -534,26 +559,10 @@
     methods: {
       getStartTimestamp(timeStr, type) {
         let startTime
-        if (type) {
-          switch (type) {
-            case 'hour':
-              startTime = moment(timeStr, 'x')
-              break
-            case 'day':
-              startTime = moment(timeStr, 'x')
-              break
-            case 'week':
-              startTime = moment(timeStr, 'x')
-              break
-            case 'month':
-              startTime = moment(timeStr, 'x')
-              break
-            case 'year':
-              startTime = moment(timeStr, 'x')
-              break
-          }
+        if (type === 'hour') {
+          startTime = moment(timeStr, 'x').minute(0).second(0).millisecond(0)
         } else {
-          return
+          startTime = moment(timeStr, 'x')
         }
         return startTime.valueOf()
       },
@@ -562,7 +571,7 @@
         if (type) {
           switch (type) {
             case 'hour':
-              endTime = moment(timeStr, 'x').add(1, 'hours').subtract(1, 'ms')
+              endTime = moment(timeStr, 'x').minute(0).second(0).millisecond(0).add(1, 'hours').subtract(1, 'ms')
               break
             case 'day':
               endTime = moment(timeStr, 'x').add(1, 'days').subtract(1, 'ms')
@@ -634,6 +643,8 @@
       },
       handleCurrentChange1(val) {
         obreportAgent({
+          statistics_type: this.statistics_type,
+          depart_id: this.departId,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: this.formInline.agent_dn[this.currentIndex],
@@ -650,6 +661,8 @@
       },
       handleCurrentChangeAgent(val) {
         obreportAgent({
+          statistics_type: this.statistics_type,
+          depart_id: this.departId,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: this.staffAgentid,
@@ -669,6 +682,8 @@
           return this.tableData
         }
         obreportAgent({
+          statistics_type: this.statistics_type,
+          depart_id: this.departId,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: this.formInline.agent_dn[this.contentIndex],
@@ -687,6 +702,8 @@
       },
       searchAgentStaff(val) {
         obreportAgent({
+          statistics_type: this.statistics_type,
+          depart_id: this.departId,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: val,
@@ -969,7 +986,7 @@
             axisLabel: {
               interval: 'auto'
             },
-            data: this.formInline.agent_dn
+            data: this.statistics_type === 'depart' ? this.formInline.agent_dnName : this.formInline.agent_dn
           }],
           yAxis: [{
             type: 'value',
@@ -1303,6 +1320,8 @@
       },
       timeChange(val) {
         obreportAgent({
+          statistics_type: this.statistics_type,
+          depart_id: this.departId,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: this.formInline.agent_dn.join(','),
@@ -1329,6 +1348,8 @@
       },
       agentChange(val, page) {
         obreportAgent({
+          statistics_type: this.statistics_type,
+          depart_id: this.departId,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: val,
@@ -1365,6 +1386,8 @@
       },
       teamData(val) {
         obstatistics({
+          statistics_type: this.statistics_type,
+          depart_id: this.departId,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
           agent_id: this.formInline.agent_dn.join(','),
@@ -1424,6 +1447,8 @@
           this.pageSize = []
           this.totalCount = []
           obtotalAgent({
+            statistics_type: this.statistics_type,
+            depart_id: this.departId,
             campaign_id: this.formInline.campaignId,
             time_dimension: this.formInline.time,
             agent_id: this.formInline.agent_dn.join(','),

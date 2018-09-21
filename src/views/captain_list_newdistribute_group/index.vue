@@ -330,6 +330,9 @@
         }
       },
       handleChange(value) {
+        if (!value) {
+          this.formInline.num = 0
+        }
         if (Number(this.formInline.num) > Number(this.formInline.noUseNum)) {
           Message({
             message: '分配量不能大于未分配量',

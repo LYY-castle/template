@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import moment from 'moment'
 export function formatDateTime(inputTime) {
   if (inputTime) {
     var date = new Date(inputTime)
@@ -294,4 +295,60 @@ export function formatSeconds(result) {
 export function swapArray(arr, index1, index2) {
   arr[index1] = arr.splice(index2, 1, arr[index1])[0]
   return arr
+}
+
+// 获取一个时间的开始时间戳.
+export function getStartTimestamp(timeStr, type) {
+  const typeArray = ['hour', 'day', 'week', 'month', 'year']
+  let startTime
+  if (type && typeArray.includes(type)) {
+    switch (type) {
+      case 'hour':
+        startTime = moment(timeStr, 'YYYY-MM-DD HH')
+        break
+      case 'day':
+        startTime = moment(timeStr, 'YYYY-MM-DD')
+        break
+      case 'week':
+        startTime = moment(timeStr, 'YYYY WW')
+        break
+      case 'month':
+        startTime = moment(timeStr, 'YYYY-MM')
+        break
+      case 'year':
+        startTime = moment(timeStr, 'YYYY')
+        break
+    }
+  } else {
+    return new Error(`type 只支持[${typeArray}]`)
+  }
+  return startTime.valueOf()
+}
+
+// 获取一个时间的结束时间戳.
+export function getEndTimestamp(timeStr, type) {
+  const typeArray = ['hour', 'day', 'week', 'month', 'year']
+  let endTime
+  if (type && typeArray.includes(type)) {
+    switch (type) {
+      case 'hour':
+        endTime = moment(timeStr, 'YYYY-MM-DD HH').add(1, 'hours').subtract(1, 'ms')
+        break
+      case 'day':
+        endTime = moment(timeStr, 'YYYY-MM-DD').add(1, 'days').subtract(1, 'ms')
+        break
+      case 'week':
+        endTime = moment(timeStr, 'YYYY WW').add(1, 'weeks').subtract(1, 'ms')
+        break
+      case 'month':
+        endTime = moment(timeStr, 'YYYY-MM').add(1, 'months').subtract(1, 'ms')
+        break
+      case 'year':
+        endTime = moment(timeStr, 'YYYY').add(1, 'years').subtract(1, 'ms')
+        break
+    }
+  } else {
+    return new Error(`type 只支持[${typeArray}]`)
+  }
+  return endTime.valueOf()
 }
