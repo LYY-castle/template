@@ -143,7 +143,7 @@
           <!-- <span style="float:left" class="line"></span> -->
           
         </div>
-        <div style="float:right;margin-right:20px;">
+        <div style="margin-right:20px;position:absolute;right:0;" v-if="havesoftphone">
           <!-- 有未读信息 -->
           <div v-show="msgNum_all > 0" class="message">
             <el-badge v-model="msgNum_all" class="item" :max="99">
@@ -192,12 +192,7 @@
             </el-tooltip>
           </div>
         <el-row v-if="!havesoftphone" style="height:75px;">
-          <el-col :span="17" style="margin-top:0.2%;">
-            <!-- <el-col :span="1" style="margin-left:-7px;">
-              <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
-            </el-col> -->
-          </el-col>
-          <el-col :span="7" class="userInfo" style="margin-top:-7px;">
+          <el-col :span="7" class="userInfo" style="float:right;margin-top:-7px;position:absolute;right:0;">
             <el-col :span="6"></el-col>
             <el-col :span="6"></el-col>
             <el-col :span="6"  style="margin-top:18px;margin-left:62%">
