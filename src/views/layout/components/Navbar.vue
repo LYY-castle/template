@@ -1278,6 +1278,11 @@ export default {
       this.$store.commit('OPEN_SIDEBAR')
       this.toggleSideBar()
     }
+    if (sessionStorage.getItem('sidebarStatus') === '0') {
+      this.$store.commit('SET_LOGOCLASS', 'opened')
+    } else {
+      this.$store.commit('SET_LOGOCLASS', 'closed')
+    }
     checkSoftphonePerm(agentId).then(res => {
       this.havesoftphone = true
       cti.connectCTI('ws://119.27.179.175:9050/')
