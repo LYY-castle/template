@@ -1280,6 +1280,8 @@ export default {
     }
     if (sessionStorage.getItem('sidebarStatus') === '0') {
       this.$store.commit('SET_LOGOCLASS', 'opened')
+    } else if (sessionStorage.getItem('sidebarStatus') === null) {
+      this.$store.commit('SET_LOGOCLASS', 'opened')
     } else {
       this.$store.commit('SET_LOGOCLASS', 'closed')
     }
