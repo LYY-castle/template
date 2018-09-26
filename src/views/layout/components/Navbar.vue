@@ -56,7 +56,7 @@
                 <img src="../../../../static/images/busy_normal.png" title="示忙"  class="img-all" v-else-if="agentState2">
                 <img src="../../../../static/images/agentStat38_allReady.png" title="就绪"  class="img-all" v-else-if="agentState3">
                 <img src="../../../../static/images/back_state.png" title="坐席状态"  class="img-all" v-else-if="agentState4">
-                <el-dropdown-menu slot="dropdown" @click="aaa"> 
+                <el-dropdown-menu slot="dropdown"> 
                   <el-dropdown-item command="0">就绪</el-dropdown-item>
                   <el-dropdown-item command="13">示忙</el-dropdown-item>
                   <el-dropdown-item command="14">后处理</el-dropdown-item>
@@ -299,6 +299,7 @@ export default {
   name: 'layout',
   data() {
     return {
+      socket: null,
       disabledDN: false, // 默认不禁用电话号码框
       dialNum: '',
       reasonCode: '',
@@ -384,9 +385,6 @@ export default {
     }
   },
   methods: {
-    aaa() {
-      console.log(111)
-    },
     // 修改密码
     checkChangePWD(changePWD) {
       if (changePWD.oldPassword === '') {
@@ -433,23 +431,6 @@ export default {
         .then(response1 => {
           this.msgNum_all = response1.data.result ? response1.data.result.total_unread_count : 0
           this.msgNum_today_all = response1.data.result ? response1.data.result.today_total_count : 0
-          return
-        })
-    },
-    // 获取当前登录人所有类别的未读消息数量
-    getUnreadMessages(agentId) {
-      getMyUnreadMessages(agentId)
-        .then(response1 => {
-          if (response1.data.result && response1.data.result.total_unread_count - this.msgNum_all >= 1) {
-            this.$notify({
-              title: '消息提示',
-              message: '收到新通知',
-              offset: 100,
-              type: 'success'
-            })
-          }
-          this.msgNum_all = response1.data.result ? response1.data.result.total_unread_count : 0
-          this.msgNum_today_all = response1.data.result ? response1.data.result.today_total_count : 0 // 今日总量
         })
     },
     // 处理点击注销
@@ -462,6 +443,7 @@ export default {
         this.timer = null
         clearInterval(interval)
         interval = null
+        this.socket.close()
         this.logout()
       } else if (command === 'changePWD') {
         this.changePWD.staffId = localStorage.getItem('agentId')
@@ -1300,20 +1282,69 @@ export default {
       console.log(error)
     })
     // 刚进页面获取未读消息数量
-    this.firstgetUnreadMessages(localStorage.getItem('agentId'))
-    // 每分钟更新未读消息数量
-    this.timer = setInterval(() => {
-      this.getUnreadMessages(localStorage.getItem('agentId'))
-    }, 4500000)
-    this.timer = null
+    this.firstgetUnreadMessages(agentId)
 
-    this.$root.eventHub.$on('SET_FIRSTSTATUS', () => {
-      this.firstgetUnreadMessages(localStorage.getItem('agentId'))
-    })
+    this.socket = new WebSocket(process.env.WS_SERVERURL + '/realtime_notification_' + agentId)
 
+    this.socket.onopen = function(openEvent) {
+      console.log('WebSocket has Connected successfully.')
+    }
+
+    this.socket.onmessage = function(messageEvent) {
+      const data = JSON.parse(messageEvent.data)
+      console.log(data)
+      if (data.operate_type === 'release') {
+        getMyUnreadMessages(agentId)
+          .then(response1 => {
+            if (response1.data && response1.data.result) {
+              if (data.notification.emergency_degree === '1' || data.notification.emergency_degree === '2') {
+                vm.$notify({
+                  title: '消息提示',
+                  message: '收到新通知',
+                  offset: 100,
+                  type: 'success'
+                })
+              } else if (data.notification.emergency_degree === '3') {
+                vm.$notify({
+                  title: '特急消息',
+                  message: data.notification.body,
+                  offset: 100,
+                  type: 'warning'
+                })
+              } else if (data.notification.emergency_degree === '4') {
+                vm.$notify({
+                  title: '特提消息',
+                  message: data.notification.body,
+                  offset: 100,
+                  type: 'warning'
+                })
+              }
+            }
+            vm.msgNum_all = response1.data.result ? response1.data.result.total_unread_count : 0
+            vm.msgNum_today_all = response1.data.result ? response1.data.result.today_total_count : 0 // 今日总量
+          })
+          // 刷新我的消息通知的列表
+        vm.$root.eventHub.$emit('CHANGE_MYMESSAGELIST')
+      } else {
+        // 修改右上角图标数量
+        getMyUnreadMessages(agentId)
+          .then(response1 => {
+            vm.msgNum_all = response1.data.result ? response1.data.result.total_unread_count : 0
+            vm.msgNum_today_all = response1.data.result ? response1.data.result.today_total_count : 0
+          })
+        // 刷新我的消息通知的列表
+        vm.$root.eventHub.$emit('CHANGE_MYMESSAGELIST')
+      }
+    }
+    vm.socket.onclose = function(closeEvent) {
+      console.log('WebSocket has been closed successfully.')
+    }
     this.$root.eventHub.$on('CHANGE_STATUS', () => {
-      this.firstgetUnreadMessages(localStorage.getItem('agentId'))
+      this.firstgetUnreadMessages(agentId)
     })
+  },
+  destroyed() {
+    this.socket.close()
   }
 }
 </script>

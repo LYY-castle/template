@@ -277,7 +277,7 @@ export default {
             this.totalCount = response.data.total_count
             this.pageSize = response.data.pageSize
             // 同时更新右上角的状态
-            this.$root.eventHub.$emit('SET_FIRSTSTATUS')
+            this.$root.eventHub.$emit('CHANGE_STATUS')
           }
         })
     },
@@ -292,7 +292,7 @@ export default {
               // 更新列表里的阅读状态
               this.searchByKeyWords(this.req)
               // 更新右上角的状态
-              this.$root.eventHub.$emit('SET_FIRSTSTATUS')
+              this.$root.eventHub.$emit('CHANGE_STATUS')
             }
           })
       }
@@ -316,7 +316,7 @@ export default {
             // 更新列表里的阅读状态
             this.searchByKeyWords(this.req)
             //  更新右上角的状态
-            this.$root.eventHub.$emit('SET_FIRSTSTATUS')
+            this.$root.eventHub.$emit('CHANGE_STATUS')
           }
         })
     },
@@ -418,6 +418,10 @@ export default {
   mounted() {
     // 默认综合查询
     this.searchByKeyWords(this.req)
+    this.$root.eventHub.$on('CHANGE_MYMESSAGELIST', () => {
+      this.resetQueryCondition()
+      this.searchByKeyWords(this.req)
+    })
   }
 }
 

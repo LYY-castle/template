@@ -52,7 +52,7 @@ export default {
           this.$router.options.routes.push(constantRouterMap[i])
         }
         this.$router.options.routes.concat(constantRouterMap)
-        console.log(this.$router.options.routes)
+        // console.log(this.$router.options.routes)
         resolve()
       }).catch(error => {
         if (error.response.status === 403) {

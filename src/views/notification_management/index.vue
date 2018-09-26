@@ -512,14 +512,18 @@ export default {
               // 直接发布
                 releaseNotification(response.data.result.notification_id)
                   .then(res1 => {
-                    if (res1.data.error === null) {
-                      this.$message.success('保存并发布成功！')
-                      this.searchByKeyWords(this.req)
-                      this.addNotificationVisiable = false
+                    if (response.data) {
+                      if (res1.data.error === null) {
+                        this.$message.success('保存并发布成功！')
+                        this.searchByKeyWords(this.req)
+                        this.addNotificationVisiable = false
+                      } else {
+                        this.$message.error(response.data.error)
+                        this.searchByKeyWords(this.req)
+                        this.addNotificationVisiable = false
+                      }
                     } else {
-                      this.$message.error(response.data.error)
-                      this.searchByKeyWords(this.req)
-                      this.addNotificationVisiable = false
+                      this.$message.error('服务器出错..请稍后再试')
                     }
                   })
               } else {
