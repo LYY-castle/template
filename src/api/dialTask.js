@@ -170,9 +170,35 @@ export function getSummariesByAgentId(agentId) {
     }
   })
 }
+
 export function findCampaignByUser() {
   return request({
     url: '/campaign/findCampaignByUser',
     method: 'get'
+  })
+}
+
+// 通过多个产品id查找响应产品信息
+export function getProducts(obj) {
+  return request({
+    url: '/product/getProducts',
+    method: 'post',
+    data: obj
+  })
+}
+// 批量生成产品
+export function batchCreatProduct(obj) {
+  return request({
+    url: '/product/batchCreatProduct',
+    method: 'post',
+    data: obj
+  })
+}
+// 多产品生成订单
+export function addMoreOrder(obj) {
+  return request({
+    url: '/order/addMoreOrder',
+    method: 'post',
+    data: obj
   })
 }

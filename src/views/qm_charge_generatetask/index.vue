@@ -515,7 +515,6 @@ export default {
     },
     // 查询质检任务信息
     searchTask(req) {
-      console.log('55555555555', req)
       queryTask(req)
         .then(response => {
           if (response.data.code === 0) {
@@ -658,13 +657,16 @@ export default {
         this.addVisible = false
         generateTask(addTask).then(response => {
           if (response.data.code === 0) {
-            this.$message.success(response.data.message)
+            this.$message({
+              message: response.data.message,
+              type: 'success'
+            })
             this.searchTask(this.req2)
           } else {
-            this.$message('新建失败')
+            this.$message('新建失败：' + response.data.message)
           }
         }).catch(error => {
-          this.$message('新建失败')
+          this.$message('新建失败:请求异常')
           console.log(error)
         })
       }

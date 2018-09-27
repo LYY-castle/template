@@ -310,7 +310,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="属性值长度" prop="propertyLength" v-if="productPropertyInfo.showOrInput==='1'">
-          <el-input v-model="productPropertyInfo.propertyLength" size="small" placeholder="长文本限长1023，其他限长50.超出则按最长限制"></el-input>
+          <el-input v-model="productPropertyInfo.propertyLength" size="small" placeholder="长文本限长1023，其他限长50.超出则按最长限制" @change="checkNum(productPropertyInfo.propertyLength)"></el-input>
         </el-form-item>
         <!-- <el-form-item label="属性值类型" prop="propertyType" v-if="productPropertyInfo.showOrInput==='1'">
           <el-select v-model="productPropertyInfo.propertyType" style="width: 100%;">
@@ -334,7 +334,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="模板类型" prop="templateType" v-if="productPropertyInfo.showOrInput==='1'">
-          <el-select v-model="productPropertyInfo.templateType" style="width: 100%;"  @change="changeResetProductProperty()">
+          <el-select v-model="productPropertyInfo.templateType" style="width: 100%;"  @change="changeResetProductProperty(productPropertyInfo.templateType)">
             <el-option value="" label="请选择模板类型"></el-option>
             <el-option value="text" label="短文本"></el-option>
             <el-option value="radio" label="单选"></el-option>
@@ -401,7 +401,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="属性值长度" prop="propertyLength" v-if="modifyProductPropertyInfo.showOrInput==='1'">
-          <el-input v-model="modifyProductPropertyInfo.propertyLength" size="small" placeholder="长文本限长1023，其他限长50.超出则按最长限制"></el-input>
+          <el-input v-model="modifyProductPropertyInfo.propertyLength" size="small" placeholder="长文本限长1023，其他限长50.超出则按最长限制" @change="checkModifyNum(modifyProductPropertyInfo.propertyLength)"></el-input>
         </el-form-item>
         <!-- <el-form-item label="属性值类型" prop="propertyType" v-if="modifyProductPropertyInfo.showOrInput==='1'">
           <el-select v-model="modifyProductPropertyInfo.propertyType" style="width: 100%;">
@@ -425,7 +425,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="模板类型" prop="templateType" v-if="modifyProductPropertyInfo.showOrInput==='1'">
-          <el-select v-model="modifyProductPropertyInfo.templateType" style="width: 100%;"  @change="changeResetModifyProperty()">
+          <el-select v-model="modifyProductPropertyInfo.templateType" style="width: 100%;"  @change="changeResetModifyProperty(modifyProductPropertyInfo.templateType)">
             <el-option value="" label="请选择模板类型"></el-option>
             <el-option value="text" label="短文本"></el-option>
             <el-option value="radio" label="单选"></el-option>
@@ -634,6 +634,28 @@ export default {
     this.queryTemplateList()
   },
   methods: {
+    checkNum(val) { // 属性值长度确定
+      if (this.productPropertyInfo.templateType === 'textarea') {
+        if (val > 1023) {
+          this.productPropertyInfo.propertyLength = 1023
+        }
+      } else {
+        if (val > 50) {
+          this.productPropertyInfo.propertyLength = 50
+        }
+      }
+    },
+    checkModifyNum(val) {
+      if (this.modifyProductPropertyInfo.templateType === 'textarea') {
+        if (val > 1023) {
+          this.modifyProductPropertyInfo.propertyLength = 1023
+        }
+      } else {
+        if (val > 50) {
+          this.modifyProductPropertyInfo.propertyLength = 50
+        }
+      }
+    },
     queryTemplateList() {
       this.req.modifyTimeStart = ''
       this.req.modifyTimeEnd = ''
@@ -1039,7 +1061,16 @@ export default {
         }
       })
     },
-    changeResetModifyProperty() {
+    changeResetModifyProperty(val) {
+      if (val === 'textarea') {
+        if (this.modifyProductPropertyInfo.propertyLength > 1023) {
+          this.modifyProductPropertyInfo.propertyLength = 1023
+        }
+      } else {
+        if (this.modifyProductPropertyInfo.propertyLength > 50) {
+          this.modifyProductPropertyInfo.propertyLength = 50
+        }
+      }
       this.modifyProductPropertyInfo.propertyValue = ''
       this.modifyProductPropertyInfo.propertyValueRadio = []
       this.modifyProductPropertyInfo.propertyValueCheckbox = []
@@ -1050,7 +1081,16 @@ export default {
         key: Date.now()
       })
     },
-    changeResetProductProperty() {
+    changeResetProductProperty(val) {
+      if (val === 'textarea') {
+        if (this.productPropertyInfo.propertyLength > 1023) {
+          this.productPropertyInfo.propertyLength = 1023
+        }
+      } else {
+        if (this.productPropertyInfo.propertyLength > 50) {
+          this.productPropertyInfo.propertyLength = 50
+        }
+      }
       this.productPropertyInfo.propertyValue = ''
       this.productPropertyInfo.propertyValueRadio = []
       this.productPropertyInfo.propertyValueCheckbox = []
