@@ -688,11 +688,7 @@
           params.agent_id = this.formInline.agent_id[this.currentIndex]
         }
 
-        console.log('into handleCurrentChange1 with params =', params)
-
         orderreportAgent(params).then(response => {
-          console.log('into handleCurrentChange1 with response =', response)
-
           this.pageNo.splice(this.currentIndex, 1, response.data.pageNo)
           this.pageSize.splice(this.currentIndex, 1, response.data.pageSize)
           this.totalCount.splice(this.currentIndex, 1, response.data.total_count)
@@ -737,19 +733,13 @@
           pageSize: 5
         }
 
-        console.log('into searchStaff with formInline.sub_depart_id =', this.formInline.sub_depart_id, this.formInline.sub_depart_id[this.contentIndex])
-
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = this.formInline.sub_depart_id[this.contentIndex]
         } else {
           params.agent_id = this.formInline.agent_id[this.contentIndex]
         }
 
-        console.log('into searchStaff with params =', params)
-
         orderreportAgent(params).then(response => {
-          console.log('into searchStaff with response =', response)
-
           this.pageNo.push(response.data.pageNo)
           this.pageSize.push(response.data.pageSize)
           this.totalCount.push(response.data.total_count)
@@ -759,18 +749,25 @@
         })
       },
       searchAgentStaff(val) {
-        orderreportAgent({
+        const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
           product_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
-          agent_id: val,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
           end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
           pageNo: 1,
           pageSize: 10
-        }).then(response => {
+        }
+
+        if (this.statistics_type === 'depart') {
+          params.sub_depart_id = val
+        } else {
+          params.agent_id = val
+        }
+
+        orderreportAgent(params).then(response => {
           this.tableDataAgent = response.data.result
           this.paginationAgent.pageNo = response.data.pageNo
           this.paginationAgent.pageSize = response.data.pageSize
@@ -1423,7 +1420,6 @@
           product_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
-          agent_id: this.formInline.agent_id.join(','),
           time: val,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
           end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
@@ -1492,18 +1488,25 @@
         })
       },
       teamData(val) {
-        orderstatistics({
+        const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
           product_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.time,
-          agent_id: this.formInline.agent_id.join(','),
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
           end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time), // val || val === 'search' ? this.timeValue[1] :
           pageNo: val && val !== 'search' ? this.formInline.from : 1,
           pageSize: 10
-        }).then(response => {
+        }
+
+        if (this.statistics_type === 'depart') {
+          params.sub_depart_id = this.formInline.sub_depart_id.join(',')
+        } else {
+          params.agent_id = this.formInline.agent_id.join(',')
+        }
+
+        orderstatistics(params).then(response => {
           this.obj = response.data
           if (this.obj.result.length) {
             this.count = this.obj.result.map(function(item, index) {
@@ -1552,17 +1555,25 @@
           this.totalCount = []
           this.formInline.product = this.formInline.productClone
           this.formInline.campaignId = this.formInline.campaignIdClone
-          ordertotalAgent({
+
+          const params = {
             statistics_type: this.statistics_type,
             depart_id: this.departId,
             product_id: this.formInline.product,
             campaign_id: this.formInline.campaignId,
             time_dimension: this.formInline.time,
-            agent_id: this.formInline.agent_id.join(','),
             sub_depart_id: this.formInline.sub_depart_id.join(','),
             start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
             end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
-          }).then(response => {
+          }
+
+          if (this.statistics_type === 'depart') {
+            params.sub_depart_id = this.formInline.sub_depart_id.join(',')
+          } else {
+            params.agent_id = this.formInline.agent_id.join(',')
+          }
+
+          ordertotalAgent(params).then(response => {
             this.tableData1 = response.data.result
           })
           this.teamData(val)

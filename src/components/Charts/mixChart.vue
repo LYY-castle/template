@@ -473,12 +473,13 @@
         pageSize: [],
         totalCount: [],
         formInline: {
-          agent_dn: [],
+          agent_id: [],
           from: 1,
           time: 'day',
           staff: '',
           time_dimension: '',
-          agent_dnName: []
+          sub_depart_id: [],
+          sub_depart_name: []
         },
         tableData: [],
         tableData1: [],
@@ -517,16 +518,16 @@
             if (response.data.result.statistics_type === 'depart') {
               this.staffOptions = response.data.result.sub_departs
               this.formInline.staff = response.data.result.sub_departs[0].depart_id
-              this.formInline.agent_dn = response.data.result.sub_departs.map(function(item, index) {
+              this.formInline.sub_depart_id = response.data.result.sub_departs.map(function(item, index) {
                 return item.depart_id
               })
-              this.formInline.agent_dnName = response.data.result.sub_departs.map(function(item, index) {
+              this.formInline.sub_depart_name = response.data.result.sub_departs.map(function(item, index) {
                 return item.depart_name
               })
             } else {
               this.staffOptions = response.data.result.agent_ids
               this.formInline.staff = response.data.result.agent_ids[0]
-              this.formInline.agent_dn = response.data.result.agent_ids.map(function(item, index) {
+              this.formInline.agent_id = response.data.result.agent_ids.map(function(item, index) {
                 return item.angentId
               })
             }
@@ -647,16 +648,23 @@
         this.currentIndex = index
       },
       handleCurrentChange1(val) {
-        reportAgent({
+        const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
           time_dimension: this.formInline.time,
-          agent_id: this.formInline.agent_dn[this.currentIndex],
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
           end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
           pageNo: val,
           pageSize: this.pageSize[this.currentIndex]
-        }).then(response => {
+        }
+
+        if (this.statistics_type === 'depart') {
+          params.sub_depart_id = this.formInline.sub_depart_id[this.currentIndex]
+        } else {
+          params.agent_id = this.formInline.agent_id[this.currentIndex]
+        }
+
+        reportAgent(params).then(response => {
           this.pageNo.splice(this.currentIndex, 1, response.data.pageNo)
           this.pageSize.splice(this.currentIndex, 1, response.data.pageSize)
           this.totalCount.splice(this.currentIndex, 1, response.data.total_count)
@@ -681,19 +689,29 @@
         })
       },
       searchStaff() {
-        if (this.contentIndex >= this.formInline.agent_dn.length) {
+        if (this.statistics_type === 'depart' && this.contentIndex >= this.formInline.sub_depart_id.length) {
+          return this.tableData
+        } else if (this.statistics_type === 'agent' && this.contentIndex >= this.formInline.agent_id.length) {
           return this.tableData
         }
-        reportAgent({
+
+        const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
           time_dimension: this.formInline.time,
-          agent_id: this.formInline.agent_dn[this.contentIndex],
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
           end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
           pageNo: 1,
           pageSize: 5
-        }).then(response => {
+        }
+
+        if (this.statistics_type === 'depart') {
+          params.sub_depart_id = this.formInline.sub_depart_id[this.contentIndex]
+        } else {
+          params.agent_id = this.formInline.agent_id[this.contentIndex]
+        }
+
+        reportAgent(params).then(response => {
           this.pageNo.push(response.data.pageNo)
           this.pageSize.push(response.data.pageSize)
           this.totalCount.push(response.data.total_count)
@@ -703,16 +721,23 @@
         })
       },
       searchAgentStaff(val) {
-        reportAgent({
+        const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
           time_dimension: this.formInline.time,
-          agent_id: val,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
           end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
           pageNo: 1,
           pageSize: 10
-        }).then(response => {
+        }
+
+        if (this.statistics_type === 'depart') {
+          params.sub_depart_id = val
+        } else {
+          params.agent_id = val
+        }
+
+        reportAgent(params).then(response => {
           this.tableDataAgent = response.data.result
           this.paginationAgent.pageNo = response.data.pageNo
           this.paginationAgent.pageSize = response.data.pageSize
@@ -840,8 +865,8 @@
               0
             ],
             bottom: 30,
-            start: 10,
-            end: 80,
+            start: 0,
+            end: 100,
             handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
             handleSize: '110%',
             handleStyle: {
@@ -1077,8 +1102,8 @@
               0
             ],
             bottom: 30,
-            start: 10,
-            end: 80,
+            start: 0,
+            end: 100,
             handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
             handleSize: '110%',
             handleStyle: {
@@ -1314,8 +1339,8 @@
               0
             ],
             bottom: 30,
-            start: 10,
-            end: 80,
+            start: 0,
+            end: 100,
             handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
             handleSize: '110%',
             handleStyle: {
@@ -1443,15 +1468,22 @@
         this.timeValue = []
       },
       timeChange(val) {
-        reportAgent({
+        const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
           time_dimension: this.formInline.time,
-          agent_id: this.formInline.agent_dn.join(','),
           time: val,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
           end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
-        }).then(response => {
+        }
+
+        if (this.statistics_type === 'depart') {
+          params.sub_depart_id = this.formInline.sub_depart_id.join(',')
+        } else {
+          params.agent_id = this.formInline.agent_id.join(',')
+        }
+
+        reportAgent(params).then(response => {
           if (response.data.result.length) {
             this.calls_numberTime = response.data.result.map(function(item, index) {
               return item.calls_number
@@ -1473,16 +1505,23 @@
         })
       },
       agentChange(val, page) {
-        reportAgent({
+        const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
           time_dimension: this.formInline.time,
-          agent_id: val,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
           end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
           pageNo: page || 1,
           pageSize: 8
-        }).then(response => {
+        }
+
+        if (this.statistics_type === 'depart') {
+          params.sub_depart_id = val
+        } else {
+          params.agent_id = val
+        }
+
+        reportAgent(params).then(response => {
           if (response.data.result.length) {
             this.calls_numberAgent = response.data.result.map(function(item, index) {
               return item.calls_number
@@ -1513,16 +1552,23 @@
         })
       },
       teamData(val) {
-        statistics({
+        const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
           time_dimension: this.formInline.time,
-          agent_id: this.formInline.agent_dn.join(','),
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
           end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
           pageNo: val && val !== 'search' ? this.formInline.from : 1,
           pageSize: 10
-        }).then(response => {
+        }
+
+        if (this.statistics_type === 'depart') {
+          params.sub_depart_id = this.formInline.sub_depart_id.join(',')
+        } else {
+          params.agent_id = this.formInline.agent_id.join(',')
+        }
+
+        statistics(params).then(response => {
           this.obj = response.data
           if (this.obj.result.length) {
             this.calls_number = this.obj.result.map(function(item, index) {
@@ -1575,14 +1621,22 @@
           this.pageNo = []
           this.pageSize = []
           this.totalCount = []
-          totalAgent({
+
+          const params = {
             statistics_type: this.statistics_type,
             depart_id: this.departId,
             time_dimension: this.formInline.time,
-            agent_id: this.formInline.agent_dn.join(','),
             start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
             end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
-          }).then(responseTotal => {
+          }
+
+          if (this.statistics_type === 'depart') {
+            params.sub_depart_id = this.formInline.sub_depart_id.join(',')
+          } else {
+            params.agent_id = this.formInline.agent_id.join(',')
+          }
+
+          totalAgent(params).then(responseTotal => {
             this.tableData1 = responseTotal.data.result
           })
           this.teamData(val)
