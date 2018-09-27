@@ -332,7 +332,7 @@
     </el-row>
     <br/><br/>
     <el-row>
-      <el-collapse v-model="activeNames" @change="handleChange">
+      <el-collapse v-model="activeNames">
         <!-- 接触记录 -->
         <el-collapse-item name="1" >
           <template slot="title">
@@ -385,61 +385,92 @@
             <b>产品信息<i class="el-icon-d-caret"></i></b>
           </template>
           <div>
-            <el-tabs v-model="activeTab" type="card" @tab-click="">
+            <el-tabs v-model="activeTab" type="border-card" @tab-click="">
               <!--
                 v-if="this.productInfo.some(i => i=== this.car_insurance)"
                 v-if="this.productInfo.some(i => i === this.child_insurance)"
                 v-if="this.productInfo.some(i => i=== this.disease_insurance)"
                 -->
-              <el-tab-pane name="P20180101000002" label="车险" v-model="car_insurance" v-if="this.productInfo.some(i => i=== this.car_insurance)">
-                <div>
-                  <span>投保年龄：</span>
-                    <el-input placeholder="25岁" size="medium" type="text" value="25岁" style="width:80px"></el-input>&nbsp;&nbsp;
-                  <span>车辆座位：</span>
-                    <el-select v-model="car_insurance_seats">
-                      <el-option value="2" label="2座">2座</el-option>
-                      <el-option value="3" label="3座">3座</el-option>
-                      <el-option value="4" label="4座">4座</el-option>
-                    </el-select>&nbsp;&nbsp;
-                  <span>保障期间：</span>
-                    <el-input placeholder="1年" size="medium" type="text" value="1年" style="width:80px"></el-input>&nbsp;&nbsp;
-                  <span>保费合计：</span>
-                    <el-input placeholder="3500" size="medium" type="text" value="3500" style="width:80px" v-model="insurancePay_car"></el-input>元&nbsp;&nbsp;
-                </div>
-              </el-tab-pane>
-              <el-tab-pane name="P20180101000003" label="儿童险"  v-model="child_insurance" v-if="this.productInfo.some(i => i === this.child_insurance)">
-                <div>
-                  <span>投保年龄：</span>
-                    <el-input placeholder="3岁" size="medium" type="text" value="3岁" style="width:80px"></el-input>&nbsp;&nbsp;
-                  <span>方案选择：</span>
-                    <el-select v-model="car_insurance_seats">
-                      <el-option value="1" label="方案1">方案1</el-option>
-                      <el-option value="2" label="方案2">方案2</el-option>
-                      <el-option value="3" label="方案3">方案3</el-option>
-                    </el-select>&nbsp;&nbsp;
-                  <span>保障期间：</span>
-                    <el-input placeholder="1年" size="medium" type="text" value="1年" style="width:80px"></el-input>&nbsp;&nbsp;
-                  <span>保费合计：</span>
-                    <el-input placeholder="80" size="medium" type="text" value="80" style="width:80px" v-model="insurancePay_child"></el-input>元&nbsp;&nbsp;
-                </div>
-              </el-tab-pane>
-              <el-tab-pane name="P20180101000004" label="重疾险" v-model="disease_insurance" v-if="this.productInfo.some(i => i=== this.disease_insurance)">
-                <div>
-                  <span>投保年龄：</span>
-                    <el-input placeholder="36岁" size="medium" type="text" value="36岁" style="width:80px"></el-input>&nbsp;&nbsp;
-                  <span>方案选择：</span>
-                    <el-select v-model="car_insurance_seats">
-                      <el-option value="1" label="方案1">方案1</el-option>
-                      <el-option value="2" label="方案2">方案2</el-option>
-                      <el-option value="3" label="方案3">方案3</el-option>
-                    </el-select>&nbsp;&nbsp;
-                  <span>保障期间：</span>
-                    <el-input placeholder="1年" size="medium" type="text" value="1年" style="width:80px"></el-input>&nbsp;&nbsp;
-                  <span>保费合计：</span>
-                    <el-input placeholder="2800" size="medium" type="text" value="2800" style="width:80px" v-model="insurancePay_ill"></el-input>元&nbsp;&nbsp;
+              <el-tab-pane 
+               v-for="(item,index) in products" 
+               :key="item.templateId"
+               :label="item.productName">
+                <div class="text item" hidden>模板类型id：<font style="color:blue;size:14px;font-weight:bold">{{item.productTypeInfo===null?'':item.productTypeInfo.productTypeId}}</font></div>
+                <div class="text item">模板类型：<font style="color:blue;size:14px;font-weight:bold">{{item.productTypeInfo===null?'':item.productTypeInfo.productTypeName}}</font></div>
+                <div class="text item">模板编号：<font style="color:blue;size:14px;font-weight:bold">{{item.templateId}}</font></div>
+                <div class="text item">模板名称：<font style="color:blue;size:14px;font-weight:bold">{{item.productName}}</font></div>
+                <div class="text item">产品单价：<font style="color:red;font-weight:bold">￥&nbsp;</font><font style="color:blue;font-weight:bold">{{item.price===null?0:item.price}}</font></div>
+                <div class="text item">产品概述：{{item.description}}</div>
+                <div v-if="item.showMessage"><font style="color:blue">Tips:以下带</font><font style="color:red">*</font><font style="color:blue">的为必填项</font></div>
+                <el-form  class="text item" >
+                  <!-- <div v-for="(i,index1) in item.propertyInfos"> -->
+                    <el-form-item  v-for="(i,index1) in item.propertyInfos" 
+                      :label="i.propertyName + '：'" style="display:inline"   
+                      :rules="{required:i.showOrInput === '1' && i.isRequired === '1', message: '此项为必填项', trigger: 'change' }">
+                      <span v-if="i.showOrInput === '0' && i.templateType !== 'textarea'">{{i.propertyValue}}</span>
+                      <textarea v-if="i.showOrInput === '0' && i.templateType === 'textarea'" readonly>{{i.propertyValue}}</textarea>
+                      <textarea v-if="i.showOrInput === '1' && i.templateType === 'textarea'" 
+                        v-model="i.propertyValue" :placeholder="'限长' + i.propertyLength + '字符'">{{i.propertyValue}}</textarea>
+                      <input v-if="i.templateType === 'text' && i.showOrInput === '1'" 
+                        v-model="i.propertyValue" :placeholder="'限长' + i.propertyLength + '字符'" :maxlength="i.propertyLength"  ></input>
+                      <el-radio-group size="mini" v-if="i.templateType === 'radio' && i.showOrInput === '1' && i.showInLine" 
+                        v-model="i.propertyValueRadio">
+                        <el-radio-button v-for="a in JSON.parse(i.propertyValue)" :label="a">{{a}}</el-radio-button>
+                      </el-radio-group>
+                      <el-radio-group size="mini" v-if="i.templateType === 'radio' && i.showOrInput === '1' && !i.showInLine" 
+                        v-model="i.propertyValueRadio">
+                        <el-radio v-for="a in JSON.parse(i.propertyValue)" :label="a">{{a}}</el-radio>
+                      </el-radio-group>
+                      <el-checkbox-group  size="mini"  v-if="i.templateType === 'checkbox' && i.showOrInput === '1'  && i.showInLine" 
+                        v-model="checks[index1]" @change="getCheckes(checks[index1],i)">
+                        <el-checkbox-button   v-for="b in JSON.parse(i.propertyValue)"  :label="b" :key="b">{{b}}</el-checkbox-button>
+                      </el-checkbox-group>
+                      <el-checkbox-group  size="mini"  v-if="i.templateType === 'checkbox' && i.showOrInput === '1' && !i.showInLine" 
+                        v-model="checks[index1]" @change="getCheckes(checks[index1],i)">
+                        <el-checkbox v-for="b in JSON.parse(i.propertyValue)"  :label="b" :key="b">{{b}}</el-checkbox>
+                      </el-checkbox-group>
+                      <el-select   size="mini" v-model="i.propertyValueSelect" placeholder="请选择" 
+                        v-if="i.templateType === 'select' && i.showOrInput === '1'">
+                        <el-option
+                          v-for="s in JSON.parse(i.propertyValue)"
+                          :key="s"
+                          :label="s"
+                          :value="s">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                  <!-- </div> -->
+                </el-form>
+                    
+                <div style="width:25%;float:right">
+                  <span>认购数量：</span>
+                  <el-input-number v-model="item.number" @change="handleChange(item.templateId,item.price,item.number)" :min="0" :max="1000" label="认购数量" size="mini">
+                      {{item.number}}
+                  </el-input-number>
                 </div>
               </el-tab-pane>
             </el-tabs>
+            <div style="width:50%;float:left">
+              <label>客户留言:</label><el-input placeholder="有特别要求请注明，限100字符" maxlength="100" style="width:80%" v-model="customerNote"></el-input>
+            </div>
+            <div style="width:50%;float:right">
+              <label>选购清单：</label>
+              <el-card shadow="hover" v-for="(item,index) in products">
+                  <div style="margin-left:5%;color:blue;font-weight:700;font-size:14px">{{item.productName}}</div>
+                  <div style="color:blue;font-weight:bold;text-align:right">
+                    {{item.price}}
+                    <span style="color:red;font-weight:bold;margin:0 3%">*</span>
+                    <el-input-number v-model="item.number" @change="handleChange(item.templateId,item.price,item.number)" :min="0" :max="1000" label="预购数量" size="mini">
+                      {{item.number}}
+                    </el-input-number>
+                    <span style="color:black;margin:0 2%">=</span>
+                    <span v-model="item.sum">{{item.price * item.number ? (item.price * item.number).toFixed(2) : 0 }}</span>
+                  </div>
+              </el-card>
+              <div style="color:blue;font-weight:bold;text-align:left;width:20%;float:right">
+                <label>总价：</label><font style="color:red;font-weight:bold">￥ {{sumTotal}}&nbsp;</font>
+              </div>
+            </div>
           </div>
         </el-collapse-item>
 
@@ -509,10 +540,7 @@
 <script>
 import cti from '@/utils/ctijs' //
 import { getPhoneOwn } from '@/api/navbar'
-import {
-  formatDateTime,
-  getIDCardInfo
-} from '@/utils/tools' // 格式化时间
+import { formatDateTime } from '@/utils/tools' // 格式化时间
 import {
   queryByKeywords,
   isInNodisturbPhones,
@@ -522,16 +550,17 @@ import {
   hasOrderInfos,
   getSummaries,
   getCampaignType,
-  addNewProduct,
   getStaffNameById,
-  generateOrder,
   sendMessageToCustomer,
   checkDialTimes,
   queryOneTask,
   updateTaskStatus,
   updateRecordInfo,
   getSummariesByAgentId,
-  findCampaignByUser
+  findCampaignByUser,
+  getProducts,
+  batchCreatProduct,
+  addMoreOrder
 } from '@/api/dialTask' // 接口
 var vm = null
 
@@ -540,29 +569,42 @@ export default {
 
   data() {
     return {
+      customerNote: '', // 客户留言
+      sumTotal: 0, // 总价格
+      sumInfo: new Map(), // 所选中的产品
+      checks: {},
+      products: [], // 活动下的产品
       isRecruit: false,
       addDays: '',
       summariesInfo: [], // 小结下拉选择
       campaignsInfo: [], // 活动下拉选择
-      taskStatusOptions: [{// 任务状态选项框
-        value: '',
-        label: '所有情况'
-      }, {
-        value: '0',
-        label: '首拨'
-      }, {
-        value: '1',
-        label: '预约'
-      }, {
-        value: '2',
-        label: '成功'
-      }, {
-        value: '3',
-        label: '失败'
-      }, {
-        value: '4',
-        label: '过期'
-      }],
+      taskStatusOptions: [
+        {
+          // 任务状态选项框
+          value: '',
+          label: '所有情况'
+        },
+        {
+          value: '0',
+          label: '首拨'
+        },
+        {
+          value: '1',
+          label: '预约'
+        },
+        {
+          value: '2',
+          label: '成功'
+        },
+        {
+          value: '3',
+          label: '失败'
+        },
+        {
+          value: '4',
+          label: '过期'
+        }
+      ],
       interval: null,
       canContact: 1,
       hideDialTo: false, // 判断超出拨打次数限制时是否将图标置灰
@@ -654,6 +696,9 @@ export default {
       }
       return ''
     },
+    getCheckes(val, i) {
+      i.propertyValueCheckbox = val
+    },
     showStatus(status) {
       return status === '1' || status === '0'
     },
@@ -700,58 +745,65 @@ export default {
     dialTo(taskId, campaignId, isBlacklist, customerPhone) {
       this.hideDialTo = true
       // console.log(taskId + ',' + campaignId + ',' + isBlacklist + ',' + customerPhone)
-      if (localStorage.getItem('reasonCode') === null || localStorage.getItem('reasonCode') === '-1' || localStorage.getItem('reasonCode') === '-2') {
+      if (
+        localStorage.getItem('reasonCode') === null ||
+        localStorage.getItem('reasonCode') === '-1' ||
+        localStorage.getItem('reasonCode') === '-2'
+      ) {
         this.$message.error('请先登录话机！')
         return
       } else {
         this.inNodisturbPhones(customerPhone)
         if (this.flag === false && isBlacklist === '0') {
-        // 非黑名单  非免访号段内的号码
-        // 判断剩余拨打次数
-          checkDialTimes(taskId)
-            .then(response => {
-              if (response.data.code === 0) {
-                if (response.data.data.canContact === '1') {
+          // 非黑名单  非免访号段内的号码
+          // 判断剩余拨打次数
+          checkDialTimes(taskId).then(response => {
+            if (response.data.code === 0) {
+              if (response.data.data.canContact === '1') {
                 // 说明未超过次数限制还能拨打
-                  if (response.data.data.lastContactTime === '1') {
+                if (response.data.data.lastContactTime === '1') {
                   // 说明是最后一次 将预约栏隐藏
-                    this.radio = ''
-                    this.isLastContactTime = true
-                    queryOneTask(taskId)
-                      .then(response1 => {
-                        if (response1.data.code === 0) {
-                          if (response1.data.data.status === 2 || response1.data.data.status === 3) {
-                            this.$message.error('该拨打任务已结束！')
-                            return
-                          } else {
-                            localStorage.setItem('global_taskId', taskId)
-                            this.normalDial(taskId, campaignId, customerPhone)
-                          }
-                        }
-                      })
-                  } else {
-                    queryOneTask(taskId)
-                      .then(response1 => {
-                        if (response1.data.code === 0) {
-                          if (response1.data.data.status === 2 || response1.data.data.status === 3) {
-                            this.$message.error('该拨打任务已结束！')
-                            return
-                          } else {
-                            localStorage.setItem('global_taskId', taskId)
-                            this.normalDial(taskId, campaignId, customerPhone)
-                          }
-                        }
-                      })
-                  }
+                  this.radio = ''
+                  this.isLastContactTime = true
+                  queryOneTask(taskId).then(response1 => {
+                    if (response1.data.code === 0) {
+                      if (
+                        response1.data.data.status === 2 ||
+                        response1.data.data.status === 3
+                      ) {
+                        this.$message.error('该拨打任务已结束！')
+                        return
+                      } else {
+                        localStorage.setItem('global_taskId', taskId)
+                        this.normalDial(taskId, campaignId, customerPhone)
+                      }
+                    }
+                  })
                 } else {
-                  this.hideDialTo = true
-                  this.canContact = 0
-                  // clearInterval(this.interval)
-                  this.$message.error('超过拨打限制次数！')
-                  return
+                  queryOneTask(taskId).then(response1 => {
+                    if (response1.data.code === 0) {
+                      if (
+                        response1.data.data.status === 2 ||
+                        response1.data.data.status === 3
+                      ) {
+                        this.$message.error('该拨打任务已结束！')
+                        return
+                      } else {
+                        localStorage.setItem('global_taskId', taskId)
+                        this.normalDial(taskId, campaignId, customerPhone)
+                      }
+                    }
+                  })
                 }
+              } else {
+                this.hideDialTo = true
+                this.canContact = 0
+                // clearInterval(this.interval)
+                this.$message.error('超过拨打限制次数！')
+                return
               }
-            })
+            }
+          })
         } else {
           this.$message.error('该号码在免访号段或黑名单中！')
           return
@@ -761,9 +813,18 @@ export default {
     // 定时监控设置能否继续拨打的状态
     editDialToStatus() {
       const reasonCode = localStorage.getItem('reasonCode')
-      if (reasonCode === '-1' || reasonCode === '-2' || reasonCode === '-3' || reasonCode === '-4' || reasonCode === '') {
+      if (
+        reasonCode === '-1' ||
+        reasonCode === '-2' ||
+        reasonCode === '-3' ||
+        reasonCode === '-4' ||
+        reasonCode === ''
+      ) {
         this.hideDialTo = true
-      } else if ((reasonCode === '0' || reasonCode === '14') && this.canContact === 0) {
+      } else if (
+        (reasonCode === '0' || reasonCode === '14') &&
+        this.canContact === 0
+      ) {
         this.hideDialTo = true
         // clearInterval(this.interval)
       } else if (reasonCode === '-101' || reasonCode === '-100') {
@@ -780,7 +841,10 @@ export default {
       const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
       if (regex.test(customerPhone)) {
         getPhoneOwn(customerPhone).then(res => {
-          if (localStorage.getItem('DN') !== null && localStorage.getItem('DN') !== '') {
+          if (
+            localStorage.getItem('DN') !== null &&
+            localStorage.getItem('DN') !== ''
+          ) {
             cti.makecall(localStorage.getItem('DN'), res.data)
             setTimeout(() => {
               this.getRecordId(taskId, campaignId)
@@ -790,8 +854,12 @@ export default {
             return
           }
         })
-      } else { // console.log('dialTo:' + customerPhone)
-        if (localStorage.getItem('DN') !== null && localStorage.getItem('DN') !== '') {
+      } else {
+        // console.log('dialTo:' + customerPhone)
+        if (
+          localStorage.getItem('DN') !== null &&
+          localStorage.getItem('DN') !== ''
+        ) {
           cti.makecall(localStorage.getItem('DN'), customerPhone)
           setTimeout(() => {
             this.getRecordId(taskId, campaignId)
@@ -804,16 +872,15 @@ export default {
     },
     // 获取新生成的接触记录信息
     getRecordId(taskId, campaignId) {
-      queryContactRecord(taskId, campaignId)
-        .then(response => {
-          if (response.data.code === 0) {
-            if (response.data.data && response.data.pageInfo.totalCount !== 0) {
-              this.recordId = response.data.data[0].recordId
-              sessionStorage.setItem('recordId', this.recordId)
-              this.contactRecord = response.data.data
-            }
+      queryContactRecord(taskId, campaignId).then(response => {
+        if (response.data.code === 0) {
+          if (response.data.data && response.data.pageInfo.totalCount !== 0) {
+            this.recordId = response.data.data[0].recordId
+            sessionStorage.setItem('recordId', this.recordId)
+            this.contactRecord = response.data.data
           }
-        })
+        }
+      })
     },
     // 判断是否需要显示发送支付短信的checkbox
     setSendMessage(radio) {
@@ -831,7 +898,10 @@ export default {
       } else {
         if (this.selectedSummarys.some(i => i === data.id)) {
           // 移除数组中此项id
-          this.selectedSummarys.splice(this.selectedSummarys.indexOf(data.id), 1)
+          this.selectedSummarys.splice(
+            this.selectedSummarys.indexOf(data.id),
+            1
+          )
         }
       }
     },
@@ -847,7 +917,13 @@ export default {
               if (!this.isDialTask) {
                 // console.log(response.data.data)
                 const data = response.data.data[0]
-                this.changeToCustomerDetail(data.taskId, data.campaignId, data.customerId, data.isBlacklist, data.customerPhone)
+                this.changeToCustomerDetail(
+                  data.taskId,
+                  data.campaignId,
+                  data.customerId,
+                  data.isBlacklist,
+                  data.customerPhone
+                )
               }
             } else {
               this.$message = '无查询结果，请核对查询条件'
@@ -891,7 +967,7 @@ export default {
         for (var i = 0; i < summarys.length; i++) {
           summaryNames += summarys[i].name + '/'
         }
-        summaryNames = summaryNames.substr(0, (summaryNames.length - 1))
+        summaryNames = summaryNames.substr(0, summaryNames.length - 1)
         return summaryNames
       }
     },
@@ -958,7 +1034,11 @@ export default {
       this.isBlacklists.length = 0
       this.customerIds.length = 0
       for (var i = 0; i < val.length; i++) {
-        if ((val[i].status === '0' || val[i].status === '1') && val[i].isBlacklist !== '1' && val[i].isNodisturb !== '1') {
+        if (
+          (val[i].status === '0' || val[i].status === '1') &&
+          val[i].isBlacklist !== '1' &&
+          val[i].isNodisturb !== '1'
+        ) {
           this.taskIds.push(val[i].taskId)
           this.campaignIds.push(val[i].campaignId)
           this.isBlacklists.push(val[i].isBlacklist)
@@ -1034,7 +1114,13 @@ export default {
         this.$store.dispatch('setDetails', [this.taskIds, this.campaignIds, this.isBlacklists, this.customerIds])
         this.canContact = 1
         this.addDays = ''
-        this.showDetailInfos(this.taskIds[0], this.campaignIds[0], this.customerIds[0], this.isBlacklists[0], null)
+        this.showDetailInfos(
+          this.taskIds[0],
+          this.campaignIds[0],
+          this.customerIds[0],
+          this.isBlacklists[0],
+          null
+        )
         if (this.taskIds.length > 1) {
           this.showAutoDial = true
         }
@@ -1054,50 +1140,87 @@ export default {
       }
     },
     // 展示拨打页面详情
-    showDetailInfos(taskId, campaignId, customerId, isBlacklist, customerPhone) {
+    showDetailInfos(
+      taskId,
+      campaignId,
+      customerId,
+      isBlacklist,
+      customerPhone
+    ) {
       // 判断活动类型
-      getCampaignType(campaignId)
-        .then(res1 => {
-          if (res1.data.code === 0) {
-            this.campaignType = res1.data.data.campaignTypeInfo.code
-            if (this.campaignType === 'RECRUIT') {
-              this.isRecruit = true
-            } else {
-              this.isRecruit = false
-            }
+      getCampaignType(campaignId).then(res1 => {
+        if (res1.data.code === 0) {
+          this.campaignType = res1.data.data.campaignTypeInfo.code
+          if (this.campaignType === 'RECRUIT') {
+            this.isRecruit = true
+          } else {
+            this.isRecruit = false
           }
-        })
+        }
+      })
       // 获取客户基本信息
-      queryCustomerInfo(customerId)
-        .then(res => {
-          if (res.data.code === 0) {
-            this.customerInfo = res.data.data
-            this.idNumber = res.data.data.idNumber
-            this.customerPhone = res.data.data.mobile
-          }
-        })
-        // 判断是否有接触记录信息
-      queryContactRecord(taskId, campaignId)
-        .then(res2 => {
-          if (res2.data.code === 0) {
-            this.contactRecord = res2.data.data
-          }
-        })
-        // 判断是否有产品信息
-      hasOrderInfos(campaignId)
-        .then(res3 => {
-          if (res3.data.code === 0 && res3.data.data.length > 0) {
-            this.hasProductInfo = true
-            this.productInfo = res3.data.data
-          }
-        })
-        // 根任务id获取小结
-      getSummaries(taskId)
-        .then(res4 => {
-          if (res4.data.code === 0 && res4.data.data.length > 0) {
-            this.nodulesTree = res4.data.data
-          }
-        })
+      queryCustomerInfo(customerId).then(res => {
+        if (res.data.code === 0) {
+          this.customerInfo = res.data.data
+          this.idNumber = res.data.data.idNumber
+          this.customerPhone = res.data.data.mobile
+        }
+      })
+      // 判断是否有接触记录信息
+      queryContactRecord(taskId, campaignId).then(res2 => {
+        if (res2.data.code === 0) {
+          this.contactRecord = res2.data.data
+        }
+      })
+      // 判断是否有产品信息
+      hasOrderInfos(campaignId).then(res3 => {
+        if (res3.data.code === 0 && res3.data.data.length > 0) {
+          this.hasProductInfo = true
+          this.productInfo = res3.data.data
+          getProducts(res3.data.data).then(res => {
+            if (res.data.code === 0 && res.data.data.length > 0) {
+              this.products = res.data.data
+              for (let i = 0; i < this.products.length; i++) {
+                const tempValue = this.products[i].propertyInfos
+                this.products[i].showMessage = false
+                if (
+                  typeof tempValue !== 'undefined' &&
+                  tempValue !== null &&
+                  tempValue.length > 0
+                ) {
+                  for (let j = 0; j < tempValue.length; j++) {
+                    if (
+                      tempValue[j].templateType === 'checkbox' &&
+                      tempValue[j].showOrInput === '1'
+                    ) {
+                      this.$set(this.checks, j, [])
+                    }
+                    if (tempValue[j].templateType === 'checkbox' || tempValue[j].templateType === 'radio') {
+                      const arr = JSON.parse(tempValue[j].propertyValue)
+                      this.products[i].propertyInfos[j].showInLine = true
+                      for (let k = 0; k < arr.length; k++) {
+                        if (arr[k].length > 4) {
+                          this.products[i].propertyInfos[j].showInLine = false
+                          break
+                        }
+                      }
+                    }
+                    if (tempValue[j].showOrInput === '1' && tempValue[j].isRequired === '1') {
+                      this.products[i].showMessage = true
+                    }
+                  }
+                }
+              }
+            }
+          })
+        }
+      })
+      // 根任务id获取小结
+      getSummaries(taskId).then(res4 => {
+        if (res4.data.code === 0 && res4.data.data.length > 0) {
+          this.nodulesTree = res4.data.data
+        }
+      })
     },
     showSex(sex) {
       if (sex === 0) {
@@ -1106,8 +1229,14 @@ export default {
         return '女'
       }
     },
-    handleChange(val) {
-      console.log(val)
+    handleChange(templateId, price, number) {
+      this.sumInfo.set(templateId, { price: price, number: number })
+      this.sumTotal = 0
+
+      this.sumInfo.forEach((val, key) => {
+        this.sumTotal += parseFloat(val.price) * parseInt(val.number)
+      })
+      this.sumTotal = this.sumTotal.toFixed(2)
     },
     //
     showCallDirection(callDirection) {
@@ -1131,7 +1260,10 @@ export default {
       } else if (this.radio === '1' && this.appointTime === '') {
         this.$message.error('未选择预约时间！')
         return false
-      } else if (this.radio === '1' && this.appointTime < formatDateTime(new Date())) {
+      } else if (
+        this.radio === '1' &&
+        this.appointTime < formatDateTime(new Date())
+      ) {
         this.$message.error('预约时间不能小于当前时间！')
         return false
       } else if (this.selectedSummarys.length === 0) {
@@ -1141,188 +1273,198 @@ export default {
         // 生成完整接触记录及小结
         // 判断任务状态radio  2：成功 3：失败  1：预约
         if (this.radio === '2' && this.campaignType !== 'RECRUIT') {
-          // 说明任务状态为成功 判断是否需要新建产品、生成订单
-          if (this.activeTab !== '0') {
-          // 选择了产品
-            switch (this.activeTab) {
-              case 'P20180101000002':// 车险
-                this.selectedProduct.applicantBirthDay = getIDCardInfo(this.idNumber).get('birthDay')
-                this.selectedProduct.applicantName = this.customerInfo.customerName
-                this.selectedProduct.applicantPhone = this.customerInfo.mobile
-                this.selectedProduct.applicantSex = getIDCardInfo(this.idNumber).get('sex')
-                this.selectedProduct.insuredBirthDay = getIDCardInfo(this.idNumber).get('birthDay')
-                this.selectedProduct.insuredName = this.customerInfo.customerName
-                this.selectedProduct.insuredPhone = this.customerInfo.mobile
-                this.selectedProduct.insuredSex = getIDCardInfo(this.idNumber).get('sex')
-                this.selectedProduct.productId = 'P20180101000002'
-                // 新建产品
-                addNewProduct(this.selectedProduct)
-                  .then(response => {
-                    if (response.data.code === 0) {
-                      this.productDetailId = response.data.data
-                      // 生成订单
-                      this.order_Params.campaignId = this.campaignId
-                      this.order_Params.taskId = this.taskId
-                      this.order_Params.staffId = localStorage.getItem('agentId')
-                      this.order_Params.staffName = localStorage.getItem('staffName')
-                      this.order_Params.creatorId = localStorage.getItem('agentId')
-                      this.order_Params.creatorName = localStorage.getItem('staffName')
-                      this.order_Params.totalAmount = this.insurancePay_car
-                      this.order_Params.productName = '车险'
-                      this.order_Params.productId = 'P20180101000002'
-                      this.order_Params.productDetailId = this.productDetailId
-                      this.order_Params.customerId = this.customerInfo.customerId
-                      this.order_Params.customerName = this.customerInfo.customerName
-                      this.order_Params.customerPhone = this.customerInfo.mobile
-                      this.order_Params.description = '车险'
-                      generateOrder(this.order_Params)
-                        .then(res => {
-                          if (res.data.code === 0) {
-                            // 成功生成订单 判断是否发送短信
-                            if (this.sendMessage === true) {
-                              sendMessageToCustomer(res.data.data, this.customerInfo.mobile)
-                            }
-                            this.$message({
-                              message: '成功生成订单',
-                              type: 'success'
-                            })
-                            sessionStorage.removeItem('isDialTask')
-                            sessionStorage.removeItem('recordId')
-                          } else {
-                            this.$message.error(res.data.message)
-                            return
-                          }
-                        })
-                    } else {
-                      this.$message.error('出错啦...请稍后重试！')
-                      return
-                    }
-                  })
-                break
+          if (this.sumTotal <= 0) {
+            this.$message.error('未选择预购产品！')
+            return false
+          }
+          const createInfo = {}
+          createInfo.campaignId = this.campaignId // 活动id
+          createInfo.taskId = this.taskId // 任务id
+          createInfo.description = this.customerNote // 客户留言
 
-              case 'P20180101000003': // 儿童险
-                this.selectedProduct.applicantBirthDay = getIDCardInfo(this.idNumber).get('birthDay')
-                this.selectedProduct.applicantName = this.customerInfo.customerName
-                this.selectedProduct.applicantPhone = this.customerInfo.mobile
-                this.selectedProduct.applicantSex = getIDCardInfo(this.idNumber).get('sex')
-                this.selectedProduct.insuredBirthDay = getIDCardInfo(this.idNumber).get('birthDay')
-                this.selectedProduct.insuredName = this.customerInfo.customerName
-                this.selectedProduct.insuredPhone = this.customerInfo.mobile
-                this.selectedProduct.insuredSex = getIDCardInfo(this.idNumber).get('sex')
-                this.selectedProduct.productId = 'P20180101000003'
-                // 新建产品
-                addNewProduct(this.selectedProduct)
-                  .then(response => {
-                    if (response.data.code === 0) {
-                      this.productDetailId = response.data.data
-                      // 生成订单
-                      this.order_Params.campaignId = this.campaignId
-                      this.order_Params.taskId = this.taskId
-                      this.order_Params.staffId = localStorage.getItem('agentId')
-                      this.order_Params.staffName = localStorage.getItem('staffName')
-                      this.order_Params.creatorId = localStorage.getItem('agentId')
-                      this.order_Params.creatorName = localStorage.getItem('staffName')
-                      this.order_Params.totalAmount = this.insurancePay_car
-                      this.order_Params.productName = '儿童险'
-                      this.order_Params.productId = 'P20180101000003'
-                      this.order_Params.productDetailId = this.productDetailId
-                      this.order_Params.customerId = this.customerInfo.customerId
-                      this.order_Params.customerName = this.customerInfo.customerName
-                      this.order_Params.customerPhone = this.customerInfo.mobile
-                      this.order_Params.description = '儿童险'
-                      generateOrder(this.order_Params)
-                        .then(res => {
-                          if (res.data.code === 0) {
-                            // 成功生成订单 判断是否发送短信
-                            if (this.sendMessage === true) {
-                              sendMessageToCustomer(res.data.data, this.customerInfo.mobile)
-                            }
-                            this.$message({
-                              message: '成功生成订单',
-                              type: 'success'
-                            })
-                            sessionStorage.removeItem('isDialTask')
-                            sessionStorage.removeItem('recordId')
-                          } else {
-                            // 生成订单出错
-                            this.$message.error(res.data.message)
-                            return
-                          }
-                        })
-                    } else {
-                      // 新建产品出错
-                      this.$message.error('出错啦...请稍后重试！')
-                      return
-                    }
-                  })
-                break
+          createInfo.customerId = this.customerId // 客户id
+          createInfo.customerName = this.customerInfo.customerName // 客户姓名
+          createInfo.customerPhone = this.customerPhone // 客户手机
 
-              case 'P20180101000004':
-                this.selectedProduct.applicantBirthDay = getIDCardInfo(this.idNumber).get('birthDay')
-                this.selectedProduct.applicantName = this.customerInfo.customerName
-                this.selectedProduct.applicantPhone = this.customerInfo.mobile
-                this.selectedProduct.applicantSex = getIDCardInfo(this.idNumber).get('sex')
-                this.selectedProduct.insuredBirthDay = getIDCardInfo(this.idNumber).get('birthDay')
-                this.selectedProduct.insuredName = this.customerInfo.customerName
-                this.selectedProduct.insuredPhone = this.customerInfo.mobile
-                this.selectedProduct.insuredSex = getIDCardInfo(this.idNumber).get('sex')
-                this.selectedProduct.productId = 'P20180101000004'
-                // 新建产品
-                addNewProduct(this.selectedProduct)
-                  .then(response => {
-                    if (response.data.code === 0) {
-                      this.productDetailId = response.data.data
-                      // 生成订单
-                      this.order_Params.campaignId = this.campaignId
-                      this.order_Params.taskId = this.taskId
-                      this.order_Params.staffId = localStorage.getItem('agentId')
-                      this.order_Params.staffName = localStorage.getItem('staffName')
-                      this.order_Params.creatorId = localStorage.getItem('agentId')
-                      this.order_Params.creatorName = localStorage.getItem('staffName')
-                      this.order_Params.totalAmount = this.insurancePay_car
-                      this.order_Params.productName = '重疾险'
-                      this.order_Params.productId = 'P20180101000004'
-                      this.order_Params.productDetailId = this.productDetailId
-                      this.order_Params.customerId = this.customerInfo.customerId
-                      this.order_Params.customerName = this.customerInfo.customerName
-                      this.order_Params.customerPhone = this.customerInfo.mobile
-                      this.order_Params.description = '重疾险'
-                      generateOrder(this.order_Params)
-                        .then(res => {
-                          if (res.data.code === 0) {
-                            // 成功生成订单 判断是否发送短信
-                            if (this.sendMessage === true) {
-                              sendMessageToCustomer(res.data.data, this.customerInfo.mobile)
-                            }
-                            this.$message({
-                              message: '成功生成订单',
-                              type: 'success'
-                            })
-                            sessionStorage.removeItem('isDialTask')
-                            sessionStorage.removeItem('recordId')
-                          } else {
-                            // 生成订单出错
-                            this.$message.error(res.data.message)
-                            return
-                          }
-                        })
-                    } else {
-                      // 新建产品出错
-                      this.$message.error('出错啦...请稍后重试！')
-                      return
-                    }
-                  })
-                break
+          createInfo.totalAmount = this.sumTotal
+          // 创建产品逻辑
+          const productTempInfo = []
+
+          let flag = true // 默认校验正确
+
+          for (let j = 0; j < this.products.length; j++) {
+            if (this.products[j].number > 0 && this.products[j].propertyInfos !== null) {
+              const propertyInfos = this.products[j].propertyInfos
+
+              for (let k = 0; k < propertyInfos.length; k++) {
+                if (propertyInfos[k].isRequired === '1' && propertyInfos[k].showOrInput === '1') {
+                  switch (propertyInfos[k].templateType) {
+                    case 'text':
+                      if (propertyInfos[k].propertyValue === '') {
+                        flag = false
+                        this.$message.error('预购订单还有必填项：' + propertyInfos[k].propertyName + '没有完成')
+                        return
+                      }
+                      break
+                    case 'input':
+                      if (propertyInfos[k].propertyValue === '') {
+                        flag = false
+                        this.$message.error('预购订单还有必填项：' + propertyInfos[k].propertyName + '没有完成')
+                        return
+                      }
+                      break
+                    case 'radio':
+                      if (typeof propertyInfos[k].propertyValueRadio === 'undefined' || propertyInfos[k].propertyValueRadio === '') {
+                        flag = false
+                        this.$message.error('预购订单还有必填项：' + propertyInfos[k].propertyName + '没有完成')
+                        return
+                      }
+                      break
+                    case 'select':
+                      if (typeof propertyInfos[k].propertyValueSelect === 'undefined' || propertyInfos[k].propertyValueSelect === '') {
+                        flag = false
+                        this.$message.error('预购订单还有必填项：' + propertyInfos[k].propertyName + '没有完成')
+                        return
+                      }
+                      break
+                    case 'checkbox':
+                      if (typeof propertyInfos[k].propertyValueCheckbox === 'undefined' || propertyInfos[k].propertyValueCheckbox === '') {
+                        flag = false
+                        this.$message.error('预购订单还有必填项：' + propertyInfos[k].propertyName + '没有完成')
+                        return
+                      }
+                      break
+                    case 'textarea':
+                      if (propertyInfos[k].propertyValue === '') {
+                        flag = false
+                        this.$message.error('预购订单还有必填项：' + propertyInfos[k].propertyName + '没有完成')
+                        return
+                      }
+                      break
+                    default:
+                      if (propertyInfos[k].propertyValue === '') {
+                        flag = false
+                        this.$message.error('预购订单还有必填项：' + propertyInfos[k].propertyName + '  没有完成')
+                        return
+                      }
+                      break
+                  }
+                }
+              }
             }
+          }
+          if (flag) {
+            for (let i = 0; i < this.products.length; i++) {
+              if (this.products[i].number > 0) {
+                const productInfo = this.products[i]
+                const result = {}
+                result.description = productInfo.description
+                result.price = productInfo.price
+                result.number = productInfo.number
+                result.productName = productInfo.productName
+                result.productTypeId = productInfo.productTypeInfo.productTypeId
+                result.productTypeName = productInfo.productTypeInfo.productTypeName
+                result.status = productInfo.status
+                // 回复选择情况
+                const propertyInfos = []
+                if (productInfo.propertyInfos !== null && productInfo.propertyInfos.length > 0) {
+                  for (let j = 0; j < productInfo.propertyInfos.length; j++) {
+                    const obj = productInfo.propertyInfos[j]
+                    const propertyInfo = {}
+                    propertyInfo.isRequired = obj.isRequired
+                    propertyInfo.mark = obj.mark
+                    propertyInfo.propertyKey = obj.propertyKey
+                    propertyInfo.propertyLength = obj.propertyLength
+                    propertyInfo.propertyName = obj.propertyName
+                    propertyInfo.propertyType = obj.propertyType
+                    switch (obj.templateType) {
+                      case 'radio':
+                        propertyInfo.propertyValue = obj.propertyValueRadio
+                        break
+                      case 'checkbox':
+                        if (typeof obj.propertyValueCheckbox !== 'undefined' && obj.propertyValueCheckbox !== '') {
+                          propertyInfo.propertyValue = '[' + obj.propertyValueCheckbox.join(',') + ']'
+                        } else {
+                          propertyInfo.propertyValue = '[]'
+                        }
+                        break
+                      case 'select':
+                        propertyInfo.propertyValue = obj.propertyValueSelect
+                        break
+                      default:
+                        propertyInfo.propertyValue = obj.propertyValue
+                        break
+                    }
+                    propertyInfo.showOrInput = obj.showOrInput
+                    propertyInfo.sort = obj.sort
+                    propertyInfo.templateType = obj.templateType
+                    propertyInfos.push(propertyInfo)
+                  }
+                }
+                result.propertyInfos = propertyInfos
+                productTempInfo.push(result)
+              }
+            }
+            // 请求后台处理创建订单
+            batchCreatProduct(productTempInfo).then(res => {
+              if (res.data.code === 0) {
+                for (let a = 0; a < productTempInfo.length; a++) {
+                  productTempInfo[a].productId = res.data.data[a]
+                }
+                // 拼接订单信息
+                const productInfos = []
+                for (let b = 0; b < productTempInfo.length; b++) {
+                  const productInfo = {}
+                  productInfo.productId = productTempInfo[b].productId
+                  productInfo.productName = productTempInfo[b].productName
+                  productInfo.productNum = productTempInfo[b].number
+                  productInfo.productTypeId = productTempInfo[b].productTypeId
+                  productInfo.productTypeName = productTempInfo[b].productTypeName
+                  productInfos.push(productInfo)
+                }
+                createInfo.productInfos = productInfos
+                // 生成订单逻辑
+                addMoreOrder(createInfo).then(response => {
+                  if (response.data.code === 0) {
+                    vm.customerNote = ''
+                    vm.products = []
+                    vm.sumTotal = 0
+                    vm.sumInfo = new Map()
+                    // 成功生成订单 判断是否发送短信
+                    if (this.sendMessage === true) {
+                      sendMessageToCustomer(
+                        response.data.data,
+                        this.customerInfo.mobile
+                      )
+                    }
+                    this.$message({
+                      message: response.data.message,
+                      type: 'success'
+                    })
+		    sessionStorage.removeItem('isDialTask')
+                    sessionStorage.removeItem('recordId')
+                  } else {
+                    this.$message({
+                      message: response.data.message,
+                      type: 'error'
+                    })
+                    return
+                  }
+                })
+              } else {
+                this.$message.error(res.data.message)
+                return
+              }
+            })
           } else {
-            this.$message.error('未选择任何产品！')
+            this.$message.error('订单还有未填的必填项')
             return
           }
         }
         // 选择失败、预约 或 成功但没有产品(如招聘)的情况
         // 修改任务状态
-        updateTaskStatus(this.taskId, this.radio, this.appointTime)
-          .then(res => {
+        updateTaskStatus(this.taskId, this.radio, this.appointTime).then(
+          res => {
             if (res.data.code === 0) {
               // 修改小结备注
               updateRecordInfo(this.recordId, this.radio, this.selectedSummarys, this.summary_description)
@@ -1390,7 +1532,8 @@ export default {
               this.$message.error(res.data.message)
               return
             }
-          })
+          }
+        )
       }
     },
     // 返回列表
@@ -1518,6 +1661,10 @@ export default {
   },
   // 离开时清除定时器
   destroyed: function() {
+    this.customerNote = ''
+    this.products = []
+    this.sumTotal = 0
+    this.sumInfo = new Map()
     clearInterval(this.interval)
     localStorage.removeItem('global_taskId')
     // this.$store.dispatch('setReq', this.req)

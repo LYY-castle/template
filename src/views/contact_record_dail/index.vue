@@ -330,13 +330,15 @@
               <a @click="detailVisible=true;orderId=scope.row.orderId;quertOrderDetail()" size="medium">{{scope.row.orderId}}</a>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="产品名称" prop="productName" :show-overflow-tooltip="true">
+          <el-table-column align="center" label="产品名称" :show-overflow-tooltip="true">
+            <template slot-scope="scope">{{showProducts(scope.row.productInfos)}}
+            </template>
           </el-table-column>
           <el-table-column align="center" label="新建时间" prop="createTime" :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column align="center" label="订单状态" :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <div>{{scope.row.status == 0 ? "未完成": "已完成"}}</div>
+              <div>{{scope.row.status === '0' ? "未完成": "已完成"}}</div>
             </template>
           </el-table-column>
           <el-table-column align="center" label="订单金额" prop="totalAmount" :show-overflow-tooltip="true">
@@ -370,13 +372,13 @@
           <span>{{orderDetailInfo.createTime}}</span>
         </el-form-item>
         <el-form-item label="订单状态：">
-          <span>{{orderDetailInfo.status===0?"未完成":"已完成"}}</span>
+          <span>{{orderDetailInfo.status==='0'?"未完成":"已完成"}}</span>
         </el-form-item>
         <el-form-item label="支付方式：" prop="modifyTime">
           <span>{{orderDetailInfo.productId==="P20180101000001"?'赠险无需支付':(orderDetailInfo.payTypeName==null?'无':orderDetailInfo.payTypeName)}}</span>
         </el-form-item>
         <el-form-item label="选购产品：" prop="productName">
-          <span>{{orderDetailInfo.productName}}</span>
+          <span>{{showProducts(orderDetailInfo.productInfos)}}</span>
         </el-form-item>
         <el-form-item label="订单总价(元)：" prop="totalAmount">
           <span>{{orderDetailInfo.totalAmount}}</span>
@@ -591,6 +593,19 @@ audio {
       this.req.pageNo = 1
     },
     methods: {
+      // 展示产品信息
+      showProducts(item) {
+        let productStr = ''
+        if (typeof item === 'undefined' || item === null) {
+          return productStr
+        } else {
+          for (let i = 0; i < item.length; i++) {
+            productStr += item[i].productName + ' * ' + item[i].productNum + '，'
+          }
+          productStr = productStr.substring(0, productStr.length - 1)
+          return productStr
+        }
+      },
       edit() {
         this.editVisible = true
         console.log('tree', this.$refs.tree)

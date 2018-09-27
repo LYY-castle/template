@@ -92,7 +92,7 @@
             prop="productName"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
-                {{ scope.row.productName }}
+                {{ showProducts(scope.row.productInfos) }}
             </template>
           </el-table-column>
           <el-table-column
@@ -222,7 +222,7 @@
           <span>{{orderDetail.payTypeName}}</span>
         </el-form-item>
         <el-form-item label="选购产品">
-          <span>{{orderDetail.productName}}</span>
+          <span>{{showProducts(orderDetail.productInfos)}}</span>
         </el-form-item>
         <el-form-item label="订单金额(元)">
           <span>{{orderDetail.totalAmount}}</span>
@@ -414,6 +414,19 @@
     },
 
     methods: {
+      // 展示订单产品信息
+      showProducts(item) {
+        let productStr = ''
+        if (typeof item === 'undefined' || item === null) {
+          return productStr
+        } else {
+          for (let i = 0; i < item.length; i++) {
+            productStr += item[i].productName + ' * ' + item[i].productNum + '，'
+          }
+          productStr = productStr.substring(0, productStr.length - 1)
+          return productStr
+        }
+      },
       // 综合查询
       searchByKeyWords(req) {
         if (this.isManager) {
