@@ -300,16 +300,18 @@
         <el-col  style="margin-left:2%;width:73%;">
                 <el-tabs :data="orderData"
                         type="border-card"
-                        v-if="orderHide" style="min-height:223px">
+                        v-if="orderHide" style="min-height:223px"
+                        v-model="orderActiveName">
                 <el-tab-pane
                   v-for="(item,index) in orderData"
-                  :key="item.name"
+                  :key="item.productId"
                   :label="item.productName"
-                  :name="item.name">
-                  <span><font>订单号：</font>{{item.orderId}}</span><br/>
-                  <span><font>产品或服务：</font>{{item.productName}}</span><br/>
-                  <span><font>商品总额：</font>{{item.totalAmount}}<font>元</font></span><br/>
-                  <span><font>保险年限：</font>{{item.year}}</span><br/>
+                  :name="item.productId">
+                  <span><font>产品id：</font>{{item.productId}}</span><br/>
+                  <span><font>产品名称：</font>{{item.productName}}</span><br/>
+                  <span><font>购买数量：</font>{{item.productNum}}<font>件</font></span><br/>
+                  <span><font>产品类型id：</font>{{item.productTypeId}}</span><br/>
+                  <span><font>产品类型名称：</font>{{item.productTypeName}}</span><br/>
                 </el-tab-pane>
               </el-tabs>
           <el-card class="box-card"  v-if="!orderHide" style="min-height:223px">
@@ -533,16 +535,18 @@
         <el-col  style="margin-left:2%;width:73%;">
                 <el-tabs :data="orderData"
                         type="border-card"
-                        v-if="orderHide" style="min-height:223px">
+                        v-if="orderHide" style="min-height:223px"
+                        v-model="orderActiveName">
                 <el-tab-pane
                   v-for="(item,index) in orderData"
-                  :key="item.name"
+                  :key="item.productId"
                   :label="item.productName"
-                  :name="item.name">
-                  <span><font>订单号：</font>{{item.orderId}}</span><br/>
-                  <span><font>产品或服务：</font>{{item.productName}}</span><br/>
-                  <span><font>商品总额：</font>{{item.totalAmount}}<font>元</font></span><br/>
-                  <span><font>保险年限：</font>{{item.year}}</span><br/>
+                  :name="item.productId">
+                  <span><font>产品id：</font>{{item.productId}}</span><br/>
+                  <span><font>产品名称：</font>{{item.productName}}</span><br/>
+                  <span><font>购买数量：</font>{{item.productNum}}<font>件</font></span><br/>
+                  <span><font>产品类型id：</font>{{item.productTypeId}}</span><br/>
+                  <span><font>产品类型名称：</font>{{item.productTypeName}}</span><br/>
                 </el-tab-pane>
               </el-tabs>
           <el-card class="box-card"  v-if="!orderHide" style="min-height:223px">
@@ -645,6 +649,7 @@
         taskId: '',
         row: {},
         activeName: '',
+        orderActiveName: '',
         comment: [],
         gradeMarks: [{
           id: 0,
@@ -982,7 +987,10 @@
             if (data.length <= 0) {
               this.orderHide = false
             } else {
-              this.orderData = data
+              this.orderData = data[0].productInfos
+              if (this.orderData.length > 0) {
+                this.orderActiveName = this.orderData[0].productId
+              }
               this.orderHide = true
             }
           } else {
@@ -998,7 +1006,7 @@
         getMarksByTaskId({ 'taskId': row.id }).then(response => {
           if (response.data.code === 0) {
             var data = response.data.data
-            if (data.length <= 0) {
+            if (data === null || data.length <= 0) {
               this.gradeHide = false
             } else {
               this.gradeHide = true
