@@ -113,7 +113,7 @@
       </el-form-item>
       <el-form-item label="员工选项:" style="margin-bottom: 0" v-else>
         <el-select v-model="formInline.staff" @change="agentChange">
-          <el-option v-for="item in staffOptions" :key="item" :label="item" :value="item"></el-option>
+          <el-option v-for="item in staffOptions" :key="item" :label="item.real_name" :value="item.agent_id"></el-option>
         </el-select>
       </el-form-item>
     </el-form>
@@ -144,7 +144,7 @@
           align="center"
           :label="statistics_type === 'depart'?'下属部门':'下属员工'">
           <template slot-scope="scope">
-            {{statistics_type === 'depart'?scope.row.depart_name:scope.row.agent_id}}
+            {{statistics_type === 'depart' ? scope.row.depart_name :  `${formInline.agentMap[scope.row.agent_id]} (${scope.row.agent_id})`}}
           </template>
         </el-table-column>
         <el-table-column
@@ -187,7 +187,7 @@
             align="center"
             :label="statistics_type === 'depart'?'下属部门':'下属员工'">
             <template slot-scope="scope">
-              {{statistics_type === 'depart'?scope.row.depart_name:scope.row.agent_id}}
+              {{statistics_type === 'depart' ? scope.row.depart_name :  `${formInline.agentMap[scope.row.agent_id]} (${scope.row.agent_id})`}}
             </template>
           </el-table-column>
           <el-table-column
@@ -397,6 +397,7 @@
 </template>
 
 <script>
+  import _ from 'lodash'
   import echarts from 'echarts'
   import resize from './mixins/resize'
   import { statistics, getDepartId, totalAgent, reportAgent, departAgents } from '@/api/ctiReport'
@@ -525,22 +526,50 @@
                 return item.depart_name
               })
             } else {
-              this.staffOptions = response.data.result.agent_ids
-              this.formInline.staff = response.data.result.agent_ids[0]
-              this.formInline.agent_id = response.data.result.agent_ids.map(function(item, index) {
-                return item.angentId
+              this.staffOptions = response.data.result.agents
+              this.formInline.staff = response.data.result.agents[0].agent_id
+              this.formInline.agent_id = response.data.result.agents.map(function(item, index) {
+                return item.agent_id
               })
+              this.formInline.agent_real_name = response.data.result.agents.map(function(item, index) {
+                return item.real_name
+              })
+              this.formInline.agentMap = _.zipObject(this.formInline.agent_id, this.formInline.agent_real_name)
             }
             this.search(0)
           })
         }).catch((error) => {
           console.log(error)
-          permsstaff(res.data.agentid).then(re => {
-            this.departPermission = false
-            this.staffPermission = true
-            this.search1(res.data.agentid)
-          }).catch((err) => {
-            console.log(err)
+          departAgents(res.data.departId).then(response => {
+            this.statistics_type = response.data.result.statistics_type
+            if (response.data.result.statistics_type === 'depart') {
+              this.staffOptions = response.data.result.sub_departs
+              this.formInline.staff = response.data.result.sub_departs[0].depart_id
+              this.formInline.sub_depart_id = response.data.result.sub_departs.map(function(item, index) {
+                return item.depart_id
+              })
+              this.formInline.sub_depart_name = response.data.result.sub_departs.map(function(item, index) {
+                return item.depart_name
+              })
+            } else {
+              this.staffOptions = response.data.result.agents
+              this.formInline.staff = response.data.result.agents[0].agent_id
+              this.formInline.agent_id = response.data.result.agents.map(function(item, index) {
+                return item.agent_id
+              })
+              this.formInline.agent_real_name = response.data.result.agents.map(function(item, index) {
+                return item.real_name
+              })
+              this.formInline.agentMap = _.zipObject(this.formInline.agent_id, this.formInline.agent_real_name)
+            }
+
+            permsstaff(res.data.agentid).then(re => {
+              this.departPermission = false
+              this.staffPermission = true
+              this.search1(res.data.agentid)
+            }).catch((err) => {
+              console.log(err)
+            })
           })
         })
       })
