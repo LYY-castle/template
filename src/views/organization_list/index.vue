@@ -197,6 +197,7 @@
 </template>
 
 <script>
+  import _ from 'lodash'
   import { modifyOrgan, delOrgan, addOrganization, delOrgansByOrganIds, findAllOrganGet, findAllOrganPost, findAllOrganTo } from '@/api/organization_list'
   import { Message, MessageBox } from 'element-ui'
   import { formatDateTime } from '@/utils/tools'
@@ -345,27 +346,19 @@
       submitFormReverse(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            let obj = {}
-            if (this.ruleFormReverse.upId) {
-              obj = {
-                organ_id: this.ruleFormReverse.id,
-                organ_No: this.ruleFormReverse.number,
-                group_cn: this.ruleFormReverse.departName,
-                select_uporgan: this.ruleFormReverse.upId,
-                remark: this.ruleFormReverse.comment,
-                creator: this.ruleFormReverse.creator,
-                createTime: this.ruleFormReverse.createTime
-              }
-            } else {
-              obj = {
-                organ_id: this.ruleFormReverse.id,
-                organ_No: this.ruleFormReverse.number,
-                group_cn: this.ruleFormReverse.departName,
-                remark: this.ruleFormReverse.comment,
-                creator: this.ruleFormReverse.creator,
-                createTime: this.ruleFormReverse.createTime
-              }
+            const obj = {
+              organ_id: this.ruleFormReverse.id,
+              organ_No: this.ruleFormReverse.number,
+              group_cn: this.ruleFormReverse.departName,
+              remark: this.ruleFormReverse.comment,
+              creator: this.ruleFormReverse.creator,
+              createTime: this.ruleFormReverse.createTime
             }
+
+            if (!_.isUndefined(this.ruleFormReverse.upId) && !_.isNull(this.ruleFormReverse.upId)) {
+              obj.select_uporgan = this.ruleFormReverse.upId
+            }
+
             modifyOrgan(obj).then(response => {
               if (response.data.exchange.body.code === 1) {
                 this.dialogFormVisibleReverse = false
