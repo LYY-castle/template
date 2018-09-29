@@ -197,7 +197,6 @@
 </template>
 
 <script>
-  import _ from 'lodash'
   import { modifyOrgan, delOrgan, addOrganization, delOrgansByOrganIds, findAllOrganGet, findAllOrganPost, findAllOrganTo } from '@/api/organization_list'
   import { Message, MessageBox } from 'element-ui'
   import { formatDateTime } from '@/utils/tools'
@@ -355,7 +354,7 @@
               createTime: this.ruleFormReverse.createTime
             }
 
-            if (!_.isUndefined(this.ruleFormReverse.upId) && !_.isNull(this.ruleFormReverse.upId)) {
+            if (this.ruleFormReverse.upId) {
               obj.select_uporgan = this.ruleFormReverse.upId
             }
 
