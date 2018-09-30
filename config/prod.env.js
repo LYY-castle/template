@@ -4,6 +4,7 @@ const prod_env = process.env.prod_env || 'dev'
 
 const base_conf = {
   NODE_ENV: '"production"',
+  // BASE_API: '"http://119.27.179.175:12004/portal"',
   BASE_API: '"/api/v1"',
 }
 
@@ -13,7 +14,7 @@ const env_conf = {
     CTI_WS_SERVERURL:'"ws://119.27.179.175:9050/"'
   },
   master: {
-    TUI_WS_SERVERURL:'"ws://119.27.179.175:12007"',
+    TUI_WS_SERVERURL:'"ws://119.27.179.175:12207"',
     CTI_WS_SERVERURL:'"ws://119.27.179.175:9050/"'
   },
   sit: {

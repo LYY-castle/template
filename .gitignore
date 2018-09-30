@@ -2,5 +2,7 @@ node_modules/
 .gitigonre
 package-lock.json
 
+/dist/
+
 /.idea/
 *.iml
