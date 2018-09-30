@@ -14,11 +14,11 @@ const env_conf = {
     CTI_WS_SERVERURL:'"ws://119.27.179.175:9050/"'
   },
   master: {
-    TUI_WS_SERVERURL:'"ws://119.27.179.175:12207"',
+    TUI_WS_SERVERURL:'"ws://119.27.179.175:12207/tui"',
     CTI_WS_SERVERURL:'"ws://119.27.179.175:9050/"'
   },
   sit: {
-    TUI_WS_SERVERURL:'"ws://119.27.179.175:12012"',
+    TUI_WS_SERVERURL:'"ws://119.27.179.175:12012/tui"',
     CTI_WS_SERVERURL:'"ws://119.27.184.157:9050/"'
   }
 }
