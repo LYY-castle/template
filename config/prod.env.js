@@ -23,4 +23,4 @@ const env_conf = {
   }
 }
 
-module.exports = _.merge(base_conf, env_conf[process.env.prod_env])
+module.exports = _.merge(base_conf, env_conf[prod_env])
