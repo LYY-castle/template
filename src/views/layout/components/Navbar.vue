@@ -40,7 +40,7 @@
               <el-popover trigger="click" placement="bottom">
                 <el-form :inline="true" size="mini" style="padding-top:20px;">
                   <!-- 分机号登入 -->
-                  <el-form-item class="txtDN" size="mini" style="width:70px;"> 
+                  <el-form-item class="txtDN" size="mini" style="width:70px;">
                     <el-input v-model="formInline.DN" placeholder="分机号">{{formInline.DN}}</el-input>
                   </el-form-item>
                   <el-form-item>
@@ -56,7 +56,7 @@
                 <img src="../../../../static/images/busy_normal.png" title="示忙"  class="img-all" v-else-if="agentState2">
                 <img src="../../../../static/images/agentStat38_allReady.png" title="就绪"  class="img-all" v-else-if="agentState3">
                 <img src="../../../../static/images/back_state.png" title="坐席状态"  class="img-all" v-else-if="agentState4">
-                <el-dropdown-menu slot="dropdown"> 
+                <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="0">就绪</el-dropdown-item>
                   <el-dropdown-item command="13">示忙</el-dropdown-item>
                   <el-dropdown-item command="14">后处理</el-dropdown-item>
@@ -141,7 +141,7 @@
             <br> -->
           </div>
           <!-- <span style="float:left" class="line"></span> -->
-          
+
         </div>
         <div style="margin-right:20px;position:absolute;right:0;" v-if="havesoftphone">
           <!-- 有未读信息 -->
@@ -252,13 +252,13 @@
         <div>
           <el-col :span="20">
             <tags-view></tags-view>
-          </el-col>  
+          </el-col>
         </div>
 
     <!-- </el-col> -->
     </div>
   </el-row>
-  
+
 
   <el-dialog width="30%" title="修改密码" :visible.sync="changePwdVisiable" append-to-body>
       <span style="color:red">*</span><span style="font-size:15px;">请输入旧密码：</span><br/>
@@ -1214,13 +1214,13 @@ export default {
     on_SessionError(event) {
       vm.bolConnected = false
       vm.islogin = false
-      console.log('error')
+      console.log('session error')
       vm.setbtnStatus('logoff')
     },
     on_SessionClose(event) {
       vm.bolConnected = false
       vm.islogin = false
-      console.log('closed')
+      console.log('session closed')
       vm.setbtnStatus('logoff')
     },
     NewSessionConnected(event) {
@@ -1269,7 +1269,7 @@ export default {
     }
     checkSoftphonePerm(agentId).then(res => {
       this.havesoftphone = true
-      cti.connectCTI('ws://119.27.179.175:9050/')
+      cti.connectCTI(process.env.CTI_WS_SERVERURL)
     }).catch(error => {
       console.log(error)
     })
@@ -1284,10 +1284,10 @@ export default {
     // 刚进页面获取未读消息数量
     this.firstgetUnreadMessages(agentId)
 
-    this.socket = new WebSocket(process.env.WS_SERVERURL + '/realtime_notification_' + agentId)
+    this.socket = new WebSocket(`${process.env.TUI_WS_SERVERURL}/realtime_notification_${agentId}`)
 
     this.socket.onopen = function(openEvent) {
-      console.log('WebSocket has Connected successfully.')
+      console.log('Connect tui webSocket successfully.')
     }
 
     this.socket.onmessage = function(messageEvent) {
@@ -1337,7 +1337,7 @@ export default {
       }
     }
     vm.socket.onclose = function(closeEvent) {
-      console.log('WebSocket has been closed successfully.')
+      console.log('Close tui webSocket client successfully.')
     }
     this.$root.eventHub.$on('CHANGE_STATUS', () => {
       this.firstgetUnreadMessages(agentId)
@@ -1411,7 +1411,7 @@ export default {
   font-size:30px;
 }
 // .status-container div{
-//   text-overflow: ellipsis; 
+//   text-overflow: ellipsis;
 //   white-space:nowrap;
 // }
 .status-container{
@@ -1420,7 +1420,7 @@ export default {
   height: 75px;
   // padding-top: 15px;
   padding-top: 23px;
-  text-overflow: ellipsis; 
+  text-overflow: ellipsis;
   white-space:nowrap;
   overflow: hidden;
   margin-left:20px;
@@ -1563,8 +1563,8 @@ export default {
     width:321px;
   }
 }
-// @media all and (min-width:400px) and (max-width:1023px)  {  
-  
+// @media all and (min-width:400px) and (max-width:1023px)  {
+
 // }
 .img-all{
   cursor:pointer;width:100%;
@@ -1614,7 +1614,7 @@ export default {
     // margin-top:1%;
     width:55%;
   }
-  
+
   .userInfo{
     div{
       line-height:29px;

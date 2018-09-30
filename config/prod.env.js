@@ -1,6 +1,25 @@
-'use strict'
-module.exports = {
+const _ = require('lodash')
+
+const prod_env = process.env.prod_env || 'dev'
+
+const base_conf = {
   NODE_ENV: '"production"',
   BASE_API: '"/api/v1"',
-  WS_SERVERURL:'"ws://119.27.179.175:12010"'
 }
+
+const env_conf = {
+  dev: {
+    TUI_WS_SERVERURL:'"ws://119.27.179.175:12010"',
+    CTI_WS_SERVERURL:'"ws://119.27.179.175:9050/"'
+  },
+  master: {
+    TUI_WS_SERVERURL:'"ws://119.27.179.175:12007"',
+    CTI_WS_SERVERURL:'"ws://119.27.179.175:9050/"'
+  },
+  sit: {
+    TUI_WS_SERVERURL:'"ws://119.27.179.175:12012"',
+    CTI_WS_SERVERURL:'"ws://119.27.184.157:9050/"'
+  }
+}
+
+module.exports = _.merge(base_conf, env_conf[process.env.prod_env])

@@ -79,7 +79,7 @@ export default (new (function() {
   var bolConnected = false
 
   var wscti = null
- 
+
 //var wscti = new WebSocket(wsUri);
 
   // function init() {
@@ -107,7 +107,7 @@ export default (new (function() {
   function onOpen(evt) {
     bolConnected = true
     EventObject.trigger('onopen')
-
+    console.log('opening cti ws client successful')
   }
 
   function onClose(evt) {
@@ -116,7 +116,7 @@ export default (new (function() {
     islogin = false
 
     wscti = null
-    console.log('closing')
+    console.log('closing cti ws client')
     EventObject.trigger('onclose')
   }
 

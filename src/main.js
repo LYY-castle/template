@@ -25,7 +25,6 @@ ElementUI.Button.props.size = { type: String, default: 'small' }
 Vue.use(ElementUI, { locale })
 Vue.use(VueQuillEditor)
 Vue.config.productionTip = false
-Vue.prototype.WS_SERVER_URL = 'ws://119.27.179.175:12010'
 
 new Vue({
   el: '#app',
