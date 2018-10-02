@@ -89,6 +89,8 @@ export default (new (function() {
   // }
 
   this.connectCTI=function (strIP_Port) {
+    console.log('connecting cti ws client addr =', strIP_Port)
+
     wscti = new WebSocket(strIP_Port)
     wscti.onopen = function(evt) {
       onOpen(evt)

@@ -1287,7 +1287,7 @@ export default {
     this.socket = new WebSocket(`${process.env.TUI_WS_SERVERURL}/realtime_notification_${agentId}`)
 
     this.socket.onopen = function(openEvent) {
-      console.log('Connect tui webSocket successfully.')
+      console.log(`Connect tui webSocket addr = ${process.env.TUI_WS_SERVERURL} successfully.`)
     }
 
     this.socket.onmessage = function(messageEvent) {
