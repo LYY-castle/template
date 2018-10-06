@@ -103,7 +103,7 @@
         </el-pagination>
       </el-row>
     </div>
-    <el-form :inline="true" class="demo-form-inline" size="small" style="margin: 10px 0">
+    <el-form :inline="true" class="demo-form-inline" size="small" style="margin-top: 10px;margin-bottom: 5px;">
       <el-form-item label="时间选项:" style="margin-bottom: 0">
         <el-select v-model="formInline.time_dimension" @change="timeChange">
           <el-option v-for="item in timeOptions" :key="item" :label="item" :value="item"></el-option>
@@ -111,7 +111,7 @@
       </el-form-item>
     </el-form>
     <div :class="className" id="staff" style="height: 100%;width: 100%;"></div>
-    <el-form :inline="true" class="demo-form-inline" size="small" style="margin: 10px 0">
+    <el-form :inline="true" class="demo-form-inline" size="small" style="margin-top: 10px;margin-bottom: 5px;">
       <el-form-item label="部门选项:" style="margin-bottom: 0" v-if="statistics_type === 'depart'">
         <el-select v-model="formInline.staff" @change="agentChange">
           <el-option v-for="item in staffOptions" :key="item.depart_id" :label="item.depart_name" :value="item.depart_id"></el-option>
@@ -119,7 +119,7 @@
       </el-form-item>
       <el-form-item label="员工选项:" style="margin-bottom: 0" v-else>
         <el-select v-model="formInline.staff" @change="agentChange">
-          <el-option v-for="item in staffOptions" :key="item" :label="item.real_name" :value="item.agent_id"></el-option>
+          <el-option v-for="item in staffOptions" :key="item" :label="item.real_name ? item.real_name + ' (' + item.agent_id + ')' : item.agent_id" :value="item.agent_id"></el-option>
         </el-select>
       </el-form-item>
     </el-form>
