@@ -1020,8 +1020,6 @@
         })
       },
       initChart1() {
-        console.log('into initChart1 with this.formInline =', this.formInline)
-
         this.chartStaff = echarts.init(document.getElementById('staff'))
         this.chartStaff.clear()
         this.chartStaff.setOption({
