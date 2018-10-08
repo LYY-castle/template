@@ -3,19 +3,19 @@
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
         <el-form-item prop="templateId" label="产品编号：">
-          <el-input v-model="req.templateId" placeholder="产品编号"></el-input>
+          <el-input v-model="req.templateId" placeholder="产品编号（限长20字符）" maxlength="20"></el-input>
         </el-form-item>
         <el-form-item prop="productName" label="产品名称：">
-          <el-input v-model="req.productName" placeholder="产品名称"></el-input>
+          <el-input v-model="req.productName" placeholder="产品名称（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item prop="priceStart" label="产品价格：">
-          <el-input v-model="req.priceStart" placeholder="产品价格"></el-input>
+          <el-input v-model="req.priceStart" placeholder="产品价格（限长11字符）" maxlength="11"></el-input>
         </el-form-item>
         <el-form-item prop="priceEnd" label="至">
-          <el-input v-model="req.priceEnd" placeholder="产品价格"></el-input>
+          <el-input v-model="req.priceEnd" placeholder="产品价格（限长11字符）" maxlength="11"></el-input>
         </el-form-item>
         <el-form-item prop="modifierName" label="操作人：">
-          <el-input v-model="req.modifierName" placeholder="操作人"></el-input>
+          <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
           <el-date-picker
@@ -132,7 +132,7 @@
           <el-input v-model="addProduct.productName" size="small" placeholder="限长50字符" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="产品价格" prop="price">
-          <el-input v-model="addProduct.price" size="small"placeholder="价格保留小数点后两位"></el-input>
+          <el-input v-model="addProduct.price" size="small"placeholder="价格保留小数点后两位（限长11字符）" maxlength="11"></el-input>
         </el-form-item>
         <el-form-item label="产品类型" prop="productTypeId">
           <el-select v-model="addProduct.productTypeId" style="width: 100%;">
@@ -219,10 +219,10 @@
       append-to-body>
       <el-form :rules="rules" :model="addProduct" ref="refUpateProduct" label-width="100px">
         <el-form-item label="产品名称" prop="productName">
-          <el-input v-model="addProduct.productName" size="small"></el-input>
+          <el-input v-model="addProduct.productName" size="small" placeholder="产品名称（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="产品价格" prop="price">
-          <el-input v-model="addProduct.price" size="small"></el-input>
+          <el-input v-model="addProduct.price" size="small" placeholder="价格保留小数点后两位（限长11字符）" maxlength="11"></el-input>
         </el-form-item>
         <el-form-item label="产品类型" prop="productTypeId">
           <el-select v-model="addProduct.productTypeId" style="width: 100%;">

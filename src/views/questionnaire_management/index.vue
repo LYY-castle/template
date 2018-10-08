@@ -4,11 +4,11 @@
     <div  v-show="isMainPage===true && isDetail === false">
       <el-row>
         <el-form :inline="true" size="small">
-          <el-form-item label="问卷模板名称">
-            <el-input type="text" v-model="req.name" size="medium" placeholder="问卷模板名称"></el-input>
+          <el-form-item label="问卷模板名称"> 
+            <el-input type="text" v-model="req.name" size="medium" placeholder="问卷模板名称（限长45字符）" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item label="操作人">
-            <el-input type="text" v-model="req.modifier" size="medium" placeholder="操作人"></el-input>
+            <el-input type="text" v-model="req.modifier" size="medium" placeholder="操作人（限长45字符）" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item label="操作时间">
             <el-date-picker
@@ -80,7 +80,7 @@
       <!-- 新建问卷dialog -->
       <el-dialog width="30%" title="新建问卷模板" :visible.sync="questionnaireTitleVisiable" append-to-body>
         <span style="color:red">*</span><span style="font-size:15px;">问卷模板标题：</span>
-        <el-input type="text" placeholder="请输入问卷模板标题" size="medium" v-model="questionnaireName" maxlength="45"></el-input>
+        <el-input type="text" placeholder="请输入问卷模板标题（限长45字符）" size="medium" v-model="questionnaireName" maxlength="45"></el-input>
         <div slot="footer" class="dialog-footer" style="text-align: center;">
           <el-button type="primary" @click="checkTitleIsNullOrNot();questionnaireTitleVisiable = false">确定</el-button>
           <el-button @click="questionnaireTitleVisiable = false">取消</el-button>
@@ -502,7 +502,7 @@
                 <!-- 修改问卷模板名称dialog -->
                 <el-dialog width="30%" title="修改问卷模板名称" :visible.sync="editQuestionnaireName" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
                   <span style="color:red">*</span><span style="font-size:15px;">问卷模板标题：</span>
-                  <el-input maxlength="45" type="text" placeholder="请输入问卷模板标题" size="medium" v-model="questionnaireName" clearable @change="checkEditName(questionnaireName);"></el-input>
+                  <el-input maxlength="45" type="text" placeholder="请输入问卷模板标题（限长45字符）" size="medium" v-model="questionnaireName" clearable @change="checkEditName(questionnaireName);"></el-input>
                   <div slot="footer" class="dialog-footer" style="text-align: center;">
                     <span style="color:red" v-if="hasQuestionnaireName===false">模板名称不能为空</span>
                     <el-button type="primary" @click="editQuestionnaireName=false" v-if="hasQuestionnaireName===true">确定</el-button>

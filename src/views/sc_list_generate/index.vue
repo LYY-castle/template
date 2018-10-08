@@ -3,13 +3,13 @@
     <el-row margin-top:>
       <el-form :inline="true" size="small" >
         <el-form-item label="名单编号:">
-          <el-input v-model="req.listId" placeholder="名单编号" maxlength="20"></el-input>
+          <el-input v-model="req.listId" placeholder="名单编号（限长20字符）" maxlength="20"></el-input>
         </el-form-item>
         <el-form-item label="名单名称:">
-          <el-input v-model="req.listName" placeholder="名单名称" maxlength="50"></el-input>
+          <el-input v-model="req.listName" placeholder="名单名称（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="操作人:">
-          <el-input v-model="req.modifierName" placeholder="操作人" ></el-input>
+          <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="操作时间:">
           <el-date-picker
@@ -139,7 +139,7 @@
           <span>{{namelistDetail.listId}}</span>
         </el-form-item>
         <el-form-item label="名单名称" prop="listName">
-          <el-input v-model="namelistDetail.listName" size="small" maxlength="50"></el-input>
+          <el-input v-model="namelistDetail.listName" size="small" placeholder="名单名称（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="名单数量" prop="listnameNumber">
           <span>{{namelistDetail.listnameNumber}}</span>
@@ -169,10 +169,10 @@
       <el-row>
         <el-form :inline="true" size="small">
           <el-form-item>
-            <el-input v-model="searchBatch.batchId" placeholder="批次号" maxlength="20"></el-input>
+            <el-input v-model="searchBatch.batchId" placeholder="批次号（限长20字符）" maxlength="20"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-input v-model="searchBatch.batchName" placeholder="批次名称" maxlength="100"></el-input>
+            <el-input v-model="searchBatch.batchName" placeholder="批次名称（限长100字符）" maxlength="100"></el-input>
           </el-form-item>
           <el-form-item label="操作时间：">
             <el-date-picker
@@ -281,7 +281,7 @@
         </el-pagination>
         <el-form :inline="true" size="small" :model="addNamelist" ref="addNamelist" :rules="rule">
           <el-form-item prop="listName">
-            <el-input v-model="addNamelist.listName" placeholder="名单名称" maxlength="50"></el-input>
+            <el-input v-model="addNamelist.listName" placeholder="名单名称（限长50字符）" maxlength="50"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button size="small" type="success" @click="submitForm('addNamelist');newNamelist(addNamelist)">确 定</el-button>

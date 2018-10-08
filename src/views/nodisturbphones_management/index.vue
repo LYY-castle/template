@@ -3,13 +3,13 @@
       <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
         <el-form-item prop="startNumber" label="开始号段:">
-          <el-input v-model="req.startNumber" placeholder="开始号段"></el-input>
+          <el-input v-model="req.startNumber" placeholder="开始号段（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item  prop="endNumber" label="结束号段:">
-          <el-input v-model="req.endNumber" placeholder="结束号段"></el-input>
+          <el-input v-model="req.endNumber" placeholder="结束号段（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item  prop="modifier" label="操作人:">
-          <el-input v-model="req.modifier" placeholder="操作人"></el-input>
+          <el-input v-model="req.modifier" placeholder="操作人（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
             <el-date-picker
@@ -116,10 +116,10 @@
       append-to-body>
       <el-form :rules="rule" :model="addNoDisturbPhonesDetail" ref="addPhonesForm" label-width="100px">
         <el-form-item label="开始号段：" prop="startNumber">
-           <el-input v-model="addNoDisturbPhonesDetail.startNumber" size="small" @blur.native="console.log(111);formatNum(addNoDisturbPhonesDetail.startNumber,'startNumber')"></el-input>
+           <el-input v-model="addNoDisturbPhonesDetail.startNumber" size="small" @blur.native="console.log(111);formatNum(addNoDisturbPhonesDetail.startNumber,'startNumber')" placeholder="开始号段（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="结束号段：" prop="endNumber">
-             <el-input v-model="addNoDisturbPhonesDetail.endNumber" size="small" @blur.native="formatNum(addNoDisturbPhonesDetail.startNumber,'startNumber')"></el-input>
+             <el-input v-model="addNoDisturbPhonesDetail.endNumber" size="small" @blur.native="formatNum(addNoDisturbPhonesDetail.startNumber,'startNumber')" placeholder="结束号段（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
       </el-form>
         <div slot="footer" style="text-align: right;">
@@ -161,10 +161,10 @@
       append-to-body>
       <el-form :rules="rule" :model="editNoDisturbPhonesDetail" ref="editPhoneForm" label-width="100px">
         <el-form-item label="开始号段:" prop="startNumber">
-           <el-input v-model="editNoDisturbPhonesDetail.startNumber" size="small" @blur.native="formatNum(editNoDisturbPhonesDetail.startNumber,'startNumber')"></el-input>
+           <el-input v-model="editNoDisturbPhonesDetail.startNumber" size="small" @blur.native="formatNum(editNoDisturbPhonesDetail.startNumber,'startNumber')" placeholder="开始号段（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="结束号段:" prop="endNumber">
-             <el-input v-model="editNoDisturbPhonesDetail.endNumber" size="small" @blur.native="formatNum(editNoDisturbPhonesDetail.endNumber,'endNumber')"></el-input>
+             <el-input v-model="editNoDisturbPhonesDetail.endNumber" size="small" @blur.native="formatNum(editNoDisturbPhonesDetail.endNumber,'endNumber')" placeholder="结束号段（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="操作人:" prop="modifier">
           <span>{{editNoDisturbPhonesDetail.modifier}}</span>

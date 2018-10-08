@@ -3,7 +3,7 @@
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
         <el-form-item prop="name" label="模板名称:">
-          <el-input v-model="req.name" placeholder="模板名称"></el-input>
+          <el-input v-model="req.name" placeholder="模板名称（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="归属模板组:">
           <el-select v-model="req.groupId" placeholder="归属模板组">
@@ -20,7 +20,7 @@
           </el-select>
         </el-form-item>
         <el-form-item  prop="modifier" label="操作人:">
-          <el-input v-model="req.modifier" placeholder="操作人"></el-input>
+          <el-input v-model="req.modifier" placeholder="操作人（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
              <el-date-picker

@@ -3,10 +3,10 @@
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
         <el-form-item prop="customerPhone" label="客户电话:">
-          <el-input v-model="req.customerPhone" placeholder="客户电话"></el-input>
+          <el-input v-model="req.customerPhone" placeholder="客户电话（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item  prop="modifierName" label="操作人:">
-          <el-input v-model="req.modifierName" placeholder="操作人"></el-input>
+          <el-input v-model="req.modifierName" placeholder="操作人（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
           <el-date-picker
@@ -130,7 +130,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="客户电话:" prop="customerPhone">
-          <el-input v-model="noVisitCustomerDetail.customerPhone" size="small"></el-input>
+          <el-input v-model="noVisitCustomerDetail.customerPhone" size="small" placeholder="客户电话（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="生效时间:" prop="effectiveDate">
           <el-date-picker
@@ -193,7 +193,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="客户电话:" prop="customerPhone">
-          <el-input v-model="editNoVisitCustomerDetail.customerPhone" size="small"></el-input>
+          <el-input v-model="editNoVisitCustomerDetail.customerPhone" size="small" placeholder="客户电话（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="生效时间:" prop="effectiveDate">
           <el-date-picker

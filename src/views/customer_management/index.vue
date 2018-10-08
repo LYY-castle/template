@@ -3,7 +3,7 @@
     <el-row margin-top:>
       <el-form :inline="true" size="small">
         <el-form-item label="客户编号:">
-          <el-input v-model="req.customerId" placeholder="客户编号" maxlength="50"></el-input>
+          <el-input v-model="req.customerId" placeholder="客户编号（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="客户姓名:">
           <el-input v-model="req.customerName" placeholder="客户姓名（限长50字符）" maxlength="50"></el-input>

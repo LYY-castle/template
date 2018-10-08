@@ -3,7 +3,7 @@
       <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
         <el-form-item prop="name" label="模板组名称:">
-          <el-input v-model="req.name" placeholder="模板组名称"></el-input>
+          <el-input v-model="req.name" placeholder="模板组名称（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="上级模板组:">
           <el-select v-model="req.upId" placeholder="上级模板组">
@@ -12,7 +12,7 @@
           </el-select>
         </el-form-item>
         <el-form-item  prop="modifier" label="操作人:">
-          <el-input v-model="req.modifier" placeholder="操作人"></el-input>
+          <el-input v-model="req.modifier" placeholder="操作人（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
              <el-date-picker
@@ -122,7 +122,7 @@
       append-to-body>
       <el-form :rules="rule" :model="addMessageTemplateDetail" ref="addMessageForm" label-width="120px">
         <el-form-item label="模板组标题：" prop="name">
-           <el-input v-model="addMessageTemplateDetail.name" size="small"></el-input>
+           <el-input v-model="addMessageTemplateDetail.name" size="small" placeholder="模板组标题（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="上级模板组：" prop="upId">
           <el-select v-model="addMessageTemplateDetail.upId" placeholder="上级模板组">
@@ -170,7 +170,7 @@
       append-to-body>
       <el-form :rules="rule" :model="editTemplateGroupDetail" ref="editTemplateGroupDeForm" label-width="120px">
        <el-form-item label="模板组标题：" prop="name">
-           <el-input v-model="editTemplateGroupDetail.name" size="small"></el-input>
+           <el-input v-model="editTemplateGroupDetail.name" size="small" placeholder="模板组标题（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="上级模板组：" prop="upId">
           <el-select v-model="editTemplateGroupDetail.upId" placeholder="上级模板组">

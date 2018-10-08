@@ -3,10 +3,10 @@
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
         <el-form-item prop="campaignId" label="活动编号：">
-          <el-input v-model="req.campaignId" placeholder="活动编号"></el-input>
+          <el-input v-model="req.campaignId" placeholder="活动编号（限长20字符）" maxlength="20"></el-input>
         </el-form-item>
         <el-form-item prop="campaignName" label="活动名称：">
-          <el-input v-model="req.campaignName" placeholder="活动名称"></el-input>
+          <el-input v-model="req.campaignName" placeholder="活动名称（限长128字符）" maxlength="128"></el-input>
         </el-form-item>
         <el-form-item label="活动状态：" prop="status">
           <el-radio-group v-model="req.status" size="small">
@@ -15,7 +15,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item prop="modifierName" label="操作人：">
-          <el-input v-model="req.modifierName" placeholder="操作人"></el-input>
+          <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
           <el-date-picker
@@ -172,7 +172,7 @@
       append-to-body>
       <el-form label-width="100px" :model="campaignDetail" ref="editCampaign" :rules="rule">
         <el-form-item label="活动名称" prop="campaignName">
-          <el-input v-model="campaignDetail.campaignName" size="small"></el-input>
+          <el-input v-model="campaignDetail.campaignName" size="small" placeholder="活动名称（限长128字符）" maxlength="128"></el-input>
         </el-form-item>
         <el-form-item label="活动类型" prop="campaignTypeCode">
           <el-select v-model="campaignDetail.campaignTypeCode" placeholder="请选择产品" style="width: 100%;">
@@ -235,7 +235,7 @@
           <span v-if="marksData.length===0">无</span>
         </el-form-item>
         <el-form-item label="活动备注" prop="description">
-        <el-input v-model="campaignDetail.description" size="small"></el-input>
+        <el-input v-model="campaignDetail.description" size="small" placeholder="活动备注（限长255字符）" maxlength="255"></el-input>
       </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
@@ -298,8 +298,8 @@
       :visible.sync="addVisible"
       append-to-body>
       <el-form :rules="rule" :model="campaignDetail" ref="campaignDetail" label-width="100px">
-        <el-form-item label="活动名称" prop="campaignName">
-          <el-input v-model="campaignDetail.campaignName" size="small"></el-input>
+        <el-form-item label="活动名称" prop="campaignName" >
+          <el-input v-model="campaignDetail.campaignName" size="small" placeholder="活动名称（限长128字符）" maxlength="128"></el-input>
         </el-form-item>
         <el-form-item label="活动类型" prop="campaignTypeCode">
           <el-select v-model="campaignDetail.campaignTypeCode" placeholder="请选择产品" style="width: 100%;">
@@ -324,7 +324,7 @@
         <el-form-item label="名单有效期" prop="listExpiryDate">
           <el-input v-model="campaignDetail.listExpiryDate" size="small" placeholder="单位：天"></el-input>
         </el-form-item>
-        <el-form-item label="拨打次数" prop="listExpiryDate">
+        <el-form-item label="拨打次数" prop="canContactNum">
           <el-input v-model="campaignDetail.canContactNum" size="small" placeholder="单位：次"></el-input>
         </el-form-item>
         <el-form-item label="活动状态" prop="status">
@@ -354,7 +354,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="活动备注" prop="description">
-        <el-input v-model="campaignDetail.description" size="small"></el-input>
+        <el-input v-model="campaignDetail.description" size="small" placeholder="活动备注（限长255字符）" maxlength="255"></el-input>
       </el-form-item>
       </el-form>
         <div slot="footer" style="text-align: right;">
@@ -736,7 +736,11 @@ export default {
         callback()
       }
     }
+    // 拨打次数不能超过9999次
     var checkCanContactNum = (eule, value, callback) => {
+      if (value > 9999) {
+        return callback(new Error('拨打次数不能超过9999次'))
+      }
       if (!/^\d+$/.test(value)) {
         return callback(new Error('请输入数字'))
       } else {

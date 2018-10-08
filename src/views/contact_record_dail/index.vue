@@ -4,7 +4,7 @@
     <el-row>
       <el-form :inline="true" size="small">
          <el-form-item label="客户编号：">
-          <el-input placeholder="客户编号" v-model="req.customerId"></el-input>
+          <el-input placeholder="客户编号（限长20字符）" v-model="req.customerId" maxlength="20"></el-input>
         </el-form-item>
         <el-form-item label="活动名称：" prop="campaignId">
           <el-select placeholder="请选择活动"  @change="selectOneCampaign(campaignId)" v-model="campaignId">

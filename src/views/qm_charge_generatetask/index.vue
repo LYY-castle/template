@@ -3,10 +3,10 @@
     <el-row>
       <el-form :inline="true" size="small">
         <el-form-item label="任务编号:">
-          <el-input v-model="req.taskId" placeholder="任务编号" maxlength="45"></el-input>
+          <el-input v-model="req.taskId" placeholder="任务编号（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="任务名称:">
-          <el-input v-model="req.taskName" placeholder="任务名称" maxlength="45"></el-input>
+          <el-input v-model="req.taskName" placeholder="任务名称（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="活动名称:">
           <el-select v-model="req.activityId" placeholder="活动名称" style="width: 100%;">
@@ -20,7 +20,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="操作人:">
-          <el-input v-model="req.modifierName" placeholder="操作人" maxlength="50"></el-input>
+          <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
           <el-date-picker
@@ -148,7 +148,7 @@
           <span>{{taskDetail.taskId}}</span>
         </el-form-item>
         <el-form-item label="任务名称" prop="taskName">
-          <el-input v-model="taskDetail.taskName" size="small" maxlength="45"></el-input>
+          <el-input v-model="taskDetail.taskName" size="small" maxlength="45" placeholder="任务名称（限长45字符）"></el-input>
         </el-form-item>
         <el-form-item label="活动名称">
           <span>{{taskDetail.activityName}}</span>
@@ -191,7 +191,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="客户姓名:">
-            <el-input v-model="getRecords.customerName" size="small" placeholder="客户姓名" maxlength="45"></el-input>
+            <el-input v-model="getRecords.customerName" size="small" placeholder="客户姓名（限长45字符）" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item label="拨打时间：">
             <el-date-picker
@@ -292,7 +292,7 @@
         </el-pagination>
         <el-form :inline="true" size="small"  :model="addTask" ref="addTask" :rules="rule">
           <el-form-item prop="taskName">
-            <el-input v-model="addTask.taskName" size="small" placeholder="质检任务名称" maxlength="50"></el-input>
+            <el-input v-model="addTask.taskName" size="small" placeholder="质检任务名称（限长45字符）" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="success" @click="submitForm('addTask');addTasks(addTask);">确 定</el-button>

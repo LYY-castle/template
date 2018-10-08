@@ -458,7 +458,7 @@
               <el-card shadow="hover" v-for="(item,index) in products">
                   <div style="margin-left:5%;color:blue;font-weight:700;font-size:14px">{{item.productName}}</div>
                   <div style="color:blue;font-weight:bold;text-align:right">
-                    {{item.price}}
+                    {{(typeof item.price==='undefined'||item.price===null)?0:item.price}}
                     <span style="color:red;font-weight:bold;margin:0 3%">*</span>
                     <el-input-number v-model="item.number" @change="handleChange(item.templateId,item.price,item.number)" :min="0" :max="1000" label="预购数量" size="mini">
                       {{item.number}}
@@ -1232,9 +1232,10 @@ export default {
     handleChange(templateId, price, number) {
       this.sumInfo.set(templateId, { price: price, number: number })
       this.sumTotal = 0
-
       this.sumInfo.forEach((val, key) => {
-        this.sumTotal += parseFloat(val.price) * parseInt(val.number)
+        if (val !== null && typeof val.price !== 'undefined') {
+          this.sumTotal += parseFloat(val.price === null ? 0 : val.price) * parseInt(val.number === null ? 0 : val.number)
+        }
       })
       this.sumTotal = this.sumTotal.toFixed(2)
     },
@@ -1441,7 +1442,7 @@ export default {
                       message: response.data.message,
                       type: 'success'
                     })
-		    sessionStorage.removeItem('isDialTask')
+                    sessionStorage.removeItem('isDialTask')
                     sessionStorage.removeItem('recordId')
                   } else {
                     this.$message({

@@ -5,13 +5,13 @@
       <el-row>
         <el-form :inline="true" size="small">
           <el-form-item label="问卷名称">
-            <el-input type="text" v-model="req2.templateName" size="medium" placeholder="问卷名称"></el-input>
+            <el-input type="text" v-model="req2.templateName" size="medium" placeholder="问卷名称（限长45字符）" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item label="答卷工号">
-            <el-input type="text" v-model="req2.angentId" size="medium" placeholder="答卷工号"></el-input>
+            <el-input type="text" v-model="req2.angentId" size="medium" placeholder="答卷工号（限长10字符）" maxlength="10"></el-input>
           </el-form-item>
           <el-form-item label="答卷人">
-            <el-input type="text" v-model="req2.staffName" size="medium" placeholder="答卷人"></el-input>
+            <el-input type="text" v-model="req2.staffName" size="medium" placeholder="答卷人（限长45字符）" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item label="答卷时间">
             <el-date-picker

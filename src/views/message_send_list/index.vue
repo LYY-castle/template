@@ -3,13 +3,13 @@
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
         <el-form-item prop="templateid" label="模板编号:">
-          <el-input v-model="req.templateid" placeholder="模板编号"></el-input>
+          <el-input v-model="req.templateid" placeholder="模板编号（上限45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item prop="templateName" label="模板名称:">
-          <el-input v-model="req.templateName" placeholder="模板名称"></el-input>
+          <el-input v-model="req.templateName" placeholder="模板名称（上限45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item prop="mobile" label="电话号码:">
-          <el-input v-model="req.mobile" placeholder="电话号码"></el-input>
+          <el-input v-model="req.mobile" placeholder="电话号码（上限20字符）" maxlength="20"></el-input>
         </el-form-item>
         <el-form-item prop="code" label="短信状态:">
            <el-select v-model="req.code">
@@ -19,7 +19,7 @@
            </el-select>
         </el-form-item>
         <el-form-item prop="creator" label="操作人:">
-          <el-input v-model="req.creator" placeholder="操作人"></el-input>
+          <el-input v-model="req.creator" placeholder="操作人（上限45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
              <el-date-picker
@@ -143,11 +143,11 @@
           {required: true, message: '电话号码不能为空', trigger: 'blur'},
           { pattern: /^\d{1,11}$/, message: '请输入不超过11位数字',trigger:'blur'}
           ]">
-          <el-input v-model="domain.value" size="small" style="width:82%"></el-input>
+          <el-input v-model="domain.value" size="small" style="width:82%" placeholder="电话号码（上限20字符）"></el-input>
           <el-button type="error" size="small" @click.prevent="removeDomain(domain)">删除</el-button>
         </el-form-item>
         <el-form-item style="text-align: right;">
-          <el-button @click="addDomain">新增号码</el-button>
+          <el-button type="success" @click="addDomain">新增号码</el-button>
           <el-button type="primary" @click="validate('dynamicValidateForm')">发送</el-button>
           <el-button type="danger" @click="resetForm('dynamicValidateForm')">重置</el-button>
         </el-form-item>
@@ -162,7 +162,7 @@
       append-to-body>
        <el-form :inline="true" size="small" :model="messageReq" ref="searchForm">
         <el-form-item prop="name" label="模板名称:">
-          <el-input v-model="messageReq.name" placeholder="模板名称"></el-input>
+          <el-input v-model="messageReq.name" placeholder="模板名称（上限45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="归属模板组:">
           <el-select v-model="messageReq.groupId" placeholder="归属模板组">
@@ -171,7 +171,7 @@
           </el-select>
         </el-form-item>
         <el-form-item  prop="modifier" label="操作人:">
-          <el-input v-model="messageReq.modifier" placeholder="操作人"></el-input>
+          <el-input v-model="messageReq.modifier" placeholder="操作人（上限45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
              <el-date-picker
@@ -270,7 +270,7 @@
     </el-row>
     <el-row style="text-align: right; margin-top:10px">
       <el-button type="danger" @click="radio='';messageVisible=false">取消</el-button>
-      <el-button @click="selectedMessage()">确定</el-button>
+      <el-button type="primary" @click="selectedMessage()">确定</el-button>
     </el-row>
     </el-dialog>
      <!-- 发送 -->

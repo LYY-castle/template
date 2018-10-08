@@ -3,13 +3,13 @@
     <el-row>
       <el-form :inline="true" size="small">
         <el-form-item label="小结编号:">
-          <el-input v-model="req.summaryId" placeholder="小结编号" maxlength="50"></el-input>
+          <el-input v-model="req.summaryId" placeholder="小结编号（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="小结标题:">
-          <el-input v-model="req.summaryName" placeholder="小结标题" maxlength="50"></el-input>
+          <el-input v-model="req.summaryName" placeholder="小结标题（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="操作人:">
-          <el-input v-model="req.modify_name" placeholder="操作人" maxlength="50"></el-input>
+          <el-input v-model="req.modify_name" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
           <el-date-picker
@@ -131,10 +131,10 @@
       append-to-body>
       <el-form label-width="100px" :model="summaryDetail" ref="editNodule" :rules="rule">
         <el-form-item label="小结标题" prop="summaryName">
-          <el-input v-model="summaryDetail.summaryName" size="small" maxlength="50"></el-input>
+          <el-input v-model="summaryDetail.summaryName" size="small" maxlength="50" placeholder="小结标题（限长50字符）"></el-input>
         </el-form-item>
         <el-form-item label="备注">
-          <el-input v-model="summaryDetail.description" type="textarea" size="small" maxlength="255"></el-input>
+          <el-input v-model="summaryDetail.description" type="textarea" size="small" maxlength="255"  placeholder="备注（限长255字符）"></el-input>
         </el-form-item>
         <div class="expand">
           <div>
@@ -200,10 +200,10 @@
       append-to-body>
       <el-form :rules="rule" :model="addSummary" ref="addSummary" label-width="100px">
         <el-form-item label="小结标题" prop="summaryName">
-          <el-input v-model="addSummary.summaryName" size="small" maxlength="50"></el-input>
+          <el-input v-model="addSummary.summaryName" size="small" maxlength="50" placeholder="小结标题（限长50字符）"></el-input>
         </el-form-item>
         <el-form-item label="备注">
-          <el-input v-model="addSummary.description" type="textarea" size="small" maxlength="255"></el-input>
+          <el-input v-model="addSummary.description" type="textarea" size="small" maxlength="255" placeholder="备注（限长255字符）"></el-input>
         </el-form-item>
         <div class="expand">
           <div>

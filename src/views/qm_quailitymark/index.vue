@@ -4,13 +4,13 @@
       <el-row>
         <el-form :inline="true" class="demo-form-inline" size="small">
           <el-form-item label="接触历史编号:">
-            <el-input placeholder="接触历史编号" v-model="formInline.contactRecord"></el-input>
+            <el-input placeholder="接触历史编号（限30字）" v-model="formInline.contactRecord" maxlength="30"></el-input>
           </el-form-item>
           <el-form-item label="任务名称:">
-            <el-input placeholder="任务名称" v-model="formInline.taskName"></el-input>
+            <el-input placeholder="任务名称（限50字）" v-model="formInline.taskName" maxlength="50"></el-input>
           </el-form-item>
           <el-form-item label="操作人:">
-            <el-input placeholder="操作人" v-model="formInline.modifierName"></el-input>
+            <el-input placeholder="操作人（限45字）" maxlength="45" v-model="formInline.modifierName"></el-input>
           </el-form-item>
           <el-form-item label="完成状态:" prop="status">
             <el-radio-group v-model="formInline.status">

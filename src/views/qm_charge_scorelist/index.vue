@@ -4,7 +4,7 @@
       <el-row>
         <el-form :inline="true" class="demo-form-inline" size="small">
           <el-form-item label="评分编号:">
-            <el-input placeholder="评分编号" v-model="formInline.gradeId"></el-input>
+            <el-input placeholder="评分编号（限长20字符）" maxlength="20" v-model="formInline.gradeId"></el-input>
           </el-form-item>
           <el-form-item label="评分表名:">
             <el-input placeholder="评分表名（限长50字符）" v-model="formInline.gradeName" maxlength="50"></el-input>

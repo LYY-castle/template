@@ -3,10 +3,10 @@
     <el-row margin-top:>
       <el-form :inline="true" size="small" :model="req" ref="searchForm">
         <el-form-item prop="contactTaskId" v-if="n==2||n==3" label="坐席编号:">
-          <el-input v-model="req.contactTaskId" placeholder="坐席任务编号" maxlength="50" v-if="n==2||n==3"></el-input>
+          <el-input v-model="req.contactTaskId" placeholder="坐席任务编号（限50字符）" maxlength="50" v-if="n==2||n==3"></el-input>
         </el-form-item>
         <el-form-item prop="qualityTaskId" v-if="n==1||n==4" label="质检任务编号:">
-          <el-input v-model="req.qualityTaskId" placeholder="质检任务编号" maxlength="50" v-if="n==1||n==4"></el-input>
+          <el-input v-model="req.qualityTaskId" placeholder="质检任务编号（限50字符）" maxlength="50" v-if="n==1||n==4"></el-input>
         </el-form-item>
         <el-form-item v-if="n==1||n==4" prop="activityId" label="质检活动:">
           <el-select v-model="req.activityId" placeholder="质检活动">
@@ -29,10 +29,10 @@
           </el-select>
         </el-form-item>
         <el-form-item prop="agentid" v-if="n==1||n==4" label="坐席工号:">
-          <el-input v-model="req.agentid" placeholder="坐席工号" maxlength="50" v-if="n==1||n==4"></el-input>
+          <el-input v-model="req.agentid" placeholder="坐席工号（限50字符）" maxlength="50" v-if="n==1||n==4"></el-input>
         </el-form-item>
         <el-form-item prop="qcAgentid" v-if="n==2||n==3" label="质检员工:">
-          <el-input v-model="req.qcAgentid" placeholder="质检员工号" maxlength="50" v-if="n==2||n==3"></el-input>
+          <el-input v-model="req.qcAgentid" placeholder="质检员工号（限50字符）" maxlength="50" v-if="n==2||n==3"></el-input>
         </el-form-item>
         <el-form-item label="质检结束时间:" prop="timeValue">
           <el-date-picker

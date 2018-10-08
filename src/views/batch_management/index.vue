@@ -681,12 +681,14 @@ export default {
         .then(response => {
           if (response.data.code === 0) {
             this.failDetail = response.data.data.failureCause
-            this.failDetail = this.failDetail.replace(/\{/g, '错误原因：')
-            this.failDetail = this.failDetail.replace(/curRow=/g, '错误行数：')
-            this.failDetail = this.failDetail.replace(/\},/g, '<hr/>')
-            this.failDetail = this.failDetail.replace(/\[/g, '')
-            this.failDetail = this.failDetail.replace(/\]/g, '')
-            this.failDetail = this.failDetail.replace(/\}/g, '')
+            if (this.failDetail !== null) {
+              this.failDetail = this.failDetail.replace(/\{/g, '错误原因：')
+              this.failDetail = this.failDetail.replace(/curRow=/g, '错误行数：')
+              this.failDetail = this.failDetail.replace(/\},/g, '<hr/>')
+              this.failDetail = this.failDetail.replace(/\[/g, '')
+              this.failDetail = this.failDetail.replace(/\]/g, '')
+              this.failDetail = this.failDetail.replace(/\}/g, '')
+            }
             this.batchDetail = response.data.data
             this.batchDetail.validityStatus = this.batchDetail.validityStatus.toString()
             this.batchDetail.validityTime = formatDateTime(this.batchDetail.validityTime)

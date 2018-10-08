@@ -307,7 +307,11 @@
               callback()
             }
           } else {
-            callback(new Error('身份证号不符合规则'))
+            if (idNo1 === '' && idNo2 === '') {
+              callback()
+            } else {
+              callback(new Error('身份证号不符合规则'))
+            }
           }
         } else {
           callback(new Error('所选地址不能为空'))

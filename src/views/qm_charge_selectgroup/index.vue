@@ -3,13 +3,13 @@
     <el-row>
       <el-form :inline="true" size="small">
         <el-form-item prop="campaignId" label="活动编号：">
-          <el-input v-model="req.campaignId" placeholder="活动编号"></el-input>
+          <el-input v-model="req.campaignId" placeholder="活动编号（限长20字符）" maxlength="20"></el-input>
         </el-form-item>
         <el-form-item label="活动名称:">
-          <el-input v-model="req.campaignName" placeholder="活动名称"></el-input>
+          <el-input v-model="req.campaignName" placeholder="活动名称（限长128字符）" maxlength="128"></el-input>
         </el-form-item>
         <el-form-item prop="modifierName" label="操作人：">
-          <el-input v-model="req.modifierName" placeholder="操作人"></el-input>
+          <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
         </el-form-item>
         <el-form-item label="操作时间：">
           <el-date-picker
