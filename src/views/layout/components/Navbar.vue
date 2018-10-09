@@ -1,5 +1,5 @@
 <template>
-  <el-menu :class="navbar" mode="horizontal">
+  <el-menu class="navbar" mode="horizontal">
     <!-- <div> -->
       <!-- <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
      <breadcrumb></breadcrumb>
@@ -26,7 +26,7 @@
     <div class="navbar-form-container">
       <div id="logo" :class="logoClass" style="float:left">
         <router-link to="/dashboard">
-          <img src="../../../../static/images/Logo.png">
+          <img :src="logoUrl">
         </router-link>
       </div>
       <!-- <el-col :span="1" class="hamburger">
@@ -141,9 +141,9 @@
             <br> -->
           </div>
           <!-- <span style="float:left" class="line"></span> -->
-
+          
         </div>
-        <div style="margin-right:20px;position:absolute;right:0;" v-if="havesoftphone">
+        <div style="float:right;margin-right:3px;" v-if="havesoftphone">
           <!-- 有未读信息 -->
           <div v-show="msgNum_all > 0" class="message">
             <el-badge v-model="msgNum_all" class="item" :max="99">
@@ -192,7 +192,7 @@
             </el-tooltip>
           </div>
         <el-row v-if="!havesoftphone" style="height:75px;">
-          <el-col :span="7" class="userInfo" style="float:right;margin-top:-7px;position:absolute;right:0;">
+          <el-col :span="7" class="userInfo" style="float:right;margin-top:-7px;">
             <el-col :span="6"></el-col>
             <el-col :span="6"></el-col>
             <el-col :span="6"  style="margin-top:18px;margin-left:62%">
@@ -278,7 +278,7 @@
 </template>
 
 <script>
-
+import { getCurrentTheme } from '@/api/theme'
 import TagsView from './TagsView'
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
@@ -349,7 +349,7 @@ export default {
         user: '',
         region: ''
       },
-      navbar: 'navbar',
+      // navbar: 'navbar',
       sidebarStatus: '',
       agentId: '', // 搜索带的参数 员工工号
       timer: null, // 定时器timer
@@ -382,6 +382,9 @@ export default {
     },
     logoClass() {
       return this.$store.state.app.logoClass
+    },
+    logoUrl() {
+      return this.$store.state.theme.logo
     }
   },
   methods: {
@@ -1250,11 +1253,45 @@ export default {
           // location.reload() // 为了重新实例化vue-router对象 避免bug
         }
       })
+    },
+    // 修改title
+    changeTitle() {
+      const val = JSON.parse(localStorage.getItem('themeInfo'))
+      document.title = val.title
+    },
+    // 主题切换
+    themeCommand() {
+      const val = JSON.parse(localStorage.getItem('themeInfo'))
+      if (val) {
+        $('#app').removeClass('theme1')
+        $('#app').removeClass('theme2')
+        $('#app').addClass(val.theme)
+      } else {
+        console.log('切换主题失败')
+      }
     }
   },
   mounted() {
     vm = this
     const agentId = localStorage.getItem('agentId')
+    // 获取主题
+    if (localStorage.getItem('themeInfo')) {
+      this.themeCommand()
+      this.changeTitle()
+      this.$store.commit('SET_LOGO', JSON.parse(localStorage.getItem('themeInfo')).logo)
+    } else if (!localStorage.getItem('themeInfo')) {
+      // 获取主题
+      getCurrentTheme().then(response => {
+        if (response.data.code === 0) {
+          localStorage.setItem('themeInfo', JSON.stringify(response.data.data))
+          this.themeCommand()
+          this.changeTitle()
+          this.$store.commit('SET_LOGO', response.data.data.logo)
+        } else {
+          throw response.data.message
+        }
+      })
+    }
     // 强制打开menu
     window.onresize = () => {
       this.$store.commit('OPEN_SIDEBAR')
@@ -1349,6 +1386,13 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
+.message .el-badge__content.is-fixed{
+  top: 3px;
+  right: 20px;
+}
+.el-menu--horizontal {
+  border:none;
+}
 #logo{
   width:210px;
   background:#263445;
@@ -1441,18 +1485,18 @@ export default {
   margin-top:10px;
 }
  @media screen and (min-width: 1281px) and (max-width:1367px){
-   .message{
-     float:left;
-     margin-right:5px;
-     margin-top:18px;
-     margin-left:22px;
-   }
-   .user{
-     float:left;
-     margin-right:5px;
-     margin-top:19px;
-   }
-   .status-container{
+  .message{
+    float:left;
+    margin-right:5px;
+    margin-top:18px;
+    margin-left:22px;
+  }
+  .user{
+    float:left;
+    margin-right:5px;
+    margin-top:19px;
+  }
+  .status-container{
     font-size:14px;
     width:107px;
     margin-right:7px;
@@ -1533,6 +1577,10 @@ export default {
   }
   .user{
     margin-right:3px;
+    margin-top:20px;
+  }
+  .theme{
+    float:left;
     margin-top:20px;
   }
   .status-container{

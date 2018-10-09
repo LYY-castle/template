@@ -40,6 +40,7 @@
 import { Message, MessageBox } from 'element-ui'
 import { loginValid } from '@/api/login'
 // import getDynamicRouter from '@/router/dynamic-router'
+import { getCurrentTheme } from '@/api/theme'
 
 export default {
   name: 'login',
@@ -73,6 +74,25 @@ export default {
     }
   },
   methods: {
+    // 修改title
+    changeTitle() {
+      const val = JSON.parse(localStorage.getItem('themeInfo'))
+      document.title = val.title
+    },
+    // 主题切换
+    themeCommand() {
+      const val = JSON.parse(localStorage.getItem('themeInfo'))
+      if (val) {
+        $('#app').removeClass('theme1')
+        $('#app').removeClass('theme2')
+        $('#app').addClass(val.theme)
+        setTimeout(() => {
+          this.loading.close()
+        }, 1000)
+      } else {
+        console.log('切换主题失败')
+      }
+    },
     showPwd() {
       if (this.pwdType === 'password') {
         this.pwdType = ''
@@ -105,6 +125,17 @@ export default {
                   type: 'success',
                   duration: 5 * 1000
                 })
+                // 获取主题
+                getCurrentTheme().then(response => {
+                  if (response.data.code === 0) {
+                    localStorage.setItem('themeInfo', JSON.stringify(response.data.data))
+                    this.themeCommand()
+                    this.changeTitle()
+                    this.$store.commit('SET_LOGO', response.data.data.logo)
+                  } else {
+                    throw response.data.message
+                  }
+                })
               }
             } else if (data.code === '0') {
               this.loading = false
@@ -125,6 +156,17 @@ export default {
                     this.loading = false
                     localStorage.setItem('agentId', this.loginForm.username)
                     this.$router.push({ path: '/dashboard' })
+                    // 获取主题
+                    getCurrentTheme().then(response => {
+                      if (response.data.code === 0) {
+                        localStorage.setItem('themeInfo', JSON.stringify(response.data.data))
+                        this.themeCommand()
+                        this.changeTitle()
+                        this.$store.commit('SET_LOGO', response.data.data.logo)
+                      } else {
+                        throw response.data.message
+                      }
+                    })
                   } else {
                     this.loading = false
                     Message({
