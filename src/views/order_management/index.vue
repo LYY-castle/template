@@ -264,7 +264,7 @@
           <span>{{orderDetail.payTypeName}}</span>
         </el-form-item>
         <el-form-item label="选购产品">
-          <span>{{orderDetail.productName}}</span>
+          <span>{{showProducts(orderDetail.productInfos)}}</span>
         </el-form-item>
         <el-form-item label="订单金额(元)">
           <span>{{orderDetail.totalAmount}}</span>

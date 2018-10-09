@@ -95,6 +95,8 @@
             label="操作"
             width="150">
             <template slot-scope="scope">
+              <el-button @click="changeStatus(scope.row)" type="text" size="small" v-if="scope.row.isDelete==='0'"> 禁用</el-button>
+              <el-button @click="changeStatus(scope.row)" type="text" size="small" v-if="scope.row.isDelete==='2'"> 启用</el-button>
               <el-button @click="handleClick(scope.row)" type="text" size="small"> 修改</el-button>
               <el-button @click="handleDelete(scope.row)" type="text" size="small">删除</el-button>
             </template>
@@ -131,6 +133,12 @@
         </el-row>
         <el-form-item label="评分表描述信息">
           <textarea v-model='ruleForm.description' placeholder="此处填写评分表简单描述，上限100字符" maxlength="100" cols="63" rows="4">{{ruleForm.description}}</textarea>
+        </el-form-item>
+        <el-form-item label="评分表状态">
+          <el-radio-group v-model='ruleForm.isDelete' size="mini">
+            <el-radio-button label='0'>启用</el-radio-button>
+            <el-radio-button label='2'>禁用</el-radio-button>
+          </el-radio-group>
         </el-form-item>
          <el-form-item>
           <el-button size="mini" type="primary" @click="add">新建</el-button>
@@ -310,6 +318,7 @@
         ruleForm: {
           gradeName: '',
           description: '',
+          isDelete: '0',
           gradeTitles: [{
             titleName: '',
             gradeOptions: [{
@@ -320,14 +329,14 @@
         },
         ruleFormReverse: {
           gradeId: '',
-          isDelete: '0',
+          isDelete: '',
           id: null,
           gradeName: '',
           description: '',
           gradeTitles: [{
             gradeId: '',
             id: null,
-            isDelete: '0',
+            isDelete: '',
             titleId: '',
             titleName: '',
             gradeOptions: [{
@@ -335,20 +344,20 @@
               optionName: '',
               id: null,
               titleId: '',
-              isDelete: '0'
+              isDelete: ''
             }]
           }]
         },
         ruleFormDetail: {
           gradeId: '',
-          isDelete: '0',
+          isDelete: '',
           id: null,
           gradeName: '',
           description: '',
           gradeTitles: [{
             gradeId: '',
             id: null,
-            isDelete: '0',
+            isDelete: '',
             titleId: '',
             titleName: '',
             gradeOptions: [{
@@ -356,7 +365,7 @@
               optionName: '',
               id: null,
               titleId: '',
-              isDelete: '0'
+              isDelete: ''
             }]
           }]
         },
@@ -369,6 +378,39 @@
       this.searchGrade({})
     },
     methods: {
+      changeStatus(obj) {
+        let statu = '0'
+        if (obj.isDelete === '0') {
+          statu = '2'
+        } else if (obj.isDelete === '2') {
+          statu = '0'
+        } else {
+          statu = '1'
+        }
+        editGrade({ 'gradeId': obj.gradeId, 'isDelete': statu }).then(response => {
+          if (response.data.code === 0) {
+            Message({
+              message: (statu === '0' ? '启用' : '禁用') + response.data.message,
+              type: 'success',
+              duration: 1500
+            })
+            this.searchGrade({})
+          } else {
+            Message({
+              message: (statu === '0' ? '启用' : '禁用') + '失败!',
+              type: 'error',
+              duration: 1500
+            })
+          }
+        }).catch(error => {
+          console.log(error)
+          Message({
+            message: '服务器异常！',
+            type: 'error',
+            duration: 1500
+          })
+        })
+      },
       getGradeTitleCount(obj) {
         var count = 0
         for (var i = 0; i < obj.length; i++) {
@@ -573,6 +615,7 @@
         var obj = {
           gradeName: '',
           description: '',
+          isDelete: '0',
           gradeTitles: [{
             titleName: '',
             gradeOptions: [{
@@ -754,6 +797,7 @@
               data.updateTime = formatDateTime(res.data.data[i].modifierTime)
               data.description = res.data.data[i].description
               data.modifier = res.data.data[i].modifierName
+              data.isDelete = res.data.data[i].isDelete
               this.tableData.push(data)
             }
           }
