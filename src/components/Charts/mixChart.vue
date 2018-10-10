@@ -335,7 +335,7 @@
       </el-row>
     </div>
     <div style="margin-top: 1%">
-      <h3>员工表详情</h3>
+      <h3>详情表</h3>
       <el-table
         :header-row-style="headerRow"
         :data="tableDataAgent"
@@ -344,11 +344,6 @@
         :span-method="arraySpanMethod"
         border
         style="width: 100%;">
-        <el-table-column
-          align="center"
-          prop="agent_id"
-          label="下属员工">
-        </el-table-column>
         <el-table-column
           align="center"
           prop="time_dimension"
@@ -1262,7 +1257,7 @@
         this.chartTime.setOption({
           backgroundColor: '#344b58',
           title: {
-            text: '单个员工CTI报表',
+            text: this.statistics_type === 'depart' ? '单个部门CTI报表' : '单个员工CTI报表',
             x: '20',
             top: '20',
             textStyle: {
