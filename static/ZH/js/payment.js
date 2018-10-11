@@ -70,7 +70,7 @@ $("#gopay").on('click',function(){
 			manualAlert("跳转到微信支付！");
 		}else if($("#alipay").prop("checked")){
 			app.request.postJSON(portalUrl+'/payment/alipay',
-						{"amount":$(".amount").text(),"description":$("#description").text(),"orderId":$("#orderId").text(),"orderName":$("#productName").text()}, 
+						{"amount":$(".amount").text(),"description":$("#description").text(),"orderId":$("#orderId").text(),"orderName":$("#productName").text().indexOf("，")===-1?$("#productName").text().substring(0,$("#productName").text().indexOf("*")):"复合产品"}, 
 					function (data) {
 						if(data.code==0){
 							var info = data.data;
