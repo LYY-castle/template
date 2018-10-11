@@ -14,9 +14,9 @@
           </el-form-item>
           <el-form-item label="完成状态:" prop="status">
             <el-radio-group v-model="formInline.status">
-              <el-radio-button label="0">未完成</el-radio-button>
+              <el-radio-button label="0">未开始</el-radio-button>
               <el-radio-button label="1">已完成</el-radio-button>
-              <el-radio-button label="2">草稿</el-radio-button>
+              <el-radio-button label="2">未完成</el-radio-button>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="分配时间：">
@@ -146,8 +146,8 @@
           label="操作"
           width="80">
           <template slot-scope="scope" >
-            <el-button @click="handleClick(scope.row)" type="text" size="small" v-if="scope.row.status==='未完成'">开始评分</el-button>
-            <el-button @click="handleClickDetail(scope.row)" type="text" size="small" v-if="scope.row.status!=='未完成'">修改评分</el-button>
+            <el-button @click="handleClick(scope.row)" type="text" size="small" v-if="scope.row.status==='未开始'">开始评分</el-button>
+            <el-button @click="handleClickDetail(scope.row)" type="text" size="small" v-if="scope.row.status!=='未开始'">修改评分</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -395,7 +395,7 @@
       </div>
       <div slot="footer" class="dialog-footer" style="text-align:center">
        <el-button type="primary" @click="toAddQCGradeRecord(1)">完成质检</el-button>
-        <el-button @click="toAddQCGradeRecord(0)">存草稿</el-button>
+        <el-button @click="toAddQCGradeRecord(0)">暂存</el-button>
         <el-button type="danger" @click="reLoad('dialogFormVisible')">重置</el-button>
       </div>
     </el-dialog>
@@ -629,7 +629,7 @@
       </div>
       <div slot="footer" class="dialog-footer" style="text-align:center">
        <el-button type="primary" @click="toEditQCGradeRecord(1)">完成质检</el-button>
-        <el-button @click="toEditQCGradeRecord(0)">存草稿</el-button>
+        <el-button @click="toEditQCGradeRecord(0)">暂存</el-button>
         <el-button type="danger" @click="reLoad('dialogFormVisibleReverse')">重置</el-button>
       </div>
     </el-dialog>
@@ -744,6 +744,12 @@
         if (this.checkChoose() && value === 1) { // 说明还有选项未填
           this.$message('还有选项未选择，请检查')
         } else {
+          if (value === 0) { // 草稿判断是否更改过
+            if (this.totalCheckMap.size < 1) {
+              this.$message('没有选择任何数据，请检查')
+              return
+            }
+          }
           editQCGradeRecord({ 'gradeRecord': gradeRecord }).then(response => {
             if (response.data.code === 0) {
               this.comment = []
@@ -797,8 +803,8 @@
         return gradeRecord
       },
       checkChoose() {
-        if (this.totalCheckMap.size < 1) {
-          return false
+        if (this.totalCheckMap.size < 1) { // 没有选任何选项
+          return true
         }
         var checkedNum = 0
         var chooseNum = 0
@@ -817,6 +823,12 @@
         if (this.checkChoose() && value === 1) { // 说明还有选项未填
           this.$message('还有选项未选择，请检查')
         } else {
+          if (value === 0) { // 草稿判断是否更改过
+            if (this.totalCheckMap.size < 1) {
+              this.$message('没有选择任何数据，请检查')
+              return
+            }
+          }
           addQCGradeRecord({ 'gradeRecord': gradeRecord }).then(response => {
             if (response.data.code === 0) {
               this.comment = []
@@ -1142,16 +1154,16 @@
               this.tableData[i].staffDistributeTime = this.tableData[i].staffDistributeTime === null ? '' : formatDateTime(this.tableData[i].staffDistributeTime)
               const tableStatus = this.tableData[i].status
               switch (tableStatus) {
-                case 0: this.tableData[i].status = '未完成'
+                case 0: this.tableData[i].status = '未开始'
                   this.tableData[i].gradeStatus = true
                   break
                 case 1: this.tableData[i].status = '已完成'
                   this.tableData[i].gradeStatus = false
                   break
-                case 2: this.tableData[i].status = '草稿'
+                case 2: this.tableData[i].status = '未完成'
                   this.tableData[i].gradeStatus = false
                   break
-                default: this.tableData[i].status = '未完成'
+                default: this.tableData[i].status = '未开始'
                   this.tableData[i].gradeStatus = true
                   break
               }

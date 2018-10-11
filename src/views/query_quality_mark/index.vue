@@ -170,7 +170,7 @@
             :show-overflow-tooltip="true"
             label="备注">
             <template slot-scope="scope">
-             {{scope.row.complete==0?'草稿':(scope.row.complete==1?'已完成':'')}}
+             {{scope.row.complete==0?'未完成':(scope.row.complete==1?'已完成':'')}}
             </template>
           </el-table-column>
         </el-table>
@@ -274,7 +274,7 @@
             label="备注"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              {{scope.row.complete==0?'草稿':(scope.row.complete==1?'已完成':'')}}
+              {{scope.row.complete==0?'未完成':(scope.row.complete==1?'已完成':'')}}
             </template>
           </el-table-column>
         </el-table>
