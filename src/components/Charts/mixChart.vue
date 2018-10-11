@@ -341,13 +341,12 @@
         :data="tableDataAgent"
         ref="multipleTable"
         tooltip-effect="dark"
-        :span-method="arraySpanMethod"
         border
         style="width: 100%;">
         <el-table-column
-          align="center"
-          prop="time_dimension"
-          label="日期">
+              align="center"
+              prop="time_dimension"
+              label="时间段">
         </el-table-column>
         <el-table-column
           align="center"
