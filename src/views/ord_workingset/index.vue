@@ -7,7 +7,7 @@
             <div slot="header" class="clearfix">
               <div style="display: inline-block;line-height: 50px;cursor: pointer" @click="changeToDailTask('0')">
                 <font style="font-size:large;color:#fff;padding-right: 5px">首拨数量: </font>
-                <font style="font-size:large;color:rgb(255,255,0);">{{new_first_dial_task_count}}</font>
+                <font style="font-size:large;color:rgb(255,255,0);">{{rowData.firstCallTotal}}</font>
               </div>
             </div>
             <div class="text item">
