@@ -138,7 +138,7 @@
 
 <script>
 import { Message, MessageBox } from 'element-ui'
-import { formatDateTime } from '@/utils/tools'
+import { formatDateTime, sec_to_time } from '@/utils/tools'
 import { getDepartId, obreportAgent, orderreportAgent, reportAgent } from '@/api/ctiReport'
 import { findContactHistory, findTotalContactByTime } from '@/api/ord_workingset'
 import moment from 'moment'
@@ -212,11 +212,11 @@ export default {
         start_time: this.getStartTimestamp(Date.parse(new Date((new Date()).toLocaleDateString()))),
         end_time: this.getEndTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))
       }).then(response => {
-        this.busy_time_duration = response.data.result[0].busy_time_duration
-        this.call_time_duration = response.data.result[0].call_time_duration
+        this.busy_time_duration = sec_to_time(response.data.result[0].busy_time_duration)
+        this.call_time_duration = sec_to_time(response.data.result[0].call_time_duration)
         this.calls_number = response.data.result[0].calls_number
-        this.free_time_duration = response.data.result[0].free_time_duration
-        this.online_time_duration = response.data.result[0].online_time_duration
+        this.free_time_duration = sec_to_time(response.data.result[0].free_time_duration)
+        this.online_time_duration = sec_to_time(response.data.result[0].online_time_duration)
       })
     })
     findContactHistory().then(res => {
