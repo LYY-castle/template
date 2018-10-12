@@ -9,20 +9,24 @@
                 <font style="font-size:large;color:#fff;padding-right: 5px">首拨数量: </font>
                 <font style="font-size:large;color:rgb(255,255,0);">{{rowData.firstCallTotal}}</font>
               </div>
+              <div style="float: right;line-height: 50px;cursor: pointer" @click="changeToDailTask('1')">
+                <font style="font-size:medium;color:#fff;padding-right: 5px">预约数量: </font>
+                <font style="font-size:medium;color:rgb(255,255,0);">{{rowData.appointCallTotal}}</font>
+              </div>
             </div>
             <div class="text item">
               <el-row>
-                <el-col :span="8" >
-                  <el-card shadow="hover" style="background-color:#f66">
-                      <div class="circle" style="border:solid #f66 1px;background-color:#fff;">
-                        <a @click="changeToDailTask('1')"><font class="line-center" style="color:#f66;">{{rowData.appointCallTotal}}</font></a>
-                      </div>
-                    <div style="text-align: center">
-                      <font class="text-align-center" style="font-size: small">预约名单</font>
-                    </div>
-                  </el-card>
-                </el-col>
-                <el-col :span="8">
+                <!--<el-col :span="8" >-->
+                  <!--<el-card shadow="hover" style="background-color:#f66">-->
+                      <!--<div class="circle" style="border:solid #f66 1px;background-color:#fff;">-->
+                        <!--<a @click="changeToDailTask('1')"><font class="line-center" style="color:#f66;">{{rowData.appointCallTotal}}</font></a>-->
+                      <!--</div>-->
+                    <!--<div style="text-align: center">-->
+                      <!--<font class="text-align-center" style="font-size: small">预约名单</font>-->
+                    <!--</div>-->
+                  <!--</el-card>-->
+                <!--</el-col>-->
+                <el-col :span="8" :offset="3">
                   <el-card shadow="hover" style="background-color:#36a9ce">
                     <div class="circle" style="border:solid #36a9ce 1px;background-color:#fff;">
                       <a @click="changeToDailTask('2')"><font class="line-center" style="color:#36a9ce;">{{new_success_contact_task_count}}</font></a>
@@ -32,7 +36,7 @@
                     </div>
                   </el-card>
                 </el-col>
-                <el-col :span="8">
+                <el-col :span="8" :offset="3">
                   <el-card shadow="hover" style="background-color:#eb7f36">
                     <div class="circle"  style="border:solid #eb7f36 1px;background-color:#fff;">
                       <a @click="changeToDailTask('3')"><font class="line-center" style="color:#eb7f36;">{{new_fail_contact_task_count}}</font></a>
