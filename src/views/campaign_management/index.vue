@@ -219,7 +219,7 @@
         <el-form-item label="话后小结" prop="summaryId">
           <el-select v-model="campaignDetail.summaryId" placeholder="请选择小结" style="width: 100%;">
             <el-option
-                v-for="item in summaryData"
+                v-for="item in visibleSummaryData"
                 :key="item.summaryId"
                 :label="item.summaryName"
                 :value="item.summaryId">
@@ -346,7 +346,7 @@
       <el-form-item label="话后小结" prop="summaryId">
         <el-select v-model="campaignDetail.summaryId" placeholder="请选择小结" style="width: 100%;">
           <el-option
-              v-for="item in summaryData"
+              v-for="item in visibleSummaryData"
               :key="item.summaryId"
               :label="item.summaryName"
               :value="item.summaryId">
@@ -703,6 +703,7 @@ import {
   findAllProduct,
   queryDepts,
   findAllNodules,
+  findAllVisibleNodules,
   findMarksByCampaignId,
   findDeptByCampaignId,
   modifyCampaign,
@@ -801,7 +802,8 @@ export default {
       productData: [], // 产品
       deptData: [], // 活动组织
       qcdeptData: [], // 质检组织
-      summaryData: [], // 小结
+      allSummaryData: [], // 所有小结
+      visibleSummaryData: [], // 所有可见的小结
       campaignTypes: [], // 活动类型
       marksData: [], // 评分表
       productName: [], // 产品名称
@@ -886,6 +888,7 @@ export default {
     this.getAllProduct()
     this.getDepts()
     this.getAllNodules()
+    this.getAllVisibleNodules()
     this.getAllCampaignTypes()
   },
   methods: {
@@ -894,7 +897,6 @@ export default {
     // 时间戳转年月日时分秒
     formatDateTime: formatDateTime,
     clearForm(obj, formName) {
-      console.log(this.$refs[formName])
       for (var key in obj) {
         if (key === 'products' || key === 'productIds') {
           obj[key] = []
@@ -1035,9 +1037,9 @@ export default {
     getSummaryName(summaryId) {
       var summaryName = ''
       // 遍历查找对应小结
-      for (var c = 0; c < this.summaryData.length; c++) {
-        if (this.summaryData[c].summaryId === summaryId) {
-          summaryName = this.summaryData[c].summaryName
+      for (var c = 0; c < this.allSummaryData.length; c++) {
+        if (this.allSummaryData[c].summaryId === summaryId) {
+          summaryName = this.allSummaryData[c].summaryName
         }
       }
       return summaryName
@@ -1091,9 +1093,9 @@ export default {
             }
           }
           // 遍历查找对应小结
-          for (var c = 0; c < this.summaryData.length; c++) {
-            if (this.summaryData[c].summaryId === this.campaignDetail.summaryId) {
-              this.summaryName = this.summaryData[c].summaryName
+          for (var c = 0; c < this.visibleSummaryData.length; c++) {
+            if (this.visibleSummaryData[c].summaryId === this.campaignDetail.summaryId) {
+              this.summaryName = this.visibleSummaryData[c].summaryName
             }
           }
         })
@@ -1145,10 +1147,16 @@ export default {
         this.deptData = response.data.data
       })
     },
-    // 查询小结
+    // 查询所有小结
     getAllNodules() {
       findAllNodules().then(response => {
-        this.summaryData = response.data.data
+        this.allSummaryData = response.data.data
+      })
+    },
+    // 查询所有可见小结
+    getAllVisibleNodules() {
+      findAllVisibleNodules().then(response => {
+        this.visibleSummaryData = response.data.data
       })
     },
     // 详情页面查询评分表
