@@ -15,7 +15,7 @@
                 <el-col :span="8" >
                   <el-card shadow="hover" style="background-color:#f66">
                       <div class="circle" style="border:solid #f66 1px;background-color:#fff;">
-                        <a @click="changeToDailTask('1')"><font class="line-center" style="color:#f66;">{{new_appoint_contact_task_count}}</font></a>
+                        <a @click="changeToDailTask('1')"><font class="line-center" style="color:#f66;">{{rowData.appointCallTotal}}</font></a>
                       </div>
                     <div style="text-align: center">
                       <font class="text-align-center" style="font-size: small">预约名单</font>
@@ -173,7 +173,79 @@ export default {
         answerTotal: 0,
         failedCallTotal: 0
       },
-      departId: ''
+      departId: '',
+      timerOnline: null,
+      timerNumber: null
+    }
+  },
+  beforeMount() {
+    var self = this
+    this.timerOnline = setInterval(getTotelOnline, 300000)
+    this.timerNumber = setInterval(getTotelNumber, 600000)
+    function getTotelNumber() {
+      getDepartId().then(res => {
+        self.departId = res.data.departId
+        obreportAgent({
+          statistics_type: 'agent',
+          depart_id: self.departId,
+          time_dimension: 'day',
+          agent_id: localStorage.getItem('agentId'),
+          start_time: self.getStartTimestamp(Date.parse(new Date((new Date()).toLocaleDateString()))),
+          end_time: self.getEndTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))
+        }).then(response => {
+          self.new_appoint_contact_task_count = response.data.result[0].new_appoint_contact_task_count
+          self.new_fail_contact_task_count = response.data.result[0].new_fail_contact_task_count
+          self.new_first_dial_task_count = response.data.result[0].new_first_dial_task_count
+          self.new_success_contact_task_count = response.data.result[0].new_success_contact_task_count
+        })
+        orderreportAgent({
+          statistics_type: 'agent',
+          depart_id: self.departId,
+          time_dimension: 'day',
+          agent_id: localStorage.getItem('agentId'),
+          start_time: self.getStartTimestamp(Date.parse(new Date((new Date()).toLocaleDateString()))),
+          end_time: self.getEndTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))
+        }).then(response => {
+          self.avg_amount = response.data.result[0].avg_amount
+          self.total_amount = response.data.result[0].total_amount
+          self.count = response.data.result[0].count
+        })
+      })
+      findContactHistory().then(res => {
+        if (res.data.code === 0) {
+          self.rowData.firstCallTotal = res.data.data.noContactCount
+          self.rowData.appointCallTotal = res.data.data.appointCount
+          self.rowData.successCallTotal = res.data.data.successCount
+          self.rowData.failedCallTotal = res.data.data.failCount
+        }
+      })
+    }
+    function getTotelOnline() {
+      getDepartId().then(res => {
+        self.departId = res.data.departId
+        reportAgent({
+          statistics_type: 'agent',
+          depart_id: self.departId,
+          time_dimension: 'day',
+          agent_id: localStorage.getItem('agentId'),
+          start_time: self.getStartTimestamp(Date.parse(new Date((new Date()).toLocaleDateString()))),
+          end_time: self.getEndTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))
+        }).then(response => {
+          self.busy_time_duration = sec_to_time(response.data.result[0].busy_time_duration)
+          self.call_time_duration = sec_to_time(response.data.result[0].call_time_duration)
+          self.calls_number = response.data.result[0].calls_number
+          self.free_time_duration = sec_to_time(response.data.result[0].free_time_duration)
+          self.online_time_duration = sec_to_time(response.data.result[0].online_time_duration)
+        })
+      })
+    }
+  },
+  beforeDestroy() {
+    if (this.timerOnline) {
+      clearInterval(this.timerOnline)
+    }
+    if (this.timerNumber) {
+      clearInterval(this.timerNumber)
     }
   },
   mounted() {
