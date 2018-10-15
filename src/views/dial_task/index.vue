@@ -1274,7 +1274,7 @@ export default {
         // 生成完整接触记录及小结
         // 判断任务状态radio  2：成功 3：失败  1：预约
         if (this.radio === '2' && this.campaignType !== 'RECRUIT') {
-          if (this.sumTotal <= 0) {
+          if (this.sumTotal < 0) {
             this.$message.error('未选择预购产品！')
             return false
           }
