@@ -196,7 +196,7 @@
             </el-table-column>
             <el-table-column align="center" label="部门人员" width="135">
               <template slot-scope="scope">
-                  <div>{{agentMap[scope.row.staffId]}}</div>
+                  <div>{{agentMap[scope.row.staffId]+" ("+scope.row.staffId+")"}}</div>
               </template>
             </el-table-column>
             <el-table-column align="center" label="首拨数量">
@@ -237,7 +237,7 @@
             </el-table-column>
             <el-table-column align="center" label="部门人员" width="135">
               <template slot-scope="scope">
-                  <div>{{agentMap[scope.row.agent_id]}}</div>
+                  <div>{{agentMap[scope.row.agent_id] +" ("+scope.row.agent_id+")"}}</div>
               </template>
             </el-table-column>
             <el-table-column align="center" label="订单数量">
@@ -273,7 +273,7 @@
             </el-table-column>
             <el-table-column align="center" label="部门人员" width="135">
               <template slot-scope="scope">
-                  <div>{{agentMap[scope.row.agent_id]}}</div>
+                  <div>{{agentMap[scope.row.agent_id] +" ("+scope.row.agent_id+")"}}</div>
               </template>
             </el-table-column>
             <el-table-column align="center" label="通话时间">
