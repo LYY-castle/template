@@ -1,9 +1,22 @@
 import request from '@/utils/request'
-export function getListUsingByOrganId(obj) {
+export function taskAssignInfo(obj) {
   return request({
-    url: '/listManage/getListUsingByOrganId',
+    url: '/listManage/taskAssignInfo',
     method: 'get',
     params: obj
+  })
+}
+export function agentOnlineStatus(obj) {
+  return request({
+    url: '/ctireportcontroller/agentOnlineStatus',
+    method: 'get',
+    params: obj
+  })
+}
+export function findCampaignByUser() {
+  return request({
+    url: '/campaign/findCampaignByUser',
+    method: 'get'
   })
 }
 export function getListUseDetailBillByOrganid(obj) {
