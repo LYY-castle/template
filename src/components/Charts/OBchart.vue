@@ -2,7 +2,7 @@
   <div style="width: 100%;height: 90%" v-if="departPermission">
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
-        <el-form-item label="活动名称:">
+        <el-form-item label="活动名称:" v-show="activeNameList && activeNameList.length > 0">
           <el-select v-model="formInline.campaignIdClone" placeholder="活动名称">
             <el-option value="" label="所有活动"></el-option>
             <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>

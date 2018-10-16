@@ -238,7 +238,7 @@
             <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="产品名称:">
+        <el-form-item label="产品名称:" v-show="productList && productList.length > 0">
           <el-select v-model="formInline.productClone" placeholder="产品名称">
             <el-option value="" label="所有产品"></el-option>
             <el-option v-for="item in productList" :key="item.productId" :label="item.productName" :value="item.productId"></el-option>
