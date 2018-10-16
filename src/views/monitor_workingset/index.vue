@@ -348,7 +348,8 @@ export default {
       campaignIdArray: [],
       timerOnline: null,
       timerOrder: null,
-      timerObTask: null
+      timerObTask: null,
+      timerOnlineStatus: null
     }
   },
   beforeDestroy() {
@@ -361,6 +362,9 @@ export default {
     if (this.timerObTask) {
       clearInterval(this.timerObTask)
     }
+    if (this.timerOnlineStatus) {
+      clearInterval(this.timerOnlineStatus)
+    }
   },
 
   mounted() {
@@ -370,6 +374,7 @@ export default {
     this.timerOnline = setInterval(this.online, 300000)
     this.timerOrder = setInterval(this.order, 600000)
     this.timerObTask = setInterval(this.obTask, 600000)
+    this.timerOnlineStatus = setTimeout(this.online, 5000)
   },
   methods: {
     online() {
