@@ -210,7 +210,7 @@
         <el-form-item label="活动组织" prop="departId">
           <el-select v-model="campaignDetail.departId" placeholder="请选择活动组织" style="width: 100%;">
           <el-option
-              v-for="item in deptData"
+              v-for="item in visibleDepts"
               :key="item.id"
               :label="item.departName"
               :value="item.id">
@@ -337,7 +337,7 @@
         <el-form-item label="活动组织" prop="departId">
         <el-select v-model="campaignDetail.departId" placeholder="请选择活动组织" style="width: 100%;">
           <el-option
-              v-for="item in deptData"
+              v-for="item in visibleDepts"
               :key="item.id"
               :label="item.departName"
               :value="item.id">
@@ -703,6 +703,7 @@
 import {
   findAllProduct,
   queryDepts,
+  getAllVisibleDepts,
   findAllNodules,
   findAllVisibleNodules,
   findMarksByCampaignId,
@@ -801,7 +802,8 @@ export default {
       // nameListExcludePage: false,//可选名单分页
       // nameListPage: false,//已选名单分页
       productData: [], // 产品
-      deptData: [], // 活动组织
+      deptData: [], // 所有组织
+      visibleDepts: [], // 所有可见组织
       qcdeptData: [], // 质检组织
       allSummaryData: [], // 所有小结
       visibleSummaryData: [], // 所有可见的小结
@@ -888,6 +890,7 @@ export default {
     this.findCampaignByConditions(this.req)
     this.getAllProduct()
     this.getDepts()
+    this.getVisibleDepts()
     this.getAllNodules()
     this.getAllVisibleNodules()
     this.getAllCampaignTypes()
@@ -1151,6 +1154,12 @@ export default {
     getDepts() {
       queryDepts().then(response => {
         this.deptData = response.data.data
+      })
+    },
+    // 查询所有可见组织
+    getVisibleDepts() {
+      getAllVisibleDepts().then(response => {
+        this.visibleDepts = response.data.data
       })
     },
     // 查询所有小结

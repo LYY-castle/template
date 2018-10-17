@@ -8,10 +8,18 @@ export function findAllProduct() {
   })
 }
 
-// 获取活动组织
+// 获取所有活动组织
 export function queryDepts() {
   return request({
     url: `employee/queryDepts`,
+    method: 'get'
+  })
+}
+
+// 获取所有可见组织
+export function getAllVisibleDepts() {
+  return request({
+    url: '/organization/findAllOrganTo',
     method: 'get'
   })
 }

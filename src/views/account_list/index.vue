@@ -253,7 +253,7 @@
 <script>
 import {
   findAllAccount,
-  findAllOrganTo,
+  queryDepts,
   changeState,
   resetPWDById,
   findAccountByAgentid,
@@ -852,7 +852,7 @@ export default {
       })
     },
     refreshOrganTo() {
-      findAllOrganTo().then(response => {
+      queryDepts().then(response => {
         this.regionOptions = response.data.data
       })
     }
