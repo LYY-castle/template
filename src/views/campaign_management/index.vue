@@ -10,6 +10,7 @@
         </el-form-item>
         <el-form-item label="活动状态：" prop="status">
           <el-radio-group v-model="req.status" size="small">
+            <el-radio label=''>所有</el-radio>
             <el-radio label='0'>有效</el-radio>
             <el-radio label='1'>无效</el-radio>
           </el-radio-group>
@@ -142,9 +143,9 @@
           <template slot-scope="scope">
             <el-button @click="editVisible=true;delReq.campaignId=scope.row.campaignId;getDeptByCampaignId(scope.row.campaignId);getMarksByCampaignId(scope.row.campaignId);getCampaignById(scope.row.campaignId);" type="text" size="small">修改</el-button>
             <el-button @click="delVisible=true;delReq.campaignId=scope.row.campaignId" type="text" size="small">删除</el-button>
-            <el-button @click="changeVisible=true;delReq.campaignId=scope.row.campaignId;delReq.status=scope.row.status" type="text" size="small">{{scope.row.status==='0'?'禁用':'启用'}}</el-button>
+            <!-- <el-button @click="changeVisible=true;delReq.campaignId=scope.row.campaignId;delReq.status=scope.row.status" type="text" size="small">{{scope.row.status==='0'?'禁用':'启用'}}</el-button> -->
             <el-button @click="campaignName=scope.row.campaignName;nameListExclude.campaignId=scope.row.campaignId;nameLists.campaignId=scope.row.campaignId;addList=true;nameLists.pageSize=10;nameListExclude.pageSize=10;nameListExclude.pageNo = 1;nameLists.pageNo = 1;getNameLists(nameLists);getNameListExclude(nameListExclude)" type="text" size="small">添加名单</el-button>
-            <el-button @click="campaignName=scope.row.campaignName;nameLists.campaignId=scope.row.campaignId;removeVisible=true;nameLists.pageNo = 1;getNameLists(nameLists)" type="text" size="small">移除名单</el-button>
+            <el-button v-if="scope.row.status == 0" @click="campaignName=scope.row.campaignName;nameLists.campaignId=scope.row.campaignId;removeVisible=true;nameLists.pageNo = 1;getNameLists(nameLists)" type="text" size="small">移除名单</el-button>
           </template>
           </el-table-column>
         </el-table>
@@ -200,12 +201,12 @@
         <el-form-item label="拨打次数" prop="canContactNum">
           <el-input v-model="campaignDetail.canContactNum" size="small" placeholder="单位：次"></el-input>
         </el-form-item>
-        <el-form-item label="活动状态:" prop="status">
+        <!-- <el-form-item label="活动状态:" prop="status">
           <el-radio-group v-model="campaignDetail.status" size="small">
             <el-radio label='0' border>有效</el-radio>
             <el-radio label='1' border>无效</el-radio>
           </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="活动组织" prop="departId">
           <el-select v-model="campaignDetail.departId" placeholder="请选择活动组织" style="width: 100%;">
           <el-option
@@ -266,9 +267,9 @@
         <el-form-item label="拨打次数">
           <span>{{campaignDetail.canContactNum==null?'':(campaignDetail.canContactNum+'次')}}</span>
         </el-form-item>
-        <el-form-item label="活动状态">
+        <!-- <el-form-item label="活动状态">
           <span>{{campaignDetail.status==='1'?'无效':'有效'}}</span>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="活动组织">
           <span>{{departName}}</span>
         </el-form-item>
@@ -327,12 +328,12 @@
         <el-form-item label="拨打次数" prop="canContactNum">
           <el-input v-model="campaignDetail.canContactNum" size="small" placeholder="单位：次"></el-input>
         </el-form-item>
-        <el-form-item label="活动状态" prop="status">
+        <!-- <el-form-item label="活动状态" prop="status">
           <el-radio-group v-model="campaignDetail.status" size="small">
             <el-radio label='0' border>有效</el-radio>
             <el-radio label='1' border>无效</el-radio>
           </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="活动组织" prop="departId">
         <el-select v-model="campaignDetail.departId" placeholder="请选择活动组织" style="width: 100%;">
           <el-option
@@ -385,7 +386,7 @@
         <el-button size="small" type="primary" @click="batchDelVisible = false;batchDelCampaigns(batchDelReq);">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog
+    <!-- <el-dialog
       width="30%"
       :visible.sync="changeVisible"
       append-to-body>
@@ -394,7 +395,7 @@
         <el-button size="small" @click="changeVisible = false">取 消</el-button>
         <el-button size="small" type="primary" @click="changeVisible = false;changeStatus(delReq);">确 定</el-button>
       </div>
-    </el-dialog>
+    </el-dialog> -->
     <el-dialog
       top="5vh"
       width="90%"
@@ -707,7 +708,7 @@ import {
   findMarksByCampaignId,
   findDeptByCampaignId,
   modifyCampaign,
-  changeCampaignStatus,
+  // changeCampaignStatus,
   findAllCampaignTypes
 } from '@/api/campaign'
 import {
@@ -770,9 +771,9 @@ export default {
           { required: true, message: '请输入拨打次数', trigger: 'change' },
           { validator: checkCanContactNum, trigger: 'change' }
         ],
-        status: [
-          { required: true, message: '请选择活动状态', trigger: 'change' }
-        ],
+        // status: [
+        //   { required: true, message: '请选择活动状态', trigger: 'change' }
+        // ],
         departId: [
           { required: true, message: '请选择活动组织', trigger: 'change' }
         ],
@@ -821,7 +822,7 @@ export default {
       req: {
         campaignId: '',
         campaignName: '',
-        status: '0',
+        status: '',
         modifierName: '',
         modifyTimeStart: '',
         modifyTimeEnd: '',
@@ -831,7 +832,7 @@ export default {
       req2: {
         campaignId: '',
         campaignName: '',
-        status: '0',
+        status: '',
         modifierName: '',
         modifyTimeStart: '',
         modifyTimeEnd: '',
@@ -956,6 +957,9 @@ export default {
         if (response.data.code === 0) {
           this.$message.success('操作成功')
           this.removeVisible = false
+          this.req2.pageNo = 1
+          this.pageInfo.pageSize = 1
+          this.findCampaignByConditions(this.req)
         } else {
           this.$message.error(response.data.message)
         }
@@ -1051,6 +1055,7 @@ export default {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
             this.req2.pageNo = 1
+            this.req2.status = ''
             this.pageInfo.pageNo = 1
             this.findCampaignByConditions(this.req2)
           } else {
@@ -1113,6 +1118,7 @@ export default {
       modifyCampaign(campaignDetail).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
+          this.req2.status = ''
           this.findCampaignByConditions(this.req2)
         } else {
           this.$message(response.data.message)
@@ -1180,10 +1186,12 @@ export default {
         return false
       }
       campaignDetail.productIds = campaignDetail.products
+      campaignDetail.status = '1'
       this.addVisible = false
       addCampaign(campaignDetail).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
+          this.req2.status = ''
           this.findCampaignByConditions(this.req2)
         } else {
           this.$message(response.data.message)
@@ -1237,32 +1245,32 @@ export default {
       this.removeLists.push(id)
     },
     // 切换活动状态
-    changeStatus(status) {
-      if (status.status === '0') {
-        status.status = '1'
-      } else {
-        status.status = '0'
-      }
-      findCampaignById(status.campaignId).then(response => {
-        if (response.data.code === 0) {
-          status.productIds = response.data.data.products
-          changeCampaignStatus(status).then(response => {
-            if (response.data.code === 0) {
-              this.$message.success(response.data.message)
-              this.findCampaignByConditions(this.req2)
-            } else {
-              this.$message(response.data.message)
-            }
-          }).catch(error => {
-            console.log(error)
-            this.$message('操作失败')
-          })
-        }
-      }).catch(error => {
-        console.log(error)
-        this.$message('操作失败')
-      })
-    },
+    // changeStatus(status) {
+    //   if (status.status === '0') {
+    //     status.status = '1'
+    //   } else {
+    //     status.status = '0'
+    //   }
+    //   findCampaignById(status.campaignId).then(response => {
+    //     if (response.data.code === 0) {
+    //       status.productIds = response.data.data.products
+    //       changeCampaignStatus(status).then(response => {
+    //         if (response.data.code === 0) {
+    //           this.$message.success(response.data.message)
+    //           this.findCampaignByConditions(this.req2)
+    //         } else {
+    //           this.$message(response.data.message)
+    //         }
+    //       }).catch(error => {
+    //         console.log(error)
+    //         this.$message('操作失败')
+    //       })
+    //     }
+    //   }).catch(error => {
+    //     console.log(error)
+    //     this.$message('操作失败')
+    //   })
+    // },
     // 新建名单
     // 查询已选名单列表
     getNameLists(campaignId) {
@@ -1315,12 +1323,16 @@ export default {
     // 提交新建名单
     addCampaignAndList(addNameList) {
       addNameList.campaignId = this.nameLists.campaignId
+      addNameList.endTime = new Date(new Date().setHours(23, 59, 59, 0))
       assignCampaignAndList(addNameList).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
           this.getNameLists(this.nameLists)
           this.getNameListExclude(this.nameListExclude)
           this.addList = false
+          this.req2.pageNo = 1
+          this.pageInfo.pageSize = 1
+          this.findCampaignByConditions(this.req)
         }
       }).catch(error => {
         console.log(error)

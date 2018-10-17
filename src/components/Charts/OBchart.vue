@@ -394,7 +394,7 @@
   import { obstatistics, departAgents, getDepartId, obtotalAgent, obreportAgent } from '@/api/ctiReport'
   import { Message } from 'element-ui'
   import { permsobdepart, permsobstaff } from '@/api/reportPermission'
-  import { findCampaignByUser } from '@/api/monitor_list_single'
+  import { findCampaignAllByUser } from '@/api/monitor_list_single'
   import moment from 'moment'
 
   export default {
@@ -500,7 +500,7 @@
       }
     },
     mounted() {
-      findCampaignByUser().then(response => {
+      findCampaignAllByUser().then(response => {
         this.activeNameList = response.data.data
       })
       getDepartId().then(res => {

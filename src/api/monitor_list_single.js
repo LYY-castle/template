@@ -1,9 +1,17 @@
 import request from '@/utils/request'
 
-//   老版本的接口
+//   老版本的接口 查所有有效的活动
 export function findCampaignByUser() {
   return request({
     url: '/campaign/findCampaignByUser',
+    method: 'get'
+  })
+}
+
+//   老版本的接口 查所有活动
+export function findCampaignAllByUser() {
+  return request({
+    url: '/campaign/findCampaignAllByUser',
     method: 'get'
   })
 }

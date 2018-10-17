@@ -392,7 +392,7 @@
   import { orderstatistics, departAgents, getDepartId, ordertotalAgent, orderreportAgent } from '@/api/ctiReport'
   import { Message } from 'element-ui'
   import { permsorderdepart, permsorderstaff } from '@/api/reportPermission'
-  import { findCampaignByUser } from '@/api/monitor_list_single'
+  import { findCampaignAllByUser } from '@/api/monitor_list_single'
   import { hasOrderInfos } from '@/api/dialTask'
   import { findAllProduct } from '@/api/campaign'
   import moment from 'moment'
@@ -502,7 +502,7 @@
       }
     },
     mounted() {
-      findCampaignByUser().then(response => {
+      findCampaignAllByUser().then(response => {
         this.activeNameList = response.data.data
       })
       findAllProduct().then(res => {
