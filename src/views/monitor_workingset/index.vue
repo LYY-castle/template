@@ -24,7 +24,7 @@
                       </el-col>
                     </el-row>
                     <div style="text-align: center">
-                      <font class="text-align-center" style="font-size: small">今日总预约量</font>
+                      <font class="text-align-center" style="font-size: small">总预约量</font>
                     </div>
                   </el-card>
                 </el-col>
@@ -204,7 +204,7 @@
                   <div>{{scope.row.noContactNum}}</div>
               </template>
             </el-table-column>
-            <el-table-column align="center" label="今日预约量" :show-overflow-tooltip="true">
+            <el-table-column align="center" label="预约量" :show-overflow-tooltip="true">
               <template slot-scope="scope">
                 <div>{{scope.row.appiontNum}}</div>
               </template>
@@ -405,32 +405,39 @@ export default {
                 res.data.data.forEach(element => {
                   this.campaignIdArray.push(element.campaignId)
                 })
-                console.log('startTime', formatDateTime(new Date().setHours(0, 0, 0, 0)))
-                console.log('endTime', formatDateTime(new Date().setHours(23, 59, 59, 59)))
-                console.log('campagin:', this.campaignIdArray.join(','))
-                taskAssignInfo({ startTime: formatDateTime(new Date().setHours(0, 0, 0, 0)), endTime: formatDateTime(new Date().setHours(23, 59, 59, 59)), campaignIds: this.campaignIdArray.join(','), type: '0', currentDepartId: localStorage.getItem('departId'), pageSize: 10000 }).then(res => {
+                taskAssignInfo({ modifyTimeStart: formatDateTime(new Date().setHours(0, 0, 0, 0)), modifyTimeEnd: formatDateTime(new Date().setHours(23, 59, 59, 59)), campaignIds: this.campaignIdArray.join(','), type: '0', currentDepartId: localStorage.getItem('departId'), pageSize: 10000 }).then(res => {
                   if (res.data.code === 0 && res.data.data) {
                     for (var i = 0; i < res.data.data.length; i++) {
                       for (var j = 0; j < this.obTaskTable.length; j++) {
                         if (this.obTaskTable[j].staffId === res.data.data[i].staffId) {
-                          this.obTaskTable[j].appiontNum = parseInt(res.data.data[i].appiontNum) + parseInt(this.obTaskTable[j].appiontNum)
                           this.obTaskTable[j].successNum = parseInt(res.data.data[i].successNum) + parseInt(this.obTaskTable[j].successNum)
                           this.obTaskTable[j].failNum = parseInt(res.data.data[i].failNum) + parseInt(this.obTaskTable[j].failNum)
-                          this.obTaskTable[j].noContactNum = parseInt(res.data.data[i].noContactNum) + parseInt(this.obTaskTable[j].noContactNum)
                         }
                       }
                     }
-                    this.obTaskData = { firstCallTotal: 0, // 首拨
-                      appointCallTotal: 0, // 预约
-                      successCallTotal: 0, // 成功
-                      failedCallTotal: 0// 失败
-                    }
-                    console.log('total:', this.obTaskTable)
-                    this.obTaskTable.forEach(element => {
-                      this.obTaskData.firstCallTotal = parseInt(element.noContactNum) + parseInt(this.obTaskData.firstCallTotal)
-                      this.obTaskData.appointCallTotal = parseInt(element.appiontNum) + parseInt(this.obTaskData.appointCallTotal)
-                      this.obTaskData.successCallTotal = parseInt(element.successNum) + parseInt(this.obTaskData.successCallTotal)
-                      this.obTaskData.failedCallTotal = parseInt(element.failNum) + parseInt(this.obTaskData.failedCallTotal)
+                    taskAssignInfo({ campaignIds: this.campaignIdArray.join(','), type: '0', currentDepartId: localStorage.getItem('departId'), pageSize: 10000 }).then(res => {
+                      if (res.data.code === 0 && res.data.data) {
+                        for (var i = 0; i < res.data.data.length; i++) {
+                          for (var j = 0; j < this.obTaskTable.length; j++) {
+                            if (this.obTaskTable[j].staffId === res.data.data[i].staffId) {
+                              this.obTaskTable[j].appiontNum = parseInt(res.data.data[i].appiontNum) + parseInt(this.obTaskTable[j].appiontNum)
+                              this.obTaskTable[j].noContactNum = parseInt(res.data.data[i].noContactNum) + parseInt(this.obTaskTable[j].noContactNum)
+                            }
+                          }
+                        }
+                        this.obTaskData = { firstCallTotal: 0, // 首拨
+                          appointCallTotal: 0, // 预约
+                          successCallTotal: 0, // 成功
+                          failedCallTotal: 0// 失败
+                        }
+                        console.log('total:', this.obTaskTable)
+                        this.obTaskTable.forEach(element => {
+                          this.obTaskData.firstCallTotal = parseInt(element.noContactNum) + parseInt(this.obTaskData.firstCallTotal)
+                          this.obTaskData.appointCallTotal = parseInt(element.appiontNum) + parseInt(this.obTaskData.appointCallTotal)
+                          this.obTaskData.successCallTotal = parseInt(element.successNum) + parseInt(this.obTaskData.successCallTotal)
+                          this.obTaskData.failedCallTotal = parseInt(element.failNum) + parseInt(this.obTaskData.failedCallTotal)
+                        })
+                      }
                     })
                   }
                 })
