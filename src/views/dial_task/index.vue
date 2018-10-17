@@ -768,8 +768,8 @@ export default {
                   queryOneTask(taskId).then(response1 => {
                     if (response1.data.code === 0) {
                       if (
-                        response1.data.data.status === 2 ||
-                        response1.data.data.status === 3
+                        response1.data.data.status === '2' ||
+                        response1.data.data.status === '3'
                       ) {
                         this.$message.error('该拨打任务已结束！')
                         return
@@ -783,8 +783,8 @@ export default {
                   queryOneTask(taskId).then(response1 => {
                     if (response1.data.code === 0) {
                       if (
-                        response1.data.data.status === 2 ||
-                        response1.data.data.status === 3
+                        response1.data.data.status === '2' ||
+                        response1.data.data.status === '3'
                       ) {
                         this.$message.error('该拨打任务已结束！')
                         return
