@@ -374,12 +374,11 @@ export default {
     this.timerOnline = setInterval(this.online, 300000)
     this.timerOrder = setInterval(this.order, 600000)
     this.timerObTask = setInterval(this.obTask, 600000)
-    this.timerOnlineStatus = setTimeout(this.online, 5000)
+    this.timerOnlineStatus = setTimeout(this.onlinneStatus, 5000)
   },
   methods: {
-    online() {
-      const obj = { depart_id: localStorage.getItem('departId') }
-      departAgents(obj).then(res => {
+    onlinneStatus() {
+      departAgents({ depart_id: localStorage.getItem('departId') }).then(res => {
         this.agentMap = {}
         if (!res.data.error) {
           this.totalNum = res.data.result.agents.length
@@ -395,12 +394,28 @@ export default {
               this.onlineNum = res.data.online_count
             }
           })
+        }
+      })
+    },
+    online() {
+      const obj = { depart_id: localStorage.getItem('departId') }
+      departAgents(obj).then(res => {
+        this.agentMap = {}
+        if (!res.data.error) {
+          this.totalNum = res.data.result.agents.length
+          this.agentArray = []
+          res.data.result.agents.forEach(element => {
+            const agent_id = (element.agent_id).toString()
+            const real_name = element.real_name
+            this.agentMap[agent_id] = real_name
+            this.agentArray.push(element.agent_id)
+          })
           this.obTaskTable = []
           this.agentArray.forEach(element => {
             this.obTaskTable.push({ staffId: element, appiontNum: 0, successNum: 0, failNum: 0, noContactNum: 0 })
           })
           findCampaignByUser().then(res => {
-            if (res.data.code === 0) {
+            if (res.data.code === 0 && res.data.data) {
               if (res.data.data) {
                 res.data.data.forEach(element => {
                   this.campaignIdArray.push(element.campaignId)
