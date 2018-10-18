@@ -95,6 +95,14 @@
           </el-table-column>
           <el-table-column
             align="center"
+            label="当前状态"
+            width="155">
+            <template slot-scope="scope">
+              <div v-html="showVisibleStatus(scope.row.visible)"></div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
             prop="modifierTime"
             label="分配状态">
             <template slot-scope="scope">
@@ -140,6 +148,16 @@
         </el-form-item>
         <el-form-item label="名单名称" prop="listName">
           <el-input v-model="namelistDetail.listName" size="small" placeholder="名单名称（限长50字符）" maxlength="50"></el-input>
+        </el-form-item>
+        <el-form-item label="当前状态" prop="visible">
+          <el-switch
+          v-model="namelistDetail.visible"
+          active-text="可见"
+          inactive-text="不可见"
+          :active-value=1
+          :inactive-value=0
+          active-color="#67C23A"
+          ></el-switch>
         </el-form-item>
         <el-form-item label="名单数量" prop="listnameNumber">
           <span>{{namelistDetail.listnameNumber}}</span>
@@ -280,8 +298,18 @@
           :total='namelistPageInfo.totalCount' style="text-align:right;float:left;">
         </el-pagination>
         <el-form :inline="true" size="small" :model="addNamelist" ref="addNamelist" :rules="rule">
-          <el-form-item prop="listName">
+          <el-form-item prop="listName" label="名单名称：">
             <el-input v-model="addNamelist.listName" placeholder="名单名称（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item prop="visible" label="名单状态：">
+            <el-switch
+            v-model="addNamelist.visible"
+            active-text="可见"
+            inactive-text="不可见"
+            :active-value=1
+            :inactive-value=0
+            active-color="#67C23A"
+            ></el-switch>
           </el-form-item>
           <el-form-item>
             <el-button size="small" type="success" @click="submitForm('addNamelist');newNamelist(addNamelist)">确 定</el-button>
@@ -312,6 +340,17 @@
       <el-button size="small" type="primary" @click="delVisible = false;delNamelist(delReq);">确 定</el-button>
     </div>
     </el-dialog>
+    <el-dialog
+      width="30%"
+      title="操作提示"
+      :visible.sync="visibleCheck"
+      append-to-body>
+    <span style="font-size:20px;">即将设置名单为不可见状态，确认？</span>
+    <div slot="footer" class="dialog-footer" style="text-align: right;">
+      <el-button size="small" @click="visibleCheck = false;namelistDetail.visible=1">取 消</el-button>
+      <el-button size="small" type="primary" @click="visibleCheck = false;checkEditNamelist(editReq)">确 定</el-button>
+    </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -335,6 +374,7 @@ export default {
       detailVisible: false,
       delVisible: false, // 删除对话框显示隐藏
       editVisible: false, // 修改对话框显示隐藏
+      visibleCheck: false, // 设置为不可见提示
       addVisible: false, // 新建对话框显示隐藏
       batchDelVisible: false, // 批量删除对话框显示隐藏
       tableData: [], // 表格数据
@@ -391,14 +431,17 @@ export default {
       addNamelist: {
         listName: '',
         batchIds: [],
-        assignStatus: 1
+        assignStatus: 1,
+        visible: 1
       },
       editReq: {
         listId: '',
         listName: '',
         modifierName: '',
-        modifierTime: ''
+        modifierTime: '',
+        visible: null
       },
+      editCheck: false,
       // editNamelist: {},
       // 分页数据
       pageInfo: {},
@@ -412,6 +455,15 @@ export default {
   methods: {
     // 深度克隆
     clone: clone,
+    showVisibleStatus(visible) {
+      if (visible === 1) {
+        // 可见
+        return "<span style='color:#67C23A'>可见</span>"
+      } else {
+        // 不可见
+        return "<span style='color:#F56C6C'>不可见</span>"
+      }
+    },
     resetForm(formName) {
       if (this.$refs[formName] !== undefined) {
         this.$refs[formName].resetFields()
@@ -493,8 +545,6 @@ export default {
         })
     },
     getBatch(req) {
-      console.log(111)
-      console.log(req)
       queryBatch(req)
         .then(response => {
           if (response.data.code === 0) {
@@ -546,15 +596,10 @@ export default {
           console.log(error)
         })
     },
-    // 修改名单信息
-    editNamelist() {
-      this.editVisible = false
-      this.editReq.listId = this.namelistDetail.listId
-      this.editReq.listName = this.namelistDetail.listName
-      this.editReq.modifierName = this.namelistDetail.modifierName
-      this.editReq.modifierTime = this.namelistDetail.modifierTime
-      editNamelist(this.editReq).then(response => {
+    checkEditNamelist(obj) {
+      editNamelist(obj).then(response => {
         if (response.data.code === 0) {
+          this.editVisible = false
           this.$message.success(response.data.message)
           this.searchNamelist(this.req2)
         } else {
@@ -563,6 +608,30 @@ export default {
       }).catch(error => {
         console.log(error)
       })
+    },
+    // 修改名单信息
+    editNamelist() {
+      this.editReq.listId = this.namelistDetail.listId
+      this.editReq.listName = this.namelistDetail.listName
+      this.editReq.modifierName = this.namelistDetail.modifierName
+      this.editReq.modifierTime = this.namelistDetail.modifierTime
+      this.editReq.visible = this.namelistDetail.visible
+
+      if (this.editReq.visible === 0) {
+        this.visibleCheck = true
+      } else {
+        this.editVisible = false
+        editNamelist(this.editReq).then(response => {
+          if (response.data.code === 0) {
+            this.$message.success(response.data.message)
+            this.searchNamelist(this.req2)
+          } else {
+            this.$message(response.data.message)
+          }
+        }).catch(error => {
+          console.log(error)
+        })
+      }
     },
     // 新建名单
     newNamelist(addReq) {

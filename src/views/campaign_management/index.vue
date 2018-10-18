@@ -876,7 +876,8 @@ export default {
         endCreateTime: '',
         pageSize: 10,
         pageNo: 1,
-        campaignId: ''
+        campaignId: '',
+        visible: 1
       },
       nameListExcludeTablel: [],
       nameListExcludePageinfo: {},
