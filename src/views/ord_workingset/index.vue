@@ -380,7 +380,8 @@ export default {
     changeToDailTask(status) {
       this.$router.push({
         name: 'dial_task.html',
-        query: { 'dialstatus': status }
+        query: { 'dialstatus': status, 'startTime': formatDateTime(this.getStartTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))),
+          'endTime': formatDateTime(this.getEndTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))) }
       })
       sessionStorage.removeItem('isDialTask')
       sessionStorage.removeItem('quickDialto')

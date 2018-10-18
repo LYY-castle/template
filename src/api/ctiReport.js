@@ -113,3 +113,40 @@ export function departAgents(id) {
     params: { 'depart_id': id }
   })
 }
+
+export function grades() {
+  return request({
+    url: '/quality/grades',
+    method: 'get'
+  })
+}
+
+export function qualityReportstatistics(obj) {
+  return request({
+    url: '/qualityReport/departOrStaff/statistics',
+    method: 'get',
+    params: _.omitBy(obj, (v) => {
+      return _.trim(v) === ''
+    })
+  })
+}
+
+export function qualityReporttotalAgent(obj) {
+  return request({
+    url: '/qualityReport/staffTotal/statistics',
+    method: 'get',
+    params: _.omitBy(obj, (v) => {
+      return _.trim(v) === ''
+    })
+  })
+}
+
+export function qualityReportreportAgent(obj) {
+  return request({
+    url: '/qualityReport/staff/statistics',
+    method: 'get',
+    params: _.omitBy(obj, (v) => {
+      return _.trim(v) === ''
+    })
+  })
+}

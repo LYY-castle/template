@@ -1597,6 +1597,10 @@ export default {
     if (this.$route.query.dialstatus) { // 说明是页面跳转过来的
       if (typeof this.$route.query.isDialTask === 'undefined') { // 说明是跳查询页面
         this.req.status = this.$route.query.dialstatus
+        if (this.$route.query.dialstatus === '2' || this.$route.query.dialstatus === '3') {
+          this.req.modifyTimeStart = this.$route.query.startTime
+          this.req.modifyTimeEnd = this.$route.query.endTime
+        }
       } else { // 说明是跳拨打页面
         this.isDialTask = this.$route.query.isDialTask
         // sessionStorage.setItem('isDialTask', this.isDialTask)
