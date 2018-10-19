@@ -1697,6 +1697,7 @@
             duration: 3 * 1000
           })
         } else {
+          this.formInline.timeClone = this.formInline.time
           this.formInline.product = this.formInline.productClone
           this.formInline.campaignId = this.formInline.campaignIdClone
           this.timeValueClone = this.timeValue

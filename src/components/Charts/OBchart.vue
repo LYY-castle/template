@@ -1630,6 +1630,7 @@
         } else {
           this.formInline.campaignId = this.formInline.campaignIdClone
           this.timeValueClone = this.timeValue
+          this.formInline.timeClone = this.formInline.time
           this.agentChange(val)
           this.searchAgentStaff(val)
         }

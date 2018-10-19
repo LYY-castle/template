@@ -8,9 +8,9 @@
             <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="质检模板:">
-          <el-select v-model="formInline.productClone" placeholder="质检模板">
-            <el-option value="" label="所有模板"></el-option>
+        <el-form-item label="质检评分表:">
+          <el-select v-model="formInline.productClone" placeholder="质检评分表">
+            <el-option value="" label="所有评分表"></el-option>
             <el-option v-for="item in productList" :key="item.id" :label="item.gradeName" :value="item.gradeId"></el-option>
           </el-select>
         </el-form-item>
@@ -228,10 +228,10 @@
             <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="产品名称:">
-          <el-select v-model="formInline.productClone" placeholder="产品名称">
-            <el-option value="" label="所有产品"></el-option>
-            <el-option v-for="item in productList" :key="item.productId" :label="item.productName" :value="item.productId"></el-option>
+        <el-form-item label="质检评分表:">
+          <el-select v-model="formInline.productClone" placeholder="质检评分表">
+            <el-option value="" label="所有评分表"></el-option>
+            <el-option v-for="item in productList" :key="item.id" :label="item.gradeName" :value="item.gradeId"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="时间维度:">
@@ -1616,6 +1616,7 @@
           this.formInline.product = this.formInline.productClone
           this.formInline.campaignId = this.formInline.campaignIdClone
           this.timeValueClone = this.timeValue
+          this.formInline.timeClone = this.formInline.time
           this.agentChange(val)
           this.searchAgentStaff(val)
         }
