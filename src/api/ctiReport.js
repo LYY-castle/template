@@ -121,6 +121,13 @@ export function grades() {
   })
 }
 
+export function findCampaignByUserQuality() {
+  return request({
+    url: '/qualityTask/findQmCampaignByUser',
+    method: 'get'
+  })
+}
+
 export function qualityReportstatistics(obj) {
   return request({
     url: '/qualityReport/departOrStaff/statistics',

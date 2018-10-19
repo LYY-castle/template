@@ -5,7 +5,7 @@
         <el-form-item label="活动名称:">
           <el-select v-model="formInline.campaignIdClone" placeholder="活动名称"> <!--@change="campaignChange" -->
             <el-option value="" label="所有活动"></el-option>
-            <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
+            <el-option v-for="item in activeNameList" :key="item.activityId" :label="item.activityName" :value="item.activityId"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="质检评分表:">
@@ -225,7 +225,7 @@
         <el-form-item label="活动名称:">
           <el-select v-model="formInline.campaignIdClone" placeholder="活动名称">
             <el-option value="" label="所有活动"></el-option>
-            <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
+            <el-option v-for="item in activeNameList" :key="item.activityId" :label="item.activityName" :value="item.activityId"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="质检评分表:">
@@ -374,10 +374,9 @@
   import _ from 'lodash'
   import echarts from 'echarts'
   import resize from './mixins/resize'
-  import { departAgents, getDepartId, grades, qualityReportstatistics, qualityReporttotalAgent, qualityReportreportAgent } from '@/api/ctiReport'
+  import { departAgents, getDepartId, grades, qualityReportstatistics, qualityReporttotalAgent, qualityReportreportAgent, findCampaignByUserQuality } from '@/api/ctiReport'
   import { Message } from 'element-ui'
   import { permsmarkreportstaff, permsmarkreportdepart } from '@/api/reportPermission'
-  import { findCampaignByUser } from '@/api/monitor_list_single'
   import { hasOrderInfos } from '@/api/dialTask'
   // import { findAllProduct } from '@/api/campaign'
   import moment from 'moment'
@@ -489,7 +488,7 @@
       }
     },
     mounted() {
-      findCampaignByUser().then(response => {
+      findCampaignByUserQuality().then(response => {
         this.activeNameList = response.data.data
       })
       // findAllProduct().then(res => {
