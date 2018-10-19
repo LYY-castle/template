@@ -1263,9 +1263,9 @@ export default {
     themeCommand() {
       const val = JSON.parse(localStorage.getItem('themeInfo'))
       if (val) {
-        $('#app').removeClass('theme1')
-        $('#app').removeClass('theme2')
-        $('#app').addClass(val.theme)
+        $('body').removeClass('theme1')
+        $('body').removeClass('theme2')
+        $('body').addClass(val.theme)
       } else {
         console.log('切换主题失败')
       }
@@ -1312,6 +1312,7 @@ export default {
     })
     getUserInfo().then(res => {
       localStorage.setItem('departId', res.data.departId)
+      localStorage.setItem('agentName', res.data.agentName)
       this.userInfo.userName = res.data.agentName
       this.userInfo.staffId = res.data.agentId
       this.userInfo.departName = res.data.departName
