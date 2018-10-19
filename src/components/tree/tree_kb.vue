@@ -21,7 +21,7 @@
 			<i class="el-icon-check" v-show="!editCancel" @click.stop="submitAdd(STORE,DATA,NODE)"></i>
 			<i class="el-icon-check" v-show="editCancel" @click.stop="submitEdit(STORE,DATA,NODE)"></i>
 			<i class="el-icon-close" v-show="!editCancel" @click.stop="nodeCancel(STORE,DATA,NODE)"></i>
-			<i class="el-icon-close" v-show="editCancel" @click.stop="nodeEditPass(STORE,DATA,NODE)"></i>
+			<i class="el-icon-close" v-show="editCancel" @click.stop="editCannel(STORE,DATA,NODE)"></i>
 		</span>
 	</span>
 </template>
@@ -30,6 +30,11 @@
 export default{
   name: 'treeExpand',
   props: ['NODE', 'DATA', 'STORE', 'maxexpandId', 'editCancel'],
+  data() {
+    return {
+      nodeName: ''
+    }
+  },
   methods: {
     nodeAdd(s, d, n) { // 新增
       this.$emit('nodeAdd', s, d, n)
@@ -40,12 +45,19 @@ export default{
       //   console.log('treeInput' + d.children[d.children.length - 1].ID)
       // })
     },
+    editCannel(s, d, n) {
+      this.$set(d, 'isEdit', false)
+      this.$emit('editCannel', s, d, n)
+      this.DATA.name = this.nodeName
+    },
     submitAdd(s, d, n) {
       this.$emit('submitAdd', s, d, n)
       this.nodeEditPass(s, d, n)
     },
     nodeEdit(s, d, n) { // 编辑
       // // console.log(d.isEdit)
+      console.log(d.name)
+      this.nodeName = d.name
       this.$set(d, 'isEdit', true)
       // // console.log(d.isEdit)
       this.$nextTick(() => {

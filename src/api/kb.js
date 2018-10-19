@@ -27,7 +27,7 @@ export function delCatalogs(obj) {
 // 编辑节点
 export function editCatalogs(id, obj) {
   return request({
-    url: 'kb/update/updateCatalogs/' + id,
+    url: 'kb/update/catalogs/' + id,
     method: 'post',
     data: obj
   })
