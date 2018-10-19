@@ -560,12 +560,12 @@
         hasNoteTitle: true, // 判断是否有标题
         body: '',
         req: {
-          title: '',
+          title: null,
           pageNo: 1,
           pageSize: 10
         },
         req2: {
-          title: '',
+          title: null,
           pageNo: 1,
           pageSize: 10
         },
@@ -1074,6 +1074,10 @@
           req.lower = null
           req.upper = null
         }
+        if (!req.title) {
+          delete req.title
+        }
+        console.log(req)
         // console.log(req)
         getArticles1(req).then(response => {
           this.tableData = response.data.result
@@ -1488,6 +1492,7 @@
     mounted() {
       this.initExpand()
       this.getCatalogs()
+      this.getArticles1(this.req)
     }
   }
 </script>
