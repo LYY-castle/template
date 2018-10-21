@@ -1,7 +1,7 @@
 <template>
   <el-container style="min-height:99vh;" id="kb">
     <el-aside style="width:330px;">
-      <div style="position:fixed;"></div>
+      <!-- <div style="position:fixed;"></div> -->
       <div class="expand">
         <div style="position:relative;top:83px;">
           <el-button class="tree-add-top" type="success" size="small" @click="handleAddTop">新建目录</el-button>
@@ -1534,16 +1534,16 @@
       color:#BFCBCF;
     }
     .expand{
-      width:330px;
+      // width:330px;
       height:100%;
-      position:fixed;
-      overflow:hidden;
+      overflow:auto;
     }
     .expand>div{
+      display: inline-block;
       height:85%;
-      width:90%;
+      // width:90%;
       margin:0 auto;
-      overflow-y:auto;
+      overflow:auto;
     }
     .expand>div::-webkit-scrollbar-track{
       box-shadow: inset 0 0 6px rgba(0,0,0,.3);

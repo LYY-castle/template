@@ -103,8 +103,8 @@ export default{
 	}
 	.tree-expand .tree-btn{
 		display:none;
-		float:right;
 		margin-left:10px;
+    width:62px;
 	}
 	.tree-expand .tree-btn-edit i:hover{
 		color:white;
