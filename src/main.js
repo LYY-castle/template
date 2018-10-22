@@ -11,6 +11,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale/lang/zh-CN' // lang i18n
 
 import '@/styles/index.scss' // global css
+import '@/styles/theme.scss' // 主题
 
 import App from './App'
 import router from './router'
@@ -33,7 +34,16 @@ new Vue({
   template: '<App/>',
   components: { App },
   data: {
-    eventHub: new Vue()
+    eventHub: new Vue(),
+    theme: ''
+  },
+  mounted() {
+    const themeType = localStorage.getItem(localStorage.getItem('agentId') + 'theme')
+    if (themeType === 'theme1') {
+      this.theme = 'styles/theme1.scss'
+    } else if (themeType === 'theme2') {
+      this.theme = 'styles/theme2.scss'
+    }
   }
 })
 

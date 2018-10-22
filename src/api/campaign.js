@@ -8,7 +8,7 @@ export function findAllProduct() {
   })
 }
 
-// 获取活动组织
+// 获取所有活动组织
 export function queryDepts() {
   return request({
     url: `employee/queryDepts`,
@@ -16,10 +16,26 @@ export function queryDepts() {
   })
 }
 
-// 获取小结
+// 获取所有可见组织
+export function getAllVisibleDepts() {
+  return request({
+    url: '/organization/findAllOrganTo',
+    method: 'get'
+  })
+}
+
+// 获取所有小结
 export function findAllNodules() {
   return request({
     url: `nodule/findAllNodules`,
+    method: 'get'
+  })
+}
+
+// 获取所有可见小结
+export function findAllVisibleNodules() {
+  return request({
+    url: `nodule/findAllVisibleNodules`,
     method: 'get'
   })
 }

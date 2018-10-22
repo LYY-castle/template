@@ -1,0 +1,306 @@
+//全局主题1 绿色主色调
+$logo:#244855 !default;
+$navbar:#F2FEFE !default;
+$tagsBar:#F2FEFE !default;
+$tagsItem1:#F2FEFE !default;
+$tags:#fff !default;
+$tagsPoint:#2C6075 !default;
+$message:#90B644 !default;
+$user:#e98341 !default;
+$theme:#2C6075 !default;
+$main:#fff !default;
+$thead:#2C6075 !default;
+$btnPrimary:#90B644 !default;
+$btnSuccess:#90B644 !default;
+$btnDanger:#E98341 !default;
+$pageAct:#2C6075 !default;
+$menu:#244855 !default;
+//memu一级菜单
+$menuItem1:#244855 !default;
+$menuItemHover1:#1F404D !default;
+$hambergerBar:#244855 !default;
+$hambergerBarHover:#1F404D !default;
+//menu二级菜单
+$menu2Item1:#2C6075 !default;
+$menu2ItemHover1:#1F404D !default;
+.theme1{
+  .navbar {
+    background:$navbar !important;
+    #logo {
+      background:$logo !important;
+    }
+    .message button{
+      background:$message !important;
+      border-color:$message !important;
+    }
+    .user button{
+      background:$user !important;
+      border-color:$user !important;
+    }
+    .theme button{
+      background:$theme !important;
+      border-color:$theme !important;
+    }
+    //tab
+    .tags-view-container .tags-view-wrapper {
+      background:$tagsBar !important;
+      .tags-view-item{
+        background:$tagsItem1 !important;
+        border:none !important;
+        height:30px !important;
+      }
+      .tags-view-item.active::before{
+        background:$tagsPoint !important;
+      }
+      .tags-view-item.active {
+        background-color: $tags !important;
+        color: #000 !important;
+        border-color: $tags !important;
+      }
+    }
+  }
+  //主体
+  .main-container{
+    background:$main !important;
+    thead tr th{
+      background:$thead !important;
+      color:#fff;
+    }
+  }
+  //按钮
+  //primary
+  .el-button--primary{
+    background-color: $btnPrimary !important;
+    border-color: $btnPrimary !important;
+    &:hover{
+      background-color: $btnPrimary !important;
+      border-color: $btnPrimary !important;
+      opacity:0.7;
+    }
+    &:active{
+      background-color: $btnPrimary !important;
+      border-color: $btnPrimary !important;
+      opacity:1;
+    }
+  }
+  //success
+  .el-button--success{
+    background-color: $btnSuccess !important;
+    border-color: $btnSuccess !important;
+    &:hover{
+      background-color: $btnSuccess !important;
+      border-color: $btnSuccess !important;
+      opacity:0.7;
+    }
+    &:active{
+      background-color: $btnSuccess !important;
+      border-color: $btnSuccess !important;
+      opacity:1;
+    }
+  }
+  //danger
+  .el-button--danger{
+    background-color: $btnDanger !important;
+    border-color: $btnDanger !important;
+    &:hover{
+      background-color: $btnDanger !important;
+      border-color: $btnDanger !important;
+      opacity:0.7;
+    }
+    &:active{
+      background-color: $btnDanger !important;
+      border-color: $btnDanger !important;
+      opacity:1;
+    }
+  }
+  //激活的页码
+  .el-pagination.is-background .el-pager li:not(.disabled).active {
+    background-color: $pageAct !important;
+    color: #fff;
+  }
+  .el-pagination.is-background .el-pager li:not(.disabled):hover {
+    color: #90B644 !important;
+  }
+  //hamberger
+  .hamberger-bar{
+    background:$hambergerBar !important;
+    &:hover{
+      background:$hambergerBarHover !important;
+    }
+  }
+  //menu
+  .el-scrollbar__view .el-menu{
+    background:$menu !important;
+    //一级
+    .menu-wrapper .el-submenu__title{
+      background:$menuItem1 !important;
+      &:hover{
+        background:$menuItemHover1 !important;
+      }
+    }
+    //二级
+    .el-menu-item{
+      background:$menu2Item1 !important;
+      &:hover{
+        background:$menu2ItemHover1 !important;
+      }
+    }
+  }
+}
+//-----------------------------------------------------------------------------
+//全局主题2 咖啡色主色调
+$logo2:#000000 !default;
+$navbar2:#9a9a9a !default;
+$tagsBar2:#9a9a9a !default;
+$tagsItem2:#9a9a9a !default;
+$tags2:#e7e7e7 !default;
+$tagsPoint2:#000000 !default;
+$message2:#2473ea !default;
+$user2:#e7e7e7 !default;
+$theme2:#e7e7e7 !default;
+$main2:#e7e7e7 !default;
+$thead2:#9a9a9a !default;
+$btnPrimary2:#2473ea !default;
+$btnSuccess2:#2473ea !default;
+$btnDanger2:#5e3930 !default;
+$pageAct2:#2473ea !default;
+$menu2:#000000 !default;
+//memu一级菜单
+$menuItem2:#000000 !default;
+$menuItemHover2:#503029 !default;
+$hambergerBar2:#000000 !default;
+$hambergerBarHover2:#5e3930 !default;
+//menu二级菜单
+$menu2Item2:#5e3930 !default;
+$menu2ItemHover2:#503029 !default;
+.theme2{
+  .navbar {
+    background:$navbar2 !important;
+    #logo {
+      background:$logo2 !important;
+    }
+    .img-all{
+      border: 3px solid #e7e7e7;
+      
+    }
+    .img-all:hover{
+      box-shadow: 0px 0px 5px 2px #e7e7e7;
+    }
+    .message button{
+      background:$message2 !important;
+      border-color:$message2 !important;
+    }
+    .user button{
+      background:$user2 !important;
+      border-color:$user2 !important;
+    }
+    .theme button{
+      background:$theme2 !important;
+      border-color:$theme2 !important;
+    }
+    //tab
+    .tags-view-container .tags-view-wrapper {
+      background:$tagsBar2 !important;
+      .tags-view-item{
+        background:$tagsItem2 !important;
+        border:none !important;
+        height:30px !important;
+      }
+      .tags-view-item.active::before{
+        background:$tagsPoint2 !important;
+      }
+      .tags-view-item.active {
+        background-color: $tags2 !important;
+        color: #000 !important;
+        border-color: $tags2 !important;
+      }
+    }
+  }
+  //主体
+  .main-container{
+    background:$main2 !important;
+    thead tr th{
+      background:$thead2 !important;
+      color:#fff;
+    }
+  }
+  //按钮
+  //primary
+  .el-button--primary{
+    background-color: $btnPrimary2 !important;
+    border-color: $btnPrimary2 !important;
+    &:hover{
+      background-color: $btnPrimary2 !important;
+      border-color: $btnPrimary2 !important;
+      opacity:0.7;
+    }
+    &:active{
+      background-color: $btnPrimary2 !important;
+      border-color: $btnPrimary2 !important;
+      opacity:1;
+    }
+  }
+  //success
+  .el-button--success{
+    background-color: $btnSuccess2 !important;
+    border-color: $btnSuccess2 !important;
+    &:hover{
+      background-color: $btnSuccess2 !important;
+      border-color: $btnSuccess2 !important;
+      opacity:0.7;
+    }
+    &:active{
+      background-color: $btnSuccess2 !important;
+      border-color: $btnSuccess2 !important;
+      opacity:1;
+    }
+  }
+  //danger
+  .el-button--danger{
+    background-color: $btnDanger2 !important;
+    border-color: $btnDanger2 !important;
+    &:hover{
+      background-color: $btnDanger2 !important;
+      border-color: $btnDanger2 !important;
+      opacity:0.7;
+    }
+    &:active{
+      background-color: $btnDanger2 !important;
+      border-color: $btnDanger2 !important;
+      opacity:1;
+    }
+  }
+  //激活的页码
+  .el-pagination.is-background .el-pager li:not(.disabled).active {
+    background-color: $pageAct2 !important;
+    color: #fff;
+  }
+  .el-pagination.is-background .el-pager li:not(.disabled):hover {
+    color: #9a9a9a !important;
+  }
+  //hamberger
+  .hamberger-bar{
+    background:$hambergerBar2 !important;
+    &:hover{
+      background:$hambergerBarHover2 !important;
+    }
+  }
+  //menu
+  .el-scrollbar__view .el-menu{
+    background:$menu2 !important;
+    //一级
+    .menu-wrapper .el-submenu__title{
+      background:$menuItem2 !important;
+      &:hover{
+        background:$menuItemHover2 !important;
+      }
+    }
+    //二级
+    .el-menu-item{
+      background:$menu2Item2 !important;
+      &:hover{
+        background:$menu2ItemHover2 !important;
+      }
+    }
+  }
+}

@@ -1,5 +1,5 @@
 <template>
-  <el-menu :class="navbar" mode="horizontal">
+  <el-menu class="navbar" mode="horizontal">
     <!-- <div> -->
       <!-- <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
      <breadcrumb></breadcrumb>
@@ -26,7 +26,7 @@
     <div class="navbar-form-container">
       <div id="logo" :class="logoClass" style="float:left">
         <router-link to="/dashboard">
-          <img src="../../../../static/images/Logo.png">
+          <img :src="logoUrl">
         </router-link>
       </div>
       <!-- <el-col :span="1" class="hamburger">
@@ -41,7 +41,7 @@
                 <el-form :inline="true" size="mini" style="padding-top:20px;">
                   <!-- 分机号登入 -->
                   <el-form-item class="txtDN" size="mini" style="width:70px;">
-                    <el-input v-model="formInline.DN" placeholder="分机号">{{formInline.DN}}</el-input>
+                    <el-input v-model="formInline.DN" placeholder="分机号" :disabled="disabledDN">{{formInline.DN}}</el-input>
                   </el-form-item>
                   <el-form-item>
                     <el-button type="primary" size="mini" style="display:inline;" v-if="!islogin" @click="agentLogin()">登入</el-button>
@@ -67,7 +67,7 @@
               <img src="../../../../static/images/answer_normal.gif" title="接听"  class="img-all" v-show="answerCall" @click="agentanswercall()" style="width:53px;">
               <el-form-item class="numberBox">
                 <!-- <el-col :span="24"> -->
-                  <el-input v-model="formInline.user" size="mini"></el-input>
+                  <el-input v-model="formInline.user" size="mini" :disabled="disabledDial"></el-input>
                 <!-- </el-col> -->
               </el-form-item>
             </el-form>
@@ -143,7 +143,7 @@
           <!-- <span style="float:left" class="line"></span> -->
 
         </div>
-        <div style="margin-right:20px;position:absolute;right:0;" v-if="havesoftphone">
+        <div style="float:right;margin-right:3px;" v-if="havesoftphone">
           <!-- 有未读信息 -->
           <div v-show="msgNum_all > 0" class="message">
             <el-badge v-model="msgNum_all" class="item" :max="99">
@@ -192,7 +192,7 @@
             </el-tooltip>
           </div>
         <el-row v-if="!havesoftphone" style="height:75px;">
-          <el-col :span="7" class="userInfo" style="float:right;margin-top:-7px;position:absolute;right:0;">
+          <el-col :span="7" class="userInfo" style="float:right;margin-top:-7px;">
             <el-col :span="6"></el-col>
             <el-col :span="6"></el-col>
             <el-col :span="6"  style="margin-top:18px;margin-left:62%">
@@ -278,7 +278,7 @@
 </template>
 
 <script>
-
+import { getCurrentTheme } from '@/api/theme'
 import TagsView from './TagsView'
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
@@ -299,8 +299,10 @@ export default {
   name: 'layout',
   data() {
     return {
+      isDialTaskPage: false, // 是否为拨打详情页面
       socket: null,
       disabledDN: false, // 默认不禁用电话号码框
+      disabledDial: false, // 默认不禁用拨打号码框
       dialNum: '',
       reasonCode: '',
       bolConnected: false,
@@ -349,7 +351,7 @@ export default {
         user: '',
         region: ''
       },
-      navbar: 'navbar',
+      // navbar: 'navbar',
       sidebarStatus: '',
       agentId: '', // 搜索带的参数 员工工号
       timer: null, // 定时器timer
@@ -382,6 +384,9 @@ export default {
     },
     logoClass() {
       return this.$store.state.app.logoClass
+    },
+    logoUrl() {
+      return this.$store.state.theme.logo
     }
   },
   methods: {
@@ -546,6 +551,7 @@ export default {
       cti.hangup()
     },
     agentretrieve() {
+      vm.disabledDial = false
       this.talkCaller = this.caller
       this.talkCallee = this.callee
       cti.retrievecall()
@@ -699,26 +705,40 @@ export default {
       })
     },
     agentdialout() {
-      const DN = this.formInline.DN
-      vm.dialNum = this.formInline.user
+      vm.dialCall = false
+      if (vm.isDialTaskPage) {
+        // 如果是在拨打页面拨打空时，默认拨打客户
+        if (JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasonCode !== '-101' &&
+        JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasonCode !== '-100') {
+          vm.$root.eventHub.$emit('NAVBAR', 'transfer')
+          // vm.dialCall = true
+        }
+      } else {
+        const DN = this.formInline.DN
+        vm.dialNum = this.formInline.user
+        this.dialOut(DN, vm.dialNum)
+      }
+    },
+    dialOut(DN, dialNum) {
       const reg = /^([1-9][0-9]{2,10}|[0-9]{1,4}\-?[0-9]{1,4}\-?[0-9]{1,9})$/
-      if (DN === vm.dialNum) {
+      if (DN === dialNum) {
         Message({
           message: '不能拨打自己本身',
           type: 'error',
           duration: 1 * 1000
         })
+        vm.dialCall = true
       } else {
-        if (reg.test(vm.dialNum)) {
+        if (reg.test(dialNum)) {
           const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
-          if (regex.test(vm.dialNum)) {
-            this.getPromise(vm.dialNum).then(function() {
+          if (regex.test(dialNum)) {
+            this.getPromise(dialNum).then(function() {
               vm.dialCall = false
-              cti.makecall(DN, vm.dialNum)
+              cti.makecall(DN, dialNum)
             })
           } else {
             vm.dialCall = false
-            cti.makecall(DN, vm.dialNum)
+            cti.makecall(DN, dialNum)
           }
         } else {
           Message({
@@ -726,6 +746,7 @@ export default {
             type: 'error',
             duration: 1 * 1000
           })
+          vm.dialCall = true
         }
       }
     },
@@ -928,6 +949,9 @@ export default {
       vm.setbtnStatus('onhold')
     },
     on_hangup_event(event, agentid, DN, UUID, hangupLine, activeLineCount) {
+      if (vm.isDialTaskPage) {
+        vm.formInline.user = ''
+      }
       addHangupContact({
         'event': 'on_hangup_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID
       }).then(res => {
@@ -997,7 +1021,11 @@ export default {
       vm.caller = callerid
       vm.callee = calleeid
       vm.orginCaller = ori_ani
-      vm.global_taskId = localStorage.getItem('global_taskId')
+      if (vm.isDialTaskPage) {
+        vm.global_taskId = localStorage.getItem('global_taskId')
+      } else {
+        vm.global_taskId = ''
+      }
       if (calleeid.length === 12) {
         if (calleeid.substring(0, 1) === '9') {
           calleeid = calleeid.substring(1)
@@ -1052,6 +1080,30 @@ export default {
       info.DN = DN
       info.reasonCode = reasonCode
       localStorage.setItem(agentId, JSON.stringify(info))
+      if (vm.isDialTaskPage) {
+        if (reasonCode === '-101' || reasonCode === '-100') {
+          vm.formInline.user = ''
+          vm.disabledDial = false
+        } else {
+          vm.disabledDial = true
+        }
+        switch (reasonCode) {
+          case '0':
+          case '13':
+          case '14':
+            vm.$root.eventHub.$emit('dialTrue', '1')
+            break
+          case '-100':
+          case '-101':
+          case '-1':
+          case '-2':
+          default:
+            vm.$root.eventHub.$emit('dialTrue', '0')
+            break
+        }
+      } else {
+        vm.disabledDial = false
+      }
       switch (reasonCode) {
         case '-1':
           vm.islogin = false
@@ -1250,11 +1302,45 @@ export default {
           // location.reload() // 为了重新实例化vue-router对象 避免bug
         }
       })
+    },
+    // 修改title
+    changeTitle() {
+      const val = JSON.parse(localStorage.getItem('themeInfo'))
+      document.title = val.title
+    },
+    // 主题切换
+    themeCommand() {
+      const val = JSON.parse(localStorage.getItem('themeInfo'))
+      if (val) {
+        $('#app').removeClass('theme1')
+        $('#app').removeClass('theme2')
+        $('#app').addClass(val.theme)
+      } else {
+        console.log('切换主题失败')
+      }
     }
   },
   mounted() {
     vm = this
     const agentId = localStorage.getItem('agentId')
+    // 获取主题
+    if (localStorage.getItem('themeInfo')) {
+      this.themeCommand()
+      this.changeTitle()
+      this.$store.commit('SET_LOGO', JSON.parse(localStorage.getItem('themeInfo')).logo)
+    } else if (!localStorage.getItem('themeInfo')) {
+      // 获取主题
+      getCurrentTheme().then(response => {
+        if (response.data.code === 0) {
+          localStorage.setItem('themeInfo', JSON.stringify(response.data.data))
+          this.themeCommand()
+          this.changeTitle()
+          this.$store.commit('SET_LOGO', response.data.data.logo)
+        } else {
+          throw response.data.message
+        }
+      })
+    }
     // 强制打开menu
     window.onresize = () => {
       this.$store.commit('OPEN_SIDEBAR')
@@ -1342,13 +1428,48 @@ export default {
     this.$root.eventHub.$on('CHANGE_STATUS', () => {
       this.firstgetUnreadMessages(agentId)
     })
+    this.$root.eventHub.$on('DISABLED_DIAL', (str) => {
+      if (str === '1') {
+        vm.dialCall = false
+      } else {
+        vm.dialCall = true
+      }
+    })
+    this.$root.eventHub.$on('DIAL_TASK', (obj) => {
+      if (!obj.isDialTask) { // 说明是拨打页面
+        vm.isDialTaskPage = true
+        vm.formInline.user = ''
+        vm.disabledDial = true
+      } else {
+        vm.isDialTaskPage = false
+        vm.disabledDial = false
+        vm.dialCall = true
+      }
+    })
+    this.$root.eventHub.$on('DIAL_TASK_DIALNM', (obj) => {
+      if (vm.isDialTaskPage) {
+        cti.makecall(obj.caller, obj.callee)
+      } else {
+        vm.$message.error('不在拨打界面，不能拨打客户')
+      }
+    })
   },
   destroyed() {
     this.socket.close()
+    this.$root.eventHub.$off('DISABLED_DIAL')
+    this.$root.eventHub.$off('DIAL_TASK')
+    this.$root.eventHub.$off('DIAL_TASK_DIALNM')
   }
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
+.message .el-badge__content.is-fixed{
+  top: 3px;
+  right: 20px;
+}
+.el-menu--horizontal {
+  border:none;
+}
 #logo{
   width:210px;
   background:#263445;
@@ -1441,18 +1562,18 @@ export default {
   margin-top:10px;
 }
  @media screen and (min-width: 1281px) and (max-width:1367px){
-   .message{
-     float:left;
-     margin-right:5px;
-     margin-top:18px;
-     margin-left:22px;
-   }
-   .user{
-     float:left;
-     margin-right:5px;
-     margin-top:19px;
-   }
-   .status-container{
+  .message{
+    float:left;
+    margin-right:5px;
+    margin-top:18px;
+    margin-left:22px;
+  }
+  .user{
+    float:left;
+    margin-right:5px;
+    margin-top:19px;
+  }
+  .status-container{
     font-size:14px;
     width:107px;
     margin-right:7px;
@@ -1533,6 +1654,10 @@ export default {
   }
   .user{
     margin-right:3px;
+    margin-top:20px;
+  }
+  .theme{
+    float:left;
     margin-top:20px;
   }
   .status-container{

@@ -1,21 +1,5 @@
 const dialTask = {
   state: {
-    // req: {
-    //   distributeTimeStart: '',
-    //   distributeTimeEnd: '',
-    //   appointTimeStart: '',
-    //   appointTimeEnd: '',
-    //   modifyTimeStart: '',
-    //   modifyTimeEnd: '',
-    //   customerName: '',
-    //   customerPhone: '',
-    //   contactStatus: '0',
-    //   contactedNum: '',
-    //   summaryId: '',
-    //   status: '0',
-    //   pageNo: 1,
-    //   pageSize: 10
-    // },
     rowInfo: {},
     taskId: '',
     campaignId: '',
@@ -26,33 +10,14 @@ const dialTask = {
     campaignIds: [],
     customerIds: [],
     isBlacklists: []
-    // radio: ''
   },
   mutations: {
-    // SET_REQ: (state, req) => {
-    //   state.req = req
-    // },
     SET_ROWINFO: (state, rowInfo) => {
       state.rowInfo = rowInfo
     },
     SET_RADIO: (state, radio) => {
       state.radio = radio
     },
-    // SET_TASKID: (state, taskId) => {
-    //   state.taskId = taskId
-    // },
-    // SET_CAMPAIGNID: (state, campaignId) => {
-    //   state.campaignId = campaignId
-    // },
-    // SET_CUSTOMERID: (state, customerId) => {
-    //   state.customerId = customerId
-    // },
-    // SET_ISBLACKLIST: (state, isBlacklist) => {
-    //   state.isBlacklist = isBlacklist
-    // },
-    // SET_CUSTOMERPHONE: (state, customerPhone) => {
-    //   state.customerPhone = customerPhone
-    // },
     SET_DETAIL: (state, arr) => {
       state.taskId = arr[0] // taskId
       state.campaignId = arr[1]// campaignId

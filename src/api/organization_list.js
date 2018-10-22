@@ -31,9 +31,34 @@ export function findAllOrganTo() {
   })
 }
 
+export function queryDepts() {
+  return request({
+    url: '/employee/queryDepts',
+    method: 'get'
+  })
+}
+
+export function verifyDept(departId) {
+  return request({
+    url: '/organization/verifyDept',
+    method: 'get',
+    params: {
+      departId: departId
+    }
+  })
+}
+
 export function modifyOrgan(obj) {
   return request({
     url: '/organization/modifyOrgan',
+    method: 'post',
+    data: obj
+  })
+}
+
+export function modifyOrganStatus(obj) {
+  return request({
+    url: '/organization/modifyOrganStatus',
     method: 'post',
     data: obj
   })

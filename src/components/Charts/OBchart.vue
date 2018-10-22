@@ -2,7 +2,7 @@
   <div style="width: 100%;height: 90%" v-if="departPermission">
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
-        <el-form-item label="活动名称:">
+        <el-form-item label="活动名称:" v-show="activeNameList && activeNameList.length > 0">
           <el-select v-model="formInline.campaignIdClone" placeholder="活动名称">
             <el-option value="" label="所有活动"></el-option>
             <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
@@ -235,7 +235,7 @@
   <div style="width: 100%;height: 90%" v-else-if="staffPermission">
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
-        <el-form-item label="活动名称:">
+        <el-form-item label="活动名称:" v-show="activeNameList && activeNameList.length > 0">
           <el-select v-model="formInline.campaignIdClone" placeholder="活动名称">
             <el-option value="" label="所有活动"></el-option>
             <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
@@ -394,7 +394,7 @@
   import { obstatistics, departAgents, getDepartId, obtotalAgent, obreportAgent } from '@/api/ctiReport'
   import { Message } from 'element-ui'
   import { permsobdepart, permsobstaff } from '@/api/reportPermission'
-  import { findCampaignByUser } from '@/api/monitor_list_single'
+  import { findCampaignAllByUser } from '@/api/monitor_list_single'
   import moment from 'moment'
 
   export default {
@@ -502,7 +502,7 @@
       }
     },
     mounted() {
-      findCampaignByUser().then(response => {
+      findCampaignAllByUser().then(response => {
         this.activeNameList = response.data.data
       })
       getDepartId().then(res => {

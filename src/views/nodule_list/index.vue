@@ -99,8 +99,10 @@
           <el-table-column
             align="center"
             label="操作"
-            width="100">
+            width="200">
           <template slot-scope="scope">
+            <el-button @click="setNoduleVisible=true;noduleObj=scope.row" size="small" type="text" v-show="scope.row.isDelete==='2'">可见</el-button>
+            <el-button @click="setNoduleInvisible=true;noduleObj=scope.row" size="small" type="text" v-show="scope.row.isDelete==='0'">不可见</el-button>
             <el-button @click="editVisible=true;delReq.noduleId=scope.row.summaryId;summaryDetail.summaryId=scope.row.summaryId;findNoduleByNoduleId(delReq);" type="text" size="small">修改</el-button>
             <el-button @click="delVisible=true;delReq.noduleId=scope.row.summaryId" type="text" size="small">删除</el-button>
           </template>
@@ -250,6 +252,29 @@
       <el-button size="small" type="primary" @click="batchDelVisible = false;delNodulesByNoduleIds(batchDelReq);">确 定</el-button>
     </div>
   </el-dialog>
+
+  <el-dialog
+    width="30%"
+    title="操作提示"
+    :visible.sync="setNoduleVisible"
+    append-to-body>
+    <span style="font-size:20px;">确认设置该小结为可见？</span>
+    <div slot="footer" class="dialog-footer" style="text-align: right;">
+      <el-button size="small" @click="setNoduleVisible = false">取 消</el-button>
+      <el-button size="small" type="primary" @click="setNoduleVisible = false;setVisibleStatus(noduleObj);">确 定</el-button>
+    </div>
+  </el-dialog>
+  <el-dialog
+    width="30%"
+    title="操作提示"
+    :visible.sync="setNoduleInvisible"
+    append-to-body>
+    <span style="font-size:20px;">确认设置该小结为不可见？</span>
+    <div slot="footer" class="dialog-footer" style="text-align: right;">
+      <el-button size="small" @click="setNoduleInvisible = false">取 消</el-button>
+      <el-button size="small" type="primary" @click="setNoduleInvisible = false;setVisibleStatus(noduleObj);">确 定</el-button>
+    </div>
+  </el-dialog>
   </div>
 </template>
 <script>
@@ -277,6 +302,8 @@ export default {
         // ]
       },
       detailVisible: false,
+      setNoduleVisible: false,
+      setNoduleInvisible: false,
       delVisible: false, // 删除对话框显示隐藏
       editVisible: false, // 修改对话框显示隐藏
       addVisible: false, // 新建对话框显示隐藏
@@ -334,7 +361,8 @@ export default {
         children: 'summaryDetailInfos',
         label: 'name'
       },
-      defaultExpandKeys: [] // 默认展开节点列表
+      defaultExpandKeys: [], // 默认展开节点列表
+      noduleObj: {}
     }
   },
   mounted() {
@@ -342,6 +370,49 @@ export default {
     this.initExpand()
   },
   methods: {
+    // 设置小结状态可见/不可见
+    setVisibleStatus(obj) {
+      // isDelete  0:可见  1:删除 2:不可见
+      if (obj.isDelete === '0') {
+        // 设置为不可见
+        this.delReq.noduleId = obj.summaryId
+        findNoduleByNoduleId(this.delReq)
+          .then(response => {
+            if (response && response.data.code === 0) {
+              this.summaryDetail = response.data.data
+              this.summaryDetail.isDelete = '2'
+              editNodule(this.summaryDetail)
+                .then(response => {
+                  if (response && response.data.code === 0) {
+                    this.$message.success('操作成功！')
+                    this.getNoduleByInfo(this.req2)
+                  } else {
+                    this.$message.error('服务器异常！')
+                  }
+                })
+            }
+          })
+      } else if (obj.isDelete === '2') {
+        // 设置为可见
+        this.delReq.noduleId = obj.summaryId
+        findNoduleByNoduleId(this.delReq)
+          .then(response => {
+            if (response && response.data.code === 0) {
+              this.summaryDetail = response.data.data
+              this.summaryDetail.isDelete = '0'
+              editNodule(this.summaryDetail)
+                .then(response => {
+                  if (response && response.data.code === 0) {
+                    this.$message.success('操作成功！')
+                    this.getNoduleByInfo(this.req2)
+                  } else {
+                    this.$message.error('服务器异常！')
+                  }
+                })
+            }
+          })
+      }
+    },
     reset() {
       this.req = {
         summaryId: '',
@@ -440,6 +511,7 @@ export default {
             this.summaryDetail = response.data.data
             this.setTree1 = response.data.data.summaryDetailInfos
             this.setTree2 = response.data.data.summaryDetailInfos
+            console.log(this.summaryDetail)
           }
         })
         .catch(error => {

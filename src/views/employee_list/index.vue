@@ -172,7 +172,7 @@
         </el-form-item>
         <el-form-item label="组织:" prop="departName">
           <el-select v-model="ruleForm.departName" placeholder="请选择部门" style="width: 100%;">
-            <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
+            <el-option v-for="item in visibleDepts" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="联系方式:" prop="userPhone">
@@ -220,7 +220,7 @@
         </el-form-item>
         <el-form-item label="组织" prop="departName">
           <el-select v-model="ruleFormReverse.departName" placeholder="请选择部门" style="width: 100%;">
-            <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
+            <el-option v-for="item in visibleDepts" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="联系方式" prop="userPhone">
@@ -281,7 +281,7 @@
 </template>
 
 <script>
-  import { queryDepts, query, deleteStaff, addStaff, queryone, edit, deleteAllStaff } from '@/api/employee_list'
+  import { getAllVisibleDepts, queryDepts, query, deleteStaff, addStaff, queryone, edit, deleteAllStaff } from '@/api/employee_list'
   import { Message, MessageBox } from 'element-ui'
   import { provinceAndCityData, CodeToText } from 'element-china-area-data'
   import { formatDateTime, isJson } from '@/utils/tools'
@@ -358,7 +358,8 @@
           name: '',
           phone: ''
         },
-        regionOptions: [],
+        regionOptions: [], // 所有组织
+        visibleDepts: [], // 所有可见组织
         tableData: [],
         multipleSelection: [],
         formInline: {
@@ -740,6 +741,9 @@
       }
       queryDepts().then(response => {
         this.regionOptions = response.data.data
+      })
+      getAllVisibleDepts().then(response1 => {
+        this.visibleDepts = response1.data.data
       })
     },
     watch: {

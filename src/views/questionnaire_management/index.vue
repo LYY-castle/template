@@ -381,7 +381,7 @@
                 <div class="title-content">
                   <span>{{questionnaireName}}&nbsp;
                     <el-tooltip class="item" effect="dark" content="修改问卷模板标题" placement="right-start">
-                      <el-button type="default" @click="editQuestionnaireName=true;" size="small" icon="el-icon-edit" style="width:50px"></el-button>
+                      <el-button type="default" @click="editQuestionnaireName=true;questionnaireName1=questionnaireName" size="small" icon="el-icon-edit" style="width:50px"></el-button>
                     </el-tooltip>
                   </span>
                 </div>
@@ -494,18 +494,18 @@
                 </div>
                 <div class="lastbuttons" >
                   <div style="margin-top:8px">
-                    <el-button size="small" type="primary" @click="editQuestionnaire(editQuestionnaireId,questionnaireName,singelItems,multiItems,fillBlanks,multiBlanks)">修改</el-button>
-                    <el-button size="small" type="default" @click="isMainPage=true;isDetail=false;questionnaireName='';singelItems=[];multiItems=[];fillBlanks=[];multiBlanks=[]">返回</el-button>
+                    <el-button size="small" type="primary" @click="editQuestionnaire(editQuestionnaireId,questionnaireName1,singelItems,multiItems,fillBlanks,multiBlanks)">修改</el-button>
+                    <el-button size="small" type="default" @click="isMainPage=true;isDetail=false;questionnaireName='';questionnaireName1='';singelItems=[];multiItems=[];fillBlanks=[];multiBlanks=[]">返回</el-button>
                   </div>
                 </div>
 
                 <!-- 修改问卷模板名称dialog -->
                 <el-dialog width="30%" title="修改问卷模板名称" :visible.sync="editQuestionnaireName" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
                   <span style="color:red">*</span><span style="font-size:15px;">问卷模板标题：</span>
-                  <el-input maxlength="45" type="text" placeholder="请输入问卷模板标题（限长45字符）" size="medium" v-model="questionnaireName" clearable @change="checkEditName(questionnaireName);"></el-input>
+                  <el-input maxlength="45" type="text" placeholder="请输入问卷模板标题（限长45字符）" size="medium" v-model="questionnaireName1" clearable @change="checkEditName(questionnaireName1);"></el-input>
                   <div slot="footer" class="dialog-footer" style="text-align: center;">
                     <span style="color:red" v-if="hasQuestionnaireName===false">模板名称不能为空</span>
-                    <el-button type="primary" @click="editQuestionnaireName=false" v-if="hasQuestionnaireName===true">确定</el-button>
+                    <el-button type="primary" @click="editQuestionnaireName=false;questionnaireName=questionnaireName1" v-if="hasQuestionnaireName===true">确定</el-button>
                     <el-button @click="editQuestionnaireName = false" v-if="hasQuestionnaireName===true">取消</el-button>
                   </div>
                 </el-dialog>
@@ -690,6 +690,7 @@ export default {
       hasQuestionnaireName: true, // 判断有无名称
       editQuestionnaireId: '', // 需要修改的问卷模板id
       questionnaireName: '', // 新建问卷名称
+      questionnaireName1: '', // 修改问卷名称
       singelItems: [], // 单选 所有选项
       multiItems: [], // 多选 所有选项
       fillBlanks: [], // 单行填空 所有选项
@@ -1036,6 +1037,7 @@ export default {
       queryOneQuestionnaire(id).then(response => {
         if (response.data.code === 0) {
           this.questionnaireName = response.data.data.name
+          this.questionnaireName1 = response.data.data.name
           this.editQuestionnaireId = response.data.data.id
           for (var i = 0; i < response.data.data.titles.length; i++) {
             if (response.data.data.titles[i].type === 0) {

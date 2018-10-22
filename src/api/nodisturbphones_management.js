@@ -31,6 +31,14 @@ export function batchdel(obj) {
     data: { 'novisitPhoneIds': obj }
   })
 }
+// 批量修改免访号段可见属性
+export function batchSetVisible(obj) {
+  return request({
+    url: '/nodisturb/batchsetvisible',
+    method: 'post',
+    data: { 'NovisitPhoneList': obj }
+  })
+}
 // 修改免访号段
 export function eidtNoDisturbZones(obj) {
   return request({

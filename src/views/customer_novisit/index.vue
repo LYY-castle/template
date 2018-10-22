@@ -89,6 +89,11 @@
                 label="操作时间"
                 width="155">
           </el-table-column>
+          <el-table-column align="center" label="状态" >
+            <template slot-scope="scope">
+              <div v-html="showVisibleStatus(scope.row.visible)"></div>
+            </template>
+          </el-table-column>
           <el-table-column
                 align="center"
                 label="操作"
@@ -104,6 +109,8 @@
     <el-row style="margin-top:5px;">
       <el-button type="success" size="small" @click="addVisible=true;clearForm(noVisitCustomerDetail,'addCustomerForm');">新建</el-button>
       <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
+      <el-button type="primary" size="small" @click="op_hints1=true">批量可见</el-button>
+      <el-button type="primary" size="small" @click="op_hints2=true" style="width:100px">批量不可见</el-button>
       <el-pagination
             v-if="pageShow"
             background
@@ -131,6 +138,16 @@
         </el-form-item>
         <el-form-item label="客户电话:" prop="customerPhone">
           <el-input v-model="noVisitCustomerDetail.customerPhone" size="small" placeholder="客户电话（限长50字符）" maxlength="50"></el-input>
+        </el-form-item>
+        <el-form-item label="状态：" prop="visible">
+          <el-switch
+          v-model="noVisitCustomerDetail.visible"
+          active-text="可见"
+          inactive-text="不可见"
+          active-color="#67C23A"
+          :active-value=1
+          :inactive-value=0
+          ></el-switch>
         </el-form-item>
         <el-form-item label="生效时间:" prop="effectiveDate">
           <el-date-picker
@@ -167,6 +184,30 @@
         <el-button type="primary" @click="batchDelVisible = false;batchDelete(batchDelReq);">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 批量可见 -->
+      <el-dialog
+      width="30%"
+      title="操作提示"
+      :visible.sync="op_hints1"
+      append-to-body>
+      <span style="font-size:20px;">是否确认批量设置客户为可见？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button @click="op_hints1 = false">取 消</el-button>
+        <el-button type="primary" @click="op_hints1 = false;batchSetVisibleStatus(batchDelReq,1)">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 批量不可见 -->
+      <el-dialog
+      width="30%"
+      title="操作提示"
+      :visible.sync="op_hints2"
+      append-to-body>
+      <span style="font-size:20px;">是否确认批量设置客户为不可见？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button @click="op_hints2 = false">取 消</el-button>
+        <el-button type="primary" @click="op_hints2 = false;batchSetVisibleStatus(batchDelReq,0)">确 定</el-button>
+      </div>
+    </el-dialog>
     <!-- 删除 -->
     <el-dialog
           width="30%"
@@ -194,6 +235,16 @@
         </el-form-item>
         <el-form-item label="客户电话:" prop="customerPhone">
           <el-input v-model="editNoVisitCustomerDetail.customerPhone" size="small" placeholder="客户电话（限长50字符）" maxlength="50"></el-input>
+        </el-form-item>
+        <el-form-item label="状态：" prop="visible">
+          <el-switch
+          v-model="editNoVisitCustomerDetail.visible"
+          active-text="可见"
+          inactive-text="不可见"
+          active-color="#67C23A"
+          :active-value=1
+          :inactive-value=0
+          ></el-switch>
         </el-form-item>
         <el-form-item label="生效时间:" prop="effectiveDate">
           <el-date-picker
@@ -258,7 +309,7 @@
   </div>
 </template>
 <script>
-  import { findAllCampaigns, queryNoVisitCustomers, addNoVisitCustomers, batchDelete, getBlackListInfoById, editBlackListInfo, delBlackListInfo } from '@/api/customer_novisit'
+  import { batchSetVisible, findAllCampaigns, queryNoVisitCustomers, addNoVisitCustomers, batchDelete, getBlackListInfoById, editBlackListInfo, delBlackListInfo } from '@/api/customer_novisit'
   import { hideMobile } from '@/utils/tools'
   export default {
     name: 'customerNoVisit',
@@ -271,6 +322,8 @@
         validate: true, // 验证不通过阻止发请求
         addVisible: false, // 新建对话框显示隐藏
         pageShow: false, // 分页显示隐藏
+        op_hints1: false,
+        op_hints2: false,
         rule: {
           campaignIds: [{ required: true, message: '请选择活动', trigger: 'blur' }],
           customerPhone: [
@@ -278,7 +331,8 @@
             { pattern: /^\d{0,20}$/, message: '请输入正确的电话号码' }
           ],
           effectiveDate: [{ required: true, message: '请选择生效时间', trigger: 'blur' }],
-          expiryDate: [{ required: true, message: '请选择生效时间', trigger: 'blur' }]
+          expiryDate: [{ required: true, message: '请选择生效时间', trigger: 'blur' }],
+          visible: [{ required: true, message: '请选择号段状态', trigger: 'blur' }]
         },
         // 查询 发送请求参数
         req: {
@@ -314,7 +368,8 @@
           campaignIds: [],
           customerPhone: '',
           effectiveDate: '',
-          expiryDate: ''
+          expiryDate: '',
+          visible: 1
 
         }
       }
@@ -324,6 +379,35 @@
       this.findNoVisitCustomers(this.req)
     },
     methods: {
+      batchSetVisibleStatus(batchDelReq, visible) {
+        if (batchDelReq.ids.length === 0) {
+          this.$message.error('请先选择需要设置的免访客户！')
+        } else {
+          var blacklistList = {
+            ids: batchDelReq.ids,
+            visible: visible
+          }
+
+          batchSetVisible(blacklistList)
+            .then(response => {
+              if (response.data.code === 0) {
+                this.$message.success(response.data.message)
+                this.findNoVisitCustomers(this.req)
+              } else {
+                this.$message.error(response.data.message)
+              }
+            })
+        }
+      },
+      showVisibleStatus(visible) {
+        if (visible === 1) {
+        // 可见
+          return "<span style='color:#67C23A'>可见</span>"
+        } else {
+        // 不可见
+          return "<span style='color:#F56C6C'>不可见</span>"
+        }
+      },
       resetReq() {
         this.req = {
           customerPhone: '',

@@ -139,7 +139,7 @@
       <div style="text-align:center">
         <h3>{{editDetail.title}}
           <el-tooltip class="item" effect="dark" content="修改笔记标题" placement="right-start">
-            <el-button style="font-size:16px;" type="text" icon="el-icon-edit-outline" @click="editNoteTitleVisiable=true" size="mini" circle></el-button>
+            <el-button style="font-size:16px;" type="text" icon="el-icon-edit-outline" @click="editNoteTitleVisiable=true;noteTitle1=editDetail.title" size="mini" circle></el-button>
           </el-tooltip>
         </h3>
         <quill-editor
@@ -152,7 +152,7 @@
         ></quill-editor>
         <el-row style="margin-top:1%;">
           <el-button type="success" @click="modifyNote();" size="small">确定</el-button>
-          <el-button type="primary" @click="editDetail.title='';isListPage='1';editDetail.content=null" size="small">取消</el-button>
+          <el-button type="primary" @click="editDetail.title='';noteTitle1='';isListPage='1';editDetail.content=null" size="small">取消</el-button>
         </el-row>
       </div>
     </div>
@@ -162,10 +162,10 @@
     <!-- 修改笔记标题 dialog -->
       <el-dialog width="30%" title="修改笔记标题" :visible.sync="editNoteTitleVisiable" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
         <span style="color:red">*</span><span style="font-size:15px;">笔记标题：</span>
-          <el-input maxlength="45" type="text" placeholder="请输入笔记标题（上限45字符）" size="medium" v-model="editDetail.title" clearable @change="checkEditTitle(editDetail.title);"></el-input>
+          <el-input maxlength="45" type="text" placeholder="请输入笔记标题（上限45字符）" size="medium" v-model="noteTitle1" clearable @change="checkEditTitle(noteTitle1);"></el-input>
         <div slot="footer" class="dialog-footer" style="text-align: center;">
         <span style="color:red" v-if="hasNoteTitle===false">笔记标题不能为空</span>
-          <el-button type="primary" @click="editNoteTitleVisiable=false" v-if="hasNoteTitle===true">确定</el-button>
+          <el-button type="primary" @click="editNoteTitleVisiable=false;editDetail.title=noteTitle1" v-if="hasNoteTitle===true">确定</el-button>
           <el-button @click="editNoteTitleVisiable = false" v-if="hasNoteTitle===true">取消</el-button>
         </div>
       </el-dialog>
@@ -226,6 +226,7 @@ export default {
       pageShow: false, // 分页显示与否
       pageInfo: {}, // 分页信息
       noteTitle: '', // 新建笔记标题
+      noteTitle1: '', // 修改笔记标题
       hasNoteTitle: true, // 判断是否有笔记标题
       noteTitleVisiable: false, // 新建笔记dialog显示与否
       editNoteTitleVisiable: false, // 修改笔记标题dialog
@@ -411,6 +412,7 @@ export default {
           // if (response.data.code === 200) {
           if (response.data) {
             this.editDetail.title = response.data.title
+            this.noteTitle1 = response.data.title
             this.editDetail.content = response.data.content
             this.noteid = response.data.noteid
             this.isListPage = '4'
@@ -429,7 +431,8 @@ export default {
         this.$message.error('笔记内容不能为空！')
         return
       } else {
-        this.note_item.title = this.editDetail.title
+        // this.note_item.title = this.editDetail.title
+        this.note_item.title = this.noteTitle1
         this.note_item.content = this.editDetail.content
         modifyNote(this.note_item, this.uid, this.noteid)
           .then(response => {
