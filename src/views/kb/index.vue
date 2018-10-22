@@ -310,6 +310,7 @@
                     :action="updateUrl"
                     :headers="{'Authorization':'Bearer ' +token}"
                     :on-remove="uploadRemove"
+                    :before-remove="beforeRemove"
                     :http-request="uploadFile"
                     :auto-upload="false">
                     <el-button slot="trigger" size="small" type="primary">选取附件</el-button>
@@ -320,7 +321,7 @@
               </el-form>
             </el-row>
             <el-row>
-              <el-button type="success" @click="generateNote();" size="small">确定</el-button>
+              <el-button type="success" @click="generateNote();" size="small" :disabled="uploadDisable">确定</el-button>
               <el-button @click="noteTitle='';addArticles=false;body=null;brief=null;remark=null" size="small">取消</el-button>
             </el-row>
           </el-row>
@@ -391,6 +392,7 @@
                     :action="updateUrl"
                     :headers="{'Authorization':'Bearer ' +token}"
                     :on-remove="uploadRemove"
+                    :before-remove="beforeRemove"
                     :http-request="uploadFile"
                     :file-list="fileList"
                     :auto-upload="false">
@@ -402,7 +404,7 @@
               </el-form>
             </el-row>
             <el-row>
-              <el-button type="success" @click="modifyNote();" size="small">确定</el-button>
+              <el-button type="success" @click="modifyNote();" size="small" :disabled="uploadDisable">确定</el-button>
               <el-button @click="editDetail.title='';editArticles=false;editDetail.body=null" size="small">取消</el-button>
             </el-row>
           </el-row>
@@ -435,7 +437,7 @@
               </el-form-item>
             </el-form>
           </el-row>
-          <div v-html="noteDetail.body" class="note-content">
+          <div v-html="noteDetail.body" class="note-content div-content" style="word-wrap:auto;">
 
           </div>
           <el-row>
@@ -537,719 +539,758 @@
 </template>
 
 <script>
-  import TreeRender from '@/components/tree/tree_kb.vue'
-  import {
-    getCatalogs,
-    addCatalogs,
-    delCatalogs,
-    editCatalogs,
-    getArticlesDetail,
-    addArticles,
-    getArticlesById, // 查询目录下的文章
-    getArticles1, // 普通查询
-    getArticles2, // 高级查询
-    editArticles,
-    delArticles,
-    addArticlesLink,
-    getUploadInfo
-  } from '@/api/kb'
-  import {
-    clone,
-    formatDateTime,
-    verify,
-    download
-  } from '@/utils/tools'
-  export default{
-    name: 'kb',
-    data() {
-      return {
-        token: localStorage.getItem('Admin-Token'),
-        // tree
-        isLoadingTree: false, // 是否加载节点树
-        draggable: true,
-        maxexpandId: 0,
-        non_maxexpandId: this.maxexpandId,
-        setTree: [], // 新建窗口 节点树数据
-        defaultProps: {
-          children: 'children',
-          label: 'name'
-        },
+import { MessageBox } from 'element-ui'
+import TreeRender from '@/components/tree/tree_kb.vue'
+import {
+  getCatalogs,
+  addCatalogs,
+  delCatalogs,
+  editCatalogs,
+  getArticlesDetail,
+  addArticles,
+  getArticlesById, // 查询目录下的文章
+  getArticles1, // 普通查询
+  getArticles2, // 高级查询
+  editArticles,
+  delArticles,
+  addArticlesLink,
+  getUploadInfo,
+  delUpload
+} from '@/api/kb'
+import {
+  clone,
+  formatDateTime,
+  verify,
+  download
+} from '@/utils/tools'
+export default{
+  name: 'kb',
+  data() {
+    return {
+      token: localStorage.getItem('Admin-Token'),
+      // tree
+      isLoadingTree: false, // 是否加载节点树
+      draggable: true,
+      maxexpandId: 0,
+      non_maxexpandId: this.maxexpandId,
+      setTree: [], // 新建窗口 节点树数据
+      defaultProps: {
+        children: 'children',
+        label: 'name'
+      },
+      catalogid: '',
+      articleid: '',
+      node: {},
+      data: {},
+      store: {},
+      editCancel: false,
+      expandedItem: [],
+      // -------------------------
+      // dynamicTags: ['标签一', '标签二', '标签三'],
+      // inputVisible: false,
+      // inputValue: '',
+      nodePageShow: false, // 节点分页显示隐藏
+      queryPageShow1: false, // 精确查询显示隐藏
+      queryPageShow2: false, // 模糊查询显示隐藏
+      pageInfo: {},
+      isListPage: '1', // 是否是主页
+      searchType: '0',
+      addArticles: false,
+      editArticles: false,
+      detailArticles: false,
+      // uploadVisible: false,
+      addVisible: false,
+      delVisible: false,
+      // batchDelVisible: false,
+      noteTitleVisiable: false, // 新建笔记模态框显示隐藏
+      editNoteTitleVisiable: false, // 修改笔记模态框显示隐藏
+      linkVisiable: false,
+      timeValue: null,
+      noteTitle: '', // 新建标题
+      brief: '',
+      remark: '',
+      hasNoteTitle: true, // 判断是否有标题
+      body: '',
+      req: {
+        title: null,
+        pageNo: 1,
+        pageSize: 10
+      },
+      req2: {
+        title: null,
+        pageNo: 1,
+        pageSize: 10
+      },
+      nodeReq: {
+        pageNo: 1,
+        pageSize: 10
+      },
+      searchReq: {
+        query: '',
+        pageNo: 1,
+        pageSize: 10
+      },
+      searchReq2: {
+        query: '',
+        pageNo: 1,
+        pageSize: 10
+      },
+      delReq: {
         catalogid: '',
-        articleid: '',
-        node: {},
-        data: {},
-        store: {},
-        editCancel: false,
-        expandedItem: [],
-        // -------------------------
-        // dynamicTags: ['标签一', '标签二', '标签三'],
-        // inputVisible: false,
-        // inputValue: '',
-        nodePageShow: false, // 节点分页显示隐藏
-        queryPageShow1: false, // 精确查询显示隐藏
-        queryPageShow2: false, // 模糊查询显示隐藏
-        pageInfo: {},
-        isListPage: '1', // 是否是主页
-        searchType: '0',
-        addArticles: false,
-        editArticles: false,
-        detailArticles: false,
-        // uploadVisible: false,
-        addVisible: false,
-        delVisible: false,
-        // batchDelVisible: false,
-        noteTitleVisiable: false, // 新建笔记模态框显示隐藏
-        editNoteTitleVisiable: false, // 修改笔记模态框显示隐藏
-        linkVisiable: false,
-        timeValue: null,
-        noteTitle: '', // 新建标题
+        articleid: ''
+      },
+      editorOption: {
+        modules: {
+          toolbar: [
+            ['bold', 'italic', 'underline', 'strike', 'image'], // 加粗bold 斜体italic 下划线underline 删除线strike
+            ['blockquote', 'code-block'], // 引用blockquote 代码块code-block
+            [{ 'direction': 'rtl' }, { 'script': 'sub' }, { 'script': 'super' }, { 'list': 'ordered' }, { 'list': 'bullet' }],
+            [{ 'size': ['small', false, 'large', 'huge'] }],
+            [{ 'color': [] }, { 'background': [] }, { 'font': [] }, { 'align': [] }]
+          ]
+        },
+        placeholder: '在此键入文本或图片内容(上限16MB)...'
+      },
+      note_item: { // 新建参数
+        title: '',
+        body: '',
         brief: '',
         remark: '',
-        hasNoteTitle: true, // 判断是否有标题
+        updatorid: null,
+        updatorRealname: '',
+        creatorid: null,
+        creatorRealname: '',
+        attachments: []
+      },
+      noteDetail: { // 详情
+        title: '',
         body: '',
-        req: {
-          title: null,
-          pageNo: 1,
-          pageSize: 10
-        },
-        req2: {
-          title: null,
-          pageNo: 1,
-          pageSize: 10
-        },
-        nodeReq: {
-          pageNo: 1,
-          pageSize: 10
-        },
-        searchReq: {
-          query: '',
-          pageNo: 1,
-          pageSize: 10
-        },
-        searchReq2: {
-          query: '',
-          pageNo: 1,
-          pageSize: 10
-        },
-        delReq: {
-          catalogid: '',
-          articleid: ''
-        },
-        editorOption: {
-          modules: {
-            toolbar: [
-              ['bold', 'italic', 'underline', 'strike', 'image'], // 加粗bold 斜体italic 下划线underline 删除线strike
-              ['blockquote', 'code-block'], // 引用blockquote 代码块code-block
-              [{ 'direction': 'rtl' }, { 'script': 'sub' }, { 'script': 'super' }, { 'list': 'ordered' }, { 'list': 'bullet' }],
-              [{ 'size': ['small', false, 'large', 'huge'] }],
-              [{ 'color': [] }, { 'background': [] }, { 'font': [] }, { 'align': [] }]
-            ]
-          },
-          placeholder: '在此键入文本或图片内容(上限16MB)...'
-        },
-        note_item: { // 新建参数
-          title: '',
-          body: '',
-          brief: '',
-          remark: '',
-          updatorid: null,
-          updatorRealname: '',
-          creatorid: null,
-          creatorRealname: '',
-          attachments: []
-        },
-        noteDetail: { // 详情
-          title: '',
-          body: '',
-          brief: '',
-          remark: ''
-        },
-        editDetail: { // 修改详情
-          title: '',
-          body: '',
-          brief: '',
-          remark: '',
-          updatorid: null,
-          updatorRealname: '',
-          attachments: []
-        },
-        tableData: [],
-        tableType: null, // 1 按节点查询   2 普通查询   3 高级查询
-        addLinkId: null,
-        addLinkReq: {
-          catalogId: null,
-          articleId: null
-        },
-        uploadInfoReq: {
-          bucketName: 'crm',
-          objectName: ''
-        },
-        updateUrl: '',
-        DLurl: [],
-        uploadCount: 0,
-        fileList: []
+        brief: '',
+        remark: ''
+      },
+      editDetail: { // 修改详情
+        title: '',
+        body: '',
+        brief: '',
+        remark: '',
+        updatorid: null,
+        updatorRealname: '',
+        attachments: []
+      },
+      tableData: [],
+      tableType: null, // 1 按节点查询   2 普通查询   3 高级查询
+      addLinkId: null,
+      addLinkReq: {
+        catalogId: null,
+        articleId: null
+      },
+      uploadInfoReq: {
+        bucketName: 'crm',
+        objectName: ''
+      },
+      delUploadReq: {
+        bucketName: 'crm',
+        objectName: null
+      },
+      updateUrl: '',
+      DLurl: [],
+      uploadCount: 0,
+      fileList: [],
+      uploadDisable: false
+    }
+  },
+  methods: {
+    // tree------------------------
+    initExpand() {
+      this.isLoadingTree = true
+    },
+    // 查询所有节点列表
+    getCatalogs() {
+      getCatalogs().then(response => {
+        this.setTree = response.data
+      }).catch(error => {
+        console.log(error)
+      })
+    },
+    resetTree() {
+      if (this.$refs.tree2) {
+        for (var i = 0; i < this.$refs.tree2.store._getAllNodes().length; i++) {
+          this.$refs.tree2.store._getAllNodes()[i].expanded = this.isexpand
+        }
       }
     },
-    methods: {
-      // tree------------------------
-      initExpand() {
-        this.isLoadingTree = true
-      },
-      // 查询所有节点列表
-      getCatalogs() {
-        getCatalogs().then(response => {
-          this.setTree = response.data
-        }).catch(error => {
-          console.log(error)
-        })
-      },
-      resetTree() {
-        if (this.$refs.tree2) {
-          for (var i = 0; i < this.$refs.tree2.store._getAllNodes().length; i++) {
-            this.$refs.tree2.store._getAllNodes()[i].expanded = this.isexpand
-          }
-        }
-      },
-      handleNodeClick(d, n, s) {
+    handleNodeClick(d, n, s) {
       // 点击节点
       // consolle.log(d,n)
-        this.catalogid = d.ID
-        // if (d.isEdit === true) {
-        //   d.isEdit = false // 放弃编辑状态
-        //   this.$set(d, 'isEdit', false)
-        //   return false
-        // }
-        // 展开节点
-        if (!n.expanded) {
-          n.expanded = true
-        } else if (n.expanded) {
-          n.expanded = false
-        }
-        // 查询文章列表
-        getArticlesById(d.ID, this.nodeReq).then(response => {
-          this.tableData = response.data.result
-          this.pageInfo = response.data.pageInfo
-          this.setHot(this.tableData, 5)
-          this.nodePageShow = true
-          this.queryPageShow1 = false
-          this.queryPageShow2 = false
-          this.tableType = 1
-        }).catch(error => {
-          this.$message({
-            message: '获取文章列表失败',
-            type: 'error'
-          })
-          console.log(error)
+      this.catalogid = d.ID
+      // if (d.isEdit === true) {
+      //   d.isEdit = false // 放弃编辑状态
+      //   this.$set(d, 'isEdit', false)
+      //   return false
+      // }
+      // 展开节点
+      if (!n.expanded) {
+        n.expanded = true
+      } else if (n.expanded) {
+        n.expanded = false
+      }
+      // 查询文章列表
+      getArticlesById(d.ID, this.nodeReq).then(response => {
+        this.tableData = response.data.result
+        this.pageInfo = response.data.pageInfo
+        this.setHot(this.tableData, 5)
+        this.nodePageShow = true
+        this.queryPageShow1 = false
+        this.queryPageShow2 = false
+        this.tableType = 1
+      }).catch(error => {
+        this.$message({
+          message: '获取文章列表失败',
+          type: 'error'
         })
-      },
-      renderContent(h, { node, data, store }) {
+        console.log(error)
+      })
+    },
+    renderContent(h, { node, data, store }) {
       // 加载节点
-        const that = this
-        that.node = node
-        that.data = data
-        that.store = store
-        return h(TreeRender, {
-          props: {
-            DATA: data,
-            NODE: node,
-            STORE: store,
-            maxexpandId: that.non_maxexpandId,
-            editCancel: that.editCancel
-          },
-          on: {
-            nodeAdd: (s, d, n) => that.handleAdd(s, d, n),
-            submitAdd: (s, d, n) => that.addCatalogs(s, d, n),
-            nodeEdit: (s, d, n) => that.handleEdit(s, d, n),
-            submitEdit: (s, d, n) => that.submitEdit(s, d, n),
-            nodeDel: (s, d, n) => that.handleDelete(s, d, n),
-            nodeCancel: (s, d, n) => that.handleCancel(s, d, n)
-          }
+      const that = this
+      that.node = node
+      that.data = data
+      that.store = store
+      return h(TreeRender, {
+        props: {
+          DATA: data,
+          NODE: node,
+          STORE: store,
+          maxexpandId: that.non_maxexpandId,
+          editCancel: that.editCancel
+        },
+        on: {
+          nodeAdd: (s, d, n) => that.handleAdd(s, d, n),
+          submitAdd: (s, d, n) => that.addCatalogs(s, d, n),
+          nodeEdit: (s, d, n) => that.handleEdit(s, d, n),
+          submitEdit: (s, d, n) => that.submitEdit(s, d, n),
+          nodeDel: (s, d, n) => that.handleDelete(s, d, n),
+          nodeCancel: (s, d, n) => that.handleCancel(s, d, n)
+        }
+      })
+    },
+    // 新建top节点
+    handleAddTop() {
+      let a = 0
+      for (let i = 0; i < this.setTree.length; i++) {
+        if (this.setTree[i].isEdit) {
+          a = a + 1
+          this.setTree.splice(i, 1)
+        }
+      }
+      if (!a) {
+        this.setTree.push({
+          ID: ++this.maxexpandId,
+          name: '',
+          parentid: 0,
+          isEdit: true,
+          children: []
         })
-      },
-      // 新建top节点
-      handleAddTop() {
-        let a = 0
-        for (let i = 0; i < this.setTree.length; i++) {
-          if (this.setTree[i].isEdit) {
+        this.editCancel = false
+      }
+    },
+    // 新建子节点
+    handleAdd(s, d, n) {
+      let a = 0
+      const parentid = n.data.ID
+      this.editCancel = false
+      // 增加节点
+      // if (n.level >= 6) {
+      //   this.$message.error('最多只支持五级！')
+      //   return false
+      // }
+      if (d.children) {
+        for (let i = 0; i < d.children.length; i++) {
+          if (d.children[i].isEdit) {
             a = a + 1
-            this.setTree.splice(i, 1)
+            d.children.splice(i, 1)
           }
         }
         if (!a) {
-          this.setTree.push({
+          if (d.children === null) {
+            d.children = []
+          }
+          // 新建数据
+          d.children.push({
             ID: ++this.maxexpandId,
             name: '',
-            parentid: 0,
+            parentid: parentid,
             isEdit: true,
             children: []
           })
-          this.editCancel = false
-        }
-      },
-      // 新建子节点
-      handleAdd(s, d, n) {
-        let a = 0
-        const parentid = n.data.ID
-        this.editCancel = false
-        // 增加节点
-        // if (n.level >= 6) {
-        //   this.$message.error('最多只支持五级！')
-        //   return false
-        // }
-        if (d.children) {
-          for (let i = 0; i < d.children.length; i++) {
-            if (d.children[i].isEdit) {
-              a = a + 1
-              d.children.splice(i, 1)
-            }
-          }
-          if (!a) {
-            if (d.children === null) {
-              d.children = []
-            }
-            // 新建数据
-            d.children.push({
-              ID: ++this.maxexpandId,
-              name: '',
-              parentid: parentid,
-              isEdit: true,
-              children: []
-            })
-            // 展开节点
-            if (!n.expanded) {
-              n.expanded = true
-            }
+          // 展开节点
+          if (!n.expanded) {
+            n.expanded = true
           }
         }
-      },
-      // 新建节点
-      addCatalogs(s, d, n) {
-        if (n.data.name) {
-          addCatalogs({ 'name': n.data.name, parentid: d.parentid }).then(response => {
-            n.parent.childNodes = response.data
-            this.getCatalogs()
-            // 展开节点
-            this.expandedItem = []
-            this.expandedItem.push(d.parentid)
-          }).catch(error => {
-            this.$message({
-              message: '新建节点失败，请重新操作',
-              type: 'error'
-            })
-            this.getCatalogs()
-            console.log(error)
-          })
-        } else {
-          this.$message.error('请输入节点名')
-        }
-        this.$set(n, 'expanded', true)
-      },
-      handleEdit(s, d, n) { // 编辑节点
-        this.editCancel = true
-      },
-      // 提交编辑
-      submitEdit(s, d, n) {
-        editCatalogs(d.ID, { 'name': d.name }).then(response => {
-          console.log(response.data)
+      }
+    },
+    // 新建节点
+    addCatalogs(s, d, n) {
+      if (n.data.name) {
+        addCatalogs({ 'name': n.data.name, parentid: d.parentid }).then(response => {
+          n.parent.childNodes = response.data
           this.getCatalogs()
           // 展开节点
           this.expandedItem = []
           this.expandedItem.push(d.parentid)
+        }).catch(error => {
+          this.$message({
+            message: '新建节点失败，请重新操作',
+            type: 'error'
+          })
+          this.getCatalogs()
+          console.log(error)
         })
-      },
-      handleDelete(s, d, n) {
+      } else {
+        this.$message.error('请输入节点名')
+      }
+      this.$set(n, 'expanded', true)
+    },
+    handleEdit(s, d, n) { // 编辑节点
+      this.editCancel = true
+    },
+    // 提交编辑
+    submitEdit(s, d, n) {
+      editCatalogs(d.ID, { 'name': d.name }).then(response => {
+        console.log(response.data)
+        this.getCatalogs()
+        // 展开节点
+        this.expandedItem = []
+        this.expandedItem.push(d.parentid)
+      })
+    },
+    handleDelete(s, d, n) {
       // 删除节点
-        const that = this
-        // 有子级不删除
-        if (d.children && d.children.length !== 0) {
-          this.$message.error('此节点有子级，不可删除！')
-          return false
-        } else {
+      const that = this
+      // 有子级不删除
+      if (d.children && d.children.length !== 0) {
+        this.$message.error('此节点有子级，不可删除！')
+        return false
+      } else {
         // 新建节点直接删除，否则要询问是否删除
-          const delNode = () => {
-            let list = n.parent.data.children || n.parent.data // 节点同级数据
-            let _index = 99999 // 要删除的index
-            if (!n.parent.data.children) { // 删除顶级节点，无children
-              list = n.parent.data
+        const delNode = () => {
+          let list = n.parent.data.children || n.parent.data // 节点同级数据
+          let _index = 99999 // 要删除的index
+          if (!n.parent.data.children) { // 删除顶级节点，无children
+            list = n.parent.data
+          }
+          list.map((c, i) => {
+            if (d.ID === c.ID) {
+              _index = i
             }
-            list.map((c, i) => {
-              if (d.ID === c.ID) {
-                _index = i
-              }
-            })
-            list.splice(_index, 1)
-            delCatalogs(d).then(response => {
-              console.log('删除成功')
-              this.getCatalogs()
-              // 展开节点
-              this.expandedItem = []
-              this.expandedItem.push(d.parentid)
-              console.log(this.expandedItem)
-            }).catch(error => {
-              if (error.response.data === "catalog has article, can't delete" && error.response.status === 405) {
-                this.$message({
-                  message: '删除节点失败，节点内有文章',
-                  type: 'error'
-                })
-                this.getCatalogs()
-                console.log(error)
-              } else {
-                this.$message({
-                  message: '删除节点失败，请重新操作',
-                  type: 'error'
-                })
-                this.getCatalogs()
-                console.log(error)
-              }
-            })
-          }
-          const isDel = () => {
-            that
-              .$confirm('是否删除此节点？', '提示', {
-                confirmButtonText: '确认',
-                cancelButtonText: '取消',
-                type: 'warning'
-              })
-              .then(() => {
-                delNode()
-              })
-              .catch(() => {
-                return false
-              })
-          }
-          // 判断是否新建
-          d.ID > this.non_maxexpandId ? delNode() : isDel()
-        }
-      },
-      handleCancel(s, d, n) {
-        // 删除节点
-        const list = n.parent.data.children || n.parent.data // 节点同级数据
-        let _index = 99999 // 要删除的index
-        list.map((c, i) => {
-          if (d.ID === c.ID) {
-            _index = i
-          }
-        })
-        list.splice(_index, 1)
-      },
-      // 拖拽结束时
-      handleDragEnd(n1, n2, e) {
-        if (e === 'inner') {
-          editCatalogs(n1.data.ID, { 'parentid': n2.data.ID }).then(response => {
+          })
+          list.splice(_index, 1)
+          delCatalogs(d).then(response => {
+            console.log('删除成功')
             this.getCatalogs()
             // 展开节点
             this.expandedItem = []
-            this.expandedItem.push(n2.data.ID)
+            this.expandedItem.push(d.parentid)
+            console.log(this.expandedItem)
+          }).catch(error => {
+            if (error.response.data === "catalog has article, can't delete" && error.response.status === 405) {
+              this.$message({
+                message: '删除节点失败，节点内有文章',
+                type: 'error'
+              })
+              this.getCatalogs()
+              console.log(error)
+            } else {
+              this.$message({
+                message: '删除节点失败，请重新操作',
+                type: 'error'
+              })
+              this.getCatalogs()
+              console.log(error)
+            }
           })
         }
-      },
-      // 上传---------------------
-      uploadFile(uploadInfo) {
-        if (!this.beforeUpload(uploadInfo.file)) {
-          return false
+        const isDel = () => {
+          that
+            .$confirm('是否删除此节点？', '提示', {
+              confirmButtonText: '确认',
+              cancelButtonText: '取消',
+              type: 'warning'
+            })
+            .then(() => {
+              delNode()
+            })
+            .catch(() => {
+              return false
+            })
         }
-        const vm = this
-        let date = new Date()
-        let uploadInfoReq2 = {}
-        date = formatDateTime(date).split(' ')[0]
-        console.log(uploadInfo)
-        vm.uploadInfoReq.objectName = localStorage.getItem('agentId') + '/' + date + '/' + uploadInfo.file.name
-        uploadInfoReq2 = clone(this.uploadInfoReq)
-        getUploadInfo(uploadInfoReq2).then(response => {
-          if (response.data.presignedPutUrl) {
-            const xhr = new XMLHttpRequest()
-            xhr.open('PUT', response.data.presignedPutUrl, true)
-            xhr.send(uploadInfo.file)
-            xhr.onload = () => {
-              if (xhr.status === 200) {
-                vm.$notify({
-                  message: uploadInfo.file.name + '上传成功!',
-                  type: 'success'
-                })
-                vm.note_item.attachments.push({
-                  'file_path': localStorage.getItem('agentId') + '/' + date + '/' + uploadInfo.file.name,
-                  'created_by': localStorage.getItem('agentId')
-                })
-                vm.editDetail.attachments.push({
-                  'file_path': localStorage.getItem('agentId') + '/' + date + '/' + uploadInfo.file.name,
-                  'created_by': localStorage.getItem('agentId'),
-                  'ArticleId': this.articleid
-                })
-                vm.DLurl.push({ 'name': uploadInfo.file.name, 'url': `${process.env.FS_SERVER_HOST}/crm/${localStorage.getItem('agentId') + '/' + date + '/' + uploadInfo.file.name}` })
+        // 判断是否新建
+        d.ID > this.non_maxexpandId ? delNode() : isDel()
+      }
+    },
+    handleCancel(s, d, n) {
+      // 删除节点
+      const list = n.parent.data.children || n.parent.data // 节点同级数据
+      let _index = 99999 // 要删除的index
+      list.map((c, i) => {
+        if (d.ID === c.ID) {
+          _index = i
+        }
+      })
+      list.splice(_index, 1)
+    },
+    // 拖拽结束时
+    handleDragEnd(n1, n2, e) {
+      if (e === 'inner') {
+        editCatalogs(n1.data.ID, { 'parentid': n2.data.ID }).then(response => {
+          this.getCatalogs()
+          // 展开节点
+          this.expandedItem = []
+          this.expandedItem.push(n2.data.ID)
+        })
+      }
+    },
+    // 上传---------------------
+    uploadFile(uploadInfo) {
+      if (!this.beforeUpload(uploadInfo.file)) {
+        return false
+      }
+      const vm = this
+      let date = new Date()
+      let uploadInfoReq2 = {}
+      vm.uploadDisable = true
+      date = formatDateTime(date).split(' ')[0]
+      console.log(uploadInfo)
+      vm.uploadInfoReq.objectName = localStorage.getItem('agentId') + '/' + date + '/' + uploadInfo.file.name
+      uploadInfoReq2 = clone(this.uploadInfoReq)
+      getUploadInfo(uploadInfoReq2).then(response => {
+        if (response.data.presignedPutUrl) {
+          const xhr = new XMLHttpRequest()
+          xhr.open('PUT', response.data.presignedPutUrl, true)
+          xhr.send(uploadInfo.file)
+          xhr.onload = () => {
+            if (xhr.status === 200) {
+              vm.$notify({
+                message: uploadInfo.file.name + '上传成功!',
+                type: 'success'
+              })
+              vm.uploadDisable = false
+              vm.note_item.attachments.push({
+                'file_path': localStorage.getItem('agentId') + '/' + date + '/' + uploadInfo.file.name,
+                'created_by': localStorage.getItem('agentId')
+              })
+              vm.editDetail.attachments.push({
+                'file_path': localStorage.getItem('agentId') + '/' + date + '/' + uploadInfo.file.name,
+                'created_by': localStorage.getItem('agentId'),
+                'ArticleId': this.articleid
+              })
+              vm.DLurl.push({ 'name': uploadInfo.file.name, 'url': `${process.env.FS_SERVER_HOST}/crm/${localStorage.getItem('agentId') + '/' + date + '/' + uploadInfo.file.name}` })
+            }
+          }
+        } else {
+          vm.$notify({
+            message: '服务器上存在与' + uploadInfo.file.name + '相同名字的文件，请删除或重命名后重新上传',
+            type: 'error'
+          })
+          // vm.clearUpload('upload')
+        }
+      })
+    },
+    beforeRemove(file, fileList) {
+      let date = new Date()
+      date = formatDateTime(date).split(' ')[0]
+      this.delUploadReq.objectName = localStorage.getItem('agentId') + '/' + date + '/' + file.name
+      return MessageBox.confirm(`确定移除 ${file.name}？`, '确定注销', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 删除附件
+        delUpload(this.delUploadReq).then(response => {
+          if (response.data.flag) {
+            this.$message({
+              message: '删除附件成功',
+              type: 'success'
+            })
+            for (let i = 0; i < this.note_item.attachments.length; i++) {
+              if (this.note_item.attachments[i].file_path.indexOf(file.name) >= 0) {
+                this.note_item.attachments.splice(i, 1)
+              }
+            }
+            for (let i = 0; i < this.editDetail.attachments.length; i++) {
+              if (this.editDetail.attachments[i].file_path.indexOf(file.name) >= 0) {
+                this.editDetail.attachments.splice(i, 1)
+              }
+            }
+            for (let i = 0; i < fileList.length; i++) {
+              if (fileList[i].name.indexOf(file.name) >= 0) {
+                fileList.splice(i, 1)
               }
             }
           } else {
-            vm.$notify({
-              message: '服务器上存在与' + uploadInfo.file.name + '相同名字的文件，请删除或重命名后重新上传',
+            this.$message({
+              message: '删除附件失败',
               type: 'error'
             })
-            // vm.clearUpload('upload')
           }
+        }).catch(() => {
+          throw new Error('reject')
         })
-      },
-      uploadRemove(file, fileList) {
-        for (let i = 0; i < this.note_item.attachments.length; i++) {
-          if (this.note_item.attachments[i].file_path.indexOf(file.name) >= 0) {
-            this.note_item.attachments.splice(i, 1)
-          }
+        throw new Error('reject')
+      }).catch(() => {
+        throw new Error('reject')
+      })
+    },
+    uploadRemove(file, fileList) {
+      for (let i = 0; i < this.note_item.attachments.length; i++) {
+        if (this.note_item.attachments[i].file_path.indexOf(file.name) >= 0) {
+          this.note_item.attachments.splice(i, 1)
         }
-        for (let i = 0; i < this.editDetail.attachments.length; i++) {
-          if (this.editDetail.attachments[i].file_path.indexOf(file.name) >= 0) {
-            this.editDetail.attachments.splice(i, 1)
-          }
+      }
+      for (let i = 0; i < this.editDetail.attachments.length; i++) {
+        if (this.editDetail.attachments[i].file_path.indexOf(file.name) >= 0) {
+          this.editDetail.attachments.splice(i, 1)
         }
-      },
-      beforeSubmit() {
-        if (this.uploadCount === $('.el-upload-list>li').length) {
-          this.note_item.attachments.length = 0
-          this.editDetail.attachments.length = 0
-          this.DLurl.length = 0
+      }
+    },
+    beforeSubmit() {
+      if (this.uploadCount === $('.el-upload-list>li').length) {
+        this.note_item.attachments.length = 0
+        this.editDetail.attachments.length = 0
+        this.DLurl.length = 0
+      }
+    },
+    // 验证上传文件的格式及大小
+    beforeUpload(file) {
+      var testmsg = file.name.substring(file.name.lastIndexOf('.') + 1)
+      this.uploadCount++
+      this.file = file
+      const extension = testmsg.toLowerCase() === 'xls'
+      const extension2 = testmsg.toLowerCase() === 'xlsx'
+      const extension3 = testmsg.toLowerCase() === 'doc'
+      const extension4 = testmsg.toLowerCase() === 'docx'
+      const extension5 = testmsg.toLowerCase() === 'txt'
+      const extension6 = testmsg.toLowerCase() === 'pdf'
+      const isLt2M = file.size / 1024 / 1024 < 10
+      if (!extension && !extension2 && !extension3 && !extension4 && !extension5 && !extension6) {
+        this.$message({
+          message: '上传附件只能是xls,xlsx,doc,docx,txt格式!',
+          type: 'warning'
+        })
+      }
+      if (!isLt2M) {
+        this.$message({
+          message: '上传文件大小不能超过 10MB!',
+          type: 'warning'
+        })
+      }
+      return (extension || extension2 || extension3 || extension4 || extension5) && isLt2M
+    },
+    submitUpload() {
+      this.$refs.upload.submit()
+    },
+    // 清空上传列表
+    clearUpload(formName) {
+      if (this.$refs[formName] !== undefined) {
+        this.$refs[formName].clearFiles()
+      }
+    },
+    download(url, name) {
+      if (name.substring(name.lastIndexOf('.') + 1) === 'txt') {
+        download(url, name, 'text/plain')
+      } else {
+        window.location.href = url
+      }
+    },
+    // -------------------------
+    clone: clone,
+    formatDateTime: formatDateTime,
+    reset() {
+      this.timeValue = null
+      if (this.pageInfo.pageNo) {
+        this.req = {
+          title: '',
+          pageNo: this.pageInfo.pageNo,
+          pageSize: this.pageInfo.pageSize
         }
-      },
-      // 验证上传文件的格式及大小
-      beforeUpload(file) {
-        var testmsg = file.name.substring(file.name.lastIndexOf('.') + 1)
-        this.uploadCount++
-        this.file = file
-        const extension = testmsg.toLowerCase() === 'xls'
-        const extension2 = testmsg.toLowerCase() === 'xlsx'
-        const extension3 = testmsg.toLowerCase() === 'doc'
-        const extension4 = testmsg.toLowerCase() === 'docx'
-        const extension5 = testmsg.toLowerCase() === 'txt'
-        const extension6 = testmsg.toLowerCase() === 'pdf'
-        const isLt2M = file.size / 1024 / 1024 < 10
-        if (!extension && !extension2 && !extension3 && !extension4 && !extension5 && !extension6) {
-          this.$message({
-            message: '上传附件只能是xls,xlsx,doc,docx,txt格式!',
-            type: 'warning'
-          })
+        this.searchReq = {
+          query: '',
+          pageNo: this.pageInfo.pageNo,
+          pageSize: this.pageInfo.pageSize
         }
-        if (!isLt2M) {
-          this.$message({
-            message: '上传文件大小不能超过 10MB!',
-            type: 'warning'
-          })
-        }
-        return (extension || extension2 || extension3 || extension4 || extension5) && isLt2M
-      },
-      submitUpload() {
-        this.$refs.upload.submit()
-      },
-      // 清空上传列表
-      clearUpload(formName) {
-        if (this.$refs[formName] !== undefined) {
-          this.$refs[formName].clearFiles()
-        }
-      },
-      download(url, name) {
-        if (name.substring(name.lastIndexOf('.') + 1) === 'txt') {
-          download(url, name, 'text/plain')
-        } else {
-          window.location.href = url
-        }
-      },
-      // -------------------------
-      clone: clone,
-      formatDateTime: formatDateTime,
-      reset() {
-        this.timeValue = null
-        if (this.pageInfo.pageNo) {
-          this.req = {
-            title: '',
-            pageNo: this.pageInfo.pageNo,
-            pageSize: this.pageInfo.pageSize
-          }
-          this.searchReq = {
-            query: '',
-            pageNo: this.pageInfo.pageNo,
-            pageSize: this.pageInfo.pageSize
-          }
-        } else {
-          this.req = {
-            title: '',
-            pageNo: 1,
-            pageSize: 10
-          }
-          this.searchReq = {
-            query: '',
-            pageNo: 1,
-            pageSize: 10
-          }
-        }
-  
-        this.req2 = {
+      } else {
+        this.req = {
           title: '',
           pageNo: 1,
           pageSize: 10
         }
-  
-        this.searchReq2 = {
+        this.searchReq = {
           query: '',
           pageNo: 1,
           pageSize: 10
         }
-      },
-      // 新建文章验证catalogid
-      checkCatalogid() {
-        if (!this.catalogid) {
-          this.$message.error('请先选择新建文章的目录')
-          return false
-        } else {
-          this.noteTitle = ''
-          this.noteTitleVisiable = true
-        }
-      },
-      // 节点ID查询文章
-      getArticlesById(catalogid, obj) {
-        getArticlesById(catalogid, obj).then(response => {
-          this.tableData = response.data.result
-          this.pageInfo = response.data.pageInfo
-          this.setHot(this.tableData, 5)
-          this.nodePageShow = true
-          this.queryPageShow1 = false
-          this.queryPageShow2 = false
-          this.tableType = 1
+      }
+
+      this.req2 = {
+        title: '',
+        pageNo: 1,
+        pageSize: 10
+      }
+
+      this.searchReq2 = {
+        query: '',
+        pageNo: 1,
+        pageSize: 10
+      }
+    },
+    // 新建文章验证catalogid
+    checkCatalogid() {
+      if (!this.catalogid) {
+        this.$message.error('请先选择新建文章的目录')
+        return false
+      } else {
+        this.noteTitle = ''
+        this.noteTitleVisiable = true
+      }
+    },
+    // 节点ID查询文章
+    getArticlesById(catalogid, obj) {
+      getArticlesById(catalogid, obj).then(response => {
+        this.tableData = response.data.result
+        this.pageInfo = response.data.pageInfo
+        this.setHot(this.tableData, 5)
+        this.nodePageShow = true
+        this.queryPageShow1 = false
+        this.queryPageShow2 = false
+        this.tableType = 1
+      })
+    },
+    // 普通查询
+    getArticles1(req) {
+      if (this.timeValue) {
+        // lower 开始时间
+        // upper 结束时间
+        req.lower = this.timeValue[0].getTime()
+        req.upper = this.timeValue[1].getTime()
+      } else {
+        req.lower = null
+        req.upper = null
+      }
+      if (!req.title) {
+        delete req.title
+      }
+      console.log(req)
+      // console.log(req)
+      getArticles1(req).then(response => {
+        this.tableData = response.data.result
+        this.pageInfo = response.data.pageInfo
+        this.setHot(this.tableData, 5)
+        this.queryPageShow1 = true
+        this.nodePageShow = false
+        this.queryPageShow2 = false
+        this.tableType = 2
+      }).catch(error => {
+        this.$message({
+          message: '查询文章失败',
+          type: 'error'
         })
-      },
-      // 普通查询
-      getArticles1(req) {
-        if (this.timeValue) {
-          // lower 开始时间
-          // upper 结束时间
-          req.lower = this.timeValue[0].getTime()
-          req.upper = this.timeValue[1].getTime()
-        } else {
-          req.lower = null
-          req.upper = null
-        }
-        if (!req.title) {
-          delete req.title
-        }
-        console.log(req)
-        // console.log(req)
-        getArticles1(req).then(response => {
-          this.tableData = response.data.result
-          this.pageInfo = response.data.pageInfo
-          this.setHot(this.tableData, 5)
-          this.queryPageShow1 = true
-          this.nodePageShow = false
-          this.queryPageShow2 = false
-          this.tableType = 2
-        }).catch(error => {
-          this.$message({
-            message: '查询文章失败',
-            type: 'error'
-          })
-          console.log(error)
+        console.log(error)
+      })
+    },
+    // 高级查询
+    getArticles2(searchReq) {
+      if (this.timeValue) {
+        // dateLower 开始时间
+        // dateUpper 结束时间
+        searchReq.dateLower = this.timeValue[0].getTime()
+        searchReq.dateUpper = this.timeValue[1].getTime()
+      } else {
+        searchReq.dateLower = null
+        searchReq.dateUpper = null
+      }
+      getArticles2(searchReq).then(response => {
+        this.tableData = response.data.result
+        this.pageInfo = response.data.pageInfo
+        this.setHot(this.tableData, 5)
+        this.queryPageShow2 = true
+        this.queryPageShow1 = false
+        this.nodePageShow = false
+        this.tableType = 3
+      }).catch(error => {
+        this.$message({
+          message: '查询文章失败',
+          type: 'error'
         })
-      },
-      // 高级查询
-      getArticles2(searchReq) {
-        if (this.timeValue) {
-          // dateLower 开始时间
-          // dateUpper 结束时间
-          searchReq.dateLower = this.timeValue[0].getTime()
-          searchReq.dateUpper = this.timeValue[1].getTime()
-        } else {
-          searchReq.dateLower = null
-          searchReq.dateUpper = null
-        }
-        getArticles2(searchReq).then(response => {
-          this.tableData = response.data.result
-          this.pageInfo = response.data.pageInfo
-          this.setHot(this.tableData, 5)
-          this.queryPageShow2 = true
-          this.queryPageShow1 = false
-          this.nodePageShow = false
-          this.tableType = 3
-        }).catch(error => {
-          this.$message({
-            message: '查询文章失败',
-            type: 'error'
-          })
-          console.log(error)
-        })
-      },
-      // 判断标题是否为空
-      checkTitleIsNullOrNot(noteTitle) {
-        if (noteTitle === '') {
-          this.$message.error('请输入标题！')
-          this.noteTitleVisiable = true
-          return
-        } else {
-          this.addArticles = true
-          this.noteTitleVisiable = false
-        }
-      },
-      // 打开修改页面
-      showEditNote(articleid) {
-        this.editArticles = true
-        getArticlesDetail(articleid)
-          .then(response => {
-          // if (response.data.code === 200) {
-            if (response.data) {
-              this.fileList.length = 0
-              for (let i = 0; i < response.data.attachments.length; i++) {
-                const file = response.data.attachments[i].file_path.split('/')
-                this.fileList.push({ 'name': file[file.length - 1] })
+        console.log(error)
+      })
+    },
+    // 判断标题是否为空
+    checkTitleIsNullOrNot(noteTitle) {
+      if (noteTitle === '') {
+        this.$message.error('请输入标题！')
+        this.noteTitleVisiable = true
+        return
+      } else {
+        this.addArticles = true
+        this.noteTitleVisiable = false
+      }
+    },
+    // 打开修改页面
+    showEditNote(articleid) {
+      this.editArticles = true
+      getArticlesDetail(articleid)
+        .then(response => {
+          if (response.data) {
+            this.fileList.length = 0
+            if (response.data.attachments) {
+              if (response.data.attachments.length) {
+                for (let i = 0; i < response.data.attachments.length; i++) {
+                  const file = response.data.attachments[i].file_path.split('/')
+                  this.fileList.push({ 'name': file[file.length - 1] })
+                }
               }
-              this.editDetail.title = response.data.title
-              this.editDetail.body = response.data.body
-              this.editDetail.remark = response.data.remark
-              this.editDetail.brief = response.data.brief
-              this.editDetail.attachments = response.data.attachments
-              this.editArticles = true
-              console.log(this.editDetail)
             } else {
-              this.$message.error('服务器出错！请稍后重试')
+              this.fileList = []
             }
-          })
-      },
-      // 提交修改
-      modifyNote() {
-        var temp_content = this.editDetail.body
-        temp_content = verify(temp_content, '<p>')
-        temp_content = verify(temp_content, '</p>')
-        temp_content = verify(temp_content, '<br>')
-        if (temp_content === '' || temp_content === null || temp_content.split(' ').join('').length === 0) {
-          this.$message.error('内容不能为空！')
-          return
-        } else {
-          this.editDetail.updatorid = parseInt(localStorage.getItem('agentId'))
-          this.editDetail.updatorRealname = localStorage.getItem('agentName')
-          editArticles(this.articleid, this.editDetail)
-            .then(response => {
-              this.$message.success('修改文章成功')
-              this.editDetail.body = ''
-              this.editDetail.title = ''
-              this.editDetail.brief = ''
-              this.editDetail.remark = ''
-              this.editDetail.updatorid = null
-              this.editDetail.updatorRealname = ''
-              console.log(this.editDetail)
-              if (this.tableType === 1) {
-                this.getArticlesById(this.catalogid, this.nodeReq)
-              } else if (this.tableType === 2) {
-                this.getArticles1(this.req2)
-              } else if (this.tableType === 3) {
-                this.getArticles2(this.searchReq2)
-              }
-              this.editArticles = false
-            })
-            .catch(error => {
-              this.$message({
-                message: '修改文章失败',
-                type: 'error'
-              })
-              console.log(error)
-            })
-        }
-      },
-      // 删除文章
-      delArticles(delReq) {
-        if (this.catalogid) {
-          delReq.catalogid = this.catalogid
-          delArticles(delReq).then(response => {
+            this.editDetail.title = response.data.title
+            this.editDetail.body = response.data.body
+            this.editDetail.remark = response.data.remark
+            this.editDetail.brief = response.data.brief
+            if (this.editDetail.attachments) {
+              this.editDetail.attachments = response.data.attachments
+            } else {
+              this.editDetail.attachments = []
+            }
+            this.editArticles = true
+          } else {
+            this.$message.error('服务器出错！请稍后重试')
+          }
+        })
+    },
+    // 提交修改
+    modifyNote() {
+      var temp_content = this.editDetail.body
+      temp_content = verify(temp_content, '<p>')
+      temp_content = verify(temp_content, '</p>')
+      temp_content = verify(temp_content, '<br>')
+      if (temp_content === '' || temp_content === null || temp_content.split(' ').join('').length === 0) {
+        this.$message.error('内容不能为空！')
+        return
+      } else {
+        console.log(this.editDetail)
+        this.editDetail.updatorid = parseInt(localStorage.getItem('agentId'))
+        this.editDetail.updatorRealname = localStorage.getItem('agentName')
+        editArticles(this.articleid, this.editDetail)
+          .then(response => {
+            this.$message.success('修改文章成功')
+            this.editDetail.body = ''
+            this.editDetail.title = ''
+            this.editDetail.brief = ''
+            this.editDetail.remark = ''
+            this.editDetail.updatorid = null
+            this.editDetail.updatorRealname = ''
             if (this.tableType === 1) {
               this.getArticlesById(this.catalogid, this.nodeReq)
             } else if (this.tableType === 2) {
@@ -1257,248 +1298,22 @@
             } else if (this.tableType === 3) {
               this.getArticles2(this.searchReq2)
             }
+            this.editArticles = false
+          })
+          .catch(error => {
             this.$message({
-              message: '删除成功',
-              type: 'success'
-            })
-          }).catch(error => {
-            this.$message({
-              message: '删除失败',
+              message: '修改文章失败',
               type: 'error'
             })
             console.log(error)
           })
-        } else {
-          this.$message.error('请选择需要删除文章的目录')
-        }
-      },
-      // 判断修改标题是否为空
-      checkEditTitle(noteTitle) {
-        if (noteTitle === '' || noteTitle.split(' ').join('').length === 0) {
-          this.hasNoteTitle = false
-        } else {
-          this.hasNoteTitle = true
-        }
-      },
-      // 提交新建
-      generateNote() {
-        var temp_content = this.body
-        temp_content = verify(temp_content, '<p>')
-        temp_content = verify(temp_content, '</p>')
-        temp_content = verify(temp_content, '<br>')
-        if (temp_content === '' || temp_content === null || temp_content.split(' ').join('').length === 0) {
-          this.$message.error('内容不能为空！')
-          return
-        } else {
-          this.note_item.title = this.noteTitle
-          this.note_item.body = this.body
-          this.note_item.brief = this.brief
-          this.note_item.remark = this.remark
-          this.note_item.creatorid = parseInt(localStorage.getItem('agentId'))
-          this.note_item.creatorRealname = localStorage.getItem('agentName')
-          this.note_item.updatorid = parseInt(localStorage.getItem('agentId'))
-          this.note_item.updatorRealname = localStorage.getItem('agentName')
-          addArticles(this.catalogid, this.note_item)
-            .then(response => {
-              this.$message.success('新建文章成功')
-              this.noteTitle = ''
-              this.body = ''
-              this.brief = ''
-              this.remark = ''
-              this.note_item.body = ''
-              this.note_item.title = ''
-              this.note_item.brief = ''
-              this.note_item.remark = ''
-              this.note_item.creatorid = null
-              this.note_item.creatorRealname = ''
-              this.note_item.updatorid = null
-              this.note_item.updatorRealname = ''
-              this.body = null
-              this.noteTitle = ''
-              if (this.tableType === 1) {
-                this.getArticlesById(this.catalogid, this.nodeReq)
-              } else if (this.tableType === 2) {
-                this.getArticles1(this.req2)
-              } else if (this.tableType === 3) {
-                this.getArticles2(this.searchReq2)
-              }
-              this.addArticles = false
-            })
-            .catch(error => {
-              this.$message({
-                message: '新建文章失败',
-                type: 'error'
-              })
-              this.getArticlesById(this.catalogid, this.nodeReq)
-              console.log(error)
-            })
-        }
-      },
-      // 详情
-      queryOne(id) {
-        this.detailArticles = true
-        getArticlesDetail(id)
-          .then(response => {
-          // if (response.data.code === 200) {
-            if (response.data) {
-              this.DLurl.length = 0
-              if (response.data.attachments) {
-                if (response.data.attachments.length) {
-                  for (let i = 0; i < response.data.attachments.length; i++) {
-                    const url = `${process.env.FS_SERVER_HOST}/crm/${response.data.attachments[i].file_path}`
-                    const fileName = response.data.attachments[i].file_path.split('/')
-                    this.DLurl.push({ 'name': fileName[fileName.length - 1], 'url': url })
-                  }
-                }
-              }
-              this.noteDetail.title = response.data.title
-              this.noteDetail.body = response.data.body
-              this.noteDetail.brief = response.data.brief
-              this.noteDetail.remark = response.data.remark
-              this.detailArticles = true
-              if (this.tableType === 1) {
-                this.getArticlesById(this.catalogid, this.nodeReq)
-              } else if (this.tableType === 2) {
-                this.getArticles1(this.req2)
-              } else if (this.tableType === 3) {
-                this.getArticles2(this.searchReq2)
-              }
-            } else {
-              this.$message.error('服务器出错！请稍后重试')
-            }
-          })
-      },
-      // 置顶
-      setTop(row) {
-        let req = {}
-        if (row.sticked === 1) {
-          req = { 'sticked': 0 }
-        } else {
-          req = { 'sticked': 1 }
-        }
-        editArticles(row.ID, req).then(response => {
-          if (this.tableType === 1) {
-            this.getArticlesById(this.catalogid, this.nodeReq)
-          } else if (this.tableType === 2) {
-            this.getArticles1(this.req2)
-          } else if (this.tableType === 3) {
-            this.getArticles2(this.searchReq2)
-          }
-        })
-      },
-      // new标签
-      setNew(row) {
-        if (row.status) {
-          const endTime = new Date(row.release_time)// 发布时间
-          const startTime = new Date(row.CreatedAt) // 创建时间
-          const NEWDAYS = endTime - startTime
-          return (NEWDAYS / 1000 / 60 / 60 / 24).toFixed(2) < 10
-        }
-      },
-      // 发布
-      release(row) {
-        let req = {}
-        if (row.status === 1) {
-          req = { 'status': 0 }
-        } else {
-          req = { 'status': 1 }
-        }
-        editArticles(row.ID, req).then(response => {
-          if (this.tableType === 1) {
-            this.getArticlesById(this.catalogid, this.nodeReq)
-          } else if (this.tableType === 2) {
-            this.getArticles1(this.req2)
-          } else if (this.tableType === 3) {
-            this.getArticles2(this.searchReq2)
-          }
-        })
-      },
-      // 获取点击数前五的文章添加hot标签
-      achieveMax(tableData, len) {
-        const arr = []
-        const maxArr = []
-        for (let j = 0; j < tableData.length; j++) {
-          arr.push(tableData[j].hits)
-        }
-        arr.sort(function(a, b) {
-          return a - b
-        })
-        for (let i = 0; i < arr.length; i++) {
-          const arrPop = arr.pop()
-          if (maxArr.length < len && maxArr.indexOf(arrPop) === -1) {
-            maxArr.push(arrPop)
-          }
-        }
-        return maxArr.reverse()
-      },
-      setHot(tableData, len) {
-        const arr = this.achieveMax(tableData, len)
-        for (let i = 0; i < tableData.length; i++) {
-          for (let j = 0; j < arr.length; j++) {
-            if (this.tableData[i].hits !== 0 && this.tableData[i].hits === arr[j]) {
-              this.tableData[i].hot = true
-            }
-          }
-        }
-      },
-      // 节点页面显示条数
-      nodeSizeChange(val) {
-        this.nodeReq.pageSize = val
-        this.nodeReq.pageNo = 1
-        this.pageInfo.pageNo = 1
-        this.getArticlesById(this.catalogid, this.nodeReq)
-      },
-      // 节点分页翻页功能
-      nodeCurrentChange(val) {
-        this.nodeReq.pageNo = val
-        this.getArticlesById(this.catalogid, this.nodeReq)
-      },
-      // 普通查询页面显示条数
-      querySizeChange1(val) {
-        this.req.pageSize = val
-        this.req2.pageSize = val
-        this.req2.pageNo = 1
-        this.pageInfo.pageNo = 1
-        this.getArticles1(this.req2)
-      },
-      // 普通查询分页翻页功能
-      queryCurrentChange1(val) {
-        this.req2.pageNo = val
-        this.getArticles1(this.req2)
-      },
-      // 高级查询页面显示条数
-      querySizeChange2(val) {
-        this.searchReq.pageSize = val
-        this.searchReq2.pageSize = val
-        this.searchReq2.pageNo = 1
-        this.pageInfo.pageNo = 1
-        this.getArticles2(this.searchReq2)
-      },
-      // 高级查询分页翻页功能
-      queryCurrentChange2(val) {
-        this.searchReq2.pageNo = val
-        this.getArticles2(this.searchReq2)
-      },
-      // 选择链接节点ID
-      choseLink(d, n, s) {
-        // 展开节点
-        if (!n.expanded) {
-          n.expanded = true
-        } else if (n.expanded) {
-          n.expanded = false
-        }
-        this.addLinkReq.catalogId = d.ID
-      },
-      // 提交添加
-      addArticlesLink(addLinkReq) {
-        if (!this.addLinkReq.catalogId) {
-          this.$message({
-            message: '请选择需要添加到文章的链接节点',
-            type: 'error'
-          })
-          return false
-        }
-        addArticlesLink(addLinkReq).then(response => {
+      }
+    },
+    // 删除文章
+    delArticles(delReq) {
+      if (this.catalogid) {
+        delReq.catalogid = this.catalogid
+        delArticles(delReq).then(response => {
           if (this.tableType === 1) {
             this.getArticlesById(this.catalogid, this.nodeReq)
           } else if (this.tableType === 2) {
@@ -1507,46 +1322,297 @@
             this.getArticles2(this.searchReq2)
           }
           this.$message({
-            message: '添加文章链接节点成功',
+            message: '删除成功',
             type: 'success'
           })
-          this.linkVisiable = false
         }).catch(error => {
           this.$message({
-            message: '添加文章链接节点失败',
+            message: '删除失败',
             type: 'error'
           })
           console.log(error)
         })
+      } else {
+        this.$message.error('请选择需要删除文章的目录')
       }
-      // 标签
-      // handleClose(tag) {
-      //   this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
-      // },
-
-      // showInput() {
-      //   this.inputVisible = true
-      //   this.$nextTick(() => {
-      //     console.log(this.$refs.saveTagInput)
-      //     this.$refs.saveTagInput.$refs.input.focus()
-      //   })
-      // },
-
-      // handleInputConfirm() {
-      //   const inputValue = this.inputValue
-      //   if (inputValue) {
-      //     this.dynamicTags.push(inputValue)
-      //   }
-      //   this.inputVisible = false
-      //   this.inputValue = ''
-      // }
     },
-    mounted() {
-      this.initExpand()
-      this.getCatalogs()
-      this.getArticles1(this.req)
+    // 判断修改标题是否为空
+    checkEditTitle(noteTitle) {
+      if (noteTitle === '' || noteTitle.split(' ').join('').length === 0) {
+        this.hasNoteTitle = false
+      } else {
+        this.hasNoteTitle = true
+      }
+    },
+    // 提交新建
+    generateNote() {
+      var temp_content = this.body
+      temp_content = verify(temp_content, '<p>')
+      temp_content = verify(temp_content, '</p>')
+      temp_content = verify(temp_content, '<br>')
+      if (temp_content === '' || temp_content === null || temp_content.split(' ').join('').length === 0) {
+        this.$message.error('内容不能为空！')
+        return
+      } else {
+        this.note_item.title = this.noteTitle
+        this.note_item.body = this.body
+        this.note_item.brief = this.brief
+        this.note_item.remark = this.remark
+        this.note_item.creatorid = parseInt(localStorage.getItem('agentId'))
+        this.note_item.creatorRealname = localStorage.getItem('agentName')
+        this.note_item.updatorid = parseInt(localStorage.getItem('agentId'))
+        this.note_item.updatorRealname = localStorage.getItem('agentName')
+        addArticles(this.catalogid, this.note_item)
+          .then(response => {
+            this.$message.success('新建文章成功')
+            this.noteTitle = ''
+            this.body = ''
+            this.brief = ''
+            this.remark = ''
+            this.note_item.body = ''
+            this.note_item.title = ''
+            this.note_item.brief = ''
+            this.note_item.remark = ''
+            this.note_item.creatorid = null
+            this.note_item.creatorRealname = ''
+            this.note_item.updatorid = null
+            this.note_item.updatorRealname = ''
+            this.body = null
+            this.noteTitle = ''
+            if (this.tableType === 1) {
+              this.getArticlesById(this.catalogid, this.nodeReq)
+            } else if (this.tableType === 2) {
+              this.getArticles1(this.req2)
+            } else if (this.tableType === 3) {
+              this.getArticles2(this.searchReq2)
+            }
+            this.addArticles = false
+          })
+          .catch(error => {
+            this.$message({
+              message: '新建文章失败',
+              type: 'error'
+            })
+            this.getArticlesById(this.catalogid, this.nodeReq)
+            console.log(error)
+          })
+      }
+    },
+    // 详情
+    queryOne(id) {
+      this.detailArticles = true
+      getArticlesDetail(id)
+        .then(response => {
+          // if (response.data.code === 200) {
+          if (response.data) {
+            this.DLurl.length = 0
+            if (response.data.attachments) {
+              if (response.data.attachments.length) {
+                for (let i = 0; i < response.data.attachments.length; i++) {
+                  const url = `${process.env.FS_SERVER_HOST}/crm/${response.data.attachments[i].file_path}`
+                  const fileName = response.data.attachments[i].file_path.split('/')
+                  this.DLurl.push({ 'name': fileName[fileName.length - 1], 'url': url })
+                }
+              }
+            } else {
+              this.DLurl = []
+            }
+            this.noteDetail.title = response.data.title
+            this.noteDetail.body = response.data.body
+            this.noteDetail.brief = response.data.brief
+            this.noteDetail.remark = response.data.remark
+            this.detailArticles = true
+            if (this.tableType === 1) {
+              this.getArticlesById(this.catalogid, this.nodeReq)
+            } else if (this.tableType === 2) {
+              this.getArticles1(this.req2)
+            } else if (this.tableType === 3) {
+              this.getArticles2(this.searchReq2)
+            }
+          } else {
+            this.$message.error('服务器出错！请稍后重试')
+          }
+        })
+    },
+    // 置顶
+    setTop(row) {
+      let req = {}
+      if (row.sticked === 1) {
+        req = { 'sticked': 0 }
+      } else {
+        req = { 'sticked': 1 }
+      }
+      editArticles(row.ID, req).then(response => {
+        if (this.tableType === 1) {
+          this.getArticlesById(this.catalogid, this.nodeReq)
+        } else if (this.tableType === 2) {
+          this.getArticles1(this.req2)
+        } else if (this.tableType === 3) {
+          this.getArticles2(this.searchReq2)
+        }
+      })
+    },
+    // new标签
+    setNew(row) {
+      if (row.status) {
+        const endTime = new Date(row.release_time)// 发布时间
+        const startTime = new Date(row.CreatedAt) // 创建时间
+        const NEWDAYS = endTime - startTime
+        return (NEWDAYS / 1000 / 60 / 60 / 24).toFixed(2) < 10
+      }
+    },
+    // 发布
+    release(row) {
+      let req = {}
+      if (row.status === 1) {
+        req = { 'status': 0 }
+      } else {
+        req = { 'status': 1 }
+      }
+      editArticles(row.ID, req).then(response => {
+        if (this.tableType === 1) {
+          this.getArticlesById(this.catalogid, this.nodeReq)
+        } else if (this.tableType === 2) {
+          this.getArticles1(this.req2)
+        } else if (this.tableType === 3) {
+          this.getArticles2(this.searchReq2)
+        }
+      })
+    },
+    // 获取点击数前五的文章添加hot标签
+    achieveMax(tableData, len) {
+      const arr = []
+      const maxArr = []
+      for (let j = 0; j < tableData.length; j++) {
+        arr.push(tableData[j].hits)
+      }
+      arr.sort(function(a, b) {
+        return a - b
+      })
+      for (let i = 0; i < arr.length; i++) {
+        const arrPop = arr.pop()
+        if (maxArr.length < len && maxArr.indexOf(arrPop) === -1) {
+          maxArr.push(arrPop)
+        }
+      }
+      return maxArr.reverse()
+    },
+    setHot(tableData, len) {
+      const arr = this.achieveMax(tableData, len)
+      for (let i = 0; i < tableData.length; i++) {
+        for (let j = 0; j < arr.length; j++) {
+          if (this.tableData[i].hits !== 0 && this.tableData[i].hits === arr[j]) {
+            this.tableData[i].hot = true
+          }
+        }
+      }
+    },
+    // 节点页面显示条数
+    nodeSizeChange(val) {
+      this.nodeReq.pageSize = val
+      this.nodeReq.pageNo = 1
+      this.pageInfo.pageNo = 1
+      this.getArticlesById(this.catalogid, this.nodeReq)
+    },
+    // 节点分页翻页功能
+    nodeCurrentChange(val) {
+      this.nodeReq.pageNo = val
+      this.getArticlesById(this.catalogid, this.nodeReq)
+    },
+    // 普通查询页面显示条数
+    querySizeChange1(val) {
+      this.req.pageSize = val
+      this.req2.pageSize = val
+      this.req2.pageNo = 1
+      this.pageInfo.pageNo = 1
+      this.getArticles1(this.req2)
+    },
+    // 普通查询分页翻页功能
+    queryCurrentChange1(val) {
+      this.req2.pageNo = val
+      this.getArticles1(this.req2)
+    },
+    // 高级查询页面显示条数
+    querySizeChange2(val) {
+      this.searchReq.pageSize = val
+      this.searchReq2.pageSize = val
+      this.searchReq2.pageNo = 1
+      this.pageInfo.pageNo = 1
+      this.getArticles2(this.searchReq2)
+    },
+    // 高级查询分页翻页功能
+    queryCurrentChange2(val) {
+      this.searchReq2.pageNo = val
+      this.getArticles2(this.searchReq2)
+    },
+    // 选择链接节点ID
+    choseLink(d, n, s) {
+      // 展开节点
+      if (!n.expanded) {
+        n.expanded = true
+      } else if (n.expanded) {
+        n.expanded = false
+      }
+      this.addLinkReq.catalogId = d.ID
+    },
+    // 提交添加
+    addArticlesLink(addLinkReq) {
+      if (!this.addLinkReq.catalogId) {
+        this.$message({
+          message: '请选择需要添加到文章的链接节点',
+          type: 'error'
+        })
+        return false
+      }
+      addArticlesLink(addLinkReq).then(response => {
+        if (this.tableType === 1) {
+          this.getArticlesById(this.catalogid, this.nodeReq)
+        } else if (this.tableType === 2) {
+          this.getArticles1(this.req2)
+        } else if (this.tableType === 3) {
+          this.getArticles2(this.searchReq2)
+        }
+        this.$message({
+          message: '添加文章链接节点成功',
+          type: 'success'
+        })
+        this.linkVisiable = false
+      }).catch(error => {
+        this.$message({
+          message: '添加文章链接节点失败',
+          type: 'error'
+        })
+        console.log(error)
+      })
     }
+    // 标签
+    // handleClose(tag) {
+    //   this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
+    // },
+
+    // showInput() {
+    //   this.inputVisible = true
+    //   this.$nextTick(() => {
+    //     console.log(this.$refs.saveTagInput)
+    //     this.$refs.saveTagInput.$refs.input.focus()
+    //   })
+    // },
+
+    // handleInputConfirm() {
+    //   const inputValue = this.inputValue
+    //   if (inputValue) {
+    //     this.dynamicTags.push(inputValue)
+    //   }
+    //   this.inputVisible = false
+    //   this.inputValue = ''
+    // }
+  },
+  mounted() {
+    this.initExpand()
+    this.getCatalogs()
+    this.getArticles1(this.req)
   }
+}
 </script>
 <style lang="scss" scoped>
 
@@ -1564,6 +1630,21 @@
     min-height:442px;
     border: 1px solid #ccc;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+  .note-content.div-content{
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    line-height: 1.42;
+    height: 100%;
+    outline: none;
+    overflow-y: auto;
+    padding: 12px 15px;
+    -o-tab-size: 4;
+    tab-size: 4;
+    -moz-tab-size: 4;
+    text-align: left;
+    white-space: pre-wrap;
+    word-wrap: break-word;
   }
   .tree-add-top{
     // width:330px;
@@ -1589,7 +1670,7 @@
     }
     .expand{
       // width:330px;
-      height:100%;
+      height:89.8%;
       overflow:auto;
     }
     .expand>div{
