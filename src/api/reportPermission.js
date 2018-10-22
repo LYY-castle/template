@@ -41,3 +41,17 @@ export function permsorderstaff(id) {
     method: 'get'
   })
 }
+
+export function permsmarkreportdepart(id) {
+  return request({
+    url: '/auth/users/' + id + '/perms/-depart-mark-report/GET',
+    method: 'get'
+  })
+}
+
+export function permsmarkreportstaff(id) {
+  return request({
+    url: '/auth/users/' + id + '/perms/-staff-mark-report/GET',
+    method: 'get'
+  })
+}
