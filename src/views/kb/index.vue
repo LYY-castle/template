@@ -1562,7 +1562,7 @@
     }
     .expand-tree .is-current>.el-tree-node__content .tree-label{
       font-weight:600;
-      white-space:normal;
+      white-space:nowrap;
     }
     div.expand .expand-tree .el-tree-node.is-current,
     div.expand .expand-tree .el-tree-node:hover{
