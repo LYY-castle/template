@@ -12,6 +12,14 @@ export function queryNoVisitCustomers(obj) {
     data: obj
   })
 }
+// 批量修改免访客户可见属性
+export function batchSetVisible(obj) {
+  return request({
+    url: '/contact/batchsetvisible',
+    method: 'post',
+    data: { 'blacklistList': obj }
+  })
+}
 export function addNoVisitCustomers(obj) {
   return request({
     url: '/contact/addBlackListInfo',

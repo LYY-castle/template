@@ -517,7 +517,7 @@ export default {
             this.pageInfo.pageNo = 1
             this.searchCustomer(this.req2)
           } else {
-            this.$message(response.data.messages)
+            this.$message.error(response.data.message)
           }
         })
         .catch(error => {
