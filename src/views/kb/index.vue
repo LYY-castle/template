@@ -76,7 +76,7 @@
           </el-form>
         </el-row>
         <!-- 普通查询 -->
-        <el-row v-if="tableType===2||1">
+        <el-row v-if="tableType===2||tableType===1">
           <el-table
             :data="tableData">
             <!-- <el-table-column
@@ -1557,7 +1557,6 @@
     margin-top: -20px;
     position:fixed;
     height:100%;
-    z-index:999;
   }
   .note-content{
     white-space:pre;
