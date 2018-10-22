@@ -663,6 +663,7 @@ export default {
         contactStatus: '0',
         contactedNum: '',
         summaryId: '',
+        campaignId: '',
         status: '0',
         pageNo: 1,
         pageSize: 10
@@ -1031,6 +1032,7 @@ export default {
       this.req.status = ''
       this.req.contactedNum = ''
       this.req.summaryId = ''
+      this.req.campaignId = ''
       // if (this.activeName === 'firstDial') {
       //   this.req.contactStatus = '0'
       //   this.req.status = '0'
