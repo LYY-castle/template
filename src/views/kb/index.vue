@@ -1040,9 +1040,16 @@ export default{
             }
           } else {
             this.$message({
-              message: '删除附件失败',
+              message: response.data.message,
               type: 'error'
             })
+            if (response.data.message === '文件对象不存在, 请检查文件名') {
+              for (let i = 0; i < fileList.length; i++) {
+                if (fileList[i].name.indexOf(file.name) >= 0) {
+                  fileList.splice(i, 1)
+                }
+              }
+            }
           }
         }).catch(() => {
           throw new Error('reject')
