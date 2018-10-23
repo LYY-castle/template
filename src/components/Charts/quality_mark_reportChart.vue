@@ -628,6 +628,7 @@
             return
           }
           const values = data.map(item => Number(item[column.property]))
+          const totalSum = data.map(item => Number(Number(item.avg_score) * Number(item.count)))
           if (index < columns.length - 1) {
             sums[index] = values.reduce((prev, curr) => {
               const value = Number(curr)
@@ -638,7 +639,15 @@
               }
             }, 0)
           } else {
-            sums[index] = sums[index - 1] / sums[index - 2] ? sums[index - 1] / sums[index - 2] : 0
+            sums[index] = totalSum.reduce((prev, curr) => {
+              const value = Number(curr)
+              if (!isNaN(value)) {
+                return prev + curr
+              } else {
+                return prev
+              }
+            }, 0)
+            sums[index] = sums[index] / sums[index - 1] ? sums[index] / sums[index - 1] : 0
             sums[index] = sums[index].toFixed(2)
           }
         })

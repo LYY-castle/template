@@ -157,3 +157,33 @@ export function qualityReportreportAgent(obj) {
     })
   })
 }
+
+export function qualityTaskReportstatistics(obj) {
+  return request({
+    url: '/quality_task_report/statistics',
+    method: 'get',
+    params: _.omitBy(obj, (v) => {
+      return _.trim(v) === ''
+    })
+  })
+}
+
+export function qualityTaskReporttotalAgent(obj) {
+  return request({
+    url: '/quality_task_report/statistics/agent-total',
+    method: 'get',
+    params: _.omitBy(obj, (v) => {
+      return _.trim(v) === ''
+    })
+  })
+}
+
+export function qualityTaskReportAgent(obj) {
+  return request({
+    url: '/quality_task_report/agent/statistics',
+    method: 'get',
+    params: _.omitBy(obj, (v) => {
+      return _.trim(v) === ''
+    })
+  })
+}
