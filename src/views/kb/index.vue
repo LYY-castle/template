@@ -314,7 +314,7 @@
                     :http-request="uploadFile"
                     :auto-upload="false">
                     <el-button slot="trigger" size="small" type="primary">选取附件</el-button>
-                    <el-button style="margin-left:10px;" size="small" type="success" @click="beforeSubmit();submitUpload();">上传</el-button>
+                    <el-button style="margin-left:10px;" size="small" type="success" @click="submitUpload();">上传</el-button>
                     <div style="font-weight:bold;color:red;" slot="tip" class="el-upload__tip">注：上传附件只能是 xls,xlsx,doc,docx,ppt,pptx,txt,pdf 格式，大小不能超过10MB</div>
                   </el-upload>
                 </el-form-item>
@@ -397,7 +397,7 @@
                     :file-list="fileList"
                     :auto-upload="false">
                     <el-button slot="trigger" size="small" type="primary">选取附件</el-button>
-                    <el-button style="margin-left:10px;" size="small" type="success" @click="beforeSubmit();submitUpload();">上传</el-button>
+                    <el-button style="margin-left:10px;" size="small" type="success" @click="submitUpload();">上传</el-button>
                     <div style="font-weight:bold;color:red;" slot="tip" class="el-upload__tip">注：上传附件只能是 xls,xlsx,doc,docx,ppt,pptx,txt,pdf 格式，大小不能超过10MB</div>
                   </el-upload>
                 </el-form-item>
@@ -445,7 +445,7 @@
               <el-form-item label-width="45px" label="附件:">
                 <div v-for="item in DLurl" :key="item.name">
                   <span>{{item.name}}</span><el-button style="font-size:16px;" type="text" icon="el-icon-download" size="mini" circle @click="download(item.url,item.name)"></el-button>
-                  <!-- <span>{{item.name}}</span><a :href="item.url" :download="item.name">123123</a> -->
+                  <span>{{item.name}}</span><a :href="item.url" :download="item.name">123123</a>
                 </div>
               </el-form-item>
               <el-form-item label-width="45px" label="备注:">
@@ -696,6 +696,7 @@ export default{
       updateUrl: '',
       DLurl: [],
       uploadCount: 0,
+      uploadSuccessCount: 0,
       fileList: [],
       uploadDisable: false
     }
@@ -963,7 +964,6 @@ export default{
       let uploadInfoReq2 = {}
       vm.uploadDisable = true
       date = formatDateTime(date).split(' ')[0]
-      console.log(uploadInfo)
       vm.uploadInfoReq.objectName = localStorage.getItem('agentId') + '/' + date + '/' + uploadInfo.file.name
       uploadInfoReq2 = clone(this.uploadInfoReq)
       getUploadInfo(uploadInfoReq2).then(response => {
@@ -986,6 +986,7 @@ export default{
                 message: uploadInfo.file.name + '上传成功!',
                 type: 'success'
               })
+              vm.uploadSuccessCount++
               vm.uploadDisable = false
               vm.note_item.attachments.push({
                 'file_path': localStorage.getItem('agentId') + '/' + date + '/' + uploadInfo.file.name,
@@ -1004,6 +1005,7 @@ export default{
             message: '服务器上存在与' + uploadInfo.file.name + '相同名字的文件，请删除或重命名后重新上传',
             type: 'error'
           })
+          vm.uploadSuccessCount++
           // vm.clearUpload('upload')
         }
       })
@@ -1050,6 +1052,11 @@ export default{
                   fileList.splice(i, 1)
                 }
               }
+              for (let i = 0; i < this.editDetail.attachments.length; i++) {
+                if (this.editDetail.attachments[i].file_path.indexOf(file.name) >= 0) {
+                  this.editDetail.attachments.splice(i, 1)
+                }
+              }
             }
           }
         }).catch(() => {
@@ -1070,13 +1077,6 @@ export default{
         if (this.editDetail.attachments[i].file_path.indexOf(file.name) >= 0) {
           this.editDetail.attachments.splice(i, 1)
         }
-      }
-    },
-    beforeSubmit() {
-      if (this.uploadCount === $('.el-upload-list>li').length) {
-        this.note_item.attachments.length = 0
-        this.editDetail.attachments.length = 0
-        this.DLurl.length = 0
       }
     },
     // 验证上传文件的格式及大小
@@ -1117,8 +1117,8 @@ export default{
       }
     },
     download(url, name) {
-      window.location.href = url
-      // window.open(url)
+      // window.location.href = url
+      window.open(url)
       // if (name.substring(name.lastIndexOf('.') + 1) === 'txt') {
       //   download(url, name, 'text/plain')
       // } else {
@@ -1307,7 +1307,6 @@ export default{
         this.$message.error('内容不能为空！')
         return
       } else {
-        console.log(this.editDetail)
         this.editDetail.updatorid = parseInt(localStorage.getItem('agentId'))
         this.editDetail.updatorRealname = localStorage.getItem('agentName')
         editArticles(this.articleid, this.editDetail)
@@ -1326,6 +1325,9 @@ export default{
             } else if (this.tableType === 3) {
               this.getArticles2(this.searchReq2)
             }
+            if (this.editDetail.attachments) {
+              this.editDetail.attachments.length = 0
+            }
             this.editArticles = false
           })
           .catch(error => {
@@ -1333,6 +1335,9 @@ export default{
               message: '修改文章失败',
               type: 'error'
             })
+            if (this.editDetail.attachments) {
+              this.editDetail.attachments.length = 0
+            }
             console.log(error)
           })
       }
@@ -1414,6 +1419,9 @@ export default{
             } else if (this.tableType === 3) {
               this.getArticles2(this.searchReq2)
             }
+            if (this.note_item.attachments) {
+              this.note_item.attachments.length = 0
+            }
             this.addArticles = false
           })
           .catch(error => {
@@ -1421,6 +1429,9 @@ export default{
               message: '新建文章失败',
               type: 'error'
             })
+            if (this.note_item.attachments) {
+              this.note_item.attachments.length = 0
+            }
             this.getArticlesById(this.catalogid, this.nodeReq)
             console.log(error)
           })
@@ -1783,7 +1794,7 @@ export default{
       top:2px;
     }
     .el-upload-list__item-status-label{
-      display:inline !important;
+      display:none !important;
       position: relative;
       right:-3px;
       top:2px;
