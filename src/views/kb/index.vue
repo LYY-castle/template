@@ -177,7 +177,7 @@
                 type="selection"
                 width="30">
               </el-table-column> -->
-              <el-table-column
+              <!-- <el-table-column
                 align="center"
                 prop="name"
                 width="58">
@@ -188,7 +188,7 @@
                     <span v-if="scope.row.status==1&&setNew(scope.row)" style="color:#E8D343;font-size:10px;">New</span>
                   </div>
                 </template>
-              </el-table-column>
+              </el-table-column> -->
               <el-table-column
                 align="center"
                 prop="title"
@@ -315,7 +315,7 @@
                     :auto-upload="false">
                     <el-button slot="trigger" size="small" type="primary">选取附件</el-button>
                     <el-button style="margin-left:10px;" size="small" type="success" @click="beforeSubmit();submitUpload();">上传</el-button>
-                    <div style="font-weight:bold;color:red;" slot="tip" class="el-upload__tip">注：上传附件只能是 xls,xlsx,doc,docx,txt 格式，大小不能超过10MB</div>
+                    <div style="font-weight:bold;color:red;" slot="tip" class="el-upload__tip">注：上传附件只能是 xls,xlsx,doc,docx,ppt,pptx,txt,pdf 格式，大小不能超过10MB</div>
                   </el-upload>
                 </el-form-item>
               </el-form>
@@ -398,7 +398,7 @@
                     :auto-upload="false">
                     <el-button slot="trigger" size="small" type="primary">选取附件</el-button>
                     <el-button style="margin-left:10px;" size="small" type="success" @click="beforeSubmit();submitUpload();">上传</el-button>
-                    <div style="font-weight:bold;color:red;" slot="tip" class="el-upload__tip">注：上传附件只能是 xls,xlsx,doc,docx,txt 格式，大小不能超过10MB</div>
+                    <div style="font-weight:bold;color:red;" slot="tip" class="el-upload__tip">注：上传附件只能是 xls,xlsx,doc,docx,ppt,pptx,txt,pdf 格式，大小不能超过10MB</div>
                   </el-upload>
                 </el-form-item>
               </el-form>
@@ -445,6 +445,7 @@
               <el-form-item label-width="45px" label="附件:">
                 <div v-for="item in DLurl" :key="item.name">
                   <span>{{item.name}}</span><el-button style="font-size:16px;" type="text" icon="el-icon-download" size="mini" circle @click="download(item.url,item.name)"></el-button>
+                  <!-- <span>{{item.name}}</span><a :href="item.url" :download="item.name">123123</a> -->
                 </div>
               </el-form-item>
               <el-form-item label-width="45px" label="备注:">
@@ -1089,10 +1090,12 @@ export default{
       const extension4 = testmsg.toLowerCase() === 'docx'
       const extension5 = testmsg.toLowerCase() === 'txt'
       const extension6 = testmsg.toLowerCase() === 'pdf'
+      const extension7 = testmsg.toLowerCase() === 'ppt'
+      const extension8 = testmsg.toLowerCase() === 'pptx'
       const isLt2M = file.size / 1024 / 1024 < 10
-      if (!extension && !extension2 && !extension3 && !extension4 && !extension5 && !extension6) {
+      if (!extension && !extension2 && !extension3 && !extension4 && !extension5 && !extension6 && !extension7 && !extension8) {
         this.$message({
-          message: '上传附件只能是xls,xlsx,doc,docx,txt格式!',
+          message: '上传附件只能是xls,xlsx,doc,docx,ppt,pptx,txt,pdf格式!',
           type: 'warning'
         })
       }
@@ -1102,7 +1105,7 @@ export default{
           type: 'warning'
         })
       }
-      return (extension || extension2 || extension3 || extension4 || extension5) && isLt2M
+      return (extension || extension2 || extension3 || extension4 || extension5 || extension6 || extension7 || extension8) && isLt2M
     },
     submitUpload() {
       this.$refs.upload.submit()
@@ -1114,11 +1117,13 @@ export default{
       }
     },
     download(url, name) {
-      if (name.substring(name.lastIndexOf('.') + 1) === 'txt') {
-        download(url, name, 'text/plain')
-      } else {
-        window.location.href = url
-      }
+      window.location.href = url
+      // window.open(url)
+      // if (name.substring(name.lastIndexOf('.') + 1) === 'txt') {
+      //   download(url, name, 'text/plain')
+      // } else {
+      //   window.location.href = url
+      // }
     },
     // -------------------------
     clone: clone,
@@ -1281,8 +1286,15 @@ export default{
             }
             this.editArticles = true
           } else {
-            this.$message.error('服务器出错！请稍后重试')
+            this.$message.error('服务器或网络出错！请稍后重试')
           }
+        }).catch(error => {
+          this.editDetail.title = '服务器或网络出错！请稍后重试'
+          this.editDetail.body = '服务器或网络出错！请稍后重试'
+          this.editDetail.remark = '服务器或网络出错！请稍后重试'
+          this.editDetail.brief = '服务器或网络出错！请稍后重试'
+          this.fileList = []
+          throw new Error(error)
         })
     },
     // 提交修改
@@ -1446,8 +1458,15 @@ export default{
               this.getArticles2(this.searchReq2)
             }
           } else {
-            this.$message.error('服务器出错！请稍后重试')
+            this.$message.error('服务器或网络出错！请稍后重试')
           }
+        }).catch(error => {
+          this.noteDetail.title = '服务器或网络出错！请稍后重试'
+          this.noteDetail.body = '服务器或网络出错！请稍后重试'
+          this.noteDetail.brief = '服务器或网络出错！请稍后重试'
+          this.noteDetail.remark = '服务器或网络出错！请稍后重试'
+          this.DLurl = []
+          throw new Error(error)
         })
     },
     // 置顶
