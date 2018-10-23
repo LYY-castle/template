@@ -102,7 +102,8 @@ export default{
 		width:80%;
 	}
 	.tree-expand .tree-btn{
-		display:none;
+		/* display:none; */
+    opacity:0;
 		margin-left:10px;
     width:62px;
 	}

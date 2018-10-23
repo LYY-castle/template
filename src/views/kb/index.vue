@@ -1,9 +1,9 @@
 <template>
   <el-container style="min-height:99vh;" id="kb">
     <el-col :span="4">
-      <el-aside style="width:360px;">
-        <!-- <div style="position:fixed;"></div> -->
+      <el-aside style="width:19%;">
         <div class="expand">
+          <div style="position:fixed;top:101px;width:18.1%;height:81px;background:#252E34;z-index:500;"></div>
           <div style="position:relative;top:83px;">
             <el-button class="tree-add-top" type="success" size="small" @click="handleAddTop">新建目录</el-button>
             <el-tree class="expand-tree"
@@ -972,6 +972,15 @@ export default{
           xhr.send(uploadInfo.file)
           xhr.onload = () => {
             if (xhr.status === 200) {
+              if (!vm.note_item.attachments) {
+                vm.note_item.attachments = []
+              }
+              if (!vm.editDetail.attachments) {
+                vm.editDetail.attachments = []
+              }
+              if (!vm.DLurl) {
+                vm.DLurl = []
+              }
               vm.$notify({
                 message: uploadInfo.file.name + '上传成功!',
                 type: 'success'
@@ -1611,6 +1620,10 @@ export default{
     this.initExpand()
     this.getCatalogs()
     this.getArticles1(this.req)
+    $('aside').height($(window).height() - 108.55 + 10)
+    $(window).resize(function() {
+      $('aside').height($(window).height() - 108.55 + 10)
+    })
   }
 }
 </script>
@@ -1669,13 +1682,13 @@ export default{
       color:#BFCBCF;
     }
     .expand{
-      // width:330px;
-      height:89.8%;
+      // height:89.8%;
+      height:100%;
       overflow:auto;
     }
     .expand>div{
       display: inline-block;
-      height:85%;
+      // height:85%;
       // width:90%;
       margin:0 auto;
       overflow:auto;
@@ -1715,6 +1728,7 @@ export default{
     div.expand .expand-tree .is-current>.el-tree-node__content .tree-btn,
     div.expand .expand-tree .el-tree-node__content:hover .tree-btn{
       display:inline-block;
+      opacity:1;
       background:#39484D;
     }
     div.expand2 .expand-tree .el-tree-node.is-current,
