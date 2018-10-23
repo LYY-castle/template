@@ -445,7 +445,7 @@
               <el-form-item label-width="45px" label="附件:">
                 <div v-for="item in DLurl" :key="item.name">
                   <span>{{item.name}}</span><el-button style="font-size:16px;" type="text" icon="el-icon-download" size="mini" circle @click="download(item.url,item.name)"></el-button>
-                  <span>{{item.name}}</span><a :href="item.url" :download="item.name">123123</a>
+                  <!-- <span>{{item.name}}</span><a :href="item.url" :download="item.name">123123</a> -->
                 </div>
               </el-form-item>
               <el-form-item label-width="45px" label="备注:">
