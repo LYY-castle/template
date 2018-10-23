@@ -3,9 +3,9 @@
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
         <el-form-item label="活动名称:">
-          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange">
+          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称"> <!--@change="campaignChange" -->
             <el-option value="" label="所有活动"></el-option>
-            <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
+            <el-option v-for="item in activeNameList" :key="item.activityId" :label="item.activityName" :value="item.activityId"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="时间维度:">
@@ -143,7 +143,6 @@
         :data="tableData1"
         ref="multipleTable"
         tooltip-effect="dark"
-        :summary-method="getSummaryMethod"
         show-summary
         border
         style="width: 100%;">
@@ -156,18 +155,23 @@
         </el-table-column>
         <el-table-column
           align="center"
+          prop="not_start_count"
+          label="未开始任务数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="start_count"
+          label="已开始任务数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="complete_count"
+          label="已完成任务数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
           prop="count"
-          label="订单数量">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="total_amount"
-          label="订单总金额">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="avg_amount"
-          label="订单平均金额">
+          label="任务总数">
         </el-table-column>
       </el-table>
       <h3>{{statistics_type === 'depart'?'下属部门详情':'下属员工详情'}}</h3>
@@ -194,18 +198,23 @@
           </el-table-column>
           <el-table-column
             align="center"
+            prop="not_start_count"
+            label="未开始任务数量">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="start_count"
+            label="已开始任务数量">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="complete_count"
+            label="已完成任务数量">
+          </el-table-column>
+          <el-table-column
+            align="center"
             prop="count"
-            label="订单数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="total_amount"
-            label="订单总金额">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="avg_amount"
-            label="订单平均金额">
+            label="任务总数">
           </el-table-column>
         </el-table>
         <el-row style="margin-top:1%;">
@@ -227,15 +236,9 @@
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
         <el-form-item label="活动名称:">
-          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange">
+          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称">
             <el-option value="" label="所有活动"></el-option>
-            <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="产品名称:">
-          <el-select v-model="formInline.productClone" placeholder="产品名称">
-            <el-option value="" label="所有产品"></el-option>
-            <el-option v-for="item in productList" :key="item.productId" :label="item.productName" :value="item.productId"></el-option>
+            <el-option v-for="item in activeNameList" :key="item.activityId" :label="item.activityName" :value="item.activityId"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="时间维度:">
@@ -349,18 +352,23 @@
         </el-table-column>
         <el-table-column
           align="center"
+          prop="not_start_count"
+          label="未开始任务数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="start_count"
+          label="已开始任务数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="complete_count"
+          label="已完成任务数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
           prop="count"
-          label="订单数量">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="total_amount"
-          label="订单总金额">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="avg_amount"
-          label="订单平均金额">
+          label="任务总数">
         </el-table-column>
       </el-table>
       <el-row style="margin-top:1%;">
@@ -383,12 +391,11 @@
   import _ from 'lodash'
   import echarts from 'echarts'
   import resize from './mixins/resize'
-  import { orderstatistics, departAgents, getDepartId, ordertotalAgent, orderreportAgent } from '@/api/ctiReport'
+  import { departAgents, getDepartId, grades, findCampaignByUserQuality, qualityTaskReportstatistics, qualityTaskReporttotalAgent, qualityTaskReportAgent } from '@/api/ctiReport'
   import { Message } from 'element-ui'
-  import { permsorderdepart, permsorderstaff } from '@/api/reportPermission'
-  import { findCampaignByUser } from '@/api/monitor_list_single'
+  import { permsqualityreportdepart, permsqualityreportstaff } from '@/api/reportPermission'
   import { hasOrderInfos } from '@/api/dialTask'
-  import { findAllProduct } from '@/api/campaign'
+  // import { findAllProduct } from '@/api/campaign'
   import moment from 'moment'
 
   export default {
@@ -484,30 +491,42 @@
         tableData1: [],
         tableDataAgent: [],
         count: [],
-        total_amount: [],
-        avg_amount: [],
+        complete_count: [],
+        not_start_count: [],
+        start_count: [],
         countTime: [],
-        total_amountTime: [],
-        avg_amountTime: [],
+        complete_countTime: [],
+        not_start_countTime: [],
+        start_countTime: [],
         countAgent: [],
-        total_amountAgent: [],
-        avg_amountAgent: [],
+        complete_countAgent: [],
+        not_start_countAgent: [],
+        start_countAgent: [],
         agentTime: [],
         staffAgentid: null,
-        websock: null
+        websock: null,
+        showActive: true
       }
     },
     mounted() {
-      findCampaignByUser().then(response => {
+      findCampaignByUserQuality().then(response => {
+        if (response.data.data.length === 0) {
+          this.showActive = false
+        } else {
+          this.showActive = true
+        }
         this.activeNameList = response.data.data
       })
-      findAllProduct().then(res => {
-        this.allProductList = res.data.data
+      // findAllProduct().then(res => {
+      //   this.allProductList = res.data.data
+      // })
+      grades().then(res => {
+        this.productList = res.data.data
       })
       getDepartId().then(res => {
         this.staffAgentid = res.data.agentid
         this.departId = res.data.departId
-        permsorderdepart(res.data.agentid).then(r => {
+        permsqualityreportdepart(res.data.agentid).then(r => {
           this.departPermission = true
           this.staffPermission = false
           departAgents(res.data.departId).then(response => {
@@ -559,7 +578,7 @@
               this.formInline.agentMap = _.zipObject(this.formInline.agent_id, this.formInline.agent_real_name)
             }
 
-            permsorderstaff(res.data.agentid).then(re => {
+            permsqualityreportstaff(res.data.agentid).then(re => {
               this.departPermission = false
               this.staffPermission = true
               this.search1(res.data.agentid)
@@ -629,6 +648,7 @@
             return
           }
           const values = data.map(item => Number(item[column.property]))
+          const totalSum = data.map(item => Number(Number(item.avg_score) * Number(item.count)))
           if (index < columns.length - 1) {
             sums[index] = values.reduce((prev, curr) => {
               const value = Number(curr)
@@ -639,7 +659,15 @@
               }
             }, 0)
           } else {
-            sums[index] = sums[index - 1] / sums[index - 2] ? sums[index - 1] / sums[index - 2] : 0
+            sums[index] = totalSum.reduce((prev, curr) => {
+              const value = Number(curr)
+              if (!isNaN(value)) {
+                return prev + curr
+              } else {
+                return prev
+              }
+            }, 0)
+            sums[index] = sums[index] / sums[index - 1] ? sums[index] / sums[index - 1] : 0
             sums[index] = sums[index].toFixed(2)
           }
         })
@@ -747,9 +775,9 @@
           params.agent_id = this.formInline.agent_id[this.currentIndex]
         }
 
-        orderreportAgent(params).then(response => {
-          this.pageNo.splice(this.currentIndex, 1, response.data.pageNo)
-          this.pageSize.splice(this.currentIndex, 1, response.data.pageSize)
+        qualityTaskReportAgent(params).then(response => {
+          this.pageNo.splice(this.currentIndex, 1, Number(response.data.pageNo))
+          this.pageSize.splice(this.currentIndex, 1, Number(response.data.pageSize))
           this.totalCount.splice(this.currentIndex, 1, response.data.total_count)
           this.tableData.splice(this.currentIndex, 1, response.data.result)
         })
@@ -758,7 +786,7 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_id: this.formInline.product,
+          grade_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           agent_id: this.staffAgentid,
@@ -768,10 +796,10 @@
           pageSize: this.paginationAgent.pageSize
         }
 
-        orderreportAgent(params).then(response => {
+        qualityTaskReportAgent(params).then(response => {
           this.tableDataAgent = response.data.result
-          this.paginationAgent.pageNo = response.data.pageNo
-          this.paginationAgent.pageSize = response.data.pageSize
+          this.paginationAgent.pageNo = Number(response.data.pageNo)
+          this.paginationAgent.pageSize = Number(response.data.pageSize)
           this.paginationAgent.totalCount = response.data.total_count
         })
       },
@@ -785,7 +813,7 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_id: this.formInline.product,
+          grade_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
@@ -800,9 +828,9 @@
           params.agent_id = this.formInline.agent_id[this.contentIndex]
         }
 
-        orderreportAgent(params).then(response => {
-          this.pageNo.push(response.data.pageNo)
-          this.pageSize.push(response.data.pageSize)
+        qualityTaskReportAgent(params).then(response => {
+          this.pageNo.push(Number(response.data.pageNo))
+          this.pageSize.push(Number(response.data.pageSize))
           this.totalCount.push(response.data.total_count)
           this.tableData.push(response.data.result)
           this.contentIndex++
@@ -813,7 +841,7 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_id: this.formInline.product,
+          grade_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
@@ -828,10 +856,10 @@
           params.agent_id = val
         }
 
-        orderreportAgent(params).then(response => {
+        qualityTaskReportAgent(params).then(response => {
           this.tableDataAgent = response.data.result
-          this.paginationAgent.pageNo = response.data.pageNo
-          this.paginationAgent.pageSize = response.data.pageSize
+          this.paginationAgent.pageNo = Number(response.data.pageNo)
+          this.paginationAgent.pageSize = Number(response.data.pageSize)
           this.paginationAgent.totalCount = response.data.total_count
         })
       },
@@ -849,7 +877,7 @@
         this.chart.setOption({
           backgroundColor: '#344b58',
           title: {
-            text: '订单报表',
+            text: '质检任务报表',
             x: '20',
             top: '20',
             textStyle: {
@@ -883,7 +911,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['订单数量', '订单总金额', '订单平均金额']
+            data: ['未开始任务数量', '已开始任务数量', '已完成任务数量', '任务总数量']
           },
           calculable: true,
           xAxis: [{
@@ -910,7 +938,7 @@
           }],
           yAxis: [{
             type: 'value',
-            name: '数量/笔',
+            name: '数量/个',
             splitLine: {
               show: false
             },
@@ -930,7 +958,7 @@
             }
           }, {
             type: 'value',
-            name: '金额/元',
+            name: '数量/个',
             splitLine: {
               show: false
             },
@@ -976,7 +1004,7 @@
             end: 35
           }],
           series: [{
-            name: '订单数量',
+            name: '未开始任务数量',
             type: 'bar',
             stack: 'total',
             barMaxWidth: 35,
@@ -996,23 +1024,21 @@
                 }
               }
             },
-            data: this.count
+            data: this.not_start_count
           }, {
-            name: '订单总金额',
-            // type: 'bar',
-            // stack: 'total',
-            // barMaxWidth: 35,
-            type: 'line',
-            // stack: 'total',
-            yAxisIndex: 1,
-            symbolSize: 10,
-            symbol: 'circle',
+            name: '已开始任务数量',
+            type: 'bar',
+            stack: 'total',
+            barMaxWidth: 35,
+            barGap: '10%',
             itemStyle: {
               normal: {
                 color: 'rgba(148,204,209,1)',
-                barBorderRadius: 0,
                 label: {
                   show: true,
+                  textStyle: {
+                    color: '#fff'
+                  },
                   position: 'insideTop',
                   formatter(p) {
                     return p.value > 0 ? p.value : ''
@@ -1020,12 +1046,33 @@
                 }
               }
             },
-            data: this.total_amount
+            data: this.start_count
           }, {
-            name: '订单平均金额',
+            name: '已完成任务数量',
+            type: 'bar',
+            stack: 'total',
+            barMaxWidth: 35,
+            barGap: '10%',
+            itemStyle: {
+              normal: {
+                color: 'rgba(255,144,128,1)',
+                label: {
+                  show: true,
+                  textStyle: {
+                    color: '#fff'
+                  },
+                  position: 'insideTop',
+                  formatter(p) {
+                    return p.value > 0 ? p.value : ''
+                  }
+                }
+              }
+            },
+            data: this.complete_count
+          }, {
+            name: '任务总数量',
             // type: 'bar',
             // stack: 'total',
-            // symbolSize: 10,
             // barMaxWidth: 35,
             type: 'line',
             // stack: 'total',
@@ -1034,7 +1081,7 @@
             symbol: 'circle',
             itemStyle: {
               normal: {
-                color: 'rgba(255,144,128,1)',
+                color: 'rgba(252,0,0,1)',
                 barBorderRadius: 0,
                 label: {
                   show: true,
@@ -1045,7 +1092,7 @@
                 }
               }
             },
-            data: this.avg_amount
+            data: this.count
           }
           ]
         })
@@ -1056,7 +1103,7 @@
         this.chartStaff.setOption({
           backgroundColor: '#344b58',
           title: {
-            text: this.statistics_type === 'depart' ? '单个时间各部门订单报表' : '单个时间各员工订单报表',
+            text: this.statistics_type === 'depart' ? '单个时间各部门质检任务报表' : '单个时间各员工质检任务报表',
             x: '20',
             top: '20',
             textStyle: {
@@ -1090,7 +1137,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['订单数量', '订单总金额', '订单平均金额']
+            data: ['未开始任务数量', '已开始任务数量', '已完成任务数量', '任务总数量']
           },
           calculable: true,
           xAxis: [{
@@ -1116,7 +1163,7 @@
           }],
           yAxis: [{
             type: 'value',
-            name: '数量/笔',
+            name: '数量/个',
             splitLine: {
               show: false
             },
@@ -1136,7 +1183,7 @@
             }
           }, {
             type: 'value',
-            name: '金额/元',
+            name: '数量/个',
             splitLine: {
               show: false
             },
@@ -1182,7 +1229,7 @@
             end: 35
           }],
           series: [{
-            name: '订单数量',
+            name: '未开始任务数量',
             type: 'bar',
             stack: 'total',
             barMaxWidth: 35,
@@ -1202,22 +1249,21 @@
                 }
               }
             },
-            data: this.countTime
+            data: this.not_start_countTime
           }, {
-            name: '订单总金额',
-            // type: 'bar',
-            // stack: 'total',
-            // barMaxWidth: 35,
-            type: 'line',
-            symbol: 'circle',
-            // stack: 'total',
-            yAxisIndex: 1,
+            name: '已开始任务数量',
+            type: 'bar',
+            stack: 'total',
+            barMaxWidth: 35,
+            barGap: '10%',
             itemStyle: {
               normal: {
                 color: 'rgba(148,204,209,1)',
-                barBorderRadius: 0,
                 label: {
                   show: true,
+                  textStyle: {
+                    color: '#fff'
+                  },
                   position: 'insideTop',
                   formatter(p) {
                     return p.value > 0 ? p.value : ''
@@ -1225,20 +1271,41 @@
                 }
               }
             },
-            data: this.total_amountTime
+            data: this.start_countTime
           }, {
-            name: '订单平均金额',
-            // type: 'bar',
-            // stack: 'total',
-            symbolSize: 10,
-            // barMaxWidth: 35,
-            type: 'line',
-            // stack: 'total',
-            yAxisIndex: 1,
-            symbol: 'circle',
+            name: '已完成任务数量',
+            type: 'bar',
+            stack: 'total',
+            barMaxWidth: 35,
+            barGap: '10%',
             itemStyle: {
               normal: {
                 color: 'rgba(255,144,128,1)',
+                label: {
+                  show: true,
+                  textStyle: {
+                    color: '#fff'
+                  },
+                  position: 'insideTop',
+                  formatter(p) {
+                    return p.value > 0 ? p.value : ''
+                  }
+                }
+              }
+            },
+            data: this.complete_countTime
+          }, {
+            name: '任务总数量',
+            // type: 'bar',
+            // stack: 'total',
+            // barMaxWidth: 35,
+            type: 'line',
+            symbol: 'circle',
+            // stack: 'total',
+            yAxisIndex: 1,
+            itemStyle: {
+              normal: {
+                color: 'rgba(252,0,0,1)',
                 barBorderRadius: 0,
                 label: {
                   show: true,
@@ -1249,7 +1316,7 @@
                 }
               }
             },
-            data: this.avg_amountTime
+            data: this.countTime
           }
           ]
         })
@@ -1260,7 +1327,7 @@
         this.chartTime.setOption({
           backgroundColor: '#344b58',
           title: {
-            text: this.statistics_type === 'depart' ? '单个部门各时间段订单报表' : '单个员工各时间段订单报表',
+            text: this.statistics_type === 'depart' ? '单个部门各时间段质检任务报表' : '单个员工各时间段质检任务报表',
             x: '20',
             top: '20',
             textStyle: {
@@ -1294,7 +1361,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['订单数量', '订单总金额', '订单平均金额']
+            data: ['未开始任务数量', '已开始任务数量', '已完成任务数量', '任务总数量']
           },
           calculable: true,
           xAxis: [{
@@ -1320,7 +1387,7 @@
           }],
           yAxis: [{
             type: 'value',
-            name: '数量/笔',
+            name: '数量/个',
             splitLine: {
               show: false
             },
@@ -1340,7 +1407,7 @@
             }
           }, {
             type: 'value',
-            name: '金额/元',
+            name: '数量/个',
             splitLine: {
               show: false
             },
@@ -1386,7 +1453,7 @@
             end: 35
           }],
           series: [{
-            name: '订单数量',
+            name: '未开始任务数量',
             type: 'bar',
             stack: 'total',
             barMaxWidth: 35,
@@ -1406,23 +1473,21 @@
                 }
               }
             },
-            data: this.countAgent
+            data: this.not_start_countAgent
           }, {
-            name: '订单总金额',
-            // type: 'bar',
-            // stack: 'total',
-            // barMaxWidth: 35,
-            type: 'line',
-            symbol: 'circle',
-            // stack: 'total',
-            yAxisIndex: 1,
-            symbolSize: 10,
+            name: '已开始任务数量',
+            type: 'bar',
+            stack: 'total',
+            barMaxWidth: 35,
+            barGap: '10%',
             itemStyle: {
               normal: {
                 color: 'rgba(148,204,209,1)',
-                barBorderRadius: 0,
                 label: {
                   show: true,
+                  textStyle: {
+                    color: '#fff'
+                  },
                   position: 'insideTop',
                   formatter(p) {
                     return p.value > 0 ? p.value : ''
@@ -1430,20 +1495,42 @@
                 }
               }
             },
-            data: this.total_amountAgent
+            data: this.start_countAgent
           }, {
-            name: '订单平均金额',
-            // type: 'bar',
-            // stack: 'total',
-            symbolSize: 10,
-            // barMaxWidth: 35,
-            type: 'line',
-            // stack: 'total',
-            yAxisIndex: 1,
-            symbol: 'circle',
+            name: '已完成任务数量',
+            type: 'bar',
+            stack: 'total',
+            barMaxWidth: 35,
+            barGap: '10%',
             itemStyle: {
               normal: {
                 color: 'rgba(255,144,128,1)',
+                label: {
+                  show: true,
+                  textStyle: {
+                    color: '#fff'
+                  },
+                  position: 'insideTop',
+                  formatter(p) {
+                    return p.value > 0 ? p.value : ''
+                  }
+                }
+              }
+            },
+            data: this.complete_countAgent
+          }, {
+            name: '任务总数量',
+            // type: 'bar',
+            // stack: 'total',
+            // barMaxWidth: 35,
+            type: 'line',
+            symbol: 'circle',
+            // stack: 'total',
+            yAxisIndex: 1,
+            symbolSize: 10,
+            itemStyle: {
+              normal: {
+                color: 'rgba(252,0,0,1)',
                 barBorderRadius: 0,
                 label: {
                   show: true,
@@ -1454,7 +1541,7 @@
                 }
               }
             },
-            data: this.avg_amountAgent
+            data: this.countAgent
           }
           ]
         })
@@ -1478,7 +1565,7 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_id: this.formInline.product,
+          grade_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           time: val,
@@ -1492,16 +1579,19 @@
           params.agent_id = this.formInline.agent_id.join(',')
         }
 
-        orderreportAgent(params).then(response => {
+        qualityTaskReportAgent(params).then(response => {
           if (response.data.result.length) {
             this.countTime = response.data.result.map(function(item, index) {
               return item.count
             })
-            this.total_amountTime = response.data.result.map(function(item, index) {
-              return item.total_amount
+            this.complete_countTime = response.data.result.map(function(item, index) {
+              return item.complete_count
             })
-            this.avg_amountTime = response.data.result.map(function(item, index) {
-              return item.avg_amount
+            this.not_start_countTime = response.data.result.map(function(item, index) {
+              return item.not_start_count
+            })
+            this.start_countTime = response.data.result.map(function(item, index) {
+              return item.start_count
             })
             this.initChart1()
           }
@@ -1511,7 +1601,7 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_id: this.formInline.product,
+          grade_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
@@ -1525,16 +1615,19 @@
           params.agent_id = val
         }
 
-        orderreportAgent(params).then(response => {
+        qualityTaskReportAgent(params).then(response => {
           if (response.data.result.length) {
             this.countAgent = response.data.result.map(function(item, index) {
               return item.count
             })
-            this.total_amountAgent = response.data.result.map(function(item, index) {
-              return item.total_amount
+            this.complete_countAgent = response.data.result.map(function(item, index) {
+              return item.complete_count
             })
-            this.avg_amountAgent = response.data.result.map(function(item, index) {
-              return item.avg_amount
+            this.not_start_countAgent = response.data.result.map(function(item, index) {
+              return item.not_start_count
+            })
+            this.start_countAgent = response.data.result.map(function(item, index) {
+              return item.start_count
             })
             this.agentTime = response.data.result.map(function(item, index) {
               return item.time_dimension
@@ -1542,8 +1635,8 @@
             this.initChart2()
           }
           this.paginationStaffPage = {
-            pageNo: response.data.pageNo,
-            pageSize: response.data.pageSize,
+            pageNo: Number(response.data.pageNo),
+            pageSize: Number(response.data.pageSize),
             totalCount: response.data.total_count,
             totalPage: null
           }
@@ -1553,7 +1646,7 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_id: this.formInline.product,
+          grade_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
@@ -1568,25 +1661,30 @@
           params.agent_id = this.formInline.agent_id.join(',')
         }
 
-        orderstatistics(params).then(response => {
+        qualityTaskReportstatistics(params).then(response => {
           this.obj = response.data
           if (this.obj.result.length) {
             this.count = this.obj.result.map(function(item, index) {
               return item.count
             })
-            this.total_amount = this.obj.result.map(function(item, index) {
-              return item.total_amount
+            this.complete_count = this.obj.result.map(function(item, index) {
+              return item.complete_count
             })
-            this.avg_amount = this.obj.result.map(function(item, index) {
-              return item.avg_amount
+            this.not_start_count = this.obj.result.map(function(item, index) {
+              return item.not_start_count
+            })
+            this.start_count = this.obj.result.map(function(item, index) {
+              return item.start_count
             })
             this.initChart()
           }
-          this.timeOptions = response.data.time_dimension_data
+          this.timeOptions = response.data.result.map(function(item, index) {
+            return item.time_dimension
+          })
           this.formInline.time_dimension = this.timeOptions[0]
           this.pagination = {
-            pageNo: response.data.pageNo,
-            pageSize: response.data.pageSize,
+            pageNo: Number(response.data.pageNo),
+            pageSize: Number(response.data.pageSize),
             totalCount: response.data.total_count,
             totalPage: null
           }
@@ -1622,7 +1720,7 @@
           const params = {
             statistics_type: this.statistics_type,
             depart_id: this.departId,
-            product_id: this.formInline.product,
+            grade_id: this.formInline.product,
             campaign_id: this.formInline.campaignId,
             time_dimension: this.formInline.timeClone,
             sub_depart_id: this.formInline.sub_depart_id.join(','),
@@ -1635,8 +1733,7 @@
           } else {
             params.agent_id = this.formInline.agent_id.join(',')
           }
-
-          ordertotalAgent(params).then(response => {
+          qualityTaskReporttotalAgent(params).then(response => {
             this.tableData1 = response.data.result
           })
           this.teamData(val)
@@ -1657,7 +1754,7 @@
           const params = {
             statistics_type: this.statistics_type,
             depart_id: this.departId,
-            product_id: this.formInline.product,
+            grade_id: this.formInline.product,
             campaign_id: this.formInline.campaignId,
             time_dimension: this.formInline.timeClone,
             sub_depart_id: this.formInline.sub_depart_id.join(','),
@@ -1671,7 +1768,7 @@
             params.agent_id = this.formInline.agent_id.join(',')
           }
 
-          ordertotalAgent(params).then(response => {
+          qualityTaskReporttotalAgent(params).then(response => {
             this.tableData1 = response.data.result
           })
           this.teamData(val)
@@ -1694,6 +1791,7 @@
           this.formInline.product = this.formInline.productClone
           this.formInline.campaignId = this.formInline.campaignIdClone
           this.timeValueClone = this.timeValue
+          this.formInline.timeClone = this.formInline.time
           this.agentChange(val)
           this.searchAgentStaff(val)
         }

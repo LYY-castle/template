@@ -55,3 +55,17 @@ export function permsmarkreportstaff(id) {
     method: 'get'
   })
 }
+
+export function permsqualityreportdepart(id) {
+  return request({
+    url: '/auth/users/' + id + '/perms/-depart-quality-report/GET',
+    method: 'get'
+  })
+}
+
+export function permsqualityreportstaff(id) {
+  return request({
+    url: '/auth/users/' + id + '/perms/-staff-quality-report/GET',
+    method: 'get'
+  })
+}
