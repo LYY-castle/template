@@ -442,12 +442,14 @@
           </div>
           <el-row>
             <el-form>
+              <div style="font-weight:bold;color:red;" class="el-upload__tip">注：txt和pdf格式的文件直接点击为预览，预览页面可以右键另存为下载，也可以右键选择另存为直接下载</div>
               <el-form-item label-width="45px" label="附件:">
                 <div v-for="item in DLurl" :key="item.name">
                   <span>{{item.name}}</span><el-button style="font-size:16px;" type="text" icon="el-icon-download" size="mini" circle @click="download(item.url,item.name)"></el-button>
                   <!-- <span>{{item.name}}</span><a :href="item.url" :download="item.name">123123</a> -->
                 </div>
               </el-form-item>
+              
               <el-form-item label-width="45px" label="备注:">
                 <div>{{noteDetail.remark}}</div>
               </el-form-item>
