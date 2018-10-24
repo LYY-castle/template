@@ -647,7 +647,6 @@ import {
   addArticles,
   getArticlesById, // 查询目录下的文章
   getArticles1, // 普通查询
-  getArticles2, // 高级查询
   editArticles,
   delArticles,
   addArticlesLink,
@@ -1463,32 +1462,32 @@ export default{
         })
       }
     },
-    // 高级查询
-    getArticles2(searchReq) {
-      if (this.timeValue) {
-        // dateLower 开始时间
-        // dateUpper 结束时间
-        searchReq.dateLower = this.timeValue[0].getTime()
-        searchReq.dateUpper = this.timeValue[1].getTime()
-      } else {
-        searchReq.dateLower = null
-        searchReq.dateUpper = null
-      }
-      getArticles2(searchReq).then(response => {
-        this.tableData = response.data.result
-        this.pageInfo = response.data.pageInfo
-        this.setHot(this.tableData, 5)
-        this.queryPageShow1 = false
-        this.nodePageShow = false
-        this.tableType = 3
-      }).catch(error => {
-        this.$message({
-          message: '查询文章失败',
-          type: 'error'
-        })
-        console.log(error)
-      })
-    },
+    // // 高级查询
+    // getArticles2(searchReq) {
+    //   if (this.timeValue) {
+    //     // dateLower 开始时间
+    //     // dateUpper 结束时间
+    //     searchReq.dateLower = this.timeValue[0].getTime()
+    //     searchReq.dateUpper = this.timeValue[1].getTime()
+    //   } else {
+    //     searchReq.dateLower = null
+    //     searchReq.dateUpper = null
+    //   }
+    //   getArticles2(searchReq).then(response => {
+    //     this.tableData = response.data.result
+    //     this.pageInfo = response.data.pageInfo
+    //     this.setHot(this.tableData, 5)
+    //     this.queryPageShow1 = false
+    //     this.nodePageShow = false
+    //     this.tableType = 3
+    //   }).catch(error => {
+    //     this.$message({
+    //       message: '查询文章失败',
+    //       type: 'error'
+    //     })
+    //     console.log(error)
+    //   })
+    // },
     // 判断标题是否为空
     checkTitleIsNullOrNot(noteTitle) {
       if (noteTitle === '') {
@@ -1564,8 +1563,6 @@ export default{
               this.getArticlesById(this.catalogid, this.nodeReq)
             } else if (this.tableType === 2) {
               this.getArticles1(this.req2)
-            } else if (this.tableType === 3) {
-              this.getArticles2(this.searchReq2)
             }
             if (this.editDetail.attachments) {
               this.editDetail.attachments.length = 0
@@ -1593,8 +1590,6 @@ export default{
             this.getArticlesById(this.catalogid, this.nodeReq)
           } else if (this.tableType === 2) {
             this.getArticles1(this.req2)
-          } else if (this.tableType === 3) {
-            this.getArticles2(this.searchReq2)
           }
           this.$message({
             message: '删除成功',
@@ -1658,8 +1653,6 @@ export default{
               this.getArticlesById(this.catalogid, this.nodeReq)
             } else if (this.tableType === 2) {
               this.getArticles1(this.req2)
-            } else if (this.tableType === 3) {
-              this.getArticles2(this.searchReq2)
             }
             if (this.note_item.attachments) {
               this.note_item.attachments.length = 0
@@ -1707,8 +1700,6 @@ export default{
               this.getArticlesById(this.catalogid, this.nodeReq)
             } else if (this.tableType === 2) {
               this.getArticles1(this.req2)
-            } else if (this.tableType === 3) {
-              this.getArticles2(this.searchReq2)
             }
           } else {
             this.$message.error('服务器或网络出错！请稍后重试')
@@ -1735,8 +1726,6 @@ export default{
           this.getArticlesById(this.catalogid, this.nodeReq)
         } else if (this.tableType === 2) {
           this.getArticles1(this.req2)
-        } else if (this.tableType === 3) {
-          this.getArticles2(this.searchReq2)
         }
       })
     },
@@ -1762,8 +1751,6 @@ export default{
           this.getArticlesById(this.catalogid, this.nodeReq)
         } else if (this.tableType === 2) {
           this.getArticles1(this.req2)
-        } else if (this.tableType === 3) {
-          this.getArticles2(this.searchReq2)
         }
       })
     },
@@ -1982,8 +1969,6 @@ export default{
           this.getArticlesById(this.catalogid, this.nodeReq)
         } else if (this.tableType === 2) {
           this.getArticles1(this.req2)
-        } else if (this.tableType === 3) {
-          this.getArticles2(this.searchReq2)
         }
         this.$message({
           message: '添加文章链接节点成功',
@@ -2151,6 +2136,9 @@ export default{
     // .sertion{
     //   display:block !important;
     // }
+    .kb-main>.el-main{
+      overflow:visible;
+    }
     .smallPaging{
       margin:0;
       width:354px;
