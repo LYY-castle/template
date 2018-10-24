@@ -3,12 +3,12 @@
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
         <el-form-item label="活动名称:" v-show="showActive">
-          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称"> <!--@change="campaignChange" -->
+          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange"> <!--@change="campaignChange" -->
             <el-option value="" label="所有活动"></el-option>
             <el-option v-for="item in activeNameList" :key="item.activityId" :label="item.activityName" :value="item.activityId"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="质检评分表:">
+        <el-form-item label="质检评分表:" v-show="showActive">
           <el-select v-model="formInline.productClone" placeholder="质检评分表">
             <el-option value="" label="所有评分表"></el-option>
             <el-option v-for="item in productList" :key="item.id" :label="item.gradeName" :value="item.gradeId"></el-option>
@@ -223,12 +223,12 @@
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
         <el-form-item label="活动名称:" v-show="showActive">
-          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称">
+          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange">
             <el-option value="" label="所有活动"></el-option>
             <el-option v-for="item in activeNameList" :key="item.activityId" :label="item.activityName" :value="item.activityId"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="质检评分表:">
+        <el-form-item label="质检评分表:" v-show="showActive">
           <el-select v-model="formInline.productClone" placeholder="质检评分表">
             <el-option value="" label="所有评分表"></el-option>
             <el-option v-for="item in productList" :key="item.id" :label="item.gradeName" :value="item.gradeId"></el-option>
@@ -374,10 +374,10 @@
   import _ from 'lodash'
   import echarts from 'echarts'
   import resize from './mixins/resize'
-  import { departAgents, getDepartId, grades, qualityReportstatistics, qualityReporttotalAgent, qualityReportreportAgent, findCampaignByUserQuality } from '@/api/ctiReport'
+  import { departAgents, getDepartId, grades, qualityReportstatistics, qualityReporttotalAgent, qualityReportreportAgent, findCampaignByUserQuality, getGradesByCampaignId } from '@/api/ctiReport'
   import { Message } from 'element-ui'
   import { permsmarkreportstaff, permsmarkreportdepart } from '@/api/reportPermission'
-  import { hasOrderInfos } from '@/api/dialTask'
+  // import { hasOrderInfos } from '@/api/dialTask'
   // import { findAllProduct } from '@/api/campaign'
   import moment from 'moment'
 
@@ -501,7 +501,7 @@
       //   this.allProductList = res.data.data
       // })
       grades().then(res => {
-        this.productList = res.data.data
+        this.allProductList = res.data.data
       })
       getDepartId().then(res => {
         this.staffAgentid = res.data.agentid
@@ -1396,13 +1396,14 @@
       },
       campaignChange(val) {
         this.productList = []
-        hasOrderInfos(val).then(res => {
+        getGradesByCampaignId(val).then(res => {
           if (res.data.data) {
-            for (let i = 0; i < this.allProductList.length; i++) {
-              if (res.data.data.indexOf(this.allProductList[i].productId) !== -1) {
-                this.productList.push(this.allProductList[i])
-              }
-            }
+            // for (let i = 0; i < this.allProductList.length; i++) {
+            //   if (res.data.data.indexOf(this.allProductList[i].productId) !== -1) {
+            //     this.productList.push(this.allProductList[i])
+            //   }
+            // }
+            this.productList = res.data.data
           }
         })
       },
