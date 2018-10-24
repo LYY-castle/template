@@ -32,7 +32,7 @@
         <el-row>
           <el-form>
             <el-form-item label="查询方式：" prop="validityStatus">
-              <el-radio-group v-model="searchType" size="small" @change="reset">
+              <el-radio-group v-model="searchType" size="small" @change="searchTypeChange">
                 <el-radio-button label='0' border>普通</el-radio-button>
                 <el-radio-button label='1' border>高级</el-radio-button>
               </el-radio-group>
@@ -70,7 +70,7 @@
               </el-date-picker>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="searchReq.pageNo=1;getArticles2(searchReq);searchReq2=clone(searchReq);">查询</el-button>
+              <el-button type="primary" @click="searchReq.pageNo=1;getArticles1(searchReq);searchReq2=clone(searchReq);">查询</el-button>
               <el-button type="danger" @click="reset();searchReq2=clone(searchReq)">重置</el-button>
             </el-form-item>
           </el-form>
@@ -171,31 +171,55 @@
           <el-row v-if="tableType===3">
             <el-col :span="6">
               <el-table
-              :data="tableData">
-              <!-- <el-table-column
-                align="left"
-                type="selection"
-                width="30">
-              </el-table-column> -->
-              <!-- <el-table-column
-                align="center"
-                prop="name"
-                width="58">
-                <template
-                  slot-scope="scope">
-                  <div>
-                    <span v-if="scope.row.hits&&scope.row.hot" style="color:red;font-size:10px;">Hot</span>
-                    <span v-if="scope.row.status==1&&setNew(scope.row)" style="color:#E8D343;font-size:10px;">New</span>
-                  </div>
-                </template>
-              </el-table-column> -->
+              style="border-left:1px solid #EBEEF5"
+              :data="tableDataTitle">
               <el-table-column
                 align="center"
                 prop="title"
                 label="标题">
                 <template
                   slot-scope="scope">
-                  <div style="text-align:left;">
+                  <div 
+                    style="text-align:left;">
+                    <a @click="queryOne(scope.row.ID);">
+                        {{scope.row.title}}
+                    </a>
+                  </div>
+                </template>
+              </el-table-column>
+              <!-- <el-table-column>
+                <template
+                  slot-scope="scope">
+                </template>
+              </el-table-column> -->
+            </el-table>
+            <div class="smallPaging"> 
+              <el-pagination
+                v-if="titlePageShow"
+                small
+                background
+                @size-change="titleSizeChange"
+                @current-change="titleCurrentChange"
+                :current-page='titlePageInfo.pageNo'
+                :page-sizes="[10, 20, 30, 40, 50]"
+                :page-size='titlePageInfo.pageSize'
+                layout="prev, pager, next, total, sizes, jumper "
+                :total='titlePageInfo.total' style="text-align: center;">
+              </el-pagination>
+            </div>
+          </el-col>
+            <el-col :span="6">
+              <el-table
+              style="border-left:1px solid #EBEEF5"
+              :data="tableDataBody">
+              <el-table-column
+                align="center"
+                prop="title"
+                label="正文">
+                <template
+                  slot-scope="scope">
+                  <div 
+                    style="text-align:left;">
                     <a @click="queryOne(scope.row.ID);">
                         {{scope.row.title}}
                     </a>
@@ -203,9 +227,90 @@
                 </template>
               </el-table-column>
             </el-table>
+            <div class="smallPaging"> 
+              <el-pagination
+                v-if="bodyPageShow"
+                small
+                background
+                @size-change="bodySizeChange"
+                @current-change="bodyCurrentChange"
+                :current-page='bodyPageInfo.pageNo'
+                :page-sizes="[10, 20, 30, 40, 50]"
+                :page-size='bodyPageInfo.pageSize'
+                layout="prev, pager, next, total, sizes, jumper "
+                :total='bodyPageInfo.total' style="text-align: center;">
+              </el-pagination>
+            </div>
+          </el-col>
+            <el-col :span="6">
+              <el-table
+              style="border-left:1px solid #EBEEF5"
+              :data="tableDataBrief">
+              <el-table-column
+                align="center"
+                prop="title"
+                label="概要">
+                <template
+                  slot-scope="scope">
+                  <div 
+                    style="text-align:left;">
+                    <a @click="queryOne(scope.row.ID);">
+                        {{scope.row.title}}
+                    </a>
+                  </div>
+                </template>
+              </el-table-column>
+            </el-table>
+            <div class="smallPaging"> 
+              <el-pagination
+                v-if="briefPageShow"
+                small
+                background
+                @size-change="briefSizeChange"
+                @current-change="briefCurrentChange"
+                :current-page='briefPageInfo.pageNo'
+                :page-sizes="[10, 20, 30, 40, 50]"
+                :page-size='briefPageInfo.pageSize'
+                layout="prev, pager, next, total, sizes, jumper "
+                :total='briefPageInfo.total' style="text-align: center;">
+              </el-pagination>
+            </div>
+          </el-col>
+            <el-col :span="6">
+              <el-table
+              style="border-left:1px solid #EBEEF5;border-right:1px solid #EBEEF5"
+              :data="tableDataRemark">
+              <el-table-column
+                align="center"
+                prop="title"
+                label="备注">
+                <template
+                  slot-scope="scope">
+                  <div 
+                    style="text-align:left;">
+                    <a @click="queryOne(scope.row.ID);">
+                      {{scope.row.title}}
+                    </a>
+                  </div>
+                </template>
+              </el-table-column>
+            </el-table>
+            <div class="smallPaging"> 
+              <el-pagination
+                v-if="remarkPageShow"
+                small
+                background
+                @size-change="remarkSizeChange"
+                @current-change="remarkCurrentChange"
+                :current-page='remarkPageInfo.pageNo'
+                :page-sizes="[10, 20, 30, 40, 50]"
+                :page-size='remarkPageInfo.pageSize'
+                layout="prev, pager, next, total, sizes, jumper "
+                :total='remarkPageInfo.total' style="text-align: center;">
+              </el-pagination>
+            </div>
           </el-col>
         </el-row>
-        
         <el-row style="margin-top:5px;">
           <el-button type="success" size="small" @click="checkCatalogid();clearUpload('upload');">新建</el-button>
           <!-- <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button> -->
@@ -225,17 +330,6 @@
             background
             @size-change="querySizeChange1"
             @current-change="queryCurrentChange1"
-            :current-page='pageInfo.pageNo'
-            :page-sizes="[10, 20, 30, 40, 50]"
-            :page-size='pageInfo.pageSize'
-            layout="total, sizes, prev, pager, next, jumper "
-            :total='pageInfo.total' style="text-align: right;float:right;">
-          </el-pagination>
-          <el-pagination
-            v-if="queryPageShow2"
-            background
-            @size-change="querySizeChange2"
-            @current-change="queryCurrentChange2"
             :current-page='pageInfo.pageNo'
             :page-sizes="[10, 20, 30, 40, 50]"
             :page-size='pageInfo.pageSize'
@@ -284,7 +378,7 @@
           </el-row> -->
           <el-row>
             <el-form>
-              <el-form-item label-width="45px" label="摘要:">
+              <el-form-item label-width="45px" label="概要:">
                 <el-input :rows="1" v-model="brief" type="textarea" class="article-textarea" autosize placeholder="请输入内容"/>
               </el-form-item>
             </el-form>
@@ -366,7 +460,7 @@
           </el-row> -->
           <el-row>
             <el-form>
-              <el-form-item label-width="45px" label="摘要:">
+              <el-form-item label-width="45px" label="概要:">
                 <el-input :rows="1" v-model="editDetail.brief" type="textarea" class="article-textarea" autosize placeholder="请输入内容"/>
               </el-form-item>
             </el-form>
@@ -432,7 +526,7 @@
           </el-row> -->
           <el-row>
             <el-form>
-              <el-form-item style="margin-top:-20px;" label-width="45px" label="摘要:">
+              <el-form-item style="margin-top:-20px;" label-width="45px" label="概要:">
                 <div>{{noteDetail.brief}}</div>
               </el-form-item>
             </el-form>
@@ -563,8 +657,7 @@ import {
 import {
   clone,
   formatDateTime,
-  verify,
-  download
+  verify
 } from '@/utils/tools'
 export default{
   name: 'kb',
@@ -593,9 +686,16 @@ export default{
       // inputVisible: false,
       // inputValue: '',
       nodePageShow: false, // 节点分页显示隐藏
-      queryPageShow1: false, // 精确查询显示隐藏
-      queryPageShow2: false, // 模糊查询显示隐藏
+      queryPageShow1: false,
+      bodyPageShow: false,
+      titlePageShow: false,
+      briefPageShow: false,
+      remarkPageShow: false,
       pageInfo: {},
+      titlePageInfo: {},
+      bodyPageInfo: {},
+      briefPageInfo: {},
+      remarkPageInfo: {},
       isListPage: '1', // 是否是主页
       searchType: '0',
       addArticles: false,
@@ -630,13 +730,41 @@ export default{
       },
       searchReq: {
         query: '',
-        pageNo: 1,
-        pageSize: 10
+        title: {
+          pageNo: 1,
+          pageSize: 10
+        },
+        body: {
+          pageNo: 1,
+          pageSize: 10
+        },
+        brief: {
+          pageNo: 1,
+          pageSize: 10
+        },
+        remark: {
+          pageNo: 1,
+          pageSize: 10
+        }
       },
       searchReq2: {
         query: '',
-        pageNo: 1,
-        pageSize: 10
+        title: {
+          pageNo: 1,
+          pageSize: 10
+        },
+        body: {
+          pageNo: 1,
+          pageSize: 10
+        },
+        brief: {
+          pageNo: 1,
+          pageSize: 10
+        },
+        remark: {
+          pageNo: 1,
+          pageSize: 10
+        }
       },
       delReq: {
         catalogid: '',
@@ -681,6 +809,10 @@ export default{
         attachments: []
       },
       tableData: [],
+      tableDataTitle: [],
+      tableDataBody: [],
+      tableDataBrief: [],
+      tableDataRemark: [],
       tableType: null, // 1 按节点查询   2 普通查询   3 高级查询
       addLinkId: null,
       addLinkReq: {
@@ -745,7 +877,6 @@ export default{
         this.setHot(this.tableData, 5)
         this.nodePageShow = true
         this.queryPageShow1 = false
-        this.queryPageShow2 = false
         this.tableType = 1
       }).catch(error => {
         this.$message({
@@ -1130,6 +1261,26 @@ export default{
     // -------------------------
     clone: clone,
     formatDateTime: formatDateTime,
+    searchTypeChange(label) {
+      this.reset()
+      if (label === '0') {
+        this.req.pageNo = 1
+        this.getArticles1(this.req)
+        this.req2 = clone(this.req)
+      } else {
+        this.tableDataTitle = []
+        this.tableDataBody = []
+        this.tableDataBrief = []
+        this.tableDataRemark = []
+        this.bodyPageShow = false
+        this.titlePageShow = false
+        this.briefPageShow = false
+        this.remarkPageShow = false
+        this.tableType = 3
+        this.queryPageShow1 = false
+        this.nodePageShow = false
+      }
+    },
     reset() {
       this.timeValue = null
       if (this.pageInfo.pageNo) {
@@ -1140,8 +1291,22 @@ export default{
         }
         this.searchReq = {
           query: '',
-          pageNo: this.pageInfo.pageNo,
-          pageSize: this.pageInfo.pageSize
+          title: {
+            pageNo: this.pageInfo.pageNo,
+            pageSize: this.pageInfo.pageSize
+          },
+          body: {
+            pageNo: this.pageInfo.pageNo,
+            pageSize: this.pageInfo.pageSize
+          },
+          brief: {
+            pageNo: this.pageInfo.pageNo,
+            pageSize: this.pageInfo.pageSize
+          },
+          remark: {
+            pageNo: this.pageInfo.pageNo,
+            pageSize: this.pageInfo.pageSize
+          }
         }
       } else {
         this.req = {
@@ -1151,8 +1316,22 @@ export default{
         }
         this.searchReq = {
           query: '',
-          pageNo: 1,
-          pageSize: 10
+          title: {
+            pageNo: 1,
+            pageSize: 10
+          },
+          body: {
+            pageNo: 1,
+            pageSize: 10
+          },
+          brief: {
+            pageNo: 1,
+            pageSize: 10
+          },
+          remark: {
+            pageNo: 1,
+            pageSize: 10
+          }
         }
       }
 
@@ -1186,41 +1365,103 @@ export default{
         this.setHot(this.tableData, 5)
         this.nodePageShow = true
         this.queryPageShow1 = false
-        this.queryPageShow2 = false
         this.tableType = 1
       })
     },
     // 普通查询
     getArticles1(req) {
-      if (this.timeValue) {
+      if (this.searchType === '0') {
+        if (this.timeValue) {
         // lower 开始时间
         // upper 结束时间
-        req.lower = this.timeValue[0].getTime()
-        req.upper = this.timeValue[1].getTime()
-      } else {
-        req.lower = null
-        req.upper = null
-      }
-      if (!req.title) {
-        delete req.title
-      }
-      console.log(req)
-      // console.log(req)
-      getArticles1(req).then(response => {
-        this.tableData = response.data.result
-        this.pageInfo = response.data.pageInfo
-        this.setHot(this.tableData, 5)
-        this.queryPageShow1 = true
-        this.nodePageShow = false
-        this.queryPageShow2 = false
-        this.tableType = 2
-      }).catch(error => {
-        this.$message({
-          message: '查询文章失败',
-          type: 'error'
+          req.lower = this.timeValue[0].getTime()
+          req.upper = this.timeValue[1].getTime()
+        } else {
+          req.lower = null
+          req.upper = null
+        }
+        if (!req.title) {
+          delete req.title
+        }
+        getArticles1(req).then(response => {
+          this.tableData = response.data.result
+          this.pageInfo = response.data.pageInfo
+          this.setHot(this.tableData, 5)
+          this.queryPageShow1 = true
+          this.nodePageShow = false
+          this.tableType = 2
+        }).catch(error => {
+          this.$message({
+            message: '查询文章失败',
+            type: 'error'
+          })
+          console.log(error)
         })
-        console.log(error)
-      })
+      } else {
+        if (!req.query) {
+          this.$message({
+            message: '请输入关键字，再进行查询',
+            type: 'error'
+          })
+          return false
+        }
+        const titleReq = req.title
+        const bodyReq = req.body
+        const briefReq = req.brief
+        const remarkReq = req.remark
+        titleReq.title = req.query
+        bodyReq.body = req.query
+        briefReq.brief = req.query
+        remarkReq.remark = req.query
+        getArticles1(titleReq).then(response => {
+          this.tableDataTitle = response.data.result
+          this.titlePageInfo = response.data.pageInfo
+          this.titlePageShow = true
+        }).catch(error => {
+          this.$message({
+            message: '按标题查询文章失败',
+            type: 'error'
+          })
+          this.titlePageShow = true
+          throw new Error(error)
+        })
+        getArticles1(bodyReq).then(response => {
+          this.tableDataBody = response.data.result
+          this.bodyPageInfo = response.data.pageInfo
+          this.bodyPageShow = true
+        }).catch(error => {
+          this.$message({
+            message: '按标题查询文章失败',
+            type: 'error'
+          })
+          this.bodyPageShow = true
+          throw new Error(error)
+        })
+        getArticles1(briefReq).then(response => {
+          this.tableDataBrief = response.data.result
+          this.briefPageInfo = response.data.pageInfo
+          this.briefPageShow = true
+        }).catch(error => {
+          this.$message({
+            message: '按标题查询文章失败',
+            type: 'error'
+          })
+          this.briefPageShow = true
+          throw new Error(error)
+        })
+        getArticles1(remarkReq).then(response => {
+          this.tableDataRemark = response.data.result
+          this.remarkPageInfo = response.data.pageInfo
+          this.remarkPageShow = true
+        }).catch(error => {
+          this.$message({
+            message: '按标题查询文章失败',
+            type: 'error'
+          })
+          this.remarkPageShow = true
+          throw new Error(error)
+        })
+      }
     },
     // 高级查询
     getArticles2(searchReq) {
@@ -1237,7 +1478,6 @@ export default{
         this.tableData = response.data.result
         this.pageInfo = response.data.pageInfo
         this.setHot(this.tableData, 5)
-        this.queryPageShow2 = true
         this.queryPageShow1 = false
         this.nodePageShow = false
         this.tableType = 3
@@ -1581,17 +1821,142 @@ export default{
       this.getArticles1(this.req2)
     },
     // 高级查询页面显示条数
-    querySizeChange2(val) {
-      this.searchReq.pageSize = val
-      this.searchReq2.pageSize = val
-      this.searchReq2.pageNo = 1
-      this.pageInfo.pageNo = 1
-      this.getArticles2(this.searchReq2)
+    titleSizeChange(val) {
+      const titleReq = this.searchReq2.title
+      titleReq.title = this.searchReq2.query
+      titleReq.pageSize = val
+      titleReq.pageNo = 1
+      this.titlePageInfo.pageNo = 1
+      getArticles1(titleReq).then(response => {
+        this.tableDataTitle = response.data.result
+        this.titlePageInfo = response.data.pageInfo
+      }).catch(error => {
+        this.$message({
+          message: '按标题查询文章失败',
+          type: 'error'
+        })
+        this.titlePageShow = true
+        throw new Error(error)
+      })
+    },
+    bodySizeChange(val) {
+      const bodyReq = this.searchReq2.body
+      bodyReq.body = this.searchReq2.query
+      bodyReq.pageSize = val
+      bodyReq.pageNo = 1
+      this.bodyPageInfo.pageNo = 1
+      getArticles1(bodyReq).then(response => {
+        this.tableDataBody = response.data.result
+        this.bodyPageInfo = response.data.pageInfo
+      }).catch(error => {
+        this.$message({
+          message: '按内容查询文章失败',
+          type: 'error'
+        })
+        this.bodyPageShow = true
+        throw new Error(error)
+      })
+    },
+    briefSizeChange(val) {
+      const briefReq = this.searchReq2.brief
+      briefReq.brief = this.searchReq2.query
+      briefReq.pageSize = val
+      briefReq.pageNo = 1
+      this.briefPageInfo.pageNo = 1
+      getArticles1(briefReq).then(response => {
+        this.tableDataBrief = response.data.result
+        this.briefPageInfo = response.data.pageInfo
+      }).catch(error => {
+        this.$message({
+          message: '按内容查询文章失败',
+          type: 'error'
+        })
+        this.briefPageShow = true
+        throw new Error(error)
+      })
+    },
+    remarkSizeChange(val) {
+      const remarkReq = this.searchReq2.remark
+      remarkReq.remark = this.searchReq2.query
+      remarkReq.pageSize = val
+      remarkReq.pageNo = 1
+      this.remarkPageInfo.pageNo = 1
+      getArticles1(remarkReq).then(response => {
+        this.tableDataRemark = response.data.result
+        this.remarkPageInfo = response.data.pageInfo
+      }).catch(error => {
+        this.$message({
+          message: '按内容查询文章失败',
+          type: 'error'
+        })
+        this.remarkPageShow = true
+        throw new Error(error)
+      })
     },
     // 高级查询分页翻页功能
-    queryCurrentChange2(val) {
-      this.searchReq2.pageNo = val
-      this.getArticles2(this.searchReq2)
+    titleCurrentChange(val) {
+      const titleReq = this.searchReq2.title
+      titleReq.title = this.searchReq2.query
+      titleReq.pageNo = val
+      getArticles1(titleReq).then(response => {
+        this.tableDataTitle = response.data.result
+        this.bodyPageInfo = response.data.pageInfo
+      }).catch(error => {
+        this.$message({
+          message: '按标题查询文章失败',
+          type: 'error'
+        })
+        this.titlePageShow = true
+        throw new Error(error)
+      })
+    },
+    bodyCurrentChange(val) {
+      const bodyReq = this.searchReq2.body
+      bodyReq.body = this.searchReq2.query
+      bodyReq.pageNo = val
+      getArticles1(bodyReq).then(response => {
+        this.tableDataBody = response.data.result
+        this.bodyPageInfo = response.data.pageInfo
+      }).catch(error => {
+        this.$message({
+          message: '按标题查询文章失败',
+          type: 'error'
+        })
+        this.bodyPageShow = true
+        throw new Error(error)
+      })
+    },
+    briefCurrentChange(val) {
+      const briefReq = this.searchReq2.brief
+      briefReq.brief = this.searchReq2.query
+      briefReq.pageNo = val
+      getArticles1(briefReq).then(response => {
+        this.tableDataBrief = response.data.result
+        this.briefPageInfo = response.data.pageInfo
+      }).catch(error => {
+        this.$message({
+          message: '按标题查询文章失败',
+          type: 'error'
+        })
+        this.briefPageShow = true
+        throw new Error(error)
+      })
+    },
+    remarkCurrentChange(val) {
+      const remarkReq = this.searchReq2.remark
+      remarkReq.remark = this.searchReq2.query
+      remarkReq.pageNo = val
+      getArticles1(remarkReq).then(response => {
+        this.tableDataRemark = response.data.result
+        this.remarkPageInfo = response.data.pageInfo
+      }).catch(error => {
+        this.$message({
+          message: '按标题查询文章失败',
+          type: 'error'
+        })
+        this.remarkPageShow = true
+        throw new Error(error)
+      })
     },
     // 选择链接节点ID
     choseLink(d, n, s) {
@@ -1782,11 +2147,40 @@ export default{
     .el-container.kb-main{
       width:100% !important;
       float:right;
-      
     }
     // .sertion{
     //   display:block !important;
     // }
+    .smallPaging{
+      margin:0;
+      width:354px;
+      box-sizing:border-box;
+      // .el-pagination__total{
+      //   display:block;
+      // }
+      .el-pagination__sizes{
+        display:block;
+        float:left;
+        margin-left:14%;
+      }
+      .el-pagination__jump{
+        display:block;
+        float:left;
+      }
+      .el-pagination__total{
+        float:left;
+        margin-left:15%;
+      }
+      .btn-prev{
+        float:left;
+      }
+      .el-pager{
+        float:left;
+      }
+      .btn-next{
+        float:left;
+      }
+    }
   }
   .kb-upload {
     .el-upload-list__item .el-icon-close {
