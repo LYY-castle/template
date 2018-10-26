@@ -299,6 +299,7 @@ export default {
   name: 'layout',
   data() {
     return {
+      isOrdSet: false, // 是否为普通坐席界面
       isDialTaskPage: false, // 是否为拨打详情页面
       socket: null,
       disabledDN: false, // 默认不禁用电话号码框
@@ -772,7 +773,7 @@ export default {
       const DN = this.formInline.DN
       if (agentId !== null && DN !== null && DN !== '') {
         cti.logoff(agentId, DN, 9)
-        localStorage.removeItem('DN')
+        // localStorage.removeItem('DN')
       }
     },
     sleep(seconds) {
@@ -1015,6 +1016,7 @@ export default {
       }).catch(error => {
         console.log('error:' + error)
       })
+      vm.$root.eventHub.$emit('addCall', true)
       vm.setbtnStatus('talking')
     },
     on_ringback_event(event, agentid, DN, UUID, callerid, calleeid, ori_ani, activeLine) {
@@ -1076,9 +1078,13 @@ export default {
       let info = {}
       if (typeof localStorage.getItem(agentId) !== 'undefined' && localStorage.getItem(agentId) !== null) {
         info = JSON.parse(localStorage.getItem(agentId))
+        // console.log(info)
+        info.beforeStatus = info.reasoncode
+        info.beforeUpdatetime = info.updateTime
       }
       info.DN = DN
-      info.reasonCode = reasonCode
+      info.reasoncode = reasonCode
+      info.updateTime = new Date()
       localStorage.setItem(agentId, JSON.stringify(info))
       if (vm.isDialTaskPage) {
         if (reasonCode === '-101' || reasonCode === '-100') {
@@ -1104,6 +1110,17 @@ export default {
       } else {
         vm.disabledDial = false
       }
+      if (localStorage.getItem('agentId') === agentId) {
+        const obj = {}
+        obj.event = event
+        obj.agentId = agentId
+        obj.DN = DN
+        obj.reasonCode = reasonCode
+        if (vm.isOrdSet) {
+          vm.$root.eventHub.$emit('reasoncodechange', obj)
+        }
+      }
+      // if (event !== 'manualchange') {
       switch (reasonCode) {
         case '-1':
           vm.islogin = false
@@ -1250,6 +1267,7 @@ export default {
           vm.disabledDN = false
           break
       }
+      // }
       vm.reasonCode = reasonCode
       localStorage.setItem('reasonCode', vm.reasonCode)
     },
@@ -1296,6 +1314,7 @@ export default {
     },
     logout() {
       vm.agentLogoff()
+      vm.$root.eventHub.$emit('closeInterval', true)// 普通坐席计时停止
       this.$store.dispatch('LogOut').then((data) => {
         if (data.info) {
           this.$router.push({ path: '/login' })
@@ -1435,6 +1454,21 @@ export default {
         vm.dialCall = true
       }
     })
+    this.$root.eventHub.$on('ord_set', (obj) => {
+      vm.isOrdSet = obj
+    })
+    // this.$root.eventHub.$on('manualchange', (obj) => {
+    //   const object = JSON.parse(localStorage.getItem(localStorage.getItem('agentId')))
+    //   let DN = localStorage.getItem('DN') ? localStorage.getItem('DN') : ''
+    //   const agentId = localStorage.getItem('agentId') ? localStorage.getItem('agentId') : ''
+    //   let reasoncode = ''
+    //   if (object) {
+    //     DN = object.DN ? object.DN : ''
+    //     reasoncode = object.reasoncode ? object.reasoncode : ''
+    //   }
+    //   vm.on_reasonchange('manualchange', agentId, DN, reasoncode)
+    // })
+
     this.$root.eventHub.$on('DIAL_TASK', (obj) => {
       if (!obj.isDialTask) { // 说明是拨打页面
         vm.isDialTaskPage = true
@@ -1459,6 +1493,7 @@ export default {
     this.$root.eventHub.$off('DISABLED_DIAL')
     this.$root.eventHub.$off('DIAL_TASK')
     this.$root.eventHub.$off('DIAL_TASK_DIALNM')
+    this.$root.eventHub.$off('ord_set')
   }
 }
 </script>
