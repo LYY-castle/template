@@ -841,7 +841,7 @@
           <el-row>
             <el-form>
               <el-form-item style="margin-left:-2px;margin-top:-20px;" label-width="75px" label="所在目录:">
-                <div v-for="item in noteDetail.catalogs" :key="item.path">{{item.path}}</div>
+                <div v-for="item in noteDetail.catalogs" :key="item.path">{{item.path_name}}</div>
               </el-form-item>
             </el-form>
           </el-row>
@@ -1723,6 +1723,11 @@ export default{
         if (!req.title) {
           delete req.title
         }
+        if (!this.permission) {
+          this.req.status = 1
+        } else if (this.permission) {
+          delete req.status
+        }
         getArticles1(req).then(response => {
           this.tableData = response.data.result
           this.pageInfo = response.data.pageInfo
@@ -1753,6 +1758,17 @@ export default{
         bodyReq.body = req.query
         briefReq.brief = req.query
         remarkReq.remark = req.query
+        if (!this.permission) {
+          titleReq.status = 1
+          bodyReq.status = 1
+          briefReq.status = 1
+          remarkReq.status = 1
+        } else if (this.permission) {
+          delete titleReq.status
+          delete bodyReq.status
+          delete briefReq.status
+          delete remarkReq.status
+        }
         getArticles1(titleReq).then(response => {
           this.tableDataTitle = response.data.result
           this.titlePageInfo = response.data.pageInfo
@@ -2391,7 +2407,6 @@ export default{
   mounted() {
     this.initExpand()
     this.getCatalogs()
-    this.getArticles1(this.req)
     $('aside').height($(window).height() - 108.55 + 10)
     $(window).resize(function() {
       $('aside').height($(window).height() - 108.55 + 10)
@@ -2400,12 +2415,14 @@ export default{
     getPermission(localStorage.getItem('agentId')).then(response => {
       if (response.data) {
         this.permission = true
+        this.getArticles1(this.req)
       } else {
         window.location.reload()
       }
     }).catch(error => {
       if (error.response.status === 403) {
         this.permission = false
+        this.getArticles1(this.req)
       } else {
         window.location.reload()
       }
