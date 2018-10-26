@@ -273,7 +273,7 @@
                 @size-change="titleSizeChange"
                 @current-change="titleCurrentChange"
                 :current-page='titlePageInfo.pageNo'
-                :page-sizes="[10, 20, 30, 40, 50]"
+                :page-sizes="[1, 20, 30, 40, 50]"
                 :page-size='titlePageInfo.pageSize'
                 layout="total, sizes, prev, pager, next, jumper "
                 :total='titlePageInfo.total' style="text-align: right;">
@@ -381,7 +381,7 @@
                 @size-change="bodySizeChange"
                 @current-change="bodyCurrentChange"
                 :current-page='bodyPageInfo.pageNo'
-                :page-sizes="[10, 20, 30, 40, 50]"
+                :page-sizes="[1, 20, 30, 40, 50]"
                 :page-size='bodyPageInfo.pageSize'
                 layout="total, sizes, prev, pager, next, jumper "
                 :total='bodyPageInfo.total' style="text-align: right;">
@@ -489,7 +489,7 @@
                 @size-change="briefSizeChange"
                 @current-change="briefCurrentChange"
                 :current-page='briefPageInfo.pageNo'
-                :page-sizes="[10, 20, 30, 40, 50]"
+                :page-sizes="[1, 20, 30, 40, 50]"
                 :page-size='briefPageInfo.pageSize'
                 layout="total, sizes, prev, pager, next, jumper "
                 :total='briefPageInfo.total' style="text-align: right;">
@@ -597,7 +597,7 @@
                 @size-change="remarkSizeChange"
                 @current-change="remarkCurrentChange"
                 :current-page='remarkPageInfo.pageNo'
-                :page-sizes="[10, 20, 30, 40, 50]"
+                :page-sizes="[1, 20, 30, 40, 50]"
                 :page-size='remarkPageInfo.pageSize'
                 layout="total, sizes, prev, pager, next, jumper "
                 :total='remarkPageInfo.total' style="text-align: right;">
@@ -2268,7 +2268,7 @@ export default{
       titleReq.pageNo = val
       getArticles1(titleReq).then(response => {
         this.tableDataTitle = response.data.result
-        this.bodyPageInfo = response.data.pageInfo
+        this.titlePageInfo = response.data.pageInfo
       }).catch(error => {
         this.$message({
           message: '按标题查询文章失败',
