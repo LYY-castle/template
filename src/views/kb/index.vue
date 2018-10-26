@@ -3,9 +3,9 @@
     <el-col :span="4">
       <el-aside style="width:19%;">
         <div class="expand">
-          <div style="position:fixed;top:101px;width:18.1%;height:81px;background:#252E34;z-index:500;"></div>
-          <div style="position:relative;top:83px;">
-            <el-button class="tree-add-top" type="success" size="small" @click="handleAddTop">新建目录</el-button>
+          <div v-if="permission" style="position:fixed;top:101px;width:18.1%;height:81px;background:#252E34;z-index:500;"></div>
+          <div style="position:relative;top:83px;min-width:100%">
+            <el-button v-if="permission" class="tree-add-top" type="success" size="small" @click="handleAddTop">新建目录</el-button>
             <el-tree class="expand-tree"
             key="tree"
             ref="tree"
@@ -60,17 +60,8 @@
             <el-form-item label="关键字:">
               <el-input v-model="searchReq.query" placeholder="关键字"></el-input>
             </el-form-item>
-            <el-form-item label="发布时间：">
-              <el-date-picker
-                  v-model="timeValue"
-                  type="datetimerange"
-                  range-separator="-"
-                  start-placeholder="开始时间"
-                  end-placeholder="结束时间">
-              </el-date-picker>
-            </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="searchReq.pageNo=1;getArticles1(searchReq);searchReq2=clone(searchReq);">查询</el-button>
+              <el-button type="primary" @click="searchReq.pageNo=1;getArticles1(searchReq);searchReq2=clone(searchReq);getPath();">查询</el-button>
               <el-button type="danger" @click="reset();searchReq2=clone(searchReq)">重置</el-button>
             </el-form-item>
           </el-form>
@@ -109,6 +100,17 @@
                 </div>
               </template>
             </el-table-column>
+            <!-- <el-table-column
+              align="center"
+              prop="title"
+              label="路径">
+              <template
+                slot-scope="scope">
+                <div>
+                  {{getPath(scope.row)}}
+                </div>
+              </template>
+            </el-table-column> -->
             <el-table-column
               width="80"
               align="center"
@@ -153,6 +155,7 @@
             </el-table-column>
             <el-table-column
               width="273"
+              v-if="permission"
               align="center"
               label="操作">
               <template slot-scope="scope">
@@ -160,9 +163,9 @@
                 <el-button @click="delVisible=true;delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
                 <el-button v-if="scope.row.sticked==0" @click="setTop(scope.row)" type="text" size="small">置顶</el-button>
                 <el-button v-if="scope.row.sticked==1" @click="setTop(scope.row)" type="text" size="small">取消置顶</el-button>
-                <el-button v-if="scope.row.status==0" @click="release(scope.row)" type="text" size="small">发布</el-button>
+                <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
                 <el-button v-if="scope.row.status==1" @click="release(scope.row)" type="text" size="small">取消发布</el-button>
-                <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加节点</el-button>
+                <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加目录</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -249,6 +252,7 @@
               </el-table-column>
               <el-table-column
                 width="273"
+                v-if="permission"
                 align="center"
                 label="操作">
                 <template slot-scope="scope">
@@ -256,9 +260,9 @@
                   <el-button @click="delVisible=true;delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
                   <el-button v-if="scope.row.sticked==0" @click="setTop(scope.row)" type="text" size="small">置顶</el-button>
                   <el-button v-if="scope.row.sticked==1" @click="setTop(scope.row)" type="text" size="small">取消置顶</el-button>
-                  <el-button v-if="scope.row.status==0" @click="release(scope.row)" type="text" size="small">发布</el-button>
+                  <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
                   <el-button v-if="scope.row.status==1" @click="release(scope.row)" type="text" size="small">取消发布</el-button>
-                  <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加节点</el-button>
+                  <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加目录</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -356,6 +360,7 @@
               </el-table-column>
               <el-table-column
                 width="273"
+                v-if="permission"
                 align="center"
                 label="操作">
                 <template slot-scope="scope">
@@ -363,9 +368,9 @@
                   <el-button @click="delVisible=true;delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
                   <el-button v-if="scope.row.sticked==0" @click="setTop(scope.row)" type="text" size="small">置顶</el-button>
                   <el-button v-if="scope.row.sticked==1" @click="setTop(scope.row)" type="text" size="small">取消置顶</el-button>
-                  <el-button v-if="scope.row.status==0" @click="release(scope.row)" type="text" size="small">发布</el-button>
+                  <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
                   <el-button v-if="scope.row.status==1" @click="release(scope.row)" type="text" size="small">取消发布</el-button>
-                  <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加节点</el-button>
+                  <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加目录</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -463,6 +468,7 @@
               </el-table-column>
               <el-table-column
                 width="273"
+                v-if="permission"
                 align="center"
                 label="操作">
                 <template slot-scope="scope">
@@ -470,9 +476,9 @@
                   <el-button @click="delVisible=true;delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
                   <el-button v-if="scope.row.sticked==0" @click="setTop(scope.row)" type="text" size="small">置顶</el-button>
                   <el-button v-if="scope.row.sticked==1" @click="setTop(scope.row)" type="text" size="small">取消置顶</el-button>
-                  <el-button v-if="scope.row.status==0" @click="release(scope.row)" type="text" size="small">发布</el-button>
+                  <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
                   <el-button v-if="scope.row.status==1" @click="release(scope.row)" type="text" size="small">取消发布</el-button>
-                  <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加节点</el-button>
+                  <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加目录</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -570,6 +576,7 @@
               </el-table-column>
               <el-table-column
                 width="273"
+                v-if="permission"
                 align="center"
                 label="操作">
                 <template slot-scope="scope">
@@ -577,9 +584,9 @@
                   <el-button @click="delVisible=true;delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
                   <el-button v-if="scope.row.sticked==0" @click="setTop(scope.row)" type="text" size="small">置顶</el-button>
                   <el-button v-if="scope.row.sticked==1" @click="setTop(scope.row)" type="text" size="small">取消置顶</el-button>
-                  <el-button v-if="scope.row.status==0" @click="release(scope.row)" type="text" size="small">发布</el-button>
+                  <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
                   <el-button v-if="scope.row.status==1" @click="release(scope.row)" type="text" size="small">取消发布</el-button>
-                  <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加节点</el-button>
+                  <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加目录</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -599,7 +606,7 @@
           </div>
         </el-row>
         <el-row style="margin-top:5px;">
-          <el-button type="success" size="small" @click="checkCatalogid();clearUpload('upload');">新建</el-button>
+          <el-button v-if="permission" type="success" size="small" @click="checkCatalogid();clearUpload('upload');">新建</el-button>
           <!-- <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button> -->
           <el-pagination
             v-if="nodePageShow"
@@ -812,6 +819,33 @@
             </el-form>
           </el-row> -->
           <el-row>
+            <el-form :inline="true" style="margin-left:-5px;margin-top:-20px;">
+              <el-form-item label="创建人:" label-width="65px">
+                <div>{{noteDetail.creatorRealname}}</div>
+              </el-form-item>
+              <el-form-item label="创建时间:" label-width="75px" style="margin-left:100px;">
+                <div>{{formatDateTime(noteDetail.CreatedAt)}}</div>
+              </el-form-item>
+            </el-form>
+          </el-row>
+          <el-row>
+            <el-form :inline="true" style="margin-left:-5px;margin-top:-20px;">
+              <el-form-item label="修改人:" label-width="65px">
+                <div>{{noteDetail.updatorRealname}}</div>
+              </el-form-item>
+              <el-form-item label="修改时间:" label-width="75px" style="margin-left:100px;">
+                <div>{{formatDateTime(noteDetail.UpdatedAt)}}</div>
+              </el-form-item>
+            </el-form>
+          </el-row>
+          <el-row>
+            <el-form>
+              <el-form-item style="margin-left:-2px;margin-top:-20px;" label-width="75px" label="所在目录:">
+                <div v-for="item in noteDetail.catalogs" :key="item.path">{{item.path}}</div>
+              </el-form-item>
+            </el-form>
+          </el-row>
+          <el-row>
             <el-form>
               <el-form-item style="margin-top:-20px;" label-width="45px" label="概要:">
                 <div>{{noteDetail.brief}}</div>
@@ -887,6 +921,19 @@
             <el-button @click="editNoteTitleVisiable = false" v-if="hasNoteTitle===true">取消</el-button>
           </div>
         </el-dialog>
+        <!-- 发布的newdays -->
+        <el-dialog 
+          width="30%" 
+          title="填写new标签持续时间" 
+          :visible.sync="releaseVisible" 
+          append-to-body>
+          <span style="color:red">*</span><span style="font-size:15px;">天数：</span>
+          <el-input type="text" placeholder="请输入天数" size="medium" v-model="newdays"></el-input>
+          <div slot="footer" class="dialog-footer" style="text-align: center;">
+            <el-button type="primary" @click="release(releaseInfo,newdays)">确定</el-button>
+            <el-button @click="newdays=null;noteTitle=null;releaseVisible = false">取消</el-button>
+          </div>
+        </el-dialog>
         <!-- 文章添加链接节点 -->
         <el-dialog
           top="5vh" 
@@ -894,7 +941,6 @@
           title="添加文章链接目录" 
           :visible.sync="linkVisiable" 
           append-to-body>
-          <span style="font-size:15px;">选择目录：</span>
           <div>
             <el-tree class="expand-tree"
               key="tree2"
@@ -925,6 +971,7 @@
 import { MessageBox } from 'element-ui'
 import TreeRender from '@/components/tree/tree_kb.vue'
 import {
+  getPermission,
   getCatalogs,
   addCatalogs,
   delCatalogs,
@@ -949,6 +996,7 @@ export default{
   data() {
     return {
       token: localStorage.getItem('Admin-Token'),
+      permission: false,
       // tree
       isLoadingTree: false, // 是否加载节点树
       draggable: true,
@@ -993,11 +1041,14 @@ export default{
       noteTitleVisiable: false, // 新建笔记模态框显示隐藏
       editNoteTitleVisiable: false, // 修改笔记模态框显示隐藏
       linkVisiable: false,
+      releaseVisible: false,
       timeValue: null,
       noteTitle: '', // 新建标题
       brief: '',
       remark: '',
       hasNoteTitle: true, // 判断是否有标题
+      newdays: 0,
+      releaseInfo: {},
       body: '',
       req: {
         title: null,
@@ -1183,7 +1234,8 @@ export default{
           NODE: node,
           STORE: store,
           maxexpandId: that.non_maxexpandId,
-          editCancel: that.editCancel
+          editCancel: that.editCancel,
+          permission: that.permission
         },
         on: {
           nodeAdd: (s, d, n) => that.handleAdd(s, d, n),
@@ -1647,7 +1699,16 @@ export default{
         this.tableType = 1
       })
     },
-    // 普通查询
+    // 获取文章路径
+    // getPath(row) {
+    //   console.log(row.catalogs)
+    //   for (let i = 0; i < row.catalogs.length; i++) {
+    //     const path = row.catalogs[i].path.split('/')
+    //     console.log(path)
+    //   }
+    //   return row.title
+    // },
+    // 查询
     getArticles1(req) {
       if (this.searchType === '0') {
         if (this.timeValue) {
@@ -1981,6 +2042,11 @@ export default{
             this.noteDetail.body = response.data.body
             this.noteDetail.brief = response.data.brief
             this.noteDetail.remark = response.data.remark
+            this.noteDetail.CreatedAt = response.data.CreatedAt
+            this.noteDetail.UpdatedAt = response.data.UpdatedAt
+            this.noteDetail.creatorRealname = response.data.creatorRealname
+            this.noteDetail.updatorRealname = response.data.updatorRealname
+            this.noteDetail.catalogs = response.data.catalogs
             this.detailArticles = true
             if (this.tableType === 1) {
               this.getArticlesById(this.catalogid, this.nodeReq)
@@ -2025,17 +2091,39 @@ export default{
         const endTime = new Date(row.release_time)// 发布时间
         const startTime = new Date(row.CreatedAt) // 创建时间
         const NEWDAYS = endTime - startTime
-        return (NEWDAYS / 1000 / 60 / 60 / 24).toFixed(2) < 10
+        return (NEWDAYS / 1000 / 60 / 60 / 24).toFixed(2) < row.newdays
       }
     },
     // 发布
-    release(row) {
+    release(row, newdays) {
       let req = {}
       if (row.status === 1) {
-        req = { 'status': 0 }
+        req = { 'status': 0, 'newdays': 0 }
       } else {
-        req = { 'status': 1 }
+        req = { 'status': 1, 'newdays': parseInt(newdays) }
+        if (!/^\d+$/.test(newdays)) {
+          this.$message({
+            message: '请输入整数',
+            type: 'error'
+          })
+          this.newdays = null
+          return false
+        } else if (!newdays) {
+          this.$message({
+            message: '请输入天数',
+            type: 'error'
+          })
+          return false
+        } else if (newdays === '0') {
+          this.$message({
+            message: '输入天数必须大于一天',
+            type: 'error'
+          })
+          this.newdays = null
+          return false
+        }
       }
+      this.releaseVisible = false
       editArticles(row.ID, req).then(response => {
         if (this.tableType === 1) {
           this.getArticlesById(this.catalogid, this.nodeReq)
@@ -2044,6 +2132,7 @@ export default{
         } else if (this.searchType === '1') {
           this.getArticles1(this.searchReq2)
         }
+        this.newdays = null
       })
     },
     // 获取点击数前五的文章添加hot标签
@@ -2306,6 +2395,20 @@ export default{
     $('aside').height($(window).height() - 108.55 + 10)
     $(window).resize(function() {
       $('aside').height($(window).height() - 108.55 + 10)
+    })
+    // 获取权限
+    getPermission(localStorage.getItem('agentId')).then(response => {
+      if (response.data) {
+        this.permission = true
+      } else {
+        window.location.reload()
+      }
+    }).catch(error => {
+      if (error.response.status === 403) {
+        this.permission = false
+      } else {
+        window.location.reload()
+      }
     })
   }
 }

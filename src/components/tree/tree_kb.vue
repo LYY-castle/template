@@ -12,7 +12,7 @@
 		:class="[DATA.ID > maxexpandId ? 'tree-new tree-label' : 'tree-label']">
 			<span>{{DATA.name}}</span>
 		</span>
-		<span class="tree-btn" v-show="!DATA.isEdit">
+		<span class="tree-btn" v-show="!DATA.isEdit" v-if="permission">
 			<i class="el-icon-plus" @click.stop="nodeAdd(STORE,DATA,NODE)"></i>
 			<i class="el-icon-edit" @click.stop="nodeEdit(STORE,DATA,NODE)"></i>
 			<i class="el-icon-delete" @click.stop="nodeDel(STORE,DATA,NODE)"></i>
@@ -29,7 +29,7 @@
 <script>
 export default{
   name: 'treeExpand',
-  props: ['NODE', 'DATA', 'STORE', 'maxexpandId', 'editCancel'],
+  props: ['NODE', 'DATA', 'STORE', 'maxexpandId', 'editCancel', 'permission'],
   data() {
     return {
       nodeName: ''

@@ -1,5 +1,12 @@
 import request from '@/utils/request'
 
+// 权限
+export function getPermission(id) {
+  return request({
+    url: `auth/users/${id}/perms/-kb-update/POST`
+  })
+}
+
 // 查询所有节点列表
 export function getCatalogs() {
   return request({
