@@ -47,7 +47,7 @@
                   end-placeholder="结束时间">
               </el-date-picker>
             </el-form-item>
-            <el-form-item label="发布状态：" prop="validityStatus">
+            <el-form-item v-if="permission" label="发布状态：" prop="validityStatus">
               <el-radio-group v-model="req.status" size="small">
                 <el-radio-button label=1 border>发布</el-radio-button>
                 <el-radio-button label=0 border>未发布</el-radio-button>
