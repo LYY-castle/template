@@ -1,6 +1,5 @@
 <template>
-  <el-container style="min-height:99vh;" id="kb">
-    <el-col :span="4">
+  <div style="width:100%;min-height:99vh;" id="kb">
       <el-aside style="width:19%;">
         <div class="expand">
           <div v-if="permission" style="position:fixed;top:101px;width:18.1%;height:81px;background:#252E34;z-index:500;"></div>
@@ -23,10 +22,7 @@
           </div>
         </div>
       </el-aside>
-    </el-col>
-    <el-col :span="1"></el-col>
-    <el-col :span="19">
-      <el-container class="kb-main" style="width:100%">
+      <div class="kb-main" style="margin-left:21%;width:80%">
       <!-- 主页 -->
       <el-main v-if="isListPage==='1'">
         <el-row>
@@ -987,10 +983,8 @@
             <el-button @click="linkVisiable = false">取消</el-button>
           </div>
         </el-dialog>
-    </el-container>
-    </el-col>
-    
-  </el-container>
+    </div>   
+  </div>
 </template>
 
 <script>
@@ -2610,12 +2604,8 @@ export default{
       background:#39484D;
     }
     .el-container.kb-main{
-      width:100% !important;
       float:right;
     }
-    // .sertion{
-    //   display:block !important;
-    // }
     .kb-main>.el-main{
       overflow:visible;
     }
