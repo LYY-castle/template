@@ -51,6 +51,12 @@
                   end-placeholder="结束时间">
               </el-date-picker>
             </el-form-item>
+            <el-form-item label="发布状态：" prop="validityStatus">
+              <el-radio-group v-model="req.status" size="small">
+                <el-radio-button label=1 border>发布</el-radio-button>
+                <el-radio-button label=0 border>未发布</el-radio-button>
+              </el-radio-group>
+            </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="getArticles1(req);req2=clone(req);">查询</el-button>
               <el-button type="danger" @click="reset();req2=clone(req)">重置</el-button>
@@ -1649,6 +1655,7 @@ export default{
           pageNo: this.pageInfo.pageNo,
           pageSize: this.pageInfo.pageSize
         }
+        delete this.req.status
         this.searchReq = {
           query: '',
           title: {
@@ -1674,6 +1681,7 @@ export default{
           pageNo: 1,
           pageSize: 10
         }
+        delete this.req.status
         this.searchReq = {
           query: '',
           title: {
@@ -1700,7 +1708,7 @@ export default{
         pageNo: 1,
         pageSize: 10
       }
-
+      delete this.req2.status
       this.searchReq2 = {
         query: '',
         pageNo: 1,
@@ -1754,8 +1762,6 @@ export default{
         }
         if (!this.permission) {
           req.status = 1
-        } else if (this.permission) {
-          delete req.status
         }
         getArticles1(req).then(response => {
           this.tableData = response.data.result
@@ -1965,13 +1971,18 @@ export default{
             if (this.editDetail.attachments) {
               this.editDetail.attachments.length = 0
             }
-            console.log(error)
+            throw new Error(error)
           })
       }
     },
     // 获取删除文章的目录
     getDelInfo(row) {
-      this.delCatalogid = ''
+      // if (this.tableType === 1) {
+      //   this.delCatalogid = this.catalogid
+      // } else {
+      //   this.delCatalogid = null
+      // }
+      this.delCatalogid = null
       getArticlesDetail(row.ID).then(response => {
         this.delVisible = true
         this.delRowInfo = response.data
@@ -2016,7 +2027,7 @@ export default{
             message: '删除失败',
             type: 'error'
           })
-          console.log(error)
+          throw new Error(error)
         })
       } else {
         this.$message.error('请选择需要删除文章的目录')
@@ -2086,7 +2097,7 @@ export default{
               this.note_item.attachments.length = 0
             }
             this.getArticlesById(this.catalogid, this.nodeReq)
-            console.log(error)
+            throw new Error(error)
           })
       }
     },
