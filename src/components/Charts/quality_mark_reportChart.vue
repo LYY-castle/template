@@ -594,7 +594,7 @@
     },
     methods: {
       initWebSocket() { // 初始化weosocket
-        const wsuri = process.env.TUI_WS_SERVERURL + '/realtime_report_ob'// ws地址
+        const wsuri = process.env.TUI_WS_SERVERURL + '/realtime_report_quality_score'// ws地址
         this.websock = new WebSocket(wsuri)
         this.websock.onopen = this.websocketonopen
         this.websock.onerror = this.websocketonerror
