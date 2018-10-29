@@ -160,7 +160,7 @@
               label="操作">
               <template slot-scope="scope">
                 <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
-                <el-button @click="delVisible=true;delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
+                <el-button @click="getDelInfo(scope.row);delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
                 <el-button v-if="scope.row.sticked==0" @click="setTop(scope.row)" type="text" size="small">置顶</el-button>
                 <el-button v-if="scope.row.sticked==1" @click="setTop(scope.row)" type="text" size="small">取消置顶</el-button>
                 <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
@@ -257,7 +257,7 @@
                 label="操作">
                 <template slot-scope="scope">
                   <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
-                  <el-button @click="delVisible=true;delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
+                  <el-button @click="getDelInfo(scope.row);delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
                   <el-button v-if="scope.row.sticked==0" @click="setTop(scope.row)" type="text" size="small">置顶</el-button>
                   <el-button v-if="scope.row.sticked==1" @click="setTop(scope.row)" type="text" size="small">取消置顶</el-button>
                   <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
@@ -365,7 +365,7 @@
                 label="操作">
                 <template slot-scope="scope">
                   <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
-                  <el-button @click="delVisible=true;delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
+                  <el-button @click="getDelInfo(scope.row);delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
                   <el-button v-if="scope.row.sticked==0" @click="setTop(scope.row)" type="text" size="small">置顶</el-button>
                   <el-button v-if="scope.row.sticked==1" @click="setTop(scope.row)" type="text" size="small">取消置顶</el-button>
                   <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
@@ -473,7 +473,7 @@
                 label="操作">
                 <template slot-scope="scope">
                   <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
-                  <el-button @click="delVisible=true;delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
+                  <el-button @click="getDelInfo(scope.row);delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
                   <el-button v-if="scope.row.sticked==0" @click="setTop(scope.row)" type="text" size="small">置顶</el-button>
                   <el-button v-if="scope.row.sticked==1" @click="setTop(scope.row)" type="text" size="small">取消置顶</el-button>
                   <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
@@ -581,7 +581,7 @@
                 label="操作">
                 <template slot-scope="scope">
                   <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
-                  <el-button @click="delVisible=true;delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
+                  <el-button @click="getDelInfo(scope.row);delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
                   <el-button v-if="scope.row.sticked==0" @click="setTop(scope.row)" type="text" size="small">置顶</el-button>
                   <el-button v-if="scope.row.sticked==1" @click="setTop(scope.row)" type="text" size="small">取消置顶</el-button>
                   <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
@@ -880,7 +880,27 @@
           title="删除"
           :visible.sync="delVisible"
           append-to-body>
-          <span style="font-size:20px;">确定删除此内容？</span>
+          <div style="font-size:18px">
+            <b>此文章存在于以下目录</b>
+          </div>
+          <div v-for="item in delRowInfo.catalogs">{{item.path_name}}</div>
+          <div style="font-size:18px" v-if="delType(delRowInfo)">此操作将会删除
+            <b style="color:red">{{delUrl.path_name}}</b>
+            下的文章，是否确定删除？</div>
+          <div v-if="!delType(delRowInfo)">
+            <el-form>
+              <el-form-item label="选择文章目录" prop="summaryId">
+              <el-select v-model="delCatalogid" placeholder="请选择需要删除文章的目录" style="width: 100%;">
+                <el-option
+                    v-for="item in delUrls"
+                    :key="item.ID"
+                    :label="item.path_name"
+                    :value="item.ID">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            </el-form>
+          </div>
           <div slot="footer" class="dialog-footer" style="text-align: right;">
             <el-button @click="delVisible = false">取 消</el-button>
             <el-button type="primary" @click="delVisible = false;delArticles(delReq);">确 定</el-button>
@@ -1168,7 +1188,11 @@ export default{
       uploadCount: 0,
       uploadSuccessCount: 0,
       fileList: [],
-      uploadDisable: false
+      uploadDisable: false,
+      delRowInfo: {},
+      delUrl: null,
+      delUrls: [],
+      delCatalogid: null
     }
   },
   methods: {
@@ -1945,10 +1969,36 @@ export default{
           })
       }
     },
+    // 获取删除文章的目录
+    getDelInfo(row) {
+      this.delCatalogid = ''
+      getArticlesDetail(row.ID).then(response => {
+        this.delVisible = true
+        this.delRowInfo = response.data
+        this.delType(this.delRowInfo)
+        if (this.delRowInfo.catalogs.length === 1) {
+          this.delUrl = this.delRowInfo.catalogs[0]
+        } else {
+          this.delUrls = this.delRowInfo.catalogs
+        }
+      }).catch(error => {
+        throw new Error(error)
+      })
+    },
+    // 判断删除文章目录数，选择操作方式
+    delType(delRowInfo) {
+      if (delRowInfo.catalogs) {
+        if (delRowInfo.catalogs.length === 1) {
+          return true
+        } else {
+          return false
+        }
+      }
+    },
     // 删除文章
     delArticles(delReq) {
-      if (this.catalogid) {
-        delReq.catalogid = this.catalogid
+      if (this.delCatalogid) {
+        delReq.catalogid = this.delCatalogid
         delArticles(delReq).then(response => {
           if (this.tableType === 1) {
             this.getArticlesById(this.catalogid, this.nodeReq)
