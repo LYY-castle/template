@@ -1396,6 +1396,7 @@ export default {
                 const result = {}
                 result.description = productInfo.description
                 result.price = productInfo.price
+                result.templateId = productInfo.templateId
                 result.number = productInfo.number
                 result.productName = productInfo.productName
                 result.productTypeId = productInfo.productTypeInfo.productTypeId
@@ -1456,6 +1457,7 @@ export default {
                   productInfo.productNum = productTempInfo[b].number
                   productInfo.productTypeId = productTempInfo[b].productTypeId
                   productInfo.productTypeName = productTempInfo[b].productTypeName
+                  productInfo.productTemplateId = productTempInfo[b].templateId
                   productInfos.push(productInfo)
                 }
                 createInfo.productInfos = productInfos
