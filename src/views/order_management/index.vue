@@ -407,12 +407,13 @@
 
     // 组件挂载时
     mounted() {
+      this.req.modifyTimeStart = this.$route.query.startTime ? this.$route.query.startTime : ''
+      this.req.modifyTimeEnd = this.$route.query.endTime ? this.$route.query.endTime : ''
       this.checkPermission().then(() => {
         this.searchByKeyWords(this.req)
       })
       this.getAllCampsByStaff()
     },
-
     methods: {
       // 展示订单产品信息
       showProducts(item) {

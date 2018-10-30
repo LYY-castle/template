@@ -20,7 +20,7 @@ if(orderId!=null){
 					$("#token").html(token);
 					$("#orderId").html(info.orderId).css("color","blue");
 					$("#totalCount").html("<label style='color:blue'>￥</label><font style='color:red;margin-left:3px;margin-right:3px;' class='amount'>"+info.totalAmount+"</font><font style='color:blue'>元</font>");
-					$("#productName").html(info.productName).css("color","blue");
+					$("#productName").html(showProducts(info.productInfos)).css("color","blue");
 					$("#dateTime").html("000").css("color","blue");
 					$("#customerName").html(info.customerName).css("color","blue");
 					$("#customerphone").html(info.customerPhone==null?'':repalceString(info.customerPhone,4,4,'*')).css("color","blue");
@@ -70,7 +70,7 @@ $("#gopay").on('click',function(){
 			manualAlert("跳转到微信支付！");
 		}else if($("#alipay").prop("checked")){
 			app.request.postJSON(portalUrl+'/payment/alipay',
-						{"amount":$(".amount").text(),"description":$("#description").text(),"orderId":$("#orderId").text(),"orderName":$("#productName").text()}, 
+						{"amount":$(".amount").text(),"description":$("#description").text(),"orderId":$("#orderId").text(),"orderName":$("#productName").text().indexOf("，")===-1?$("#productName").text().substring(0,$("#productName").text().indexOf("*")):"复合产品"}, 
 					function (data) {
 						if(data.code==0){
 							var info = data.data;
@@ -148,4 +148,17 @@ function resetTime(time){
 	   }
 	  }
 	  timer=setInterval(countDown,1000);
+	}
+	// 展示产品信息
+	function showProducts(item) {
+		let productStr = ''
+		if (typeof item === 'undefined' || item === null) {
+			return productStr
+		} else {
+			for (let i = 0; i < item.length; i++) {
+				productStr += item[i].productName + ' * ' + item[i].productNum + '，'
+			}
+			productStr = productStr.substring(0, productStr.length - 1)
+			return productStr
+		}
 	}

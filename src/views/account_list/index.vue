@@ -253,7 +253,7 @@
 <script>
 import {
   findAllAccount,
-  findAllOrganTo,
+  queryDepts,
   changeState,
   resetPWDById,
   findAccountByAgentid,
@@ -452,7 +452,10 @@ export default {
       addRole(this.ruleFormReverse.agentId, roleIds).then(response => {
         if (response.status === 200) {
           this.dialogFormVisible = false
-          this.$message.success('赋予用户角色成功')
+          this.$message({
+            message: '赋予用户角色成功',
+            type: 'success'
+          })
           if (this.$route.query.departName) {
             this.formInline.departName = this.$route.query.departName
             findAllAccount(this.formInline).then(
@@ -467,25 +470,47 @@ export default {
               this.queryStaff(response)
             })
           }
+        } else {
+          this.$message({
+            message: '赋予用户角色失败',
+            type: 'error'
+          })
         }
       }).catch(error => {
-        this.$message.error('赋予用户角色失败')
+        this.$message({
+          message: '赋予用户角色失败',
+          type: 'error'
+        })
         console.log(error)
       })
     },
     // 修改角色
     editRole(roleIds) {
       if (this.checkRoleData2.length === 0) {
-        this.$message.error('请选择角色')
+        this.$message({
+          message: '请选择角色',
+          type: 'error'
+        })
         return false
       }
       editRole(this.ruleFormReverse.agentId, roleIds).then(response => {
         if (response.status === 200) {
           this.dialogFormVisibleReverse = false
-          this.$message.success('修改用户角色成功')
+          this.$message({
+            message: '修改角色成功',
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: '修改角色失败',
+            type: 'error'
+          })
         }
       }).catch(error => {
-        this.$message.error('修改用户角色失败')
+        this.$message({
+          message: '修改角色失败',
+          type: 'error'
+        })
         console.log(error)
       })
     },
@@ -827,7 +852,7 @@ export default {
       })
     },
     refreshOrganTo() {
-      findAllOrganTo().then(response => {
+      queryDepts().then(response => {
         this.regionOptions = response.data.data
       })
     }

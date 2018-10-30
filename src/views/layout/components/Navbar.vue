@@ -41,7 +41,7 @@
                 <el-form :inline="true" size="mini" style="padding-top:20px;">
                   <!-- 分机号登入 -->
                   <el-form-item class="txtDN" size="mini" style="width:70px;">
-                    <el-input v-model="formInline.DN" placeholder="分机号">{{formInline.DN}}</el-input>
+                    <el-input v-model="formInline.DN" placeholder="分机号" :disabled="disabledDN">{{formInline.DN}}</el-input>
                   </el-form-item>
                   <el-form-item>
                     <el-button type="primary" size="mini" style="display:inline;" v-if="!islogin" @click="agentLogin()">登入</el-button>
@@ -67,7 +67,7 @@
               <img src="../../../../static/images/answer_normal.gif" title="接听"  class="img-all" v-show="answerCall" @click="agentanswercall()" style="width:53px;">
               <el-form-item class="numberBox">
                 <!-- <el-col :span="24"> -->
-                  <el-input v-model="formInline.user" size="mini"></el-input>
+                  <el-input v-model="formInline.user" size="mini" :disabled="disabledDial"></el-input>
                 <!-- </el-col> -->
               </el-form-item>
             </el-form>
@@ -141,7 +141,7 @@
             <br> -->
           </div>
           <!-- <span style="float:left" class="line"></span> -->
-          
+
         </div>
         <div style="float:right;margin-right:3px;" v-if="havesoftphone">
           <!-- 有未读信息 -->
@@ -299,8 +299,10 @@ export default {
   name: 'layout',
   data() {
     return {
+      isDialTaskPage: false, // 是否为拨打详情页面
       socket: null,
       disabledDN: false, // 默认不禁用电话号码框
+      disabledDial: false, // 默认不禁用拨打号码框
       dialNum: '',
       reasonCode: '',
       bolConnected: false,
@@ -549,6 +551,7 @@ export default {
       cti.hangup()
     },
     agentretrieve() {
+      vm.disabledDial = false
       this.talkCaller = this.caller
       this.talkCallee = this.callee
       cti.retrievecall()
@@ -702,26 +705,40 @@ export default {
       })
     },
     agentdialout() {
-      const DN = this.formInline.DN
-      vm.dialNum = this.formInline.user
+      vm.dialCall = false
+      if (vm.isDialTaskPage) {
+        // 如果是在拨打页面拨打空时，默认拨打客户
+        if (JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasonCode !== '-101' &&
+        JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasonCode !== '-100') {
+          vm.$root.eventHub.$emit('NAVBAR', 'transfer')
+          // vm.dialCall = true
+        }
+      } else {
+        const DN = this.formInline.DN
+        vm.dialNum = this.formInline.user
+        this.dialOut(DN, vm.dialNum)
+      }
+    },
+    dialOut(DN, dialNum) {
       const reg = /^([1-9][0-9]{2,10}|[0-9]{1,4}\-?[0-9]{1,4}\-?[0-9]{1,9})$/
-      if (DN === vm.dialNum) {
+      if (DN === dialNum) {
         Message({
           message: '不能拨打自己本身',
           type: 'error',
           duration: 1 * 1000
         })
+        vm.dialCall = true
       } else {
-        if (reg.test(vm.dialNum)) {
+        if (reg.test(dialNum)) {
           const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
-          if (regex.test(vm.dialNum)) {
-            this.getPromise(vm.dialNum).then(function() {
+          if (regex.test(dialNum)) {
+            this.getPromise(dialNum).then(function() {
               vm.dialCall = false
-              cti.makecall(DN, vm.dialNum)
+              cti.makecall(DN, dialNum)
             })
           } else {
             vm.dialCall = false
-            cti.makecall(DN, vm.dialNum)
+            cti.makecall(DN, dialNum)
           }
         } else {
           Message({
@@ -729,6 +746,7 @@ export default {
             type: 'error',
             duration: 1 * 1000
           })
+          vm.dialCall = true
         }
       }
     },
@@ -931,6 +949,9 @@ export default {
       vm.setbtnStatus('onhold')
     },
     on_hangup_event(event, agentid, DN, UUID, hangupLine, activeLineCount) {
+      if (vm.isDialTaskPage) {
+        vm.formInline.user = ''
+      }
       addHangupContact({
         'event': 'on_hangup_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID
       }).then(res => {
@@ -1000,7 +1021,11 @@ export default {
       vm.caller = callerid
       vm.callee = calleeid
       vm.orginCaller = ori_ani
-      vm.global_taskId = localStorage.getItem('global_taskId')
+      if (vm.isDialTaskPage) {
+        vm.global_taskId = localStorage.getItem('global_taskId')
+      } else {
+        vm.global_taskId = ''
+      }
       if (calleeid.length === 12) {
         if (calleeid.substring(0, 1) === '9') {
           calleeid = calleeid.substring(1)
@@ -1055,6 +1080,30 @@ export default {
       info.DN = DN
       info.reasonCode = reasonCode
       localStorage.setItem(agentId, JSON.stringify(info))
+      if (vm.isDialTaskPage) {
+        if (reasonCode === '-101' || reasonCode === '-100') {
+          vm.formInline.user = ''
+          vm.disabledDial = false
+        } else {
+          vm.disabledDial = true
+        }
+        switch (reasonCode) {
+          case '0':
+          case '13':
+          case '14':
+            vm.$root.eventHub.$emit('dialTrue', '1')
+            break
+          case '-100':
+          case '-101':
+          case '-1':
+          case '-2':
+          default:
+            vm.$root.eventHub.$emit('dialTrue', '0')
+            break
+        }
+      } else {
+        vm.disabledDial = false
+      }
       switch (reasonCode) {
         case '-1':
           vm.islogin = false
@@ -1381,9 +1430,37 @@ export default {
     this.$root.eventHub.$on('CHANGE_STATUS', () => {
       this.firstgetUnreadMessages(agentId)
     })
+    this.$root.eventHub.$on('DISABLED_DIAL', (str) => {
+      if (str === '1') {
+        vm.dialCall = false
+      } else {
+        vm.dialCall = true
+      }
+    })
+    this.$root.eventHub.$on('DIAL_TASK', (obj) => {
+      if (!obj.isDialTask) { // 说明是拨打页面
+        vm.isDialTaskPage = true
+        vm.formInline.user = ''
+        vm.disabledDial = true
+      } else {
+        vm.isDialTaskPage = false
+        vm.disabledDial = false
+        vm.dialCall = true
+      }
+    })
+    this.$root.eventHub.$on('DIAL_TASK_DIALNM', (obj) => {
+      if (vm.isDialTaskPage) {
+        cti.makecall(obj.caller, obj.callee)
+      } else {
+        vm.$message.error('不在拨打界面，不能拨打客户')
+      }
+    })
   },
   destroyed() {
     this.socket.close()
+    this.$root.eventHub.$off('DISABLED_DIAL')
+    this.$root.eventHub.$off('DIAL_TASK')
+    this.$root.eventHub.$off('DIAL_TASK_DIALNM')
   }
 }
 </script>

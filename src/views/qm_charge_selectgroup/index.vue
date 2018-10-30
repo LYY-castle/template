@@ -287,15 +287,12 @@ export default {
             queryDeptById(response.data.data.departId)
               .then(response => {
                 if (response.data.code === 1) {
-                  console.log(response.data.data.departName)
                   this.campaignDetail.departName = response.data.data.departName
                   // 通过小结id显示小结名称
                   queryNodulesById(summaryId)
                     .then(response => {
                       if (response.data.code === 0) {
-                        console.log(response.data.data.summaryName)
                         this.campaignDetail.summaryName = response.data.data.summaryName
-                        console.log(this.campaignDetail)
                         this.appointVisiable = true
                       }
                     })

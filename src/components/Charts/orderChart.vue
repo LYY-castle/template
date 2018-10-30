@@ -2,13 +2,13 @@
   <div style="width: 100%;height: 90%" v-if="departPermission">
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
-        <el-form-item label="活动名称:">
+        <el-form-item label="活动名称:" v-show="activeNameList && activeNameList.length > 0">
           <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange">
             <el-option value="" label="所有活动"></el-option>
             <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="产品名称:">
+        <el-form-item label="产品名称:" v-show="productList && productList.length > 0">
           <el-select v-model="formInline.productClone" placeholder="产品名称">
             <el-option value="" label="所有产品"></el-option>
             <el-option v-for="item in productList" :key="item.productId" :label="item.productName" :value="item.productId"></el-option>
@@ -125,7 +125,7 @@
       </el-form-item>
       <el-form-item label="员工选项:" style="margin-bottom: 0" v-else>
         <el-select v-model="formInline.staff" @change="agentChange">
-          <el-option v-for="item in staffOptions" :key="item" :label="item.real_name ? item.real_name + ' (' + item.agent_id + ')' : item.agent_id" :value="item.agent_id"></el-option>
+          <el-option v-for="item in staffOptions" :key="item.agent_id" :label="item.real_name ? item.real_name + ' (' + item.agent_id + ')' : item.agent_id" :value="item.agent_id"></el-option>
         </el-select>
       </el-form-item>
     </el-form>
@@ -238,7 +238,7 @@
             <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="产品名称:">
+        <el-form-item label="产品名称:" v-show="productList && productList.length > 0">
           <el-select v-model="formInline.productClone" placeholder="产品名称">
             <el-option value="" label="所有产品"></el-option>
             <el-option v-for="item in productList" :key="item.productId" :label="item.productName" :value="item.productId"></el-option>
@@ -392,7 +392,7 @@
   import { orderstatistics, departAgents, getDepartId, ordertotalAgent, orderreportAgent } from '@/api/ctiReport'
   import { Message } from 'element-ui'
   import { permsorderdepart, permsorderstaff } from '@/api/reportPermission'
-  import { findCampaignByUser } from '@/api/monitor_list_single'
+  import { findCampaignAllByUser } from '@/api/monitor_list_single'
   import { hasOrderInfos } from '@/api/dialTask'
   import { findAllProduct } from '@/api/campaign'
   import moment from 'moment'
@@ -477,6 +477,7 @@
           agent_id: [],
           from: 1,
           time: 'day',
+          timeClone: 'day',
           staff: '',
           time_dimension: '',
           productClone: '',
@@ -498,11 +499,12 @@
         total_amountAgent: [],
         avg_amountAgent: [],
         agentTime: [],
-        staffAgentid: null
+        staffAgentid: null,
+        websock: null
       }
     },
     mounted() {
-      findCampaignByUser().then(response => {
+      findCampaignAllByUser().then(response => {
         this.activeNameList = response.data.data
       })
       findAllProduct().then(res => {
@@ -574,6 +576,12 @@
         })
       })
     },
+    created() {
+      this.initWebSocket()
+    },
+    destroyed() {
+      this.websocketclose()
+    },
     beforeDestroy() {
       if (!this.chart) {
         return
@@ -592,6 +600,33 @@
       this.chartTime = null
     },
     methods: {
+      initWebSocket() { // 初始化weosocket
+        const wsuri = process.env.TUI_WS_SERVERURL + '/realtime_report_order'// ws地址
+        this.websock = new WebSocket(wsuri)
+        this.websock.onopen = this.websocketonopen
+        this.websock.onerror = this.websocketonerror
+        this.websock.onmessage = this.websocketonmessage
+        this.websock.onclose = this.websocketclose
+      },
+      websocketonopen() {
+        console.log('WebSocket连接成功')
+      },
+      websocketonerror(e) { // 错误
+        console.log('WebSocket连接发生错误')
+      },
+      websocketonmessage(e) { // 数据接收
+        if (e) {
+          if (this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone) < Date.parse(new Date()) < this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)) {
+            this.searchEvery('search')
+          }
+        }
+      },
+      // websocketsend(agentData) { // 数据发送
+      //   this.websock.send(agentData)
+      // },
+      websocketclose(e) { // 关闭
+        console.log(e)
+      },
       getSummaryMethod({ columns, data }) {
         const sums = []
         columns.forEach((column, index) => {
@@ -705,9 +740,9 @@
           statistics_type: this.statistics_type,
           depart_id: this.departId,
           campaign_id: this.formInline.campaignId,
-          time_dimension: this.formInline.time,
-          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
-          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
+          time_dimension: this.formInline.timeClone,
+          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
+          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone),
           pageNo: val,
           pageSize: this.pageSize[this.currentIndex]
         }
@@ -731,10 +766,10 @@
           depart_id: this.departId,
           product_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
-          time_dimension: this.formInline.time,
+          time_dimension: this.formInline.timeClone,
           agent_id: this.staffAgentid,
-          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
-          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
+          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
+          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone),
           pageNo: val,
           pageSize: this.paginationAgent.pageSize
         }
@@ -758,9 +793,9 @@
           depart_id: this.departId,
           product_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
-          time_dimension: this.formInline.time,
-          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
-          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
+          time_dimension: this.formInline.timeClone,
+          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
+          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone),
           pageNo: 1,
           pageSize: 5
         }
@@ -786,9 +821,9 @@
           depart_id: this.departId,
           product_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
-          time_dimension: this.formInline.time,
-          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
-          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
+          time_dimension: this.formInline.timeClone,
+          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
+          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone),
           pageNo: 1,
           pageSize: 10
         }
@@ -1451,10 +1486,10 @@
           depart_id: this.departId,
           product_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
-          time_dimension: this.formInline.time,
+          time_dimension: this.formInline.timeClone,
           time: val,
-          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
-          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
+          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
         }
 
         if (this.statistics_type === 'depart') {
@@ -1484,9 +1519,9 @@
           depart_id: this.departId,
           product_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
-          time_dimension: this.formInline.time,
-          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
-          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
+          time_dimension: this.formInline.timeClone,
+          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
+          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone),
           pageNo: page || 1,
           pageSize: 8
         }
@@ -1526,9 +1561,9 @@
           depart_id: this.departId,
           product_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
-          time_dimension: this.formInline.time,
-          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
-          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time), // val || val === 'search' ? this.timeValue[1] :
+          time_dimension: this.formInline.timeClone,
+          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
+          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone), // val || val === 'search' ? this.timeValue[1] :
           pageNo: val && val !== 'search' ? this.formInline.from : 1,
           pageSize: 10
         }
@@ -1583,6 +1618,7 @@
           })
         } else {
           this.timeValueClone = this.timeValue
+          this.formInline.timeClone = this.formInline.time
           this.pageNo = []
           this.pageSize = []
           this.totalCount = []
@@ -1594,10 +1630,45 @@
             depart_id: this.departId,
             product_id: this.formInline.product,
             campaign_id: this.formInline.campaignId,
-            time_dimension: this.formInline.time,
+            time_dimension: this.formInline.timeClone,
             sub_depart_id: this.formInline.sub_depart_id.join(','),
-            start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
-            end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+            start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
+            end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+          }
+
+          if (this.statistics_type === 'depart') {
+            params.sub_depart_id = this.formInline.sub_depart_id.join(',')
+          } else {
+            params.agent_id = this.formInline.agent_id.join(',')
+          }
+
+          ordertotalAgent(params).then(response => {
+            this.tableData1 = response.data.result
+          })
+          this.teamData(val)
+        }
+      },
+      searchEvery(val) {
+        if (this.timeValue[0] > this.timeValue[1]) {
+          Message({
+            message: '开始时间不能大于结束时间',
+            type: 'error',
+            duration: 3 * 1000
+          })
+        } else {
+          this.pageNo = []
+          this.pageSize = []
+          this.totalCount = []
+
+          const params = {
+            statistics_type: this.statistics_type,
+            depart_id: this.departId,
+            product_id: this.formInline.product,
+            campaign_id: this.formInline.campaignId,
+            time_dimension: this.formInline.timeClone,
+            sub_depart_id: this.formInline.sub_depart_id.join(','),
+            start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
+            end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
           }
 
           if (this.statistics_type === 'depart') {
@@ -1626,6 +1697,7 @@
             duration: 3 * 1000
           })
         } else {
+          this.formInline.timeClone = this.formInline.time
           this.formInline.product = this.formInline.productClone
           this.formInline.campaignId = this.formInline.campaignIdClone
           this.timeValueClone = this.timeValue

@@ -122,7 +122,7 @@
         <el-col :span="1" style="float:right">
           <div style="display:inline-block;text-align:center">
              <div><a><img src="../../../static/images/monitoring_index/refresh.png" alt="刷新" @click="refresh()"></img></a></div>
-              <span style="float:right;cursor:pointer" @click="refresh()">刷新</span> 
+              <span style="float:right;cursor:pointer" @click="refresh()">刷新</span>
           </div>
         </el-col>
       </el-row>
@@ -512,7 +512,7 @@ var baseinfo = null
         baseinfo.team.ringingCount = 0
         baseinfo.team.freeCount = 0
         baseinfo.team.queueCount = 0
-  
+
         if (Object.keys(baseinfo.departInfo).length > 0) {
           for (let i = 0; i < baseinfo.organData.length; i++) {
             if (baseinfo.departInfo[baseinfo.organData[i].departId]) {
@@ -601,7 +601,7 @@ var baseinfo = null
               const dayTime = new Date()
               const updateTime = (dayTime.getMonth() + 1 > 9 ? dayTime.getMonth() + 1 : '0' + (dayTime.getMonth() + 1)) + '/' + (dayTime.getDate() > 9 ? dayTime.getDate() : '0' + dayTime.getDate()) + '/' + (dayTime.getFullYear()) + ' ' + (dayTime.getHours() > 9 ? dayTime.getHours() : '0' + dayTime.getHours()) + ':' + (dayTime.getMinutes() > 9 ? dayTime.getMinutes() : '0' + dayTime.getMinutes()) + ':' + (dayTime.getSeconds() > 9 ? dayTime.getSeconds() : '0' + dayTime.getSeconds())
               baseinfo.agentData[i].updateTime = updateTime
-  
+
               findStatusByAgentId(agentid).then(res => {
                 if (res.data.code === 0) {
                   baseinfo.agentData[i].talkOutCount = res.data.data.outCallTotalTime
@@ -968,8 +968,7 @@ var baseinfo = null
                     obj.loginoffshow = true
                     obj.busyshow = false
                   })
-                  var ctiIP_Port = 'ws://119.27.179.175:9052/'
-                  cti.connectCTI(ctiIP_Port)
+                  cti.connectCTI(process.env.CTI_MONITOR_WS_SERVERURL)
                   for (let j = 0; j < baseinfo.agentData.length; j++) {
                     findStatusByAgentId(baseinfo.agentData[j].agentId).then((response) => {
                       if (response.data.code === 0) {
@@ -1003,13 +1002,12 @@ var baseinfo = null
                 obj.freeCount = 0
                 obj.queueCount = 0
                 obj.onlineCount = 0
-  
+
                 baseinfo.organData.push(obj)
               }
               if (baseinfo.promise_arr.length > 0) {
                 Promise.all(baseinfo.promise_arr).then(function() {
-                  var ctiIP_Port = 'ws://119.27.179.175:9052/'
-                  cti.connectCTI(ctiIP_Port)
+                  cti.connectCTI(process.env.CTI_MONITOR_WS_SERVERURL)
                 })
               }
             }

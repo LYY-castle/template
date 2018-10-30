@@ -7,6 +7,14 @@ export function queryDepts() {
   })
 }
 
+// 获取所有可见组织
+export function getAllVisibleDepts() {
+  return request({
+    url: '/organization/findAllOrganTo',
+    method: 'get'
+  })
+}
+
 export function query(page) {
   return request({
     url: '/employee/query',

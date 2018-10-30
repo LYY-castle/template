@@ -13,7 +13,7 @@
             <el-select v-model="formInline.parent_organ" placeholder="上级组织">
               <el-option label="所有上级组织" value=""></el-option>
               <el-option label="一级组织" value="0"></el-option>
-              <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
+              <el-option v-for="item in allDepts" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="操作人：">
@@ -78,6 +78,14 @@
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
               {{ scope.row.upDepartName }}
+            </template>
+          </el-table-column>
+          <el-table-column
+          align="center"
+          label="组织状态"
+          :show-overflow-tooltip="true">
+            <template slot-scope="scope">
+              <div v-html="showOrgStatus(scope.row.visible)"></div>
             </template>
           </el-table-column>
           <el-table-column
@@ -153,6 +161,16 @@
             <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="组织状态">
+          <el-switch
+          v-model="ruleForm.visible"
+          active-text="可见"
+          inactive-text="不可见"
+          active-color="#13ce66"
+          :active-value=1
+          :inactive-value=0
+          ></el-switch>
+        </el-form-item>
         <el-form-item label="备注">
           <el-input type="textarea" v-model="ruleForm.comment" placeholder="上限255字符" maxlength="255"></el-input>
         </el-form-item>
@@ -177,6 +195,17 @@
             <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="组织状态">
+          <el-switch
+          @change="checkVisibleStatus(ruleFormReverse)"
+          v-model="ruleFormReverse.visible"
+          active-text="可见"
+          inactive-text="不可见"
+          active-color="#13ce66"
+          :active-value=1
+          :inactive-value=0
+          ></el-switch>
+        </el-form-item>
         <el-form-item label="备注">
           <el-input type="textarea" v-model="ruleFormReverse.comment" placeholder="上限255字符" maxlength="255"></el-input>
         </el-form-item>
@@ -193,11 +222,26 @@
         <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确 定</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog
+      width="30%"
+      title="操作提示"
+      :visible.sync="op_hints"
+      :close-on-press-escape=false
+      :close-on-click-modal=false
+      :show-close=false
+      append-to-body>
+      <span style="font-size:20px;">该部门下存在可见的下属组织，是否设置为不可见。</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button @click="op_hints = false;ruleFormReverse.visible=1">取 消</el-button>
+        <el-button type="primary" @click="op_hints = false;updateOrganStatus(visibleData)">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-  import { modifyOrgan, delOrgan, addOrganization, delOrgansByOrganIds, findAllOrganGet, findAllOrganPost, findAllOrganTo } from '@/api/organization_list'
+  import { queryDepts, verifyDept, modifyOrganStatus, modifyOrgan, delOrgan, addOrganization, delOrgansByOrganIds, findAllOrganGet, findAllOrganPost, findAllOrganTo } from '@/api/organization_list'
   import { Message, MessageBox } from 'element-ui'
   import { formatDateTime } from '@/utils/tools'
   import { validSpace } from '@/utils/validate'
@@ -208,6 +252,7 @@
       return {
         timeValue: '',
         organData: {},
+        visibleData: {},
         pagination: {
           pageSize: null,
           pageNo: null,
@@ -218,7 +263,8 @@
           name: '',
           phone: ''
         },
-        regionOptions: [],
+        regionOptions: [], // 所有可见组织
+        allDepts: [], // 所有组织
         tableData: [],
         multipleSelection: [],
         formInline: {
@@ -234,7 +280,8 @@
         ruleForm: {
           id: '',
           departName: '',
-          comment: ''
+          comment: '',
+          visible: 1 // 组织状态  0：不可见    1：可见
         },
         ruleFormReverse: {
           upId: '',
@@ -244,10 +291,13 @@
           upDepartName: '',
           departName: '',
           comment: '',
-          createTime: ''
+          createTime: '',
+          visible: null
         },
         dialogFormVisible: false,
         dialogFormVisibleReverse: false,
+        op_hints: false,
+        ophints_check: false,
         rules: {
           departName: [
             { required: true, message: '请输入组织名', trigger: 'blur' },
@@ -263,6 +313,26 @@
       }
     },
     methods: {
+      // 修改组织可见/不可见状态
+      updateOrganStatus(obj) {
+        modifyOrganStatus(obj)
+          .then(res1 => {
+            if (!res1 || res1.data.code === 0) {
+              this.$message.error('修改组织状态失败！')
+            } else {
+              this.searchOrgan(this.formInline)
+            }
+          })
+      },
+      showOrgStatus(visible) {
+        if (visible === 0) {
+          // 不可见
+          return "<span style='color:red'>不可见</span>"
+        } else {
+          // 可见
+          return "<span style='color:green'>可见</span>"
+        }
+      },
       deleteAll() {
         const organIds = this.multipleSelection.map(function(item, index) {
           return item.id
@@ -312,12 +382,14 @@
               obj = {
                 organ_cn: this.ruleForm.departName,
                 upId: this.ruleForm.id,
-                remark: this.ruleForm.comment
+                remark: this.ruleForm.comment,
+                visible: parseInt(this.ruleForm.visible)
               }
             } else {
               obj = {
                 organ_cn: this.ruleForm.departName,
-                remark: this.ruleForm.comment
+                remark: this.ruleForm.comment,
+                visible: parseInt(this.ruleForm.visible)
               }
             }
             addOrganization(obj).then(response => {
@@ -342,6 +414,26 @@
           }
         })
       },
+      checkVisibleStatus(obj) {
+        if (obj.visible === 0) {
+          // 说明从可见设置为不可见 需要判断是否有可见的下级部门
+          this.visibleData = obj
+          verifyDept(obj.id)
+            .then(response => {
+              if (response.data.code === 0) {
+                // 存在可见下级部门
+                this.op_hints = true
+              } else {
+                // 不存在可见下级部门
+                // 直接更改
+                this.updateOrganStatus(obj)
+              }
+            })
+        } else {
+          // 从不可见设置为可见 直接更改
+          this.updateOrganStatus(obj)
+        }
+      },
       submitFormReverse(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -360,6 +452,7 @@
 
             modifyOrgan(obj).then(response => {
               if (response.data.exchange.body.code === 1) {
+                this.$message.success('修改成功！')
                 this.dialogFormVisibleReverse = false
                 findAllOrganPost(this.formInline).then(response => {
                   this.queryOrgan(response)
@@ -466,7 +559,8 @@
               upDepartName: data.upDepartName,
               departName: data.departName,
               comment: data.comment,
-              createTime: formatDateTime(data.createTime)
+              createTime: formatDateTime(data.createTime),
+              visible: data.visible
             }
           }
         })
@@ -481,7 +575,8 @@
           upDepartName: this.organData.upDepartName,
           departName: this.organData.departName,
           comment: this.organData.comment,
-          createTime: formatDateTime(this.organData.createTime)
+          createTime: formatDateTime(this.organData.createTime),
+          visible: this.organData.visible
         }
       },
       handleCurrentChange(val) {
@@ -552,10 +647,13 @@
         findAllOrganTo().then(response => {
           this.regionOptions = response.data.data
         })
+        queryDepts().then(response1 => {
+          this.allDepts = response1.data.data
+        })
       }
     },
     created() {
-      console.log(this.$route.query.parent_organ)
+      // console.log(this.$route.query.parent_organ)
       if (this.$route.query.parent_organ) {
         this.refreshOrgan()
       } else {

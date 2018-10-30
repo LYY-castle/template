@@ -75,15 +75,20 @@
           <el-table-column
             align="center"
             label="操作时间"
-            width="155">
+            >
             <template slot-scope="scope">
                 <div>{{formatDateTime(scope.row.modifyTime)}}</div>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" label="号段状态" >
+            <template slot-scope="scope">
+              <div v-html="showVisibleStatus(scope.row.visible)"></div>
             </template>
           </el-table-column>
           <el-table-column
             align="center"
             label="操作"
-            width="200">1
+            >
           <template slot-scope="scope">
             <el-button @click="editVisible=true;delReq.id=scope.row.id;resetEdit();queryone(scope.row.id);" type="text" size="small">修改</el-button>
             <el-button @click="delVisible=true;delReq.id=scope.row.id" type="text" size="small">删除</el-button>
@@ -95,6 +100,8 @@
     <el-row style="margin-top:5px;">
         <el-button type="success" size="small" @click="addVisible=true;clearForm(addNoDisturbPhonesDetail,'addPhonesForm');">新建</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
+        <el-button type="primary" size="small" @click="op_hints1=true">批量可见</el-button>
+        <el-button type="primary" size="small" @click="op_hints2=true" style="width:100px">批量不可见</el-button>
         <el-pagination
           v-if="pageShow"
           background
@@ -120,6 +127,16 @@
         </el-form-item>
         <el-form-item label="结束号段：" prop="endNumber">
              <el-input v-model="addNoDisturbPhonesDetail.endNumber" size="small" @blur.native="formatNum(addNoDisturbPhonesDetail.startNumber,'startNumber')" placeholder="结束号段（限长45字符）" maxlength="45"></el-input>
+        </el-form-item>
+        <el-form-item label="号段状态：" prop="visible">
+          <el-switch
+          v-model="addNoDisturbPhonesDetail.visible"
+          active-text="可见"
+          inactive-text="不可见"
+          active-color="#67C23A"
+          :active-value=1
+          :inactive-value=0
+          ></el-switch>
         </el-form-item>
       </el-form>
         <div slot="footer" style="text-align: right;">
@@ -152,6 +169,30 @@
         <el-button type="primary" @click="delVisible = false;deleteone(delReq.id);">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 批量可见 -->
+      <el-dialog
+      width="30%"
+      title="操作提示"
+      :visible.sync="op_hints1"
+      append-to-body>
+      <span style="font-size:20px;">是否确认批量设置号段为可见？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button @click="op_hints1 = false">取 消</el-button>
+        <el-button type="primary" @click="op_hints1 = false;batchSetVisibleStatus(batchDelReq,1)">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 批量不可见 -->
+      <el-dialog
+      width="30%"
+      title="操作提示"
+      :visible.sync="op_hints2"
+      append-to-body>
+      <span style="font-size:20px;">是否确认批量设置号段为不可见？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button @click="op_hints2 = false">取 消</el-button>
+        <el-button type="primary" @click="op_hints2 = false;batchSetVisibleStatus(batchDelReq,0)">确 定</el-button>
+      </div>
+    </el-dialog>
       <!-- 修改免访客户 -->
       <el-dialog
       align:left
@@ -165,6 +206,16 @@
         </el-form-item>
         <el-form-item label="结束号段:" prop="endNumber">
              <el-input v-model="editNoDisturbPhonesDetail.endNumber" size="small" @blur.native="formatNum(editNoDisturbPhonesDetail.endNumber,'endNumber')" placeholder="结束号段（限长45字符）" maxlength="45"></el-input>
+        </el-form-item>
+        <el-form-item label="号段状态：" prop="visible">
+          <el-switch
+          v-model="editNoDisturbPhonesDetail.visible"
+          active-text="可见"
+          inactive-text="不可见"
+          active-color="#67C23A"
+          :active-value=1
+          :inactive-value=0
+          ></el-switch>
         </el-form-item>
         <el-form-item label="操作人:" prop="modifier">
           <span>{{editNoDisturbPhonesDetail.modifier}}</span>
@@ -182,7 +233,7 @@
   </div>
 </template>
 <script>
-import { querynodisturbphones, queryone, addNoDisturbZones, batchdel, eidtNoDisturbZones, deleteone } from '@/api/nodisturbphones_management'
+import { batchSetVisible, querynodisturbphones, queryone, addNoDisturbZones, batchdel, eidtNoDisturbZones, deleteone } from '@/api/nodisturbphones_management'
 import { formatDateTime } from '@/utils/tools'
 
 export default {
@@ -212,6 +263,8 @@ export default {
       validate: true, // 验证不通过阻止发请求
       addVisible: false, // 新建对话框显示隐藏
       pageShow: false, // 分页显示隐藏
+      op_hints1: false,
+      op_hints2: false,
       blur: false,
       rule: {
         startNumber: [
@@ -223,6 +276,11 @@ export default {
           { required: true, message: '开始号段不能为空', trigger: 'blur' },
           { pattern: /^\d{1,11}$/, message: '请输入不超过11位数字号段' },
           { validator: formatNum, trigger: 'blur' }
+        ],
+        visible: [
+          {
+            required: true, message: '请选择号段状态', trigger: 'blur'
+          }
         ]
       },
       // 查询 发送请求参数
@@ -246,7 +304,8 @@ export default {
       }, // 记录上次查询条件
       addNoDisturbPhonesDetail: {
         startNumber: '', // 开始号段
-        endNumber: '' // 结束号段
+        endNumber: '', // 结束号段
+        visible: 1 // 可见不可见字段
       },
       delReq: {
         id: ''
@@ -272,6 +331,36 @@ export default {
     this.querynodisturbphones(this.req)
   },
   methods: {
+    batchSetVisibleStatus(batchDelReq, visible) {
+      if (batchDelReq.ids.length === 0) {
+        this.$message.error('请先选择需要设置的免访号段！')
+      } else {
+        var NovisitPhoneList = {
+          ids: batchDelReq.ids,
+          visible: visible
+        }
+
+        batchSetVisible(NovisitPhoneList)
+          .then(response => {
+            if (response.data.code === 0) {
+              this.$message.success(response.data.message)
+              this.querynodisturbphones(this.req)
+            } else {
+              this.$message.error(response.data.message)
+            }
+          })
+      }
+    },
+    // 展示当前可见状态
+    showVisibleStatus(visible) {
+      if (visible === 1) {
+        // 可见
+        return "<span style='color:#67C23A'>可见</span>"
+      } else {
+        // 不可见
+        return "<span style='color:#F56C6C'>不可见</span>"
+      }
+    },
     // 重置查询框内容
     reset() {
       this.req = {
@@ -287,7 +376,8 @@ export default {
     resetAdd() {
       this.addNoDisturbPhonesDetail = {
         startNumber: '', // 开始号段
-        endNumber: '' // 结束号段
+        endNumber: '', // 结束号段
+        visible: 1
       }
     },
     resetEdit() {
@@ -320,6 +410,7 @@ export default {
     queryone(id) {
       queryone(id).then(response => {
         if (response.data.code === 0) {
+          console.log(response.data.data)
           this.editNoDisturbPhonesDetail = response.data.data
         } else {
           this.$message.success(response.data.message)
@@ -440,7 +531,6 @@ export default {
     },
     // 校验检测
     submitForm(formName, value) {
-      console.log(value)
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.validate = true
@@ -448,7 +538,6 @@ export default {
           this.$message.error('请检查是否填写正确')
           this.validate = false
         }
-        console.log(this.validate)
         if (this.validate) {
           if (parseInt(value.startNumber) > parseInt(value.endNumber)) {
             this.$message.error('开始号段不能大于结束号段')
@@ -458,10 +547,8 @@ export default {
       })
     },
     formatNum(num, name) {
-      console.log(111)
       var pattern = '/^\d{1,11}$/'
       var tag = pattern.test(num)
-      console.log(tag)
       if (tag) {
         var len = 11 - (num.toString().length)
         for (var i = 0; i < len; i++) {

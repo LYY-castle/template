@@ -113,3 +113,84 @@ export function departAgents(id) {
     params: { 'depart_id': id }
   })
 }
+
+export function grades() {
+  return request({
+    url: '/quality/grades',
+    method: 'get'
+  })
+}
+
+export function findCampaignByUserQuality() {
+  return request({
+    url: '/qualityTask/findQmCampaignByUser',
+    method: 'get'
+  })
+}
+
+export function qualityReportstatistics(obj) {
+  return request({
+    url: '/qualityReport/departOrStaff/statistics',
+    method: 'get',
+    params: _.omitBy(obj, (v) => {
+      return _.trim(v) === ''
+    })
+  })
+}
+
+export function qualityReporttotalAgent(obj) {
+  return request({
+    url: '/qualityReport/staffTotal/statistics',
+    method: 'get',
+    params: _.omitBy(obj, (v) => {
+      return _.trim(v) === ''
+    })
+  })
+}
+
+export function qualityReportreportAgent(obj) {
+  return request({
+    url: '/qualityReport/staff/statistics',
+    method: 'get',
+    params: _.omitBy(obj, (v) => {
+      return _.trim(v) === ''
+    })
+  })
+}
+
+export function qualityTaskReportstatistics(obj) {
+  return request({
+    url: '/quality_task_report/statistics',
+    method: 'get',
+    params: _.omitBy(obj, (v) => {
+      return _.trim(v) === ''
+    })
+  })
+}
+
+export function qualityTaskReporttotalAgent(obj) {
+  return request({
+    url: '/quality_task_report/statistics/agent-total',
+    method: 'get',
+    params: _.omitBy(obj, (v) => {
+      return _.trim(v) === ''
+    })
+  })
+}
+
+export function qualityTaskReportAgent(obj) {
+  return request({
+    url: '/quality_task_report/agent/statistics',
+    method: 'get',
+    params: _.omitBy(obj, (v) => {
+      return _.trim(v) === ''
+    })
+  })
+}
+
+export function getGradesByCampaignId(id) {
+  return request({
+    url: '/quality/getGradesByCampaignId?campaignId=' + id,
+    method: 'get'
+  })
+}

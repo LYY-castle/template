@@ -4,7 +4,7 @@
       <el-form-item :inline='true' label="修改系统logo" prop="logo" style="width:487px;">
         <el-upload
           ref="upload"
-          action="http://119.27.179.175:8111/linntestportal/themeandcolor/upload"
+          :action="uploadUrl"
           :headers="{'Authorization':'Bearer ' +token}"
           :on-success="uploadSuccess"
           :before-upload="beforeUpload"
@@ -61,7 +61,8 @@ export default {
         url: '',
         title: '',
         type: 0
-      }
+      },
+      uploadUrl: ''
     }
   },
   methods: {
@@ -73,9 +74,9 @@ export default {
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       })
-      // setTimeout(() => {
-      //   this.loading.close()
-      // }, 3000)
+      setTimeout(() => {
+        this.loading.close()
+      }, 3000)
     },
     changeTheme(req) {
       modifyTheme(req).then(response => {
@@ -178,6 +179,10 @@ export default {
         this.$refs[formName].clearFiles()
       }
     }
+  },
+  mounted() {
+    this.uploadUrl = process.env.BASE_API + '/themeandcolor/upload'
+    console.log(this.uploadUrl)
   }
 }
 </script>

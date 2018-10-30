@@ -16,6 +16,13 @@ export function changeState(obj) {
   })
 }
 
+export function queryDepts() {
+  return request({
+    url: '/employee/queryDepts',
+    method: 'get'
+  })
+}
+
 export function alterAccountList(obj) {
   return request({
     url: '/account/alterAccountList',

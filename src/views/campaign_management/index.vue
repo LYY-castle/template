@@ -10,6 +10,7 @@
         </el-form-item>
         <el-form-item label="活动状态：" prop="status">
           <el-radio-group v-model="req.status" size="small">
+            <el-radio label=''>所有</el-radio>
             <el-radio label='0'>有效</el-radio>
             <el-radio label='1'>无效</el-radio>
           </el-radio-group>
@@ -142,9 +143,9 @@
           <template slot-scope="scope">
             <el-button @click="editVisible=true;delReq.campaignId=scope.row.campaignId;getDeptByCampaignId(scope.row.campaignId);getMarksByCampaignId(scope.row.campaignId);getCampaignById(scope.row.campaignId);" type="text" size="small">修改</el-button>
             <el-button @click="delVisible=true;delReq.campaignId=scope.row.campaignId" type="text" size="small">删除</el-button>
-            <el-button @click="changeVisible=true;delReq.campaignId=scope.row.campaignId;delReq.status=scope.row.status" type="text" size="small">{{scope.row.status==='0'?'禁用':'启用'}}</el-button>
+            <!-- <el-button @click="changeVisible=true;delReq.campaignId=scope.row.campaignId;delReq.status=scope.row.status" type="text" size="small">{{scope.row.status==='0'?'禁用':'启用'}}</el-button> -->
             <el-button @click="campaignName=scope.row.campaignName;nameListExclude.campaignId=scope.row.campaignId;nameLists.campaignId=scope.row.campaignId;addList=true;nameLists.pageSize=10;nameListExclude.pageSize=10;nameListExclude.pageNo = 1;nameLists.pageNo = 1;getNameLists(nameLists);getNameListExclude(nameListExclude)" type="text" size="small">添加名单</el-button>
-            <el-button @click="campaignName=scope.row.campaignName;nameLists.campaignId=scope.row.campaignId;removeVisible=true;nameLists.pageNo = 1;getNameLists(nameLists)" type="text" size="small">移除名单</el-button>
+            <el-button v-if="scope.row.status == 0" @click="campaignName=scope.row.campaignName;nameLists.campaignId=scope.row.campaignId;removeVisible=true;nameLists.pageNo = 1;getNameLists(nameLists)" type="text" size="small">移除名单</el-button>
           </template>
           </el-table-column>
         </el-table>
@@ -200,16 +201,16 @@
         <el-form-item label="拨打次数" prop="canContactNum">
           <el-input v-model="campaignDetail.canContactNum" size="small" placeholder="单位：次"></el-input>
         </el-form-item>
-        <el-form-item label="活动状态:" prop="status">
+        <!-- <el-form-item label="活动状态:" prop="status">
           <el-radio-group v-model="campaignDetail.status" size="small">
             <el-radio label='0' border>有效</el-radio>
             <el-radio label='1' border>无效</el-radio>
           </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="活动组织" prop="departId">
           <el-select v-model="campaignDetail.departId" placeholder="请选择活动组织" style="width: 100%;">
           <el-option
-              v-for="item in deptData"
+              v-for="item in visibleDepts"
               :key="item.id"
               :label="item.departName"
               :value="item.id">
@@ -219,7 +220,7 @@
         <el-form-item label="话后小结" prop="summaryId">
           <el-select v-model="campaignDetail.summaryId" placeholder="请选择小结" style="width: 100%;">
             <el-option
-                v-for="item in summaryData"
+                v-for="item in visibleSummaryData"
                 :key="item.summaryId"
                 :label="item.summaryName"
                 :value="item.summaryId">
@@ -266,9 +267,9 @@
         <el-form-item label="拨打次数">
           <span>{{campaignDetail.canContactNum==null?'':(campaignDetail.canContactNum+'次')}}</span>
         </el-form-item>
-        <el-form-item label="活动状态">
+        <!-- <el-form-item label="活动状态">
           <span>{{campaignDetail.status==='1'?'无效':'有效'}}</span>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="活动组织">
           <span>{{departName}}</span>
         </el-form-item>
@@ -327,16 +328,16 @@
         <el-form-item label="拨打次数" prop="canContactNum">
           <el-input v-model="campaignDetail.canContactNum" size="small" placeholder="单位：次"></el-input>
         </el-form-item>
-        <el-form-item label="活动状态" prop="status">
+        <!-- <el-form-item label="活动状态" prop="status">
           <el-radio-group v-model="campaignDetail.status" size="small">
             <el-radio label='0' border>有效</el-radio>
             <el-radio label='1' border>无效</el-radio>
           </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="活动组织" prop="departId">
         <el-select v-model="campaignDetail.departId" placeholder="请选择活动组织" style="width: 100%;">
           <el-option
-              v-for="item in deptData"
+              v-for="item in visibleDepts"
               :key="item.id"
               :label="item.departName"
               :value="item.id">
@@ -346,7 +347,7 @@
       <el-form-item label="话后小结" prop="summaryId">
         <el-select v-model="campaignDetail.summaryId" placeholder="请选择小结" style="width: 100%;">
           <el-option
-              v-for="item in summaryData"
+              v-for="item in visibleSummaryData"
               :key="item.summaryId"
               :label="item.summaryName"
               :value="item.summaryId">
@@ -385,7 +386,7 @@
         <el-button size="small" type="primary" @click="batchDelVisible = false;batchDelCampaigns(batchDelReq);">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog
+    <!-- <el-dialog
       width="30%"
       :visible.sync="changeVisible"
       append-to-body>
@@ -394,7 +395,7 @@
         <el-button size="small" @click="changeVisible = false">取 消</el-button>
         <el-button size="small" type="primary" @click="changeVisible = false;changeStatus(delReq);">确 定</el-button>
       </div>
-    </el-dialog>
+    </el-dialog> -->
     <el-dialog
       top="5vh"
       width="90%"
@@ -702,11 +703,13 @@
 import {
   findAllProduct,
   queryDepts,
+  getAllVisibleDepts,
   findAllNodules,
+  findAllVisibleNodules,
   findMarksByCampaignId,
   findDeptByCampaignId,
   modifyCampaign,
-  changeCampaignStatus,
+  // changeCampaignStatus,
   findAllCampaignTypes
 } from '@/api/campaign'
 import {
@@ -769,9 +772,9 @@ export default {
           { required: true, message: '请输入拨打次数', trigger: 'change' },
           { validator: checkCanContactNum, trigger: 'change' }
         ],
-        status: [
-          { required: true, message: '请选择活动状态', trigger: 'change' }
-        ],
+        // status: [
+        //   { required: true, message: '请选择活动状态', trigger: 'change' }
+        // ],
         departId: [
           { required: true, message: '请选择活动组织', trigger: 'change' }
         ],
@@ -799,9 +802,11 @@ export default {
       // nameListExcludePage: false,//可选名单分页
       // nameListPage: false,//已选名单分页
       productData: [], // 产品
-      deptData: [], // 活动组织
+      deptData: [], // 所有组织
+      visibleDepts: [], // 所有可见组织
       qcdeptData: [], // 质检组织
-      summaryData: [], // 小结
+      allSummaryData: [], // 所有小结
+      visibleSummaryData: [], // 所有可见的小结
       campaignTypes: [], // 活动类型
       marksData: [], // 评分表
       productName: [], // 产品名称
@@ -819,7 +824,7 @@ export default {
       req: {
         campaignId: '',
         campaignName: '',
-        status: '0',
+        status: '',
         modifierName: '',
         modifyTimeStart: '',
         modifyTimeEnd: '',
@@ -829,7 +834,7 @@ export default {
       req2: {
         campaignId: '',
         campaignName: '',
-        status: '0',
+        status: '',
         modifierName: '',
         modifyTimeStart: '',
         modifyTimeEnd: '',
@@ -871,7 +876,8 @@ export default {
         endCreateTime: '',
         pageSize: 10,
         pageNo: 1,
-        campaignId: ''
+        campaignId: '',
+        visible: 1
       },
       nameListExcludeTablel: [],
       nameListExcludePageinfo: {},
@@ -885,7 +891,9 @@ export default {
     this.findCampaignByConditions(this.req)
     this.getAllProduct()
     this.getDepts()
+    this.getVisibleDepts()
     this.getAllNodules()
+    this.getAllVisibleNodules()
     this.getAllCampaignTypes()
   },
   methods: {
@@ -894,7 +902,6 @@ export default {
     // 时间戳转年月日时分秒
     formatDateTime: formatDateTime,
     clearForm(obj, formName) {
-      console.log(this.$refs[formName])
       for (var key in obj) {
         if (key === 'products' || key === 'productIds') {
           obj[key] = []
@@ -954,6 +961,9 @@ export default {
         if (response.data.code === 0) {
           this.$message.success('操作成功')
           this.removeVisible = false
+          this.req2.pageNo = 1
+          this.pageInfo.pageSize = 1
+          this.findCampaignByConditions(this.req)
         } else {
           this.$message.error(response.data.message)
         }
@@ -1035,9 +1045,9 @@ export default {
     getSummaryName(summaryId) {
       var summaryName = ''
       // 遍历查找对应小结
-      for (var c = 0; c < this.summaryData.length; c++) {
-        if (this.summaryData[c].summaryId === summaryId) {
-          summaryName = this.summaryData[c].summaryName
+      for (var c = 0; c < this.allSummaryData.length; c++) {
+        if (this.allSummaryData[c].summaryId === summaryId) {
+          summaryName = this.allSummaryData[c].summaryName
         }
       }
       return summaryName
@@ -1049,6 +1059,7 @@ export default {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
             this.req2.pageNo = 1
+            this.req2.status = ''
             this.pageInfo.pageNo = 1
             this.findCampaignByConditions(this.req2)
           } else {
@@ -1091,9 +1102,9 @@ export default {
             }
           }
           // 遍历查找对应小结
-          for (var c = 0; c < this.summaryData.length; c++) {
-            if (this.summaryData[c].summaryId === this.campaignDetail.summaryId) {
-              this.summaryName = this.summaryData[c].summaryName
+          for (var c = 0; c < this.visibleSummaryData.length; c++) {
+            if (this.visibleSummaryData[c].summaryId === this.campaignDetail.summaryId) {
+              this.summaryName = this.visibleSummaryData[c].summaryName
             }
           }
         })
@@ -1111,6 +1122,7 @@ export default {
       modifyCampaign(campaignDetail).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
+          this.req2.status = ''
           this.findCampaignByConditions(this.req2)
         } else {
           this.$message(response.data.message)
@@ -1145,10 +1157,22 @@ export default {
         this.deptData = response.data.data
       })
     },
-    // 查询小结
+    // 查询所有可见组织
+    getVisibleDepts() {
+      getAllVisibleDepts().then(response => {
+        this.visibleDepts = response.data.data
+      })
+    },
+    // 查询所有小结
     getAllNodules() {
       findAllNodules().then(response => {
-        this.summaryData = response.data.data
+        this.allSummaryData = response.data.data
+      })
+    },
+    // 查询所有可见小结
+    getAllVisibleNodules() {
+      findAllVisibleNodules().then(response => {
+        this.visibleSummaryData = response.data.data
       })
     },
     // 详情页面查询评分表
@@ -1172,10 +1196,12 @@ export default {
         return false
       }
       campaignDetail.productIds = campaignDetail.products
+      campaignDetail.status = '1'
       this.addVisible = false
       addCampaign(campaignDetail).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
+          this.req2.status = ''
           this.findCampaignByConditions(this.req2)
         } else {
           this.$message(response.data.message)
@@ -1229,32 +1255,32 @@ export default {
       this.removeLists.push(id)
     },
     // 切换活动状态
-    changeStatus(status) {
-      if (status.status === '0') {
-        status.status = '1'
-      } else {
-        status.status = '0'
-      }
-      findCampaignById(status.campaignId).then(response => {
-        if (response.data.code === 0) {
-          status.productIds = response.data.data.products
-          changeCampaignStatus(status).then(response => {
-            if (response.data.code === 0) {
-              this.$message.success(response.data.message)
-              this.findCampaignByConditions(this.req2)
-            } else {
-              this.$message(response.data.message)
-            }
-          }).catch(error => {
-            console.log(error)
-            this.$message('操作失败')
-          })
-        }
-      }).catch(error => {
-        console.log(error)
-        this.$message('操作失败')
-      })
-    },
+    // changeStatus(status) {
+    //   if (status.status === '0') {
+    //     status.status = '1'
+    //   } else {
+    //     status.status = '0'
+    //   }
+    //   findCampaignById(status.campaignId).then(response => {
+    //     if (response.data.code === 0) {
+    //       status.productIds = response.data.data.products
+    //       changeCampaignStatus(status).then(response => {
+    //         if (response.data.code === 0) {
+    //           this.$message.success(response.data.message)
+    //           this.findCampaignByConditions(this.req2)
+    //         } else {
+    //           this.$message(response.data.message)
+    //         }
+    //       }).catch(error => {
+    //         console.log(error)
+    //         this.$message('操作失败')
+    //       })
+    //     }
+    //   }).catch(error => {
+    //     console.log(error)
+    //     this.$message('操作失败')
+    //   })
+    // },
     // 新建名单
     // 查询已选名单列表
     getNameLists(campaignId) {
@@ -1307,12 +1333,16 @@ export default {
     // 提交新建名单
     addCampaignAndList(addNameList) {
       addNameList.campaignId = this.nameLists.campaignId
+      addNameList.endTime = new Date(new Date().setHours(23, 59, 59, 0))
       assignCampaignAndList(addNameList).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
           this.getNameLists(this.nameLists)
           this.getNameListExclude(this.nameListExclude)
           this.addList = false
+          this.req2.pageNo = 1
+          this.pageInfo.pageSize = 1
+          this.findCampaignByConditions(this.req)
         }
       }).catch(error => {
         console.log(error)

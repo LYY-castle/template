@@ -41,3 +41,31 @@ export function permsorderstaff(id) {
     method: 'get'
   })
 }
+
+export function permsmarkreportdepart(id) {
+  return request({
+    url: '/auth/users/' + id + '/perms/-depart-mark-report/GET',
+    method: 'get'
+  })
+}
+
+export function permsmarkreportstaff(id) {
+  return request({
+    url: '/auth/users/' + id + '/perms/-staff-mark-report/GET',
+    method: 'get'
+  })
+}
+
+export function permsqualityreportdepart(id) {
+  return request({
+    url: '/auth/users/' + id + '/perms/-depart-quality-report/GET',
+    method: 'get'
+  })
+}
+
+export function permsqualityreportstaff(id) {
+  return request({
+    url: '/auth/users/' + id + '/perms/-staff-quality-report/GET',
+    method: 'get'
+  })
+}
