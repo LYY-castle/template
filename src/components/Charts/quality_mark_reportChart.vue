@@ -650,7 +650,7 @@
           if (index < columns.length - 1) {
             if (index === 2) {
               if (median.length % 2 === 1) {
-                sums[index] = median[parseInt(median.length / 2)]
+                sums[index] = median[parseInt(median.length / 2)].toFixed(2)
               } else {
                 sums[index] = ((median[median.length / 2] + median[median.length / 2 - 1]) / 2).toFixed(2)
               }
