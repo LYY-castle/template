@@ -100,7 +100,9 @@ export default {
   mounted() {
     this.staffId = localStorage.getItem('agentId')
     if (this.staffId) {
-      findQCTaskByQCId(this.staffId).then(res => {
+      const staff = {}
+      staff.staffId = this.staffId
+      findQCTaskByQCId(staff).then(res => {
         if (res.data.code === 0) {
           this.completeNum = res.data.data.completeNum
           this.noCompleteNum = res.data.data.noCompleteNum

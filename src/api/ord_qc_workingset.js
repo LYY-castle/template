@@ -11,8 +11,8 @@ export function findQualityTaskByInfo(obj) { // 根据接触历史编号、任�
 export function findQCTaskByQCId(obj) { // 通过质检工号来查询质检员的任务情况
   return request({
     url: '/quality/findQCTaskByQCId',
-    method: 'post',
-    data: obj
+    method: 'get',
+    params: obj
   })
 }
 
