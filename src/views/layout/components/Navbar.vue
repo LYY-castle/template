@@ -51,15 +51,15 @@
                 <img slot="reference" src="../../../../static/images/enter_disable.png" title="登入" class="img-all icon-container" style="width:53px;">
               </el-popover>
               <!-- 状态 -->
-              <el-dropdown trigger="click" placement="bottom" @command="changeState">
+              <el-dropdown trigger="click" placement="bottom" @command="changeState" >
                 <img src="../../../../static/images/nologin_state.png" title="未登录" class="img-all" v-if="agentState1">
                 <img src="../../../../static/images/busy_normal.png" title="示忙"  class="img-all" v-else-if="agentState2">
                 <img src="../../../../static/images/agentStat38_allReady.png" title="就绪"  class="img-all" v-else-if="agentState3">
                 <img src="../../../../static/images/back_state.png" title="坐席状态"  class="img-all" v-else-if="agentState4">
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="0">就绪</el-dropdown-item>
-                  <el-dropdown-item command="13">示忙</el-dropdown-item>
-                  <el-dropdown-item command="14">后处理</el-dropdown-item>
+                  <el-dropdown-item command="0" :disabled="lockChange">就绪</el-dropdown-item>
+                  <el-dropdown-item command="13" :disabled="lockChange">示忙</el-dropdown-item>
+                  <el-dropdown-item command="14" :disabled="lockChange">后处理</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
               <!-- 号码输入框 -->
@@ -299,6 +299,8 @@ export default {
   name: 'layout',
   data() {
     return {
+      agentArray: [], // 部门下属成员
+      lockChange: false, // 默认不禁用切换状态框
       isOrdSet: false, // 是否为普通坐席界面
       isDialTaskPage: false, // 是否为拨打详情页面
       socket: null,
@@ -450,6 +452,9 @@ export default {
         clearInterval(interval)
         interval = null
         this.socket.close()
+        this.agentArray.forEach(ele => { // 清空班长监控下的历史数据
+          localStorage.removeItem('m_' + ele)
+        })
         this.logout()
       } else if (command === 'changePWD') {
         this.changePWD.staffId = localStorage.getItem('agentId')
@@ -1123,6 +1128,7 @@ export default {
       // if (event !== 'manualchange') {
       switch (reasonCode) {
         case '-1':
+          vm.lockChange = true
           vm.islogin = false
           vm.timeCount = ''
           vm.telephoneState = '登出'
@@ -1132,6 +1138,7 @@ export default {
           vm.disabledDN = false
           break
         case '0':
+          vm.lockChange = false
           vm.islogin = true
           vm.oldtelephonestate = vm.telephoneState
           vm.telephoneState = '就绪'
@@ -1153,6 +1160,7 @@ export default {
           }
           break
         case '13':
+          vm.lockChange = false
           vm.islogin = true
           vm.oldtelephonestate = vm.telephoneState
           vm.telephoneState = '示忙'
@@ -1172,8 +1180,10 @@ export default {
             vm.disabledDN = false
             vm.formInline.DN = DN
           }
+
           break
         case '14':
+          vm.lockChange = false
           vm.islogin = true
           vm.oldtelephonestate = vm.telephoneState
           vm.telephoneState = '后处理'
@@ -1193,8 +1203,10 @@ export default {
             vm.disabledDN = false
             vm.formInline.DN = DN
           }
+
           break
         case '-100':
+          vm.lockChange = true
           vm.islogin = true
           vm.oldtelephonestate = vm.telephoneState
           vm.telephoneState = '来电通话中'
@@ -1225,8 +1237,10 @@ export default {
             vm.disabledDN = false
             vm.formInline.DN = DN
           }
+
           break
         case '-101':
+          vm.lockChange = true
           vm.islogin = true
           vm.oldtelephonestate = vm.telephoneState
           vm.telephoneState = '去电通话中'
@@ -1256,8 +1270,10 @@ export default {
             vm.disabledDN = false
             vm.formInline.DN = DN
           }
+
           break
         case '-2':
+          vm.lockChange = true
           vm.timeCount = ''
           vm.telephoneState = '登出'
           clearInterval(interval)
@@ -1265,6 +1281,10 @@ export default {
           vm.islogin = false
           vm.setbtnStatus('logoff')
           vm.disabledDN = false
+          break
+        case '-3':
+        case '-4':
+          vm.lockChange = true
           break
       }
       // }
@@ -1456,6 +1476,9 @@ export default {
     })
     this.$root.eventHub.$on('ord_set', (obj) => {
       vm.isOrdSet = obj
+    })
+    this.$root.eventHub.$on('monitor_workingset', (obj) => {
+      vm.agentArray = obj
     })
     // this.$root.eventHub.$on('manualchange', (obj) => {
     //   const object = JSON.parse(localStorage.getItem(localStorage.getItem('agentId')))

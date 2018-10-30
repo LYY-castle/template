@@ -321,10 +321,10 @@ export default {
   data() {
     return {
       // 定时器数组，累计在线，空闲，示忙和通话情况
-      online_interval: '',
-      free_interval: '',
-      busy_interval: '',
-      call_interval: '',
+      online_interval: null,
+      free_interval: null,
+      busy_interval: null,
+      call_interval: null,
       online_time_duration: 0, // 在线时长暂存
       free_time_duration: 0, // 空闲时长暂存
       busy_time_duration: 0, // 示忙时长暂存
@@ -380,12 +380,15 @@ export default {
     }
     baseinfo.closeInterval()
     baseinfo.monitorlogoff()
-    cti.onClose()
+    // cti.onClose()
   },
   destroyed() {
+    // baseinfo.agentArray.forEach(ele => {
+    //   localStorage.removeItem('m_' + ele)
+    // })
     baseinfo.monitorlogoff()
     baseinfo.closeInterval()
-    cti.onClose()
+    // cti.onClose()
   },
   mounted() {
     baseinfo = this
@@ -399,7 +402,7 @@ export default {
     departAgents({ depart_id: localStorage.getItem('departId') }).then(res => {
       this.agentMap = {}
       this.agentStatusMap = {}
-      if (!res.data.error) {
+      if ((!res.data.error) && (typeof res.data.result.agents !== 'undefined')) {
         this.totalNum = res.data.result.agents.length
         this.agentArray = []
         res.data.result.agents.forEach(element => {
@@ -416,6 +419,7 @@ export default {
           this.agentStatusMap[agent_id] = obj
           this.agentArray.push(element.agent_id)
         })
+        this.$root.eventHub.$emit('monitor_workingset', this.agentArray)
         agentStatus({ agent_id: this.agentArray.join(',') }).then(res => {
           if (!res.data.errorCode) {
             if (res.data.result.length > 0) {
@@ -472,13 +476,16 @@ export default {
         // online_time_duration = online_time_duration + (obj[element].online_time_duration ? obj[element].online_time_duration : 0)
 
         let stillTime = 0
-        if (obj[element].updateTime !== baseinfo.updateTime) { // 说明不是由这个员工状态改变引起的计算,需要计算间隔时间，然后统一到更新时间
-          // obj[element].stillTime = baseinfo.updateTime - (obj[element].updateTime ? obj[element].updateTime : 0)
-          // obj[element].updateTime = baseinfo.updateTime
-          // console.log(new Date().setHours(0, 0, 0, 0))
-          obj[element].updateTime = (obj[element].updateTime < new Date().setHours(0, 0, 0, 0)) ? new Date().setHours(0, 0, 0, 0) : obj[element].updateTime
-          stillTime = new Date().getTime() - obj[element].updateTime
-        }
+        // if (obj[element].updateTime !== baseinfo.updateTime) { // 说明不是由这个员工状态改变引起的计算,需要计算间隔时间，然后统一到更新时间
+        // obj[element].stillTime = baseinfo.updateTime - (obj[element].updateTime ? obj[element].updateTime : 0)
+        // obj[element].updateTime = baseinfo.updateTime
+        // console.log(new Date().setHours(0, 0, 0, 0))
+        obj[element].updateTime = (obj[element].updateTime < new Date().setHours(0, 0, 0, 0)) ? new Date().setHours(0, 0, 0, 0) : obj[element].updateTime
+        stillTime = new Date().getTime() - obj[element].updateTime
+        // } else {
+        //   obj[element].updateTime = (obj[element].updateTime < new Date().setHours(0, 0, 0, 0)) ? new Date().setHours(0, 0, 0, 0) : obj[element].updateTime
+        //   stillTime = new Date().getTime() - obj[element].updatetime
+        // }
         switch (obj[element].reasoncode) {
           case '0':// 就绪，累计在线和空闲时间;在线和空闲人数
             free_time_duration = free_time_duration + stillTime / 1000
@@ -495,6 +502,13 @@ export default {
             break
           case '-3':// 来电，累计在线时间
           case '-4':// 去电，累计在线时间
+            if (obj[element].beforeStatus === '-101' || obj[element].beforeStatus === '-100' || obj[element].beforeStatus === '-4') { // 说明是转接通话加1，时长加1倍，或者是通话取回，同理
+              call_time_duration = call_time_duration + stillTime / 1000
+              callSum = callSum + 1
+            }
+            online_time_duration = online_time_duration + stillTime / 1000
+            onlineSum = onlineSum + 1
+            break
           case '14':// 后处理，累计在线时间
             online_time_duration = online_time_duration + stillTime / 1000
             onlineSum = onlineSum + 1
@@ -544,11 +558,37 @@ export default {
       return moment(timeStr, 'x').add(1, 'days').subtract(1, 'ms').valueOf()
     },
     on_AgentStatusList(event, agentid, DN, reasoncode, UpdateTime) { // 坐席状态变化
-      localStorage.setItem('m_' + agentid, JSON.stringify({ 'reasoncode': reasoncode, 'DN': DN, 'updateTime': new Date().getTime() }))
+      if (window.location.href.indexOf('monitor_workingset') === -1 && agentid === localStorage.getItem('agentId')) { // 说明不是班长工作台页面，并且是坐席本身则不接收事件变化
+        return
+      }
+      const tempObj = {}
+      if (localStorage.getItem('m_' + agentid)) {
+        tempObj.DN = DN
+        tempObj.beforeStatus = JSON.parse(localStorage.getItem('m_' + agentid)).reasoncode
+        tempObj.beforeUpdatetime = JSON.parse(localStorage.getItem('m_' + agentid)).updateTime
+        tempObj.reasoncode = reasoncode
+        // tempObj.updateTime = new Date(UpdateTime).getTime()
+        if (tempObj.reasoncode === '-4' && (tempObj.beforeStatus === '-100' || tempObj.beforeStatus === '-101' || tempObj.beforeStatus === '-4')) {
+          tempObj.updateTime = JSON.parse(localStorage.getItem('m_' + agentid)).updateTime
+        } else {
+          tempObj.updateTime = new Date(UpdateTime).getTime()
+        }
+      } else {
+        tempObj.DN = DN
+        tempObj.reasoncode = reasoncode
+        tempObj.updateTime = new Date(UpdateTime).getTime()
+        tempObj.beforeStatus = reasoncode
+        tempObj.beforeUpdatetime = new Date(UpdateTime).getTime()
+      }
+      localStorage.setItem('m_' + agentid, JSON.stringify(tempObj))
+      // localStorage.setItem('m_' + agentid, JSON.stringify({ 'reasoncode': reasoncode, 'DN': DN, 'updateTime': new Date().getTime() }))
       if (baseinfo.agentStatusMap[agentid]) { // 说明这个坐席是组内的成员
         const obj = baseinfo.agentStatusMap[agentid]
-        obj.updateTime = new Date().getTime()
+        obj.beforeStatus = tempObj.beforeStatus
+        obj.beforeUpdatetime = tempObj.beforeUpdatetime
+        obj.updateTime = tempObj.updateTime
         obj.reasoncode = reasoncode
+        obj.DN = DN
         // 设置更新时间
         baseinfo.updateTime = new Date().getTime()
         baseinfo.agentStatusMap[agentid] = obj
@@ -600,11 +640,35 @@ export default {
       console.log(AgentID)
     },
     on_reasonchange(event, agentid, DN, reasoncode) {
-      localStorage.setItem('m_' + agentid, JSON.stringify({ 'reasoncode': reasoncode, 'DN': DN, 'updateTime': new Date().getTime() }))
+      if (window.location.href.indexOf('monitor_workingset') === -1 && agentid === localStorage.getItem('agentId')) { // 说明不是班长工作台页面，并且是坐席本身则不接收事件变化
+        return
+      }
+      const tempObj = {}
+      if (localStorage.getItem('m_' + agentid)) {
+        tempObj.DN = DN
+        tempObj.beforeStatus = JSON.parse(localStorage.getItem('m_' + agentid)).reasoncode
+        tempObj.beforeUpdatetime = JSON.parse(localStorage.getItem('m_' + agentid)).updateTime
+        tempObj.reasoncode = reasoncode
+        if (tempObj.reasoncode === '-4' && (tempObj.beforeStatus === '-100' || tempObj.beforeStatus === '-101' || tempObj.beforeStatus === '-4')) {
+          tempObj.updateTime = JSON.parse(localStorage.getItem('m_' + agentid)).updateTime
+        } else {
+          tempObj.updateTime = new Date().getTime()
+        }
+      } else {
+        tempObj.DN = DN
+        tempObj.reasoncode = reasoncode
+        tempObj.updateTime = new Date().getTime()
+        tempObj.beforeStatus = reasoncode
+        tempObj.beforeUpdatetime = new Date().getTime()
+      }
+      localStorage.setItem('m_' + agentid, JSON.stringify(tempObj))
       if (baseinfo.agentStatusMap[agentid]) { // 说明这个坐席是组内的成员
         const obj = baseinfo.agentStatusMap[agentid]
-        obj.updateTime = new Date().getTime()
+        obj.beforeStatus = tempObj.beforeStatus
+        obj.beforeUpdatetime = tempObj.beforeUpdatetime
+        obj.updateTime = tempObj.updateTime
         obj.reasoncode = reasoncode
+        obj.DN = DN
         // 设置更新时间
         baseinfo.updateTime = new Date().getTime()
         baseinfo.agentStatusMap[agentid] = obj
@@ -687,7 +751,7 @@ export default {
       const obj = { depart_id: localStorage.getItem('departId') }
       departAgents(obj).then(res => {
         this.agentMap = {}
-        if (!res.data.error) {
+        if ((!res.data.error) && (typeof res.data.result.agents !== 'undefined')) {
           this.totalNum = res.data.result.agents.length
           this.agentArray = []
           res.data.result.agents.forEach(element => {
@@ -731,7 +795,7 @@ export default {
                           successCallTotal: 0, // 成功
                           failedCallTotal: 0// 失败
                         }
-                        console.log('total:', this.obTaskTable)
+                        // console.log('total:', this.obTaskTable)
                         this.obTaskTable.forEach(element => {
                           this.obTaskData.firstCallTotal = parseInt(element.noContactNum) + parseInt(this.obTaskData.firstCallTotal)
                           this.obTaskData.appointCallTotal = parseInt(element.appiontNum) + parseInt(this.obTaskData.appointCallTotal)
@@ -743,11 +807,11 @@ export default {
                   }
                 })
               }
-              console.log('####', res.data)
+              // console.log('####', res.data)
             }
           })
         }
-        console.log(process.env.BASE_API)
+        // console.log(process.env.BASE_API)
       })
     },
     order() {

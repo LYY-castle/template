@@ -848,11 +848,16 @@ var baseinfo = null
         if (typeof baseinfo.monitorDN === 'undefined' || baseinfo.monitorDN === '' || baseinfo.monitorDN.trim() === '') {
           baseinfo.monitorDN = '12345'
         }
-        cti.login(baseinfo.monitorID, baseinfo.monitorDN)
-        // cti.Send2wsCTIterval(this.monitorID)
+        cti.login('100' + baseinfo.monitorID, baseinfo.monitorDN)
         if (baseinfo.showStaff) {
           baseinfo.setbtnStatus('login')
         }
+      },
+      monitorlogoff() {
+        if (typeof baseinfo.monitorDN === 'undefined' || baseinfo.monitorDN === '' || baseinfo.monitorDN.trim() === '') {
+          baseinfo.monitorDN = '12345'
+        }
+        cti.logoff('100' + baseinfo.monitorID, baseinfo.monitorDN)
       },
       setbtnStatus(str) { // 设置按钮功能
         switch (str) {
@@ -1014,6 +1019,9 @@ var baseinfo = null
           })
         }
       })
+    },
+    destroyed() {
+      this.monitorlogoff()
     }
   }
 </script>
