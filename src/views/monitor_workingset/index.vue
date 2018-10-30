@@ -601,7 +601,7 @@ export default {
   width:110px;
   height:40px;
   border-radius:40px;
-  float:left;
+  /*float:left;*/
   text-align:center;
 }
 .line-center{

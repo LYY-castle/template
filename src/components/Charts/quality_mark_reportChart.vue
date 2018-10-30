@@ -644,7 +644,9 @@
           }
           const values = data.map(item => Number(item[column.property]))
           const totalSum = data.map(item => Number(Number(item.avg_score) * Number(item.count)))
-          const median = data.map(item => Number(Number(item.median).toFixed(2)))
+          const median = (data.map(item => Number(Number(item.median).toFixed(2)))).sort(function(a, b) {
+            return a - b
+          })
           if (index < columns.length - 1) {
             if (index === 2) {
               if (median.length % 2 === 1) {
