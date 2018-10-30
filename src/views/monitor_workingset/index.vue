@@ -598,10 +598,11 @@ export default {
   padding: 2%
 }
 .circle{
-  width:110px;
+  width:6em;
   height:40px;
   border-radius:40px;
   /*float:left;*/
+  margin: 0 auto;
   text-align:center;
 }
 .line-center{
