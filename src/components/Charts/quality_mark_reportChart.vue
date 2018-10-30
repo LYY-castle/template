@@ -167,6 +167,11 @@
         </el-table-column>
         <el-table-column
           align="center"
+          prop="median"
+          label="计分中位数">
+        </el-table-column>
+        <el-table-column
+          align="center"
           prop="avg_score"
           label="计分平均数">
         </el-table-column>
@@ -197,6 +202,11 @@
             align="center"
             prop="count"
             label="质检表单数量">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="median"
+            label="计分中位数">
           </el-table-column>
           <el-table-column
             align="center"
@@ -347,6 +357,11 @@
           align="center"
           prop="count"
           label="质检表单数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="median"
+          label="计分中位数">
         </el-table-column>
         <el-table-column
           align="center"
@@ -647,7 +662,7 @@
                 return prev
               }
             }, 0)
-            sums[index] = sums[index] / sums[index - 1] ? sums[index] / sums[index - 1] : 0
+            sums[index] = sums[index] / sums[index - 2] ? sums[index] / sums[index - 2] : 0
             sums[index] = sums[index].toFixed(2)
           }
         })
@@ -891,7 +906,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['质检表单数量', '计分平均数']
+            data: ['质检表单数量', '计分中位数', '计分平均数']
           },
           calculable: true,
           xAxis: [{
@@ -1006,6 +1021,30 @@
             },
             data: this.count
           }, {
+            name: '计分中位数',
+            // type: 'bar',
+            // stack: 'total',
+            // barMaxWidth: 35,
+            type: 'line',
+            // stack: 'total',
+            yAxisIndex: 1,
+            symbolSize: 10,
+            symbol: 'circle',
+            itemStyle: {
+              normal: {
+                color: 'rgba(255,144,128,1)',
+                barBorderRadius: 0,
+                label: {
+                  show: true,
+                  position: 'insideTop',
+                  formatter(p) {
+                    return p.value > 0 ? p.value : ''
+                  }
+                }
+              }
+            },
+            data: this.median_score
+          }, {
             name: '计分平均数',
             // type: 'bar',
             // stack: 'total',
@@ -1073,7 +1112,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['质检表单数量', '计分平均数']
+            data: ['质检表单数量', '计分中位数', '计分平均数']
           },
           calculable: true,
           xAxis: [{
@@ -1187,6 +1226,29 @@
             },
             data: this.countTime
           }, {
+            name: '计分中位数',
+            // type: 'bar',
+            // stack: 'total',
+            // barMaxWidth: 35,
+            type: 'line',
+            symbol: 'circle',
+            // stack: 'total',
+            yAxisIndex: 1,
+            itemStyle: {
+              normal: {
+                color: 'rgba(255,144,128,1)',
+                barBorderRadius: 0,
+                label: {
+                  show: true,
+                  position: 'insideTop',
+                  formatter(p) {
+                    return p.value > 0 ? p.value : ''
+                  }
+                }
+              }
+            },
+            data: this.median_scoreTime
+          }, {
             name: '计分平均数',
             // type: 'bar',
             // stack: 'total',
@@ -1253,7 +1315,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['质检表单数量', '计分平均数']
+            data: ['质检表单数量', '计分中位数', '计分平均数']
           },
           calculable: true,
           xAxis: [{
@@ -1367,6 +1429,30 @@
             },
             data: this.countAgent
           }, {
+            name: '计分中位数',
+            // type: 'bar',
+            // stack: 'total',
+            // barMaxWidth: 35,
+            type: 'line',
+            symbol: 'circle',
+            // stack: 'total',
+            yAxisIndex: 1,
+            symbolSize: 10,
+            itemStyle: {
+              normal: {
+                color: 'rgba(255,144,128,1)',
+                barBorderRadius: 0,
+                label: {
+                  show: true,
+                  position: 'insideTop',
+                  formatter(p) {
+                    return p.value > 0 ? p.value : ''
+                  }
+                }
+              }
+            },
+            data: this.median_scoreAgent
+          }, {
             name: '计分平均数',
             // type: 'bar',
             // stack: 'total',
@@ -1434,7 +1520,7 @@
               return item.count
             })
             this.median_scoreTime = response.data.result.map(function(item, index) {
-              return item.median_score
+              return item.median
             })
             this.avg_scoreTime = response.data.result.map(function(item, index) {
               return item.avg_score
@@ -1470,7 +1556,7 @@
               return item.avg_score
             })
             this.median_scoreAgent = response.data.result.map(function(item, index) {
-              return item.median_score
+              return item.median
             })
             this.agentTime = response.data.result.map(function(item, index) {
               return item.time_dimension
@@ -1514,7 +1600,7 @@
               return item.avg_score
             })
             this.median_score = this.obj.result.map(function(item, index) {
-              return item.median_score
+              return item.median
             })
             this.initChart()
           }
