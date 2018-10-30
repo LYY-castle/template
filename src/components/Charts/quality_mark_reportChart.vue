@@ -644,15 +644,24 @@
           }
           const values = data.map(item => Number(item[column.property]))
           const totalSum = data.map(item => Number(Number(item.avg_score) * Number(item.count)))
+          const median = data.map(item => Number(Number(item.median).toFixed(2)))
           if (index < columns.length - 1) {
-            sums[index] = values.reduce((prev, curr) => {
-              const value = Number(curr)
-              if (!isNaN(value)) {
-                return prev + curr
+            if (index === 2) {
+              if (median.length % 2 === 1) {
+                sums[index] = median[parseInt(median.length / 2)]
               } else {
-                return prev
+                sums[index] = ((median[median.length / 2] + median[median.length / 2 - 1]) / 2).toFixed(2)
               }
-            }, 0)
+            } else {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr)
+                if (!isNaN(value)) {
+                  return prev + curr
+                } else {
+                  return prev
+                }
+              }, 0)
+            }
           } else {
             sums[index] = totalSum.reduce((prev, curr) => {
               const value = Number(curr)
