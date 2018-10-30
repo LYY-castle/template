@@ -3,12 +3,12 @@
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
         <el-form-item label="活动名称:" v-show="showActive">
-          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称"> <!--@change="campaignChange" -->
+          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange"> <!--@change="campaignChange" -->
             <el-option value="" label="所有活动"></el-option>
             <el-option v-for="item in activeNameList" :key="item.activityId" :label="item.activityName" :value="item.activityId"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="质检评分表:">
+        <el-form-item label="质检评分表:" v-show="showActive">
           <el-select v-model="formInline.productClone" placeholder="质检评分表">
             <el-option value="" label="所有评分表"></el-option>
             <el-option v-for="item in productList" :key="item.id" :label="item.gradeName" :value="item.gradeId"></el-option>
@@ -167,6 +167,11 @@
         </el-table-column>
         <el-table-column
           align="center"
+          prop="median"
+          label="计分中位数">
+        </el-table-column>
+        <el-table-column
+          align="center"
           prop="avg_score"
           label="计分平均数">
         </el-table-column>
@@ -200,6 +205,11 @@
           </el-table-column>
           <el-table-column
             align="center"
+            prop="median"
+            label="计分中位数">
+          </el-table-column>
+          <el-table-column
+            align="center"
             prop="avg_score"
             label="计分平均数">
           </el-table-column>
@@ -223,12 +233,12 @@
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
         <el-form-item label="活动名称:" v-show="showActive">
-          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称">
+          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange">
             <el-option value="" label="所有活动"></el-option>
             <el-option v-for="item in activeNameList" :key="item.activityId" :label="item.activityName" :value="item.activityId"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="质检评分表:">
+        <el-form-item label="质检评分表:" v-show="showActive">
           <el-select v-model="formInline.productClone" placeholder="质检评分表">
             <el-option value="" label="所有评分表"></el-option>
             <el-option v-for="item in productList" :key="item.id" :label="item.gradeName" :value="item.gradeId"></el-option>
@@ -350,6 +360,11 @@
         </el-table-column>
         <el-table-column
           align="center"
+          prop="median"
+          label="计分中位数">
+        </el-table-column>
+        <el-table-column
+          align="center"
           prop="avg_score"
           label="计分平均数">
         </el-table-column>
@@ -374,10 +389,10 @@
   import _ from 'lodash'
   import echarts from 'echarts'
   import resize from './mixins/resize'
-  import { departAgents, getDepartId, grades, qualityReportstatistics, qualityReporttotalAgent, qualityReportreportAgent, findCampaignByUserQuality } from '@/api/ctiReport'
+  import { departAgents, getDepartId, grades, qualityReportstatistics, qualityReporttotalAgent, qualityReportreportAgent, findCampaignByUserQuality, getGradesByCampaignId } from '@/api/ctiReport'
   import { Message } from 'element-ui'
   import { permsmarkreportstaff, permsmarkreportdepart } from '@/api/reportPermission'
-  import { hasOrderInfos } from '@/api/dialTask'
+  // import { hasOrderInfos } from '@/api/dialTask'
   // import { findAllProduct } from '@/api/campaign'
   import moment from 'moment'
 
@@ -501,7 +516,7 @@
       //   this.allProductList = res.data.data
       // })
       grades().then(res => {
-        this.productList = res.data.data
+        this.allProductList = res.data.data
       })
       getDepartId().then(res => {
         this.staffAgentid = res.data.agentid
@@ -594,7 +609,7 @@
     },
     methods: {
       initWebSocket() { // 初始化weosocket
-        const wsuri = process.env.TUI_WS_SERVERURL + '/realtime_report_ob'// ws地址
+        const wsuri = process.env.TUI_WS_SERVERURL + '/realtime_report_quality_score'// ws地址
         this.websock = new WebSocket(wsuri)
         this.websock.onopen = this.websocketonopen
         this.websock.onerror = this.websocketonerror
@@ -629,15 +644,26 @@
           }
           const values = data.map(item => Number(item[column.property]))
           const totalSum = data.map(item => Number(Number(item.avg_score) * Number(item.count)))
+          const median = (data.map(item => Number(Number(item.median).toFixed(2)))).sort(function(a, b) {
+            return a - b
+          })
           if (index < columns.length - 1) {
-            sums[index] = values.reduce((prev, curr) => {
-              const value = Number(curr)
-              if (!isNaN(value)) {
-                return prev + curr
+            if (index === 2) {
+              if (median.length % 2 === 1) {
+                sums[index] = median[parseInt(median.length / 2)].toFixed(2)
               } else {
-                return prev
+                sums[index] = ((median[median.length / 2] + median[median.length / 2 - 1]) / 2).toFixed(2)
               }
-            }, 0)
+            } else {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr)
+                if (!isNaN(value)) {
+                  return prev + curr
+                } else {
+                  return prev
+                }
+              }, 0)
+            }
           } else {
             sums[index] = totalSum.reduce((prev, curr) => {
               const value = Number(curr)
@@ -647,7 +673,7 @@
                 return prev
               }
             }, 0)
-            sums[index] = sums[index] / sums[index - 1] ? sums[index] / sums[index - 1] : 0
+            sums[index] = sums[index] / sums[index - 2] ? sums[index] / sums[index - 2] : 0
             sums[index] = sums[index].toFixed(2)
           }
         })
@@ -891,7 +917,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['质检表单数量', '计分平均数']
+            data: ['质检表单数量', '计分中位数', '计分平均数']
           },
           calculable: true,
           xAxis: [{
@@ -1006,6 +1032,30 @@
             },
             data: this.count
           }, {
+            name: '计分中位数',
+            // type: 'bar',
+            // stack: 'total',
+            // barMaxWidth: 35,
+            type: 'line',
+            // stack: 'total',
+            yAxisIndex: 1,
+            symbolSize: 10,
+            symbol: 'circle',
+            itemStyle: {
+              normal: {
+                color: 'rgba(255,144,128,1)',
+                barBorderRadius: 0,
+                label: {
+                  show: true,
+                  position: 'insideTop',
+                  formatter(p) {
+                    return p.value > 0 ? p.value : ''
+                  }
+                }
+              }
+            },
+            data: this.median_score
+          }, {
             name: '计分平均数',
             // type: 'bar',
             // stack: 'total',
@@ -1073,7 +1123,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['质检表单数量', '计分平均数']
+            data: ['质检表单数量', '计分中位数', '计分平均数']
           },
           calculable: true,
           xAxis: [{
@@ -1187,6 +1237,29 @@
             },
             data: this.countTime
           }, {
+            name: '计分中位数',
+            // type: 'bar',
+            // stack: 'total',
+            // barMaxWidth: 35,
+            type: 'line',
+            symbol: 'circle',
+            // stack: 'total',
+            yAxisIndex: 1,
+            itemStyle: {
+              normal: {
+                color: 'rgba(255,144,128,1)',
+                barBorderRadius: 0,
+                label: {
+                  show: true,
+                  position: 'insideTop',
+                  formatter(p) {
+                    return p.value > 0 ? p.value : ''
+                  }
+                }
+              }
+            },
+            data: this.median_scoreTime
+          }, {
             name: '计分平均数',
             // type: 'bar',
             // stack: 'total',
@@ -1253,7 +1326,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['质检表单数量', '计分平均数']
+            data: ['质检表单数量', '计分中位数', '计分平均数']
           },
           calculable: true,
           xAxis: [{
@@ -1367,6 +1440,30 @@
             },
             data: this.countAgent
           }, {
+            name: '计分中位数',
+            // type: 'bar',
+            // stack: 'total',
+            // barMaxWidth: 35,
+            type: 'line',
+            symbol: 'circle',
+            // stack: 'total',
+            yAxisIndex: 1,
+            symbolSize: 10,
+            itemStyle: {
+              normal: {
+                color: 'rgba(255,144,128,1)',
+                barBorderRadius: 0,
+                label: {
+                  show: true,
+                  position: 'insideTop',
+                  formatter(p) {
+                    return p.value > 0 ? p.value : ''
+                  }
+                }
+              }
+            },
+            data: this.median_scoreAgent
+          }, {
             name: '计分平均数',
             // type: 'bar',
             // stack: 'total',
@@ -1396,13 +1493,14 @@
       },
       campaignChange(val) {
         this.productList = []
-        hasOrderInfos(val).then(res => {
+        getGradesByCampaignId(val).then(res => {
           if (res.data.data) {
-            for (let i = 0; i < this.allProductList.length; i++) {
-              if (res.data.data.indexOf(this.allProductList[i].productId) !== -1) {
-                this.productList.push(this.allProductList[i])
-              }
-            }
+            // for (let i = 0; i < this.allProductList.length; i++) {
+            //   if (res.data.data.indexOf(this.allProductList[i].productId) !== -1) {
+            //     this.productList.push(this.allProductList[i])
+            //   }
+            // }
+            this.productList = res.data.data
           }
         })
       },
@@ -1433,7 +1531,7 @@
               return item.count
             })
             this.median_scoreTime = response.data.result.map(function(item, index) {
-              return item.median_score
+              return item.median
             })
             this.avg_scoreTime = response.data.result.map(function(item, index) {
               return item.avg_score
@@ -1469,7 +1567,7 @@
               return item.avg_score
             })
             this.median_scoreAgent = response.data.result.map(function(item, index) {
-              return item.median_score
+              return item.median
             })
             this.agentTime = response.data.result.map(function(item, index) {
               return item.time_dimension
@@ -1513,7 +1611,7 @@
               return item.avg_score
             })
             this.median_score = this.obj.result.map(function(item, index) {
-              return item.median_score
+              return item.median
             })
             this.initChart()
           }

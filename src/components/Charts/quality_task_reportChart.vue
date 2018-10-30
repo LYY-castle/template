@@ -2,7 +2,7 @@
   <div style="width: 100%;height: 90%" v-if="departPermission">
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
-        <el-form-item label="活动名称:">
+        <el-form-item label="活动名称:" v-show="showActive">
           <el-select v-model="formInline.campaignIdClone" placeholder="活动名称"> <!--@change="campaignChange" -->
             <el-option value="" label="所有活动"></el-option>
             <el-option v-for="item in activeNameList" :key="item.activityId" :label="item.activityName" :value="item.activityId"></el-option>
@@ -155,7 +155,7 @@
         </el-table-column>
         <el-table-column
           align="center"
-          prop="not_start_count"
+          prop="new_not_start_count"
           label="未开始任务数量">
         </el-table-column>
         <el-table-column
@@ -198,7 +198,7 @@
           </el-table-column>
           <el-table-column
             align="center"
-            prop="not_start_count"
+            prop="new_not_start_count"
             label="未开始任务数量">
           </el-table-column>
           <el-table-column
@@ -235,7 +235,7 @@
   <div style="width: 100%;height: 90%" v-else-if="staffPermission">
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
-        <el-form-item label="活动名称:">
+        <el-form-item label="活动名称:" v-show="showActive">
           <el-select v-model="formInline.campaignIdClone" placeholder="活动名称">
             <el-option value="" label="所有活动"></el-option>
             <el-option v-for="item in activeNameList" :key="item.activityId" :label="item.activityName" :value="item.activityId"></el-option>
@@ -352,7 +352,7 @@
         </el-table-column>
         <el-table-column
           align="center"
-          prop="not_start_count"
+          prop="new_not_start_count"
           label="未开始任务数量">
         </el-table-column>
         <el-table-column
@@ -492,15 +492,15 @@
         tableDataAgent: [],
         count: [],
         complete_count: [],
-        not_start_count: [],
+        new_not_start_count: [],
         start_count: [],
         countTime: [],
         complete_countTime: [],
-        not_start_countTime: [],
+        new_not_start_countTime: [],
         start_countTime: [],
         countAgent: [],
         complete_countAgent: [],
-        not_start_countAgent: [],
+        new_not_start_countAgent: [],
         start_countAgent: [],
         agentTime: [],
         staffAgentid: null,
@@ -614,7 +614,7 @@
     },
     methods: {
       initWebSocket() { // 初始化weosocket
-        const wsuri = process.env.TUI_WS_SERVERURL + '/realtime_report_ob'// ws地址
+        const wsuri = process.env.TUI_WS_SERVERURL + '/realtime_report_quality_task'// ws地址
         this.websock = new WebSocket(wsuri)
         this.websock.onopen = this.websocketonopen
         this.websock.onerror = this.websocketonerror
@@ -1024,7 +1024,7 @@
                 }
               }
             },
-            data: this.not_start_count
+            data: this.new_not_start_count
           }, {
             name: '已开始任务数量',
             type: 'bar',
@@ -1249,7 +1249,7 @@
                 }
               }
             },
-            data: this.not_start_countTime
+            data: this.new_not_start_countTime
           }, {
             name: '已开始任务数量',
             type: 'bar',
@@ -1473,7 +1473,7 @@
                 }
               }
             },
-            data: this.not_start_countAgent
+            data: this.new_not_start_countAgent
           }, {
             name: '已开始任务数量',
             type: 'bar',
@@ -1587,8 +1587,8 @@
             this.complete_countTime = response.data.result.map(function(item, index) {
               return item.complete_count
             })
-            this.not_start_countTime = response.data.result.map(function(item, index) {
-              return item.not_start_count
+            this.new_not_start_countTime = response.data.result.map(function(item, index) {
+              return item.new_not_start_count
             })
             this.start_countTime = response.data.result.map(function(item, index) {
               return item.start_count
@@ -1623,8 +1623,8 @@
             this.complete_countAgent = response.data.result.map(function(item, index) {
               return item.complete_count
             })
-            this.not_start_countAgent = response.data.result.map(function(item, index) {
-              return item.not_start_count
+            this.new_not_start_countAgent = response.data.result.map(function(item, index) {
+              return item.new_not_start_count
             })
             this.start_countAgent = response.data.result.map(function(item, index) {
               return item.start_count
@@ -1670,8 +1670,8 @@
             this.complete_count = this.obj.result.map(function(item, index) {
               return item.complete_count
             })
-            this.not_start_count = this.obj.result.map(function(item, index) {
-              return item.not_start_count
+            this.new_not_start_count = this.obj.result.map(function(item, index) {
+              return item.new_not_start_count
             })
             this.start_count = this.obj.result.map(function(item, index) {
               return item.start_count

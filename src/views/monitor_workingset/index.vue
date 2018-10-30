@@ -1,42 +1,43 @@
 <template>
   <div class="app-container">
     <div >
-      <el-row :gutter="20">
+      <el-row :gutter="5">
 
         <el-col :span="8">
           <el-card shadow="hover" style="background-color:#339999;">
+            <!--<div slot="header" class="clearfix">-->
+              <!--<div style="display: inline-block;line-height: 50px">-->
+                <!--<font style="font-size:large;color:#fff;padding-right: 5px">首拨总数量: </font>-->
+                <!--<font style="font-size:large;color:rgb(255,255,0);">{{obTaskData.firstCallTotal}}</font>-->
+              <!--</div>-->
+              <!--<div style="display: inline-block;line-height: 50px;width:10%;float:right;"><i class="el-icon-phone-outline" style="color:white;cursor:pointer;font-size:25px;font-weight:bold"  @click="changeToDailTask('0')"></i></div>-->
+            <!--</div>-->
             <div slot="header" class="clearfix">
-              <div style="display: inline-block;line-height: 50px;width:50%">
+              <div style="display: inline-block;line-height: 50px;">
                 <font style="font-size:large;color:#fff;padding-right: 5px">首拨总数量: </font>
                 <font style="font-size:large;color:rgb(255,255,0);">{{obTaskData.firstCallTotal}}</font>
               </div>
-              <div style="display: inline-block;line-height: 50px;width:10%;float:right;"><i class="el-icon-phone-outline" style="color:white;cursor:pointer;font-size:25px;font-weight:bold"  @click="changeToDailTask('0')"></i></div>
+              <div style="float: right;line-height: 50px;cursor: pointer" @click="changeToDailTask('0')">
+                <i class="el-icon-phone-outline" style="color:white;cursor:pointer;font-size:25px;font-weight:bold"></i>
+              </div>
             </div>
             <div class="text item">
               <el-row>
                 <el-col :span="8" >
-                  <el-card shadow="hover" style="background-color:#f66">
-                    <el-row>
-                      <el-col :span="16" :offset="4">
-                        <div class="circle" style="border:solid #f66 1px;background-color:#fff;">
-                          <font class="line-center" style="color:#f66;">{{obTaskData.appointCallTotal}}</font>
-                        </div>
-                      </el-col>
-                    </el-row>
+                  <el-card shadow="hover" style="background-color:#36a9ce">
+                    <div class="circle" style="border:solid #36a9ce 1px;background-color:#fff;">
+                      <font class="line-center" style="color:#36a9ce;">{{obTaskData.appointCallTotal}}</font>
+                    </div>
                     <div style="text-align: center">
                       <font class="text-align-center" style="font-size: small">总预约量</font>
                     </div>
                   </el-card>
                 </el-col>
                 <el-col :span="8">
-                  <el-card shadow="hover" style="background-color:#36a9ce">
-                    <el-row>
-                      <el-col :span="16" :offset="4">
-                        <div class="circle" style="border:solid #36a9ce 1px;background-color:#fff;">
-                          <font class="line-center" style="color:#36a9ce;">{{obTaskData.successCallTotal}}</font>
-                        </div>
-                      </el-col>
-                    </el-row>
+                  <el-card shadow="hover" style="background-color:#eb7f36">
+                    <div class="circle"  style="border:solid #eb7f36 1px;background-color:#fff;">
+                      <font class="line-center" style="color:#eb7f36;">{{obTaskData.successCallTotal}}</font>
+                    </div>
                     <div style="text-align: center">
                       <font class="text-align-center" style="font-size: small">今日总成功量</font>
                     </div>
@@ -44,13 +45,9 @@
                 </el-col>
                 <el-col :span="8">
                   <el-card shadow="hover" style="background-color:#eb7f36">
-                    <el-row>
-                      <el-col :span="16" :offset="4">
-                        <div class="circle"  style="border:solid #eb7f36 1px;background-color:#fff;">
-                          <font class="line-center" style="color:#eb7f36;">{{obTaskData.failedCallTotal}}</font>
-                        </div>
-                      </el-col>
-                    </el-row>
+                    <div class="circle"  style="border:solid #eb7f36 1px;background-color:#fff;">
+                      <font class="line-center" style="color:#eb7f36;">{{obTaskData.failedCallTotal}}</font>
+                    </div>
                     <div style="text-align: center">
                       <font class="text-align-center" style="font-size: small">今日总失败量</font>
                     </div>
@@ -73,27 +70,19 @@
               <el-row>
                 <el-col :span="8" :offset="3">
                   <el-card shadow="hover" style="background-color:#36a9ce">
-                    <el-row>
-                      <el-col :span="16" :offset="4">
-                        <div class="circle" style="border:solid #36a9ce 1px;background-color:#fff;">
-                          <a @click="changeToOrderManagement()"><font class="line-center" style="color:#36a9ce;">{{orderData.total_amount}}</font></a>
-                        </div>
-                      </el-col>
-                    </el-row>
+                    <div class="circle" style="border:solid #36a9ce 1px;background-color:#fff;">
+                      <a @click="changeToOrderManagement()"><font class="line-center" style="color:#36a9ce;">{{orderData.total_amount}}</font></a>
+                    </div>
                     <div style="text-align: center">
                       <font class="text-align-center" style="font-size: small">订单总金额</font>
                     </div>
                   </el-card>
                 </el-col>
-                <el-col :span="8" :offset="2">
+                <el-col :span="8" :offset="3">
                   <el-card shadow="hover" style="background-color:#eb7f36">
-                    <el-row>
-                      <el-col :span="16" :offset="4">
-                        <div class="circle"  style="border:solid #eb7f36 1px;background-color:#fff;">
-                          <a @click="changeToOrderManagement()"><font class="line-center" style="color:#eb7f36;">{{orderData.avg_amount}}</font></a>
-                        </div>
-                      </el-col>
-                    </el-row>
+                    <div class="circle"  style="border:solid #eb7f36 1px;background-color:#fff;">
+                      <a @click="changeToOrderManagement()"><font class="line-center" style="color:#eb7f36;">{{orderData.avg_amount}}</font></a>
+                    </div>
                     <div style="text-align: center">
                       <font class="text-align-center" style="font-size: small">订单平均金额</font>
                     </div>
@@ -107,54 +96,44 @@
         <el-col :span="8">
           <el-card shadow="hover" style="background-color:#339999;">
             <div slot="header" class="clearfix">
-              <el-row>
-                <el-col :span="8" >
-              <div style="display: inline-block;line-height: 25px;" >
-                <font style="font-size:large;color:#fff;padding-right: 5px">通话时间: </font>
-                <font style="font-size:large;color:rgb(255,255,0);cursor: pointer" @click="changeToMonitorPhone()">{{formatSeconds(ctiData.call_time_duration)}}</font>
+              <div>
+                <div style="display: inline-block;line-height: 25px;">
+                  <font style="font-size:medium;color:#fff;padding-right: 5px">通话时间: </font>
+                  <font style="font-size:medium;color:rgb(255,255,0);cursor: pointer" @click="changeToMonitorPhone()">{{formatSeconds(ctiData.call_time_duration)}}</font>
+                </div>
+                <div style="float: right;line-height: 25px">
+                  <font style="font-size:medium;color:#fff;padding-right: 5px">通话次数: </font>
+                  <font style="font-size:medium;color:rgb(255,255,0);cursor: pointer" @click="changeToMonitorPhone()">{{ctiData.calls_number}}</font>
+                </div>
               </div>
-              <div style="display: inline-block;line-height: 25px;">
-                <font style="font-size:large;color:#fff;padding-right: 5px">通话次数: </font>
-                <font style="font-size:large;color:rgb(255,255,0);cursor: pointer"  @click="changeToMonitorPhone()">{{ctiData.calls_number}}</font>
+              <div>
+                <div style="display: inline-block;line-height: 25px">
+                  <font style="font-size:medium;color:#fff;padding-right: 5px">在线人数: </font>
+                  <font style="font-size:medium;color:rgb(255,255,0);cursor: pointer" @click="changeToMonitorPhone()">{{onlineNum}}</font>
+                </div>
+                <div style="float: right;line-height: 25px">
+                  <font style="font-size:medium;color:#fff;padding-right: 5px">部门人数: </font>
+                  <font style="font-size:medium;color:rgb(255,255,0);cursor: pointer" @click="changeToMonitorPhone()">{{totalNum}}</font>
+                </div>
               </div>
-              </el-col>
-              <el-col :span="8" :offset="8">
-              <div style="line-height: 25px">
-                <font style="font-size:large;color:#fff;padding-right: 5px">在线人数: </font>
-                <font style="font-size:large;color:rgb(255,255,0);cursor: pointer"  @click="changeToMonitorPhone()">{{onlineNum}}</font>
-              </div>
-               <div style="line-height: 25px">
-                <font style="font-size:large;color:#fff;padding-right: 5px">部门人数: </font>
-                <font style="font-size:large;color:rgb(255,255,0);cursor: pointer"  @click="changeToMonitorPhone()">{{totalNum}}</font>
-              </div>
-              </el-col>
-              </el-row>
             </div>
             <div class="text item">
               <el-row>
                 <el-col :span="8" >
-                  <el-card shadow="hover" style="background-color:#f66">
-                    <el-row>
-                      <el-col :span="16" :offset="4">
-                        <div class="circle" style="border:solid #f66 1px;background-color:#fff;">
-                          <a @click="changeToMonitorPhone()"><font class="line-center" style="color:#f66;">{{formatSeconds(ctiData.online_time_duration)}}</font></a>
-                        </div>
-                      </el-col>
-                    </el-row>
-                   <div style="text-align: center">
+                  <el-card shadow="hover" style="background-color:#eb7f36">
+                    <div class="circle"  style="border:solid #eb7f36 1px;background-color:#fff;">
+                      <a @click="changeToMonitorPhone()"><font class="line-center" style="color:#eb7f36;">{{formatSeconds(ctiData.online_time_duration)}}</font></a>
+                    </div>
+                    <div style="text-align: center">
                       <font class="text-align-center" style="font-size: small">在线时长</font>
                     </div>
                   </el-card>
                 </el-col>
                 <el-col :span="8">
                   <el-card shadow="hover" style="background-color:#36a9ce">
-                    <el-row>
-                      <el-col :span="16" :offset="4">
-                        <div class="circle" style="border:solid #36a9ce 1px;background-color:#fff;">
-                          <a @click="changeToMonitorPhone()"><font class="line-center" style="color:#36a9ce;">{{formatSeconds(ctiData.free_time_duration)}}</font></a>
-                        </div>
-                      </el-col>
-                    </el-row>
+                    <div class="circle" style="border:solid #36a9ce 1px;background-color:#fff;">
+                      <a @click="changeToMonitorPhone()"><font class="line-center" style="color:#36a9ce;">{{formatSeconds(ctiData.free_time_duration)}}</font></a>
+                    </div>
                     <div style="text-align: center">
                       <font class="text-align-center" style="font-size: small">空闲时长</font>
                     </div>
@@ -162,13 +141,9 @@
                 </el-col>
                 <el-col :span="8">
                   <el-card shadow="hover" style="background-color:#eb7f36">
-                    <el-row>
-                      <el-col :span="16" :offset="4">
-                        <div class="circle"  style="border:solid #eb7f36 1px;background-color:#fff;">
-                          <a @click="changeToMonitorPhone()"><font class="line-center" style="color:#eb7f36;">{{formatSeconds(ctiData.busy_time_duration)}}</font></a>
-                        </div>
-                      </el-col>
-                    </el-row>
+                    <div class="circle"  style="border:solid #eb7f36 1px;background-color:#fff;">
+                      <a @click="changeToMonitorPhone()"><font class="line-center" style="color:#eb7f36;">{{formatSeconds(ctiData.busy_time_duration)}}</font></a>
+                    </div>
                     <div style="text-align: center">
                       <font class="text-align-center" style="font-size: small">示忙时长</font>
                     </div>
@@ -623,10 +598,11 @@ export default {
   padding: 2%
 }
 .circle{
-  width:110px;
+  width:6em;
   height:40px;
   border-radius:40px;
-  float:left;
+  /*float:left;*/
+  margin: 0 auto;
   text-align:center;
 }
 .line-center{

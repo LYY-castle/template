@@ -187,3 +187,10 @@ export function qualityTaskReportAgent(obj) {
     })
   })
 }
+
+export function getGradesByCampaignId(id) {
+  return request({
+    url: '/quality/getGradesByCampaignId?campaignId=' + id,
+    method: 'get'
+  })
+}
