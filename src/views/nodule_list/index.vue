@@ -351,8 +351,8 @@ export default {
       // 分页数据
       pageInfo: {},
       // tree-----------------------
-      // maxexpandId: api.maxexpandId, // 新建节点开始id
-      // non_maxexpandId: api.maxexpandId, // 新建节点开始id(不更改)
+      maxexpandId: 0, // 新建节点开始id
+      non_maxexpandId: this.maxexpandId, // 新建节点开始id(不更改)
       isLoadingTree: false, // 是否加载节点树
       setTree: [], // 新建窗口 节点树数据
       setTree1: [], // 详情窗口 节点树数据
@@ -627,8 +627,8 @@ export default {
         props: {
           DATA: data,
           NODE: node,
-          STORE: store
-          // maxexpandId: that.non_maxexpandId
+          STORE: store,
+          maxexpandId: that.non_maxexpandId
         },
         on: {
           nodeAdd: (s, d, n) => that.handleAdd(s, d, n),
@@ -640,14 +640,14 @@ export default {
     // 新建节点
     handleAddTop() {
       this.setTree.push({
-        // id: ++this.maxexpandId,
+        id: ++this.maxexpandId,
         name: '新建小结',
         // pid: '',
         isEdit: false,
         summaryDetailInfos: []
       })
       this.setTree2.push({
-        // id: ++this.maxexpandId,
+        id: ++this.maxexpandId,
         name: '新建小结',
         // pid: '',
         isEdit: false,
@@ -665,7 +665,7 @@ export default {
       }
       // 新建数据
       d.summaryDetailInfos.push({
-        // id: ++this.maxexpandId,
+        id: ++this.maxexpandId,
         name: '新建小结',
         // pid: d.id,
         isEdit: false,
@@ -675,6 +675,9 @@ export default {
       if (!n.expanded) {
         n.expanded = true
       }
+    },
+    handleEdit(s, d, n) { // 编辑节点
+      console.log(s, d, n)
     },
     handleDelete(s, d, n) {
       // 删除节点

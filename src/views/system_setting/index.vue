@@ -109,9 +109,9 @@ export default {
       const val = JSON.parse(localStorage.getItem('themeInfo'))
       if (val) {
         this.$message.success('切换主题成功')
-        $('#app').removeClass('theme1')
-        $('#app').removeClass('theme2')
-        $('#app').addClass(val.theme)
+        $('body').removeClass('theme1')
+        $('body').removeClass('theme2')
+        $('body').addClass(val.theme)
         setTimeout(() => {
           this.loading.close()
         }, 1000)

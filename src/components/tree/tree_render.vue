@@ -32,10 +32,10 @@
 	      // console.log(d.isEdit)
 	      this.$set(d, 'isEdit', true)
 	      // console.log(d.isEdit)
-	      // this.$nextTick(() => {
-	      //   this.$refs['treeInput' + d.id].$refs.input.focus()
-	      // })
-	      // this.$emit('nodeEdit', s, d, n)
+	      this.$nextTick(() => {
+	        this.$refs['treeInput' + d.id].$refs.input.focus()
+	      })
+	      this.$emit('nodeEdit', s, d, n)
 	    },
 	    nodeDel(s, d, n) { // 删除
 	      this.$emit('nodeDel', s, d, n)
@@ -68,7 +68,7 @@
 	.tree-expand .tree-btn{
 		display:none;
 		float:right;
-		margin-right:20px;
+		margin-left:10px;
 	}
 	.tree-expand .tree-btn i{
 		color:#8492a6;
