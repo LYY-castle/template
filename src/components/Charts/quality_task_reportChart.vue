@@ -168,11 +168,6 @@
           prop="complete_count"
           label="已完成任务数量">
         </el-table-column>
-        <el-table-column
-          align="center"
-          prop="count"
-          label="任务总数">
-        </el-table-column>
       </el-table>
       <h3>{{statistics_type === 'depart'?'下属部门详情':'下属员工详情'}}</h3>
       <div style="margin-top:1%;" v-for="(item, index) in staffOptions">
@@ -210,11 +205,6 @@
             align="center"
             prop="complete_count"
             label="已完成任务数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="count"
-            label="任务总数">
           </el-table-column>
         </el-table>
         <el-row style="margin-top:1%;">
@@ -364,11 +354,6 @@
           align="center"
           prop="complete_count"
           label="已完成任务数量">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="count"
-          label="任务总数">
         </el-table-column>
       </el-table>
       <el-row style="margin-top:1%;">
@@ -911,7 +896,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['未开始任务数量', '已开始任务数量', '已完成任务数量', '任务总数量']
+            data: ['未开始任务数量', '已开始任务数量', '已完成任务数量']
           },
           calculable: true,
           xAxis: [{
@@ -1069,30 +1054,6 @@
               }
             },
             data: this.complete_count
-          }, {
-            name: '任务总数量',
-            // type: 'bar',
-            // stack: 'total',
-            // barMaxWidth: 35,
-            type: 'line',
-            // stack: 'total',
-            yAxisIndex: 1,
-            symbolSize: 10,
-            symbol: 'circle',
-            itemStyle: {
-              normal: {
-                color: 'rgba(252,0,0,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.count
           }
           ]
         })
@@ -1137,7 +1098,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['未开始任务数量', '已开始任务数量', '已完成任务数量', '任务总数量']
+            data: ['未开始任务数量', '已开始任务数量', '已完成任务数量']
           },
           calculable: true,
           xAxis: [{
@@ -1294,29 +1255,6 @@
               }
             },
             data: this.complete_countTime
-          }, {
-            name: '任务总数量',
-            // type: 'bar',
-            // stack: 'total',
-            // barMaxWidth: 35,
-            type: 'line',
-            symbol: 'circle',
-            // stack: 'total',
-            yAxisIndex: 1,
-            itemStyle: {
-              normal: {
-                color: 'rgba(252,0,0,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.countTime
           }
           ]
         })
@@ -1361,7 +1299,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['未开始任务数量', '已开始任务数量', '已完成任务数量', '任务总数量']
+            data: ['未开始任务数量', '已开始任务数量', '已完成任务数量']
           },
           calculable: true,
           xAxis: [{
@@ -1518,30 +1456,6 @@
               }
             },
             data: this.complete_countAgent
-          }, {
-            name: '任务总数量',
-            // type: 'bar',
-            // stack: 'total',
-            // barMaxWidth: 35,
-            type: 'line',
-            symbol: 'circle',
-            // stack: 'total',
-            yAxisIndex: 1,
-            symbolSize: 10,
-            itemStyle: {
-              normal: {
-                color: 'rgba(252,0,0,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.countAgent
           }
           ]
         })
