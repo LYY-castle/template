@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import { findGradeByDepartId, findQualityTaskByInfo } from '@/api/ord_qc_workingset'
+import { findGradeByDepartIds, findQualityTaskByInfo } from '@/api/ord_qc_workingset'
 import { formatDateTime } from '@/utils/tools'
 export default {
   name: 'qc_monitior_workingset',
@@ -101,11 +101,10 @@ export default {
     this.departId = localStorage.getItem('departId')
     this.staffId = localStorage.getItem('agentId')
     if (this.departId) {
-      findGradeByDepartId({ 'departId': this.departId }).then(res => {
+      findGradeByDepartIds({ 'departId': this.departId }).then(res => {
         if (res.data.code === 0) {
           this.noCompleteNum = res.data.data.noCompleteNum
           this.completeNum = res.data.data.completeNum
-          this.noCompleteNum = res.data.data.noCompleteNum
           this.temporaryNum = res.data.data.temporaryNum
           this.totalNum = parseInt(this.noCompleteNum) + parseInt(this.completeNum) + parseInt(this.temporaryNum)
         } else {

@@ -16,9 +16,9 @@ export function findQCTaskByQCId(obj) { // 通过质检工号来查询质检员�
   })
 }
 
-export function findGradeByDepartId(obj) { // 通过部门id查询该部门质检员任务完成总体情况
+export function findGradeByDepartIds(obj) { // 通过部门id查询该部门质检员任务完成总体情况
   return request({
-    url: '/quality/findGradeByDepartId',
+    url: '/quality/findGradeByDepartIds',
     method: 'get',
     params: obj
   })
