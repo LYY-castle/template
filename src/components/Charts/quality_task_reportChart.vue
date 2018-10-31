@@ -578,7 +578,7 @@
       this.initWebSocket()
     },
     destroyed() {
-      this.websocketclose()
+      this.socket.close()
     },
     beforeDestroy() {
       if (!this.chart) {
@@ -623,7 +623,7 @@
       //   this.websock.send(agentData)
       // },
       websocketclose(e) { // 关闭
-        console.log(e)
+        console.log('WebSocket成功关闭')
       },
       getSummaryMethod({ columns, data }) {
         const sums = []
