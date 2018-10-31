@@ -84,7 +84,7 @@
 
 <script>
 import { findQCTaskByQCId, findQualityTaskByInfo } from '@/api/ord_qc_workingset'
-import { formatDateTime } from '@/utils/tools'
+// import { formatDateTime } from '@/utils/tools'
 export default {
   name: 'ord_qc_workingset',
   data() {
@@ -104,12 +104,11 @@ export default {
       staff.staffId = this.staffId
       findQCTaskByQCId(staff).then(res => {
         if (res.data.code === 0) {
-          this.completeNum = res.data.data.completeNum
+          this.todayCompleteNum = res.data.data.completeNum
           this.noCompleteNum = res.data.data.noCompleteNum
           this.temporaryNum = res.data.data.temporaryNum
-          this.totalNum = parseInt(this.completeNum) + parseInt(this.noCompleteNum) + parseInt(this.temporaryNum)
         } else {
-          this.$message('查询失败，请稍后重试！')
+          this.$message('查询当天任务情况失败，请稍后重试！')
         }
       }).catch(error => {
         console.log(error, '无法连接到服务器')
@@ -117,14 +116,26 @@ export default {
       const obj = {}
       obj.status = '1'
       obj.staffId = this.staffId
-      obj.doneStart = formatDateTime(new Date().setHours(0, 0, 0, 0))
-      obj.doneStop = formatDateTime(new Date().setHours(23, 59, 59, 0))
-      obj.pageSize = 1000
+      // obj.doneStart = formatDateTime(new Date().setHours(0, 0, 0, 0))
+      // obj.doneStop = formatDateTime(new Date().setHours(23, 59, 59, 0))
+      // obj.pageSize = 1000
       findQualityTaskByInfo(obj).then(res => {
         if (res.data.code === 0) {
-          this.todayCompleteNum = res.data.pageInfo.totalCount
+          this.completeNum = res.data.pageInfo.totalCount
         } else {
-          this.$message('查询失败，请稍后重试！')
+          this.$message('查询历史完成情况失败，请稍后重试！')
+        }
+      }).catch(error => {
+        console.log(error, '无法连接服务器')
+      })
+      const totalObj = {}
+      totalObj.status = ''
+      totalObj.staffId = this.staffId
+      findQualityTaskByInfo(totalObj).then(res => {
+        if (res.data.code === 0) {
+          this.totalNum = res.data.pageInfo.totalCount
+        } else {
+          this.$message('查询总任务失败，请稍后重试！')
         }
       }).catch(error => {
         console.log(error, '无法连接服务器')

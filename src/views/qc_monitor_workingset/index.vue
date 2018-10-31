@@ -119,7 +119,7 @@ export default {
       obj.staffId = this.staffId
       obj.doneStart = formatDateTime(new Date().setHours(0, 0, 0, 0))
       obj.doneStop = formatDateTime(new Date().setHours(23, 59, 59, 0))
-      obj.pageSize = 1000
+      // obj.pageSize = 1000
       findQualityTaskByInfo(obj).then(res => {
         if (res.data.code === 0) {
           this.todayCompleteNum = res.data.pageInfo.totalCount
