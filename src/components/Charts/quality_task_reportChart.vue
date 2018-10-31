@@ -156,7 +156,7 @@
         <el-table-column
           align="center"
           prop="new_not_start_count"
-          label="未开始任务数量">
+          label="新增未开始任务数量">
         </el-table-column>
         <el-table-column
           align="center"
@@ -194,7 +194,7 @@
           <el-table-column
             align="center"
             prop="new_not_start_count"
-            label="未开始任务数量">
+            label="新增未开始任务数量">
           </el-table-column>
           <el-table-column
             align="center"
@@ -343,7 +343,7 @@
         <el-table-column
           align="center"
           prop="new_not_start_count"
-          label="未开始任务数量">
+          label="新增未开始任务数量">
         </el-table-column>
         <el-table-column
           align="center"
@@ -896,7 +896,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['未开始任务数量', '已开始任务数量', '已完成任务数量']
+            data: ['新增未开始任务数量', '已开始任务数量', '已完成任务数量']
           },
           calculable: true,
           xAxis: [{
@@ -941,27 +941,8 @@
             splitArea: {
               show: false
             }
-          }, {
-            type: 'value',
-            name: '数量/个',
-            splitLine: {
-              show: false
-            },
-            axisLine: {
-              lineStyle: {
-                color: '#90979c'
-              }
-            },
-            axisTick: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
-            },
-            splitArea: {
-              show: false
-            }
-          }],
+          }
+          ],
           dataZoom: [{
             show: true,
             height: 30,
@@ -989,7 +970,7 @@
             end: 35
           }],
           series: [{
-            name: '未开始任务数量',
+            name: '新增未开始任务数量',
             type: 'bar',
             stack: 'total',
             barMaxWidth: 35,
@@ -1098,7 +1079,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['未开始任务数量', '已开始任务数量', '已完成任务数量']
+            data: ['新增未开始任务数量', '已开始任务数量', '已完成任务数量']
           },
           calculable: true,
           xAxis: [{
@@ -1123,26 +1104,6 @@
             data: this.statistics_type === 'depart' ? this.formInline.sub_depart_name : this.formInline.agent_id
           }],
           yAxis: [{
-            type: 'value',
-            name: '数量/个',
-            splitLine: {
-              show: false
-            },
-            axisLine: {
-              lineStyle: {
-                color: '#90979c'
-              }
-            },
-            axisTick: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
-            },
-            splitArea: {
-              show: false
-            }
-          }, {
             type: 'value',
             name: '数量/个',
             splitLine: {
@@ -1190,7 +1151,7 @@
             end: 35
           }],
           series: [{
-            name: '未开始任务数量',
+            name: '新增未开始任务数量',
             type: 'bar',
             stack: 'total',
             barMaxWidth: 35,
@@ -1299,7 +1260,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['未开始任务数量', '已开始任务数量', '已完成任务数量']
+            data: ['新增未开始任务数量', '已开始任务数量', '已完成任务数量']
           },
           calculable: true,
           xAxis: [{
@@ -1324,26 +1285,6 @@
             data: this.agentTime
           }],
           yAxis: [{
-            type: 'value',
-            name: '数量/个',
-            splitLine: {
-              show: false
-            },
-            axisLine: {
-              lineStyle: {
-                color: '#90979c'
-              }
-            },
-            axisTick: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
-            },
-            splitArea: {
-              show: false
-            }
-          }, {
             type: 'value',
             name: '数量/个',
             splitLine: {
@@ -1391,7 +1332,7 @@
             end: 35
           }],
           series: [{
-            name: '未开始任务数量',
+            name: '新增未开始任务数量',
             type: 'bar',
             stack: 'total',
             barMaxWidth: 35,
