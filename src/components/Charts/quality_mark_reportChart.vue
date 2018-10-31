@@ -588,7 +588,7 @@
       this.initWebSocket()
     },
     destroyed() {
-      this.socket.close()
+      this.websock.close()
     },
     beforeDestroy() {
       if (!this.chart) {

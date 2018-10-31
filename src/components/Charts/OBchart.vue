@@ -594,7 +594,7 @@
       this.chartTime = null
     },
     destroyed() {
-      this.socket.close()
+      this.websock.close()
     },
     methods: {
       initWebSocket() { // 初始化weosocket
