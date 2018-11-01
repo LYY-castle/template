@@ -705,7 +705,7 @@
         gradeHide: false,
         formInline: {
           contactRecord: '',
-          status: '0',
+          status: '',
           pageSize: 10,
           pageNo: 1,
           assignStart: '',
@@ -1175,10 +1175,14 @@
       },
       searchTask(req) {
         req.pageNo = 1
-        req.assignStart = this.timeValue1[0]
-        req.assignStop = this.timeValue1[1]
-        req.doneStart = this.timeValue2[0]
-        req.doneStop = this.timeValue2[1]
+        if (this.timeValue1) {
+          req.assignStart = this.timeValue1[0]
+          req.assignStop = this.timeValue1[1]
+        }
+        if (this.timeValue2) {
+          req.doneStart = this.timeValue2[0]
+          req.doneStop = this.timeValue2[1]
+        }
         req.staffId = localStorage.getItem('agentId')
         req.status = this.formInline.status
         findQualityTaskByInfo(req).then(response => {
@@ -1193,6 +1197,20 @@
     },
     mounted() {
       this.searchTask({ })
+    },
+    created() {
+      if (this.$route.query.status) { // 说明是由工作台跳转(质检员和质检主管共用一个状态)
+        if (this.$route.query.status === '3') { // 说明是查总任务状态，不需要状态和时间条件
+          this.formInline.status = ''
+        } else if (this.$route.query.status === '4') { // 说明是查当日完成情况，须带状态和时间
+          this.formInline.status = '1'
+          this.timeValue2 = []
+          this.timeValue2[0] = formatDateTime(new Date().setHours(0, 0, 0, 0))
+          this.timeValue2[1] = formatDateTime(new Date().setHours(23, 59, 59, 0))
+        } else { // 未完成，已完成，未开始，只需要状态不需要时间条件查询
+          this.formInline.status = this.$route.query.status
+        }
+      }
     }
   }
 </script>
