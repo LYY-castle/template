@@ -420,17 +420,21 @@ export default {
           this.agentArray.push(element.agent_id)
         })
         this.$root.eventHub.$emit('monitor_workingset', this.agentArray)
+        console.log(11111111)
         agentStatus({ agent_id: this.agentArray.join(',') }).then(res => {
+          console.log(11111111112)
           if (!res.data.errorCode) {
             if (res.data.result.length > 0) {
               for (let i = 0; i < res.data.result.length; i++) {
                 const obj = {}
+                console.log(res.data.result[i])
                 obj.busy_time_duration = res.data.result[i].busy_time_duration
                 obj.free_time_duration = res.data.result[i].free_time_duration
                 obj.online_time_duration = res.data.result[i].online_time_duration
                 obj.updateTime = res.data.result[i].last_update_time
                 baseinfo[res.data.result[i].agent_id] = obj
               }
+              this.sumTotal(baseinfo.agentStatusMap)
             }
           }
         })
@@ -482,6 +486,11 @@ export default {
         // console.log(new Date().setHours(0, 0, 0, 0))
         obj[element].updateTime = (obj[element].updateTime < new Date().setHours(0, 0, 0, 0)) ? new Date().setHours(0, 0, 0, 0) : obj[element].updateTime
         stillTime = new Date().getTime() - obj[element].updateTime
+        if (obj[element].isTrans) { // 转接过程中，时间翻倍，通话加1
+          console.log(obj[element].isTrans, '加一了')
+          stillTime = stillTime + (new Date().getTime() - obj[element].transTalking)
+          // callSum = callSum + 1
+        }
         // } else {
         //   obj[element].updateTime = (obj[element].updateTime < new Date().setHours(0, 0, 0, 0)) ? new Date().setHours(0, 0, 0, 0) : obj[element].updateTime
         //   stillTime = new Date().getTime() - obj[element].updatetime
@@ -580,9 +589,9 @@ export default {
         tempObj.beforeStatus = reasoncode
         tempObj.beforeUpdatetime = new Date(UpdateTime).getTime()
       }
-      localStorage.setItem('m_' + agentid, JSON.stringify(tempObj))
       // localStorage.setItem('m_' + agentid, JSON.stringify({ 'reasoncode': reasoncode, 'DN': DN, 'updateTime': new Date().getTime() }))
       if (baseinfo.agentStatusMap[agentid]) { // 说明这个坐席是组内的成员
+        localStorage.setItem('m_' + agentid, JSON.stringify(tempObj))
         const obj = baseinfo.agentStatusMap[agentid]
         obj.beforeStatus = tempObj.beforeStatus
         obj.beforeUpdatetime = tempObj.beforeUpdatetime
@@ -640,6 +649,7 @@ export default {
       console.log(AgentID)
     },
     on_reasonchange(event, agentid, DN, reasoncode) {
+      console.log(event, '改状态' + reasoncode)
       if (window.location.href.indexOf('monitor_workingset') === -1 && agentid === localStorage.getItem('agentId')) { // 说明不是班长工作台页面，并且是坐席本身则不接收事件变化
         return
       }
@@ -652,8 +662,16 @@ export default {
         if (tempObj.reasoncode === '-4' && (tempObj.beforeStatus === '-100' || tempObj.beforeStatus === '-101' || tempObj.beforeStatus === '-4')) {
           tempObj.updateTime = JSON.parse(localStorage.getItem('m_' + agentid)).updateTime
           tempObj.reasoncode = tempObj.beforeStatus
+          tempObj.transTalking = ''
+          tempObj.isTrans = false
+        } else if (tempObj.reasoncode === '-101' && (tempObj.beforeStatus === '-100' || tempObj.beforeStatus === '-101')) { // 转接被接听
+          tempObj.updateTime = JSON.parse(localStorage.getItem('m_' + agentid)).updateTime
+          tempObj.transTalking = new Date().getTime()
+          tempObj.isTrans = true
         } else {
           tempObj.updateTime = new Date().getTime()
+          tempObj.transTalking = ''
+          tempObj.isTrans = false
         }
       } else {
         tempObj.DN = DN
@@ -661,15 +679,19 @@ export default {
         tempObj.updateTime = new Date().getTime()
         tempObj.beforeStatus = reasoncode
         tempObj.beforeUpdatetime = new Date().getTime()
+        tempObj.transTalking = ''
+        tempObj.isTrans = false
       }
-      localStorage.setItem('m_' + agentid, JSON.stringify(tempObj))
       if (baseinfo.agentStatusMap[agentid]) { // 说明这个坐席是组内的成员
+        localStorage.setItem('m_' + agentid, JSON.stringify(tempObj))
         const obj = baseinfo.agentStatusMap[agentid]
         obj.beforeStatus = tempObj.beforeStatus
         obj.beforeUpdatetime = tempObj.beforeUpdatetime
         obj.updateTime = tempObj.updateTime
         obj.reasoncode = reasoncode
         obj.DN = DN
+        obj.isTrans = tempObj.isTrans
+        obj.transTalking = tempObj.transTalking
         // 设置更新时间
         baseinfo.updateTime = new Date().getTime()
         baseinfo.agentStatusMap[agentid] = obj
@@ -832,15 +854,15 @@ export default {
     },
     obTask() {
       const param = { statistics_type: 'agent', depart_id: localStorage.getItem('departId'), time_dimension: 'day', start_time: getStartTimestamp(moment().format(formatDateTime(new Date()).split(' ')[0]), 'day'), end_time: getEndTimestamp(moment().format(formatDateTime(new Date()).split(' ')[0]), 'day') }
-      // ctiRecordStatistics(param).then(res => {
-      //   if (!res.data.error) {
-      //     this.ctiData.online_time_duration = res.data.result[0].online_time_duration
-      //     this.ctiData.free_time_duration = res.data.result[0].free_time_duration
-      //     this.ctiData.busy_time_duration = res.data.result[0].busy_time_duration
-      //     this.ctiData.call_time_duration = res.data.result[0].call_time_duration
-      //     this.ctiData.calls_number = res.data.result[0].calls_number
-      //   }
-      // })
+      ctiRecordStatistics(param).then(res => {
+        if (!res.data.error) {
+          this.ctiData.online_time_duration = this.fomart(res.data.result[0].online_time_duration)
+          this.ctiData.free_time_duration = this.fomart(res.data.result[0].free_time_duration)
+          this.ctiData.busy_time_duration = this.fomart(res.data.result[0].busy_time_duration)
+          this.ctiData.call_time_duration = this.fomart(res.data.result[0].call_time_duration)
+          this.ctiData.calls_number = res.data.result[0].calls_number
+        }
+      })
       ctiReportByAgent(param).then(res => {
         if (!res.data.error) {
           this.ctiTable = res.data.result

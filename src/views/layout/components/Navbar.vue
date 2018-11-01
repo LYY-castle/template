@@ -765,7 +765,7 @@ export default {
         setTimeout(() => {
           if (this.reasonCode === '-1' || this.reasonCode === '-2') {
           // localStorage.setItem('callerDN', null)
-            localStorage.setItem('DN', null)
+            localStorage.removeItem('DN')
           } else {
           // localStorage.setItem('callerDN', DN)
             localStorage.setItem('DN', DN)
@@ -778,7 +778,8 @@ export default {
       const DN = this.formInline.DN
       if (agentId !== null && DN !== null && DN !== '') {
         cti.logoff(agentId, DN, 9)
-        // localStorage.removeItem('DN')
+        localStorage.removeItem('DN')
+        localStorage.removeItem(agentId)
       }
     },
     sleep(seconds) {
@@ -961,9 +962,9 @@ export default {
       addHangupContact({
         'event': 'on_hangup_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID
       }).then(res => {
-        console.log('新建挂断电话的记录：' + res)
+        console.log('新建挂断电话的记录：', res)
       }).catch(error => {
-        console.log('error:' + error)
+        console.log('error:', error)
       })
       switch (hangupLine) {
         case 1:
@@ -1513,6 +1514,9 @@ export default {
   },
   destroyed() {
     this.socket.close()
+    this.agentArray.forEach(ele => { // 清空班长监控下的历史数据
+      localStorage.removeItem('m_' + ele)
+    })
     this.$root.eventHub.$off('DISABLED_DIAL')
     this.$root.eventHub.$off('DIAL_TASK')
     this.$root.eventHub.$off('DIAL_TASK_DIALNM')

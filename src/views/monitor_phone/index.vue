@@ -1021,6 +1021,10 @@ var baseinfo = null
       })
     },
     destroyed() {
+      this.interval.forEach(ele => {
+        clearInterval(ele)
+        ele = null
+      })
       this.monitorlogoff()
     }
   }
