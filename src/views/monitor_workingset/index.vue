@@ -651,6 +651,7 @@ export default {
         tempObj.reasoncode = reasoncode
         if (tempObj.reasoncode === '-4' && (tempObj.beforeStatus === '-100' || tempObj.beforeStatus === '-101' || tempObj.beforeStatus === '-4')) {
           tempObj.updateTime = JSON.parse(localStorage.getItem('m_' + agentid)).updateTime
+          tempObj.reasoncode = tempObj.beforeStatus
         } else {
           tempObj.updateTime = new Date().getTime()
         }
