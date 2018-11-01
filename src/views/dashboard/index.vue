@@ -67,6 +67,10 @@ export default {
       const menu = sessionStorage.getItem('getMenu')
       if (menu && menu.indexOf('ord_workingset.html') > 0) {
         this.$router.push({ name: 'ord_workingset.html' })
+      } else if (menu && menu.indexOf('ord_qc_workingset.html') > 0) {
+        this.$router.push({ name: 'ord_qc_workingset.html' })
+      } else {
+        console.log('没有坐席工作台和质检员工作台的页面权限')
       }
     })
   }
