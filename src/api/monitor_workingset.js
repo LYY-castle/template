@@ -6,9 +6,9 @@ export function taskAssignInfo(obj) {
     params: obj
   })
 }
-export function agentOnlineStatus(obj) {
+export function agentStatus(obj) { // 统计成员（支持多个）的状态：通话时长，在线时长，空闲时长，示忙时长，状态，状态更新时间
   return request({
-    url: '/ctireportcontroller/agentOnlineStatus',
+    url: '/ctireportcontroller/agentStatus',
     method: 'get',
     params: obj
   })
@@ -61,4 +61,4 @@ export function ctiReportByAgent(obj) {
     params: obj
   })
 }
-var wscti = null
+

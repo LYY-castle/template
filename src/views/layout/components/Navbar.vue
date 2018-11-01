@@ -51,15 +51,15 @@
                 <img slot="reference" src="../../../../static/images/enter_disable.png" title="登入" class="img-all icon-container" style="width:53px;">
               </el-popover>
               <!-- 状态 -->
-              <el-dropdown trigger="click" placement="bottom" @command="changeState">
+              <el-dropdown trigger="click" placement="bottom" @command="changeState" >
                 <img src="../../../../static/images/nologin_state.png" title="未登录" class="img-all" v-if="agentState1">
                 <img src="../../../../static/images/busy_normal.png" title="示忙"  class="img-all" v-else-if="agentState2">
                 <img src="../../../../static/images/agentStat38_allReady.png" title="就绪"  class="img-all" v-else-if="agentState3">
                 <img src="../../../../static/images/back_state.png" title="坐席状态"  class="img-all" v-else-if="agentState4">
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="0">就绪</el-dropdown-item>
-                  <el-dropdown-item command="13">示忙</el-dropdown-item>
-                  <el-dropdown-item command="14">后处理</el-dropdown-item>
+                  <el-dropdown-item command="0" :disabled="lockChange">就绪</el-dropdown-item>
+                  <el-dropdown-item command="13" :disabled="lockChange">示忙</el-dropdown-item>
+                  <el-dropdown-item command="14" :disabled="lockChange">后处理</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
               <!-- 号码输入框 -->
@@ -299,6 +299,9 @@ export default {
   name: 'layout',
   data() {
     return {
+      agentArray: [], // 部门下属成员
+      lockChange: false, // 默认不禁用切换状态框
+      isOrdSet: false, // 是否为普通坐席界面
       isDialTaskPage: false, // 是否为拨打详情页面
       socket: null,
       disabledDN: false, // 默认不禁用电话号码框
@@ -449,6 +452,9 @@ export default {
         clearInterval(interval)
         interval = null
         this.socket.close()
+        this.agentArray.forEach(ele => { // 清空班长监控下的历史数据
+          localStorage.removeItem('m_' + ele)
+        })
         this.logout()
       } else if (command === 'changePWD') {
         this.changePWD.staffId = localStorage.getItem('agentId')
@@ -759,7 +765,7 @@ export default {
         setTimeout(() => {
           if (this.reasonCode === '-1' || this.reasonCode === '-2') {
           // localStorage.setItem('callerDN', null)
-            localStorage.setItem('DN', null)
+            localStorage.removeItem('DN')
           } else {
           // localStorage.setItem('callerDN', DN)
             localStorage.setItem('DN', DN)
@@ -773,6 +779,7 @@ export default {
       if (agentId !== null && DN !== null && DN !== '') {
         cti.logoff(agentId, DN, 9)
         localStorage.removeItem('DN')
+        localStorage.removeItem(agentId)
       }
     },
     sleep(seconds) {
@@ -955,9 +962,9 @@ export default {
       addHangupContact({
         'event': 'on_hangup_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID
       }).then(res => {
-        console.log('新建挂断电话的记录：' + res)
+        console.log('新建挂断电话的记录：', res)
       }).catch(error => {
-        console.log('error:' + error)
+        console.log('error:', error)
       })
       switch (hangupLine) {
         case 1:
@@ -1015,6 +1022,7 @@ export default {
       }).catch(error => {
         console.log('error:' + error)
       })
+      vm.$root.eventHub.$emit('addCall', true)
       vm.setbtnStatus('talking')
     },
     on_ringback_event(event, agentid, DN, UUID, callerid, calleeid, ori_ani, activeLine) {
@@ -1076,9 +1084,13 @@ export default {
       let info = {}
       if (typeof localStorage.getItem(agentId) !== 'undefined' && localStorage.getItem(agentId) !== null) {
         info = JSON.parse(localStorage.getItem(agentId))
+        // console.log(info)
+        info.beforeStatus = info.reasoncode
+        info.beforeUpdatetime = info.updateTime
       }
       info.DN = DN
-      info.reasonCode = reasonCode
+      info.reasoncode = reasonCode
+      info.updateTime = new Date()
       localStorage.setItem(agentId, JSON.stringify(info))
       if (vm.isDialTaskPage) {
         if (reasonCode === '-101' || reasonCode === '-100') {
@@ -1104,8 +1116,20 @@ export default {
       } else {
         vm.disabledDial = false
       }
+      if (localStorage.getItem('agentId') === agentId) {
+        const obj = {}
+        obj.event = event
+        obj.agentId = agentId
+        obj.DN = DN
+        obj.reasonCode = reasonCode
+        if (vm.isOrdSet) {
+          vm.$root.eventHub.$emit('reasoncodechange', obj)
+        }
+      }
+      // if (event !== 'manualchange') {
       switch (reasonCode) {
         case '-1':
+          vm.lockChange = true
           vm.islogin = false
           vm.timeCount = ''
           vm.telephoneState = '登出'
@@ -1115,6 +1139,7 @@ export default {
           vm.disabledDN = false
           break
         case '0':
+          vm.lockChange = false
           vm.islogin = true
           vm.oldtelephonestate = vm.telephoneState
           vm.telephoneState = '就绪'
@@ -1136,6 +1161,7 @@ export default {
           }
           break
         case '13':
+          vm.lockChange = false
           vm.islogin = true
           vm.oldtelephonestate = vm.telephoneState
           vm.telephoneState = '示忙'
@@ -1155,8 +1181,10 @@ export default {
             vm.disabledDN = false
             vm.formInline.DN = DN
           }
+
           break
         case '14':
+          vm.lockChange = false
           vm.islogin = true
           vm.oldtelephonestate = vm.telephoneState
           vm.telephoneState = '后处理'
@@ -1176,8 +1204,10 @@ export default {
             vm.disabledDN = false
             vm.formInline.DN = DN
           }
+
           break
         case '-100':
+          vm.lockChange = true
           vm.islogin = true
           vm.oldtelephonestate = vm.telephoneState
           vm.telephoneState = '来电通话中'
@@ -1208,8 +1238,10 @@ export default {
             vm.disabledDN = false
             vm.formInline.DN = DN
           }
+
           break
         case '-101':
+          vm.lockChange = true
           vm.islogin = true
           vm.oldtelephonestate = vm.telephoneState
           vm.telephoneState = '去电通话中'
@@ -1239,8 +1271,10 @@ export default {
             vm.disabledDN = false
             vm.formInline.DN = DN
           }
+
           break
         case '-2':
+          vm.lockChange = true
           vm.timeCount = ''
           vm.telephoneState = '登出'
           clearInterval(interval)
@@ -1249,7 +1283,12 @@ export default {
           vm.setbtnStatus('logoff')
           vm.disabledDN = false
           break
+        case '-3':
+        case '-4':
+          vm.lockChange = true
+          break
       }
+      // }
       vm.reasonCode = reasonCode
       localStorage.setItem('reasonCode', vm.reasonCode)
     },
@@ -1296,6 +1335,7 @@ export default {
     },
     logout() {
       vm.agentLogoff()
+      vm.$root.eventHub.$emit('closeInterval', true)// 普通坐席计时停止
       this.$store.dispatch('LogOut').then((data) => {
         if (data.info) {
           this.$router.push({ path: '/login' })
@@ -1437,6 +1477,24 @@ export default {
         vm.dialCall = true
       }
     })
+    this.$root.eventHub.$on('ord_set', (obj) => {
+      vm.isOrdSet = obj
+    })
+    this.$root.eventHub.$on('monitor_workingset', (obj) => {
+      vm.agentArray = obj
+    })
+    // this.$root.eventHub.$on('manualchange', (obj) => {
+    //   const object = JSON.parse(localStorage.getItem(localStorage.getItem('agentId')))
+    //   let DN = localStorage.getItem('DN') ? localStorage.getItem('DN') : ''
+    //   const agentId = localStorage.getItem('agentId') ? localStorage.getItem('agentId') : ''
+    //   let reasoncode = ''
+    //   if (object) {
+    //     DN = object.DN ? object.DN : ''
+    //     reasoncode = object.reasoncode ? object.reasoncode : ''
+    //   }
+    //   vm.on_reasonchange('manualchange', agentId, DN, reasoncode)
+    // })
+
     this.$root.eventHub.$on('DIAL_TASK', (obj) => {
       if (!obj.isDialTask) { // 说明是拨打页面
         vm.isDialTaskPage = true
@@ -1458,9 +1516,13 @@ export default {
   },
   destroyed() {
     this.socket.close()
+    this.agentArray.forEach(ele => { // 清空班长监控下的历史数据
+      localStorage.removeItem('m_' + ele)
+    })
     this.$root.eventHub.$off('DISABLED_DIAL')
     this.$root.eventHub.$off('DIAL_TASK')
     this.$root.eventHub.$off('DIAL_TASK_DIALNM')
+    this.$root.eventHub.$off('ord_set')
   }
 }
 </script>
