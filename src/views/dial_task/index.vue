@@ -563,6 +563,7 @@ import {
   batchCreatProduct,
   addMoreOrder
 } from '@/api/dialTask' // 接口
+import { departAgents, getDepartId } from '@/api/ctiReport'
 var vm = null
 
 export default {
@@ -570,6 +571,8 @@ export default {
 
   data() {
     return {
+      departId: '',
+      agents: [],
       customerNote: '', // 客户留言
       sumTotal: 0, // 总价格
       sumInfo: new Map(), // 所选中的产品
@@ -666,7 +669,8 @@ export default {
         campaignId: '',
         status: '0',
         pageNo: 1,
-        pageSize: 10
+        pageSize: 10,
+        staffId: ''
       },
       customerInfo: {
         customerName: '',
@@ -1661,6 +1665,30 @@ export default {
   },
   // 模板编译/挂载之后
   mounted() {
+    getDepartId().then(res => {
+      this.departId = res.data.departId
+      departAgents(res.data.departId).then(response => {
+        this.agents = response.data.result.agents.map(function(item) {
+          return item.agent_id
+        })
+        this.req.staffId = this.agents.join(',')
+        // 判断是 快速拨打 还是 拨打
+        if (sessionStorage.getItem('quickDialto') && sessionStorage.getItem('isDialTask')) {
+          const obj = JSON.parse(sessionStorage.getItem('setDetails'))
+          this.taskIds = obj.taskIds
+          this.campaignIds = obj.campaignIds
+          this.customerIds = obj.customerIds
+          this.isBlacklists = obj.isBlacklists
+          // this.taskIds = this.$store.state.dialTask.taskIds
+          // this.campaignIds = this.$store.state.dialTask.campaignIds
+          // this.customerIds = this.$store.state.dialTask.customerIds
+          // this.isBlacklists = this.$store.state.dialTask.isBlacklists
+          this.quickDialto()
+        } else {
+          this.getParametersFromContactRecordDail()
+        }
+      })
+    })
     history.pushState(null, null, document.URL)
     window.addEventListener('popstate', function() {
       history.pushState(null, null, document.URL)
@@ -1671,21 +1699,6 @@ export default {
       this.recordId = sessionStorage.getItem('recordId')
     } else {
       this.recordId = ''
-    }
-    // 判断是 快速拨打 还是 拨打
-    if (sessionStorage.getItem('quickDialto') && sessionStorage.getItem('isDialTask')) {
-      const obj = JSON.parse(sessionStorage.getItem('setDetails'))
-      this.taskIds = obj.taskIds
-      this.campaignIds = obj.campaignIds
-      this.customerIds = obj.customerIds
-      this.isBlacklists = obj.isBlacklists
-      // this.taskIds = this.$store.state.dialTask.taskIds
-      // this.campaignIds = this.$store.state.dialTask.campaignIds
-      // this.customerIds = this.$store.state.dialTask.customerIds
-      // this.isBlacklists = this.$store.state.dialTask.isBlacklists
-      this.quickDialto()
-    } else {
-      this.getParametersFromContactRecordDail()
     }
     getStaffNameById(localStorage.getItem('agentId'))
       .then(res => {
