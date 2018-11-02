@@ -170,6 +170,12 @@
           </el-table-column>
           <el-table-column
             align="center"
+            label="所属员工"
+            prop="staffId"
+            :show-overflow-tooltip="true">
+          </el-table-column>
+          <el-table-column
+            align="center"
             label="任务状态">
             <template
               slot-scope="scope">
