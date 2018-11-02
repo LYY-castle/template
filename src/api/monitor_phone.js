@@ -19,6 +19,13 @@ export function findStatusByAgentId(agentId) {
     data: { 'agentId': agentId }
   })
 }
+export function findStatusByAgentIds(obj) {
+  return request({
+    url: '/contact/findStatusByAgentIds',
+    method: 'post',
+    data: { 'agentIds': obj }
+  })
+}
 export function getDepartIdByAgentId(agentId) {
   return request({
     url: '/employee/getStaffNameByAgentId',

@@ -395,14 +395,12 @@ export default {
           this.agentArray.push(element.agent_id)
         })
         this.$root.eventHub.$emit('monitor_workingset', this.agentArray)
-        console.log(11111111)
         agentStatus({ agent_id: this.agentArray.join(',') }).then(res => {
-          console.log(11111111112)
           if (!res.data.errorCode) {
             if (res.data.result.length > 0) {
               for (let i = 0; i < res.data.result.length; i++) {
                 const obj = {}
-                console.log(res.data.result[i])
+                // console.log(res.data.result[i])
                 obj.busy_time_duration = res.data.result[i].busy_time_duration
                 obj.free_time_duration = res.data.result[i].free_time_duration
                 obj.online_time_duration = res.data.result[i].online_time_duration
@@ -462,7 +460,6 @@ export default {
         obj[element].updateTime = (obj[element].updateTime < new Date().setHours(0, 0, 0, 0)) ? new Date().setHours(0, 0, 0, 0) : obj[element].updateTime
         stillTime = new Date().getTime() - obj[element].updateTime
         if (obj[element].isTrans) { // 转接过程中，时间翻倍，通话加1
-          console.log(obj[element].isTrans, '加一了')
           stillTime = stillTime + (new Date().getTime() - obj[element].transTalking)
           // callSum = callSum + 1
         }
@@ -624,7 +621,6 @@ export default {
       console.log(AgentID)
     },
     on_reasonchange(event, agentid, DN, reasoncode) {
-      console.log(event, '改状态' + reasoncode)
       if (window.location.href.indexOf('monitor_workingset') === -1 && agentid === localStorage.getItem('agentId')) { // 说明不是班长工作台页面，并且是坐席本身则不接收事件变化
         return
       }

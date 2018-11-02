@@ -200,7 +200,7 @@
 
 <script>
   import { Message } from 'element-ui'
-  import { findNextAgentByNow, findStatusByAgentId, findNextOrganByNow, getDepartIdByAgentId, getAllChildrenOrgan } from '@/api/monitor_phone'
+  import { findNextAgentByNow, findStatusByAgentId, findNextOrganByNow, getDepartIdByAgentId, getAllChildrenOrgan, findStatusByAgentIds } from '@/api/monitor_phone'
   import cti from '@/utils/monitorcti'
   import { getDownInfoByCurrentUser } from '@/api/monitor_list_single'
 
@@ -862,40 +862,40 @@ var baseinfo = null
       setbtnStatus(str) { // 设置按钮功能
         switch (str) {
           case 'sessionclosed':
-            this.btnunIntrudeIn = true
-            this.btnunListen = true
-            this.btnunWhisper = true
-            this.btnunIntrudeOut = true
-            this.btnunForceFree = true
-            this.btnunForceBusy = true
-            this.btnunForceLogoff = true
+            baseinfo.btnunIntrudeIn = true
+            baseinfo.btnunListen = true
+            baseinfo.btnunWhisper = true
+            baseinfo.btnunIntrudeOut = true
+            baseinfo.btnunForceFree = true
+            baseinfo.btnunForceBusy = true
+            baseinfo.btnunForceLogoff = true
             break
           case 'login':
-            this.btnunIntrudeIn = false
-            this.btnunListen = false
-            this.btnunWhisper = false
-            this.btnunIntrudeOut = false
-            this.btnunForceFree = false
-            this.btnunForceBusy = false
-            this.btnunForceLogoff = false
+            baseinfo.btnunIntrudeIn = false
+            baseinfo.btnunListen = false
+            baseinfo.btnunWhisper = false
+            baseinfo.btnunIntrudeOut = false
+            baseinfo.btnunForceFree = false
+            baseinfo.btnunForceBusy = false
+            baseinfo.btnunForceLogoff = false
             break
           case 'logoff':
-            this.btnunIntrudeIn = true
-            this.btnunListen = true
-            this.btnunWhisper = true
-            this.btnunIntrudeOut = true
-            this.btnunForceFree = true
-            this.btnunForceBusy = true
-            this.btnunForceLogoff = true
+            baseinfo.btnunIntrudeIn = true
+            baseinfo.btnunListen = true
+            baseinfo.btnunWhisper = true
+            baseinfo.btnunIntrudeOut = true
+            baseinfo.btnunForceFree = true
+            baseinfo.btnunForceBusy = true
+            baseinfo.btnunForceLogoff = true
             break
           default :
-            this.btnunIntrudeIn = true
-            this.btnunListen = true
-            this.btnunWhisper = true
-            this.btnunIntrudeOut = true
-            this.btnunForceFree = true
-            this.btnunForceBusy = true
-            this.btnunForceLogoff = true
+            baseinfo.btnunIntrudeIn = true
+            baseinfo.btnunListen = true
+            baseinfo.btnunWhisper = true
+            baseinfo.btnunIntrudeOut = true
+            baseinfo.btnunForceFree = true
+            baseinfo.btnunForceBusy = true
+            baseinfo.btnunForceLogoff = true
             break
         }
       },
@@ -974,20 +974,32 @@ var baseinfo = null
                     obj.busyshow = false
                   })
                   cti.connectCTI(process.env.CTI_MONITOR_WS_SERVERURL)
+                  let agents = ''
                   for (let j = 0; j < baseinfo.agentData.length; j++) {
-                    findStatusByAgentId(baseinfo.agentData[j].agentId).then((response) => {
-                      if (response.data.code === 0) {
-                        var data = response.data.data
-                        if (data) {
-                          baseinfo.agentData[j].talkOutCount = data.outCallTotalTime
-                          baseinfo.agentData[j].talkOutTimes = data.outCallTimes
-                          baseinfo.agentData[j].comeinCount = data.inCallTotalTime
-                          baseinfo.agentData[j].comeinTimes = data.inCallTimes
-                          baseinfo.$forceUpdate()
-                        }
-                      }
-                    })
+                    agents = agents + baseinfo.agentData[j].agentId + ','
                   }
+                  if (agents.endsWith(',')) {
+                    agents = agents.substring(0, agents.length - 1)
+                  }
+                  findStatusByAgentIds(agents).then((response) => {
+                    if (response.data.code === 0) {
+                      const data = response.data.data
+                      if (data && data.length > 0) {
+                        for (let i = 0; i < data.length; i++) {
+                          for (let k = 0; k < baseinfo.agentData.length; k++) {
+                            if (data[i].staffId === baseinfo.agentData[k].agentId) {
+                              baseinfo.agentData[k].talkOutCount = data[i].outCallTotalTime
+                              baseinfo.agentData[k].talkOutTimes = parseInt(data[i].outCallTimes)
+                              baseinfo.agentData[k].comeinCount = data[i].inCallTotalTime
+                              baseinfo.agentData[k].comeinTimes = parseInt(data[i].inCallTimes)
+                              break
+                            }
+                          }
+                        }
+                        baseinfo.$forceUpdate()
+                      }
+                    }
+                  })
                 }
               }
             }
