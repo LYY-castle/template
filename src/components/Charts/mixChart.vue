@@ -3,7 +3,7 @@
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
         <el-form-item>
-          <el-select v-model="formInline.time" @change="time_dimensionChange">
+          <el-select v-model="formInline.timeClone" @change="time_dimensionChange">
             <el-option label="天" value="day"></el-option>
             <el-option label="小时" value="hour"></el-option>
             <el-option label="周" value="week"></el-option>
@@ -11,7 +11,7 @@
             <el-option label="年" value="year"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-show="formInline.time === 'hour'" label="操作时间：">
+        <el-form-item v-show="formInline.timeClone === 'hour'" label="操作时间：">
           <el-date-picker
             v-model="timeValue"
             type="datetimerange"
@@ -21,7 +21,7 @@
             format="yyyy-MM-dd HH">
           </el-date-picker>
         </el-form-item>
-        <el-form-item v-show="formInline.time === 'day'" label="操作时间：">
+        <el-form-item v-show="formInline.timeClone === 'day'" label="操作时间：">
           <el-date-picker
             v-model="timeValue"
             type="daterange"
@@ -31,7 +31,7 @@
             format="yyyy-MM-dd">
           </el-date-picker>
         </el-form-item>
-        <el-form-item v-show="formInline.time === 'week'" label="操作时间：">
+        <el-form-item v-show="formInline.timeClone === 'week'" label="操作时间：">
           <el-date-picker
             v-model="timeValue[0]"
             type="week"
@@ -48,7 +48,7 @@
             :picker-options="week">
           </el-date-picker>
         </el-form-item>
-        <el-form-item v-show="formInline.time === 'month'" label="操作时间：">
+        <el-form-item v-show="formInline.timeClone === 'month'" label="操作时间：">
           <el-date-picker
             v-model="timeValue[0]"
             type="month"
@@ -63,7 +63,7 @@
             format="yyyy-MM">
           </el-date-picker>
         </el-form-item>
-        <el-form-item v-show="formInline.time === 'year'" label="操作时间：">
+        <el-form-item v-show="formInline.timeClone === 'year'" label="操作时间：">
           <el-date-picker
             v-model="timeValue[0]"
             type="year"
@@ -240,7 +240,7 @@
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
         <el-form-item>
-          <el-select v-model="formInline.time" @change="time_dimensionChange">
+          <el-select v-model="formInline.timeClone" @change="time_dimensionChange">
             <el-option label="天" value="day"></el-option>
             <el-option label="小时" value="hour"></el-option>
             <el-option label="周" value="week"></el-option>
@@ -248,7 +248,7 @@
             <el-option label="年" value="year"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-show="formInline.time === 'hour'" label="操作时间：">
+        <el-form-item v-show="formInline.timeClone === 'hour'" label="操作时间：">
           <el-date-picker
             v-model="timeValue"
             type="datetimerange"
@@ -258,7 +258,7 @@
             format="yyyy-MM-dd HH">
           </el-date-picker>
         </el-form-item>
-        <el-form-item v-show="formInline.time === 'day'" label="操作时间：">
+        <el-form-item v-show="formInline.timeClone === 'day'" label="操作时间：">
           <el-date-picker
             v-model="timeValue"
             type="daterange"
@@ -268,7 +268,7 @@
             format="yyyy-MM-dd">
           </el-date-picker>
         </el-form-item>
-        <el-form-item v-show="formInline.time === 'week'" label="操作时间：">
+        <el-form-item v-show="formInline.timeClone === 'week'" label="操作时间：">
           <el-date-picker
             v-model="timeValue[0]"
             type="week"
@@ -285,7 +285,7 @@
             :picker-options="week">
           </el-date-picker>
         </el-form-item>
-        <el-form-item v-show="formInline.time === 'month'" label="操作时间：">
+        <el-form-item v-show="formInline.timeClone === 'month'" label="操作时间：">
           <el-date-picker
             v-model="timeValue[0]"
             type="month"
@@ -300,7 +300,7 @@
             format="yyyy-MM">
           </el-date-picker>
         </el-form-item>
-        <el-form-item v-show="formInline.time === 'year'" label="操作时间：">
+        <el-form-item v-show="formInline.timeClone === 'year'" label="操作时间：">
           <el-date-picker
             v-model="timeValue[0]"
             type="year"
@@ -474,7 +474,8 @@
           staff: '',
           time_dimension: '',
           sub_depart_id: [],
-          sub_depart_name: []
+          sub_depart_name: [],
+          timeClone: 'day'
         },
         tableData: [],
         tableData1: [],
@@ -498,7 +499,15 @@
         staffAgentid: null,
         week: {
           firstDayOfWeek: 1
-        }
+        },
+        timer: null
+      }
+    },
+    beforeMount() {
+      var self = this
+      this.timer = setInterval(getTotelNumber, 30000)
+      function getTotelNumber() {
+        self.searchEvery('search')
       }
     },
     mounted() {
@@ -584,6 +593,9 @@
       }
       this.chartTime.dispose()
       this.chartTime = null
+      if (this.timer) {
+        clearInterval(this.timer)
+      }
     },
     methods: {
       getStartTimestamp(timeStr, type) {
@@ -1627,7 +1639,7 @@
         })
       },
       search(val) {
-        if (this.formInline.time === 'week') {
+        if (this.formInline.timeClone === 'week') {
           this.timeValue[0] = Date.parse(this.timeValue[0]) - 24 * 3600 * 1000
           this.timeValue[0] = new Date(this.timeValue[0])
           this.timeValue[1] = Date.parse(this.timeValue[1]) - 24 * 3600 * 1000
@@ -1640,7 +1652,9 @@
             duration: 3 * 1000
           })
         } else {
-          this.timeValueClone = this.timeValue
+          this.timeValueClone[0] = this.timeValue[0]
+          this.timeValueClone[1] = this.timeValue[1]
+          this.formInline.time = this.formInline.timeClone
           this.pageNo = []
           this.pageSize = []
           this.totalCount = []
@@ -1665,8 +1679,39 @@
           this.teamData(val)
         }
       },
+      searchEvery(val) {
+        if (this.timeValueClone[0] > this.timeValueClone[1]) {
+          Message({
+            message: '开始时间不能大于结束时间',
+            type: 'error',
+            duration: 3 * 1000
+          })
+        } else {
+          this.pageNo = []
+          this.pageSize = []
+          this.totalCount = []
+          const params = {
+            statistics_type: this.statistics_type,
+            depart_id: this.departId,
+            time_dimension: this.formInline.time,
+            start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
+            end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+          }
+
+          if (this.statistics_type === 'depart') {
+            params.sub_depart_id = this.formInline.sub_depart_id.join(',')
+          } else {
+            params.agent_id = this.formInline.agent_id.join(',')
+          }
+
+          totalAgent(params).then(responseTotal => {
+            this.tableData1 = responseTotal.data.result
+          })
+          this.teamData(val)
+        }
+      },
       search1(val) {
-        if (this.formInline.time === 'week') {
+        if (this.formInline.timeClone === 'week') {
           this.timeValue[0] = Date.parse(this.timeValue[0]) - 24 * 3600 * 1000
           this.timeValue[0] = new Date(this.timeValue[0])
           this.timeValue[1] = Date.parse(this.timeValue[1]) - 24 * 3600 * 1000
@@ -1679,14 +1724,16 @@
             duration: 3 * 1000
           })
         } else {
-          this.timeValueClone = this.timeValue
+          this.timeValueClone[0] = this.timeValue[0]
+          this.timeValueClone[1] = this.timeValue[1]
+          this.formInline.time = this.formInline.timeClone
           this.agentChange(val)
           this.searchAgentStaff(val)
         }
       },
       reset() {
         this.formInline.from = 1
-        this.formInline.time = 'day'
+        this.formInline.timeClone = 'day'
         this.timeValue = [new Date(new Date(new Date().toLocaleDateString()).getTime() - 7 * 24 * 3600 * 1000), new Date(new Date(new Date().toLocaleDateString()).getTime())]
       }
     }

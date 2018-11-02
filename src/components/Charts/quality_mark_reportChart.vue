@@ -1646,7 +1646,8 @@
             duration: 3 * 1000
           })
         } else {
-          this.timeValueClone = this.timeValue
+          this.timeValueClone[0] = this.timeValue[0]
+          this.timeValueClone[1] = this.timeValue[1]
           this.formInline.timeClone = this.formInline.time
           this.pageNo = []
           this.pageSize = []
@@ -1727,7 +1728,8 @@
         } else {
           this.formInline.product = this.formInline.productClone
           this.formInline.campaignId = this.formInline.campaignIdClone
-          this.timeValueClone = this.timeValue
+          this.timeValueClone[0] = this.timeValue[0]
+          this.timeValueClone[1] = this.timeValue[1]
           this.formInline.timeClone = this.formInline.time
           this.agentChange(val)
           this.searchAgentStaff(val)

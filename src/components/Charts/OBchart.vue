@@ -1555,7 +1555,8 @@
         } else {
           this.formInline.campaignId = this.formInline.campaignIdClone
           this.formInline.timeClone = this.formInline.time
-          this.timeValueClone = this.timeValue
+          this.timeValueClone[0] = this.timeValue[0]
+          this.timeValueClone[1] = this.timeValue[1]
           this.pageNo = []
           this.pageSize = []
           this.totalCount = []
@@ -1629,7 +1630,8 @@
           })
         } else {
           this.formInline.campaignId = this.formInline.campaignIdClone
-          this.timeValueClone = this.timeValue
+          this.timeValueClone[0] = this.timeValue[0]
+          this.timeValueClone[1] = this.timeValue[1]
           this.formInline.timeClone = this.formInline.time
           this.agentChange(val)
           this.searchAgentStaff(val)
