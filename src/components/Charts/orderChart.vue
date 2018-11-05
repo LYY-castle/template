@@ -11,7 +11,7 @@
         <el-form-item label="产品名称:" v-show="productList && productList.length > 0">
           <el-select v-model="formInline.productClone" placeholder="产品名称">
             <el-option value="" label="所有产品"></el-option>
-            <el-option v-for="item in productList" :key="item.productId" :label="item.productName" :value="item.productId"></el-option>
+            <el-option v-for="item in productList" :key="item.templateId" :label="item.productName" :value="item.templateId"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="时间维度:">
@@ -241,7 +241,7 @@
         <el-form-item label="产品名称:" v-show="productList && productList.length > 0">
           <el-select v-model="formInline.productClone" placeholder="产品名称">
             <el-option value="" label="所有产品"></el-option>
-            <el-option v-for="item in productList" :key="item.productId" :label="item.productName" :value="item.productId"></el-option>
+            <el-option v-for="item in productList" :key="item.templateId" :label="item.productName" :value="item.templateId"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="时间维度:">
@@ -764,7 +764,7 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_id: this.formInline.product,
+          product_template_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           agent_id: this.staffAgentid,
@@ -791,7 +791,7 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_id: this.formInline.product,
+          product_template_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
@@ -819,7 +819,7 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_id: this.formInline.product,
+          product_template_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
@@ -1470,7 +1470,7 @@
         hasOrderInfos(val).then(res => {
           if (res.data.data) {
             for (let i = 0; i < this.allProductList.length; i++) {
-              if (res.data.data.indexOf(this.allProductList[i].productId) !== -1) {
+              if (res.data.data.indexOf(this.allProductList[i].templateId) !== -1) {
                 this.productList.push(this.allProductList[i])
               }
             }
@@ -1484,7 +1484,7 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_id: this.formInline.product,
+          product_template_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           time: val,
@@ -1517,7 +1517,7 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_id: this.formInline.product,
+          product_template_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
@@ -1559,7 +1559,7 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_id: this.formInline.product,
+          product_template_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
@@ -1628,7 +1628,7 @@
           const params = {
             statistics_type: this.statistics_type,
             depart_id: this.departId,
-            product_id: this.formInline.product,
+            product_template_id: this.formInline.product,
             campaign_id: this.formInline.campaignId,
             time_dimension: this.formInline.timeClone,
             sub_depart_id: this.formInline.sub_depart_id.join(','),
@@ -1663,7 +1663,7 @@
           const params = {
             statistics_type: this.statistics_type,
             depart_id: this.departId,
-            product_id: this.formInline.product,
+            product_template_id: this.formInline.product,
             campaign_id: this.formInline.campaignId,
             time_dimension: this.formInline.timeClone,
             sub_depart_id: this.formInline.sub_depart_id.join(','),
