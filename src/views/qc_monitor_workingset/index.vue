@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import { findGradeByDepartIds, findQualityTaskByInfo } from '@/api/ord_qc_workingset'
+import { findGradeByDepartIds, findQualityTaskByInfo, getStaffByDepartId } from '@/api/ord_qc_workingset'
 import { formatDateTime } from '@/utils/tools'
 export default {
   name: 'qc_monitior_workingset',
@@ -113,20 +113,28 @@ export default {
       }).catch(error => {
         console.log(error, '无法连接到服务器')
       })
-      const obj = {}
-      obj.status = '1'
-      obj.staffId = this.staffId
-      obj.doneStart = formatDateTime(new Date().setHours(0, 0, 0, 0))
-      obj.doneStop = formatDateTime(new Date().setHours(23, 59, 59, 0))
-      // obj.pageSize = 1000
-      findQualityTaskByInfo(obj).then(res => {
-        if (res.data.code === 0) {
-          this.todayCompleteNum = res.data.pageInfo.totalCount
-        } else {
-          this.$message('查询失败，请稍后重试！')
-        }
-      }).catch(error => {
-        console.log(error, '无法连接服务器')
+      getStaffByDepartId(this.departId).then(response => {
+        const lists = response.data.dataAll
+        const staffs = []
+        lists.forEach(element => {
+          staffs.push(element[1])
+        })
+        const obj = {}
+        obj.status = '1'
+
+        obj.staffId = staffs.join(',')
+        obj.doneStart = formatDateTime(new Date().setHours(0, 0, 0, 0))
+        obj.doneStop = formatDateTime(new Date().setHours(23, 59, 59, 0))
+        // obj.pageSize = 1000
+        findQualityTaskByInfo(obj).then(res => {
+          if (res.data.code === 0) {
+            this.todayCompleteNum = res.data.pageInfo.totalCount
+          } else {
+            this.$message('查询失败，请稍后重试！')
+          }
+        }).catch(error => {
+          console.log(error, '无法连接服务器')
+        })
       })
     }
   },
@@ -134,7 +142,7 @@ export default {
     checkNum(value) {
       this.$router.push({
         name: 'qm_quailitymark.html',
-        query: { 'status': value, 'timeStart': new Date().setHours(0, 0, 0, 0), 'timeEnd': new Date().setHours(23, 59, 59, 0) }
+        query: { 'status': value, 'isManager': true }
       })
     }
   }

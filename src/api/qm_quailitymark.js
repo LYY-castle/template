@@ -79,6 +79,14 @@ export function getGradeByGradeId(req) {
     params: req
   })
 }
+// 查找部门员工
+export function getStaffByDepartId(id) {
+  return request({
+    url: '/employee/getStaffByDepartId',
+    method: 'get',
+    params: { 'departId': id }
+  })
+}
 
 /** 和谐字符串 */
 export function repalceString(string, start, length, str) { // string:需要替换的字符串，start:从第几个开始，length:替换几个，str:用什么替换
