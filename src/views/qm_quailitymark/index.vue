@@ -1180,6 +1180,9 @@
         // this.formInline.status = this.formInline.status
         obj.status = this.formInline.status
         // this.formInline.staffId = localStorage.getItem('agentId')
+        obj.contactRecord = this.formInline.contactRecord// 接触历史编号
+        obj.taskName = this.formInline.taskName// 任务名称
+        obj.modifierName = this.formInline.modifierName// 操作人
         if (this.isManager) {
           if (this.formInline.staffId === '') {
             let tempStr = ''
@@ -1214,6 +1217,9 @@
         // this.formInline.doneStop = this.timeValue2[1]
         obj.doneStop = this.timeValue2[1]
         obj.status = this.formInline.status
+        obj.contactRecord = this.formInline.contactRecord// 接触历史编号
+        obj.taskName = this.formInline.taskName// 任务名称
+        obj.modifierName = this.formInline.modifierName// 操作人
         if (this.isManager) {
           if (this.formInline.staffId === '') {
             let tempStr = ''
@@ -1274,19 +1280,19 @@
         const req = {}
         req.pageNo = 1
         this.formInline.pageNo = 1
-        if (this.timeValue1) {
+        if (this.timeValue1) { // 分配时间开始、结束
           this.formInline.assignStart = this.timeValue1[0]
           req.assignStart = this.timeValue1[0]
           this.formInline.assignStop = this.timeValue1[1]
           req.assignStop = this.timeValue1[1]
         }
-        if (this.timeValue2) {
+        if (this.timeValue2) { // 操作时间开始、结束
           this.formInline.doneStart = this.timeValue2[0]
           req.doneStart = this.timeValue2[0]
           this.formInline.doneStop = this.timeValue2[1]
           req.doneStop = this.timeValue2[1]
         }
-        if (this.isManager) {
+        if (this.isManager) { // 是否主管权限
           if (this.formInline.staffId !== '') {
             req.staffId = this.formInline.staffId
           } else {
@@ -1299,7 +1305,10 @@
         } else {
           req.staffId = localStorage.getItem('agentId')
         }
-        req.status = this.formInline.status
+        req.status = this.formInline.status// 完成状态
+        req.contactRecord = this.formInline.contactRecord// 接触历史编号
+        req.taskName = this.formInline.taskName// 任务名称
+        req.modifierName = this.formInline.modifierName// 操作人
         findQualityTaskByInfo(req).then(response => {
           this.queryGradeList(response)
         })
