@@ -598,6 +598,7 @@ export default {
             type: 'error',
             duration: 1 * 1000
           })
+          return
         } else {
           if (reg.test(vm.dialNum)) {
             const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
@@ -648,6 +649,7 @@ export default {
             type: 'error',
             duration: 1 * 1000
           })
+          return
         } else {
           if (reg.test(vm.dialNum)) {
             const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
@@ -1508,7 +1510,11 @@ export default {
     })
     this.$root.eventHub.$on('DIAL_TASK_DIALNM', (obj) => {
       if (vm.isDialTaskPage) {
-        cti.makecall(obj.caller, obj.callee)
+        if (obj.callee === obj.caller) {
+          vm.$message.error('不能拨打给自己')
+        } else {
+          cti.makecall(obj.caller, obj.callee)
+        }
       } else {
         vm.$message.error('不在拨打界面，不能拨打客户')
       }
