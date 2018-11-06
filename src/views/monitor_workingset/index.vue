@@ -436,6 +436,7 @@ export default {
       return hours + ':' + minutes + ':' + seconds
     },
     sumTotal(obj) {
+      console.log(obj, '1111111111')
       // 初始化示忙时间，通话时间，空闲时间和在线时间
       let busy_time_duration = baseinfo.busy_time_duration
       let call_time_duration = baseinfo.call_time_duration
@@ -577,6 +578,7 @@ export default {
       }
     },
     trigger(agentid, reasoncode, DN) {
+      console.log(agentid, reasoncode, DN)
       // reportAgent({
       //   statistics_type: 'agent',
       //   depart_id: localStorage.getItem('departId'),
@@ -621,6 +623,7 @@ export default {
       console.log(AgentID)
     },
     on_reasonchange(event, agentid, DN, reasoncode) {
+      console.log(event)
       if (window.location.href.indexOf('monitor_workingset') === -1 && agentid === localStorage.getItem('agentId')) { // 说明不是班长工作台页面，并且是坐席本身则不接收事件变化
         return
       }

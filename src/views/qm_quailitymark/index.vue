@@ -168,9 +168,9 @@
           width="80">
           <template slot-scope="scope" >
             <el-button @click="handleClick(scope.row)" type="text" size="small" v-if="scope.row.status==='未开始'&&scope.row.staffId===staffId">开始评分</el-button>
-            <el-button type="text" size="small" v-if="scope.row.status==='未开始'&&scope.row.staffId!==staffId">无权限</el-button>
+            <el-button type="text" size="small" v-if="scope.row.status==='未开始'&&scope.row.staffId!==staffId">没有权限</el-button>
             <el-button @click="handleClickDetail(scope.row)" type="text" size="small" v-if="scope.row.status!=='未开始'&&scope.row.staffId===staffId">修改评分</el-button>
-            <el-button type="text" size="small" v-if="scope.row.status!=='未开始'&&scope.row.staffId!==staffId">无权限</el-button>
+            <el-button type="text" size="small" v-if="scope.row.status!=='未开始'&&scope.row.staffId!==staffId">没有权限</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -661,6 +661,7 @@
 
 <script>
   import { findQualityTaskByInfo, getMarksByTaskId, getGradeListByGradeId, querycustomerbyid, queryrecordbytaskid, queryOrder, addQCGradeRecord, editQCGradeRecord, getGradeByGradeId, repalceString, getStaffByDepartId } from '@/api/qm_quailitymark'
+  import { permsqualityMonitorWorkingSet, permsqualityOrdWorkingSet } from '@/api/reportPermission'
   import { formatDateTime } from '@/utils/tools'
 
   export default {
@@ -670,6 +671,7 @@
         staffId: '', // 当前质检员
         departId: '', // 部门id
         isManager: false, // 是否主管
+        isStaff: false, // 是否质检员
         staffs: [], // 质检员
         gradeArr: ['差', '中', '良', '优'],
         gradeRate: 0,
@@ -754,6 +756,20 @@
       }
     },
     methods: {
+      async checkPermission(staffId) {
+        // 判断主管
+        await permsqualityMonitorWorkingSet(staffId).then(response => {
+          this.isManager = true
+        }).catch(() => {
+          this.isManager = false
+        })
+        // 判断员工
+        await permsqualityOrdWorkingSet(staffId).then(response => {
+          this.isStaff = true
+        }).catch(() => {
+          this.isStaff = false
+        })
+      },
       showStaffName(val) {
         for (let i = 0; i < this.staffs.length; i++) {
           if (this.staffs[i].staffId === val) {
@@ -1307,8 +1323,11 @@
         } else { // 未完成，已完成，未开始，只需要状态不需要时间条件查询
           this.formInline.status = this.$route.query.status
         }
-        if (this.$route.query.isManager) {
-          this.isManager = true
+      } else {
+        this.searchTask(this.formInline)
+      }
+      this.checkPermission(this.staffId).then(res => {
+        if (this.isManager) {
           this.departId = localStorage.getItem('departId')
           getStaffByDepartId(this.departId).then(response => {
             const lists = response.data.dataAll
@@ -1316,17 +1335,23 @@
             lists.forEach(element => {
               this.staffs.push({ 'staffName': element[2], 'staffId': element[1] })
             })
-            this.formInline.staffId = ''
+            if (this.$route.query.staffId) {
+              this.formInline.staffId = this.$route.query.staffId
+            } else {
+              this.formInline.staffId = ''
+            }
             this.searchTask(this.formInline)
           })
         } else {
-          this.isManager = false
-          this.formInline.staffId = localStorage.getItem('agentId')
-          this.searchTask(this.formInline)
+          if (this.isStaff) {
+            this.formInline.staffId = localStorage.getItem('agentId')
+            this.searchTask(this.formInline)
+          } else {
+            this.$message('您未拥有该页面的权限！')
+            return
+          }
         }
-      } else {
-        this.searchTask(this.formInline)
-      }
+      })
     }
   
   }

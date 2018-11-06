@@ -317,6 +317,18 @@ var baseinfo = null
               type: 'error',
               duration: 1500
             })
+          } else if (this.analysisArr.indexOf('-3') > -1 || this.analysisArr.indexOf('-4') > -1) {
+            Message({
+              message: '不能' + doStr + '响铃状态的话机',
+              type: 'error',
+              duration: 1500
+            })
+          } else if (this.analysisArr.indexOf('-100') > -1 || this.analysisArr.indexOf('-101') > -1) {
+            Message({
+              message: '不能' + doStr + '通话中的话机',
+              type: 'error',
+              duration: 1500
+            })
           } else {
             for (let i = 0; i < this.analysisAgentId.length; i++) {
               if (str === 'free') {
@@ -848,7 +860,7 @@ var baseinfo = null
         if (typeof baseinfo.monitorDN === 'undefined' || baseinfo.monitorDN === '' || baseinfo.monitorDN.trim() === '') {
           baseinfo.monitorDN = '12345'
         }
-        cti.login('100' + baseinfo.monitorID, baseinfo.monitorDN)
+        cti.login('101' + baseinfo.monitorID, baseinfo.monitorID + baseinfo.monitorDN)
         if (baseinfo.showStaff) {
           baseinfo.setbtnStatus('login')
         }
@@ -857,7 +869,7 @@ var baseinfo = null
         if (typeof baseinfo.monitorDN === 'undefined' || baseinfo.monitorDN === '' || baseinfo.monitorDN.trim() === '') {
           baseinfo.monitorDN = '12345'
         }
-        cti.logoff('100' + baseinfo.monitorID, baseinfo.monitorDN)
+        cti.logoff('101' + baseinfo.monitorID, baseinfo.monitorID + baseinfo.monitorDN)
       },
       setbtnStatus(str) { // 设置按钮功能
         switch (str) {
