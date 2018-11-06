@@ -156,7 +156,7 @@
         <el-table-column
           align="center"
           prop="new_not_start_count"
-          label="未开始任务数量">
+          label="新增未开始任务数量">
         </el-table-column>
         <el-table-column
           align="center"
@@ -167,11 +167,6 @@
           align="center"
           prop="complete_count"
           label="已完成任务数量">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="count"
-          label="任务总数">
         </el-table-column>
       </el-table>
       <h3>{{statistics_type === 'depart'?'下属部门详情':'下属员工详情'}}</h3>
@@ -199,7 +194,7 @@
           <el-table-column
             align="center"
             prop="new_not_start_count"
-            label="未开始任务数量">
+            label="新增未开始任务数量">
           </el-table-column>
           <el-table-column
             align="center"
@@ -210,11 +205,6 @@
             align="center"
             prop="complete_count"
             label="已完成任务数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="count"
-            label="任务总数">
           </el-table-column>
         </el-table>
         <el-row style="margin-top:1%;">
@@ -353,7 +343,7 @@
         <el-table-column
           align="center"
           prop="new_not_start_count"
-          label="未开始任务数量">
+          label="新增未开始任务数量">
         </el-table-column>
         <el-table-column
           align="center"
@@ -364,11 +354,6 @@
           align="center"
           prop="complete_count"
           label="已完成任务数量">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="count"
-          label="任务总数">
         </el-table-column>
       </el-table>
       <el-row style="margin-top:1%;">
@@ -593,7 +578,7 @@
       this.initWebSocket()
     },
     destroyed() {
-      this.websocketclose()
+      this.websock.close()
     },
     beforeDestroy() {
       if (!this.chart) {
@@ -638,7 +623,7 @@
       //   this.websock.send(agentData)
       // },
       websocketclose(e) { // 关闭
-        console.log(e)
+        console.log('WebSocket成功关闭')
       },
       getSummaryMethod({ columns, data }) {
         const sums = []
@@ -911,7 +896,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['未开始任务数量', '已开始任务数量', '已完成任务数量', '任务总数量']
+            data: ['新增未开始任务数量', '已开始任务数量', '已完成任务数量']
           },
           calculable: true,
           xAxis: [{
@@ -956,27 +941,8 @@
             splitArea: {
               show: false
             }
-          }, {
-            type: 'value',
-            name: '数量/个',
-            splitLine: {
-              show: false
-            },
-            axisLine: {
-              lineStyle: {
-                color: '#90979c'
-              }
-            },
-            axisTick: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
-            },
-            splitArea: {
-              show: false
-            }
-          }],
+          }
+          ],
           dataZoom: [{
             show: true,
             height: 30,
@@ -1004,7 +970,7 @@
             end: 35
           }],
           series: [{
-            name: '未开始任务数量',
+            name: '新增未开始任务数量',
             type: 'bar',
             stack: 'total',
             barMaxWidth: 35,
@@ -1069,30 +1035,6 @@
               }
             },
             data: this.complete_count
-          }, {
-            name: '任务总数量',
-            // type: 'bar',
-            // stack: 'total',
-            // barMaxWidth: 35,
-            type: 'line',
-            // stack: 'total',
-            yAxisIndex: 1,
-            symbolSize: 10,
-            symbol: 'circle',
-            itemStyle: {
-              normal: {
-                color: 'rgba(252,0,0,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.count
           }
           ]
         })
@@ -1137,7 +1079,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['未开始任务数量', '已开始任务数量', '已完成任务数量', '任务总数量']
+            data: ['新增未开始任务数量', '已开始任务数量', '已完成任务数量']
           },
           calculable: true,
           xAxis: [{
@@ -1162,26 +1104,6 @@
             data: this.statistics_type === 'depart' ? this.formInline.sub_depart_name : this.formInline.agent_id
           }],
           yAxis: [{
-            type: 'value',
-            name: '数量/个',
-            splitLine: {
-              show: false
-            },
-            axisLine: {
-              lineStyle: {
-                color: '#90979c'
-              }
-            },
-            axisTick: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
-            },
-            splitArea: {
-              show: false
-            }
-          }, {
             type: 'value',
             name: '数量/个',
             splitLine: {
@@ -1229,7 +1151,7 @@
             end: 35
           }],
           series: [{
-            name: '未开始任务数量',
+            name: '新增未开始任务数量',
             type: 'bar',
             stack: 'total',
             barMaxWidth: 35,
@@ -1294,29 +1216,6 @@
               }
             },
             data: this.complete_countTime
-          }, {
-            name: '任务总数量',
-            // type: 'bar',
-            // stack: 'total',
-            // barMaxWidth: 35,
-            type: 'line',
-            symbol: 'circle',
-            // stack: 'total',
-            yAxisIndex: 1,
-            itemStyle: {
-              normal: {
-                color: 'rgba(252,0,0,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.countTime
           }
           ]
         })
@@ -1361,7 +1260,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['未开始任务数量', '已开始任务数量', '已完成任务数量', '任务总数量']
+            data: ['新增未开始任务数量', '已开始任务数量', '已完成任务数量']
           },
           calculable: true,
           xAxis: [{
@@ -1386,26 +1285,6 @@
             data: this.agentTime
           }],
           yAxis: [{
-            type: 'value',
-            name: '数量/个',
-            splitLine: {
-              show: false
-            },
-            axisLine: {
-              lineStyle: {
-                color: '#90979c'
-              }
-            },
-            axisTick: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
-            },
-            splitArea: {
-              show: false
-            }
-          }, {
             type: 'value',
             name: '数量/个',
             splitLine: {
@@ -1453,7 +1332,7 @@
             end: 35
           }],
           series: [{
-            name: '未开始任务数量',
+            name: '新增未开始任务数量',
             type: 'bar',
             stack: 'total',
             barMaxWidth: 35,
@@ -1518,30 +1397,6 @@
               }
             },
             data: this.complete_countAgent
-          }, {
-            name: '任务总数量',
-            // type: 'bar',
-            // stack: 'total',
-            // barMaxWidth: 35,
-            type: 'line',
-            symbol: 'circle',
-            // stack: 'total',
-            yAxisIndex: 1,
-            symbolSize: 10,
-            itemStyle: {
-              normal: {
-                color: 'rgba(252,0,0,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.countAgent
           }
           ]
         })
@@ -1709,7 +1564,8 @@
             duration: 3 * 1000
           })
         } else {
-          this.timeValueClone = this.timeValue
+          this.timeValueClone[0] = this.timeValue[0]
+          this.timeValueClone[1] = this.timeValue[1]
           this.formInline.timeClone = this.formInline.time
           this.pageNo = []
           this.pageSize = []
@@ -1790,7 +1646,8 @@
         } else {
           this.formInline.product = this.formInline.productClone
           this.formInline.campaignId = this.formInline.campaignIdClone
-          this.timeValueClone = this.timeValue
+          this.timeValueClone[0] = this.timeValue[0]
+          this.timeValueClone[1] = this.timeValue[1]
           this.formInline.timeClone = this.formInline.time
           this.agentChange(val)
           this.searchAgentStaff(val)

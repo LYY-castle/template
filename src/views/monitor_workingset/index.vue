@@ -13,19 +13,16 @@
               <!--<div style="display: inline-block;line-height: 50px;width:10%;float:right;"><i class="el-icon-phone-outline" style="color:white;cursor:pointer;font-size:25px;font-weight:bold"  @click="changeToDailTask('0')"></i></div>-->
             <!--</div>-->
             <div slot="header" class="clearfix">
-              <div style="display: inline-block;line-height: 50px;">
+              <div style="display: inline-block;line-height: 50px;cursor: pointer" @click="changeToDailTask('0')">
                 <font style="font-size:large;color:#fff;padding-right: 5px">首拨总数量: </font>
                 <font style="font-size:large;color:rgb(255,255,0);">{{obTaskData.firstCallTotal}}</font>
-              </div>
-              <div style="float: right;line-height: 50px;cursor: pointer" @click="changeToDailTask('0')">
-                <i class="el-icon-phone-outline" style="color:white;cursor:pointer;font-size:25px;font-weight:bold"></i>
               </div>
             </div>
             <div class="text item">
               <el-row>
                 <el-col :span="8" >
                   <el-card shadow="hover" style="background-color:#36a9ce">
-                    <div class="circle" style="border:solid #36a9ce 1px;background-color:#fff;">
+                    <div class="circle" style="border:solid #36a9ce 1px;background-color:#fff;cursor: pointer" @click="changeToDailTask('1')">
                       <font class="line-center" style="color:#36a9ce;">{{obTaskData.appointCallTotal}}</font>
                     </div>
                     <div style="text-align: center">
@@ -35,7 +32,7 @@
                 </el-col>
                 <el-col :span="8">
                   <el-card shadow="hover" style="background-color:#eb7f36">
-                    <div class="circle"  style="border:solid #eb7f36 1px;background-color:#fff;">
+                    <div class="circle"  style="border:solid #eb7f36 1px;background-color:#fff;cursor: pointer" @click="changeToDailTask('2')">
                       <font class="line-center" style="color:#eb7f36;">{{obTaskData.successCallTotal}}</font>
                     </div>
                     <div style="text-align: center">
@@ -45,7 +42,7 @@
                 </el-col>
                 <el-col :span="8">
                   <el-card shadow="hover" style="background-color:#eb7f36">
-                    <div class="circle"  style="border:solid #eb7f36 1px;background-color:#fff;">
+                    <div class="circle"  style="border:solid #eb7f36 1px;background-color:#fff;cursor: pointer"  @click="changeToDailTask('3')">
                       <font class="line-center" style="color:#eb7f36;">{{obTaskData.failedCallTotal}}</font>
                     </div>
                     <div style="text-align: center">
