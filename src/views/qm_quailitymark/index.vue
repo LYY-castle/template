@@ -95,10 +95,20 @@
         <el-table-column
           align="center"
           prop="modifierName"
+          :show-overflow-tooltip="true"
           label="操作人">
-          :show-overflow-tooltip="true">
           <template slot-scope="scope">
             {{ scope.row.modifierName }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="modifierName"
+          :show-overflow-tooltip="true"
+          v-if="isManager"
+          label="质检员">
+          <template slot-scope="scope">
+            {{ showStaffName(scope.row.staffId )}}
           </template>
         </el-table-column>
         <el-table-column
@@ -158,9 +168,9 @@
           width="80">
           <template slot-scope="scope" >
             <el-button @click="handleClick(scope.row)" type="text" size="small" v-if="scope.row.status==='未开始'&&scope.row.staffId===staffId">开始评分</el-button>
-            <el-button @click="handleClick(scope.row)" type="text" size="small" v-if="scope.row.status==='未开始'&&scope.row.staffId!==staffId">无权限</el-button>
+            <el-button type="text" size="small" v-if="scope.row.status==='未开始'&&scope.row.staffId!==staffId">无权限</el-button>
             <el-button @click="handleClickDetail(scope.row)" type="text" size="small" v-if="scope.row.status!=='未开始'&&scope.row.staffId===staffId">修改评分</el-button>
-            <el-button @click="handleClickDetail(scope.row)" type="text" size="small" v-if="scope.row.status!=='未开始'&&scope.row.staffId!==staffId">无权限</el-button>
+            <el-button type="text" size="small" v-if="scope.row.status!=='未开始'&&scope.row.staffId!==staffId">无权限</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -744,6 +754,14 @@
       }
     },
     methods: {
+      showStaffName(val) {
+        for (let i = 0; i < this.staffs.length; i++) {
+          if (this.staffs[i].staffId === val) {
+            return this.staffs[i].staffName
+          }
+        }
+        return '未查到对应人'
+      },
       reLoad(obj) {
         this.comment = []
         switch (obj) {
@@ -907,7 +925,8 @@
           contactRecord: '',
           taskName: '',
           modifierName: '',
-          status: '0',
+          status: '',
+          staffId: '',
           pageNo: (isNaN(this.pagination.pageNo) ? 1 : this.pagination.pageNo),
           pageSize: (isNaN(this.pagination.pageSize) ? 1 : this.pagination.pageSize)
         }
@@ -1303,6 +1322,7 @@
         } else {
           this.isManager = false
           this.formInline.staffId = localStorage.getItem('agentId')
+          this.searchTask(this.formInline)
         }
       } else {
         this.searchTask(this.formInline)
