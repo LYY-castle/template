@@ -89,6 +89,18 @@
                   </el-option>
                 </el-select>
             </el-form-item>
+            <el-form-item label="所属员工：">
+              <el-select v-model="req.staffId">
+                <el-option label="所有员工" :value="agentsId"></el-option>
+                <el-option
+                  v-for="item in agentsOptions"
+                  :key="item.agent_id"
+                  :value="item.agent_id"
+                  :label="item.real_name">
+
+                </el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="活动：">
                 <el-select v-model="req.campaignId">
                   <el-option
@@ -579,6 +591,8 @@ export default {
     return {
       departId: '',
       agents: [],
+      agentsOptions: [],
+      agentsId: '',
       customerNote: '', // 客户留言
       sumTotal: 0, // 总价格
       sumInfo: new Map(), // 所选中的产品
@@ -1674,9 +1688,11 @@ export default {
     getDepartId().then(res => {
       this.departId = res.data.departId
       departAgents(res.data.departId).then(response => {
+        this.agentsOptions = response.data.result.agents
         this.agents = response.data.result.agents.map(function(item) {
           return item.agent_id
         })
+        this.agentsId = this.agents.join(',')
         this.req.staffId = this.agents.join(',')
         // 判断是 快速拨打 还是 拨打
         if (sessionStorage.getItem('quickDialto') && sessionStorage.getItem('isDialTask')) {
