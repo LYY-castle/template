@@ -14,6 +14,7 @@
           </el-form-item>
           <el-form-item label="完成状态:" prop="status">
             <el-radio-group v-model="formInline.status">
+              <el-radio-button label="">所有情况</el-radio-button>
               <el-radio-button label="0">未开始</el-radio-button>
               <el-radio-button label="1">已完成</el-radio-button>
               <el-radio-button label="2">未完成</el-radio-button>
@@ -38,6 +39,16 @@
               end-placeholder="结束时间"
               value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
+          </el-form-item>
+          <el-form-item label="质检员：" prop="staffId" v-if="isManager">
+            <el-select placeholder=""  v-model="formInline.staffId">
+              <el-option label="本部门人员" value=""></el-option>
+              <el-option
+              v-for="item in staffs"
+              :label="item.staffName"
+              :value="item.staffId">
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="searchTask(formInline)">查询</el-button>
@@ -84,10 +95,20 @@
         <el-table-column
           align="center"
           prop="modifierName"
+          :show-overflow-tooltip="true"
           label="操作人">
-          :show-overflow-tooltip="true">
           <template slot-scope="scope">
             {{ scope.row.modifierName }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="modifierName"
+          :show-overflow-tooltip="true"
+          v-if="isManager"
+          label="质检员">
+          <template slot-scope="scope">
+            {{ showStaffName(scope.row.staffId )}}
           </template>
         </el-table-column>
         <el-table-column
@@ -102,8 +123,8 @@
         <el-table-column
           align="center"
           prop="contactStaffId"
-          label="员工工号">
-          :show-overflow-tooltip="true">
+          :show-overflow-tooltip="true"
+          label="坐席工号">
           <template slot-scope="scope">
             {{ scope.row.contactStaffId }}
           </template>
@@ -146,8 +167,10 @@
           label="操作"
           width="80">
           <template slot-scope="scope" >
-            <el-button @click="handleClick(scope.row)" type="text" size="small" v-if="scope.row.status==='未开始'">开始评分</el-button>
-            <el-button @click="handleClickDetail(scope.row)" type="text" size="small" v-if="scope.row.status!=='未开始'">修改评分</el-button>
+            <el-button @click="handleClick(scope.row)" type="text" size="small" v-if="scope.row.status==='未开始'&&scope.row.staffId===staffId">开始评分</el-button>
+            <el-button type="text" size="small" v-if="scope.row.status==='未开始'&&scope.row.staffId!==staffId">无权限</el-button>
+            <el-button @click="handleClickDetail(scope.row)" type="text" size="small" v-if="scope.row.status!=='未开始'&&scope.row.staffId===staffId">修改评分</el-button>
+            <el-button type="text" size="small" v-if="scope.row.status!=='未开始'&&scope.row.staffId!==staffId">无权限</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -161,7 +184,7 @@
             @current-change="handleCurrentChange"
             :current-page.sync="pagination.pageNo"
             :page-size="pagination.pageSize"
-            :page-sizes="[10, 2, 30, 50]"
+            :page-sizes="[10, 20, 30, 50]"
             layout="total, sizes, prev, pager, next, jumper "
             :total="pagination.totalCount" style="text-align: right">
           </el-pagination>
@@ -637,13 +660,17 @@
 </template>
 
 <script>
-  import { findQualityTaskByInfo, getMarksByTaskId, getGradeListByGradeId, querycustomerbyid, queryrecordbytaskid, queryOrder, addQCGradeRecord, editQCGradeRecord, getGradeByGradeId, repalceString } from '@/api/qm_quailitymark'
+  import { findQualityTaskByInfo, getMarksByTaskId, getGradeListByGradeId, querycustomerbyid, queryrecordbytaskid, queryOrder, addQCGradeRecord, editQCGradeRecord, getGradeByGradeId, repalceString, getStaffByDepartId } from '@/api/qm_quailitymark'
   import { formatDateTime } from '@/utils/tools'
 
   export default {
     name: 'qm_quailitymark',
     data() {
       return {
+        staffId: '', // 当前质检员
+        departId: '', // 部门id
+        isManager: false, // 是否主管
+        staffs: [], // 质检员
         gradeArr: ['差', '中', '良', '优'],
         gradeRate: 0,
         taskId: '',
@@ -727,6 +754,14 @@
       }
     },
     methods: {
+      showStaffName(val) {
+        for (let i = 0; i < this.staffs.length; i++) {
+          if (this.staffs[i].staffId === val) {
+            return this.staffs[i].staffName
+          }
+        }
+        return '未查到对应人'
+      },
       reLoad(obj) {
         this.comment = []
         switch (obj) {
@@ -890,7 +925,8 @@
           contactRecord: '',
           taskName: '',
           modifierName: '',
-          status: '0',
+          status: '',
+          staffId: '',
           pageNo: (isNaN(this.pagination.pageNo) ? 1 : this.pagination.pageNo),
           pageSize: (isNaN(this.pagination.pageSize) ? 1 : this.pagination.pageSize)
         }
@@ -1114,25 +1150,70 @@
         this.getMarks(row, 0)
       },
       handleSizeChange(val) {
+        const obj = {}
         this.formInline.pageSize = val
-        this.formInline.assignStart = this.timeValue1[0]
-        this.formInline.assignStop = this.timeValue1[1]
-        this.formInline.doneStart = this.timeValue2[0]
-        this.formInline.doneStop = this.timeValue2[1]
-        this.formInline.staffId = localStorage.getItem('agentId')
+        obj.pageSize = val
+        // this.formInline.assignStart = this.timeValue1[0]
+        obj.assignStart = this.timeValue1[0]
+        // this.formInline.assignStop = this.timeValue1[1]
+        obj.assignStop = this.timeValue1[1]
+        // this.formInline.doneStart = this.timeValue2[0]
+        obj.doneStart = this.timeValue2[0]
+        // this.formInline.doneStop = this.timeValue2[1]
+        obj.doneStop = this.timeValue2[1]
+        // this.formInline.status = this.formInline.status
+        obj.status = this.formInline.status
+        // this.formInline.staffId = localStorage.getItem('agentId')
+        if (this.isManager) {
+          if (this.formInline.staffId === '') {
+            let tempStr = ''
+            for (let i = 0; i < this.staffs.length; i++) {
+              tempStr = tempStr + this.staffs[i].staffId + ','
+            }
+            obj.staffId = tempStr.substring(0, tempStr.length - 1)
+            this.formInline.staffId = ''
+          } else {
+            obj.staffId = this.formInline.staffId
+          }
+        } else {
+          this.formInline.staffId = localStorage.getItem('agentId')
+          obj.staffId = localStorage.getItem('agentId')
+        }
         this.pagination.pageNo = 1
-        findQualityTaskByInfo(this.formInline).then(response => {
+        findQualityTaskByInfo(obj).then(response => {
           this.queryGradeList(response)
         })
       },
       handleCurrentChange(val) {
+        const obj = {}
+        obj.pageNo = val
         this.formInline.pageNo = val
-        this.formInline.assignStart = this.timeValue1[0]
-        this.formInline.assignStop = this.timeValue1[1]
-        this.formInline.doneStart = this.timeValue2[0]
-        this.formInline.doneStop = this.timeValue2[1]
-        this.formInline.staffId = localStorage.getItem('agentId')
-        findQualityTaskByInfo(this.formInline).then(response => {
+        obj.pageSize = this.formInline.pageSize
+        // this.formInline.assignStart = this.timeValue1[0]
+        obj.assignStart = this.timeValue1[0]
+        // this.formInline.assignStop = this.timeValue1[1]
+        obj.assignStop = this.timeValue1[1]
+        // this.formInline.doneStart = this.timeValue2[0]
+        obj.doneStart = this.timeValue2[0]
+        // this.formInline.doneStop = this.timeValue2[1]
+        obj.doneStop = this.timeValue2[1]
+        obj.status = this.formInline.status
+        if (this.isManager) {
+          if (this.formInline.staffId === '') {
+            let tempStr = ''
+            for (let i = 0; i < this.staffs.length; i++) {
+              tempStr = tempStr + this.staffs[i].staffId + ','
+            }
+            obj.staffId = tempStr.substring(0, tempStr.length - 1)
+            // this.formInline.staffId = ''
+          } else {
+            obj.staffId = this.formInline.staffId
+          }
+        } else {
+          this.formInline.staffId = localStorage.getItem('agentId')
+          obj.staffId = localStorage.getItem('agentId')
+        }
+        findQualityTaskByInfo(obj).then(response => {
           this.queryGradeList(response)
         })
       },
@@ -1145,8 +1226,8 @@
       },
       queryGradeList(res) {
         this.tableData = res.data.data
-        this.pagination = res.data.pageInfo
-        if (this.tableData.length !== 0) {
+        this.pagination = typeof res.data.pageInfo === 'undefined' ? this.pagination : res.data.pageInfo
+        if (typeof this.tableData !== 'undefined' && this.tableData.length !== 0) {
           for (let i = 0; i <= this.tableData.length; i++) {
             if (this.tableData[i]) {
               this.tableData[i].touchTime = this.tableData[i].touchTime === null ? '' : formatDateTime(this.tableData[i].touchTime)
@@ -1173,17 +1254,35 @@
           console.log('查不到符合条件的数据')
         }
       },
-      searchTask(req) {
+      searchTask(req1) {
+        const req = {}
         req.pageNo = 1
+        this.formInline.pageNo = 1
         if (this.timeValue1) {
+          this.formInline.assignStart = this.timeValue1[0]
           req.assignStart = this.timeValue1[0]
+          this.formInline.assignStop = this.timeValue1[1]
           req.assignStop = this.timeValue1[1]
         }
         if (this.timeValue2) {
+          this.formInline.doneStart = this.timeValue2[0]
           req.doneStart = this.timeValue2[0]
+          this.formInline.doneStop = this.timeValue2[1]
           req.doneStop = this.timeValue2[1]
         }
-        req.staffId = localStorage.getItem('agentId')
+        if (this.isManager) {
+          if (this.formInline.staffId !== '') {
+            req.staffId = this.formInline.staffId
+          } else {
+            let str = ''
+            for (let i = 0; i < this.staffs.length; i++) {
+              str = str + this.staffs[i].staffId + ','
+            }
+            req.staffId = this.staffs.length < 1 ? localStorage.getItem('agentId') : str.substring(0, str.length - 1)
+          }
+        } else {
+          req.staffId = localStorage.getItem('agentId')
+        }
         req.status = this.formInline.status
         findQualityTaskByInfo(req).then(response => {
           this.queryGradeList(response)
@@ -1196,9 +1295,7 @@
       }
     },
     mounted() {
-      this.searchTask({ })
-    },
-    created() {
+      this.staffId = localStorage.getItem('agentId')
       if (this.$route.query.status) { // 说明是由工作台跳转(质检员和质检主管共用一个状态)
         if (this.$route.query.status === '3') { // 说明是查总任务状态，不需要状态和时间条件
           this.formInline.status = ''
@@ -1210,8 +1307,28 @@
         } else { // 未完成，已完成，未开始，只需要状态不需要时间条件查询
           this.formInline.status = this.$route.query.status
         }
+        if (this.$route.query.isManager) {
+          this.isManager = true
+          this.departId = localStorage.getItem('departId')
+          getStaffByDepartId(this.departId).then(response => {
+            const lists = response.data.dataAll
+            this.staffs = []
+            lists.forEach(element => {
+              this.staffs.push({ 'staffName': element[2], 'staffId': element[1] })
+            })
+            this.formInline.staffId = ''
+            this.searchTask(this.formInline)
+          })
+        } else {
+          this.isManager = false
+          this.formInline.staffId = localStorage.getItem('agentId')
+          this.searchTask(this.formInline)
+        }
+      } else {
+        this.searchTask(this.formInline)
       }
     }
+  
   }
 </script>
 

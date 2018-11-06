@@ -23,4 +23,11 @@ export function findGradeByDepartIds(obj) { // 通过部门id查询该部门质�
     params: obj
   })
 }
-
+// 查找部门员工
+export function getStaffByDepartId(id) {
+  return request({
+    url: '/employee/getStaffByDepartId',
+    method: 'get',
+    params: { 'departId': id }
+  })
+}
