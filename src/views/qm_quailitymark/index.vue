@@ -123,8 +123,8 @@
         <el-table-column
           align="center"
           prop="contactStaffId"
-          label="员工工号">
-          :show-overflow-tooltip="true">
+          :show-overflow-tooltip="true"
+          label="坐席工号">
           <template slot-scope="scope">
             {{ scope.row.contactStaffId }}
           </template>
