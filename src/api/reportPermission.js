@@ -69,3 +69,17 @@ export function permsqualityreportstaff(id) {
     method: 'get'
   })
 }
+
+export function permsDepart(id) {
+  return request({
+    url: '/auth/users/' + id + '/perms/-depart-/GET',
+    method: 'get'
+  })
+}
+
+export function permsStaff(id) {
+  return request({
+    url: '/auth/users/' + id + '/perms/-staff-/GET',
+    method: 'get'
+  })
+}

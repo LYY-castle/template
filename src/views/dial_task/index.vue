@@ -89,7 +89,7 @@
                   </el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="所属员工：">
+            <el-form-item label="所属员工：" v-if="departPermission">
               <el-select v-model="req.staffId">
                 <el-option label="所有员工" :value="agentsId"></el-option>
                 <el-option
@@ -582,6 +582,7 @@ import {
   addMoreOrder
 } from '@/api/dialTask' // 接口
 import { departAgents, getDepartId } from '@/api/ctiReport'
+import { permsDepart, permsStaff } from '@/api/reportPermission'
 var vm = null
 
 export default {
@@ -589,6 +590,7 @@ export default {
 
   data() {
     return {
+      departPermission: false,
       departId: '',
       agents: [],
       agentsOptions: [],
@@ -1687,28 +1689,52 @@ export default {
   mounted() {
     getDepartId().then(res => {
       this.departId = res.data.departId
-      departAgents(res.data.departId).then(response => {
-        this.agentsOptions = response.data.result.agents
-        this.agents = response.data.result.agents.map(function(item) {
-          return item.agent_id
+      permsDepart(res.data.agentid).then(r => {
+        this.departPermission = true
+        departAgents(res.data.departId).then(response => {
+          this.agentsOptions = response.data.result.agents
+          this.agents = response.data.result.agents.map(function(item) {
+            return item.agent_id
+          })
+          this.agentsId = this.agents.join(',')
+          this.req.staffId = this.agents.join(',')
+          // 判断是 快速拨打 还是 拨打
+          if (sessionStorage.getItem('quickDialto') && sessionStorage.getItem('isDialTask')) {
+            const obj = JSON.parse(sessionStorage.getItem('setDetails'))
+            this.taskIds = obj.taskIds
+            this.campaignIds = obj.campaignIds
+            this.customerIds = obj.customerIds
+            this.isBlacklists = obj.isBlacklists
+            // this.taskIds = this.$store.state.dialTask.taskIds
+            // this.campaignIds = this.$store.state.dialTask.campaignIds
+            // this.customerIds = this.$store.state.dialTask.customerIds
+            // this.isBlacklists = this.$store.state.dialTask.isBlacklists
+            this.quickDialto()
+          } else {
+            this.getParametersFromContactRecordDail()
+          }
         })
-        this.agentsId = this.agents.join(',')
-        this.req.staffId = this.agents.join(',')
-        // 判断是 快速拨打 还是 拨打
-        if (sessionStorage.getItem('quickDialto') && sessionStorage.getItem('isDialTask')) {
-          const obj = JSON.parse(sessionStorage.getItem('setDetails'))
-          this.taskIds = obj.taskIds
-          this.campaignIds = obj.campaignIds
-          this.customerIds = obj.customerIds
-          this.isBlacklists = obj.isBlacklists
-          // this.taskIds = this.$store.state.dialTask.taskIds
-          // this.campaignIds = this.$store.state.dialTask.campaignIds
-          // this.customerIds = this.$store.state.dialTask.customerIds
-          // this.isBlacklists = this.$store.state.dialTask.isBlacklists
-          this.quickDialto()
-        } else {
-          this.getParametersFromContactRecordDail()
-        }
+      }).catch((error) => {
+        console.log(error)
+        permsStaff(res.data.agentid).then(re => {
+          this.departPermission = false
+          this.req.staffId = res.data.agentid
+          // 判断是 快速拨打 还是 拨打
+          if (sessionStorage.getItem('quickDialto') && sessionStorage.getItem('isDialTask')) {
+            const obj = JSON.parse(sessionStorage.getItem('setDetails'))
+            this.taskIds = obj.taskIds
+            this.campaignIds = obj.campaignIds
+            this.customerIds = obj.customerIds
+            this.isBlacklists = obj.isBlacklists
+            // this.taskIds = this.$store.state.dialTask.taskIds
+            // this.campaignIds = this.$store.state.dialTask.campaignIds
+            // this.customerIds = this.$store.state.dialTask.customerIds
+            // this.isBlacklists = this.$store.state.dialTask.isBlacklists
+            this.quickDialto()
+          } else {
+            this.getParametersFromContactRecordDail()
+          }
+        })
       })
     })
     history.pushState(null, null, document.URL)
