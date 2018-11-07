@@ -962,6 +962,14 @@ var baseinfo = null
       if (localStorage.getItem('DN')) {
         baseinfo.monitorDN = localStorage.getItem('DN')
       }
+      baseinfo.$root.eventHub.$on('monitorphone', obj => { // 接收navbar上登录的话机
+        if (obj !== null) {
+          this.monitorID = obj.agentId
+          this.monitorDN = obj.DN
+        } else {
+          this.monitorDN = ''
+        }
+      })
       baseinfo.checkStaffMonitorPromise().then(function() {
         if (baseinfo.showStaff) {
           findNextAgentByNow().then(res => {
@@ -1058,6 +1066,7 @@ var baseinfo = null
         ele = null
       })
       this.monitorlogoff()
+      this.$root.eventHub.$off('monitorphone')// 关闭接收班长电话的更新
     }
   }
 </script>
