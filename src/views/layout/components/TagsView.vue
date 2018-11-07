@@ -1,10 +1,18 @@
 <template>
   <div class="tags-view-container">
-    <scroll-pane class='tags-view-wrapper' ref='scrollPane'>
-      <router-link ref='tag' class="tags-view-item" :class="isActive(tag)?'active':''" v-for="tag in Array.from(visitedViews)"
-        :to="tag.path" :key="tag.path" @contextmenu.prevent.native="openMenu(tag,$event)">
-        {{tag.title}}
-        <span class='el-icon-close' @click.prevent.stop='closeSelectedTag(tag)'></span>
+    <scroll-pane ref="scrollPane" class="tags-view-wrapper">
+      <router-link
+        v-for="tag in visitedViews"
+        ref="tag"
+        :class="isActive(tag)?'active':''"
+        :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
+        :key="tag.path"
+        tag="span"
+        class="tags-view-item"
+        @click.middle.native="closeSelectedTag(tag)"
+        @contextmenu.prevent.native="openMenu(tag,$event)">
+        {{ tag.title }}
+        <span class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)" />
       </router-link>
     </scroll-pane>
     <!-- <ul class='contextmenu' v-show="visible" :style="{left:left+'px',top:top+'px'}">
@@ -51,50 +59,60 @@ export default {
     this.addViewTags()
   },
   methods: {
-    // generateTitle, // generateTitle by vue-i18n
-    generateRoute() {
-      if (this.$route.name) {
-        return this.$route
-      }
-      return false
-    },
+    // generateTitle by vue-i18n
     isActive(route) {
       return route.path === this.$route.path
     },
     addViewTags() {
-      const route = this.generateRoute()
-      if (!route) {
-        return false
+      const { name } = this.$route
+      if (name) {
+        this.$store.dispatch('addView', this.$route)
       }
-      this.$store.dispatch('addVisitedViews', route)
+      return false
     },
     moveToCurrentTag() {
       const tags = this.$refs.tag
       this.$nextTick(() => {
         if (tags) {
           for (const tag of tags) {
-            if (tag.to === this.$route.path) {
-              this.$refs.scrollPane.moveToTarget(tag.$el)
+            if (tag.to.path === this.$route.path) {
+              this.$refs.scrollPane.moveToTarget(tag)
+
+              // when query is different then update
+              if (tag.to.fullPath !== this.$route.fullPath) {
+                this.$store.dispatch('updateVisitedView', this.$route)
+              }
+
               break
             }
           }
         }
       })
     },
+    refreshSelectedTag(view) {
+      this.$store.dispatch('delCachedView', view).then(() => {
+        const { fullPath } = view
+        this.$nextTick(() => {
+          this.$router.replace({
+            path: '/redirect' + fullPath
+          })
+        })
+      })
+    },
     closeSelectedTag(view) {
-      this.$store.dispatch('delVisitedViews', view).then((views) => {
+      this.$store.dispatch('delView', view).then(({ visitedViews }) => {
         if (this.isActive(view)) {
-          const latestView = views.slice(-1)[0]
+          const latestView = visitedViews.slice(-1)[0]
           if (latestView) {
-            this.$router.push(latestView.path)
+            this.$router.push(latestView)
           } else {
-            this.$router.push('/dashboard')
+            this.$router.push('/')
           }
         }
       })
     },
     closeOthersTags() {
-      this.$router.push(this.selectedTag.path)
+      this.$router.push(this.selectedTag)
       this.$store.dispatch('delOthersViews', this.selectedTag).then(() => {
         this.moveToCurrentTag()
       })
@@ -104,10 +122,21 @@ export default {
       this.$router.push('/')
     },
     openMenu(tag, e) {
+      const menuMinWidth = 105
+      const offsetLeft = this.$el.getBoundingClientRect().left // container margin left
+      const offsetWidth = this.$el.offsetWidth // container width
+      const maxLeft = offsetWidth - menuMinWidth // left boundary
+      const left = e.clientX - offsetLeft + 15 // 15: margin right
+
+      if (left > maxLeft) {
+        this.left = maxLeft
+      } else {
+        this.left = left
+      }
+      this.top = e.clientY
+
       this.visible = true
       this.selectedTag = tag
-      this.left = e.clientX
-      this.top = e.clientY
     },
     closeMenu() {
       this.visible = false
@@ -185,6 +214,7 @@ export default {
 //reset element css of el-icon-close
 .tags-view-wrapper {
   .tags-view-item {
+    cursor: pointer;
     .el-icon-close {
       width: 16px;
       height: 16px;
