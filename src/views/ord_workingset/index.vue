@@ -5,11 +5,11 @@
         <el-col :span="8">
           <el-card shadow="hover" style="background-color:#339999;">
             <div slot="header" class="clearfix">
-              <div style="display: inline-block;line-height: 50px;cursor: pointer" @click="changeToDailTask('0')">
+              <div style="display: inline-block;line-height: 50px;cursor: pointer" @click="changeToDailTask('0','agent')">
                 <font style="font-size:large;color:#fff;padding-right: 5px">首拨数量: </font>
                 <font style="font-size:large;color:rgb(255,255,0);">{{rowData.firstCallTotal}}</font>
               </div>
-              <div style="float: right;line-height: 50px;cursor: pointer" @click="changeToDailTask('1')">
+              <div style="float: right;line-height: 50px;cursor: pointer" @click="changeToDailTask('1','agent')">
                 <font style="font-size:medium;color:#fff;padding-right: 5px">预约数量: </font>
                 <font style="font-size:medium;color:rgb(255,255,0);">{{rowData.appointCallTotal}}</font>
               </div>
@@ -29,7 +29,7 @@
                 <el-col :span="8" :offset="3">
                   <el-card shadow="hover" style="background-color:#36a9ce">
                     <div class="circle" style="border:solid #36a9ce 1px;background-color:#fff;">
-                      <a @click="changeToDailTask('2')"><font class="line-center" style="color:#36a9ce;">{{new_success_contact_task_count}}</font></a>
+                      <a @click="changeToDailTask('2','agent')"><font class="line-center" style="color:#36a9ce;">{{new_success_contact_task_count}}</font></a>
                     </div>
                     <div style="text-align: center">
                       <font class="text-align-center" style="font-size: small">今日成功量</font>
@@ -39,7 +39,7 @@
                 <el-col :span="8" :offset="3">
                   <el-card shadow="hover" style="background-color:#eb7f36">
                     <div class="circle"  style="border:solid #eb7f36 1px;background-color:#fff;">
-                      <a @click="changeToDailTask('3')"><font class="line-center" style="color:#eb7f36;">{{new_fail_contact_task_count}}</font></a>
+                      <a @click="changeToDailTask('3','agent')"><font class="line-center" style="color:#eb7f36;">{{new_fail_contact_task_count}}</font></a>
                     </div>
                     <div style="text-align: center">
                       <font class="text-align-center" style="font-size: small">今日失败量</font>
@@ -583,10 +583,10 @@ export default {
         query: { 'sTime': sTime, 'eTime': eTime, 'callStatu': callStatu }
       })
     },
-    changeToDailTask(status) {
+    changeToDailTask(status, agent) {
       this.$router.push({
         name: 'dial_task.html',
-        query: { 'dialstatus': status, 'startTime': formatDateTime(this.getStartTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))),
+        query: { 'dialstatus': status, 'agent': agent, 'startTime': formatDateTime(this.getStartTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))),
           'endTime': formatDateTime(this.getEndTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))) }
       })
       sessionStorage.removeItem('isDialTask')

@@ -249,8 +249,10 @@
             :show-overflow-tooltip="true"
             width="100">
           <template slot-scope="scope">
-            <a v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb)" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);" size="small" type="text">
+            <a v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb)" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);" v-show="scope.row.staffId === aId" size="small" type="text">
               <img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</a>
+            <div v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb)" v-show="scope.row.staffId !== aId" size="small" type="text">
+              不可拨打</div>
             <el-tooltip v-else-if="!showStatus(scope.row.status)" class="item" effect="dark"  content="该状态不能拨打" placement="left-start">
               <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
             </el-tooltip>
@@ -590,6 +592,7 @@ export default {
 
   data() {
     return {
+      aId: '',
       departPermission: false,
       departId: '',
       agents: [],
@@ -1691,6 +1694,7 @@ export default {
   mounted() {
     getDepartId().then(res => {
       this.departId = res.data.departId
+      this.aId = res.data.agentid
       permsDepart(res.data.agentid).then(r => {
         this.departPermission = true
         departAgents(res.data.departId).then(response => {
@@ -1698,8 +1702,12 @@ export default {
           this.agents = response.data.result.agents.map(function(item) {
             return item.agent_id
           })
+          if (this.$route.query.agent === undefined) {
+            this.req.staffId = this.agents.join(',')
+          } else {
+            this.req.staffId = res.data.agentid
+          }
           this.agentsId = this.agents.join(',')
-          this.req.staffId = this.agents.join(',')
           // 判断是 快速拨打 还是 拨打
           if (sessionStorage.getItem('quickDialto') && sessionStorage.getItem('isDialTask')) {
             const obj = JSON.parse(sessionStorage.getItem('setDetails'))
