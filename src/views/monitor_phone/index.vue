@@ -373,6 +373,14 @@ var baseinfo = null
             doStr = '强拆'
             break
         }
+        if (this.monitorDN === '' || this.monitorDN === '12345') {
+          Message({
+            message: '班长还未登录话机不能' + doStr,
+            type: 'error',
+            duration: 1500
+          })
+          return
+        }
         if (this.attentionList.length > 1) {
           Message({
             message: '一次最多' + doStr + '一个话机！',
@@ -860,7 +868,7 @@ var baseinfo = null
         if (typeof baseinfo.monitorDN === 'undefined' || baseinfo.monitorDN === '' || baseinfo.monitorDN.trim() === '') {
           baseinfo.monitorDN = '12345'
         }
-        cti.login('101' + baseinfo.monitorID, baseinfo.monitorID + baseinfo.monitorDN)
+        cti.login('101' + baseinfo.monitorID, baseinfo.monitorDN)
         if (baseinfo.showStaff) {
           baseinfo.setbtnStatus('login')
         }
@@ -869,7 +877,7 @@ var baseinfo = null
         if (typeof baseinfo.monitorDN === 'undefined' || baseinfo.monitorDN === '' || baseinfo.monitorDN.trim() === '') {
           baseinfo.monitorDN = '12345'
         }
-        cti.logoff('101' + baseinfo.monitorID, baseinfo.monitorID + baseinfo.monitorDN)
+        cti.logoff('101' + baseinfo.monitorID, baseinfo.monitorDN)
       },
       setbtnStatus(str) { // 设置按钮功能
         switch (str) {
