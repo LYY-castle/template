@@ -649,7 +649,7 @@ audio {
             const isBlacklist = response.data.data.isBlacklist
             sessionStorage.setItem('isDialTask', false)
             this.$router.push({
-              name: 'dial_task.html',
+              name: 'dial_task',
               query: {// 通过query 传递参数
                 taskId: taskId, campaignId: campaignId, customerId: customerId, isBlacklist: isBlacklist, customerPhone: customerPhone
               }

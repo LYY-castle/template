@@ -191,7 +191,7 @@
 import { getTemplateList, getAllTemplateGroup, addTemplateGroup, editTemplateGroup, getTemplateListById, delTemplateGroup } from '@/api/message_template_list'
 import { formatDateTime } from '@/utils/tools'
 export default {
-  name: 'customerNoVisit',
+  name: 'message_template_list',
   data() {
     var validateLength = (eule, value, callback) => {
       if (value.length > 250) {

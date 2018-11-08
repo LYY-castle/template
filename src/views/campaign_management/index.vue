@@ -726,7 +726,7 @@ import {
 import { formatDateTime, clone } from '@/utils/tools'
 
 export default {
-  name: 'campaignManagement',
+  name: 'campaign_management',
   data() {
     // 有效时间不能超过9999天
     var checkExpiryDate = (eule, value, callback) => {

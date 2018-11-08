@@ -10,7 +10,7 @@
   import Chart from '@/components/Charts/quality_task_reportChart'
 
   export default {
-    name: 'quality_task_reportChart',
+    name: 'quality_task_report',
     components: { Chart }
   }
 </script>

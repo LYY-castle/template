@@ -384,7 +384,7 @@ import { rule } from '@/utils/validate'
 import { formatDateTime, clone } from '@/utils/tools'
 
 export default {
-  name: 'batchManagement',
+  name: 'batch_management',
   data() {
     return {
       fileList: [],

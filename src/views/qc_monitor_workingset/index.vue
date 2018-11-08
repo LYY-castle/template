@@ -74,11 +74,11 @@
               </div>
           </el-card>
         </el-col>
-       
+
       </el-row>
     </div>
   </div>
-  
+
 </template>
 
 <script>
@@ -141,7 +141,7 @@ export default {
   methods: {
     checkNum(value) {
       this.$router.push({
-        name: 'qm_quailitymark.html',
+        name: 'qm_quailitymark',
         query: { 'status': value }
       })
     }

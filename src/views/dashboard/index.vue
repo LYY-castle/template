@@ -30,7 +30,7 @@ import { getMenu } from '@/api/dashboard'
 import getDynamicRouter from '@/router/dynamic-router'
 
 export default {
-  name: 'dashboard',
+  name: 'Dashboard',
   computed: {
     ...mapGetters([
       'name',

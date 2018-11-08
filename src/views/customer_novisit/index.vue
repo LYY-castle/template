@@ -312,7 +312,7 @@
   import { batchSetVisible, findAllCampaigns, queryNoVisitCustomers, addNoVisitCustomers, batchDelete, getBlackListInfoById, editBlackListInfo, delBlackListInfo } from '@/api/customer_novisit'
   import { hideMobile } from '@/utils/tools'
   export default {
-    name: 'customerNoVisit',
+    name: 'customer_novisit',
     data() {
       return {
         detailVisible: false, // 免访客户详情
