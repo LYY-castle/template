@@ -41,15 +41,6 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="序号"
-            width="55">
-              <template
-              slot-scope="scope">
-              <div>{{scope.$index+(formInline.pageNo-1)*formInline.pageSize+1}}</div>
-              </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
             label="评分编号"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">

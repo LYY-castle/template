@@ -70,15 +70,6 @@
           border>
           <el-table-column
             align="center"
-            label="序号"
-            width="50">
-            <template
-              slot-scope="scope">
-              <div>{{scope.$index+(req.pageNo-1)*10+1}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
             label="订单编号"
             width="180"
             :show-overflow-tooltip="true">

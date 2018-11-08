@@ -47,16 +47,6 @@
             width="55">
           </el-table-column>
           <el-table-column
-            width="55"
-            align="center"
-            type="index"
-            label="序号">
-            <template
-              slot-scope="scope">
-              <div>{{scope.$index+(pagination.pageNo-1)*formInline.pageSize+1}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
             align="center"
             prop="number"
             label="组织编号"

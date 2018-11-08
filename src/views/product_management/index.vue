@@ -47,15 +47,6 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="序号"
-            width="55">
-            <template
-              slot-scope="scope">
-              <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
             label="产品编号"
             prop="templateId">
           </el-table-column> 

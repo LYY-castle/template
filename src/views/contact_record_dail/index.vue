@@ -75,11 +75,6 @@
     <el-row>
       <el-col>
         <el-table :data="tableData" border>
-          <el-table-column align="center" label="序号" width="55">
-            <template slot-scope="scope">
-                <div>{{scope.$index+(req.pageNo-1)*(req.pageSize)+1}}</div>
-            </template>
-          </el-table-column>
             <el-table-column align="center" label="客户编号" width="135">
             <template slot-scope="scope">
                 <div>{{scope.row.customerId}}</div>
@@ -263,11 +258,6 @@
   <el-row>
       <el-col>
         <el-table :data="detailInfo.recordInfo" border>
-          <el-table-column align="center" label="序号" width="55">
-            <template slot-scope="item">
-                <div>{{item.$index+1}}</div>
-            </template>
-          </el-table-column>
           <el-table-column align="center" label="记录编号" :show-overflow-tooltip="true">
             <template slot-scope="item">
               <a @click="ids.recordId=item.row.recordId;resetDetai();contactDetail()" size="medium">{{item.row.recordId}}</a>
@@ -320,11 +310,6 @@
     <el-row>
       <el-col>
         <el-table :data="detailInfo.orderInfo" border>
-          <el-table-column align="center" label="序号" width="55">
-            <template slot-scope="scope">
-                <div>{{scope.$index+1}}</div>
-            </template>
-          </el-table-column>
           <el-table-column align="center" label="订单编号" :show-overflow-tooltip="true">
             <template slot-scope="scope">
               <a @click="detailVisible=true;orderId=scope.row.orderId;quertOrderDetail()" size="medium">{{scope.row.orderId}}</a>

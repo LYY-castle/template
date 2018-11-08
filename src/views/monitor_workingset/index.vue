@@ -161,11 +161,6 @@
     <el-row>
         <el-col>
           <el-table :data="obTaskTable" border>
-            <el-table-column align="center" label="序号" width="55">
-              <template slot-scope="scope">
-                  <div>{{scope.$index+1}}</div>
-              </template>
-            </el-table-column>
             <el-table-column align="center" label="部门人员" width="135">
               <template slot-scope="scope">
                   <div>{{agentMap[scope.row.staffId]+" ("+scope.row.staffId+")"}}</div>
@@ -202,11 +197,6 @@
     <el-row>
         <el-col>
           <el-table :data="orderTable" border>
-            <el-table-column align="center" label="序号" width="55">
-              <template slot-scope="scope">
-                <div>{{scope.$index+1}}</div>
-              </template>
-            </el-table-column>
             <el-table-column align="center" label="部门人员" width="135">
               <template slot-scope="scope">
                   <div>{{agentMap[scope.row.agent_id] +" ("+scope.row.agent_id+")"}}</div>
@@ -238,11 +228,6 @@
     <el-row>
         <el-col>
           <el-table :data="ctiTable" border>
-            <el-table-column align="center" label="序号" width="55">
-              <template slot-scope="scope">
-                  <div>{{scope.$index+1}}</div>
-              </template>
-            </el-table-column>
             <el-table-column align="center" label="部门人员" width="135">
               <template slot-scope="scope">
                   <div>{{agentMap[scope.row.agent_id] +" ("+scope.row.agent_id+")"}}</div>

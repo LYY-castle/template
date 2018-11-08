@@ -27,13 +27,6 @@
       <el-row>
         <el-col>
           <el-table :data="tableData" border>
-            <!-- <el-table-column align="center" type="selection" width="55"></el-table-column> -->
-            <el-table-column align="center" label="序号" width="55">
-              <template slot-scope="scope">
-                <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
-              </template>
-            </el-table-column>
-            <!-- <el-table-column align="center" label="笔记编号" prop="noteid"></el-table-column> -->
             <el-table-column align="center" label="笔记标题" :show-overflow-tooltip="true">
               <template slot-scope="scope">
                 <a @click="queryOne(scope.row.noteid,scope.row.userid)">{{scope.row.title}}</a>

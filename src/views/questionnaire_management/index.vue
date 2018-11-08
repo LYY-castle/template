@@ -31,11 +31,6 @@
         <el-col>
           <el-table :data="tableData" border @selection-change="handleSelectionChange">
             <el-table-column align="center" type="selection" width="55"></el-table-column>
-            <el-table-column align="center" label="序号" width="55">
-              <template slot-scope="scope">
-                <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
-              </template>
-            </el-table-column>
             <el-table-column align="center" label="问卷模板名称">
               <template slot-scope="scope">
                 <a type="text" size="medium" @click="checkDetail(scope.row.id);selectOption_single.length=0;selectOption_blanks.length=0;selectOption_multiblanks.length=0">{{scope.row.name}}</a>

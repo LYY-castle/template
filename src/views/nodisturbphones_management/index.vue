@@ -48,15 +48,6 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="序号"
-            width="55">
-            <template
-              slot-scope="scope">
-              <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
             label="开始号段 ~ 结束号段"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">

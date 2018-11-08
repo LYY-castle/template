@@ -34,11 +34,6 @@
         <el-col>
           <el-table :data="listRecords" border @selection-change="handleSelectionChange">
             <el-table-column align="center" type="selection" width="55"></el-table-column>
-            <el-table-column align="center" label="序号" width="55">
-              <template slot-scope="scope">
-                <div>{{scope.$index+(req2.pageNo-1)*req2.pageSize+1}}</div>
-              </template>
-            </el-table-column>
             <el-table-column align="center" label="问卷名称">
               <template slot-scope="scope">
                 <div>{{scope.row.templateName}}</div>

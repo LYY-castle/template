@@ -141,15 +141,6 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="序号"
-            width="55">
-            <template
-              slot-scope="scope">
-              <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
             label="客户姓名"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
@@ -361,11 +352,6 @@
           <el-table
           :data="contactRecord"
           border>
-          <el-table-column align="center" label="序号" width="55">
-            <template slot-scope="scope">
-              <div>{{scope.$index + 1}}</div>
-            </template>
-          </el-table-column>
           <el-table-column align="center" label="记录编号" width="170" prop="recordId">
           </el-table-column>
           <el-table-column align="center" label="拨打时间" width="170" prop="callTime">

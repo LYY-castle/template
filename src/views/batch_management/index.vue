@@ -60,15 +60,6 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="序号"
-            width="50">
-            <template
-              slot-scope="scope">
-              <div>{{scope.$index+(req2.pageNo-1)*req2.pageSize+1}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
             prop="batchId"
             label="批次号"
             :show-overflow-tooltip="true">
@@ -314,15 +305,6 @@
         <el-table
           :data="batchSnapshot"
           border>
-          <el-table-column
-            align="center"
-            label="序号"
-            width="55">
-            <template
-              slot-scope="scope">
-              <div>{{scope.$index+1}}</div>
-            </template>
-          </el-table-column>
           <el-table-column
             align="center"
             prop="customerName"

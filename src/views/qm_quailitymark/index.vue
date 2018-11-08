@@ -64,14 +64,6 @@
         style="width: 100%;"
         @selection-change="handleSelectionChange">
         <el-table-column
-          width="55"
-          align="center"
-          label="序号">
-          <template slot-scope="scope" >
-            <div>{{scope.$index+(formInline.pageNo-1)*formInline.pageSize+1}}</div>
-          </template>
-        </el-table-column>
-        <el-table-column
           align="center"
           prop="recordId"
           :show-overflow-tooltip="true"
@@ -210,12 +202,6 @@
               border
               style="width: 100%;"
               @selection-change="handleSelectionChange">
-              <el-table-column
-                width="55"
-                align="center"
-                type="index"
-                label="序号">
-              </el-table-column>
               <el-table-column
                 align="center"
                 prop="staffId"
@@ -443,13 +429,6 @@
               border
               style="width:100%;"
               @selection-change="handleSelectionChange">
-              <el-table-column
-                width="55"
-                align="center"
-                type="index"
-                :show-overflow-tooltip="true"
-                label="序号">
-              </el-table-column>
               <el-table-column
                 align="center"
                 prop="staffId"

@@ -45,15 +45,6 @@
           border>
           <el-table-column
             align="center"
-            label="序号"
-            width="55">
-            <template
-              slot-scope="scope">
-              <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
             label="模板编号"
             prop="templateid">
           </el-table-column>
@@ -202,20 +193,6 @@
               <el-radio v-model="radio" :label="scope.row.templateid">&nbsp;</el-radio>
             </template>
           </el-table-column>
-          <el-table-column
-            align="center"
-            label="序号"
-            width="55">
-            <template
-              slot-scope="scope">
-              <div>{{scope.$index+(messageReq.pageNo-1)*messageReq.pageSize+1}}</div>
-            </template>
-          </el-table-column>
-          <!-- <el-table-column
-            align="center"
-            label="模板编号"
-            prop="id">
-          </el-table-column> -->
           <el-table-column
             align="center"
             label="模板名称"

@@ -36,12 +36,6 @@
           tooltip-effect="dark"
           border>
           <el-table-column
-            width="55"
-            align="center"
-            type="index"
-            label="序号">
-          </el-table-column>
-          <el-table-column
             align="center"
             prop="departName"
             label="组织名"
