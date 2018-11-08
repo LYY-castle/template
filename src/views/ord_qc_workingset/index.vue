@@ -146,7 +146,7 @@ export default {
     checkNum(value) {
       this.$router.push({
         name: 'qm_quailitymark.html',
-        query: { 'status': value, 'isManager': false }
+        query: { 'status': value, 'staffId': localStorage.getItem('agentId') }
       })
     }
   }

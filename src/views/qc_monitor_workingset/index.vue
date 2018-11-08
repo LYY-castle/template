@@ -142,7 +142,7 @@ export default {
     checkNum(value) {
       this.$router.push({
         name: 'qm_quailitymark.html',
-        query: { 'status': value, 'isManager': true }
+        query: { 'status': value }
       })
     }
   }

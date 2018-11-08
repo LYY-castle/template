@@ -77,9 +77,23 @@ export function permsDepart(id) {
   })
 }
 
+export function permsqualityMonitorWorkingSet(id) { // 质检主管权限
+  return request({
+    url: '/auth/users/' + id + '/perms/-qc-depart-/GET',
+    method: 'get'
+  })
+}
+
 export function permsStaff(id) {
   return request({
     url: '/auth/users/' + id + '/perms/-staff-/GET',
+    method: 'get'
+  })
+}
+
+export function permsqualityOrdWorkingSet(id) { // 质检员权限
+  return request({
+    url: '/auth/users/' + id + '/perms/-qc-staff-/GET',
     method: 'get'
   })
 }

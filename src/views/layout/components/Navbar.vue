@@ -780,6 +780,7 @@ export default {
       const DN = this.formInline.DN
       if (agentId !== null && DN !== null && DN !== '') {
         cti.logoff(agentId, DN, 9)
+        vm.$root.eventHub.$emit('monitorphone', null)// 发送到班长监控话机界面，退出班长号码
         localStorage.removeItem('DN')
         localStorage.removeItem(agentId)
       }
@@ -1251,8 +1252,15 @@ export default {
             clearInterval(interval)
             vm.times()
           }
-
+          if (vm.orginCaller === 'Forcerelease') {
+            vm.telephoneState = '班长强拆'
+          }
           if (vm.orginCaller === 'WisperCall' || vm.orginCaller === 'IntrudeCall') { // 表示是强插或者耳语功能
+            if (vm.orginCaller === 'WisperCall') {
+              vm.telephoneState = '班长耳语'
+            } else {
+              vm.telephoneState = '班长强插'
+            }
             vm.dialCall = false // 不能拨打
             vm.answerCall = false // 不能接听
             vm.hangupCall = true // 可以挂断电话
@@ -1296,6 +1304,7 @@ export default {
     },
     on_loginsucess(event, agentId, DN) {
       console.log('响应事件：登录成功' + event + ',员工工号：' + agentId + '，分机：' + DN)
+      vm.$root.eventHub.$emit('monitorphone', { 'agentId': agentId, 'DN': DN })// 发送到班长监控电话页面，提示更新班长号码
       vm.islogin = true
       cti.setAgentStatus(agentId, '13')
     },

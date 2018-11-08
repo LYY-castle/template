@@ -317,6 +317,18 @@ var baseinfo = null
               type: 'error',
               duration: 1500
             })
+          } else if (this.analysisArr.indexOf('-3') > -1 || this.analysisArr.indexOf('-4') > -1) {
+            Message({
+              message: '不能' + doStr + '响铃状态的话机',
+              type: 'error',
+              duration: 1500
+            })
+          } else if (this.analysisArr.indexOf('-100') > -1 || this.analysisArr.indexOf('-101') > -1) {
+            Message({
+              message: '不能' + doStr + '通话中的话机',
+              type: 'error',
+              duration: 1500
+            })
           } else {
             for (let i = 0; i < this.analysisAgentId.length; i++) {
               if (str === 'free') {
@@ -360,6 +372,14 @@ var baseinfo = null
           case 'forcerelease':
             doStr = '强拆'
             break
+        }
+        if (this.monitorDN === '' || this.monitorDN === '12345') {
+          Message({
+            message: '班长还未登录话机不能' + doStr,
+            type: 'error',
+            duration: 1500
+          })
+          return
         }
         if (this.attentionList.length > 1) {
           Message({
@@ -848,7 +868,7 @@ var baseinfo = null
         if (typeof baseinfo.monitorDN === 'undefined' || baseinfo.monitorDN === '' || baseinfo.monitorDN.trim() === '') {
           baseinfo.monitorDN = '12345'
         }
-        cti.login('100' + baseinfo.monitorID, baseinfo.monitorDN)
+        cti.login('101' + baseinfo.monitorID, baseinfo.monitorDN)
         if (baseinfo.showStaff) {
           baseinfo.setbtnStatus('login')
         }
@@ -857,7 +877,7 @@ var baseinfo = null
         if (typeof baseinfo.monitorDN === 'undefined' || baseinfo.monitorDN === '' || baseinfo.monitorDN.trim() === '') {
           baseinfo.monitorDN = '12345'
         }
-        cti.logoff('100' + baseinfo.monitorID, baseinfo.monitorDN)
+        cti.logoff('101' + baseinfo.monitorID, baseinfo.monitorDN)
       },
       setbtnStatus(str) { // 设置按钮功能
         switch (str) {
@@ -942,6 +962,14 @@ var baseinfo = null
       if (localStorage.getItem('DN')) {
         baseinfo.monitorDN = localStorage.getItem('DN')
       }
+      baseinfo.$root.eventHub.$on('monitorphone', obj => { // 接收navbar上登录的话机
+        if (obj !== null) {
+          this.monitorID = obj.agentId
+          this.monitorDN = obj.DN
+        } else {
+          this.monitorDN = ''
+        }
+      })
       baseinfo.checkStaffMonitorPromise().then(function() {
         if (baseinfo.showStaff) {
           findNextAgentByNow().then(res => {
@@ -1038,6 +1066,7 @@ var baseinfo = null
         ele = null
       })
       this.monitorlogoff()
+      this.$root.eventHub.$off('monitorphone')// 关闭接收班长电话的更新
     }
   }
 </script>
