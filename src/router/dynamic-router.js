@@ -33,7 +33,7 @@ export default (menuData) => {
           // ,
           // icon: 'user'
         }
-        children[j].component = () => import('@/views/' + data[i].sub_menus[j].template.substring(0, data[i].sub_menus[j].template.length - 5) + '/index')
+        children[j].component = () => import('@/views/' + data[i].sub_menus[j].template + '/index')
       }
       baseRouter[i].children = children
       if (baseRouter[i].children.length === 1) {
