@@ -292,7 +292,7 @@ import { messageSendRecords, findTemplateList, getAllTemplateGroup, sendMessage 
 import { Message } from 'element-ui'
 import { formatDateTime } from '@/utils/tools'
 export default {
-  name: 'messageSendList',
+  name: 'message_send_list',
   data() {
     return {
       send: false,

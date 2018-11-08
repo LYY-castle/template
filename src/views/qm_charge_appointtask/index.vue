@@ -228,7 +228,7 @@ import {
   assignQualityTaskInfo
 } from '@/api/qm_charge_appointtask'
 export default {
-  name: 'qmChargeAppointtask',
+  name: 'qm_charge_appointtask',
   data() {
     const checkAssignSum = (eule, value, callback) => {
       value = Number(value)

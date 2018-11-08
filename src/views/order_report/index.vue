@@ -10,7 +10,7 @@
   import Chart from '@/components/Charts/orderChart'
 
   export default {
-    name: 'orderChart',
+    name: 'order_report',
     components: { Chart }
   }
 </script>

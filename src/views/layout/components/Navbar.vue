@@ -482,7 +482,7 @@ export default {
       const messageRouter = getDynamicRouter(JSON.parse(sessionStorage.getItem('getMenu')))
       for (let i = 0; i < messageRouter.length; i++) {
         for (let j = 0; j < messageRouter[i].children.length; j++) {
-          if (messageRouter[i].children[j].name === 'notification_my.html') {
+          if (messageRouter[i].children[j].name === 'notification_my') {
             messagePath = messageRouter[i].path + '/' + messageRouter[i].children[j].name
           }
         }

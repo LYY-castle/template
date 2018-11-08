@@ -539,7 +539,7 @@ export default {
     },
     changeToDailPage(status) {
       this.$router.push({
-        name: 'dial_task.html',
+        name: 'dial_task',
         query: { 'dialstatus': status, 'isDialTask': false }
       })
       sessionStorage.removeItem('isDialTask')
@@ -579,13 +579,13 @@ export default {
           break
       }
       this.$router.push({
-        name: 'contact_record_dail.html',
+        name: 'contact_record_dail',
         query: { 'sTime': sTime, 'eTime': eTime, 'callStatu': callStatu }
       })
     },
     changeToDailTask(status, agent) {
       this.$router.push({
-        name: 'dial_task.html',
+        name: 'dial_task',
         query: { 'dialstatus': status, 'agent': agent, 'startTime': formatDateTime(this.getStartTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))),
           'endTime': formatDateTime(this.getEndTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))) }
       })
@@ -594,7 +594,7 @@ export default {
     },
     changeToOrderManagement() {
       this.$router.push({
-        name: 'order_management.html',
+        name: 'order_management',
         query: { 'startTime': formatDateTime(this.getStartTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))),
           'endTime': formatDateTime(this.getEndTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))) }
       })

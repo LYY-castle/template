@@ -511,7 +511,7 @@
 <script>
 import { queryTemplateList, queryTemplateInfo, deleteTemplateInfos, deleteTemplateInfo, queryProductTypes, createTemplateInfo, updateTemplateInfo } from '@/api/product_management'
 export default {
-  name: 'productManagement',
+  name: 'product_management',
   data() {
     var validNum = (eule, value, callback) => {
       if (value < 1) {

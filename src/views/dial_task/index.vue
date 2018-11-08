@@ -588,7 +588,7 @@ import { permsDepart, permsStaff } from '@/api/reportPermission'
 var vm = null
 
 export default {
-  name: 'dialTask',
+  name: 'dial_task',
 
   data() {
     return {

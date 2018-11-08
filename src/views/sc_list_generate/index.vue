@@ -367,7 +367,7 @@ import { rule } from '@/utils/validate'
 import { clone } from '@/utils/tools'
 
 export default {
-  name: 'scListGenerate',
+  name: 'sc_list_generate',
   data() {
     return {
       rule: rule,

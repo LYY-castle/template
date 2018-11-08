@@ -106,7 +106,7 @@ import {
 import { clone } from '@/utils/tools'
 
 export default {
-  name: 'qualityCase',
+  name: 'quality_case',
   data() {
     return {
       recodingContent: '',

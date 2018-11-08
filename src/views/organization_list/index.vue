@@ -527,20 +527,20 @@
       },
       handleClickOrgan(row) {
         this.$router.push({
-          name: 'organization_list.html',
+          name: 'organization_list',
           query: { parent_organ: row.departName }
         })
         // this.refreshOrgan()
       },
       handleClickStaff(row) {
         this.$router.push({
-          name: 'employee_list.html',
+          name: 'employee_list',
           query: { departName: row.departName }
         })
       },
       handleClickUser(row) {
         this.$router.push({
-          name: 'account_list.html',
+          name: 'account_list',
           query: { departName: row.departName }
         })
       },

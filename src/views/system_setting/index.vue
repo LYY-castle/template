@@ -37,7 +37,7 @@
 <script>
 import { modifyTheme } from '@/api/theme'
 export default {
-  name: 'theme',
+  name: 'system_setting',
   data() {
     return {
       token: localStorage.getItem('Admin-Token'),

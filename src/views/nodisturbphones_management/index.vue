@@ -237,7 +237,7 @@ import { batchSetVisible, querynodisturbphones, queryone, addNoDisturbZones, bat
 import { formatDateTime } from '@/utils/tools'
 
 export default {
-  name: 'customerNoVisit',
+  name: 'nodisturbphones_management',
   data() {
     var formatNum = (eule, value, callback) => {
       console.log(eule)

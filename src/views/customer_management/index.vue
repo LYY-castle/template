@@ -293,7 +293,7 @@ import {
 import { formatDateTime, clone } from '@/utils/tools'
 
 export default {
-  name: 'customerManagement',
+  name: 'customer_management',
   data() {
     var checkSex = (rule, value, callback) => {
       if (value) {

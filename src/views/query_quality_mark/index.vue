@@ -549,7 +549,7 @@ import {
 } from '@/utils/tools'
 
 export default {
-  name: 'qmSearchquailitymark',
+  name: 'query_quality_mark',
   data() {
     return {
       orderActiveName: '',

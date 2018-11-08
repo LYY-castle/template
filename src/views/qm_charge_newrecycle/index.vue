@@ -222,7 +222,7 @@ import {
 } from '@/api/qm_charge_newrecycle'
 import { clone } from '@/utils/tools'
 export default {
-  name: 'qmChargeNewrecycle',
+  name: 'qm_charge_newrecycle',
   data() {
     return {
       submitVisible: false,

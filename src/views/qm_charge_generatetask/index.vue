@@ -350,7 +350,7 @@ import {
 import { rule } from '@/utils/validate'
 import { formatDateTime, clone } from '@/utils/tools'
 export default {
-  name: 'qmChargeGeneratetask',
+  name: 'qm_charge_generatetask',
   data() {
     return {
       detailVisible: false,
