@@ -786,7 +786,6 @@ export default {
                           successCallTotal: 0, // 成功
                           failedCallTotal: 0// 失败
                         }
-                        // console.log('total:', this.obTaskTable)
                         this.obTaskTable.forEach(element => {
                           this.obTaskData.firstCallTotal = parseInt(element.noContactNum) + parseInt(this.obTaskData.firstCallTotal)
                           this.obTaskData.appointCallTotal = parseInt(element.appiontNum) + parseInt(this.obTaskData.appointCallTotal)
