@@ -3,15 +3,9 @@
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
         <el-form-item label="活动名称:" v-show="activeNameList && activeNameList.length > 0">
-          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange">
+          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称">
             <el-option value="" label="所有活动"></el-option>
             <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="产品名称:" v-show="productList && productList.length > 0">
-          <el-select v-model="formInline.productClone" placeholder="产品名称">
-            <el-option value="" label="所有产品"></el-option>
-            <el-option v-for="item in productList" :key="item.templateId" :label="item.productName" :value="item.templateId"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="时间维度:">
@@ -233,15 +227,9 @@
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
         <el-form-item label="活动名称:">
-          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange">
+          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称">
             <el-option value="" label="所有活动"></el-option>
             <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="产品名称:" v-show="productList && productList.length > 0">
-          <el-select v-model="formInline.productClone" placeholder="产品名称">
-            <el-option value="" label="所有产品"></el-option>
-            <el-option v-for="item in productList" :key="item.templateId" :label="item.productName" :value="item.templateId"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="时间维度:">
@@ -393,8 +381,6 @@
   import { Message } from 'element-ui'
   import { permsorderdepart, permsorderstaff } from '@/api/reportPermission'
   import { findCampaignAllByUser } from '@/api/monitor_list_single'
-  import { hasOrderInfos } from '@/api/dialTask'
-  import { findAllProduct } from '@/api/campaign'
   import moment from 'moment'
 
   export default {
@@ -433,8 +419,6 @@
         week: {
           firstDayOfWeek: 1
         },
-        allProductList: [],
-        productList: [],
         activeNameList: [],
         departPermission: false,
         staffPermission: false,
@@ -480,8 +464,6 @@
           timeClone: 'day',
           staff: '',
           time_dimension: '',
-          productClone: '',
-          product: '',
           sub_depart_id: [],
           sub_depart_name: [],
           agentMap: {}
@@ -506,9 +488,6 @@
     mounted() {
       findCampaignAllByUser().then(response => {
         this.activeNameList = response.data.data
-      })
-      findAllProduct().then(res => {
-        this.allProductList = res.data.data
       })
       getDepartId().then(res => {
         this.staffAgentid = res.data.agentid
@@ -764,7 +743,6 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_template_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           agent_id: this.staffAgentid,
@@ -791,7 +769,6 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_template_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
@@ -819,7 +796,6 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_template_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
@@ -1465,18 +1441,6 @@
           ]
         })
       },
-      campaignChange(val) {
-        this.productList = []
-        hasOrderInfos(val).then(res => {
-          if (res.data.data) {
-            for (let i = 0; i < this.allProductList.length; i++) {
-              if (res.data.data.indexOf(this.allProductList[i].templateId) !== -1) {
-                this.productList.push(this.allProductList[i])
-              }
-            }
-          }
-        })
-      },
       time_dimensionChange(val) {
         this.timeValue = []
       },
@@ -1484,7 +1448,6 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_template_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           time: val,
@@ -1517,7 +1480,6 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_template_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
@@ -1559,7 +1521,6 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_template_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
@@ -1623,13 +1584,11 @@
           this.pageNo = []
           this.pageSize = []
           this.totalCount = []
-          this.formInline.product = this.formInline.productClone
           this.formInline.campaignId = this.formInline.campaignIdClone
 
           const params = {
             statistics_type: this.statistics_type,
             depart_id: this.departId,
-            product_template_id: this.formInline.product,
             campaign_id: this.formInline.campaignId,
             time_dimension: this.formInline.timeClone,
             sub_depart_id: this.formInline.sub_depart_id.join(','),
@@ -1664,7 +1623,6 @@
           const params = {
             statistics_type: this.statistics_type,
             depart_id: this.departId,
-            product_template_id: this.formInline.product,
             campaign_id: this.formInline.campaignId,
             time_dimension: this.formInline.timeClone,
             sub_depart_id: this.formInline.sub_depart_id.join(','),
@@ -1699,7 +1657,6 @@
           })
         } else {
           this.formInline.timeClone = this.formInline.time
-          this.formInline.product = this.formInline.productClone
           this.formInline.campaignId = this.formInline.campaignIdClone
           this.timeValueClone[0] = this.timeValue[0]
           this.timeValueClone[1] = this.timeValue[1]
@@ -1709,7 +1666,6 @@
       },
       reset() {
         this.formInline.campaignIdClone = ''
-        this.formInline.productClone = ''
         this.formInline.from = 1
         this.formInline.time = 'day'
         this.timeValue = [new Date(new Date(new Date().toLocaleDateString()).getTime() - 7 * 24 * 3600 * 1000), new Date(new Date(new Date().toLocaleDateString()).getTime())]
