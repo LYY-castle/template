@@ -709,7 +709,7 @@
       },
       searchStaff(req) {
         // 根据老版本的逻辑 查询只能传分页页码的第一页
-        req.pageNo = 1
+        // req.pageNo = 1
         req.startTime = this.timeValue ? this.timeValue[0] : ''
         req.stopTime = this.timeValue ? this.timeValue[1] : ''
         query(req).then(response => {
