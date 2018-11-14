@@ -136,7 +136,7 @@
           <el-button type="success" size="small"  @click="dialogFormVisible = true">新建</el-button>
           <el-button type="danger" size="small" @click="deleteAll">批量删除</el-button>
         </el-col>
-        <el-col :span="18">
+        <el-col :span="20">
           <el-pagination
             background
             @size-change="handleSizeChange"
@@ -663,18 +663,21 @@
       }
       this.refreshOrganTo()
     },
-    watch: {
-      $route(to, from) {
-        // 判断url是否带参
-        if (!to.query.parent_organ) {
-          this.formInline.parent_organ = ''
-          findAllOrganGet().then(response => {
-            this.queryOrgan(response)
-          })
-        } else {
-          this.refreshOrgan()
-        }
-      }
+    activated() {
+      this.searchOrgan(this.formInline)
     }
+    // watch: {
+    //   $route(to, from) {
+    //     // 判断url是否带参
+    //     if (!to.query.parent_organ) {
+    //       this.formInline.parent_organ = ''
+    //       findAllOrganGet().then(response => {
+    //         this.queryOrgan(response)
+    //       })
+    //     } else {
+    //       this.refreshOrgan()
+    //     }
+    //   }
+    // }
   }
 </script>

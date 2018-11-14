@@ -873,17 +873,20 @@ export default {
     }
     this.refreshOrganTo()
   },
-  watch: {
-    $route(to, from) {
-      // 判断url是否带参
-      if (!to.query.departName) {
-        this.formInline.departName = ''
-        findAllAccount({ departName: '' }).then(response => {
-          this.queryStaff(response)
-        })
-      }
-    }
+  activated() {
+    this.searchStaff(this.formInline)
   }
+  // watch: {
+  //   $route(to, from) {
+  //     // 判断url是否带参
+  //     if (!to.query.departName) {
+  //       this.formInline.departName = ''
+  //       findAllAccount({ departName: '' }).then(response => {
+  //         this.queryStaff(response)
+  //       })
+  //     }
+  //   }
+  // }
 }
 </script>
 <style>
