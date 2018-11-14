@@ -736,17 +736,20 @@
         this.visibleDepts = response1.data.data
       })
     },
-    watch: {
-      $route(to, pageNo) {
-        // 判断url是否带参
-        if (!to.query.departName) {
-          this.formInline.departName = ''
-          query({ pageNo: 1 }).then(response => {
-            this.queryStaff(response)
-          })
-        }
-      }
+    activated() {
+      this.searchStaff(this.formInline)
     }
+    // watch: {
+    //   $route(to, pageNo) {
+    //     // 判断url是否带参
+    //     if (!to.query.departName) {
+    //       this.formInline.departName = ''
+    //       query({ pageNo: 1 }).then(response => {
+    //         this.queryStaff(response)
+    //       })
+    //     }
+    //   }
+    // }
   }
 </script>
 <!--<style>-->

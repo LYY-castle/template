@@ -7,13 +7,7 @@
           :data="tableData"
           ref="multipleTable"
           tooltip-effect="dark"
-          border
-          @selection-change="handleSelectionChange">
-          <el-table-column
-            align="center"
-            type="selection"
-            width="55">
-          </el-table-column>
+          border>
           <el-table-column
             width="55"
             align="center"
@@ -26,68 +20,82 @@
           </el-table-column>
           <el-table-column
             align="center"
-            prop="number"
-            label="组织编号"
+            prop="name"
+            label="名称"
             :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
-            prop="departName"
-            label="组织名"
+            prop="code"
+            label="编码"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              {{ scope.row.departName }}
+              {{ scope.row.code }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
-            prop="upDepartName"
-            label="上级组织"
+            prop="value"
+            label="选项值"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              {{ scope.row.upDepartName }}
+              {{ scope.row.value }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
-            label="组织状态"
+            prop="rank"
+            label="排序"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <div v-html="showOrgStatus(scope.row.visible)"></div>
+              {{ scope.row.rank }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
-            prop="comment"
-            label="备注"
+            label="可见性"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              {{ scope.row.comment }}
+              <div v-html="showOrgStatus(scope.row.enabled)"></div>
             </template>
           </el-table-column>
           <el-table-column
             align="center"
-            prop="modifier"
-            label="操作人"
+            prop="creator_realname"
+            label="创建人"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              {{ scope.row.modifier }}
+              {{ scope.row.creator_realname }}
             </template>
           </el-table-column>
           <el-table-column
             align="center"
-            prop="updateTime"
-            label="操作时间"
+            prop="created_at"
+            label="创建时间"
+            width="155">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="updator_realname"
+            label="修改人"
+            :show-overflow-tooltip="true">
+            <template slot-scope="scope">
+              {{ scope.row.updator_realname }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="updated_at"
+            label="修改时间"
             width="155">
           </el-table-column>
           <el-table-column
             align="center"
             label="操作"
-            width="300">
+            width="200">
             <template slot-scope="scope">
-              <el-button @click="handleClickOrgan(scope.row)" type="text" size="small">下属组织</el-button>
-              <el-button @click="handleClickStaff(scope.row)" type="text" size="small">下属人员</el-button>
-              <el-button @click="handleClickUser(scope.row)" type="text" size="small">下属账号</el-button>
+              <el-button @click="handleClickStaff(scope.row)" type="text" size="small">查看</el-button>
+              <el-button @click="handleClickUser(scope.row)" type="text" size="small">查看子集</el-button>
               <el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
               <el-button
                 @click.native.prevent="deleteRow(scope.row)"
@@ -100,7 +108,10 @@
         </el-table>
       </el-row>
       <el-row style="margin-top:1%;">
-        <el-col :span="24">
+        <el-col :span="4">
+          <el-button type="success" size="small"  @click="dialogFormVisible = true">新建</el-button>
+        </el-col>
+        <el-col :span="20">
           <el-pagination
             background
             @size-change="handleSizeChange"
@@ -114,17 +125,105 @@
         </el-col>
       </el-row>
     </div>
+    <el-dialog title="新建组织" :visible.sync="dialogFormVisible" width="30%" @close="resetForm('ruleForm')" append-to-body>
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="组织名" prop="departName">
+          <el-input v-model="ruleForm.departName" placeholder="上限45字符" maxlength="45"></el-input>
+        </el-form-item>
+        <el-form-item label="上级组织">
+          <el-select v-model="ruleForm.id" placeholder="请选择部门" style="width: 100%;">
+            <el-option label="根组织" value=""></el-option>
+            <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="组织状态">
+          <el-switch
+            v-model="ruleForm.visible"
+            active-text="可见"
+            inactive-text="不可见"
+            active-color="#13ce66"
+            :active-value=1
+            :inactive-value=0
+          ></el-switch>
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input type="textarea" v-model="ruleForm.comment" placeholder="上限255字符" maxlength="255"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="danger" @click="resetForm('ruleForm')">重置</el-button>
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="修改组织" :visible.sync="dialogFormVisibleReverse" width="30%" @close="resetForm('ruleFormReverse')" append-to-body>
+      <el-form :model="ruleFormReverse" :rules="rules" ref="ruleFormReverse" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="组织编号">
+          <span>{{ruleFormReverse.number}}</span>
+        </el-form-item>
+        <el-form-item label="组织名" prop="departName">
+          <el-input v-model="ruleFormReverse.departName" placeholder="上限45字符" maxlength="45"></el-input>
+        </el-form-item>
+        <el-form-item label="上级组织">
+          <el-select v-model="ruleFormReverse.upId" placeholder="请选择部门" style="width: 100%;">
+            <el-option label="根组织" value=""></el-option>
+            <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.id"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="组织状态">
+          <el-switch
+            @change="checkVisibleStatus(ruleFormReverse)"
+            v-model="ruleFormReverse.visible"
+            active-text="可见"
+            inactive-text="不可见"
+            active-color="#13ce66"
+            :active-value=1
+            :inactive-value=0
+          ></el-switch>
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input type="textarea" v-model="ruleFormReverse.comment" placeholder="上限255字符" maxlength="255"></el-input>
+        </el-form-item>
+        <el-form-item label="新建人">
+          <span>{{ruleFormReverse.creator}}</span>
+        </el-form-item>
+        <el-form-item label="新建时间">
+          <span>{{ruleFormReverse.createTime}}</span>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="danger" @click="resetReverse">重置</el-button>
+        <el-button @click="dialogFormVisibleReverse = false">取 消</el-button>
+        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog
+      width="30%"
+      title="操作提示"
+      :visible.sync="op_hints"
+      :close-on-press-escape=false
+      :close-on-click-modal=false
+      :show-close=false
+      append-to-body>
+      <span style="font-size:20px;">该部门下存在可见的下属组织，是否设置为不可见。</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button @click="op_hints = false;ruleFormReverse.visible=1">取 消</el-button>
+        <el-button type="primary" @click="op_hints = false;updateOrganStatus(visibleData)">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
   import { queryDepts, verifyDept, modifyOrganStatus, modifyOrgan, delOrgan, addOrganization, delOrgansByOrganIds, findAllOrganGet, findAllOrganPost, findAllOrganTo } from '@/api/organization_list'
+  import { categoriesCreate, categoriesEdit, categories, categoriesNext, categoriesOne, categoriesDelete } from '@/api/category'
   import { Message, MessageBox } from 'element-ui'
   import { formatDateTime } from '@/utils/tools'
   import { validSpace } from '@/utils/validate'
 
   export default {
-    name: 'category',
+    name: 'organization_list',
     data() {
       return {
         timeValue: '',
@@ -540,18 +639,29 @@
       }
       this.refreshOrganTo()
     },
-    watch: {
-      $route(to, from) {
-        // 判断url是否带参
-        if (!to.query.parent_organ) {
-          this.formInline.parent_organ = ''
-          findAllOrganGet().then(response => {
-            this.queryOrgan(response)
-          })
-        } else {
-          this.refreshOrgan()
-        }
+    activated() {
+      // console.log(this.$route.query.parent_organ)
+      if (this.$route.query.parent_organ) {
+        this.refreshOrgan()
+      } else {
+        findAllOrganGet().then(response => {
+          this.queryOrgan(response)
+        })
       }
+      this.refreshOrganTo()
     }
+    // watch: {
+    //   $route(to, from) {
+    //     // 判断url是否带参
+    //     if (!to.query.parent_organ) {
+    //       this.formInline.parent_organ = ''
+    //       findAllOrganGet().then(response => {
+    //         this.queryOrgan(response)
+    //       })
+    //     } else {
+    //       this.refreshOrgan()
+    //     }
+    //   }
+    // }
   }
 </script>
