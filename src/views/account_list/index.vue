@@ -844,7 +844,7 @@ export default {
     },
     searchStaff(req) {
       // 根据老版本的逻辑 查询只能传分页页码的第一页
-      req.pageNo = 1
+      // req.pageNo = 1
       req.start_time = this.timeValue[0]
       req.end_time = this.timeValue[1]
       findAllAccount(req).then(response => {
