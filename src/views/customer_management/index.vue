@@ -322,7 +322,7 @@ export default {
       tableData: [], // 表格数据
       validate: true, // 验证不通过阻止发请求
       pageShow: false, // 分页显示隐藏
-      timeValue: '',
+      timeValue: [],
       rule: {
         customerName: [
           { required: true, message: '请输入客户名称', trigger: 'blur' }
@@ -395,7 +395,7 @@ export default {
     clone: clone,
     // 重置查询框内容
     reset() {
-      this.timeValue = ''
+      this.timeValue = []
       this.req = {
         customerName: '',
         customerPhone: '',
@@ -476,8 +476,8 @@ export default {
     },
     // 查询客户信息
     searchCustomer(req) {
-      req.startModifierTime = this.timeValue[0]
-      req.endModifierTime = this.timeValue[1]
+      req.startModifierTime = this.timeValue ? this.timeValue[0] : null
+      req.endModifierTime = this.timeValue ? this.timeValue[1] : null
       queryByCustomer(req)
         .then(response => {
           if (response.data.code === 0) {
