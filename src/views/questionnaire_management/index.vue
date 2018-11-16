@@ -658,7 +658,7 @@ export default {
       tableData: [], // 表格数据
       pageShow: false, // 分页显示与否
       pageInfo: {}, // 分页信息
-      timeValue: '', // 查询时间显示
+      timeValue: [], // 查询时间显示
       hasSingle: false,
       hasMulti: false,
       hasBlanks: false,
@@ -724,7 +724,7 @@ export default {
 
     // 重置查询条件
     resetQueryCondition() {
-      this.timeValue = ''
+      this.timeValue = []
       this.req = {
         accurate: '0',
         name: '', // 问卷模板名称
@@ -942,8 +942,8 @@ export default {
     },
     // 综合查询
     searchByKeyWords(req) {
-      req.beginTime = this.timeValue[0]
-      req.afterTime = this.timeValue[1]
+      req.beginTime = this.timeValue ? this.timeValue[0] : null
+      req.afterTime = this.timeValue ? this.timeValue[1] : null
       queryByKeyWords(req).then(response => {
         if (response.data.code === 0) {
           this.tableData = response.data.data

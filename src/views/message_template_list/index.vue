@@ -198,7 +198,7 @@ export default {
       validate: true, // 验证不通过阻止发请求
       addVisible: false, // 新建对话框显示隐藏
       pageShow: false, // 分页显示隐藏
-      timeValue: '', // 操作时间
+      timeValue: [], // 操作时间
       messageMap: {}, // 存所有的模板
       rule: {
         name: [
@@ -267,7 +267,7 @@ export default {
         pageNo: this.pageInfo.pageNo,
         pageSize: this.pageInfo.pageSize
       }
-      this.timeValue = ''
+      this.timeValue = []
     },
     resetAdd() {
       this.addMessageTemplateDetail = {
@@ -293,8 +293,8 @@ export default {
     },
     // 查询表格数据
     getTemplateList(req) {
-      this.req.beginTime = this.timeValue[0]
-      this.req.afterTime = this.timeValue[1]
+      this.req.beginTime = this.timeValue ? this.timeValue[0] : null
+      this.req.afterTime = this.timeValue ? this.timeValue[1] : null
       getTemplateList(req).then(response => {
         if (response.data.code === 0) {
           this.tableData = response.data.data

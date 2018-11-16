@@ -240,7 +240,7 @@
     name: 'organization_list',
     data() {
       return {
-        timeValue: '',
+        timeValue: [],
         organData: {},
         visibleData: {},
         pagination: {
@@ -465,7 +465,7 @@
         this.$refs[formName].resetFields()
       },
       reset() {
-        this.timeValue = ''
+        this.timeValue = []
         this.formInline = {
           organ_id: '',
           organ_name: '',
@@ -571,8 +571,8 @@
       },
       handleCurrentChange(val) {
         this.formInline.pageNo = val
-        this.formInline.startTime = this.timeValue[0]
-        this.formInline.stopTime = this.timeValue[1]
+        this.formInline.startTime = this.timeValue ? this.timeValue[0] : null
+        this.formInline.stopTime = this.timeValue ? this.timeValue[1] : null
         findAllOrganPost(this.formInline).then(response => {
           this.queryOrgan(response)
         })
@@ -612,8 +612,8 @@
       },
       searchOrgan(req) {
         // 根据老版本的逻辑 查询只能传分页页码的第一页
-        this.formInline.startTime = this.timeValue[0]
-        this.formInline.stopTime = this.timeValue[1]
+        this.formInline.startTime = this.timeValue ? this.timeValue[0] : null
+        this.formInline.stopTime = this.timeValue ? this.timeValue[1] : null
         findAllOrganPost(req).then(response => {
           this.queryOrgan(response)
         })

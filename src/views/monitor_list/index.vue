@@ -142,7 +142,7 @@
         nameListId: [],
         campaignIdList: [],
         departs: '',
-        receiveTimeValue: '',
+        receiveTimeValue: [],
         tableData: [],
         nameList: [],
         activeNameList: [],
@@ -199,11 +199,11 @@
       },
       search(req, type) {
         const obj = {}
-        obj.starttime = this.receiveTimeValue ? this.receiveTimeValue[0] : ''
-        obj.endtime = this.receiveTimeValue ? this.receiveTimeValue[1] : ''
+        obj.starttime = this.receiveTimeValue ? this.receiveTimeValue[0] : null
+        obj.endtime = this.receiveTimeValue ? this.receiveTimeValue[1] : null
         obj.campaignId = req.campaignId ? req.campaignId : this.campaignIdList.join(',')
         obj.listId = req.listId ? req.listId : ''
-        obj.starttime = this.receiveTimeValue ? this.receiveTimeValue[0] : ''
+        obj.starttime = this.receiveTimeValue ? this.receiveTimeValue[0] : null
         if (type === 0) {
           obj.pageNo = 1
         } else {
@@ -216,7 +216,7 @@
         })
       },
       reset() {
-        this.receiveTimeValue = ''
+        this.receiveTimeValue = []
         this.formInline = {
           starttime: '',
           endtime: '',

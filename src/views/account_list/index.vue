@@ -313,7 +313,7 @@ export default {
       //   }
       // ],
       checkedRoles: [],
-      timeValue: '',
+      timeValue: [],
       staffData: {},
       pagination: {
         pageSize: null,
@@ -625,7 +625,7 @@ export default {
       this.resetReverse(this.ruleFormReverse.agentId)
     },
     reset() {
-      this.timeValue = ''
+      this.timeValue = []
       this.formInline = {
         staffName: '',
         angentId: '',
@@ -787,8 +787,8 @@ export default {
     },
     handleCurrentChange(val) {
       this.formInline.pageNo = val
-      this.formInline.start_time = this.timeValue[0]
-      this.formInline.end_time = this.timeValue[1]
+      this.formInline.start_time = this.timeValue ? this.timeValue[0] : null
+      this.formInline.end_time = this.timeValue ? this.timeValue[1] : null
       findAllAccount(this.formInline).then(response => {
         this.queryStaff(response)
       })
@@ -834,9 +834,9 @@ export default {
     },
     searchStaff(req) {
       // 根据老版本的逻辑 查询只能传分页页码的第一页
-      // req.pageNo = 1
-      req.start_time = this.timeValue[0]
-      req.end_time = this.timeValue[1]
+      req.pageNo = 1
+      req.start_time = this.timeValue ? this.timeValue[0] : null
+      req.end_time = this.timeValue ? this.timeValue[1] : null
       findAllAccount(req).then(response => {
         this.queryStaff(response)
       })
@@ -863,20 +863,17 @@ export default {
     }
     this.refreshOrganTo()
   },
-  activated() {
-    this.searchStaff(this.formInline)
+  watch: {
+    $route(to, from) {
+      // 判断url是否带参
+      if (!to.query.departName) {
+        this.formInline.departName = ''
+        findAllAccount({ departName: '' }).then(response => {
+          this.queryStaff(response)
+        })
+      }
+    }
   }
-  // watch: {
-  //   $route(to, from) {
-  //     // 判断url是否带参
-  //     if (!to.query.departName) {
-  //       this.formInline.departName = ''
-  //       findAllAccount({ departName: '' }).then(response => {
-  //         this.queryStaff(response)
-  //       })
-  //     }
-  //   }
-  // }
 }
 </script>
 <style>
