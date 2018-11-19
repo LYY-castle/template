@@ -39,7 +39,7 @@
         </el-form-item>
         <el-form-item v-show="formInline.time === 'week'" label="操作时间：">
           <el-date-picker
-            v-model="timeValue[0]"
+            v-model="timeValue1[0]"
             type="week"
             format="yyyy 第 WW 周"
             placeholder="开始周"
@@ -47,7 +47,7 @@
           </el-date-picker>
           <span>-</span>
           <el-date-picker
-            v-model="timeValue[1]"
+            v-model="timeValue1[1]"
             type="week"
             format="yyyy 第 WW 周"
             placeholder="结束周"
@@ -56,14 +56,14 @@
         </el-form-item>
         <el-form-item v-show="formInline.time === 'month'" label="操作时间：">
           <el-date-picker
-            v-model="timeValue[0]"
+            v-model="timeValue1[0]"  
             type="month"
             placeholder="开始月"
             format="yyyy-MM">
           </el-date-picker>
           <span>-</span>
           <el-date-picker
-            v-model="timeValue[1]"
+            v-model="timeValue1[1]"
             type="month"
             placeholder="结束月"
             format="yyyy-MM">
@@ -71,14 +71,14 @@
         </el-form-item>
         <el-form-item v-show="formInline.time === 'year'" label="操作时间：">
           <el-date-picker
-            v-model="timeValue[0]"
+            v-model="timeValue1[0]"
             type="year"
             placeholder="开始年"
             format="yyyy">
           </el-date-picker>
           <span>-</span>
           <el-date-picker
-            v-model="timeValue[1]"
+            v-model="timeValue1[1]"
             type="year"
             placeholder="结束年"
             format="yyyy">
@@ -433,6 +433,7 @@
         obj: {},
         timeValueClone: [],
         timeValue: [new Date(new Date(new Date().toLocaleDateString()).getTime() - 7 * 24 * 3600 * 1000), new Date(new Date(new Date().toLocaleDateString()).getTime())],
+        timeValue1: [],
         pagination: {
           pageNo: null,
           pageSize: null,
@@ -1462,7 +1463,7 @@
         }
 
         orderreportAgent(params).then(response => {
-          if (response.data.result.length) {
+          if (response.data.result && response.data.result.length) {
             this.countTime = response.data.result.map(function(item, index) {
               return item.count
             })
@@ -1494,7 +1495,7 @@
         }
 
         orderreportAgent(params).then(response => {
-          if (response.data.result.length) {
+          if (response.data.result && response.data.result.length) {
             this.countAgent = response.data.result.map(function(item, index) {
               return item.count
             })
@@ -1523,18 +1524,23 @@
           depart_id: this.departId,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
-          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
-          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone), // val || val === 'search' ? this.timeValue[1] :
+          // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
+          // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone), // val || val === 'search' ? this.timeValue[1] :
           pageNo: val && val !== 'search' ? this.formInline.from : 1,
           pageSize: 10
         }
-
+  
+        if (this.timeValueClone[0] && this.timeValueClone[0].getDate()) {
+          params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
+        }
+        if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
+          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+        }
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = this.formInline.sub_depart_id.join(',')
         } else {
           params.agent_id = this.formInline.agent_id.join(',')
         }
-
         orderstatistics(params).then(response => {
           this.obj = response.data
           if (this.obj.result.length) {
@@ -1566,20 +1572,28 @@
       },
       search(val) {
         if (this.formInline.time === 'week') {
-          this.timeValue[0] = Date.parse(this.timeValue[0]) - 24 * 3600 * 1000
-          this.timeValue[0] = new Date(this.timeValue[0])
-          this.timeValue[1] = Date.parse(this.timeValue[1]) - 24 * 3600 * 1000
-          this.timeValue[1] = new Date(this.timeValue[1])
+          // this.timeValue[0] = Date.parse(this.timeValue[0]) - 24 * 3600 * 1000
+          // this.timeValue[0] = new Date(this.timeValue[0])
+          // this.timeValue[1] = Date.parse(this.timeValue[1]) - 24 * 3600 * 1000
+          // this.timeValue[1] = new Date(this.timeValue[1])
+          this.timeValue[0] = this.timeValue1 ? new Date(Date.parse(this.timeValue1[0]) - 24 * 1000 * 3600) : null
+          this.timeValue[1] = this.timeValue1 ? new Date(Date.parse(this.timeValue1[1]) - 24 * 1000 * 3600) : null
         }
-        if (this.timeValue[0] > this.timeValue[1]) {
+        if (this.formInline.time === 'month' || this.formInline.time === 'year') {
+          this.timeValue[0] = this.timeValue1 ? this.timeValue1[0] : null
+          this.timeValue[1] = this.timeValue1 ? this.timeValue1[1] : null
+        }
+        if (this.timeValue && (this.timeValue[0] > this.timeValue[1])) {
           Message({
             message: '开始时间不能大于结束时间',
             type: 'error',
             duration: 3 * 1000
           })
         } else {
-          this.timeValueClone[0] = this.timeValue[0]
-          this.timeValueClone[1] = this.timeValue[1]
+          // this.timeValueClone[0] = this.timeValue[0]
+          // this.timeValueClone[1] = this.timeValue[1]
+          this.timeValueClone[0] = this.timeValue ? this.timeValue[0] : null
+          this.timeValueClone[1] = this.timeValue ? this.timeValue[1] : null
           this.formInline.timeClone = this.formInline.time
           this.pageNo = []
           this.pageSize = []
@@ -1591,17 +1605,22 @@
             depart_id: this.departId,
             campaign_id: this.formInline.campaignId,
             time_dimension: this.formInline.timeClone,
-            sub_depart_id: this.formInline.sub_depart_id.join(','),
-            start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
-            end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+            sub_depart_id: this.formInline.sub_depart_id.join(',')
           }
+          if (this.timeValueClone[0]) {
+            params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
+          }
+          if (this.timeValueClone[1]) {
+            params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+          }
+          // start_time:this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
+          // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
 
           if (this.statistics_type === 'depart') {
             params.sub_depart_id = this.formInline.sub_depart_id.join(',')
           } else {
             params.agent_id = this.formInline.agent_id.join(',')
           }
-
           ordertotalAgent(params).then(response => {
             this.tableData1 = response.data.result
           })
@@ -1609,7 +1628,7 @@
         }
       },
       searchEvery(val) {
-        if (this.timeValue[0] > this.timeValue[1]) {
+        if (this.timeValue && (this.timeValue[0] > this.timeValue[1])) {
           Message({
             message: '开始时间不能大于结束时间',
             type: 'error',
@@ -1625,10 +1644,16 @@
             depart_id: this.departId,
             campaign_id: this.formInline.campaignId,
             time_dimension: this.formInline.timeClone,
-            sub_depart_id: this.formInline.sub_depart_id.join(','),
-            start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
-            end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+            sub_depart_id: this.formInline.sub_depart_id.join(',')
           }
+          if (this.timeValueClone[0]) {
+            params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
+          }
+          if (this.timeValueClone[1]) {
+            params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+          }
+          // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
+          // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
 
           if (this.statistics_type === 'depart') {
             params.sub_depart_id = this.formInline.sub_depart_id.join(',')
@@ -1644,12 +1669,14 @@
       },
       search1(val) {
         if (this.formInline.time === 'week') {
-          this.timeValue[0] = Date.parse(this.timeValue[0]) - 24 * 3600 * 1000
-          this.timeValue[0] = new Date(this.timeValue[0])
-          this.timeValue[1] = Date.parse(this.timeValue[1]) - 24 * 3600 * 1000
-          this.timeValue[1] = new Date(this.timeValue[1])
+          // this.timeValue[0] = Date.parse(this.timeValue[0]) - 24 * 3600 * 1000
+          // this.timeValue[0] = new Date(this.timeValue[0])
+          // this.timeValue[1] = Date.parse(this.timeValue[1]) - 24 * 3600 * 1000
+          // this.timeValue[1] = new Date(this.timeValue[1])
+          this.timeValue[0] = this.timeValue ? new Date(Date.parse(this.timeValue[0]) - 24 * 3600 * 1000) : null
+          this.timeValue[1] = this.timeValue ? new Date(Date.parse(this.timeValue[1]) - 24 * 3600 * 1000) : null
         }
-        if (this.timeValue[0] > this.timeValue[1]) {
+        if (this.timeValue && (this.timeValue[0] > this.timeValue[1])) {
           Message({
             message: '开始时间不能大于结束时间',
             type: 'error',
@@ -1658,8 +1685,8 @@
         } else {
           this.formInline.timeClone = this.formInline.time
           this.formInline.campaignId = this.formInline.campaignIdClone
-          this.timeValueClone[0] = this.timeValue[0]
-          this.timeValueClone[1] = this.timeValue[1]
+          this.timeValueClone[0] = this.timeValue ? this.timeValue[0] : null
+          this.timeValueClone[1] = this.timeValue ? this.timeValue[1] : null
           this.agentChange(val)
           this.searchAgentStaff(val)
         }

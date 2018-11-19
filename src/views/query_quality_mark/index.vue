@@ -813,13 +813,10 @@ export default {
       if (this.a === false && this.b === false && this.c === false && this.d === false) {
         this.$message.error('没有权限操作此页面')
       }
-      if (this.timeValue && this.timeValue.length !== 0) {
-        req.start_time = this.timeValue[0]
-        req.end_time = this.timeValue[1]
-      } else if (this.timeValue === null || this.timeValue.length === []) {
-        req.start_time = null
-        req.end_time = null
-      }
+
+      req.start_time = this.timeValue ? this.timeValue[0] : null
+      req.end_time = this.timeValue ? this.timeValue[1] : null
+
       if (req.max || req.max === 0) {
         req.max = parseInt(req.max)
       } else {
