@@ -641,14 +641,7 @@
     },
     activated() {
       // console.log(this.$route.query.parent_organ)
-      if (this.$route.query.parent_organ) {
-        this.refreshOrgan()
-      } else {
-        findAllOrganGet().then(response => {
-          this.queryOrgan(response)
-        })
-      }
-      this.refreshOrganTo()
+      this.searchOrgan(this.formInline)
     }
     // watch: {
     //   $route(to, from) {

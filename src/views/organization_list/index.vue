@@ -9,11 +9,11 @@
           <el-form-item label="组织名：">
             <el-input placeholder="组织名（限长45字符）" v-model="formInline.organ_name" maxlength="45"></el-input>
           </el-form-item>
-          <el-form-item label="上级组织：">
-            <el-select v-model="formInline.parent_organ" placeholder="上级组织">
+          <el-form-item label="上级组织：" v-if="$route.params.id === ':id'">
+            <el-select v-model="formInline.parent_organ_id" placeholder="上级组织">
               <el-option label="所有上级组织" value=""></el-option>
               <el-option label="一级组织" value="0"></el-option>
-              <el-option v-for="item in allDepts" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
+              <el-option v-for="item in allDepts" :key="item.departName" :label="item.departName" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="操作人：">
@@ -71,9 +71,9 @@
             </template>
           </el-table-column>
           <el-table-column
-          align="center"
-          label="组织状态"
-          :show-overflow-tooltip="true">
+            align="center"
+            label="组织状态"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
               <div v-html="showOrgStatus(scope.row.visible)"></div>
             </template>
@@ -153,12 +153,12 @@
         </el-form-item>
         <el-form-item label="组织状态">
           <el-switch
-          v-model="ruleForm.visible"
-          active-text="可见"
-          inactive-text="不可见"
-          active-color="#13ce66"
-          :active-value=1
-          :inactive-value=0
+            v-model="ruleForm.visible"
+            active-text="可见"
+            inactive-text="不可见"
+            active-color="#13ce66"
+            :active-value=1
+            :inactive-value=0
           ></el-switch>
         </el-form-item>
         <el-form-item label="备注">
@@ -187,13 +187,13 @@
         </el-form-item>
         <el-form-item label="组织状态">
           <el-switch
-          @change="checkVisibleStatus(ruleFormReverse)"
-          v-model="ruleFormReverse.visible"
-          active-text="可见"
-          inactive-text="不可见"
-          active-color="#13ce66"
-          :active-value=1
-          :inactive-value=0
+            @change="checkVisibleStatus(ruleFormReverse)"
+            v-model="ruleFormReverse.visible"
+            active-text="可见"
+            inactive-text="不可见"
+            active-color="#13ce66"
+            :active-value=1
+            :inactive-value=0
           ></el-switch>
         </el-form-item>
         <el-form-item label="备注">
@@ -231,7 +231,7 @@
 </template>
 
 <script>
-  import { queryDepts, verifyDept, modifyOrganStatus, modifyOrgan, delOrgan, addOrganization, delOrgansByOrganIds, findAllOrganGet, findAllOrganPost, findAllOrganTo } from '@/api/organization_list'
+  import { queryDepts, verifyDept, modifyOrganStatus, modifyOrgan, delOrgan, addOrganization, delOrgansByOrganIds, findAllOrganPost, findAllOrganTo } from '@/api/organization_list'
   import { Message, MessageBox } from 'element-ui'
   import { formatDateTime } from '@/utils/tools'
   import { validSpace } from '@/utils/validate'
@@ -240,6 +240,7 @@
     name: 'organization_list',
     data() {
       return {
+        tempRoute: {},
         timeValue: [],
         organData: {},
         visibleData: {},
@@ -261,6 +262,7 @@
           organ_id: '',
           organ_name: '',
           parent_organ: '',
+          parent_organ_id: '',
           startTime: '',
           stopTime: '',
           pageNo: 1,
@@ -470,6 +472,7 @@
           organ_id: '',
           organ_name: '',
           parent_organ: '',
+          parent_organ_id: '',
           startTime: '',
           stopTime: '',
           creator: '',
@@ -518,7 +521,8 @@
       handleClickOrgan(row) {
         this.$router.push({
           name: 'organization_list',
-          query: { parent_organ: row.departName }
+          // query: { parent_organ: row.departName }
+          params: { id: row.id }
         })
         // this.refreshOrgan()
       },
@@ -618,13 +622,18 @@
           this.queryOrgan(response)
         })
       },
+      setTagsViewTitle() {
+        const route = Object.assign({}, this.tempRoute, { title: this.$route.params.id === ':id' ? this.tempRoute.meta.title : this.tempRoute.meta.title + '-' + this.$route.params.id })
+        this.$store.dispatch('updateVisitedView', route)
+      },
       refreshOrgan() {
-        this.formInline.parent_organ = this.$route.query.parent_organ
+        // this.formInline.parent_organ = this.$route.query.parent_organ
+        this.formInline.parent_organ_id = this.$route.params.id === ':id' ? '' : this.$route.params.id
         // 由于老版本不需要实时更新查询条件去查询下属组织 因此传参只需要2个值即可,其他字段完全无用 （备注 可以改装）
         findAllOrganPost({
           organ_id: '',
           organ_name: '',
-          parent_organ: this.$route.query.parent_organ,
+          parent_organ_id: this.$route.params.id === ':id' ? '' : this.$route.params.id,
           startTime: '',
           stopTime: '',
           creator: '',
@@ -642,18 +651,22 @@
         })
       }
     },
-    created() {
-      // console.log(this.$route.query.parent_organ)
-      if (this.$route.query.parent_organ) {
-        this.refreshOrgan()
-      } else {
-        findAllOrganGet().then(response => {
-          this.queryOrgan(response)
-        })
-      }
+    mounted() {
+      this.tempRoute = Object.assign({}, this.$route)
+      this.setTagsViewTitle()
+      // this.formInline.parent_organ = this.$route.params.id === ':id' ? '' : this.$route.params.id
+      // if (this.$route.params.id === ':id') {
+      //   this.refreshOrgan()
+      // } else {
+      // findAllOrganGet().then(response => {
+      //   this.queryOrgan(response)
+      // })
+      this.refreshOrgan()
+      // }
       this.refreshOrganTo()
     },
     activated() {
+      this.setTagsViewTitle()
       this.searchOrgan(this.formInline)
     }
     // watch: {
