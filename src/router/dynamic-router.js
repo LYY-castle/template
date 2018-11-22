@@ -26,7 +26,11 @@ export default (menuData) => {
       }
       for (let j = 0; j < data[i].sub_menus.length; j++) {
         children[j] = {}
-        children[j].path = data[i].sub_menus[j].template
+        if (data[i].sub_menus[j].template === 'organization_list') {
+          children[j].path = data[i].sub_menus[j].template + '/:id'
+        } else {
+          children[j].path = data[i].sub_menus[j].template
+        }
         children[j].name = data[i].sub_menus[j].template
         children[j].meta = {
           title: data[i].sub_menus[j].title
