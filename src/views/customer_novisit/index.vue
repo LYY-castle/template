@@ -416,6 +416,8 @@
         })
       },
       findNoVisitCustomers(req) {
+        req.modifyTimeStart = req.modifyTimeStart?req.modifyTimeStart:''
+        req.modifyTimeEnd = req.modifyTimeEnd?req.modifyTimeEnd:''
         queryNoVisitCustomers(req).then(response => {
           if (response.data.code === 0) {
             this.tableData = response.data.data

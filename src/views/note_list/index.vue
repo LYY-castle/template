@@ -214,7 +214,7 @@ export default {
         endat: '',
         uid: ''
       },
-      timeValue: '', // 查询时间显示
+      timeValue: [], // 查询时间显示
       tableData: [], // 表格数据
       pageShow: false, // 分页显示与否
       pageInfo: {}, // 分页信息
@@ -274,8 +274,9 @@ export default {
     },
     // 综合查询
     searchByKeyWords(req) {
-      req.startat = this.timeValue[0]
-      req.endat = this.timeValue[1]
+      req.startat = this.timeValue ? this.timeValue[0] : null
+      req.endat = this.timeValue ? this.timeValue[1] : null
+
       this.req.uid = this.uid
       queryByKeyWords(req)
         .then(response => {
@@ -296,7 +297,7 @@ export default {
     formatDateTime: formatDateTime,
     // 重置查询项
     resetQueryCondition() {
-      this.timeValue = ''
+      this.timeValue = []
       this.req = {
         pageNo: this.pageInfo.pageNo,
         pageSize: this.pageInfo.pageSize,
@@ -367,13 +368,17 @@ export default {
         addNotes(this.note_item, this.uid)
           .then(response => {
             if (response.data) {
-              this.$message.success('新建笔记成功')
-              this.note_item.content = ''
-              this.note_item.title = ''
-              this.content = null
-              this.noteTitle = ''
-              this.searchByKeyWords(this.req)
-              this.isListPage = '1'
+              if (response.data.code === 1) {
+                this.$message.error('新建笔记失败：' + response.data.error)
+              } else {
+                this.$message.success('新建笔记成功')
+                this.note_item.content = ''
+                this.note_item.title = ''
+                this.content = null
+                this.noteTitle = ''
+                this.searchByKeyWords(this.req)
+                this.isListPage = '1'
+              }
             } else {
               this.$message.error('服务出错啦...请稍后重试')
             }
@@ -429,14 +434,22 @@ export default {
         this.note_item.content = this.editDetail.content
         modifyNote(this.note_item, this.uid, this.noteid)
           .then(response => {
-            this.$message.success('修改笔记成功')
-            this.note_item.content = ''
-            this.note_item.title = ''
-            this.noteid = ''
-            this.editDetail.content = null
-            this.editDetail.title = ''
-            this.searchByKeyWords(this.req)
-            this.isListPage = '1'
+            if (response.data) {
+              if (response.data.code === 1) {
+                this.$message.error('修改笔记失败：' + response.data.error)
+              } else {
+                this.$message.success('修改笔记成功')
+                this.note_item.content = ''
+                this.note_item.title = ''
+                this.noteid = ''
+                this.editDetail.content = null
+                this.editDetail.title = ''
+                this.searchByKeyWords(this.req)
+                this.isListPage = '1'
+              }
+            } else {
+              this.$message.error('修改笔记失败！')
+            }
           })
           .catch(error => {
             console.log(error)

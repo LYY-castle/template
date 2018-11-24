@@ -648,12 +648,8 @@ export default {
       }
     },
     queryTemplateList() {
-      this.req.modifyTimeStart = ''
-      this.req.modifyTimeEnd = ''
-      if (this.timeValue && this.timeValue.length > 0) {
-        this.req.modifyTimeStart = this.timeValue[0]
-        this.req.modifyTimeEnd = this.timeValue[1]
-      }
+      this.req.modifyTimeStart = this.timeValue ? this.timeValue[0] : null
+      this.req.modifyTimeEnd = this.timeValue ? this.timeValue[1] : null
       queryTemplateList(this.req).then(response => {
         if (response.data.code === 0) {
           this.tableData = response.data.data

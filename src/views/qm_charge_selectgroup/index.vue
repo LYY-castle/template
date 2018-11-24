@@ -252,10 +252,8 @@ export default {
     },
     // 综合查询
     searchByCampaign(req) {
-      if (this.timeValue !== null && typeof (this.timeValue) !== undefined && this.timeValue.length > 0) {
-        req.modifyTimeStart = this.timeValue[0]
-        req.modifyTimeEnd = this.timeValue[1]
-      }
+      req.modifyTimeStart = this.timeValue ? this.timeValue[0] : null
+      req.modifyTimeEnd = this.timeValue ? this.timeValue[1] : null
       queryByCampaign(req)
         .then(response => {
           if (response.data.code === 0) {

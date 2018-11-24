@@ -461,7 +461,7 @@ export default {
       pageShow2: false, // 分页显示与否
       pageInfo: {}, // 分页信息
       pageInfo2: {}, // 分页信息
-      timeValue: '', // 查询时间显示
+      timeValue: [], // 查询时间显示
       req: {
         accurate: '0', // 是否精确查找 0否 1是
         name: '', // 问卷模板名称
@@ -524,8 +524,8 @@ export default {
     // },
     // 综合查询记录列表
     getQuestionnaireRecords(req) {
-      req.beginTime = this.timeValue[0]
-      req.afterTime = this.timeValue[1]
+      req.beginTime = this.timeValue ? this.timeValue[0] : null
+      req.afterTime = this.timeValue ? this.timeValue[1] : null
       queryQuestionnaireRecords(req).then(response => {
         if (response.data.code === 0) {
           this.listRecords = response.data.data
@@ -609,8 +609,8 @@ export default {
     formatDateTime: formatDateTime,
     // 综合查询
     searchByKeyWords(req) {
-      req.beginTime = this.timeValue[0]
-      req.afterTime = this.timeValue[1]
+      req.beginTime = this.timeValue ? this.timeValue[0] : null
+      req.afterTime = this.timeValue ? this.timeValue[1] : null
       queryByKeyWords(req).then(response => {
         if (response.data.code === 0) {
           this.templates = response.data.data
@@ -830,7 +830,7 @@ export default {
     },
     // 重置查询条件
     resetQueryCondition() {
-      this.timeValue = ''
+      this.timeValue = []
       this.req2 = {
         templateName: '', // 问卷名称
         staffName: '', // 操作人
