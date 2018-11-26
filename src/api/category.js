@@ -16,30 +16,41 @@ export function categoriesEdit(category_id, obj) {
   })
 }
 
-export function categories() {
+export function categoriesQuery(obj) {
   return request({
     url: '/categories/query/list',
-    method: 'get'
+    method: 'get',
+    params: obj
   })
 }
 
-export function categoriesNext(obj) {
+export function categoriesDelete(category_id) {
   return request({
-    url: '/categories?category_id=' + obj.category_id + '&code=' + obj.code,
-    method: 'get'
+    url: '/categories/delete/' + category_id,
+    method: 'post',
+    data: {}
   })
 }
 
-export function categoriesOne(category_id) {
+export function categoriesSpecific(category_id) {
   return request({
     url: '/categories/' + category_id,
     method: 'get'
   })
 }
 
-export function categoriesDelete(category_id, obj) {
+export function categoriesBatchDelete(obj) {
   return request({
-    url: '/categories/delete/' + category_id,
-    method: 'post'
+    url: '/categories/batch_delete?category_ids=' + obj.category_ids,
+    method: 'post',
+    data: {}
+  })
+}
+
+export function categoriesBatchEnable(obj) {
+  return request({
+    url: '/categories/batch_enable_disable?category_ids=' + obj.category_ids + '&enabled=' + obj.enabled,
+    method: 'post',
+    data: {}
   })
 }

@@ -43,16 +43,16 @@ export const constantRouterMap = [
     }]
   },
   {
-    path: '/example',
+    path: '/category',
     component: Layout,
     // redirect: '/dashboard/index',
-    name: 'Example',
+    name: 'Category',
     hidden: true,
     children: [{
-      path: 'edit/:id(\\d+)',
+      path: 'categoryChild/:id(\\d+)',
       component: () => import('@/views/example/edit'),
-      name: 'EditArticle',
-      meta: { title: 'editArticle' },
+      name: 'CategoryChild',
+      meta: { title: '选项管理' },
       hidden: true
     }]
   },
