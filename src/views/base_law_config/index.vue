@@ -14,6 +14,9 @@
           <el-form-item label="名称:">
             <el-input placeholder="名称（限长45字符）" v-model="formInline.name" maxlength="45"></el-input>
           </el-form-item>
+          <el-form-item label="编号:">
+            <el-input placeholder="编号（限长45字符）" v-model="formInline.code" maxlength="45"></el-input>
+          </el-form-item>
           <el-form-item label="配置类型:">
              <el-select v-model="formInline.type" placeholder="配置类型">
                 <el-option label="所有类型" value=""></el-option>
@@ -42,8 +45,11 @@
                 <el-option label="不可见" value="1"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="操作人:">
-            <el-input placeholder="操作人（限长45字符）" v-model="formInline.modifierName" maxlength="45"></el-input>
+          <el-form-item label="操作人姓名:">
+            <el-input placeholder="操作人姓名（限长45字符）" v-model="formInline.modifier_realname" maxlength="45"></el-input>
+          </el-form-item>
+          <el-form-item label="操作人id:">
+            <el-input placeholder="操作人id（限长45字符）" v-model="formInline.modifier_id" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item label="操作时间：">
             <el-date-picker
@@ -82,11 +88,20 @@
           </el-table-column>
           <el-table-column
             align="center"
+            prop="code"
+            label="编号"
+            :show-overflow-tooltip="true">
+            <template slot-scope="scope">
+              {{scope.row.code}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
             prop="type"
             label="配置类型"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              {{ scope.row.type }}
+              {{showConfigType(scope.row.type)}}
             </template>
           </el-table-column>
             <el-table-column
@@ -95,7 +110,7 @@
             label="值类型"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              {{ scope.row.val_type }}
+              {{showValueType( scope.row.val_type )}}
             </template>
           </el-table-column>
           <el-table-column
@@ -113,17 +128,17 @@
             label="可见性"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              {{ scope.row.enabled }}
+              {{showEnabledType( scope.row.enabled )}}
             </template>
           </el-table-column>
           
           <el-table-column
             align="center"
-            prop="modifier_name"
+            prop="modifier_realname"
             label="操作人"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              {{ scope.row.modifier_name }}
+              {{ scope.row.modifier_realname }}
             </template>
           </el-table-column>
           <el-table-column
@@ -136,7 +151,7 @@
           <el-table-column
             align="center"
             label="操作"
-            width="150">
+            width="180">
             <template slot-scope="scope">
               <el-button @click="handleQuery(scope.row)" type="text" size="small"> 查看</el-button>
               <el-button @click="handleClick(scope.row)" type="text" size="small"> 编辑</el-button>
@@ -184,20 +199,20 @@
                 <!-- <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option> -->
             </el-select>
         </el-form-item>
-        <el-form-item label="值类型"  :rules="{required:true}" v-if="ruleForm.type==='0'||ruleForm.type==='1'">
+        <el-form-item label="值类型"  :rules="{required:true}" v-if="ruleForm.type==='1'">
           <el-radio-group v-model='ruleForm.val_type' size="mini">
             <el-radio-button label='0'>金额</el-radio-button>
             <el-radio-button label='1'>系数</el-radio-button>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="值类型"  :rules="{required:true}" v-if="ruleForm.type==='2'">
+        <el-form-item label="值类型"  :rules="{required:true}" v-if="ruleForm.type==='0'||ruleForm.type==='2'">
           <span v-model='ruleForm.val_type' size="mini" value='0'>金额</span>
         </el-form-item>
-        <el-form-item label="描述">
-          <textarea v-model='ruleForm.description' placeholder="此处填写配置名称简单描述，上限100字符" maxlength="100" cols="63" rows="4">{{ruleForm.description}}</textarea>
+        <el-form-item label="备注">
+          <textarea v-model='ruleForm.remark' placeholder="此处填写配置名称简单备注，上限100字符" maxlength="100" cols="63" rows="4">{{ruleForm.remark}}</textarea>
         </el-form-item>
         <el-form-item label="值" v-if="ruleForm.type==='2'" :rules="{required: true}">
-          <i style="color:red">￥</i><el-input v-model='ruleForm.value' placeholder="此处填写金额" maxlength="10" style="width:150px;margin-left:1%">{{ruleForm.value}}</el-input>元
+          <i style="color:red">￥</i><el-input v-model='ruleForm.value' placeholder="此处填写金额" maxlength="11" style="width:150px;margin-left:1%" @change="checkNum(ruleForm.value)">{{ruleForm.value}}</el-input>元
         </el-form-item>
         <template>
           <div style="margin-bottom:1%" v-if="ruleForm.type==='0'||ruleForm.type==='1'">
@@ -205,7 +220,7 @@
           </div>
         <el-table
           v-if="ruleForm.type==='0'"
-          :data="ruleForm.list"
+          :data="ruleForm.base_setting"
           style="width: 100%">
           <el-table-column
             align="center"
@@ -243,10 +258,10 @@
           </el-table-column>
           <el-table-column
             align="center"
-            prop="value"
+            prop="val"
             label="值">
              <template slot-scope="scope">
-               <el-input v-model="scope.row.value" style="width:100px"></el-input>
+               <el-input v-model="scope.row.val" style="width:100px" @change="checkNum(scope.row.val)"  maxlength="11"></el-input>
              </template>
           </el-table-column>
           <el-table-column
@@ -260,7 +275,7 @@
         </el-table>
         <el-table
           v-if="ruleForm.type==='1'"
-          :data="ruleForm.array"
+          :data="ruleForm.float_setting"
           style="width: 100%">
           <el-table-column
             align="center"
@@ -298,10 +313,10 @@
           </el-table-column>
           <el-table-column
             align="center"
-            prop="value_start"
+            prop="val_start"
             label="开始值">
              <template slot-scope="scope">
-               <el-input v-model="scope.row.value_start" @change="checkRow('ruleFormArray',scope.row)"></el-input>
+               <el-input v-model="scope.row.val_start" @change="checkNum(scope.row.val_start),checkRow('ruleFormArray',scope.row)" maxlength="11"></el-input>
              </template>
           </el-table-column>
           <el-table-column
@@ -311,7 +326,7 @@
              <template slot-scope="scope">
              <el-select v-model="scope.row.rule1" @change="checkRow('ruleFormArray',scope.row)">
                   <el-option label="" value=""></el-option>
-                  <el-option label="=<" value="=<"></el-option>
+                  <el-option label="<=" value="<="></el-option>
                   <el-option label="<" value="<"></el-option>
                   <!-- <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option> -->
               </el-select>
@@ -324,7 +339,7 @@
              <template slot-scope="scope">
                 <el-select v-model="scope.row.rule2" @change="checkRow('ruleFormArray',scope.row)">
                   <el-option label="" value=""></el-option>
-                  <el-option label="=<" value="=<"></el-option>
+                  <el-option label="<=" value="<="></el-option>
                   <el-option label="<" value="<"></el-option>
                   <!-- <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option> -->
               </el-select>
@@ -332,26 +347,28 @@
           </el-table-column>
           <el-table-column
             align="center"
-            prop="value_end"
+            prop="val_end"
             label="结束值">
              <template slot-scope="scope" >
-               <el-input v-model="scope.row.value_end" @change="checkRow('ruleFormArray',scope.row)" ></el-input>
+               <el-input v-model="scope.row.val_end" @change="checkNum(scope.row.val_end),checkRow('ruleFormArray',scope.row)" maxlength="11" ></el-input>
              </template>
           </el-table-column>
           <el-table-column
             align="center"
-            prop="value"
+            prop="val"
             label="值">
              <template slot-scope="scope">
-               <el-input v-model="scope.row.value" ></el-input>
+               <el-input v-model="scope.row.val" maxlength="11" @change="checkNum(scope.row.val)"></el-input>
              </template>
           </el-table-column>
           <el-table-column
             align="center"
             prop="rate"
-            label="权重">
+            label="权重"
+            width="120"
+            v-if="ruleForm.val_type==='1'">
              <template slot-scope="scope">
-               <el-input v-model="scope.row.rate" ></el-input>
+               <el-input style="width:80px" v-model="scope.row.rate" maxlength="5" @change="checkNum(scope.row.rate),checkRow('ruleFormArray',scope.row)"></el-input>%
              </template>
           </el-table-column>
           <el-table-column
@@ -381,26 +398,48 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="描述">
-          <textarea v-model='ruleFormReverse.description' placeholder="此处填写配置名称简单描述，上限100字符" maxlength="100" cols="63" rows="4">{{ruleFormReverse.description}}</textarea>
+        <el-form-item label="配置类型">
+          <el-select v-model="ruleFormReverse.type" placeholder="配置类型" disabled="disabled">
+            <el-option label="基础配置" value="0"></el-option>
+            <el-option label="浮动配置" value="1"></el-option>
+            <el-option label="其他金额配置" value="2"></el-option>
+            <!-- <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option> -->
+          </el-select>
         </el-form-item>
         <el-form-item label="值类型"  :rules="{required:true}" >
-          <el-radio-group v-model='ruleFormReverse.val_type' size="mini">
+          <el-radio-group v-model='ruleFormReverse.val_type' size="mini" v-if="ruleFormReverse.type==='1'">
             <el-radio-button label='0'>金额</el-radio-button>
             <el-radio-button label='1'>系数</el-radio-button>
           </el-radio-group>
+          <span v-model='ruleFormReverse.val_type' size="mini" v-if="ruleFormReverse.type==='0'||ruleFormReverse.type==='2'">
+            金额
+          </span>
+        </el-form-item>
+        <el-form-item label="备注">
+          <textarea v-model='ruleFormReverse.remark' placeholder="此处填写配置名称简单备注，上限100字符" maxlength="100" cols="63" rows="4">{{ruleFormReverse.remark}}</textarea>
+        </el-form-item>
+         <el-form-item label="值" v-if="ruleFormReverse.type==='2'" :rules="{required: true}">
+          <i style="color:red">￥</i><el-input v-model='ruleFormReverse.value' placeholder="此处填写金额" maxlength="11" style="width:150px;margin-left:1%" @change="checkNum(ruleFormReverse.value)">{{ruleForm.value}}</el-input>元
         </el-form-item>
         <template>
-          <div style="margin-bottom:1%">
-           <el-button type="primary" @click="addRuleFormReverse()">添加栏</el-button>
+          <div style="margin-bottom:1%" v-if="ruleFormReverse.type==='0'||ruleFormReverse.type==='1'">
+           <el-button type="primary" @click="addRuleFormReverse(ruleFormReverse.type)">添加栏</el-button>
           </div>
         <el-table
-          :data="ruleFormReverse.list"
+          :data="ruleFormReverse.base_setting"
+          v-if="ruleFormReverse.type==='0'"
           style="width: 100%">
           <el-table-column
             align="center"
             type="selection"
             width="55">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="id"
+            v-if="false"
+            width="55"
+            label="id">
           </el-table-column>
           <el-table-column
             align="center"
@@ -433,10 +472,10 @@
           </el-table-column>
           <el-table-column
             align="center"
-            prop="value"
+            prop="val"
             label="值">
              <template slot-scope="scope">
-               <el-input v-model="scope.row.value" style="width:100px"></el-input>
+               <el-input v-model="scope.row.val" style="width:100px" maxlength="11" @change="checkNum(scope.row.val)"></el-input>
              </template>
           </el-table-column>
           <el-table-column
@@ -445,6 +484,119 @@
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
               <el-button type="danger" @click="deleteRow('ruleFormReverse',scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-table
+          v-if="ruleFormReverse.type==='1'"
+          :data="ruleFormReverse.float_setting"
+          style="width: 100%">
+          <el-table-column
+            align="center"
+            type="selection"
+            width="55">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="id"
+            v-if="false"
+            label="id">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="job_name"
+            label="岗位"
+            width="180">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.job_id" placeholder="岗位" @change="checkRow('ruleFormReverseArray',scope.row)">
+                  <el-option label="所有岗位" value=""></el-option>
+                  <el-option label="坐席" value="0"></el-option>
+                  <el-option label="质检" value="1"></el-option>
+                  <!-- <el-option v-for="item in allJobs" :key="item.job_id" :label="item.job_name" :value="item.job_name"></el-option> -->
+              </el-select>
+            </template>
+          </el-table-column>
+         
+          <el-table-column
+            align="center"
+            prop="level_name"
+            label="职级"
+            width="180">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.level_id" placeholder="职级"  @change="checkRow('ruleFormReverseArray',scope.row)">
+                  <el-option label="所有职级" value=""></el-option>
+                  <el-option label="一级" value="0"></el-option>
+                  <el-option label="二级" value="1"></el-option>
+                  <!-- <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option> -->
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="val_start"
+            label="开始值">
+             <template slot-scope="scope">
+               <el-input v-model="scope.row.val_start" @change="checkNum(scope.row.val_start),checkRow('ruleFormReverseArray',scope.row)" maxlength="11"></el-input>
+             </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="rule1"
+            label="与开始值比较">
+             <template slot-scope="scope">
+             <el-select v-model="scope.row.rule1" @change="checkRow('ruleFormReverseArray',scope.row)">
+                  <el-option label="" value=""></el-option>
+                  <el-option label="<=" value="<="></el-option>
+                  <el-option label="<" value="<"></el-option>
+                  <!-- <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option> -->
+              </el-select>
+             </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="rule2"
+            label="与结束值比较">
+             <template slot-scope="scope">
+                <el-select v-model="scope.row.rule2" @change="checkRow('ruleFormReverseArray',scope.row)">
+                  <el-option label="" value=""></el-option>
+                  <el-option label="<=" value="<="></el-option>
+                  <el-option label="<" value="<"></el-option>
+                  <!-- <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option> -->
+              </el-select>
+             </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="val_end"
+            label="结束值">
+             <template slot-scope="scope" >
+               <el-input v-model="scope.row.val_end" @change="checkNum(scope.row.val_end),checkRow('ruleFormReverseArray',scope.row)" maxlength="11" ></el-input>
+             </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="val"
+            label="值">
+             <template slot-scope="scope">
+               <el-input v-model="scope.row.val" maxlength="11" @change="checkNum(scope.row.val)"></el-input>
+             </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="rate"
+            label="权重"
+            width="120"
+            v-if="ruleFormReverse.val_type==='1'">
+             <template slot-scope="scope">
+               <el-input style="width:80px" v-model="scope.row.rate" maxlength="5" @change="checkNum(scope.row.rate),checkRow('ruleFormReverseArray',scope.row)"></el-input>%
+             </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="操作"
+            :show-overflow-tooltip="true">
+            <template slot-scope="scope">
+              <el-button type="danger" @click="deleteRow('ruleFormReverseArray',scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -466,19 +618,26 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="描述">
-          <textarea v-model='ruleFormDetail.description' placeholder="此处填写配置名称简单描述，上限100字符" maxlength="100" cols="63" rows="4" readonly>{{ruleFormDetail.description}}</textarea>
+        <el-form-item label="备注">
+          <textarea v-model='ruleFormDetail.remark' placeholder="此处填写配置名称简单备注，上限100字符" maxlength="100" cols="63" rows="4" readonly>{{ruleFormDetail.remark}}</textarea>
         </el-form-item>
         <el-form-item label="值类型"   >
-          <el-radio-group v-model='ruleFormDetail.val_type' size="mini" disabled>
+          <el-radio-group v-model='ruleFormDetail.val_type' size="mini" disabled v-if="ruleFormDetail.type==='1'">
             <el-radio-button label='0'>金额</el-radio-button>
             <el-radio-button label='1'>系数</el-radio-button>
           </el-radio-group>
+          <span v-model='ruleFormDetail.val_type' size="mini" disabled v-if="ruleFormDetail.type==='0'||ruleFormDetail.type==='2'">
+            金额
+          </span>
+        </el-form-item>
+        <el-form-item label="值" v-if="ruleFormDetail.type==='2'">
+          <i style="color:red">￥</i><el-input v-model='ruleFormDetail.value' style="width:150px;margin-left:1%" disabled="disabled">{{ruleFormDetail.value}}</el-input>元
         </el-form-item>
         <template>
         
         <el-table
-          :data="ruleFormDetail.list"
+          :data="ruleFormDetail.base_setting"
+          v-if="ruleFormDetail.type==='0'"
           style="width: 100%">
           <el-table-column
             align="center"
@@ -510,18 +669,119 @@
           </el-table-column>
           <el-table-column
             align="center"
-            prop="value"
+            prop="val"
             label="值">
              <template slot-scope="scope">
-               {{scope.row.value}}
+               {{scope.row.val}}
                <!-- <el-input v-model="scope.row.value" style="width:100px" readonly="readonly"></el-input> -->
              </template>
           </el-table-column>
         </el-table>
+
+        <el-table
+          v-if="ruleFormDetail.type==='1'"
+          :data="ruleFormDetail.float_setting"
+          style="width: 100%">
+          <el-table-column
+            align="center"
+            type="selection"
+            width="55">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="job_name"
+            label="岗位"
+            width="180">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.job_id" placeholder="岗位" disabled="disabled">
+                  <el-option label="所有岗位" value=""></el-option>
+                  <el-option label="坐席" value="0"></el-option>
+                  <el-option label="质检" value="1"></el-option>
+                  <!-- <el-option v-for="item in allJobs" :key="item.job_id" :label="item.job_name" :value="item.job_name"></el-option> -->
+              </el-select>
+            </template>
+          </el-table-column>
+         
+          <el-table-column
+            align="center"
+            prop="level_name"
+            label="职级"
+            width="180">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.level_id" placeholder="职级" disabled="disabled">
+                  <el-option label="所有职级" value=""></el-option>
+                  <el-option label="一级" value="0"></el-option>
+                  <el-option label="二级" value="1"></el-option>
+                  <!-- <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option> -->
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="val_start"
+            label="开始值">
+             <template slot-scope="scope">
+               <el-input v-model="scope.row.val_start" disabled="disabled"></el-input>
+             </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="rule1"
+            label="与开始值比较">
+             <template slot-scope="scope">
+             <el-select v-model="scope.row.rule1" disabled="disabled">
+                  <el-option label="" value=""></el-option>
+                  <el-option label="<=" value="<="></el-option>
+                  <el-option label="<" value="<"></el-option>
+                  <!-- <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option> -->
+              </el-select>
+             </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="rule2"
+            label="与结束值比较">
+             <template slot-scope="scope">
+                <el-select v-model="scope.row.rule2" disabled="disabled">
+                  <el-option label="" value=""></el-option>
+                  <el-option label="<=" value="<="></el-option>
+                  <el-option label="<" value="<"></el-option>
+                  <!-- <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option> -->
+              </el-select>
+             </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="val_end"
+            label="结束值">
+             <template slot-scope="scope" >
+               <el-input v-model="scope.row.val_end" disabled="disabled"></el-input>
+             </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="val"
+            label="值">
+             <template slot-scope="scope">
+               <el-input v-model="scope.row.val" maxlength="11" disabled="disabled"></el-input>
+             </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="rate"
+            label="权重"
+            width="120"
+            v-if="ruleFormDetail.val_type==='1'">
+             <template slot-scope="scope">
+               <el-input style="width:80px" v-model="scope.row.rate" disabled="disabled"></el-input>%
+             </template>
+          </el-table-column>
+       </el-table>
+       
       </template>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="resetForm('ruleFormDetail');dialogFormVisibleDetail = false">取消</el-button>
+        <el-button @click="resetForm('ruleFormDetail');dialogFormVisibleDetail = false">返回</el-button>
        </div>
     </el-dialog>
       
@@ -529,103 +789,85 @@
 </template>
 
 <script>
-  import { findAllAccount } from '@/api/base_law_config'
-  import { Message, MessageBox } from 'element-ui'
+  import { addBaseLawConfig, searchInfo, queryOne, updateBaseLawConfig, delBaseLawConfig, batchSetEnabled } from '@/api/base_law_config'
+  import { MessageBox } from 'element-ui'
   import { formatDateTime } from '@/utils/tools'
-import { duration } from 'moment'
-
 export default {
     name: 'base_law_config',
     data() {
       return {
-        timeValue: '',
-        pagination: {
+        timeValue: [], // 时间插件
+        pagination: {// 页码插件
           pageNo: null,
           pageSize: null,
           totalCount: null,
           totalPage: null
         },
-        tableData: [],
-        formInline: {
-          job_id: '',
-          job_name: '',
+        tableData: [], // 列表数据
+        formInline: {// 查询列表数据
           name: '',
-          level_id: '',
-          level_name: '',
-          min: '',
-          max: '',
+          code: '',
+          type: '',
           val_type: '',
-          value: '',
-          modifierName: '',
+          enabled: '',
+          modifier_realname: '',
+          modifier_id: '',
           modifierTimeStart: '',
           modifierTimeEnd: '',
           pageNo: 1,
           pageSize: 10
         },
-        dataCopy: {
-          id: '',
-          name: '',
-          val_type: '',
-          description: '',
-          list: [{
-            relation_id: '',
-            job_id: '',
-            name: '',
-            level_id: '',
-            value: '1',
-            isDelete: '0'
-          }]
-        }, // 用来保存修改或查询界面的初始数据
         tempDeleteArr: [], // 用来保存临时假删除的数据
-        ruleForm: {
+        ruleForm: {// 新增时的配置参数
           name: '',
           type: '0',
           val_type: '0',
-          description: '',
-          list: [{
+          remark: '',
+          base_setting: [{// 基础配置
             job_id: '',
             level_id: '',
-            value: '1'
+            val: '1'
           }],
-          array: [{
+          float_setting: [{// 浮动配置
             job_id: '',
             level_id: '',
-            value_start: '',
-            value_end: '',
-            value: '1',
+            val_start: '',
+            val_end: '',
+            val: '1',
             rule1: '<',
             rule2: '<',
-            rate: 1
+            rate: 100
           }],
-          value: ''
+          value: ''// 其他金额配置
         },
-        ruleFormReverse: {
+        ruleFormReverse: {// 修改时的配置参数
           id: '',
           name: '',
+          type: '',
           val_type: '',
-          description: '',
-          list: [{
-            relation_id: '',
+          remark: '',
+          base_setting: [{// 基础配置
+            id: '',
             job_id: '',
-            name: '',
             level_id: '',
-            value: '1',
-            isDelete: '0'
-          }]
+            val: '1',
+            isDelete: '1'// 1:可见，0:不可见（假删除）
+          }],
+          float_setting: [{// 浮动配置
+            id: '',
+            job_id: '',
+            level_id: '',
+            val_start: '',
+            val_end: '',
+            val: '1',
+            rule1: '<',
+            rule2: '<',
+            rate: 100,
+            isDelete: '1'// 1:可见，0:不可见（假删除）
+          }],
+          value: ''// 其他金额配置
         },
         ruleFormDetail: {
-          id: '111',
-          name: 'haha',
-          val_type: '0',
-          description: 'dsadsadsadsa',
-          list: [{
-            relation_id: '1212',
-            job_id: '0',
-            name: 'haha',
-            level_id: '1',
-            value: '3',
-            isDelete: '0'
-          }]
         },
         dialogFormVisible: false,
         dialogFormVisibleReverse: false,
@@ -633,9 +875,49 @@ export default {
       }
     },
     mounted() {
-  
+      this.searchInfo(this.formInline)
     },
     methods: {
+      showEnabledType(str) {
+        let result = ''
+        switch (str) {
+          case 0:result = '不可见'
+            break
+          case 1:result = '可见'
+            break
+          default:break
+        }
+        return result
+      },
+      showValueType(str) {
+        let result = ''
+        switch (str) {
+          case '0':result = '金额'
+            break
+          case '1':result = '系数'
+            break
+          default:break
+        }
+        return result
+      },
+      showConfigType(str) {
+        let result = ''
+        switch (str) {
+          case '0':result = '基础配置'
+            break
+          case '1':result = '浮动配置'
+            break
+          case '2':result = '其他金额配置'
+            break
+          default:break
+        }
+        return result
+      },
+      checkNum(value) {
+        if (isNaN(value)) {
+          this.$message.error('您填写了一个非数字类型的值，如不修改将会不能提交！')
+        }
+      },
       max(a, b) {
         if (a === 'min' || a === '') {
           return b
@@ -658,63 +940,134 @@ export default {
         if (((arr1[0] === 'min' || arr1[0] === '') && (arr2[0] === 'min' || arr2[0])) || ((arr1[1] === 'max' || arr1[1] === '') && (arr2[1] === 'max' || arr2[1] === ''))) {
           return false
         }
-        return parseFloat(this.max(arr1[0], arr2[0])) < parseFloat(this.min(arr1[1], arr2[1]))
+        if (arr1[0] === 'min' || arr1[0] === '') { // 如果第一个数据只有最大值，则用第二个数据的最小值去比较
+          return parseFloat(arr2[0]) < parseFloat(arr1[1])
+        }
+        if (arr1[1] === 'max' || arr1[1] === '') { // 如果第一个数据只有最小值，则用第二个数据的最大值去比较
+          return parseFloat(arr1[0]) < parseFloat(arr2[1])
+        }
+        if (arr2[0] === 'min' || arr2[0] === '') { // 如果第二个数据只有最大值，则用第一个数据的最小值去比较
+          return parseFloat(arr2[0]) > parseFloat(arr1[1])
+        }
+        if (arr1[1] === 'max' || arr1[1] === '') { // 如果第二个数据只有最小值，则用第一个数据的最大值去比较
+          return parseFloat(arr1[0]) > parseFloat(arr2[1])
+        }
+        return !((parseFloat(arr1[0]) >= parseFloat(arr2[1])) || (parseFloat(arr1[1]) <= parseFloat(arr2[0])))
       },
       resetFormInline() {
         this.formInline = {
-          job_id: '',
-          job_name: '',
           name: '',
-          level_id: '',
-          level_name: '',
-          min: '',
-          max: '',
+          code: '',
+          type: '',
           val_type: '',
-          value: '',
-          modifierName: '',
+          enabled: '',
+          modifier_realname: '',
+          modifier_id: '',
           modifierTimeStart: '',
           modifierTimeEnd: '',
           pageNo: 1,
           pageSize: 10
-  
         }
+        this.timeValue = []
       },
       searchInfo(obj) { // 调用主页查询方法
-        console.log(obj)
+        obj.modifierTimeStart = this.timeValue ? this.timeValue[0] : null
+        obj.modifierTimeEnd = this.timeValue ? this.timeValue[1] : null
+        searchInfo(obj).then(res => {
+          if (res.data.result && res.data.result.data && res.data.result.data.length > 0) {
+            this.tableData = res.data.result.data
+          }
+        })
       },
       batchVisable() { // 批量可见
+        if (typeof this.multipleSelection === 'undefined') {
+          this.$message.error('还未选中条目！')
+          return
+        }
+        const setting_ids = []
+        let flag = true
         this.multipleSelection.map(function(item, index) {
-          console.log(item)
+          if (item.enabled === 0) {
+            flag = flag && false
+          }
+          setting_ids.push(item.setting_id)
+        })
+        if (setting_ids.length < 1) {
+          this.$message.error('还未选中需要设置为可见的条目！')
+          return
+        }
+        if (flag) {
+          this.$message.error('选中的条目已经都是可见！')
+          return
+        }
+        batchSetEnabled(setting_ids.join(','), 1).then(res => {
+          console.log(res, 'res')
         })
       },
       batchCover() { // 批量不可见
+        if (typeof this.multipleSelection === 'undefined') {
+          this.$message.error('还未选中条目！')
+          return
+        }
+        const setting_ids = []
+        let flag = true
         this.multipleSelection.map(function(item, index) {
-          console.log(item)
+          if (item.enabled === 1) {
+            flag = flag && false
+          }
+          setting_ids.push(item.setting_id)
+        })
+        if (setting_ids.length < 1) {
+          this.$message.error('还未选中需要设置为不可见的条目！')
+          return
+        }
+        if (flag) {
+          this.$message.error('选中的条目已经都是不可见！')
+          return
+        }
+        batchSetEnabled(setting_ids.join(','), 0).then(res => {
+          console.log(res, 'res')
         })
       },
       deleteAll() {
+        if (typeof this.multipleSelection === 'undefined') {
+          this.$message.error('还未选中条目！')
+          return
+        }
+        const setting_ids = []
         this.multipleSelection.map(function(item, index) {
-          console.log(item)
+          setting_ids.push(item.setting_id)
+        })
+        if (setting_ids.length < 1) {
+          this.$message.error('还未选中需要删除的条目！')
+          return
+        }
+        delBaseLawConfig(null, setting_ids.join(',')).then(res => {
+          console.log(res, 'res')
         })
         // const chk_box = this.multipleSelection.map(function(item, index) {
         //   return item.gradeId
         // })
       },
       checkRow(str, obj) { // 改变岗位和职级的对应关系，判定是否重复
-        let list = []
+        let base_setting = []
+        let float_setting = []
         if (str === 'ruleForm') {
-          list = this.ruleForm.list
+          base_setting = this.ruleForm.base_setting
         }
         if (str === 'ruleFormArray') {
-          list = this.ruleForm.array
+          float_setting = this.ruleForm.float_setting
         }
         if (str === 'ruleFormReverse') {
-          list = this.ruleFormReverse.list
+          base_setting = this.ruleFormReverse.base_setting
+        }
+        if (str === 'ruleFormReverseArray') {
+          float_setting = this.ruleFormReverse.float_setting
         }
         let count = 0
         if (str === 'ruleForm' || str === 'ruleFormReverse') {
-          for (let i = 0; i < list.length; i++) {
-            if (list[i].job_id === obj.job_id && list[i].level_id === obj.level_id) {
+          for (let i = 0; i < base_setting.length; i++) {
+            if (base_setting[i].job_id === obj.job_id && base_setting[i].level_id === obj.level_id) {
               count++
               if (count > 1) { // 说明已经存在现有关系，尝试删除最新添加的空白栏
                 this.$message.error('已存在此对应关系，如不修改，则会导致不能提交！')
@@ -722,19 +1075,38 @@ export default {
             }
           }
         }
-        if (str === 'ruleFormArray') {
-          if (((obj.value_start && obj.rule1) || (!obj.value_start && !obj.rule1)) && ((obj.value_end && obj.rule2) || (!obj.value_end && !obj.rule2))) {
-            if (obj.value_start && obj.value_end && obj.value_start > obj.value_end) {
+        if (str === 'ruleFormArray' || str === 'ruleFormReverseArray') {
+          if (((obj.val_start && obj.rule1) || (!obj.val_start && !obj.rule1)) && ((obj.val_end && obj.rule2) || (!obj.val_end && !obj.rule2))) {
+            if (obj.val_start && obj.val_end && parseFloat(obj.val_start) >= parseFloat(obj.val_end)) {
               this.$message.error('结束值不能小于开始值，否则将不能提交！')
               return
             }
+            if (obj.val_start === '' && obj.val_end === '') {
+              this.$message.error('开始值和结束值均未填，不能提交！')
+              return
+            }
             const arr = []
-            for (let i = 0; i < list.length; i++) {
-              if (list[i].job_id === obj.job_id && list[i].level_id === obj.level_id) {
+            const rate_arr = []
+            for (let i = 0; i < float_setting.length; i++) {
+              if (float_setting[i].job_id === obj.job_id && float_setting[i].level_id === obj.level_id) {
                 const tempArr = []
-                tempArr[0] = list[i].value_start ? list[i].value_start : 'min'
-                tempArr[1] = list[i].value_end ? list[i].value_end : 'max'
+                tempArr[0] = float_setting[i].val_start ? float_setting[i].val_start : 'min'
+                tempArr[1] = float_setting[i].val_end ? float_setting[i].val_end : 'max'
                 arr.push(tempArr)
+                rate_arr.push(float_setting[i])
+              }
+            }
+            let total_rate = 0
+            for (let k = 0; k < rate_arr.length; k++) {
+              if (parseFloat(rate_arr[k].rate) < 0 || parseFloat(rate_arr[k].rate) > 100) {
+                this.$message.error('权重须在0到100之间！')
+                return
+              } else {
+                total_rate = total_rate + parseFloat(rate_arr[k].rate)
+                if ((this.ruleForm.val_type === '1' || this.ruleFormReverse.type === '1') && (total_rate > 100 || total_rate < 0)) {
+                  this.$message.error('同类型配置权重和须在0到100之间！')
+                  return
+                }
               }
             }
             let len = arr.length
@@ -742,6 +1114,7 @@ export default {
               for (let j = 0; j < arr.length - 1; j++) {
                 if (this.copy(arr[j], arr[j + 1])) {
                   this.$message.error('存在交叉数据的问题，请认真核对，否则不能提交！')
+                  return
                 }
               }
               len--
@@ -751,7 +1124,7 @@ export default {
       },
 
       equals(o1, o2) {
-        if (o1.job_id === o2.job_id && o1.level_id === o2.level_id && (o1.isDelete !== '1' && o2.isDelete !== '1')) {
+        if (o1.job_id === o2.job_id && o1.level_id === o2.level_id && (o1.isDelete !== '0' && o2.isDelete !== '0')) {
           return 1
         } else {
           return 0
@@ -759,13 +1132,17 @@ export default {
       },
       checkArr(obj) {
         const relation = []
-        if (((obj.value_start && obj.rule1) || (!obj.value_start && !obj.rule1)) && ((obj.value_end && obj.rule2) || (!obj.value_end && !obj.rule2))) {
-          if (obj.value_start && obj.value_end && obj.value_start > obj.value_end) {
-            this.$message.error('存在开始值大于结束值的情况，不能提交！')
+        if (((obj.val_start && obj.rule1) || (!obj.val_start && !obj.rule1)) && ((obj.val_end && obj.rule2) || (!obj.val_end && !obj.rule2))) {
+          if (obj.val_start && obj.val_end && parseFloat(obj.val_start) >= parseFloat(obj.val_end)) {
+            this.$message.error('存在开始值大于或等于结束值的情况，不能提交！')
             return null
           }
-          relation[0] = obj.value_start ? obj.value_start : 'min'
-          relation[1] = obj.value_end ? obj.value_end : 'max'
+          if (obj.val_start === '' && obj.val_end === '') {
+            this.$message.error('开始值和结束值均未填，不能提交！')
+            return null
+          }
+          relation[0] = obj.val_start ? obj.val_start : 'min'
+          relation[1] = obj.val_end ? obj.val_end : 'max'
           return relation
         } else {
           this.$message.error('存在开始值或结束值与符号不匹配的情况，不能提交！')
@@ -774,28 +1151,33 @@ export default {
       },
       deleteItem(arr, obj) {
         if (arr.length < 1) {
-          arr[0] = obj.value_start
-          arr[1] = obj.value_end
+          arr[0] = obj[0]
+          arr[1] = obj[1]
         } else {
-          arr.indexOf(obj.value_start) ? arr.splice(arr.indexOf(obj.value_start), 1) : arr.push(obj.value_start)
-          arr.indexOf(obj.value_end) ? arr.splice(arr.indexOf(obj.value_end), 1) : arr.push(obj.value_end)
+          arr.indexOf(obj[0]) > -1 ? arr.splice(arr.indexOf(obj[0]), 1) : arr.push(obj[0])
+          arr.indexOf(obj[1]) > -1 ? arr.splice(arr.indexOf(obj[1]), 1) : arr.push(obj[1])
         }
         return arr
       },
-      checkForm(obj) {
+      checkForm(obj, str) {
         if (!obj.name || !obj.val_type) {
           return { 'code': false, 'message': '必填项不能留空白！' }
         }
-        if (obj.list.length === 0) {
-          return { 'code': true, 'message': '没有确立关系！' }
-        }
-        if (this.ruleForm.type === '0') { // 基础配置
-          const list = obj.list
-          let len = list.length
+        if ((this.ruleForm.type === '0' && str === '0') || (this.ruleFormReverse.type === '0' && str === '1')) { // 基础配置
+          if (obj.base_setting.length === 0) {
+            return { 'code': true, 'message': '没有确立关系！' }
+          }
+          const base_setting = obj.base_setting
+          let len = base_setting.length
           let count_copy = 0
-          while (len > 0) {
-            for (let i = 0; i < len - 1; i++) {
-              count_copy = count_copy + this.equals(list[i], list[i + 1])
+          for (let a = 0; a < base_setting.length; a++) {
+            if (isNaN(base_setting[a].val)) {
+              return { 'code': false, 'message': '存在非数值类的值，请仔细检查！' }
+            }
+          }
+          while (len > 1) {
+            for (let i = len - 1; i > 0; i--) {
+              count_copy = count_copy + this.equals(base_setting[i - 1], base_setting[len - 1])
               if (count_copy > 0) {
                 return { 'code': false, 'message': '存在重复项，请仔细检查！' }
               }
@@ -804,17 +1186,33 @@ export default {
           }
           return { 'code': true, 'message': '校验内容无误！' }
         }
-        if (this.ruleForm.type === '1') { // 浮动配置
-          const array = obj.array
+
+        if ((this.ruleForm.type === '1' && str === '0') || (this.ruleFormReverse.type === '1' && str === '1')) { // 浮动配置
+          if (obj.float_setting.length === 0) {
+            return { 'code': true, 'message': '没有确立关系！' }
+          }
+          const float_setting = obj.float_setting
+          for (let a = 0; a < float_setting.length; a++) {
+            if (isNaN(float_setting[a].val_start) || isNaN(float_setting[a].val_end) || isNaN(float_setting[a].val)) {
+              return { 'code': false, 'message': '存在非数值类的值，请仔细检查！' }
+            }
+            if (isNaN(float_setting[a].rate)) {
+              return { 'code': false, 'message': '权重为非数值类型，请检查！' }
+            } else {
+              if (parseFloat(float_setting[a].rate) < 0 || parseFloat(float_setting[a].rate) > 100) {
+                return { 'code': false, 'message': '权重为超出0到100的范围，请检查！' }
+              }
+            }
+          }
           const objArr = []
-          for (let i = 0; i < array.length; i++) {
+          for (let i = 0; i < float_setting.length; i++) {
             let flag = false
             for (let j = 0; j < objArr.length; j++) {
-              if (objArr[j].job_id === array[i].job_id && objArr[j].level_id === array[i].level_id) {
-                if (this.checkArr(array[i])) {
-                  objArr[j].arr.push(this.checkArr(array[i]))
+              if (objArr[j].job_id === float_setting[i].job_id && objArr[j].level_id === float_setting[i].level_id) {
+                if (this.checkArr(float_setting[i])) {
+                  objArr[j].arr.push(this.checkArr(float_setting[i]))
+                  objArr[j].rate.push(float_setting[i].rate)
                   flag = true
-                  break
                 } else {
                   this.$message.error('匹配关系存在错误，请核对并修正！')
                   return { 'code': false, 'message': '匹配关系存在错误，请核对并修正！' }
@@ -822,24 +1220,43 @@ export default {
               }
             }
             if (!flag) {
-              if (this.checkArr(array[i])) {
-                objArr.push({ 'job_id': array[i].job_id, 'level_id': array[i].level_id, 'arr': this.checkArr(array[i]) })
+              if (this.checkArr(float_setting[i])) {
+                const tempArr1 = []
+                tempArr1.push(this.checkArr(float_setting[i]))
+                const tempArr2 = []
+                tempArr2.push(float_setting[i].rate)
+                objArr.push({ 'job_id': float_setting[i].job_id, 'level_id': float_setting[i].level_id, 'arr': tempArr1, 'rate': tempArr2 })
               } else {
                 this.$message.error('匹配关系存在错误，请核对并修正！')
                 return { 'code': false, 'message': '匹配关系存在错误，请核对并修正！' }
               }
             }
           }
-          console.log(objArr, 'objArr')
           let isLack = true
           let count = 0
+          const count_arr = []
+          let rate_flag = true
           for (let o = 0; o < objArr.length; o++) {
             const arr = objArr[o].arr
+            const arr_rate = objArr[o].rate
+            let count_rate = 0
+            for (let q = 0; q < arr_rate.length; q++) {
+              count_rate = count_rate + parseFloat(arr_rate[q])
+            }
+            if (count_rate > 100 && obj.val_type === '1') { // 值类型为系数时，权重和大于100则提示错误
+              this.$message.error('同条件配置权重超出范围，请认真核对并修改！')
+              return { 'code': false, 'message': '同条件配置权重超出范围，请认真核对并修改！' }
+            } else if (count_rate === 100) {
+              rate_flag = rate_flag && true
+            } else {
+              rate_flag = false
+            }
+
             let length = arr.length
             let tempArr = []
             while (length > 0) { // 冒泡判断是否有交叉数据
-              for (let k = 0; k < arr.length - 1; k++) {
-                if (this.copy(arr[k], arr[k + 1])) {
+              for (let k = length - 1; k > 0; k--) {
+                if (this.copy(arr[k - 1], arr[k])) {
                   this.$message.error('存在交叉数据的问题，请认真核对并修改！')
                   return { 'code': false, 'message': '存在交叉数据的问题，请认真核对并修改！' }
                 }
@@ -849,18 +1266,36 @@ export default {
             for (let p = 0; p < arr.length; p++) {
               tempArr = this.deleteItem(tempArr, arr[p])
             }
-            if (tempArr.length > 2) {
+  
+            count_arr.push(tempArr)
+          }
+          for (let q = 0; q < count_arr.length; q++) {
+            if (count_arr[q].indexOf('min') > -1) {
+              count_arr[q].splice(count_arr[q].indexOf('min'), 1)
+            }
+            if (count_arr[q].indexOf('max') > -1) {
+              count_arr[q].splice(count_arr[q].indexOf('max'), 1)
+            }
+            if (count_arr[q].length > 0) {
               isLack = false
-              count++
+              count = count + Math.floor((count_arr[q].length + 1) / 2)
+            } else {
+              isLack = true && isLack
             }
           }
-          console.log(array, 'array')
-          // TODO 提交数据
+          //  提交数据
           let isCross = true
           if (!isLack) {
             console.log('还有一些区间没有包括到', count)
-            if (window.confirm('还有至少' + count + '个条件没有包含到，是否继续提交')) {
-              isCross = true
+            if (window.confirm('至少还有' + count + '个条件没有包含到，是否继续提交')) {
+              isCross = isCross && true
+            } else {
+              isCross = false
+            }
+          }
+          if (!rate_flag && obj.val_type === '1') { // 值类型为系数，校验权重不大于100
+            if (window.confirm('部分配置权重和小于100，是否继续提交')) {
+              isCross = isCross && true
             } else {
               isCross = false
             }
@@ -871,28 +1306,103 @@ export default {
             return { 'code': false, 'message': '放弃提交，重新检查并修改！' }
           }
         }
+        if ((this.ruleForm.type === '2' && str === '0') || (this.ruleFormReverse.type === '2' && str === '1')) { // 其他金额配置
+          const value = obj.value
+          if (value.trim() === '') {
+            return { 'code': false, 'message': '金额不能为空' }
+          }
+          if (isNaN(value)) {
+            return { 'code': false, 'message': '金额配置有问题' }
+          } else {
+            return { 'code': true, 'message': '校验内容无误！' }
+          }
+        }
       },
       submitForm(str) { // 提交表单
         if (str === 'ruleForm') {
-          const obj = this.checkForm(this.ruleForm)// 核对是否已经存在对应关系
+          const obj = this.checkForm(this.ruleForm, '0')// 核对是否已经存在对应关系
           if (obj.code) {
-            console.log('ok')
+            const datas = {}
+            datas.name = this.ruleForm.name
+            datas.type = this.ruleForm.type
+            datas.val_type = this.ruleForm.val_type
+            datas.remark = this.ruleForm.remark
+            datas.setting_id = null
+            // 创建人信息
+            datas.creator_id = localStorage.getItem('agentId') ? localStorage.getItem('agentId') : ''
+            datas.modifier_id = localStorage.getItem('agentId') ? localStorage.getItem('agentId') : ''
+            datas.creator_realname = localStorage.getItem('agentName') ? localStorage.getItem('agentName') : ''
+            datas.modifier_realname = localStorage.getItem('agentName') ? localStorage.getItem('agentName') : ''
+
+            if (this.ruleForm.type === '0') { // 基本配置
+              datas.base_setting = this.ruleForm.base_setting
+              for (let i = 0; i < datas.base_setting.length; i++) {
+                datas.base_setting[i].id = null
+              }
+              addBaseLawConfig(datas).then(res1 => {
+                console.log(res1)
+              })
+            }
+            if (this.ruleForm.type === '1') { // 浮动配置
+              datas.float_setting = this.ruleForm.float_setting
+              for (let i = 0; i < datas.float_setting.length; i++) {
+                datas.float_setting[i].id = null
+              }
+              addBaseLawConfig(datas).then(res2 => {
+                console.log(res2)
+              })
+            }
+            if (this.ruleForm.type === '2') { // 其他金额配置
+              const obj = []
+              obj[0] = { 'val': this.ruleForm.value }
+              datas.other_money_setting = obj
+              addBaseLawConfig(datas).then(res3 => {
+                console.log(res3)
+              })
+            }
           } else {
             this.$message.error(obj.message)
           }
         }
         if (str === 'ruleFormReverse') {
-          // const list = this.ruleFormReverse.list
-          // for (let i = 0; i < this.tempDeleteArr.length; i++) {
-          //   list.push(this.tempDeleteArr[i])
-          // }
-          const tempData = { 'name': this.ruleFormReverse.name,
-            'description': this.ruleFormReverse.description,
-            'val_type': this.ruleFormReverse.val_type,
-            'list': this.tempDeleteArr.concat(this.ruleFormReverse.list) }
-          const obj = this.checkForm(tempData)// 核对是否已经存在对应关系
+          // const tempData = { 'name': this.ruleFormReverse.name,
+          //   'remark': this.ruleFormReverse.remark,
+          //   'val_type': this.ruleFormReverse.val_type,
+          //   'base_setting': this.tempDeleteArr.concat(this.ruleFormReverse.base_setting) }
+          const obj = this.checkForm(this.ruleFormReverse, '1')// 核对是否已经存在对应关系
           if (obj.code) {
-            console.log('ok')
+            const datas = {}
+            datas.setting_id = this.ruleFormReverse.setting_id
+            datas.enabled = this.ruleFormReverse.enabled
+            datas.name = this.ruleFormReverse.name
+            datas.remark = this.ruleFormReverse.remark
+            datas.type = this.ruleFormReverse.type
+            datas.val_type = this.ruleFormReverse.val_type
+
+            // 修改人信息
+            datas.modifier_id = localStorage.getItem('agentId') ? localStorage.getItem('agentId') : ''
+            datas.modifier_realname = localStorage.getItem('agentName') ? localStorage.getItem('agentName') : ''
+
+            if (this.ruleFormReverse.type === '0') { // 基本配置
+              datas.base_setting = this.ruleFormReverse.base_setting
+              updateBaseLawConfig(datas.setting_id, datas).then(res1 => {
+                console.log(res1, 'res1')
+              })
+            }
+            if (this.ruleFormReverse.type === '1') { // 浮动配置
+              datas.float_setting = this.ruleFormReverse.float_setting
+              updateBaseLawConfig(datas.setting_id, datas).then(res2 => {
+                console.log(res2, 'res2')
+              })
+            }
+            if (this.ruleFormReverse.type === '2') { // 其他金额配置
+              const obj = []
+              obj[0] = { 'val': this.ruleFormReverse.value }
+              datas.other_money_setting = obj
+              updateBaseLawConfig(datas.setting_id, datas).then(res3 => {
+                console.log(res3, 'res3')
+              })
+            }
           } else {
             this.$message.error(obj.message)
           }
@@ -900,60 +1410,40 @@ export default {
       },
       deleteRow(str, obj) { // 删除表栏
         if (str === 'ruleFormReverse') {
-          const arr = this.ruleFormReverse.list
+          const arr = this.ruleFormReverse.base_setting
           for (let i = 0; i < arr.length; i++) {
             if (arr[i] === obj) {
               // if (obj.isDelete === '0' && obj.relation_id !== null) { // 如果是已经存在的关系，则做假删除
-              if (obj.isDelete === '0') {
+              if (obj.isDelete === '0') { // 从原有基础上假删除
                 obj.isDelete = '1'
                 this.tempDeleteArr.push(obj)
               }
-              this.ruleFormReverse.list.splice(i, 1)
+              this.ruleFormReverse.base_setting.splice(i, 1)
             }
           }
         }
         if (str === 'ruleForm') {
-          const arr = this.ruleForm.list
+          const arr = this.ruleForm.base_setting
           for (let i = 0; i < arr.length; i++) {
             if (arr[i] === obj) {
-              this.ruleForm.list.splice(i, 1)
+              this.ruleForm.base_setting.splice(i, 1)
             }
           }
         }
         if (str === 'ruleFormArray') {
-          const arr = this.ruleForm.array
+          const arr = this.ruleForm.float_setting
           for (let i = 0; i < arr.length; i++) {
             if (arr[i] === obj) {
-              this.ruleForm.array.splice(i, 1)
+              this.ruleForm.float_setting.splice(i, 1)
             }
           }
         }
       },
-      addRuleFormReverse() {
-        const list = this.ruleFormReverse.list
-        for (let i = 0; i < list.length; i++) {
-          if (list[i].job_id === '' && list[i].level_id === '' && list[i].isDelete !== 0) {
-            this.$message({
-              message: '请先填好须匹配的岗位、级别对应项!',
-              type: 'warning',
-              duration: 1000
-            })
-            return
-          }
-        }
-        const item = {
-          job_id: '',
-          name: this.ruleFormReverse.name,
-          level_id: '',
-          value: '1'
-        }
-        this.ruleFormReverse.list.push(item)
-      },
-      addRuleForm(str) { // 添加表栏
-        if (str === '0') { // 基础配置
-          const list = this.ruleForm.list
-          for (let i = 0; i < list.length; i++) {
-            if (list[i].job_id === '' && list[i].level_id === '') {
+      addRuleFormReverse(type) {
+        if (type === '0') {
+          const base_setting = this.ruleFormReverse.base_setting
+          for (let i = 0; i < base_setting.length; i++) {
+            if (base_setting[i].job_id === '' && base_setting[i].level_id === '' && base_setting[i].isDelete !== 0) {
               this.$message({
                 message: '请先填好须匹配的岗位、级别对应项!',
                 type: 'warning',
@@ -965,14 +1455,14 @@ export default {
           const item = {
             job_id: '',
             level_id: '',
-            value: '1'
+            val: '1'
           }
-          this.ruleForm.list.push(item)
+          this.ruleFormReverse.base_setting.push(item)
         }
-        if (str === '1') { // 浮动配置
-          const array = this.ruleForm.array
-          for (let i = 0; i < array.length; i++) {
-            if (array[i].job_id === '' && array[i].level_id === '') {
+        if (type === '1') { // 浮动配置
+          const float_setting = this.ruleFormReverse.float_setting
+          for (let i = 0; i < float_setting.length; i++) {
+            if (float_setting[i].job_id === '' && float_setting[i].level_id === '') {
               this.$message({
                 message: '还有未匹配的岗位、级别对应项!',
                 type: 'warning',
@@ -983,14 +1473,58 @@ export default {
           const item = {
             job_id: '',
             level_id: '',
-            value_start: '',
-            value_end: '',
-            value: '1',
+            val_start: '',
+            val_end: '',
+            val: '1',
             rule1: '<',
             rule2: '<',
-            rate: 1
+            rate: 100
           }
-          this.ruleForm.array.push(item)
+          this.ruleFormReverse.float_setting.push(item)
+        }
+      },
+      addRuleForm(str) { // 添加表栏
+        if (str === '0') { // 基础配置
+          const base_setting = this.ruleForm.base_setting
+          for (let i = 0; i < base_setting.length; i++) {
+            if (base_setting[i].job_id === '' && base_setting[i].level_id === '') {
+              this.$message({
+                message: '请先填好须匹配的岗位、级别对应项!',
+                type: 'warning',
+                duration: 1000
+              })
+              return
+            }
+          }
+          const item = {
+            job_id: '',
+            level_id: '',
+            val: '1'
+          }
+          this.ruleForm.base_setting.push(item)
+        }
+        if (str === '1') { // 浮动配置
+          const float_setting = this.ruleForm.float_setting
+          for (let i = 0; i < float_setting.length; i++) {
+            if (float_setting[i].job_id === '' && float_setting[i].level_id === '') {
+              this.$message({
+                message: '还有未匹配的岗位、级别对应项!',
+                type: 'warning',
+                duration: 1000
+              })
+            }
+          }
+          const item = {
+            job_id: '',
+            level_id: '',
+            val_start: '',
+            val_end: '',
+            val: '1',
+            rule1: '<',
+            rule2: '<',
+            rate: 100
+          }
+          this.ruleForm.float_setting.push(item)
         }
       },
       addRuleFormDetailPage() { // 打开查询页面
@@ -1009,30 +1543,36 @@ export default {
               name: '',
               type: '0',
               val_type: '0',
-              description: '',
-              list: [{
+              remark: '',
+              base_setting: [{
                 job_id: '',
                 level_id: '',
-                value: '1'
+                val: '1'
               }],
-              array: [{
+              float_setting: [{
                 job_id: '',
                 level_id: '',
-                value_start: '',
-                value_end: '',
-                value: '1',
+                val_start: '',
+                val_end: '',
+                val: '1',
                 rule1: '<',
                 rule2: '<',
-                rate: 1
+                rate: 100
               }],
               value: ''
             }
             break
           case 'ruleFormReverse':
-            this.ruleFormReverse = this.dataCopy
+            queryOne(this.ruleFormReverse.setting_id).then(res => {
+              if (res.data.result) {
+                this.ruleFormReverse = res.data.result
+                if (res.data.result.type === '2') {
+                  this.ruleFormReverse.value = res.data.result.other_money_setting[0].val
+                }
+              }
+            })
             break
           case 'ruleFormDetail':
-            this.ruleFormDetail = this.dataCopy
             break
         }
       },
@@ -1042,30 +1582,47 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-  
+          const setting_id = row.setting_id
+          delBaseLawConfig(null, setting_id).then(res => {
+            console.log(res, 'res')
+          })
         })
       },
       handleCopy(row) {
         this.reverseRow = row
         this.dialogFormVisible = true
+        queryOne(row.setting_id).then(res => {
+          if (res.data.result) {
+            this.ruleForm = res.data.result
+            if (res.data.result.type === '2') {
+              this.ruleForm.value = res.data.result.other_money_setting[0].val
+            }
+          }
+        })
       },
       handleQuery(row) {
         this.reverseRow = row
         this.dialogFormVisibleDetail = true
+        queryOne(row.setting_id).then(res => {
+          if (res.data.result) {
+            this.ruleFormDetail = res.data.result
+            if (res.data.result.type === '2') {
+              this.ruleFormDetail.value = res.data.result.other_money_setting[0].val
+            }
+          }
+        })
       },
       handleClick(row) {
         this.reverseRow = row
         this.dialogFormVisibleReverse = true
-      },
-      changeStatus(obj) {
-        let statu = '0'
-        if (obj.isDelete === '0') {
-          statu = '2'
-        } else if (obj.isDelete === '2') {
-          statu = '0'
-        } else {
-          statu = '1'
-        }
+        queryOne(row.setting_id).then(res => {
+          if (res.data.result) {
+            this.ruleFormReverse = res.data.result
+            if (res.data.result.type === '2') {
+              this.ruleFormReverse.value = res.data.result.other_money_setting[0].val
+            }
+          }
+        })
       },
       headerRow({ row, rowIndex }) {
         if (rowIndex === 0) {
@@ -1076,19 +1633,18 @@ export default {
       },
       handleSelectionChange(val) {
         this.multipleSelection = val
-        console.log(val)
       },
       handleSizeChange(val) {
         this.formInline.pageNo = 1
         this.formInline.pageSize = val
-        this.formInline.start_time = this.timeValue[0]
-        this.formInline.end_time = this.timeValue[1]
+        this.formInline.modifierTimeStart = this.timeValue ? this.timeValue[0] : null
+        this.formInline.modifierTimeEnd = this.timeValue ? this.timeValue[1] : null
         this.pagination.pageNo = 1
       },
       handleCurrentChange(val) {
         this.formInline.pageNo = val
-        this.formInline.start_time = this.timeValue[0]
-        this.formInline.end_time = this.timeValue[1]
+        this.formInline.modifierTimeStart = this.timeValue ? this.timeValue[0] : null
+        this.formInline.modifierTimeEnd = this.timeValue ? this.timeValue[1] : null
       }
     }
   }
