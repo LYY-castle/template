@@ -102,7 +102,7 @@
         </el-col>
       </el-row>
     </div>
-    <el-dialog title="修改选项" :visible.sync="dialogFormVisibleReverse" width="30%" @close="resetForm('ruleFormReverse')" append-to-body>
+    <el-dialog title="修改选项" :visible.sync="dialogFormVisibleReverse" width="38%" @close="resetForm('ruleFormReverse')" append-to-body>
       <el-form :model="ruleFormReverse" :rules="rules" ref="ruleFormReverse" label-width="100px" class="demo-ruleForm">
         <el-form-item label="名称" prop="name">
           <el-input v-model="ruleFormReverse.name" placeholder="上限45字符" maxlength="45"></el-input>
@@ -115,36 +115,36 @@
       </div>
     </el-dialog>
     
-    <el-dialog title="选项详情" :visible.sync="dialogFormVisibleDetail" width="30%" append-to-body>
+    <el-dialog title="选项详情" :visible.sync="dialogFormVisibleDetail" width="38%" append-to-body>
       <el-form :model="ruleFormReverseDetail" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="名称">
+        <el-form-item label="名称" class="marginBottom">
           <span>{{ruleFormReverseDetail.name}}</span>
         </el-form-item>
-        <el-form-item label="编码">
+        <el-form-item label="编号" class="marginBottom">
           <span>{{ruleFormReverseDetail.code}}</span>
         </el-form-item>
-        <el-form-item label="排序">
+        <el-form-item label="排序" class="marginBottom">
           <span>{{ruleFormReverseDetail.rank}}</span>
         </el-form-item>
-        <el-form-item label="备注">
+        <el-form-item label="备注" class="marginBottom">
           <span>{{ruleFormReverseDetail.remark}}</span>
         </el-form-item>
-        <el-form-item label="选项值">
-          <span>{{ruleFormReverseDetail.value}}</span>
-        </el-form-item>
-        <el-form-item label="可见性">
-          <span v-html="showOrgStatus(ruleFormReverseDetail.enabled)"></span>
-        </el-form-item>
-        <el-form-item label="创建人员">
+        <!--<el-form-item label="选项值" class="marginBottom">-->
+          <!--<span>{{ruleFormReverseDetail.value}}</span>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item label="可见性" class="marginBottom">-->
+          <!--<span v-html="showOrgStatus(ruleFormReverseDetail.enabled)"></span>-->
+        <!--</el-form-item>-->
+        <el-form-item label="创建人员" class="marginBottom">
           <span>{{ruleFormReverseDetail.creator_realname}}</span>
         </el-form-item>
-        <el-form-item label="创建时间">
+        <el-form-item label="创建时间" class="marginBottom">
           <span>{{formatTime(ruleFormReverseDetail.creator_at)}}</span>
         </el-form-item>
-        <el-form-item label="操作人员">
+        <el-form-item label="操作人员" class="marginBottom">
           <span>{{ruleFormReverseDetail.updator_realname}}</span>
         </el-form-item>
-        <el-form-item label="操作时间">
+        <el-form-item label="操作时间" class="marginBottom">
           <span>{{formatTime(ruleFormReverseDetail.updator_at)}}</span>
         </el-form-item>
       </el-form>
@@ -459,3 +459,9 @@
     }
   }
 </script>
+
+<style rel="stylesheet/scss" lang="scss" scoped>
+  .marginBottom {
+    margin-bottom: 10px
+  }
+</style>
