@@ -123,9 +123,9 @@
         <el-form-item label="编号" class="marginBottom">
           <span>{{ruleFormReverseDetail.code}}</span>
         </el-form-item>
-        <el-form-item label="排序" class="marginBottom">
-          <span>{{ruleFormReverseDetail.rank}}</span>
-        </el-form-item>
+        <!--<el-form-item label="排序" class="marginBottom">-->
+          <!--<span>{{ruleFormReverseDetail.rank}}</span>-->
+        <!--</el-form-item>-->
         <el-form-item label="备注" class="marginBottom">
           <span>{{ruleFormReverseDetail.remark}}</span>
         </el-form-item>

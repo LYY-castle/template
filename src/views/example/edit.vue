@@ -237,9 +237,9 @@
         <!--<el-form-item label="选项值">-->
           <!--<span>{{ruleFormReverseDetail.value}}</span>-->
         <!--</el-form-item>-->
-        <!--<el-form-item label="可见性">-->
-          <!--<span v-html="showOrgStatus(ruleFormReverseDetail.enabled)"></span>-->
-        <!--</el-form-item>-->
+        <el-form-item label="可见状态" class="marginBottom">
+          <span v-html="showOrgStatus(ruleFormReverseDetail.enabled)"></span>
+        </el-form-item>
         <el-form-item label="创建人员" class="marginBottom">
           <span>{{ruleFormReverseDetail.creator_realname}}</span>
         </el-form-item>
