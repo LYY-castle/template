@@ -9,10 +9,10 @@
           <el-form-item label="编号：">
             <el-input placeholder="编号" v-model="formInline.code"></el-input>
           </el-form-item>
-          <el-form-item label="备注：">
-            <el-input placeholder="备注" v-model="formInline.remark"></el-input>
-          </el-form-item>
-          <el-form-item label="完成状态:">
+          <!--<el-form-item label="备注：">-->
+            <!--<el-input placeholder="备注" v-model="formInline.remark"></el-input>-->
+          <!--</el-form-item>-->
+          <el-form-item label="可见状态:">
             <el-radio-group v-model="formInline.enabled">
               <el-radio-button label="">所有情况</el-radio-button>
               <el-radio-button label="0">不可见</el-radio-button>
@@ -161,7 +161,7 @@
         <!--<el-form-item label="选项值">-->
           <!--<el-input v-model="ruleForm.value" placeholder="请输入选项值(数字)" maxlength="45"></el-input>-->
         <!--</el-form-item>-->
-        <el-form-item label="排序">
+        <el-form-item label="排序" prop="rank">
           <el-input v-model="ruleForm.rank" placeholder="请输入排序值" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="可见状态">
@@ -181,7 +181,7 @@
         <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="修改选项" :visible.sync="dialogFormVisibleReverse" width="30%" @close="resetForm('ruleFormReverse')" append-to-body>
+    <el-dialog title="修改选项" :visible.sync="dialogFormVisibleReverse" width="38%" @close="resetForm('ruleFormReverse')" append-to-body>
       <el-form :model="ruleFormReverse" :rules="rules" ref="ruleFormReverse" label-width="100px" class="demo-ruleForm">
         <el-form-item label="选项值" prop="name">
           <el-input v-model="ruleFormReverse.name" placeholder="上限45字符" maxlength="45"></el-input>
@@ -189,7 +189,7 @@
         <!--<el-form-item label="选项值">-->
           <!--<el-input v-model="ruleFormReverse.value" placeholder="请输入选项值(数字)" maxlength="45"></el-input>-->
         <!--</el-form-item>-->
-        <el-form-item label="排序">
+        <el-form-item label="排序" prop="rank">
           <el-input v-model="ruleFormReverse.rank" placeholder="请输入排序值" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="可见状态">
@@ -223,23 +223,23 @@
         <el-button type="primary" @click="op_hints = false;updateOrganStatus(visibleData)">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="选项详情" :visible.sync="dialogFormVisibleDetail" width="30%" append-to-body>
+    <el-dialog title="选项详情" :visible.sync="dialogFormVisibleDetail" width="38%" append-to-body>
       <el-form :model="ruleFormReverseDetail" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="名称">
+        <el-form-item label="选项值">
           <span>{{ruleFormReverseDetail.name}}</span>
         </el-form-item>
-        <el-form-item label="编码">
+        <el-form-item label="编号">
           <span>{{ruleFormReverseDetail.code}}</span>
         </el-form-item>
         <el-form-item label="排序">
           <span>{{ruleFormReverseDetail.rank}}</span>
         </el-form-item>
-        <el-form-item label="选项值">
-          <span>{{ruleFormReverseDetail.value}}</span>
-        </el-form-item>
-        <el-form-item label="可见性">
-          <span v-html="showOrgStatus(ruleFormReverseDetail.enabled)"></span>
-        </el-form-item>
+        <!--<el-form-item label="选项值">-->
+          <!--<span>{{ruleFormReverseDetail.value}}</span>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item label="可见性">-->
+          <!--<span v-html="showOrgStatus(ruleFormReverseDetail.enabled)"></span>-->
+        <!--</el-form-item>-->
         <el-form-item label="创建人员">
           <span>{{ruleFormReverseDetail.creator_realname}}</span>
         </el-form-item>
@@ -327,7 +327,7 @@
           enabled: 1,
           name: '',
           parent_id: '',
-          rank: 1,
+          rank: '',
           updator_id: '',
           updator_realname: '',
           value: null
@@ -358,6 +358,9 @@
           name: [
             { required: true, message: '请输入名称', trigger: 'blur' },
             { validator: validSpace, trigger: 'blur' }
+          ],
+          rank: [
+            { pattern: /^(0|[1-9][0-9]*)$/, message: '请输入合理排序值', trigger: 'blur' }
           ]
         }
       }
@@ -412,6 +415,12 @@
                 }).then(response => {
                   this.queryOrgan(response)
                   this.dialogFormVisible = false
+                })
+              } else {
+                Message({
+                  message: response.data.error,
+                  type: 'error',
+                  duration: 3 * 1000
                 })
               }
             })
