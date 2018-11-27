@@ -336,7 +336,7 @@
         }).then(() => {
           delOrgansByOrganIds({
             listId: organIds,
-            operatorId: JSON.parse(sessionStorage.getItem('getMenu')).agentId
+            operatorId: localStorage.getItem('agentId')
           }).then(response => {
             if (response.data.code === 1) {
               Message({
