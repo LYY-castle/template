@@ -72,7 +72,7 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="可见性"
+            label="可见状态"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
               <div v-html="showOrgStatus(scope.row.enabled)"></div>
@@ -153,7 +153,7 @@
         </el-col>
       </el-row>
     </div>
-    <el-dialog title="新建选项" :visible.sync="dialogFormVisible" width="30%" @close="resetForm('ruleForm')" append-to-body>
+    <el-dialog title="新建选项值" :visible.sync="dialogFormVisible" width="30%" @close="resetForm('ruleForm')" append-to-body>
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="选项值" prop="name">
           <el-input v-model="ruleForm.name" placeholder="上限45字符" maxlength="45"></el-input>
@@ -223,15 +223,15 @@
         <el-button type="primary" @click="op_hints = false;updateOrganStatus(visibleData)">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="选项详情" :visible.sync="dialogFormVisibleDetail" width="38%" append-to-body>
+    <el-dialog title="选项值详情" :visible.sync="dialogFormVisibleDetail" width="38%" append-to-body>
       <el-form :model="ruleFormReverseDetail" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="选项值">
+        <el-form-item label="选项值" class="marginBottom">
           <span>{{ruleFormReverseDetail.name}}</span>
         </el-form-item>
-        <el-form-item label="编号">
+        <el-form-item label="编号" class="marginBottom">
           <span>{{ruleFormReverseDetail.code}}</span>
         </el-form-item>
-        <el-form-item label="排序">
+        <el-form-item label="排序" class="marginBottom">
           <span>{{ruleFormReverseDetail.rank}}</span>
         </el-form-item>
         <!--<el-form-item label="选项值">-->
@@ -240,16 +240,16 @@
         <!--<el-form-item label="可见性">-->
           <!--<span v-html="showOrgStatus(ruleFormReverseDetail.enabled)"></span>-->
         <!--</el-form-item>-->
-        <el-form-item label="创建人员">
+        <el-form-item label="创建人员" class="marginBottom">
           <span>{{ruleFormReverseDetail.creator_realname}}</span>
         </el-form-item>
-        <el-form-item label="创建时间">
+        <el-form-item label="创建时间" class="marginBottom">
           <span>{{formatTime(ruleFormReverseDetail.creator_at)}}</span>
         </el-form-item>
-        <el-form-item label="操作人员">
+        <el-form-item label="操作人员" class="marginBottom">
           <span>{{ruleFormReverseDetail.updator_realname}}</span>
         </el-form-item>
-        <el-form-item label="操作时间">
+        <el-form-item label="操作时间" class="marginBottom">
           <span>{{formatTime(ruleFormReverseDetail.updator_at)}}</span>
         </el-form-item>
       </el-form>
@@ -803,4 +803,10 @@
     }
   }
 </script>
+
+<style rel="stylesheet/scss" lang="scss" scoped>
+  .marginBottom {
+    margin-bottom: 10px
+  }
+</style>
 
