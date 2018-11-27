@@ -3,8 +3,34 @@
     <div class="filter-container">
       <el-row>
         <el-form :inline="true" class="demo-form-inline" size="small">
-          <el-form-item label="选项名：">
-            <el-input placeholder="选项名（限长45字符）" v-model="formInline.organ_name" maxlength="45"></el-input>
+          <el-form-item label="选项值：">
+            <el-input placeholder="选项值" v-model="formInline.name" maxlength="45"></el-input>
+          </el-form-item>
+          <el-form-item label="编号：">
+            <el-input placeholder="编号" v-model="formInline.code"></el-input>
+          </el-form-item>
+          <el-form-item label="备注：">
+            <el-input placeholder="备注" v-model="formInline.remark"></el-input>
+          </el-form-item>
+          <el-form-item label="完成状态:">
+            <el-radio-group v-model="formInline.enabled">
+              <el-radio-button label="">所有情况</el-radio-button>
+              <el-radio-button label="0">不可见</el-radio-button>
+              <el-radio-button label="1">可见</el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="操作人员：">
+            <el-input placeholder="操作人员（限长45字符）" v-model="formInline.updator_realname" maxlength="45"></el-input>
+          </el-form-item>
+          <el-form-item label="操作时间：">
+            <el-date-picker
+              v-model="formInline.timeValue"
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
+              value-format="timestamp">
+            </el-date-picker>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="formInline.pageNo = 1;searchOrgan(formInline)">查询</el-button>
@@ -24,29 +50,16 @@
             width="55">
           </el-table-column>
           <el-table-column
-            width="55"
-            align="center"
-            type="index"
-            label="序号">
-            <template
-              slot-scope="scope">
-              <div>{{scope.$index+(pagination.pageNo-1)*formInline.pageSize+1}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
             align="center"
             prop="name"
-            label="名称"
+            label="选项值"
             :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
             align="center"
-            prop="value"
-            label="选项值"
+            prop="code"
+            label="编号"
             :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ scope.row.value }}
-            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -65,28 +78,28 @@
               <div v-html="showOrgStatus(scope.row.enabled)"></div>
             </template>
           </el-table-column>
-          <el-table-column
-            align="center"
-            prop="creator_realname"
-            label="创建人"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ scope.row.creator_realname }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="creator_at"
-            label="创建时间"
-            width="155">
-            <template slot-scope="scope">
-              {{ formatTime(scope.row.creator_at) }}
-            </template>
-          </el-table-column>
+          <!--<el-table-column-->
+            <!--align="center"-->
+            <!--prop="creator_realname"-->
+            <!--label="创建人"-->
+            <!--:show-overflow-tooltip="true">-->
+            <!--<template slot-scope="scope">-->
+              <!--{{ scope.row.creator_realname }}-->
+            <!--</template>-->
+          <!--</el-table-column>-->
+          <!--<el-table-column-->
+            <!--align="center"-->
+            <!--prop="creator_at"-->
+            <!--label="创建时间"-->
+            <!--width="155">-->
+            <!--<template slot-scope="scope">-->
+              <!--{{ formatTime(scope.row.creator_at) }}-->
+            <!--</template>-->
+          <!--</el-table-column>-->
           <el-table-column
             align="center"
             prop="updator_realname"
-            label="修改人"
+            label="操作人员"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
               {{ scope.row.updator_realname }}
@@ -95,7 +108,7 @@
           <el-table-column
             align="center"
             prop="updator_at"
-            label="修改时间"
+            label="操作时间"
             width="155">
             <template slot-scope="scope">
               {{ formatTime(scope.row.updator_at) }}
@@ -140,18 +153,18 @@
         </el-col>
       </el-row>
     </div>
-    <el-dialog title="新建组织" :visible.sync="dialogFormVisible" width="30%" @close="resetForm('ruleForm')" append-to-body>
+    <el-dialog title="新建选项" :visible.sync="dialogFormVisible" width="30%" @close="resetForm('ruleForm')" append-to-body>
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="选项名" prop="name">
+        <el-form-item label="选项值" prop="name">
           <el-input v-model="ruleForm.name" placeholder="上限45字符" maxlength="45"></el-input>
         </el-form-item>
-        <el-form-item label="选项值">
-          <el-input v-model="ruleForm.value" placeholder="请输入选项值(数字)" maxlength="45"></el-input>
-        </el-form-item>
+        <!--<el-form-item label="选项值">-->
+          <!--<el-input v-model="ruleForm.value" placeholder="请输入选项值(数字)" maxlength="45"></el-input>-->
+        <!--</el-form-item>-->
         <el-form-item label="排序">
           <el-input v-model="ruleForm.rank" placeholder="请输入排序值" maxlength="45"></el-input>
         </el-form-item>
-        <el-form-item label="选项状态">
+        <el-form-item label="可见状态">
           <el-switch
             v-model="ruleForm.enabled"
             active-text="可见"
@@ -170,16 +183,16 @@
     </el-dialog>
     <el-dialog title="修改选项" :visible.sync="dialogFormVisibleReverse" width="30%" @close="resetForm('ruleFormReverse')" append-to-body>
       <el-form :model="ruleFormReverse" :rules="rules" ref="ruleFormReverse" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="名称" prop="name">
+        <el-form-item label="选项值" prop="name">
           <el-input v-model="ruleFormReverse.name" placeholder="上限45字符" maxlength="45"></el-input>
         </el-form-item>
-        <el-form-item label="选项值">
-          <el-input v-model="ruleFormReverse.value" placeholder="请输入选项值(数字)" maxlength="45"></el-input>
-        </el-form-item>
+        <!--<el-form-item label="选项值">-->
+          <!--<el-input v-model="ruleFormReverse.value" placeholder="请输入选项值(数字)" maxlength="45"></el-input>-->
+        <!--</el-form-item>-->
         <el-form-item label="排序">
           <el-input v-model="ruleFormReverse.rank" placeholder="请输入排序值" maxlength="45"></el-input>
         </el-form-item>
-        <el-form-item label="选项状态">
+        <el-form-item label="可见状态">
           <el-switch
             v-model="ruleFormReverse.enabled"
             active-text="可见"
@@ -218,25 +231,25 @@
         <el-form-item label="编码">
           <span>{{ruleFormReverseDetail.code}}</span>
         </el-form-item>
-        <el-form-item label="选项值">
-          <span>{{ruleFormReverseDetail.value}}</span>
-        </el-form-item>
         <el-form-item label="排序">
           <span>{{ruleFormReverseDetail.rank}}</span>
+        </el-form-item>
+        <el-form-item label="选项值">
+          <span>{{ruleFormReverseDetail.value}}</span>
         </el-form-item>
         <el-form-item label="可见性">
           <span v-html="showOrgStatus(ruleFormReverseDetail.enabled)"></span>
         </el-form-item>
-        <el-form-item label="创建人">
+        <el-form-item label="创建人员">
           <span>{{ruleFormReverseDetail.creator_realname}}</span>
         </el-form-item>
         <el-form-item label="创建时间">
           <span>{{formatTime(ruleFormReverseDetail.creator_at)}}</span>
         </el-form-item>
-        <el-form-item label="修改人">
+        <el-form-item label="操作人员">
           <span>{{ruleFormReverseDetail.updator_realname}}</span>
         </el-form-item>
-        <el-form-item label="修改时间">
+        <el-form-item label="操作时间">
           <span>{{formatTime(ruleFormReverseDetail.updator_at)}}</span>
         </el-form-item>
       </el-form>
@@ -259,7 +272,7 @@
       return {
         tagName: '',
         tempRoute: {},
-        timeValue: '',
+        timeValueClone: [],
         organData: {},
         visibleData: {},
         pagination: {
@@ -277,14 +290,19 @@
         tableData: [],
         multipleSelection: [],
         formInline: {
-          organ_id: '',
-          organ_name: '',
-          parent_organ: '',
-          startTime: '',
-          stopTime: '',
+          nameClone: '',
+          name: '',
+          code: '',
+          remark: '',
+          enabled: '',
+          enabledClone: '',
+          updator_realname: '',
+          codeClone: '',
+          remarkClone: '',
+          updator_realnameClone: '',
+          timeValue: [],
           pageNo: 1,
-          pageSize: 10,
-          creator: ''
+          pageSize: 10
         },
         ruleFormReverseDetail: {
           category_id: '',
@@ -381,7 +399,13 @@
             }).then(response => {
               if (response.data.result) {
                 categoriesQuery({
-                  name: this.formInline.organ_id,
+                  name: this.formInline.nameClone,
+                  code: this.formInline.codeClone,
+                  updator_realname: this.formInline.updator_realnameClone,
+                  remark: this.formInline.remarkClone,
+                  start_updated_at: this.timeValueClone.length ? this.timeValueClone[0] : '',
+                  end_updated_at: this.timeValueClone.length ? this.timeValueClone[1] : '',
+                  enabled: this.formInline.enabledClone ? Number(this.formInline.enabledClone) : '',
                   parent_id: this.$route.params.id,
                   pageNo: this.formInline.pageNo,
                   pageSize: this.formInline.pageSize
@@ -410,7 +434,13 @@
                 this.$message.success('修改成功！')
                 this.dialogFormVisibleReverse = false
                 categoriesQuery({
-                  name: this.formInline.organ_id,
+                  name: this.formInline.nameClone,
+                  code: this.formInline.codeClone,
+                  updator_realname: this.formInline.updator_realnameClone,
+                  remark: this.formInline.remarkClone,
+                  start_updated_at: this.timeValueClone.length ? this.timeValueClone[0] : '',
+                  end_updated_at: this.timeValueClone.length ? this.timeValueClone[1] : '',
+                  enabled: this.formInline.enabledClone ? Number(this.formInline.enabledClone) : '',
                   parent_id: this.$route.params.id,
                   pageNo: this.formInline.pageNo,
                   pageSize: this.formInline.pageSize
@@ -434,17 +464,14 @@
         this.$refs[formName].resetFields()
       },
       reset() {
-        this.timeValue = ''
-        this.formInline = {
-          organ_id: '',
-          organ_name: '',
-          parent_organ: '',
-          startTime: '',
-          stopTime: '',
-          creator: '',
-          pageNo: this.pagination.pageNo,
-          pageSize: this.pagination.pageSize
-        }
+        this.formInline.name = ''
+        this.formInline.timeValue = []
+        this.formInline.updator_realname = ''
+        this.formInline.code = ''
+        this.formInline.remark = ''
+        this.formInline.enabled = ''
+        this.formInline.pageNo = this.pagination.pageNo
+        this.formInline.pageSize = this.pagination.pageSize
       },
       handleClickStaff(row) {
         this.dialogFormVisibleDetail = true
@@ -500,7 +527,13 @@
       handleCurrentChange(val) {
         this.formInline.pageNo = val
         categoriesQuery({
-          name: this.formInline.organ_id,
+          name: this.formInline.nameClone,
+          code: this.formInline.codeClone,
+          updator_realname: this.formInline.updator_realnameClone,
+          remark: this.formInline.remarkClone,
+          start_updated_at: this.timeValueClone.length ? this.timeValueClone[0] : '',
+          end_updated_at: this.timeValueClone.length ? this.timeValueClone[1] : '',
+          enabled: this.formInline.enabledClone ? Number(this.formInline.enabledClone) : '',
           parent_id: this.$route.params.id,
           pageNo: this.formInline.pageNo,
           pageSize: this.formInline.pageSize
@@ -513,7 +546,13 @@
         this.formInline.pageNo = 1
         this.formInline.pageSize = val
         categoriesQuery({
-          name: this.formInline.organ_id,
+          name: this.formInline.nameClone,
+          code: this.formInline.codeClone,
+          updator_realname: this.formInline.updator_realnameClone,
+          remark: this.formInline.remarkClone,
+          start_updated_at: this.timeValueClone.length ? this.timeValueClone[0] : '',
+          end_updated_at: this.timeValueClone.length ? this.timeValueClone[1] : '',
+          enabled: this.formInline.enabledClone ? Number(this.formInline.enabledClone) : '',
           parent_id: this.$route.params.id,
           pageNo: this.formInline.pageNo,
           pageSize: this.formInline.pageSize
@@ -537,7 +576,13 @@
               this.formInline.pageNo = 1
               this.pagination.pageNo = 1
               categoriesQuery({
-                name: this.formInline.organ_id,
+                name: this.formInline.nameClone,
+                code: this.formInline.codeClone,
+                updator_realname: this.formInline.updator_realnameClone,
+                remark: this.formInline.remarkClone,
+                start_updated_at: this.timeValueClone.length ? this.timeValueClone[0] : '',
+                end_updated_at: this.timeValueClone.length ? this.timeValueClone[1] : '',
+                enabled: this.formInline.enabledClone ? Number(this.formInline.enabledClone) : '',
                 parent_id: this.$route.params.id,
                 pageNo: this.formInline.pageNo,
                 pageSize: this.formInline.pageSize
@@ -551,6 +596,12 @@
                 duration: 3 * 1000
               })
             }
+          }).catch(() => {
+            Message({
+              message: '删除失败',
+              type: 'error',
+              duration: 3 * 1000
+            })
           })
         }).catch(() => {
           Message({
@@ -582,7 +633,13 @@
                 this.formInline.pageNo = 1
                 this.pagination.pageNo = 1
                 categoriesQuery({
-                  name: this.formInline.organ_id,
+                  name: this.formInline.nameClone,
+                  code: this.formInline.codeClone,
+                  updator_realname: this.formInline.updator_realnameClone,
+                  remark: this.formInline.remarkClone,
+                  start_updated_at: this.timeValueClone.length ? this.timeValueClone[0] : '',
+                  end_updated_at: this.timeValueClone.length ? this.timeValueClone[1] : '',
+                  enabled: this.formInline.enabledClone ? Number(this.formInline.enabledClone) : '',
                   parent_id: this.$route.params.id,
                   pageNo: this.formInline.pageNo,
                   pageSize: this.formInline.pageSize
@@ -636,7 +693,13 @@
                 this.formInline.pageNo = 1
                 this.pagination.pageNo = 1
                 categoriesQuery({
-                  name: this.formInline.organ_id,
+                  name: this.formInline.nameClone,
+                  code: this.formInline.codeClone,
+                  updator_realname: this.formInline.updator_realnameClone,
+                  remark: this.formInline.remarkClone,
+                  start_updated_at: this.timeValueClone.length ? this.timeValueClone[0] : '',
+                  end_updated_at: this.timeValueClone.length ? this.timeValueClone[1] : '',
+                  enabled: this.formInline.enabledClone ? Number(this.formInline.enabledClone) : '',
                   parent_id: this.$route.params.id,
                   pageNo: this.formInline.pageNo,
                   pageSize: this.formInline.pageSize
@@ -691,9 +754,26 @@
         this.pagination.totalCount = Number(res.data.totalCount)
       },
       searchOrgan(req) {
-        this.formInline.organ_id = req.organ_name
+        console.log(req.enabled)
+        this.formInline.nameClone = req.name
+        this.formInline.updator_realnameClone = req.updator_realname
+        this.formInline.codeClone = req.code
+        this.formInline.remarkClone = req.remark
+        this.formInline.enabledClone = req.enabled
+        if (this.formInline.timeValue.length) {
+          this.timeValueClone[0] = this.formInline.timeValue[0]
+          this.timeValueClone[1] = this.formInline.timeValue[1]
+        } else {
+          this.timeValueClone = []
+        }
         categoriesQuery({
-          name: req.organ_id,
+          name: req.nameClone,
+          code: req.codeClone,
+          updator_realname: req.updator_realnameClone,
+          remark: req.remarkClone,
+          start_updated_at: this.timeValueClone.length ? this.timeValueClone[0] : '',
+          end_updated_at: this.timeValueClone.length ? this.timeValueClone[1] : '',
+          enabled: req.enabledClone ? Number(req.enabledClone) : '',
           parent_id: this.$route.params.id,
           pageNo: req.pageNo,
           pageSize: req.pageSize
