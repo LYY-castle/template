@@ -10,7 +10,7 @@
   import Chart from '@/components/Charts/mixChart'
 
   export default {
-    name: 'cti',
+    name: 'cti_',
     components: { Chart }
   }
 </script>

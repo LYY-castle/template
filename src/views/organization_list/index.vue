@@ -123,7 +123,7 @@
       </el-row>
       <el-row style="margin-top:1%;">
         <el-col :span="4">
-          <el-button type="success" size="small"  @click="dialogFormVisible = true">新建</el-button>
+          <el-button type="success" size="small"  @click="dialogFormVisible = true;ruleForm.id = ''">新建</el-button>
           <el-button type="danger" size="small" @click="deleteAll">批量删除</el-button>
         </el-col>
         <el-col :span="20">
