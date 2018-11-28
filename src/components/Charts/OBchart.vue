@@ -1535,25 +1535,20 @@
           pageSize: 10
         }
 
-        if (this.timeValueClone[0]) {
-          params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
-        } else {
+        if (!this.timeValueClone[0] || !this.timeValueClone[1]) {
           Message({
-            message: '请选择开始时间',
+            message: '请选择操作时间',
             type: 'error',
             duration: 3 * 1000
           })
           return
         }
+
+        if (this.timeValueClone[0]) {
+          params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
+        }
         if (this.timeValueClone[1]) {
           params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
-        } else {
-          Message({
-            message: '请选择结束时间',
-            type: 'error',
-            duration: 3 * 1000
-          })
-          return
         }
 
         if (this.statistics_type === 'depart') {
