@@ -724,7 +724,7 @@
           params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
         }
         if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
-          params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
         }
 
         if (this.statistics_type === 'depart') {
@@ -756,7 +756,7 @@
           params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
         }
         if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
-          params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
         }
         obreportAgent(params).then(response => {
           this.tableDataAgent = response.data.result
@@ -786,7 +786,7 @@
           params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
         }
         if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
-          params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
         }
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = this.formInline.sub_depart_id[this.contentIndex]
@@ -818,7 +818,7 @@
           params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
         }
         if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
-          params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
         }
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = val
@@ -1447,7 +1447,7 @@
           params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
         }
         if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
-          params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
         }
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = this.formInline.sub_depart_id.join(',')
@@ -1488,7 +1488,7 @@
           params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
         }
         if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
-          params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
         }
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = val
@@ -1534,12 +1534,28 @@
           pageNo: val && val !== 'search' ? this.formInline.from : 1,
           pageSize: 10
         }
+
         if (this.timeValueClone[0]) {
           params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
+        } else {
+          Message({
+            message: '请选择开始时间',
+            type: 'error',
+            duration: 3 * 1000
+          })
+          return
         }
         if (this.timeValueClone[1]) {
-          params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+        } else {
+          Message({
+            message: '请选择结束时间',
+            type: 'error',
+            duration: 3 * 1000
+          })
+          return
         }
+
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = this.formInline.sub_depart_id.join(',')
         } else {
@@ -1594,7 +1610,7 @@
           this.timeValue[0] = this.timeValue1 ? this.timeValue1[0] : null
           this.timeValue[1] = this.timeValue1 ? this.timeValue1[1] : null
         }
-  
+
         if (this.timeValue && this.timeValue[0] && this.timeValue[0].getDate() && this.timeValue[1] && this.timeValue[1].getDate() && (this.timeValue[0] > this.timeValue[1])) {
           Message({
             message: '开始时间不能大于结束时间',
@@ -1622,7 +1638,7 @@
             params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
           }
           if (this.timeValueClone[1]) {
-            params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+            params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
           }
           if (this.statistics_type === 'depart') {
             params.sub_depart_id = this.formInline.sub_depart_id.join(',')
@@ -1652,13 +1668,13 @@
             statistics_type: this.statistics_type,
             depart_id: this.departId,
             campaign_id: this.formInline.campaignId,
-            time_dimension: this.formInline.timeClone
+            time_dimension: this.formInline.timeClone,
             // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
             // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
           }
           if (this.timeValueClone) {
             params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
-            params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+            params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
           }
 
           if (this.statistics_type === 'depart') {
