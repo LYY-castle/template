@@ -697,7 +697,7 @@
           params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
         }
         if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
-          params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
         }
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = this.formInline.sub_depart_id[this.currentIndex]
@@ -727,7 +727,7 @@
           params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
         }
         if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
-          params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
         }
         reportAgent(params).then(response => {
           this.tableDataAgent = response.data.result
@@ -756,7 +756,7 @@
           params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
         }
         if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
-          params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
         }
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = this.formInline.sub_depart_id[this.contentIndex]
@@ -787,7 +787,7 @@
           params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
         }
         if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
-          params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
         }
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = val
@@ -1538,7 +1538,7 @@
           params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
         }
         if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
-          params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
         }
 
         if (this.statistics_type === 'depart') {
@@ -1582,7 +1582,7 @@
           params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
         }
         if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
-          params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
         }
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = val
@@ -1632,9 +1632,23 @@
         }
         if (this.timeValueClone[0] && this.timeValueClone[0].getDate()) {
           params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
+        } else {
+          Message({
+            message: '请选择开始时间',
+            type: 'error',
+            duration: 3 * 1000
+          })
+          return
         }
         if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
-          params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+        } else {
+          Message({
+            message: '请选择结束时间',
+            type: 'error',
+            duration: 3 * 1000
+          })
+          return
         }
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = this.formInline.sub_depart_id.join(',')
@@ -1715,7 +1729,7 @@
             params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
           }
           if (this.timeValueClone[1]) {
-            params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+            params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
           }
           if (this.statistics_type === 'depart') {
             params.sub_depart_id = this.formInline.sub_depart_id.join(',')
@@ -1751,7 +1765,7 @@
             params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
           }
           if (this.timeValueClone[1]) {
-            params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+            params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
           }
           if (this.statistics_type === 'depart') {
             params.sub_depart_id = this.formInline.sub_depart_id.join(',')

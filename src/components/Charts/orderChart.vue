@@ -56,7 +56,7 @@
         </el-form-item>
         <el-form-item v-show="formInline.time === 'month'" label="操作时间：">
           <el-date-picker
-            v-model="timeValue1[0]"  
+            v-model="timeValue1[0]"
             type="month"
             placeholder="开始月"
             format="yyyy-MM">
@@ -1529,12 +1529,26 @@
           pageNo: val && val !== 'search' ? this.formInline.from : 1,
           pageSize: 10
         }
-  
+
         if (this.timeValueClone[0] && this.timeValueClone[0].getDate()) {
           params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
+        } else {
+          Message({
+            message: '请选择开始时间',
+            type: 'error',
+            duration: 3 * 1000
+          })
+          return
         }
         if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
           params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+        } else {
+          Message({
+            message: '请选择结束时间',
+            type: 'error',
+            duration: 3 * 1000
+          })
+          return
         }
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = this.formInline.sub_depart_id.join(',')
