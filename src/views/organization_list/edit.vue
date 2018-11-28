@@ -10,10 +10,10 @@
             <el-input placeholder="组织名（限长45字符）" v-model="formInline.organ_name" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item label="上级组织：" v-if="$route.params.id === ':id'">
-            <el-select v-model="formInline.parent_organ_id" placeholder="上级组织">
+            <el-select v-model="formInline.parent_organ" placeholder="上级组织">
               <el-option label="所有上级组织" value=""></el-option>
               <el-option label="一级组织" value="0"></el-option>
-              <el-option v-for="item in allDepts" :key="item.departName" :label="item.departName" :value="item.id"></el-option>
+              <el-option v-for="item in allDepts" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="操作人：">
@@ -45,6 +45,16 @@
             align="center"
             type="selection"
             width="55">
+          </el-table-column>
+          <el-table-column
+            width="55"
+            align="center"
+            type="index"
+            label="序号">
+            <template
+              slot-scope="scope">
+              <div>{{scope.$index+(pagination.pageNo-1)*formInline.pageSize+1}}</div>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -123,7 +133,7 @@
       </el-row>
       <el-row style="margin-top:1%;">
         <el-col :span="4">
-          <el-button type="success" size="small"  @click="dialogFormVisible = true;ruleForm.id = ''">新建</el-button>
+          <el-button type="success" size="small"  @click="dialogFormVisible = true">新建</el-button>
           <el-button type="danger" size="small" @click="deleteAll">批量删除</el-button>
         </el-col>
         <el-col :span="20">
@@ -240,9 +250,8 @@
     name: 'organization_list',
     data() {
       return {
-        tagName: '',
         tempRoute: {},
-        timeValue: [],
+        timeValue: '',
         organData: {},
         visibleData: {},
         pagination: {
@@ -263,7 +272,6 @@
           organ_id: '',
           organ_name: '',
           parent_organ: '',
-          parent_organ_id: '',
           startTime: '',
           stopTime: '',
           pageNo: 1,
@@ -337,7 +345,7 @@
         }).then(() => {
           delOrgansByOrganIds({
             listId: organIds,
-            operatorId: localStorage.getItem('agentId')
+            operatorId: JSON.parse(sessionStorage.getItem('getMenu')).agentId
           }).then(response => {
             if (response.data.code === 1) {
               Message({
@@ -468,12 +476,11 @@
         this.$refs[formName].resetFields()
       },
       reset() {
-        this.timeValue = []
+        this.timeValue = ''
         this.formInline = {
           organ_id: '',
           organ_name: '',
           parent_organ: '',
-          parent_organ_id: this.$route.params.id === ':id' ? '' : this.$route.params.id,
           startTime: '',
           stopTime: '',
           creator: '',
@@ -523,10 +530,9 @@
         this.$router.push({
           name: 'organization_list',
           // query: { parent_organ: row.departName }
-          params: { id: row.id }
+          params: { id: row.departName }
         })
         // this.refreshOrgan()
-        sessionStorage.setItem(row.id, row.departName)
       },
       handleClickStaff(row) {
         this.$router.push({
@@ -577,8 +583,8 @@
       },
       handleCurrentChange(val) {
         this.formInline.pageNo = val
-        this.formInline.startTime = this.timeValue ? this.timeValue[0] : null
-        this.formInline.stopTime = this.timeValue ? this.timeValue[1] : null
+        this.formInline.startTime = this.timeValue[0]
+        this.formInline.stopTime = this.timeValue[1]
         findAllOrganPost(this.formInline).then(response => {
           this.queryOrgan(response)
         })
@@ -618,24 +624,25 @@
       },
       searchOrgan(req) {
         // 根据老版本的逻辑 查询只能传分页页码的第一页
-        this.formInline.startTime = this.timeValue ? this.timeValue[0] : null
-        this.formInline.stopTime = this.timeValue ? this.timeValue[1] : null
+        this.formInline.startTime = this.timeValue[0]
+        this.formInline.stopTime = this.timeValue[1]
         findAllOrganPost(req).then(response => {
           this.queryOrgan(response)
         })
       },
       setTagsViewTitle() {
-        const route = Object.assign({}, this.tempRoute, { title: this.$route.params.id === ':id' ? this.tempRoute.meta.title : this.tempRoute.meta.title + '-' + sessionStorage.getItem(this.$route.params.id) })
+        const route = Object.assign({}, this.tempRoute, { title: this.$route.params.id === ':id' ? '组织管理' : this.$route.params.id })
+        console.log(route)
         this.$store.dispatch('updateVisitedView', route)
       },
       refreshOrgan() {
         // this.formInline.parent_organ = this.$route.query.parent_organ
-        this.formInline.parent_organ_id = this.$route.params.id === ':id' ? '' : this.$route.params.id
+        this.formInline.parent_organ = this.$route.params.id === ':id' ? '' : this.$route.params.id
         // 由于老版本不需要实时更新查询条件去查询下属组织 因此传参只需要2个值即可,其他字段完全无用 （备注 可以改装）
         findAllOrganPost({
           organ_id: '',
           organ_name: '',
-          parent_organ_id: this.$route.params.id === ':id' ? '' : this.$route.params.id,
+          parent_organ: this.$route.params.id === ':id' ? '' : this.$route.params.id,
           startTime: '',
           stopTime: '',
           creator: '',
@@ -653,9 +660,7 @@
         })
       }
     },
-    mounted() {
-      this.tempRoute = Object.assign({}, this.$route)
-      this.setTagsViewTitle()
+    created() {
       // this.formInline.parent_organ = this.$route.params.id === ':id' ? '' : this.$route.params.id
       // if (this.$route.params.id === ':id') {
       //   this.refreshOrgan()
@@ -666,9 +671,10 @@
       this.refreshOrgan()
       // }
       this.refreshOrganTo()
+      this.tempRoute = Object.assign({}, this.$route)
+      this.setTagsViewTitle()
     },
     activated() {
-      this.setTagsViewTitle()
       this.searchOrgan(this.formInline)
     }
     // watch: {

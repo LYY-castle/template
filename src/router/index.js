@@ -42,6 +42,20 @@ export const constantRouterMap = [
       component: () => import('@/views/dashboard/index')
     }]
   },
+  {
+    path: '/category',
+    component: Layout,
+    // redirect: '/dashboard/index',
+    name: 'Category',
+    hidden: true,
+    children: [{
+      path: 'categoryChild/:id(\\d+)',
+      component: () => import('@/views/example/edit'),
+      name: 'CategoryChild',
+      meta: { title: '选项管理' },
+      hidden: true
+    }]
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]
 
