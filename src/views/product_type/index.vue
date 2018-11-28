@@ -40,16 +40,6 @@
           width="55">
         </el-table-column>
         <el-table-column
-          width="55"
-          align="center"
-          type="index"
-          label="序号">
-          <template
-            slot-scope="scope">
-            <div>{{scope.$index+(pagination.pageNo-1)*formInline.pageSize+1}}</div>
-          </template>
-        </el-table-column>
-        <el-table-column
           align="center"
           prop="productTypeId"
           label="产品类型编号"
@@ -188,7 +178,7 @@
         clickTwiceReverse: false, // “确定”按钮多次点击
         info: {},
         multipleSelection: [],
-        timeValue: '',
+        timeValue: [],
         pagination: {
           pageSize: null,
           pageNo: null,
@@ -323,7 +313,7 @@
         this.$refs[formName].resetFields()
       },
       reset() {
-        this.timeValue = ''
+        this.timeValue = []
         this.formInline = {
           product_type_name: '',
           modifierName: '',
@@ -399,8 +389,8 @@
       },
       handleCurrentChange(val) {
         this.formInline.pageNo = val
-        this.formInline.modifyTimeStart = this.timeValue[0]
-        this.formInline.modifyTimeEnd = this.timeValue[1]
+        this.formInline.modifyTimeStart = this.timeValue ? this.timeValue[0] : null
+        this.formInline.modifyTimeEnd = this.timeValue ? this.timeValue[1] : null
         this.queryList()
       },
       headerRow({ row, rowIndex }) {
@@ -430,15 +420,15 @@
       searchProductType(req) {
         // 根据老版本的逻辑 查询只能传分页页码的第一页
         req.pageNo = 1
-        req.modifyTimeStart = this.timeValue ? this.timeValue[0] : ''
-        req.modifyTimeEnd = this.timeValue ? this.timeValue[1] : ''
+        req.modifyTimeStart = this.timeValue ? this.timeValue[0] : null
+        req.modifyTimeEnd = this.timeValue ? this.timeValue[1] : null
         queryProductTypeList(req).then(response => {
           this.showProductType(response)
         })
       },
       queryList() {
-        this.formInline.modifyTimeStart = this.timeValue ? this.timeValue[0] : ''
-        this.formInline.modifyTimeEnd = this.timeValue ? this.timeValue[1] : ''
+        this.formInline.modifyTimeStart = this.timeValue ? this.timeValue[0] : null
+        this.formInline.modifyTimeEnd = this.timeValue ? this.timeValue[1] : null
         queryProductTypeList(this.formInline).then(res => {
           if (res.data.code === 0) {
             this.showProductType(res)

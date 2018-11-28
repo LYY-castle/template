@@ -2,63 +2,48 @@ import request from '@/utils/request'
 
 export function firstIn(uid) {
   return request({
-    url: '/note/getAllNotes',
+    url: `/note/users/${uid}/notes`,
     method: 'get',
-    params: {
-      uid: uid
-    }
+    params: null
   })
 }
 
-export function queryByKeyWords(req) {
+export function queryByKeyWords(obj) {
   return request({
-    url: '/note/getNoteByInfo',
-    method: 'post',
-    data: req
+    url: '/note/users/' + obj.uid + '/search',
+    method: 'get',
+    params: obj
   })
 }
 
 export function addNotes(note_item, uid) {
   return request({
-    url: '/note/addNote',
+    url: `/note/add/users/${uid}/notes`,
     method: 'post',
-    data: {
-      note_item: note_item,
-      uid: uid
-    }
+    data: note_item
   })
 }
 
 export function getNoteDetail(noteid, uid) {
   return request({
-    url: '/note/findNoteByNoteId',
-    method: 'post',
-    data: {
-      noteid: noteid,
-      uid: uid
-    }
+    url: `/note/users/${uid}/notes/${noteid}`,
+    method: 'get',
+    params: null
   })
 }
 
 export function modifyNote(note_item, uid, noteid) {
   return request({
-    url: '/note/editNote',
+    url: `/note/edit/users/${uid}/notes/${noteid}`,
     method: 'post',
-    data: {
-      note_item: note_item,
-      uid: uid,
-      noteid: noteid
-    }
+    data: note_item
   })
 }
 
 export function deleteOneNote(noteid, uid) {
   return request({
-    url: '/note/delNoteByNoteId',
+    url: `/note/del/users/${uid}/notes/${noteid} `,
     method: 'post',
-    data: {
-      noteid: noteid,
-      uid: uid
-    }
+    data: {}
   })
 }

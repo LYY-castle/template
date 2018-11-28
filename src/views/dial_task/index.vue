@@ -141,15 +141,6 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="序号"
-            width="55">
-            <template
-              slot-scope="scope">
-              <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
             label="客户姓名"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
@@ -361,11 +352,6 @@
           <el-table
           :data="contactRecord"
           border>
-          <el-table-column align="center" label="序号" width="55">
-            <template slot-scope="scope">
-              <div>{{scope.$index + 1}}</div>
-            </template>
-          </el-table-column>
           <el-table-column align="center" label="记录编号" width="170" prop="recordId">
           </el-table-column>
           <el-table-column align="center" label="拨打时间" width="170" prop="callTime">
@@ -951,7 +937,35 @@ export default {
     },
     // 综合查询
     searchByKeyWords(req) {
-      queryByKeywords(req)
+      const queryInfo = {}
+      queryInfo.appointTimeEnd = req.appointTimeEnd
+      queryInfo.appointTimeStart = req.appointTimeStart
+      queryInfo.contactStatus = req.contactStatus
+      queryInfo.contactedNum = req.contactedNum
+      queryInfo.customerName = req.customerName
+      queryInfo.customerPhone = req.customerPhone
+      queryInfo.distributeTimeEnd = req.distributeTimeEnd
+      queryInfo.distributeTimeStart = req.distributeTimeStart
+      queryInfo.modifyTimeEnd = req.modifyTimeEnd
+      queryInfo.modifyTimeStart = req.modifyTimeStart
+      queryInfo.pageNo = req.pageNo
+      queryInfo.pageSize = req.pageSize
+      queryInfo.staffId = req.staffId
+      queryInfo.status = req.status
+      queryInfo.summaryId = req.summaryId
+      if (req.campaignId === '' && this.campaignsInfo.length > 0) {
+        const arr = []
+        for (let i = 0; i < this.campaignsInfo.length; i++) {
+          const campaignId = this.campaignsInfo[i].campaignId
+          if (campaignId !== '') {
+            arr.push(campaignId)
+          }
+        }
+        queryInfo.campaignId = arr.join(',')
+      } else {
+        queryInfo.campaignId = req.campaignId
+      }
+      queryByKeywords(queryInfo)
         .then(response => {
           if (response.data.code === 0) {
             if (response.data.data) {

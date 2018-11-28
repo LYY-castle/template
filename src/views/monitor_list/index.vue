@@ -36,15 +36,6 @@
           tooltip-effect="dark"
           border>
           <el-table-column
-            width="55"
-            align="center"
-            type="index"
-            label="序号">
-            <template slot-scope="scope">
-                <div>{{scope.$index+(pageInfo.pageNo-1)*pageInfo.pageSize+1}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
             align="center"
             prop="listId"
             label="名单编号"
@@ -151,7 +142,7 @@
         nameListId: [],
         campaignIdList: [],
         departs: '',
-        receiveTimeValue: '',
+        receiveTimeValue: [],
         tableData: [],
         nameList: [],
         activeNameList: [],
@@ -208,11 +199,11 @@
       },
       search(req, type) {
         const obj = {}
-        obj.starttime = this.receiveTimeValue ? this.receiveTimeValue[0] : ''
-        obj.endtime = this.receiveTimeValue ? this.receiveTimeValue[1] : ''
+        obj.starttime = this.receiveTimeValue ? this.receiveTimeValue[0] : null
+        obj.endtime = this.receiveTimeValue ? this.receiveTimeValue[1] : null
         obj.campaignId = req.campaignId ? req.campaignId : this.campaignIdList.join(',')
         obj.listId = req.listId ? req.listId : ''
-        obj.starttime = this.receiveTimeValue ? this.receiveTimeValue[0] : ''
+        obj.starttime = this.receiveTimeValue ? this.receiveTimeValue[0] : null
         if (type === 0) {
           obj.pageNo = 1
         } else {
@@ -225,7 +216,7 @@
         })
       },
       reset() {
-        this.receiveTimeValue = ''
+        this.receiveTimeValue = []
         this.formInline = {
           starttime: '',
           endtime: '',

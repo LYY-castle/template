@@ -33,7 +33,7 @@
         </el-form-item>
         <el-form-item v-show="formInline.timeClone === 'week'" label="操作时间：">
           <el-date-picker
-            v-model="timeValue[0]"
+            v-model="timeValue1[0]"
             type="week"
             format="yyyy 第 WW 周"
             placeholder="开始周"
@@ -41,7 +41,7 @@
           </el-date-picker>
           <span>-</span>
           <el-date-picker
-            v-model="timeValue[1]"
+            v-model="timeValue1[1]"
             type="week"
             format="yyyy 第 WW 周"
             placeholder="结束周"
@@ -50,14 +50,14 @@
         </el-form-item>
         <el-form-item v-show="formInline.timeClone === 'month'" label="操作时间：">
           <el-date-picker
-            v-model="timeValue[0]"
+            v-model="timeValue1[0]"
             type="month"
             placeholder="开始月"
             format="yyyy-MM">
           </el-date-picker>
           <span>-</span>
           <el-date-picker
-            v-model="timeValue[1]"
+            v-model="timeValue1[1]"
             type="month"
             placeholder="结束月"
             format="yyyy-MM">
@@ -65,14 +65,14 @@
         </el-form-item>
         <el-form-item v-show="formInline.timeClone === 'year'" label="操作时间：">
           <el-date-picker
-            v-model="timeValue[0]"
+            v-model="timeValue1[0]"
             type="year"
             placeholder="开始年"
             format="yyyy">
           </el-date-picker>
           <span>-</span>
           <el-date-picker
-            v-model="timeValue[1]"
+            v-model="timeValue1[1]"
             type="year"
             placeholder="结束年"
             format="yyyy">
@@ -270,7 +270,7 @@
         </el-form-item>
         <el-form-item v-show="formInline.timeClone === 'week'" label="操作时间：">
           <el-date-picker
-            v-model="timeValue[0]"
+            v-model="timeValue1[0]"
             type="week"
             format="yyyy 第 WW 周"
             placeholder="开始周"
@@ -278,7 +278,7 @@
           </el-date-picker>
           <span>-</span>
           <el-date-picker
-            v-model="timeValue[1]"
+            v-model="timeValue1[1]"
             type="week"
             format="yyyy 第 WW 周"
             placeholder="结束周"
@@ -287,14 +287,14 @@
         </el-form-item>
         <el-form-item v-show="formInline.timeClone === 'month'" label="操作时间：">
           <el-date-picker
-            v-model="timeValue[0]"
+            v-model="timeValue1[0]"
             type="month"
             placeholder="开始月"
             format="yyyy-MM">
           </el-date-picker>
           <span>-</span>
           <el-date-picker
-            v-model="timeValue[1]"
+            v-model="timeValue1[1]"
             type="month"
             placeholder="结束月"
             format="yyyy-MM">
@@ -302,14 +302,14 @@
         </el-form-item>
         <el-form-item v-show="formInline.timeClone === 'year'" label="操作时间：">
           <el-date-picker
-            v-model="timeValue[0]"
+            v-model="timeValue1[0]"
             type="year"
             placeholder="开始年"
             format="yyyy">
           </el-date-picker>
           <span>-</span>
           <el-date-picker
-            v-model="timeValue[1]"
+            v-model="timeValue1[1]"
             type="year"
             placeholder="结束年"
             format="yyyy">
@@ -444,6 +444,7 @@
         chartTime: null,
         obj: {},
         timeValueClone: [],
+        timeValue1: [],
         timeValue: [new Date(new Date(new Date().toLocaleDateString()).getTime() - 7 * 24 * 3600 * 1000), new Date(new Date(new Date().toLocaleDateString()).getTime())],
         pagination: {
           pageNo: null,
@@ -687,12 +688,17 @@
           statistics_type: this.statistics_type,
           depart_id: this.departId,
           time_dimension: this.formInline.time,
-          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
-          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
+          // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
+          // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
           pageNo: val,
           pageSize: this.pageSize[this.currentIndex]
         }
-
+        if (this.timeValueClone[0] && this.timeValueClone[0].getDate()) {
+          params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
+        }
+        if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
+          params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+        }
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = this.formInline.sub_depart_id[this.currentIndex]
         } else {
@@ -707,16 +713,23 @@
         })
       },
       handleCurrentChangeAgent(val) {
-        reportAgent({
+        const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
           time_dimension: this.formInline.time,
           agent_id: this.staffAgentid,
-          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
-          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
+          // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
+          // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
           pageNo: val,
           pageSize: this.paginationAgent.pageSize
-        }).then(response => {
+        }
+        if (this.timeValueClone[0] && this.timeValueClone[0].getDate()) {
+          params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
+        }
+        if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
+          params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+        }
+        reportAgent(params).then(response => {
           this.tableDataAgent = response.data.result
           this.paginationAgent.pageNo = response.data.pageNo
           this.paginationAgent.pageSize = response.data.pageSize
@@ -734,12 +747,17 @@
           statistics_type: this.statistics_type,
           depart_id: this.departId,
           time_dimension: this.formInline.time,
-          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
-          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
+          // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
+          // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
           pageNo: 1,
           pageSize: 5
         }
-
+        if (this.timeValueClone[0] && this.timeValueClone[0].getDate()) {
+          params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
+        }
+        if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
+          params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+        }
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = this.formInline.sub_depart_id[this.contentIndex]
         } else {
@@ -760,12 +778,17 @@
           statistics_type: this.statistics_type,
           depart_id: this.departId,
           time_dimension: this.formInline.time,
-          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
-          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
+          // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
+          // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
           pageNo: 1,
           pageSize: 10
         }
-
+        if (this.timeValueClone[0] && this.timeValueClone[0].getDate()) {
+          params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
+        }
+        if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
+          params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+        }
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = val
         } else {
@@ -1507,9 +1530,15 @@
           statistics_type: this.statistics_type,
           depart_id: this.departId,
           time_dimension: this.formInline.time,
-          time: val,
-          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
-          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+          time: val
+          // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
+          // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+        }
+        if (this.timeValueClone[0] && this.timeValueClone[0].getDate()) {
+          params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
+        }
+        if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
+          params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
         }
 
         if (this.statistics_type === 'depart') {
@@ -1544,12 +1573,17 @@
           statistics_type: this.statistics_type,
           depart_id: this.departId,
           time_dimension: this.formInline.time,
-          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
-          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
+          // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
+          // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
           pageNo: page || 1,
           pageSize: 8
         }
-
+        if (this.timeValueClone[0] && this.timeValueClone[0].getDate()) {
+          params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
+        }
+        if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
+          params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+        }
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = val
         } else {
@@ -1591,12 +1625,17 @@
           statistics_type: this.statistics_type,
           depart_id: this.departId,
           time_dimension: this.formInline.time,
-          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
-          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
+          // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
+          // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
           pageNo: val && val !== 'search' ? this.formInline.from : 1,
           pageSize: 10
         }
-
+        if (this.timeValueClone[0] && this.timeValueClone[0].getDate()) {
+          params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
+        }
+        if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
+          params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+        }
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = this.formInline.sub_depart_id.join(',')
         } else {
@@ -1640,20 +1679,26 @@
       },
       search(val) {
         if (this.formInline.timeClone === 'week') {
-          this.timeValue[0] = Date.parse(this.timeValue[0]) - 24 * 3600 * 1000
-          this.timeValue[0] = new Date(this.timeValue[0])
-          this.timeValue[1] = Date.parse(this.timeValue[1]) - 24 * 3600 * 1000
-          this.timeValue[1] = new Date(this.timeValue[1])
+          // this.timeValue[0] = Date.parse(this.timeValue[0]) - 24 * 3600 * 1000
+          // this.timeValue[0] = new Date(this.timeValue[0])
+          // this.timeValue[1] = Date.parse(this.timeValue[1]) - 24 * 3600 * 1000
+          // this.timeValue[1] = new Date(this.timeValue[1])
+          this.timeValue[0] = this.timeValue1 ? new Date(Date.parse(this.timeValue1[0]) - 24 * 3600 * 1000) : null
+          this.timeValue[1] = this.timeValue1 ? new Date(Date.parse(this.timeValue1[1]) - 24 * 3600 * 1000) : null
         }
-        if (this.timeValueClone[0] > this.timeValueClone[1]) {
+        if (this.formInline.time === 'month' || this.formInline.time === 'year') {
+          this.timeValue[0] = this.timeValue1 ? this.timeValue1[0] : null
+          this.timeValue[1] = this.timeValue1 ? this.timeValue1[1] : null
+        }
+        if (this.timeValue && this.timeValue[0] && this.timeValue[0].getDate() && this.timeValue[1] && this.timeValue[1].getDate() && (this.timeValue[0] > this.timeValue[1])) {
           Message({
             message: '开始时间不能大于结束时间',
             type: 'error',
             duration: 3 * 1000
           })
         } else {
-          this.timeValueClone[0] = this.timeValue[0]
-          this.timeValueClone[1] = this.timeValue[1]
+          this.timeValueClone[0] = this.timeValue ? this.timeValue[0] : null
+          this.timeValueClone[1] = this.timeValue ? this.timeValue[1] : null
           this.formInline.time = this.formInline.timeClone
           this.pageNo = []
           this.pageSize = []
@@ -1662,11 +1707,16 @@
           const params = {
             statistics_type: this.statistics_type,
             depart_id: this.departId,
-            time_dimension: this.formInline.time,
-            start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
-            end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+            time_dimension: this.formInline.time
+            // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
+            // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
           }
-
+          if (this.timeValueClone[0]) {
+            params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
+          }
+          if (this.timeValueClone[1]) {
+            params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+          }
           if (this.statistics_type === 'depart') {
             params.sub_depart_id = this.formInline.sub_depart_id.join(',')
           } else {
@@ -1680,7 +1730,7 @@
         }
       },
       searchEvery(val) {
-        if (this.timeValueClone[0] > this.timeValueClone[1]) {
+        if (this.timeValue && this.timeValue[0] && this.timeValue[0].getDate() && this.timeValue[1] && this.timeValue[1].getDate() && (this.timeValue[0] > this.timeValue[1])) {
           Message({
             message: '开始时间不能大于结束时间',
             type: 'error',
@@ -1693,11 +1743,16 @@
           const params = {
             statistics_type: this.statistics_type,
             depart_id: this.departId,
-            time_dimension: this.formInline.time,
-            start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
-            end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+            time_dimension: this.formInline.time
+            // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
+            // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
           }
-
+          if (this.timeValueClone[0]) {
+            params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
+          }
+          if (this.timeValueClone[1]) {
+            params.end_time = this.getStartTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+          }
           if (this.statistics_type === 'depart') {
             params.sub_depart_id = this.formInline.sub_depart_id.join(',')
           } else {
@@ -1712,20 +1767,26 @@
       },
       search1(val) {
         if (this.formInline.timeClone === 'week') {
-          this.timeValue[0] = Date.parse(this.timeValue[0]) - 24 * 3600 * 1000
-          this.timeValue[0] = new Date(this.timeValue[0])
-          this.timeValue[1] = Date.parse(this.timeValue[1]) - 24 * 3600 * 1000
-          this.timeValue[1] = new Date(this.timeValue[1])
+          // this.timeValue[0] = Date.parse(this.timeValue[0]) - 24 * 3600 * 1000
+          // this.timeValue[0] = new Date(this.timeValue[0])
+          // this.timeValue[1] = Date.parse(this.timeValue[1]) - 24 * 3600 * 1000
+          // this.timeValue[1] = new Date(this.timeValue[1])
+          this.timeValue[0] = this.timeValue1 ? new Date(Date.parse(this.timeValue1[0]) - 24 * 3600 * 1000) : null
+          this.timeValue[1] = this.timeValue1 ? new Date(Date.parse(this.timeValue1[1]) - 24 * 3600 * 1000) : null
         }
-        if (this.timeValue[0] > this.timeValue[1]) {
+        if (this.formInline.time === 'month' || this.formInline.time === 'year') {
+          this.timeValue[0] = this.timeValue1 ? this.timeValue1[0] : null
+          this.timeValue[1] = this.timeValue1 ? this.timeValue1[1] : null
+        }
+        if (this.timeValue && this.timeValue[0] && this.timeValue[0].getDate() && this.timeValue[1] && this.timeValue[1].getDate() && (this.timeValue[0] > this.timeValue[1])) {
           Message({
             message: '开始时间不能大于结束时间',
             type: 'error',
             duration: 3 * 1000
           })
         } else {
-          this.timeValueClone[0] = this.timeValue[0]
-          this.timeValueClone[1] = this.timeValue[1]
+          this.timeValueClone[0] = this.timeValue ? this.timeValue[0] : null
+          this.timeValueClone[1] = this.timeValue ? this.timeValue[1] : null
           this.formInline.time = this.formInline.timeClone
           this.agentChange(val)
           this.searchAgentStaff(val)

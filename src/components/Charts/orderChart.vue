@@ -3,15 +3,9 @@
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
         <el-form-item label="活动名称:" v-show="activeNameList && activeNameList.length > 0">
-          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange">
+          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称">
             <el-option value="" label="所有活动"></el-option>
             <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="产品名称:" v-show="productList && productList.length > 0">
-          <el-select v-model="formInline.productClone" placeholder="产品名称">
-            <el-option value="" label="所有产品"></el-option>
-            <el-option v-for="item in productList" :key="item.templateId" :label="item.productName" :value="item.templateId"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="时间维度:">
@@ -45,7 +39,7 @@
         </el-form-item>
         <el-form-item v-show="formInline.time === 'week'" label="操作时间：">
           <el-date-picker
-            v-model="timeValue[0]"
+            v-model="timeValue1[0]"
             type="week"
             format="yyyy 第 WW 周"
             placeholder="开始周"
@@ -53,7 +47,7 @@
           </el-date-picker>
           <span>-</span>
           <el-date-picker
-            v-model="timeValue[1]"
+            v-model="timeValue1[1]"
             type="week"
             format="yyyy 第 WW 周"
             placeholder="结束周"
@@ -62,14 +56,14 @@
         </el-form-item>
         <el-form-item v-show="formInline.time === 'month'" label="操作时间：">
           <el-date-picker
-            v-model="timeValue[0]"
+            v-model="timeValue1[0]"  
             type="month"
             placeholder="开始月"
             format="yyyy-MM">
           </el-date-picker>
           <span>-</span>
           <el-date-picker
-            v-model="timeValue[1]"
+            v-model="timeValue1[1]"
             type="month"
             placeholder="结束月"
             format="yyyy-MM">
@@ -77,14 +71,14 @@
         </el-form-item>
         <el-form-item v-show="formInline.time === 'year'" label="操作时间：">
           <el-date-picker
-            v-model="timeValue[0]"
+            v-model="timeValue1[0]"
             type="year"
             placeholder="开始年"
             format="yyyy">
           </el-date-picker>
           <span>-</span>
           <el-date-picker
-            v-model="timeValue[1]"
+            v-model="timeValue1[1]"
             type="year"
             placeholder="结束年"
             format="yyyy">
@@ -233,15 +227,9 @@
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
         <el-form-item label="活动名称:">
-          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange">
+          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称">
             <el-option value="" label="所有活动"></el-option>
             <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="产品名称:" v-show="productList && productList.length > 0">
-          <el-select v-model="formInline.productClone" placeholder="产品名称">
-            <el-option value="" label="所有产品"></el-option>
-            <el-option v-for="item in productList" :key="item.templateId" :label="item.productName" :value="item.templateId"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="时间维度:">
@@ -393,8 +381,6 @@
   import { Message } from 'element-ui'
   import { permsorderdepart, permsorderstaff } from '@/api/reportPermission'
   import { findCampaignAllByUser } from '@/api/monitor_list_single'
-  import { hasOrderInfos } from '@/api/dialTask'
-  import { findAllProduct } from '@/api/campaign'
   import moment from 'moment'
 
   export default {
@@ -433,8 +419,6 @@
         week: {
           firstDayOfWeek: 1
         },
-        allProductList: [],
-        productList: [],
         activeNameList: [],
         departPermission: false,
         staffPermission: false,
@@ -449,6 +433,7 @@
         obj: {},
         timeValueClone: [],
         timeValue: [new Date(new Date(new Date().toLocaleDateString()).getTime() - 7 * 24 * 3600 * 1000), new Date(new Date(new Date().toLocaleDateString()).getTime())],
+        timeValue1: [],
         pagination: {
           pageNo: null,
           pageSize: null,
@@ -480,8 +465,6 @@
           timeClone: 'day',
           staff: '',
           time_dimension: '',
-          productClone: '',
-          product: '',
           sub_depart_id: [],
           sub_depart_name: [],
           agentMap: {}
@@ -506,9 +489,6 @@
     mounted() {
       findCampaignAllByUser().then(response => {
         this.activeNameList = response.data.data
-      })
-      findAllProduct().then(res => {
-        this.allProductList = res.data.data
       })
       getDepartId().then(res => {
         this.staffAgentid = res.data.agentid
@@ -764,7 +744,6 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_template_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           agent_id: this.staffAgentid,
@@ -791,7 +770,6 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_template_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
@@ -819,7 +797,6 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_template_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
@@ -1465,18 +1442,6 @@
           ]
         })
       },
-      campaignChange(val) {
-        this.productList = []
-        hasOrderInfos(val).then(res => {
-          if (res.data.data) {
-            for (let i = 0; i < this.allProductList.length; i++) {
-              if (res.data.data.indexOf(this.allProductList[i].templateId) !== -1) {
-                this.productList.push(this.allProductList[i])
-              }
-            }
-          }
-        })
-      },
       time_dimensionChange(val) {
         this.timeValue = []
       },
@@ -1484,7 +1449,6 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_template_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           time: val,
@@ -1499,7 +1463,7 @@
         }
 
         orderreportAgent(params).then(response => {
-          if (response.data.result.length) {
+          if (response.data.result && response.data.result.length) {
             this.countTime = response.data.result.map(function(item, index) {
               return item.count
             })
@@ -1517,7 +1481,6 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_template_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
@@ -1532,7 +1495,7 @@
         }
 
         orderreportAgent(params).then(response => {
-          if (response.data.result.length) {
+          if (response.data.result && response.data.result.length) {
             this.countAgent = response.data.result.map(function(item, index) {
               return item.count
             })
@@ -1559,21 +1522,25 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
-          product_template_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
-          start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
-          end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone), // val || val === 'search' ? this.timeValue[1] :
+          // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
+          // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone), // val || val === 'search' ? this.timeValue[1] :
           pageNo: val && val !== 'search' ? this.formInline.from : 1,
           pageSize: 10
         }
-
+  
+        if (this.timeValueClone[0] && this.timeValueClone[0].getDate()) {
+          params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
+        }
+        if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
+          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+        }
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = this.formInline.sub_depart_id.join(',')
         } else {
           params.agent_id = this.formInline.agent_id.join(',')
         }
-
         orderstatistics(params).then(response => {
           this.obj = response.data
           if (this.obj.result.length) {
@@ -1605,44 +1572,55 @@
       },
       search(val) {
         if (this.formInline.time === 'week') {
-          this.timeValue[0] = Date.parse(this.timeValue[0]) - 24 * 3600 * 1000
-          this.timeValue[0] = new Date(this.timeValue[0])
-          this.timeValue[1] = Date.parse(this.timeValue[1]) - 24 * 3600 * 1000
-          this.timeValue[1] = new Date(this.timeValue[1])
+          // this.timeValue[0] = Date.parse(this.timeValue[0]) - 24 * 3600 * 1000
+          // this.timeValue[0] = new Date(this.timeValue[0])
+          // this.timeValue[1] = Date.parse(this.timeValue[1]) - 24 * 3600 * 1000
+          // this.timeValue[1] = new Date(this.timeValue[1])
+          this.timeValue[0] = this.timeValue1 ? new Date(Date.parse(this.timeValue1[0]) - 24 * 1000 * 3600) : null
+          this.timeValue[1] = this.timeValue1 ? new Date(Date.parse(this.timeValue1[1]) - 24 * 1000 * 3600) : null
         }
-        if (this.timeValue[0] > this.timeValue[1]) {
+        if (this.formInline.time === 'month' || this.formInline.time === 'year') {
+          this.timeValue[0] = this.timeValue1 ? this.timeValue1[0] : null
+          this.timeValue[1] = this.timeValue1 ? this.timeValue1[1] : null
+        }
+        if (this.timeValue && (this.timeValue[0] > this.timeValue[1])) {
           Message({
             message: '开始时间不能大于结束时间',
             type: 'error',
             duration: 3 * 1000
           })
         } else {
-          this.timeValueClone[0] = this.timeValue[0]
-          this.timeValueClone[1] = this.timeValue[1]
+          // this.timeValueClone[0] = this.timeValue[0]
+          // this.timeValueClone[1] = this.timeValue[1]
+          this.timeValueClone[0] = this.timeValue ? this.timeValue[0] : null
+          this.timeValueClone[1] = this.timeValue ? this.timeValue[1] : null
           this.formInline.timeClone = this.formInline.time
           this.pageNo = []
           this.pageSize = []
           this.totalCount = []
-          this.formInline.product = this.formInline.productClone
           this.formInline.campaignId = this.formInline.campaignIdClone
 
           const params = {
             statistics_type: this.statistics_type,
             depart_id: this.departId,
-            product_template_id: this.formInline.product,
             campaign_id: this.formInline.campaignId,
             time_dimension: this.formInline.timeClone,
-            sub_depart_id: this.formInline.sub_depart_id.join(','),
-            start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
-            end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+            sub_depart_id: this.formInline.sub_depart_id.join(',')
           }
+          if (this.timeValueClone[0]) {
+            params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
+          }
+          if (this.timeValueClone[1]) {
+            params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+          }
+          // start_time:this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
+          // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
 
           if (this.statistics_type === 'depart') {
             params.sub_depart_id = this.formInline.sub_depart_id.join(',')
           } else {
             params.agent_id = this.formInline.agent_id.join(',')
           }
-
           ordertotalAgent(params).then(response => {
             this.tableData1 = response.data.result
           })
@@ -1650,7 +1628,7 @@
         }
       },
       searchEvery(val) {
-        if (this.timeValue[0] > this.timeValue[1]) {
+        if (this.timeValue && (this.timeValue[0] > this.timeValue[1])) {
           Message({
             message: '开始时间不能大于结束时间',
             type: 'error',
@@ -1664,13 +1642,18 @@
           const params = {
             statistics_type: this.statistics_type,
             depart_id: this.departId,
-            product_template_id: this.formInline.product,
             campaign_id: this.formInline.campaignId,
             time_dimension: this.formInline.timeClone,
-            sub_depart_id: this.formInline.sub_depart_id.join(','),
-            start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
-            end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+            sub_depart_id: this.formInline.sub_depart_id.join(',')
           }
+          if (this.timeValueClone[0]) {
+            params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
+          }
+          if (this.timeValueClone[1]) {
+            params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+          }
+          // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
+          // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
 
           if (this.statistics_type === 'depart') {
             params.sub_depart_id = this.formInline.sub_depart_id.join(',')
@@ -1686,12 +1669,14 @@
       },
       search1(val) {
         if (this.formInline.time === 'week') {
-          this.timeValue[0] = Date.parse(this.timeValue[0]) - 24 * 3600 * 1000
-          this.timeValue[0] = new Date(this.timeValue[0])
-          this.timeValue[1] = Date.parse(this.timeValue[1]) - 24 * 3600 * 1000
-          this.timeValue[1] = new Date(this.timeValue[1])
+          // this.timeValue[0] = Date.parse(this.timeValue[0]) - 24 * 3600 * 1000
+          // this.timeValue[0] = new Date(this.timeValue[0])
+          // this.timeValue[1] = Date.parse(this.timeValue[1]) - 24 * 3600 * 1000
+          // this.timeValue[1] = new Date(this.timeValue[1])
+          this.timeValue[0] = this.timeValue ? new Date(Date.parse(this.timeValue[0]) - 24 * 3600 * 1000) : null
+          this.timeValue[1] = this.timeValue ? new Date(Date.parse(this.timeValue[1]) - 24 * 3600 * 1000) : null
         }
-        if (this.timeValue[0] > this.timeValue[1]) {
+        if (this.timeValue && (this.timeValue[0] > this.timeValue[1])) {
           Message({
             message: '开始时间不能大于结束时间',
             type: 'error',
@@ -1699,17 +1684,15 @@
           })
         } else {
           this.formInline.timeClone = this.formInline.time
-          this.formInline.product = this.formInline.productClone
           this.formInline.campaignId = this.formInline.campaignIdClone
-          this.timeValueClone[0] = this.timeValue[0]
-          this.timeValueClone[1] = this.timeValue[1]
+          this.timeValueClone[0] = this.timeValue ? this.timeValue[0] : null
+          this.timeValueClone[1] = this.timeValue ? this.timeValue[1] : null
           this.agentChange(val)
           this.searchAgentStaff(val)
         }
       },
       reset() {
         this.formInline.campaignIdClone = ''
-        this.formInline.productClone = ''
         this.formInline.from = 1
         this.formInline.time = 'day'
         this.timeValue = [new Date(new Date(new Date().toLocaleDateString()).getTime() - 7 * 24 * 3600 * 1000), new Date(new Date(new Date().toLocaleDateString()).getTime())]

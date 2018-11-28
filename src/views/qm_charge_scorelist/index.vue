@@ -41,15 +41,6 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="序号"
-            width="55">
-              <template
-              slot-scope="scope">
-              <div>{{scope.$index+(formInline.pageNo-1)*formInline.pageSize+1}}</div>
-              </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
             label="评分编号"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
@@ -297,7 +288,7 @@
     data() {
       return {
         reverseRow: {},
-        timeValue: '',
+        timeValue: [],
         pagination: {
           pageNo: null,
           pageSize: null,
@@ -653,7 +644,7 @@
         }
       },
       reset() {
-        this.timeValue = ''
+        this.timeValue = []
         this.formInline = {
           gradeId: '',
           gradeName: '',
@@ -763,8 +754,8 @@
       handleSizeChange(val) {
         this.formInline.pageNo = 1
         this.formInline.pageSize = val
-        this.formInline.start_time = this.timeValue[0]
-        this.formInline.end_time = this.timeValue[1]
+        this.formInline.modifierTimeStart = this.timeValue ? this.timeValue[0] : null
+        this.formInline.modifierTimeEnd = this.timeValue ? this.timeValue[1] : null
         this.pagination.pageNo = 1
         findAllGradeForm(this.formInline).then(response => {
           this.queryGrade(response)
@@ -772,8 +763,8 @@
       },
       handleCurrentChange(val) {
         this.formInline.pageNo = val
-        this.formInline.start_time = this.timeValue[0]
-        this.formInline.end_time = this.timeValue[1]
+        this.formInline.modifierTimeStart = this.timeValue ? this.timeValue[0] : null
+        this.formInline.modifierTimeEnd = this.timeValue ? this.timeValue[1] : null
         findAllGradeForm(this.formInline).then(response => {
           this.queryGrade(response)
         })
@@ -814,8 +805,8 @@
         req.pageNo = 1
         req.gradeName = this.formInline.gradeName
         req.modifierName = this.formInline.modifierName
-        req.start_time = this.timeValue[0]
-        req.end_time = this.timeValue[1]
+        req.modifierTimeStart = this.timeValue ? this.timeValue[0] : null
+        req.modifierTimeEnd = this.timeValue ? this.timeValue[1] : null
         findAllGradeForm(req).then(response => {
           this.queryGrade(response)
         })

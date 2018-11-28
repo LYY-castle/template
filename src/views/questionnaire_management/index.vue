@@ -31,11 +31,6 @@
         <el-col>
           <el-table :data="tableData" border @selection-change="handleSelectionChange">
             <el-table-column align="center" type="selection" width="55"></el-table-column>
-            <el-table-column align="center" label="序号" width="55">
-              <template slot-scope="scope">
-                <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
-              </template>
-            </el-table-column>
             <el-table-column align="center" label="问卷模板名称">
               <template slot-scope="scope">
                 <a type="text" size="medium" @click="checkDetail(scope.row.id);selectOption_single.length=0;selectOption_blanks.length=0;selectOption_multiblanks.length=0">{{scope.row.name}}</a>
@@ -663,7 +658,7 @@ export default {
       tableData: [], // 表格数据
       pageShow: false, // 分页显示与否
       pageInfo: {}, // 分页信息
-      timeValue: '', // 查询时间显示
+      timeValue: [], // 查询时间显示
       hasSingle: false,
       hasMulti: false,
       hasBlanks: false,
@@ -729,7 +724,7 @@ export default {
 
     // 重置查询条件
     resetQueryCondition() {
-      this.timeValue = ''
+      this.timeValue = []
       this.req = {
         accurate: '0',
         name: '', // 问卷模板名称
@@ -947,8 +942,8 @@ export default {
     },
     // 综合查询
     searchByKeyWords(req) {
-      req.beginTime = this.timeValue[0]
-      req.afterTime = this.timeValue[1]
+      req.beginTime = this.timeValue ? this.timeValue[0] : null
+      req.afterTime = this.timeValue ? this.timeValue[1] : null
       queryByKeyWords(req).then(response => {
         if (response.data.code === 0) {
           this.tableData = response.data.data

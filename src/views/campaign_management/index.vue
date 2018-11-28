@@ -47,15 +47,6 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="序号"
-            width="50">
-            <template
-              slot-scope="scope">
-              <div>{{scope.$index+(req2.pageNo-1)*req2.pageSize+1}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
             label="活动编号"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
@@ -450,15 +441,6 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="序号"
-            width="55">
-            <template
-              slot-scope="scope">
-              <div>{{scope.$index+(nameListExcludePageinfo.pageNo-1)*nameListExcludePageinfo.pageSize+1}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
             prop="listId"
             label="名单编号">
           </el-table-column>
@@ -508,15 +490,6 @@
         <el-table
           :data="nameListsTable"
           border>
-          <el-table-column
-            align="center"
-            label="序号"
-            width="55">
-            <template
-              slot-scope="scope">
-              <div>{{scope.$index+(nameListsPageinfo.pageNo-1)*nameListsPageinfo.pageSize+1}}</div>
-            </template>
-          </el-table-column>
           <el-table-column
             align="center"
             prop="listId"
@@ -620,15 +593,6 @@
             align="center"
             type="selection"
             width="55">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="序号"
-            width="55">
-            <template
-              slot-scope="scope">
-              <div>{{scope.$index+(nameListsPageinfo.pageNo-1)*10+1}}</div>
-            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -983,10 +947,8 @@ export default {
     },
     // 查询活动信息
     findCampaignByConditions(req) {
-      if (this.timeValue !== null && typeof (this.timeValue) !== undefined && this.timeValue.length > 0) {
-        req.modifyTimeStart = this.timeValue[0]
-        req.modifyTimeEnd = this.timeValue[1]
-      }
+      req.modifyTimeStart = this.timeValue ? this.timeValue[0] : null
+      req.modifyTimeEnd = this.timeValue ? this.timeValue[1] : null
       queryCampaign(req)
         .then(response => {
           if (response.data.code === 0) {

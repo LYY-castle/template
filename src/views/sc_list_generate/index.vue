@@ -47,15 +47,6 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="序号"
-            width="55">
-            <template
-              slot-scope="scope">
-              <div>{{scope.$index+(pageInfo.pageNo-1)*pageInfo.pageSize+1}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
             prop="listId"
             label="名单编号"
             :show-overflow-tooltip="true">
@@ -224,15 +215,6 @@
             align="center"
             type="selection"
             width="55">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="序号"
-            width="55">
-            <template
-              slot-scope="scope">
-              <div>{{scope.$index+(namelistPageInfo.pageNo-1)*namelistPageInfo.pageSize+1}}</div>
-            </template>
           </el-table-column>
           <el-table-column
             align="center"

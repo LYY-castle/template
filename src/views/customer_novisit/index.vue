@@ -51,15 +51,6 @@
           </el-table-column>
           <el-table-column
                 align="center"
-                label="序号"
-                width="55">
-            <template
-                  slot-scope="scope">
-              <div>{{scope.$index+(paginationReq.pageNo-1)*paginationReq.pageSize+1}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
-                align="center"
                 label="客户电话"
                 :show-overflow-tooltip="true">
             <template slot-scope="scope">
@@ -425,6 +416,8 @@
         })
       },
       findNoVisitCustomers(req) {
+        req.modifyTimeStart = req.modifyTimeStart?req.modifyTimeStart:''
+        req.modifyTimeEnd = req.modifyTimeEnd?req.modifyTimeEnd:''
         queryNoVisitCustomers(req).then(response => {
           if (response.data.code === 0) {
             this.tableData = response.data.data

@@ -64,14 +64,6 @@
         style="width: 100%;"
         @selection-change="handleSelectionChange">
         <el-table-column
-          width="55"
-          align="center"
-          label="序号">
-          <template slot-scope="scope" >
-            <div>{{scope.$index+(formInline.pageNo-1)*formInline.pageSize+1}}</div>
-          </template>
-        </el-table-column>
-        <el-table-column
           align="center"
           prop="recordId"
           :show-overflow-tooltip="true"
@@ -210,12 +202,6 @@
               border
               style="width: 100%;"
               @selection-change="handleSelectionChange">
-              <el-table-column
-                width="55"
-                align="center"
-                type="index"
-                label="序号">
-              </el-table-column>
               <el-table-column
                 align="center"
                 prop="staffId"
@@ -443,13 +429,6 @@
               border
               style="width:100%;"
               @selection-change="handleSelectionChange">
-              <el-table-column
-                width="55"
-                align="center"
-                type="index"
-                :show-overflow-tooltip="true"
-                label="序号">
-              </el-table-column>
               <el-table-column
                 align="center"
                 prop="staffId"
@@ -691,8 +670,8 @@
         totalCheck: new Map(),
         gradeChoice: [],
         addScopeUrl: '',
-        timeValue1: '',
-        timeValue2: '',
+        timeValue1: [],
+        timeValue2: [],
         pagination: {
   
           pageNo: null,
@@ -935,8 +914,8 @@
         })
       },
       reset() {
-        this.timeValue1 = ''
-        this.timeValue2 = ''
+        this.timeValue1 = []
+        this.timeValue2 = []
         this.formInline = {
           contactRecord: '',
           taskName: '',
@@ -1170,13 +1149,13 @@
         this.formInline.pageSize = val
         obj.pageSize = val
         // this.formInline.assignStart = this.timeValue1[0]
-        obj.assignStart = this.timeValue1[0]
+        obj.assignStart = this.timeValue1 ? this.timeValue1[0] : null
         // this.formInline.assignStop = this.timeValue1[1]
-        obj.assignStop = this.timeValue1[1]
+        obj.assignStop = this.timeValue1 ? this.timeValue1[1] : null
         // this.formInline.doneStart = this.timeValue2[0]
-        obj.doneStart = this.timeValue2[0]
+        obj.doneStart = this.timeValue2 ? this.timeValue2[0] : null
         // this.formInline.doneStop = this.timeValue2[1]
-        obj.doneStop = this.timeValue2[1]
+        obj.doneStop = this.timeValue2 ? this.timeValue2[1] : null
         // this.formInline.status = this.formInline.status
         obj.status = this.formInline.status
         // this.formInline.staffId = localStorage.getItem('agentId')
@@ -1209,13 +1188,13 @@
         this.formInline.pageNo = val
         obj.pageSize = this.formInline.pageSize
         // this.formInline.assignStart = this.timeValue1[0]
-        obj.assignStart = this.timeValue1[0]
+        obj.assignStart = this.timeValue1 ? this.timeValue1[0] : null
         // this.formInline.assignStop = this.timeValue1[1]
-        obj.assignStop = this.timeValue1[1]
+        obj.assignStop = this.timeValue1 ? this.timeValue1[1] : null
         // this.formInline.doneStart = this.timeValue2[0]
-        obj.doneStart = this.timeValue2[0]
+        obj.doneStart = this.timeValue2 ? this.timeValue2[0] : null
         // this.formInline.doneStop = this.timeValue2[1]
-        obj.doneStop = this.timeValue2[1]
+        obj.doneStop = this.timeValue2 ? this.timeValue2[1] : null
         obj.status = this.formInline.status
         obj.contactRecord = this.formInline.contactRecord// 接触历史编号
         obj.taskName = this.formInline.taskName// 任务名称
@@ -1280,18 +1259,18 @@
         const req = {}
         req.pageNo = 1
         this.formInline.pageNo = 1
-        if (this.timeValue1) { // 分配时间开始、结束
-          this.formInline.assignStart = this.timeValue1[0]
-          req.assignStart = this.timeValue1[0]
-          this.formInline.assignStop = this.timeValue1[1]
-          req.assignStop = this.timeValue1[1]
-        }
-        if (this.timeValue2) { // 操作时间开始、结束
-          this.formInline.doneStart = this.timeValue2[0]
-          req.doneStart = this.timeValue2[0]
-          this.formInline.doneStop = this.timeValue2[1]
-          req.doneStop = this.timeValue2[1]
-        }
+        // 分配时间开始、结束
+        this.formInline.assignStart = this.timeValue1 ? this.timeValue1[0] : null
+        req.assignStart = this.timeValue1 ? this.timeValue1[0] : null
+        this.formInline.assignStop = this.timeValue1 ? this.timeValue1[1] : null
+        req.assignStop = this.timeValue1 ? this.timeValue1[1] : null
+  
+        // 操作时间开始、结束
+        this.formInline.doneStart = this.timeValue2 ? this.timeValue2[0] : null
+        req.doneStart = this.timeValue2 ? this.timeValue2[0] : null
+        this.formInline.doneStop = this.timeValue2 ? this.timeValue2[1] : null
+        req.doneStop = this.timeValue2 ? this.timeValue2[1] : null
+  
         if (this.isManager) { // 是否主管权限
           if (this.formInline.staffId !== '') {
             req.staffId = this.formInline.staffId

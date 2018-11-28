@@ -69,15 +69,6 @@
           border>
           <el-table-column
             align="center"
-            label="序号"
-            width="55">
-            <template
-              slot-scope="scope">
-              <div>{{scope.$index+(req2.pageNo-1)*req2.pageSize+1}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
             label="质检评分编号"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
@@ -181,15 +172,6 @@
         <el-table
           :data="tableData"
           border>
-          <el-table-column
-            align="center"
-            label="序号"
-            width="55">
-            <template
-              slot-scope="scope">
-              <div>{{scope.$index+(req2.pageNo-1)*req2.pageSize+1}}</div>
-            </template>
-          </el-table-column>
           <el-table-column
             align="center"
             label="质检评分编号"
@@ -312,12 +294,6 @@
           tooltip-effect="dark"
           border
           style="width: 100%;">
-          <el-table-column
-            width="55"
-            align="center"
-            type="index"
-            label="序号">
-          </el-table-column>
           <el-table-column
             width="80"
             align="center"
@@ -837,13 +813,10 @@ export default {
       if (this.a === false && this.b === false && this.c === false && this.d === false) {
         this.$message.error('没有权限操作此页面')
       }
-      if (this.timeValue && this.timeValue.length !== 0) {
-        req.start_time = this.timeValue[0]
-        req.end_time = this.timeValue[1]
-      } else if (this.timeValue === null || this.timeValue.length === []) {
-        req.start_time = null
-        req.end_time = null
-      }
+
+      req.start_time = this.timeValue ? this.timeValue[0] : null
+      req.end_time = this.timeValue ? this.timeValue[1] : null
+
       if (req.max || req.max === 0) {
         req.max = parseInt(req.max)
       } else {

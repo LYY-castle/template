@@ -31,11 +31,6 @@
     <el-row>
       <el-col>
         <el-table :data="tableData" border>
-          <el-table-column align="center" label="序号" width="55">
-            <template slot-scope="scope">
-              <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
-            </template>
-          </el-table-column>
           <el-table-column align="center" label="活动编号" prop="campaignId" :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column align="center" label="活动名称" prop="activityName" :show-overflow-tooltip="true">
@@ -257,10 +252,8 @@ export default {
     },
     // 综合查询
     searchByCampaign(req) {
-      if (this.timeValue !== null && typeof (this.timeValue) !== undefined && this.timeValue.length > 0) {
-        req.modifyTimeStart = this.timeValue[0]
-        req.modifyTimeEnd = this.timeValue[1]
-      }
+      req.modifyTimeStart = this.timeValue ? this.timeValue[0] : null
+      req.modifyTimeEnd = this.timeValue ? this.timeValue[1] : null
       queryByCampaign(req)
         .then(response => {
           if (response.data.code === 0) {

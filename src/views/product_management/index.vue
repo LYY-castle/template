@@ -47,15 +47,6 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="序号"
-            width="55">
-            <template
-              slot-scope="scope">
-              <div>{{scope.$index+(req.pageNo-1)*req.pageSize+1}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
             label="产品编号"
             prop="templateId">
           </el-table-column> 
@@ -657,12 +648,8 @@ export default {
       }
     },
     queryTemplateList() {
-      this.req.modifyTimeStart = ''
-      this.req.modifyTimeEnd = ''
-      if (this.timeValue && this.timeValue.length > 0) {
-        this.req.modifyTimeStart = this.timeValue[0]
-        this.req.modifyTimeEnd = this.timeValue[1]
-      }
+      this.req.modifyTimeStart = this.timeValue ? this.timeValue[0] : null
+      this.req.modifyTimeEnd = this.timeValue ? this.timeValue[1] : null
       queryTemplateList(this.req).then(response => {
         if (response.data.code === 0) {
           this.tableData = response.data.data

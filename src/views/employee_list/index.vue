@@ -45,16 +45,6 @@
           width="55">
         </el-table-column>
         <el-table-column
-          width="55"
-          align="center"
-          type="index"
-          label="序号">
-          <template
-            slot-scope="scope">
-            <div>{{scope.$index+(pagination.pageNo-1)*formInline.pageSize+1}}</div>
-          </template>
-        </el-table-column>
-        <el-table-column
           align="center"
           prop="angentId"
           label="员工工号"
@@ -347,7 +337,7 @@
       return {
         staffData: {},
         options: provinceAndCityData,
-        timeValue: '',
+        timeValue: [],
         pagination: {
           pageSize: null,
           pageNo: null,
@@ -567,7 +557,7 @@
         this.$refs[formName].resetFields()
       },
       reset() {
-        this.timeValue = ''
+        this.timeValue = []
         this.formInline = {
           name: '',
           angentId: '',
@@ -682,8 +672,8 @@
       },
       handleCurrentChange(val) {
         this.formInline.pageNo = val
-        this.formInline.startTime = this.timeValue[0]
-        this.formInline.stopTime = this.timeValue[1]
+        this.formInline.startTime = this.timeValue ? this.timeValue[0] : null
+        this.formInline.stopTime = this.timeValue ? this.timeValue[1] : null
         query(this.formInline).then(response => {
           this.queryStaff(response)
         })
@@ -719,9 +709,9 @@
       },
       searchStaff(req) {
         // 根据老版本的逻辑 查询只能传分页页码的第一页
-        // req.pageNo = 1
-        req.startTime = this.timeValue ? this.timeValue[0] : ''
-        req.stopTime = this.timeValue ? this.timeValue[1] : ''
+        req.pageNo = 1
+        req.startTime = this.timeValue ? this.timeValue[0] : null
+        req.stopTime = this.timeValue ? this.timeValue[1] : null
         query(req).then(response => {
           this.queryStaff(response)
         })
