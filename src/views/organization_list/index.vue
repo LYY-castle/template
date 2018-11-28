@@ -240,6 +240,7 @@
     name: 'organization_list',
     data() {
       return {
+        tagName: '',
         tempRoute: {},
         timeValue: [],
         organData: {},
@@ -472,7 +473,7 @@
           organ_id: '',
           organ_name: '',
           parent_organ: '',
-          parent_organ_id: '',
+          parent_organ_id: this.$route.params.id === ':id' ? '' : this.$route.params.id,
           startTime: '',
           stopTime: '',
           creator: '',
@@ -525,6 +526,7 @@
           params: { id: row.id }
         })
         // this.refreshOrgan()
+        sessionStorage.setItem(row.id, row.departName)
       },
       handleClickStaff(row) {
         this.$router.push({
@@ -623,7 +625,7 @@
         })
       },
       setTagsViewTitle() {
-        const route = Object.assign({}, this.tempRoute, { title: this.$route.params.id === ':id' ? this.tempRoute.meta.title : this.tempRoute.meta.title + '-' + this.$route.params.id })
+        const route = Object.assign({}, this.tempRoute, { title: this.$route.params.id === ':id' ? this.tempRoute.meta.title : this.tempRoute.meta.title + '-' + sessionStorage.getItem(this.$route.params.id) })
         this.$store.dispatch('updateVisitedView', route)
       },
       refreshOrgan() {
