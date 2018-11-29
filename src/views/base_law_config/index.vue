@@ -234,10 +234,10 @@
             width="180">
             <template slot-scope="scope">
               <el-select v-model="scope.row.job_id" placeholder="岗位" @change="checkRow('ruleForm',scope.row)">
-                  <el-option label="所有岗位" value=""></el-option>
+                  <!-- <el-option label="所有岗位" value=""></el-option>
                   <el-option label="坐席" value="0"></el-option>
-                  <el-option label="质检" value="1"></el-option>
-                  <!-- <el-option v-for="item in allJobs" :key="item.job_id" :label="item.job_name" :value="item.job_name"></el-option> -->
+                  <el-option label="质检" value="1"></el-option> -->
+                  <el-option v-for="item in allJobs" :key="item.job_id" :label="item.job_name" :value="item.job_name"></el-option>
               </el-select>
             </template>
           </el-table-column>
@@ -249,10 +249,10 @@
             width="180">
             <template slot-scope="scope">
               <el-select v-model="scope.row.level_id" placeholder="职级"  @change="checkRow('ruleForm',scope.row)">
-                  <el-option label="所有职级" value=""></el-option>
+                  <!-- <el-option label="所有职级" value=""></el-option>
                   <el-option label="一级" value="0"></el-option>
-                  <el-option label="二级" value="1"></el-option>
-                  <!-- <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option> -->
+                  <el-option label="二级" value="1"></el-option> -->
+                  <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option>
               </el-select>
             </template>
           </el-table-column>
@@ -289,10 +289,10 @@
             width="180">
             <template slot-scope="scope">
               <el-select v-model="scope.row.job_id" placeholder="岗位" @change="checkRow('ruleFormArray',scope.row)">
-                  <el-option label="所有岗位" value=""></el-option>
+                  <!-- <el-option label="所有岗位" value=""></el-option>
                   <el-option label="坐席" value="0"></el-option>
-                  <el-option label="质检" value="1"></el-option>
-                  <!-- <el-option v-for="item in allJobs" :key="item.job_id" :label="item.job_name" :value="item.job_name"></el-option> -->
+                  <el-option label="质检" value="1"></el-option> -->
+                  <el-option v-for="item in allJobs" :key="item.job_id" :label="item.job_name" :value="item.job_name"></el-option>
               </el-select>
             </template>
           </el-table-column>
@@ -304,10 +304,10 @@
             width="180">
             <template slot-scope="scope">
               <el-select v-model="scope.row.level_id" placeholder="职级"  @change="checkRow('ruleFormArray',scope.row)">
-                  <el-option label="所有职级" value=""></el-option>
+                  <!-- <el-option label="所有职级" value=""></el-option>
                   <el-option label="一级" value="0"></el-option>
-                  <el-option label="二级" value="1"></el-option>
-                  <!-- <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option> -->
+                  <el-option label="二级" value="1"></el-option> -->
+                  <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option>
               </el-select>
             </template>
           </el-table-column>
@@ -448,10 +448,10 @@
             width="180">
             <template slot-scope="scope">
               <el-select v-model="scope.row.job_id" placeholder="岗位" @change="checkRow('ruleFormReverse',scope.row)">
-                  <el-option label="所有岗位" value=""></el-option>
+                  <!-- <el-option label="所有岗位" value=""></el-option>
                   <el-option label="坐席" value="0"></el-option>
-                  <el-option label="质检" value="1"></el-option>
-                  <!-- <el-option v-for="item in allJobs" :key="item.job_id" :label="item.job_name" :value="item.job_name"></el-option> -->
+                  <el-option label="质检" value="1"></el-option> -->
+                  <el-option v-for="item in allJobs" :key="item.job_id" :label="item.job_name" :value="item.job_name"></el-option>
               </el-select>
             </template>
           </el-table-column>
@@ -463,10 +463,10 @@
             width="180">
             <template slot-scope="scope">
               <el-select v-model="scope.row.level_id" placeholder="职级"  @change="checkRow('ruleFormReverse',scope.row)">
-                  <el-option label="所有职级" value=""></el-option>
+                  <!-- <el-option label="所有职级" value=""></el-option>
                   <el-option label="一级" value="0"></el-option>
-                  <el-option label="二级" value="1"></el-option>
-                  <!-- <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option> -->
+                  <el-option label="二级" value="1"></el-option> -->
+                  <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option>
               </el-select>
             </template>
           </el-table-column>
@@ -509,10 +509,10 @@
             width="180">
             <template slot-scope="scope">
               <el-select v-model="scope.row.job_id" placeholder="岗位" @change="checkRow('ruleFormReverseArray',scope.row)">
-                  <el-option label="所有岗位" value=""></el-option>
+                  <!-- <el-option label="所有岗位" value=""></el-option>
                   <el-option label="坐席" value="0"></el-option>
-                  <el-option label="质检" value="1"></el-option>
-                  <!-- <el-option v-for="item in allJobs" :key="item.job_id" :label="item.job_name" :value="item.job_name"></el-option> -->
+                  <el-option label="质检" value="1"></el-option> -->
+                  <el-option v-for="item in allJobs" :key="item.job_id" :label="item.job_name" :value="item.job_name"></el-option>
               </el-select>
             </template>
           </el-table-column>
@@ -524,10 +524,10 @@
             width="180">
             <template slot-scope="scope">
               <el-select v-model="scope.row.level_id" placeholder="职级"  @change="checkRow('ruleFormReverseArray',scope.row)">
-                  <el-option label="所有职级" value=""></el-option>
+                  <!-- <el-option label="所有职级" value=""></el-option>
                   <el-option label="一级" value="0"></el-option>
-                  <el-option label="二级" value="1"></el-option>
-                  <!-- <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option> -->
+                  <el-option label="二级" value="1"></el-option> -->
+                  <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option>
               </el-select>
             </template>
           </el-table-column>
@@ -646,10 +646,10 @@
             width="180">
             <template slot-scope="scope">
               <el-select v-model="scope.row.job_id" placeholder="岗位" disabled>
-                  <el-option label="所有岗位" value=""></el-option>
+                  <!-- <el-option label="所有岗位" value=""></el-option>
                   <el-option label="坐席" value="0"></el-option>
-                  <el-option label="质检" value="1"></el-option>
-                  <!-- <el-option v-for="item in allJobs" :key="item.job_id" :label="item.job_name" :value="item.job_name"></el-option> -->
+                  <el-option label="质检" value="1"></el-option> -->
+                  <el-option v-for="item in allJobs" :key="item.job_id" :label="item.job_name" :value="item.job_name"></el-option>
               </el-select>
             </template>
           </el-table-column>
@@ -660,10 +660,10 @@
             width="180">
             <template slot-scope="scope">
               <el-select v-model="scope.row.level_id" placeholder="职级" disabled>
-                  <el-option label="所有职级" value=""></el-option>
+                  <!-- <el-option label="所有职级" value=""></el-option>
                   <el-option label="一级" value="0"></el-option>
-                  <el-option label="二级" value="1"></el-option>
-                  <!-- <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option> -->
+                  <el-option label="二级" value="1"></el-option> -->
+                  <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option>
               </el-select>
             </template>
           </el-table-column>
@@ -694,10 +694,10 @@
             width="180">
             <template slot-scope="scope">
               <el-select v-model="scope.row.job_id" placeholder="岗位" disabled="disabled">
-                  <el-option label="所有岗位" value=""></el-option>
+                  <!-- <el-option label="所有岗位" value=""></el-option>
                   <el-option label="坐席" value="0"></el-option>
-                  <el-option label="质检" value="1"></el-option>
-                  <!-- <el-option v-for="item in allJobs" :key="item.job_id" :label="item.job_name" :value="item.job_name"></el-option> -->
+                  <el-option label="质检" value="1"></el-option> -->
+                  <el-option v-for="item in allJobs" :key="item.job_id" :label="item.job_name" :value="item.job_name"></el-option>
               </el-select>
             </template>
           </el-table-column>
@@ -709,10 +709,10 @@
             width="180">
             <template slot-scope="scope">
               <el-select v-model="scope.row.level_id" placeholder="职级" disabled="disabled">
-                  <el-option label="所有职级" value=""></el-option>
+                  <!-- <el-option label="所有职级" value=""></el-option>
                   <el-option label="一级" value="0"></el-option>
-                  <el-option label="二级" value="1"></el-option>
-                  <!-- <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option> -->
+                  <el-option label="二级" value="1"></el-option> -->
+                  <el-option v-for="item in allLevels" :key="item.level_id" :label="item.level_name" :value="item.level_name"></el-option>
               </el-select>
             </template>
           </el-table-column>
@@ -792,10 +792,13 @@
   import { addBaseLawConfig, searchInfo, queryOne, updateBaseLawConfig, delBaseLawConfig, batchSetEnabled } from '@/api/base_law_config'
   import { MessageBox } from 'element-ui'
   import { formatDateTime } from '@/utils/tools'
+  import { getJob, getLevel } from '@/config/category_codes'
 export default {
     name: 'base_law_config',
     data() {
       return {
+        allJobs: [],
+        allLevels: [],
         timeValue: [], // 时间插件
         pagination: {// 页码插件
           pageNo: null,
@@ -875,6 +878,7 @@ export default {
       }
     },
     mounted() {
+      console.log(getJob(), getLevel(), '11111')
       this.searchInfo(this.formInline)
     },
     methods: {
