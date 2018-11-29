@@ -47,3 +47,32 @@ export function checkSoftphonePerm(agentId) {
     method: 'get'
   })
 }
+export function changeWechatState(req) {
+  return request({
+    url: '/wechat/updateStatus',
+    method: 'post',
+    data: req
+  })
+}
+export function getWechatState(angentId) {
+  return request({
+    url: '/wechat/queryStatus',
+    method: 'post',
+    data: angentId
+
+  })
+}
+// 综合查询聊天记录
+export function navbarQueryRecords(agentId) {
+  return request({
+    url: '/wechat/queryRecords',
+    method: 'post',
+    data: {
+      staffId: agentId,
+      direction: 0,
+      readStatus: '0',
+      pageNo: 1
+    }
+  })
+}
+

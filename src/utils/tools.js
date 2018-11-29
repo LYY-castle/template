@@ -372,3 +372,29 @@ export function sec_to_time(s) {
   }
   return t
 }
+
+// 上传功能 FS_SERVER_HOST=服务器地址 url=上传地址 ftomData=上传的流 date=日期 YYYY-MM-DD timeStamp=时间戳
+export function uploading(FS_SERVER_HOST, url, formData, date, timeStamp, name) {
+  let DLurl = []
+  const xhr = new XMLHttpRequest()
+  xhr.open('PUT', url, true)
+  if (formData.file) {
+    xhr.send(formData.file)
+  } else {
+    xhr.send(formData)
+  }
+  xhr.onreadystatechange = () => {
+    if (xhr.status === 200 && xhr.readyState === 4) {
+      if (!DLurl) {
+        DLurl = []
+      }
+      if (formData.file) {
+        DLurl.push({ 'name': formData.file.name, 'url': `${FS_SERVER_HOST}/crm/${localStorage.getItem('agentId') + '/' + date + '/' + timeStamp + '_' + formData.file.name}` })
+        sessionStorage.setItem('DLurl', JSON.stringify(DLurl))
+      } else {
+        DLurl.push({ 'name': name, 'url': `${FS_SERVER_HOST}/crm/${localStorage.getItem('agentId') + '/' + date + '/' + timeStamp + '_' + name}` })
+        sessionStorage.setItem('DLurl', JSON.stringify(DLurl))
+      }
+    }
+  }
+}

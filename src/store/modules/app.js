@@ -8,9 +8,21 @@ const app = {
       withoutAnimation: false
     },
     device: 'desktop',
-    logoClass: 'opened'
+    logoClass: 'opened',
+    msgNum_wechat: null,
+    wechat_contents: [],
+    wechat_customerInfos: []
   },
   mutations: {
+    CHANGE_WECHATMSG: (state, count) => {
+      state.msgNum_wechat = count
+    },
+    SET_WECHATCUSTOMERINFO: (state, customerInfos) => {
+      state.wechat_customerInfos = customerInfos
+    },
+    SET_WECHATCONTENTS: (state, contents) => {
+      state.wechat_contents = contents
+    },
     TOGGLE_SIDEBAR: state => {
       if (state.sidebar.opened) {
         Cookies.set('sidebarStatus', 1)

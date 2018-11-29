@@ -1,5 +1,6 @@
 <template>
 <div class='container'>
+  <!-- 隐藏的getSummariesDetail -->
   <!-- 拨打任务列表div层 -->
   <div  v-if="isDialTask===true">
       <el-row>
@@ -240,7 +241,7 @@
             :show-overflow-tooltip="true"
             width="100">
           <template slot-scope="scope">
-            <a v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb)" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);" v-show="scope.row.staffId === aId" size="small" type="text">
+            <a v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb)" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);" size="small" type="text">
               <img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</a>
             <div v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb)" v-show="scope.row.staffId !== aId" size="small" type="text">
               不可拨打</div>
@@ -253,6 +254,7 @@
             <el-tooltip v-else-if="!checkNodisturb(scope.row.isNodisturb)" class="item" effect="dark"  content="该号码处于免访号段中" placement="left-start">
               <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
             </el-tooltip>
+            <el-button type="text" class="el-icon-message" :disabled="!showStatus(scope.row.status) || checkBindWechat(scope.row.customerId)" @click="toChatPage(scope.row.taskId, scope.row.campaignId, scope.row.customerId, scope.row.customerName, scope.row.customerPhone)">微信聊天</el-button>
           </template>
           </el-table-column>
         </el-table>
@@ -293,8 +295,9 @@
           <img src="../../../static/images/my_imgs/img_xiegang.png"  alt="横杆"/>
         </div>
         <div>
-          <img v-if="!hideDialTo" src="../../../static/images/dial_normal.png" alt="拨打" width="28px" height="28px" @click="dialTo(taskId,campaignId,isBlacklist,customerPhone)" style="cursor:pointer">
-          <img v-if="hideDialTo" src="../../../static/images/dial_disable.png" alt="拨打" width="28px" height="28px"  style="cursor:default">
+          <img v-if="!hideDialTo" src="../../../static/images/dial_normal.png" alt="拨打" width="28px" height="28px" @click="dialTo(taskId,campaignId,isBlacklist,customerPhone)" style="cursor:pointer;margin-right:60px;">
+          <img v-if="hideDialTo" src="../../../static/images/dial_disable.png" alt="拨打" width="28px" height="28px"  style="cursor:default;margin-right:60px;">
+          <el-button :disabled="checkBindWechat(telCustomerInfos.customerId)" @click="toWeChat" class="wechat-btn" type="text"><svg-icon icon-class="wechat" class="icon-size" style="padding-bottom:5px;width:25px;height:25px;"/></el-button>
         </div>
       </el-col>
       <el-col :span="3"></el-col>
@@ -541,13 +544,26 @@
 </template>
 
 <style lang='scss' scoped>
+.wechat-btn{
+  color:#30DE72;
+  &.is-disabled{
+    color:#787878;
+  }
+  &.is-disabled:hover{
+    opacity:1 !important;
+  }
+  &:hover{
+    opacity:0.7;
+  }
+}
 </style>
 
 <script>
-// import cti from '@/utils/ctijs' //
+import cti from '@/utils/ctijs' //
 import { getPhoneOwn } from '@/api/navbar'
 import { formatDateTime } from '@/utils/tools' // 格式化时间
 import { Message } from 'element-ui'
+import getDynamicRouter from '@/router/dynamic-router'
 import {
   queryByKeywords,
   isInNodisturbPhones,
@@ -571,6 +587,7 @@ import {
 } from '@/api/dialTask' // 接口
 import { departAgents, getDepartId } from '@/api/ctiReport'
 import { permsDepart, permsStaff } from '@/api/reportPermission'
+import { getWechatCustomer } from '@/api/wechat_list'
 var vm = null
 
 export default {
@@ -694,16 +711,49 @@ export default {
         comment: '',
         source: ''
       },
-      idNumber: ''
+      idNumber: '',
+      customerInfos: [],
+      telCustomerInfos: JSON.parse(sessionStorage.getItem('setDetail'))
     }
   },
   methods: {
+    // 判断客户是否绑定微信公众号
+    checkBindWechat(customerId) {
+      console.log(customerId)
+      const customerInfos = JSON.stringify(this.customerInfos)
+      console.log(customerInfos.indexOf(customerId))
+      if (customerInfos.indexOf(customerId) === -1) {
+        return true
+      }
+    },
     sendMessageToNavbar(flag) {
       // 发送指令给navbar告知当前情况
       const obj = {}
       obj.agentId = localStorage.getItem('agentId')
       obj.isDialTask = flag
       this.$root.eventHub.$emit('DIAL_TASK', obj)
+    },
+    // 跳转至聊天页
+    toChatPage(taskId, campaignId, customerId, customerName, customerPhone) {
+      let messagePath = ''
+      const messageRouter = getDynamicRouter(JSON.parse(sessionStorage.getItem('getMenu')))
+      for (let i = 0; i < messageRouter.length; i++) {
+        for (let j = 0; j < messageRouter[i].children.length; j++) {
+          if (messageRouter[i].children[j].name === 'wechat_list') {
+            messagePath = messageRouter[i].path + '/' + messageRouter[i].children[j].name
+          }
+        }
+      }
+      this.$router.push({
+        path: messagePath,
+        query: {
+          fromDialTask: '0',
+          taskId: taskId,
+          campaignId: campaignId,
+          customerId: customerId,
+          customerPhone: customerPhone
+        }
+      })
     },
     showCampaign(info) {
       for (let i = 0; i < vm.campaignsInfo.length; i++) {
@@ -1109,6 +1159,7 @@ export default {
     // 跳转拨打页面
     changeToCustomerDetail(taskId, campaignId, customerId, isBlacklist, customerPhone) {
       sessionStorage.setItem('setDetail', JSON.stringify({ 'taskId': taskId, 'campaignId': campaignId, 'customerId': customerId, 'isBlacklist': isBlacklist, 'customerPhone': customerPhone }))
+      this.telCustomerInfos = JSON.parse(sessionStorage.getItem('setDetail'))
       // this.$store.dispatch('setDetail', [taskId, campaignId, customerId, isBlacklist, customerPhone])
       this.customerPhone = customerPhone
       // 调用方法判断是否在免访号段内
@@ -1647,7 +1698,6 @@ export default {
         this.customerId = obj.customerId
         this.isBlacklist = obj.isBlacklist
         this.customerPhone = obj.customerPhone
-
         // this.taskId = this.$store.state.dialTask.taskId
         // this.campaignId = this.$store.state.dialTask.campaignId
         // this.customerId = this.$store.state.dialTask.customerId
@@ -1671,6 +1721,69 @@ export default {
           vm.handle(obj[i].summaryDetailInfos)
         }
       }
+    },
+    // 跳转到微信页面
+    toWeChat() {
+      const customerInfo = JSON.parse(sessionStorage.getItem('setDetail'))
+      var obj = localStorage.getItem('customerInfos') === null ? null : localStorage.getItem('customerInfos').length > 0 ? JSON.parse(localStorage.getItem('customerInfos')) : null
+      queryOneTask(customerInfo.taskId).then(response1 => {
+        if (response1.data.code === 0) {
+          if (response1.data.data.status === '2' || response1.data.data.status === '3') {
+            this.$message.error('该微信任务已结束！')
+            return
+          } else {
+            if (!localStorage.getItem('customerInfos')) {
+              obj = []
+              obj.push({
+                customerName: this.customerInfo.customerName,
+                taskId: customerInfo.taskId,
+                campaignId: customerInfo.campaignId,
+                customerId: customerInfo.customerId,
+                customerPhone: customerInfo.customerPhone,
+                unreadNum: 0,
+                isTalking: false
+              })
+            } else {
+              for (var i = 0; i < obj.length; i++) {
+                if (obj[i].taskId === customerInfo.taskId) {
+                  obj.splice(i, 1)
+                }
+              }
+              obj.push({
+                customerName: this.customerInfo.customerName,
+                taskId: customerInfo.taskId,
+                campaignId: customerInfo.campaignId,
+                customerId: customerInfo.customerId,
+                customerPhone: customerInfo.customerPhone,
+                unreadNum: 0,
+                isTalking: false
+              })
+            }
+            obj = obj.reverse()
+            localStorage.setItem('customerInfos', JSON.stringify(obj))
+
+            let messagePath = ''
+            const messageRouter = getDynamicRouter(JSON.parse(sessionStorage.getItem('getMenu')))
+            for (let i = 0; i < messageRouter.length; i++) {
+              for (let j = 0; j < messageRouter[i].children.length; j++) {
+                if (messageRouter[i].children[j].name === 'wechat_list') {
+                  messagePath = messageRouter[i].path + '/' + messageRouter[i].children[j].name
+                }
+              }
+            }
+            this.$router.push({
+              path: messagePath,
+              query: {
+                fromDialTask: '0',
+                taskId: customerInfo.taskId,
+                campaignId: customerInfo.campaignId,
+                customerId: customerInfo.customerId,
+                customerPhone: customerInfo.customerPhone
+              }
+            })
+          }
+        }
+      })
     }
   },
   watch: {
@@ -1706,136 +1819,305 @@ export default {
   },
   // 模板编译/挂载之后
   mounted() {
-    getDepartId().then(res => {
-      this.departId = res.data.departId
-      this.aId = res.data.agentid
-      permsDepart(res.data.agentid).then(r => {
-        this.departPermission = true
-        departAgents(res.data.departId).then(response => {
-          this.agentsOptions = response.data.result.agents
-          this.agents = response.data.result.agents.map(function(item) {
-            return item.agent_id
-          })
-          if (this.$route.query.agent === undefined) {
-            this.req.staffId = this.agents.join(',')
-          } else {
-            this.req.staffId = res.data.agentid
-          }
-          this.agentsId = this.agents.join(',')
-          // 判断是 快速拨打 还是 拨打
-          if (sessionStorage.getItem('quickDialto') && sessionStorage.getItem('isDialTask')) {
-            const obj = JSON.parse(sessionStorage.getItem('setDetails'))
-            this.taskIds = obj.taskIds
-            this.campaignIds = obj.campaignIds
-            this.customerIds = obj.customerIds
-            this.isBlacklists = obj.isBlacklists
-            // this.taskIds = this.$store.state.dialTask.taskIds
-            // this.campaignIds = this.$store.state.dialTask.campaignIds
-            // this.customerIds = this.$store.state.dialTask.customerIds
-            // this.isBlacklists = this.$store.state.dialTask.isBlacklists
-            this.quickDialto()
-          } else {
-            this.getParametersFromContactRecordDail()
-          }
-        })
-      }).catch((error) => {
-        console.log(error)
-        permsStaff(res.data.agentid).then(re => {
-          this.departPermission = false
-          this.req.staffId = res.data.agentid
-          // 判断是 快速拨打 还是 拨打
-          if (sessionStorage.getItem('quickDialto') && sessionStorage.getItem('isDialTask')) {
-            const obj = JSON.parse(sessionStorage.getItem('setDetails'))
-            this.taskIds = obj.taskIds
-            this.campaignIds = obj.campaignIds
-            this.customerIds = obj.customerIds
-            this.isBlacklists = obj.isBlacklists
-            // this.taskIds = this.$store.state.dialTask.taskIds
-            // this.campaignIds = this.$store.state.dialTask.campaignIds
-            // this.customerIds = this.$store.state.dialTask.customerIds
-            // this.isBlacklists = this.$store.state.dialTask.isBlacklists
-            this.quickDialto()
-          } else {
-            this.getParametersFromContactRecordDail()
-          }
-        })
-      })
-    })
-    history.pushState(null, null, document.URL)
-    window.addEventListener('popstate', function() {
+    // 获取微信客户列表
+    getWechatCustomer(localStorage.getItem('agentId')).then(response => {
+      this.customerInfos = response.data.data
       history.pushState(null, null, document.URL)
-    })
-    vm = this
-    // 通话记录变量
-    if (sessionStorage.getItem('recordId')) {
-      this.recordId = sessionStorage.getItem('recordId')
-    } else {
-      this.recordId = ''
-    }
-    getStaffNameById(localStorage.getItem('agentId'))
-      .then(res => {
-        if (res.data.code === 1) {
-          localStorage.setItem('staffName', res.data.data[0].staffName)
-        }
+      window.addEventListener('popstate', function () {
+        history.pushState(null, null, document.URL)
       })
-    // this.interval = setInterval(() => {
-    //   this.editDialToStatus()
-    // }, 2000)
-    getSummariesByAgentId(localStorage.getItem('agentId')).then(response => {
-      vm.summariesInfo = [] // 清空小结节点
-      if (response.data.code === 0) {
-        if (response.data.data.length > 0) {
-          vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
-          this.handle(response.data.data)
-        } else {
-          vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
-        }
+      vm = this
+      // 通话记录变量
+      if (sessionStorage.getItem('recordId')) {
+        this.recordId = sessionStorage.getItem('recordId')
+      } else {
+        this.recordId = ''
       }
-    }).catch(error => {
-      console.log(error)
-      vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
-    })
-    findCampaignByUser().then(res => {
-      if (res.data.code === 0) {
-        vm.campaignsInfo.push({ campaignId: '', campaignName: '所有活动' })
-        if (res.data.data.length > 0) {
-          for (let i = 0; i < res.data.data.length; i++) {
-            vm.campaignsInfo.push({ campaignId: res.data.data[i].campaignId, campaignName: res.data.data[i].campaignName })
+      getDepartId().then(res => {
+        this.departId = res.data.departId
+        this.aId = res.data.agentid
+        permsDepart(res.data.agentid).then(r => {
+          this.departPermission = true
+          departAgents(res.data.departId).then(response => {
+            this.agentsOptions = response.data.result.agents
+            this.agents = response.data.result.agents.map(function (item) {
+              return item.agent_id
+            })
+            if (this.$route.query.agent === undefined) {
+              this.req.staffId = this.agents.join(',')
+            } else {
+              this.req.staffId = res.data.agentid
+            }
+            this.agentsId = this.agents.join(',')
+            // 判断是 快速拨打 还是 拨打
+            if (sessionStorage.getItem('quickDialto') && sessionStorage.getItem('isDialTask')) {
+              const obj = JSON.parse(sessionStorage.getItem('setDetails'))
+              this.taskIds = obj.taskIds
+              this.campaignIds = obj.campaignIds
+              this.customerIds = obj.customerIds
+              this.isBlacklists = obj.isBlacklists
+              // this.taskIds = this.$store.state.dialTask.taskIds
+              // this.campaignIds = this.$store.state.dialTask.campaignIds
+              // this.customerIds = this.$store.state.dialTask.customerIds
+              // this.isBlacklists = this.$store.state.dialTask.isBlacklists
+              this.quickDialto()
+            } else {
+              this.getParametersFromContactRecordDail()
+            }
+          })
+        }).catch((error) => {
+          console.log(error)
+          permsStaff(res.data.agentid).then(re => {
+            this.departPermission = false
+            this.req.staffId = res.data.agentid
+            // 判断是 快速拨打 还是 拨打
+            if (sessionStorage.getItem('quickDialto') && sessionStorage.getItem('isDialTask')) {
+              const obj = JSON.parse(sessionStorage.getItem('setDetails'))
+              this.taskIds = obj.taskIds
+              this.campaignIds = obj.campaignIds
+              this.customerIds = obj.customerIds
+              this.isBlacklists = obj.isBlacklists
+              // this.taskIds = this.$store.state.dialTask.taskIds
+              // this.campaignIds = this.$store.state.dialTask.campaignIds
+              // this.customerIds = this.$store.state.dialTask.customerIds
+              // this.isBlacklists = this.$store.state.dialTask.isBlacklists
+              this.quickDialto()
+            } else {
+              this.getParametersFromContactRecordDail()
+            }
+          })
+        })
+      })
+      history.pushState(null, null, document.URL)
+      window.addEventListener('popstate', function () {
+        history.pushState(null, null, document.URL)
+      })
+      vm = this
+      // 通话记录变量
+      if (sessionStorage.getItem('recordId')) {
+        this.recordId = sessionStorage.getItem('recordId')
+      } else {
+        this.recordId = ''
+      }
+      getStaffNameById(localStorage.getItem('agentId'))
+        .then(res => {
+          if (res.data.code === 1) {
+            localStorage.setItem('staffName', res.data.data[0].staffName)
+          }
+        })
+      // this.interval = setInterval(() => {
+      //   this.editDialToStatus()
+      // }, 2000)
+      getSummariesByAgentId(localStorage.getItem('agentId')).then(response => {
+        vm.summariesInfo = [] // 清空小结节点
+        if (response.data.code === 0) {
+          if (response.data.data.length > 0) {
+            vm.summariesInfo.push({'id': '', 'name': '所有小结'})
+            this.handle(response.data.data)
+          } else {
+            vm.summariesInfo.push({'id': '', 'name': '所有小结'})
           }
         }
-      } else {
-        vm.campaignsInfo.push({ campaignId: '', campaignName: '所有活动' })
-      }
-    })
-    // this.req = this.$store.state.dialTask.req
-    this.$root.eventHub.$on('NAVBAR', (str) => {
-      if (str === 'transfer') {
-        if (vm.customerPhone === '' || vm.isBlacklist === '') {
-          Message({
-            message: '页面还未加载完全，请稍后...',
-            type: 'error',
-            duration: 2 * 1000
-          })
-          this.$root.eventHub.$emit('DISABLED_DIAL', '')
+      }).catch(error => {
+        console.log(error)
+        vm.summariesInfo.push({'id': '', 'name': '所有小结'})
+      })
+      findCampaignByUser().then(res => {
+        if (res.data.code === 0) {
+          vm.campaignsInfo.push({campaignId: '', campaignName: '所有活动'})
+          if (res.data.data.length > 0) {
+            for (let i = 0; i < res.data.data.length; i++) {
+              vm.campaignsInfo.push({
+                campaignId: res.data.data[i].campaignId,
+                campaignName: res.data.data[i].campaignName
+              })
+            }
+          }
         } else {
-          if (vm.customerPhone === localStorage.getItem('agentId')) {
+          vm.campaignsInfo.push({campaignId: '', campaignName: '所有活动'})
+        }
+      })
+      // this.req = this.$store.state.dialTask.req
+      this.$root.eventHub.$on('NAVBAR', (str) => {
+        if (str === 'transfer') {
+          if (vm.customerPhone === '' || vm.isBlacklist === '') {
             Message({
-              message: '坐席号码和客户号码一样，请核对...',
+              message: '页面还未加载完全，请稍后...',
               type: 'error',
               duration: 2 * 1000
             })
-            return
+            this.$root.eventHub.$emit('DISABLED_DIAL', '')
+          } else {
+            if (vm.customerPhone === localStorage.getItem('agentId')) {
+              Message({
+                message: '坐席号码和客户号码一样，请核对...',
+                type: 'error',
+                duration: 2 * 1000
+              })
+              return
+            }
+            vm.dialTo(vm.taskId, vm.campaignId, vm.isBlacklist, vm.customerPhone)
           }
-          vm.dialTo(vm.taskId, vm.campaignId, vm.isBlacklist, vm.customerPhone)
         }
-      }
+      })
+      vm.$root.eventHub.$on('dialTrue', (str) => {
+        if (str === '1') {
+          vm.hideDialTo = false
+        } else {
+          vm.hideDialTo = true
+        }
+      })
     })
-    vm.$root.eventHub.$on('dialTrue', (str) => {
-      if (str === '1') {
-        vm.hideDialTo = false
+  },
+  activated() {
+    // 获取微信客户列表
+    getWechatCustomer(localStorage.getItem('agentId')).then(response => {
+      this.customerInfos = response.data.data
+      history.pushState(null, null, document.URL)
+      window.addEventListener('popstate', function () {
+        history.pushState(null, null, document.URL)
+      })
+      vm = this
+      // 通话记录变量
+      if (sessionStorage.getItem('recordId')) {
+        this.recordId = sessionStorage.getItem('recordId')
       } else {
-        vm.hideDialTo = true
+        this.recordId = ''
       }
+      getDepartId().then(res => {
+        this.departId = res.data.departId
+        this.aId = res.data.agentid
+        permsDepart(res.data.agentid).then(r => {
+          this.departPermission = true
+          departAgents(res.data.departId).then(response => {
+            this.agentsOptions = response.data.result.agents
+            this.agents = response.data.result.agents.map(function (item) {
+              return item.agent_id
+            })
+            if (this.$route.query.agent === undefined) {
+              this.req.staffId = this.agents.join(',')
+            } else {
+              this.req.staffId = res.data.agentid
+            }
+            this.agentsId = this.agents.join(',')
+            // 判断是 快速拨打 还是 拨打
+            if (sessionStorage.getItem('quickDialto') && sessionStorage.getItem('isDialTask')) {
+              const obj = JSON.parse(sessionStorage.getItem('setDetails'))
+              this.taskIds = obj.taskIds
+              this.campaignIds = obj.campaignIds
+              this.customerIds = obj.customerIds
+              this.isBlacklists = obj.isBlacklists
+              // this.taskIds = this.$store.state.dialTask.taskIds
+              // this.campaignIds = this.$store.state.dialTask.campaignIds
+              // this.customerIds = this.$store.state.dialTask.customerIds
+              // this.isBlacklists = this.$store.state.dialTask.isBlacklists
+              this.quickDialto()
+            } else {
+              this.getParametersFromContactRecordDail()
+            }
+          })
+        }).catch((error) => {
+          console.log(error)
+          permsStaff(res.data.agentid).then(re => {
+            this.departPermission = false
+            this.req.staffId = res.data.agentid
+            // 判断是 快速拨打 还是 拨打
+            if (sessionStorage.getItem('quickDialto') && sessionStorage.getItem('isDialTask')) {
+              const obj = JSON.parse(sessionStorage.getItem('setDetails'))
+              this.taskIds = obj.taskIds
+              this.campaignIds = obj.campaignIds
+              this.customerIds = obj.customerIds
+              this.isBlacklists = obj.isBlacklists
+              // this.taskIds = this.$store.state.dialTask.taskIds
+              // this.campaignIds = this.$store.state.dialTask.campaignIds
+              // this.customerIds = this.$store.state.dialTask.customerIds
+              // this.isBlacklists = this.$store.state.dialTask.isBlacklists
+              this.quickDialto()
+            } else {
+              this.getParametersFromContactRecordDail()
+            }
+          })
+        })
+      })
+      history.pushState(null, null, document.URL)
+      window.addEventListener('popstate', function () {
+        history.pushState(null, null, document.URL)
+      })
+      vm = this
+      // 通话记录变量
+      if (sessionStorage.getItem('recordId')) {
+        this.recordId = sessionStorage.getItem('recordId')
+      } else {
+        this.recordId = ''
+      }
+      getStaffNameById(localStorage.getItem('agentId'))
+        .then(res => {
+          if (res.data.code === 1) {
+            localStorage.setItem('staffName', res.data.data[0].staffName)
+          }
+        })
+      // this.interval = setInterval(() => {
+      //   this.editDialToStatus()
+      // }, 2000)
+      getSummariesByAgentId(localStorage.getItem('agentId')).then(response => {
+        vm.summariesInfo = [] // 清空小结节点
+        if (response.data.code === 0) {
+          if (response.data.data.length > 0) {
+            vm.summariesInfo.push({'id': '', 'name': '所有小结'})
+            this.handle(response.data.data)
+          } else {
+            vm.summariesInfo.push({'id': '', 'name': '所有小结'})
+          }
+        }
+      }).catch(error => {
+        console.log(error)
+        vm.summariesInfo.push({'id': '', 'name': '所有小结'})
+      })
+      findCampaignByUser().then(res => {
+        if (res.data.code === 0) {
+          vm.campaignsInfo.push({campaignId: '', campaignName: '所有活动'})
+          if (res.data.data.length > 0) {
+            for (let i = 0; i < res.data.data.length; i++) {
+              vm.campaignsInfo.push({
+                campaignId: res.data.data[i].campaignId,
+                campaignName: res.data.data[i].campaignName
+              })
+            }
+          }
+        } else {
+          vm.campaignsInfo.push({campaignId: '', campaignName: '所有活动'})
+        }
+      })
+      // this.req = this.$store.state.dialTask.req
+      this.$root.eventHub.$on('NAVBAR', (str) => {
+        if (str === 'transfer') {
+          if (vm.customerPhone === '' || vm.isBlacklist === '') {
+            Message({
+              message: '页面还未加载完全，请稍后...',
+              type: 'error',
+              duration: 2 * 1000
+            })
+            this.$root.eventHub.$emit('DISABLED_DIAL', '')
+          } else {
+            if (vm.customerPhone === localStorage.getItem('agentId')) {
+              Message({
+                message: '坐席号码和客户号码一样，请核对...',
+                type: 'error',
+                duration: 2 * 1000
+              })
+              return
+            }
+            vm.dialTo(vm.taskId, vm.campaignId, vm.isBlacklist, vm.customerPhone)
+          }
+        }
+      })
+      vm.$root.eventHub.$on('dialTrue', (str) => {
+        if (str === '1') {
+          vm.hideDialTo = false
+        } else {
+          vm.hideDialTo = true
+        }
+      })
     })
   },
   // 离开时清除定时器
@@ -1854,4 +2136,3 @@ export default {
 }
 </script>
 
- 

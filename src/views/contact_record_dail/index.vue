@@ -53,12 +53,19 @@
               default-time="00:00:00">
           </el-date-picker>
         </el-form-item>
-         <el-form-item label="接通状态：">
+          <el-form-item label="接通状态：">
             <el-radio-group v-model="req.status"  @change="changeChoice()">
               <el-radio-button label="-1">所有情况</el-radio-button>
               <el-radio-button label="1">已接通</el-radio-button>
               <el-radio-button label="0">未接通</el-radio-button>
             </el-radio-group>
+          </el-form-item>
+          <el-form-item label="接触类型：">
+            <el-select placeholder="接触类型：" v-model="req.contactType">
+              <el-option label="全部" value=""></el-option>
+              <el-option label="微信" value="2"></el-option>
+              <el-option label="电话" value="1"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="通话时长：" v-if="showTalkTime">
             <el-input v-model="req.stime" style="width:80px" @change="checkNo(req.stime)" onkeypress="return event.keyCode>=48&&event.keyCode<=57" :maxlength="3"></el-input>
@@ -83,6 +90,11 @@
           <el-table-column align="center" label="客户姓名" :show-overflow-tooltip="true">
             <template slot-scope="scope">
               <a @click="transferParameters(scope.row.taskId, scope.row.campaignId,scope.row.customerId,scope.row.customerPhone)" size="medium">{{scope.row.customerName}}</a>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" label="接触类型" :show-overflow-tooltip="true">
+            <template slot-scope="scope">
+              <div>{{scope.row.contactType =="1"?'电话':'微信'}}</div>
             </template>
           </el-table-column>
           <el-table-column align="center" label="联系电话">
@@ -137,13 +149,13 @@
           </el-table-column>
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
-              <el-button type="text" @click="isMainPage=false;detailInfo.recordInfo=[],detailInfo.orderInfo=[];ids.campaignId=scope.row.campaignId;ids.recordId=scope.row.recordId;ids.taskId=scope.row.taskId;ids.agentId=scope.row.staffId;ids.customerId=scope.row.customerId;contactDetail()" size="medium">详情</el-button>
+              <el-button v-if="scope.row.contactType =='1'" type="text" @click="contactType='1';isMainPage=false;detailInfo.recordInfo=[],detailInfo.orderInfo=[];ids.campaignId=scope.row.campaignId;ids.recordId=scope.row.recordId;ids.taskId=scope.row.taskId;ids.agentId=scope.row.staffId;ids.customerId=scope.row.customerId;contactDetail()" size="medium">详情</el-button>
+              <el-button v-if="scope.row.contactType =='2'" type="text" @click="contactType='2';isMainPage=false;detailInfo.recordInfo=[],detailInfo.orderInfo=[];ids.campaignId=scope.row.campaignId;ids.recordId=scope.row.recordId;ids.taskId=scope.row.taskId;ids.agentId=scope.row.staffId;ids.customerId=scope.row.customerId;getChatRecords(scope.row.recordId);contactDetail();" size="medium">详情</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-col>
     </el-row>
-
     <el-row style="margin-top:5px;">
         <el-pagination
           v-if="pageShow"
@@ -243,7 +255,7 @@
               <el-form-item  label="预约时间:" prop="dialTaskInfo.appointTime"  v-if="detailInfo.dialTaskInfo.status=='1'"  class="el-form-div">
                 <span>{{detailInfo.dialTaskInfo.appointTime?detailInfo.dialTaskInfo.appointTime:'无'}}</span>
               </el-form-item>
-              <el-form-item  label="电话录音:" prop="contactInfo.soundRecordUrl" class="el-form-div">
+              <el-form-item v-if="contactType=='1'" label="电话录音:" prop="contactInfo.soundRecordUrl" class="el-form-div">
                 <audio v-bind:src="detailInfo.contactInfo.soundRecordUrl" controls="controls" style="height:40"></audio>
               </el-form-item>
             </div>
@@ -255,7 +267,7 @@
           <el-button type="primary" @click="edit();editVisible=true">修改</el-button>
     </div>
   <div class="el-icon-info title-class">相关接触记录列表</div>
-  <el-row>
+  <el-row v-if="contactType=='1'">
       <el-col>
         <el-table :data="detailInfo.recordInfo" border>
           <el-table-column align="center" label="记录编号" :show-overflow-tooltip="true">
@@ -304,6 +316,53 @@
             </template>
           </el-table-column>
         </el-table>
+      </el-col>
+    </el-row>
+    <el-row v-if="contactType=='2'">
+      <el-col>
+        <div id="short-message-content" style="height:55vh;overflow-x:auto;">
+          <!-- 点击加载更多div -->
+          <div style="font-size:14px;color:#35ABE2;text-align:center" v-if="hasMoreRecords">
+            <a @click="getChatRecords(sessionId,queryPageNum);queryPageNum++">查看更多消息</a>
+          </div>
+          <div v-for="(item,index) in contents">
+          <!-- 来自客户的消息 -->
+          <el-row style="color:#BFBFBF;min-height: 5vh;;line-height:5vh;text-align:center;border-radius: 4px;font-size:14px;" v-if="'0'===item.direction">{{formatDateTime(item.createTime)}}</el-row>
+          <el-row style="min-height: 8vh;border-radius: 4px;text-align:left;word-break:break-all;" v-if="'0'===item.direction">
+            <el-col :span="19" :offset="0">
+              <div>
+                <span class="el-icon-loading" v-if="'2'===item.code" style="margin-left:4px;line-height:40px;"></span>
+                <span class="el-icon-warning" v-if="'4'===item.code" style="margin-left:4px;line-height:40px;"></span>
+                <div v-if="item.msgType=='text'" style="min-height:40px;color:#3A2424;padding:10px;background-color:#fff;float:left;border-radius: 4px">{{item.content}}</div>
+                <div v-if="item.msgType=='image'" style="width:220px;color:#3A2424;padding:10px;background-color:#fff;float:left;border-radius: 4px">
+                  <img :src="item.mediaUrl" style="width:100%;cursor:pointer;" @click="imageDetailVisible=true;imgsrc=item.mediaUrl">
+                </div>
+                <div v-if="item.msgType=='voice'" style="color:#3A2424;padding:10px;background-color:#fff;float:left;border-radius: 4px">
+                  <audio controls="controls" :src="item.mediaUrl"></audio>
+                </div>
+              </div>
+            </el-col>
+          </el-row>
+
+          <!-- 我发出的消息  -->
+          <el-row style="color:#BFBFBF;min-height: 5vh;;line-height:5vh;text-align:center;border-radius: 4px;font-size:14px;" v-if="'1'===item.direction">{{formatDateTime(item.createTime)}}</el-row>
+          <el-row style="border-radius: 4px;text-align:left;word-break:break-all" v-if="'1'===item.direction">
+            <el-col :span="19" :offset="5">
+              <div style="float:right">
+                <span class="el-icon-loading" v-if="'2'===item.code" style="margin-left:26px;line-height:40px;"></span>
+                <a class="el-icon-warning" v-if="'4'===item.code" @click="sendMessageAgainVisible=true;sendMessageAgain_Obj=item;sendMessageAgain_Index=index;" style="margin-left:26px;line-height:40px;"></a>
+                <div v-if="item.msgType=='text'" style="min-height:40px;color:#3A2424;padding:10px;background-color:#67c23a;float:right;border-radius: 4px">{{item.content}}</div>
+                <div v-if="item.msgType=='image'" style="width:220px;color:#3A2424;padding:10px;background-color:#67c23a;float:right;border-radius: 4px">
+                  <img :src="item.mediaUrl" style="width:100%;cursor:pointer;" @click="imageDetailVisible=true;imgsrc=item.mediaUrl">
+                </div>
+                <div v-if="item.msgType=='voice'" style="color:#3A2424;padding:10px;background-color:#67c23a;float:right;border-radius: 4px">
+                  <audio controls="controls" :src="audiosrc"></audio>
+                </div>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
+      </div>
       </el-col>
     </el-row>
   <div class="el-icon-info title-class">订单信息</div>
@@ -455,7 +514,8 @@ audio {
     updateTaskStatus,
     generateRecord,
     quertOrderDetail,
-    getStaffByDepartId
+    getStaffByDepartId,
+    queryRecords
   } from '@/api/contact_record_dail' // api接口引用
 
   export default {
@@ -510,6 +570,7 @@ audio {
         campaignId: '', // select框选中的活动id
         // 查询条件
         req: {
+          contactType: '',
           customerId: '',
           customerName: '',
           campaign: [],
@@ -524,7 +585,12 @@ audio {
           pageSize: 10,
           pageNo: 1,
           status: '-1'
-        }
+        },
+        contents: [],
+        hasMoreRecords: false,
+        queryPageNum: 2,
+        sessionId: null,
+        contactType: ''
       }
     },
 
@@ -932,7 +998,56 @@ audio {
         var data = {}
         data = JSON.parse(JSON.stringify(obj))
         return data
+      },
+      // 综合查询聊天记录
+      getChatRecords(sessionId, queryPageNum) {
+        this.sessionId = sessionId
+        queryRecords(this.sessionId, queryPageNum)
+          .then(response => {
+            if (response.data.code === 0 && response.data.data) {
+              if (response.data.data.length) {
+                if (!queryPageNum) {
+                  // 不传页数默认查询第一页 把第一页数据直接放数组中
+                  this.contents = response.data.data
+                  // 判断是否还有更多消息记录
+                  if (response.data.pageInfo.totalPage > 1) {
+                    this.hasMoreRecords = true
+                  } else {
+                    this.hasMoreRecords = false
+                  }
+                  this.queryPageNum = 2
+                } else {
+                  // 传了页数 将查询的数据插入数组的最前
+                  const contentDiv = document.getElementById('short-message-content')
+                  const y = contentDiv.scrollTop
+                  for (var i = response.data.data.length - 1; i >= 0; i--) {
+                    this.contents.unshift(response.data.data[i])
+                  }
+                  setTimeout(() => {
+                    contentDiv.scrollTop = y
+                  }, 10)
+                  // 判断是否还有更多消息记录
+                  if (response.data.pageInfo.totalPage > queryPageNum) {
+                    this.hasMoreRecords = true
+                  } else {
+                    this.hasMoreRecords = false
+                  }
+                }
+              } else {
+                this.contents = []
+                this.$message({
+                  message: '该客户无微信聊天记录'
+                })
+              }
+            } else {
+              this.contents = []
+              this.$message.error(response.data.message)
+            }
+          }).catch(error => {
+            throw new Error(error)
+          })
       }
+
     },
     watch: {}
 

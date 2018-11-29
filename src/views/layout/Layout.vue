@@ -77,6 +77,7 @@ export default {
     z-index:100;
   }
   #app .main-container {
+    min-height:100%;
     /* margin-left: 210px; */
     margin-left: 11%;
   }

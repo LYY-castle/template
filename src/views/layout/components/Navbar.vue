@@ -144,6 +144,24 @@
 
         </div>
         <div style="float:right;margin-right:3px;" v-if="havesoftphone">
+          <!-- 微信 -->
+          <el-badge v-model="msgNum_wechat" class="item wechat" :max="999" :hidden="!msgNum_wechat">
+            <el-tooltip placement="bottom">
+              <div slot="content">{{wechatState=="0"?"示忙":"就绪"}}</div>
+              <el-dropdown trigger="click" placement="bottom" @command="changeWechatState" >
+                <el-button type="info" circle><svg-icon icon-class="wechat" class="icon-size"/></el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item>
+                    <div @click="toWeChat">
+                      进入微信聊天
+                    </div>
+                  </el-dropdown-item>
+                  <el-dropdown-item command="1">就绪</el-dropdown-item>
+                  <el-dropdown-item command="0">示忙</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </el-tooltip>
+          </el-badge>
           <!-- 有未读信息 -->
           <div v-show="msgNum_all > 0" class="message">
             <el-badge v-model="msgNum_all" class="item" :max="99">
@@ -193,39 +211,7 @@
           </div>
         <el-row v-if="!havesoftphone" style="height:75px;">
           <el-col :span="7" class="userInfo" style="float:right;margin-top:-7px;">
-            <el-col :span="6"></el-col>
-            <el-col :span="6"></el-col>
-            <el-col :span="6"  style="margin-top:18px;margin-left:62%">
-              <!-- 有未读信息 -->
-              <div v-show="msgNum_all > 0">
-                <el-badge v-model="msgNum_all" class="item" :max="99">
-                  <el-tooltip placement="bottom">
-                    <div slot="content">
-                      您有{{msgNum_all}}条未读信息<br/><br/>
-                      今日消息：{{msgNum_today_all}} 条<br/>
-                      <!-- 未读特提：{{msgNum_sm}} 条<br/>
-                      未读特急：{{msgNum_eu}} 条<br/> -->
-                    </div>
-                    <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()" style="font-size:30px;"></el-button>
-                  </el-tooltip>
-                </el-badge>
-              </div>
-
-              <!-- 没有未读信息 -->
-              <div v-show="msgNum_all === '' || msgNum_all === 0">
-                <el-tooltip placement="bottom">
-                  <div slot="content">
-                    您有{{msgNum_all}}条未读信息<br/><br/>
-                    今日消息：{{msgNum_today_all}} 条<br/>
-                    <!-- 未读特提：{{msgNum_sm}} 条<br/>
-                    未读特急：{{msgNum_eu}} 条<br/> -->
-                  </div>
-                  <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()" style="font-size:30px;"></el-button>
-                </el-tooltip>
-              </div>
-            </el-col>
-            <el-col :span="3"></el-col>
-            <el-col :span="3" style="margin-top:18px;margin-left:-25px;">
+             <el-col :span="3" style="margin-top:18px;float:right;margin-left:10px;">
               <!-- 用户 -->
               <el-dropdown @command="handleCommand" trigger="click" >
                 <el-button type="info" circle><svg-icon icon-class="user" style="font-size:30px;"/></el-button>
@@ -244,6 +230,35 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </el-col>
+
+            <el-col :span="3"  style="margin-top:18px;float:right;margin-left:10px;">
+              <!-- 有未读信息 -->
+              <div v-show="msgNum_all > 0">
+                <el-badge v-model="msgNum_all" class="item" :max="99">
+                  <el-tooltip placement="bottom">
+                    <div slot="content">
+                      您有{{msgNum_all}}条未读信息<br/><br/>
+                      今日消息：{{msgNum_today_all}} 条<br/>
+                      <!-- 未读特提：{{msgNum_sm}} 条<br/>
+                      未读特急：{{msgNum_eu}} 条<br/> -->
+                    </div>
+                    <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()" style="font-size:30px;"></el-button>
+                  </el-tooltip>
+                </el-badge>
+              </div>
+              <!-- 没有未读信息 -->
+              <div v-show="msgNum_all === '' || msgNum_all === 0">
+                <el-tooltip placement="bottom">
+                  <div slot="content">
+                    您有{{msgNum_all}}条未读信息<br/><br/>
+                    今日消息：{{msgNum_today_all}} 条<br/>
+                    <!-- 未读特提：{{msgNum_sm}} 条<br/>
+                    未读特急：{{msgNum_eu}} 条<br/> -->
+                  </div>
+                  <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()" style="font-size:30px;"></el-button>
+                </el-tooltip>
+              </div>
+            </el-col>        
           </el-col>
 
         </el-row>
@@ -285,7 +300,21 @@ import Breadcrumb from '@/components/Breadcrumb'
 // import Hamburger from '@/components/Hamburger'
 import { getUserInfo } from '@/api/dashboard'
 import { Message } from 'element-ui'
-import { addComeContact, addDialContact, addAnswerContact, addHangupContact, getPhoneOwn, checkSoftphonePerm } from '@/api/navbar'
+import {
+  addComeContact,
+  addDialContact,
+  addAnswerContact,
+  addHangupContact,
+  getPhoneOwn,
+  checkSoftphonePerm,
+  changeWechatState,
+  getWechatState,
+  navbarQueryRecords
+} from '@/api/navbar'
+import {
+  getUnreadNum,
+  changeRecords
+} from '@/api/wechat_list'
 import {
   getMyUnreadMessages,
   generateValidateCode,
@@ -303,7 +332,8 @@ export default {
       lockChange: false, // 默认不禁用切换状态框
       isOrdSet: false, // 是否为普通坐席界面
       isDialTaskPage: false, // 是否为拨打详情页面
-      socket: null,
+      socket_nofitication: null, // 消息通知的socket
+      socket_wechat: null, // 微信消息的socket
       disabledDN: false, // 默认不禁用电话号码框
       disabledDial: false, // 默认不禁用拨打号码框
       dialNum: '',
@@ -367,7 +397,10 @@ export default {
         newPassword: '',
         validateCode: ''
       },
-      codeUrl: ''
+      codeUrl: '',
+      wechatState: null,
+      msgNum_wechat1: null, // 微信消息条数
+      customerInfo: {}
     }
   },
   components: {
@@ -390,9 +423,65 @@ export default {
     },
     logoUrl() {
       return this.$store.state.theme.logo
+    },
+    msgNum_wechat() {
+      return this.$store.state.app.msgNum_wechat
     }
   },
   methods: {
+    // 获取微信状态
+    getWechatState() {
+      const angentId = localStorage.getItem('agentId')
+      getWechatState({ 'angentId': angentId }).then(response => {
+        if (response.data.code === 1) {
+          if (response.data.data[0].online === 0) {
+            console.log('示忙')
+            $('.wechat').addClass('outline')
+          } else {
+            console.log('就绪')
+            $('.wechat').removeClass('outline')
+          }
+          this.wechatState = response.data.online
+        } else {
+          console.log('获取微信状态失败')
+        }
+      }).catch(error => {
+        throw new Error(error)
+      })
+    },
+    // 切换微信状态
+    changeWechatState(val) {
+      this.wechatState = val
+      const req = {
+        angentId: localStorage.getItem('agentId'),
+        online: parseInt(val)
+      }
+      if (val) {
+        changeWechatState(req).then(response => {
+          if (response.data.code === 1) {
+            if (val === '0') {
+              this.$message({
+                message: '修改微信状态为示忙'
+              })
+              $('.wechat').addClass('outline')
+            } else if (val === '1') {
+              this.$message({
+                message: '修改微信状态为就绪',
+                type: 'success'
+              })
+              $('.wechat').removeClass('outline')
+            }
+          } else {
+            this.$message({
+              message: response.data.message,
+              type: 'error'
+            })
+          }
+        }).catch(error => {
+          throw new Error(error)
+        })
+      }
+    },
     // 修改密码
     checkChangePWD(changePWD) {
       if (changePWD.oldPassword === '') {
@@ -448,13 +537,15 @@ export default {
         clearInterval(this.timer)
         sessionStorage.removeItem('isDialTask')
         sessionStorage.removeItem('quickDialto')
+        localStorage.removeItem('customerInfos')
         this.timer = null
         clearInterval(interval)
         interval = null
-        this.socket.close()
         this.agentArray.forEach(ele => { // 清空班长监控下的历史数据
           localStorage.removeItem('m_' + ele)
         })
+        this.socket_nofitication.close()
+        this.socket_wechat.close()
         this.logout()
       } else if (command === 'changePWD') {
         this.changePWD.staffId = localStorage.getItem('agentId')
@@ -1369,10 +1460,71 @@ export default {
       } else {
         console.log('切换主题失败')
       }
+    },
+    // 跳转到微信页面
+    toWeChat() {
+      let messagePath = ''
+      const messageRouter = getDynamicRouter(JSON.parse(sessionStorage.getItem('getMenu')))
+      for (let i = 0; i < messageRouter.length; i++) {
+        for (let j = 0; j < messageRouter[i].children.length; j++) {
+          if (messageRouter[i].children[j].name === 'wechat_list') {
+            messagePath = messageRouter[i].path + '/' + messageRouter[i].children[j].name
+          }
+        }
+      }
+      this.$router.push({
+        path: messagePath
+      })
     }
   },
   mounted() {
     vm = this
+    // 获取微信状态
+    this.getWechatState()
+    // 查询微信未读消息 ，写死
+    navbarQueryRecords(localStorage.getItem('agentId')).then(response => {
+      this.msgNum_wechat1 = response.data.pageInfo.totalCount
+      this.$store.commit('CHANGE_WECHATMSG', this.msgNum_wechat1)
+    })
+    // 实时接收新的消息
+    this.$root.eventHub.$on('RECEIVE_MESSAGES', (oneMsg) => {
+      console.log('navbar接收消息')
+      let contents = []
+      contents = this.$store.state.app.wechat_contents
+      if (contents.length !== 0) {
+        // push聊天内容
+        if (contents[0].customerId === JSON.parse(oneMsg).customerId) {
+          this.$set(contents, contents.length, JSON.parse(oneMsg))
+          changeRecords([JSON.parse(oneMsg).id]).then(response => {
+            console.log(response.data)
+          })
+        }
+        this.$store.commit('SET_WECHATCONTENTS', contents)
+      }
+      // 查询聊天列表客户对应未读消息数量
+      getUnreadNum(localStorage.getItem('agentId')).then(response => {
+        if (localStorage.getItem('customerInfos')) {
+          vm.customerInfo = JSON.parse(localStorage.getItem('customerInfos'))
+        } else {
+          vm.customerInfo = []
+        }
+        for (let i = 0; i < vm.customerInfo.length; i++) {
+          for (let j = 0; j < response.data.data.length; j++) {
+            if (vm.customerInfo[i].customerId === response.data.data[j].customerId) {
+              vm.customerInfo[i].unreadNum = response.data.data[j].num
+            }
+          }
+        }
+        console.log(this.customerInfo)
+        this.$store.commit('SET_WECHATCUSTOMERINFO', this.customerInfo)
+        localStorage.setItem('customerInfos', JSON.stringify(this.customerInfo))
+      })
+      // 查询此工号所有未读消息
+      navbarQueryRecords(localStorage.getItem('agentId')).then(response => {
+        this.$store.commit('CHANGE_WECHATMSG', response.data.pageInfo.totalCount)
+      })
+      // console.log(this.$store.state.app.wechat_customerInfos)
+    })
     const agentId = localStorage.getItem('agentId')
     // 获取主题
     if (localStorage.getItem('themeInfo')) {
@@ -1423,13 +1575,18 @@ export default {
     // 刚进页面获取未读消息数量
     this.firstgetUnreadMessages(agentId)
 
-    this.socket = new WebSocket(`${process.env.TUI_WS_SERVERURL}/realtime_notification_${agentId}`)
+    this.socket_nofitication = new WebSocket(`${process.env.TUI_WS_SERVERURL}/realtime_notification_${agentId}`)
+    this.socket_wechat = new WebSocket(`${process.env.TUI_WS_SERVERURL}/realtime_wechat_${agentId}`)
 
-    this.socket.onopen = function(openEvent) {
-      console.log(`Connect tui webSocket addr = ${process.env.TUI_WS_SERVERURL} successfully.`)
+    this.socket_nofitication.onopen = function(openEvent) {
+      console.log(`Connect tui webSocket(notification) addr = ${process.env.TUI_WS_SERVERURL}/realtime_notification_${agentId} successfully.`)
+    }
+    this.socket_wechat.onopen = function(openEvent) {
+      console.log(`Connect tui webSocket(wechat) addr = ${process.env.TUI_WS_SERVERURL}/realtime_wechat_${agentId} successfully.`)
     }
 
-    this.socket.onmessage = function(messageEvent) {
+    // 收到消息通知时
+    this.socket_nofitication.onmessage = function(messageEvent) {
       const data = JSON.parse(messageEvent.data)
       console.log(data)
       if (data.operate_type === 'release') {
@@ -1475,8 +1632,16 @@ export default {
         vm.$root.eventHub.$emit('CHANGE_MYMESSAGELIST')
       }
     }
-    vm.socket.onclose = function(closeEvent) {
-      console.log('Close tui webSocket client successfully.')
+    // 收到微信消息时
+    vm.socket_wechat.onmessage = function(messageEvent) {
+      vm.$root.eventHub.$emit('RECEIVE_MESSAGES', messageEvent.data)
+    }
+    vm.socket_nofitication.onclose = function(closeEvent) {
+      console.log('Close tui webSocket(notification) client successfully.')
+    }
+
+    vm.socket_wechat.onclose = function(closeEvent) {
+      console.log('Close tui webSocket(wechat) client successfully.')
     }
     this.$root.eventHub.$on('CHANGE_STATUS', () => {
       this.firstgetUnreadMessages(agentId)
@@ -1530,7 +1695,10 @@ export default {
     })
   },
   destroyed() {
-    this.socket.close()
+    this.$root.eventHub.$off('RECEIVE_MESSAGES')
+    this.socket_nofitication.close()
+    this.socket_wechat.close()
+    this.$root.eventHub.$off('CHANGE_STATUS')
     this.agentArray.forEach(ele => { // 清空班长监控下的历史数据
       localStorage.removeItem('m_' + ele)
     })
@@ -1631,7 +1799,7 @@ export default {
 }
 .message{
   float:left;
-  margin-left:50px;
+  
   margin-right:25px;
   margin-top:9px;
 }
@@ -1640,17 +1808,96 @@ export default {
   margin-right:25px;
   margin-top:10px;
 }
+.wechat{
+  float:left;
+  margin-left:50px;
+  margin-right:25px;
+  margin-top:10px;
+  .el-button{
+    border-color:#2AA145;
+    background:#2AA145;
+  }
+  .el-button:hover{
+    border-color:#2AA145;
+    background:#2AA145;
+    opacity:0.7;
+  }
+  .el-button:active{
+    border-color:#2AA145;
+    background:#2AA145;
+    opacity:1;
+  }
+}
+.outline.wechat{
+  float:left;
+  margin-left:50px;
+  margin-right:25px;
+  margin-top:10px;
+  .el-button{
+    border-color:#333;
+    background:#333;
+  }
+  .el-button:hover{
+    border-color:#333;
+    background:#333;
+    opacity:0.7;
+  }
+  .el-button:active{
+    border-color:#333;
+    background:#333;
+    opacity:1;
+  }
+}
  @media screen and (min-width: 1281px) and (max-width:1367px){
   .message{
     float:left;
     margin-right:5px;
     margin-top:18px;
-    margin-left:22px;
   }
   .user{
     float:left;
     margin-right:5px;
     margin-top:19px;
+  }
+  .wechat{
+    float:left;
+    margin-left:22px;
+    margin-right:5px;
+    margin-top:19px;
+    .el-button{
+      border-color:#2AA145;
+      background:#2AA145;
+    }
+    .el-button:hover{
+      border-color:#2AA145;
+      background:#2AA145;
+      opacity:0.7;
+    }
+    .el-button:active{
+      border-color:#2AA145;
+      background:#2AA145;
+      opacity:1;
+    }
+  }
+  .outline.wechat{
+    float:left;
+    margin-left:22px;
+    margin-right:5px;
+    margin-top:19px;
+    .el-button{
+      border-color:#333;
+      background:#333;
+    }
+    .el-button:hover{
+      border-color:#333;
+      background:#333;
+      opacity:0.7;
+    }
+    .el-button:active{
+      border-color:#333;
+      background:#333;
+      opacity:1;
+    }
   }
   .status-container{
     font-size:14px;
@@ -1729,15 +1976,48 @@ export default {
   .message{
     margin-right:3px;
     margin-top:19px;
-    margin-left:20px;
   }
   .user{
     margin-right:3px;
     margin-top:20px;
   }
-  .theme{
-    float:left;
+  .wechat{
+    margin-right:3px;
     margin-top:20px;
+    margin-left:20px;
+    .el-button{
+      border-color:#2AA145;
+      background:#2AA145;
+    }
+    .el-button:hover{
+      border-color:#2AA145;
+      background:#2AA145;
+      opacity:0.7;
+    }
+    .el-button:active{
+      border-color:#2AA145;
+      background:#2AA145;
+      opacity:1;
+    }
+  }
+  .outline.wechat{
+    margin-right:3px;
+    margin-top:20px;
+    margin-left:20px;
+    .el-button{
+      border-color:#333;
+      background:#333;
+    }
+    .el-button:hover{
+      border-color:#333;
+      background:#333;
+      opacity:0.7;
+    }
+    .el-button:active{
+      border-color:#333;
+      background:#333;
+      opacity:1;
+    }
   }
   .status-container{
     font-size:14px;
