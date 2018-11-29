@@ -131,7 +131,7 @@
       </el-row>
     </div>
     <div style="margin-top: 1%">
-      <h3>{{statistics_type === 'depart'?'部门':'员工'}}合计表</h3>
+      <h3>合计表</h3>
       <el-table
         :header-row-style="headerRow"
         :data="tableDataAgent2"
@@ -170,85 +170,45 @@
           label="通话次数">
         </el-table-column>
       </el-table>
-      <el-table
-        :header-row-style="headerRow"
-        :data="tableDataAgent1"
-        ref="multipleTable"
-        tooltip-effect="dark"
-        border
-        style="width: 100%;margin-top: 1%;">
-        <el-table-column
-          align="center"
-          :label="statistics_type === 'depart'?'下属部门':'下属员工'">
-          <template slot-scope="scope">
-            {{statistics_type === 'depart' ? scope.row.depart_name :  `${formInline.agentMap[scope.row.agent_id]} (${scope.row.agent_id})`}}
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="online_time_duration"
-          label="在线时长(秒)">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="free_time_duration"
-          label="空闲时长(秒)">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="busy_time_duration"
-          label="示忙时长(秒)">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="call_time_duration"
-          label="通话时长(秒)">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="calls_number"
-          label="通话次数">
-        </el-table-column>
-      </el-table>
       <h3>时间合计表</h3>
-      <el-table
-        :header-row-style="headerRow"
-        :data="tableDataTime2"
-        ref="multipleTable"
-        tooltip-effect="dark"
-        border
-        style="width: 100%;">
-        <el-table-column
-          align="center"
-          prop="time_dimension"
-          label="时间合计">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="online_time_duration"
-          label="在线时长(秒)">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="free_time_duration"
-          label="空闲时长(秒)">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="busy_time_duration"
-          label="示忙时长(秒)">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="call_time_duration"
-          label="通话时长(秒)">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="calls_number"
-          label="通话次数">
-        </el-table-column>
-      </el-table>
+      <!--<el-table-->
+      <!--:header-row-style="headerRow"-->
+      <!--:data="tableDataTime2"-->
+      <!--ref="multipleTable"-->
+      <!--tooltip-effect="dark"-->
+      <!--border-->
+      <!--style="width: 100%;">-->
+      <!--<el-table-column-->
+      <!--align="center"-->
+      <!--prop="time_dimension"-->
+      <!--label="时间合计">-->
+      <!--</el-table-column>-->
+      <!--<el-table-column-->
+      <!--align="center"-->
+      <!--prop="online_time_duration"-->
+      <!--label="在线时长(秒)">-->
+      <!--</el-table-column>-->
+      <!--<el-table-column-->
+      <!--align="center"-->
+      <!--prop="free_time_duration"-->
+      <!--label="空闲时长(秒)">-->
+      <!--</el-table-column>-->
+      <!--<el-table-column-->
+      <!--align="center"-->
+      <!--prop="busy_time_duration"-->
+      <!--label="示忙时长(秒)">-->
+      <!--</el-table-column>-->
+      <!--<el-table-column-->
+      <!--align="center"-->
+      <!--prop="call_time_duration"-->
+      <!--label="通话时长(秒)">-->
+      <!--</el-table-column>-->
+      <!--<el-table-column-->
+      <!--align="center"-->
+      <!--prop="calls_number"-->
+      <!--label="通话次数">-->
+      <!--</el-table-column>-->
+      <!--</el-table>-->
       <el-table
         :header-row-style="headerRow"
         :data="tableDataTime1"
@@ -299,6 +259,47 @@
           </el-pagination>
         </el-row>
       </div>
+      <h3>{{statistics_type === 'depart'?'部门':'员工'}}合计表</h3>
+      <el-table
+        :header-row-style="headerRow"
+        :data="tableDataAgent1"
+        ref="multipleTable"
+        tooltip-effect="dark"
+        border
+        style="width: 100%;margin-top: 1%;">
+        <el-table-column
+          align="center"
+          :label="statistics_type === 'depart'?'下属部门':'下属员工'">
+          <template slot-scope="scope">
+            {{statistics_type === 'depart' ? scope.row.depart_name :  `${formInline.agentMap[scope.row.agent_id]} (${scope.row.agent_id})`}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="online_time_duration"
+          label="在线时长(秒)">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="free_time_duration"
+          label="空闲时长(秒)">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="busy_time_duration"
+          label="示忙时长(秒)">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="call_time_duration"
+          label="通话时长(秒)">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="calls_number"
+          label="通话次数">
+        </el-table-column>
+      </el-table>
       <h3>{{statistics_type === 'depart'?'下属部门详情':'下属员工详情'}}</h3>
       <div style="margin-top:1%;" v-for="(item, index) in staffOptions">
         <el-table
