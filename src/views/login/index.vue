@@ -102,6 +102,8 @@ export default {
     },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
+        // 清除缓存中的客户信息
+        localStorage.removeItem('customerInfos')
         // 清除以前登录的token
         this.$store.dispatch('FedLogOut', this.loginForm)
         if (valid) {

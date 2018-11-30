@@ -1,5 +1,5 @@
 <template>
-<div class="container wechat-list">
+<div class="container wechat-list" @click="hideEmoji">
   <div style="height:100%;border:1px solid #ECECEC;">
     <el-container>
       <el-aside>
@@ -34,7 +34,7 @@
           </div>
 
           <!-- 聊天记录 对话框 div -->
-          <div id="short-message-content" style="padding:10px;height: 595px;background-color:#F5F5F5;overflow-x:hidden" ref="refContentMessage">
+          <div id="short-message-content" style="position:relative;padding:10px;height: 595px;background-color:#F5F5F5;overflow-x:hidden" ref="refContentMessage">
             <!-- 点击加载更多div -->
             <div style="font-size:14px;color:#35ABE2" v-if="hasMoreRecords">
               <a @click="getChatRecords(customerId,queryPageNum);queryPageNum++;">查看更多消息</a>
@@ -47,7 +47,7 @@
                   <div>
                     <span class="el-icon-loading" v-if="item.code=='2'" style="margin-left:4px;line-height:40px;"></span>
                     <span class="el-icon-warning" v-if="item.code=='4'" style="margin-left:4px;line-height:40px;"></span>
-                    <div v-if="item.msgType=='text'" style="min-height:40px;color:#3A2424;padding:10px;background-color:#fff;float:left;border-radius: 4px">{{item.content}}</div>
+                    <div v-if="item.msgType=='text'" style="line-height:26px;min-height:26px;color:#3A2424;padding:13px 10px 7px;background-color:#fff;float:left;border-radius: 4px" v-html="showMsgs(item.content)"></div>
                     <div v-if="item.msgType=='link'" style="min-height:40px;color:#3A2424;padding:10px;background-color:#fff;float:left;border-radius: 4px">
                       <a class="link" style="color:#4190E7;" @click="jump(item.content)">{{item.content}}</a>
                     </div>
@@ -68,7 +68,7 @@
                   <div style="float:right">
                     <span class="el-icon-loading" v-if="item.code=='2'" style="margin-left:26px;line-height:40px;"></span>
                     <a class="el-icon-warning" v-if="item.code=='4'" @click="sendMessageAgainVisible=true;sendMessageAgain_Obj=item;sendMessageAgain_Index=index;" style="margin-left:26px;line-height:40px;"></a>
-                    <div v-if="item.msgType=='text'" style="min-height:40px;color:#3A2424;padding:10px;background-color:#67c23a;float:right;border-radius: 4px">{{item.content}}</div>
+                    <div v-if="item.msgType=='text'" style="line-height:26px;min-height:26px;color:#3A2424;padding:13px 10px 7px;background-color:#fff;float:left;border-radius: 4px" v-html="showMsgs(item.content)"></div>
                     <div v-if="item.msgType=='file'" style="min-height:40px;color:#3A2424;padding:10px;background-color:#67c23a;float:right;border-radius: 4px">
                       <a class="link" style="color:#4190E7;" @click="jump(item.content)">{{decodeURI(item.content)}}</a>
                     </div>
@@ -82,6 +82,18 @@
                 </el-col>
               </el-row>
             </div>
+	    
+	          <!-- 表情选择 -->
+            <!-- <div v-if="showEmojis" style="position:absolute;top:1025px;left:0;background:#fff;width: 68%;box-shadow:1px 3px 8px 0 rgba(207, 212, 220, 0.3);" id="emoji_div">
+              <el-tabs v-model="chooseEmojis" style="margin:0;margin-left:5px;">
+                <el-tab-pane label="QQ表情" name="qq_face">
+                  <emotion @emotion="handleEmotion" :height="230" ></emotion>
+                </el-tab-pane>
+                <el-tab-pane label="emoji表情" name="emoji_face">
+                  <vue-emoji @select="handleEmotion1"></vue-emoji>
+                </el-tab-pane>
+              </el-tabs>
+            </div> -->
           </div>
         </el-main>
         <!-- 是否重新发送消息dialog -->
@@ -93,9 +105,21 @@
             </div>
           </el-dialog>
 
-        <el-footer style="border-top:1px solid #ECECEC;height:178px;background-color:#FFFFFF;padding:0;">
+        <el-footer style="position:relative;border-top:1px solid #ECECEC;height:178px;background-color:#FFFFFF;padding:0;">
+          <!-- 表情选择 -->
+            <div v-if="showEmojis" style="line-height:0;position:absolute;top:-286px;left:0px;background:#fff;width: 80%;box-shadow:1px 3px 8px 0 rgba(207, 212, 220, 0.3);" id="emoji_div">
+              <el-tabs v-model="chooseEmojis" style="margin:0;margin-left:5px;">
+                <el-tab-pane label="QQ表情" name="qq_face">
+                  <emotion @emotion="handleEmotion" :height="230" ></emotion>
+                </el-tab-pane>
+                <el-tab-pane label="emoji表情" name="emoji_face">
+                  <vue-emoji @select="handleEmotion1"></vue-emoji>
+                </el-tab-pane>
+              </el-tabs>
+            </div>
           <!-- 发送图片及录音 -->
           <div class="multi" style="color:#909399;line-height:0;height:35px;text-align:left;background:#fff;">
+	        <a title="表情" class="select_emojis" href="javascript:;" @click="showEmojis=!showEmojis;chooseEmojis='qq_face'"></a>
             <el-upload
               class="upload-demo"
               ref="upload"
@@ -120,7 +144,7 @@
           <div contenteditable="true" style="line-height:1;padding:3px 10px;overflow-x:hidden;text-align:left;height:103px;word-wrap:break-word;font-size:18px" ref="myMessages_div" @keyup.enter="sendMessage('text')">
           </div>
           <!-- 发送按钮div -->
-          <div style="text-align:right;line-height:40px;z-index:999;width:100%;" >
+          <div style="text-align:right;line-height:40px;z-index:999;width:100%;margin: 0px 0px" >
             <!-- <el-button v-if="recVisible&&!stoprecVisible" style="background:#F5F5F5;margin-right:10px;" @click="startRecording();recVisible=false;stoprecVisible=true">开始录音</el-button>
             <el-button v-if="stoprecVisible" style="background:#F5F5F5;margin-right:10px;" @click="stopRecording();">停止录音</el-button> -->
             <el-button style="background:#F5F5F5;margin-right:10px;" v-if="sendVisible" @click="sendMessage('text');recVisible=false;stoprecVisible=false">发送</el-button>
@@ -427,7 +451,6 @@
 <style lang='scss'>
 
 .wechat-list{
- 
   .el-container{
     height:100%;
   }
@@ -484,6 +507,15 @@
     }
   }
 }
+.select_emojis {
+  width: 30px;
+  height: 30px;
+  padding:12px 15px;
+  background:url(../../../static/images/my_imgs/select_face.png) no-repeat -404px -398px;
+  background-size: 487px 462px;
+  margin-left:10px;
+}
+
 
 </style>
 
@@ -521,11 +553,20 @@ import {
 } from '@/api/wechat_list' // 接口
 import { navbarQueryRecords } from '@/api/navbar'
 import getDynamicRouter from '@/router/dynamic-router'
+import Emotion from '@/components/Emotion1/index'
+import vueEmoji from '@/components/Emotion3/emoji.vue'
+import emojidata from '@/components/Emotion3/emoji-data.js'
+import reg_emoji from '@/components/Emotion3/reg_emojis.js'
 var vm = null
 export default {
   name: 'wechat_list1',
   data() {
     return {
+      emojidata: emojidata,
+      reg_emojis: reg_emoji,
+      finalContent: '',
+      showEmojis: false, // 是否显示出表情的div
+      chooseEmojis: 'qq_face', // 显示表情的tabs
       sessionId: '',
       queryPageNum: 2,
       hasMoreRecords: false, // 判断是否有更多记录 是否需要显示loading按钮
@@ -585,8 +626,14 @@ export default {
       activeNames: ['1'], // 折叠板默认打开项
       msgIds: [],
       dailTaskCustomer: {},
-      customerActive: null
+      customerActive: null,
+      unicoded_qq_face: ['/::)', '/::~', '/::B', '/::|', '/:8-)', '/::<', '/::$', '/::X', '/::Z', "/::'(", '/::-|', '/::@', '/::P', '/::D', '/::O', '/::(', '/::+', '[囧]', '/::Q', '/::T', '/:,@P', '/:,@-D', '/::d', '/:,@o', '/::g', '/:|-)', '/::!', '/::L', '/::>', '/::,@', '/:,@f', '/::-S', '/:?', '/:,@x', '/:,@@', '/::8', '/:,@!', '/:!!!', '/:xx', '/:bye', '/:wipe', '/:dig', '/:handclap', '/:&-(', '/:B-)', '/:<@', '/:@>', '/::-O', '/:>-|', '/:P-(', "/::'|", '/:X-)', '/::*', '/:@x', '/:8*', '/:pd', '/:<W>', '/:beer', '/:basketb', '/:oo', '/:coffee', '/:eat', '/:pig', '/:rose', '/:fade', '/:showlove', '/:heart', '/:break', '/:cake', '/:li', '/:bome', '/:kn', '/:footb', '/:ladybug', '/:shit', '/:moon', '/:sun', '/:gift', '/:hug', '/:strong', '/:weak', '/:share', '/:v', '/:@)', '/:jj', '/:@@', '/:bad', '/:lvu', '/:no', '/:ok', '/:love', '/:<L>', '/:jump', '/:shake', '/:<O>', '/:circle', '/:kotow', '/:turn', '/:skip', '[挥手]', '/:#-0', '/:hiphot', '/:<&', '/:&>'],
+      unicoded_emoji_face: ['0x1f600', '0x1f601', '0x1f602', '0x1f923', '0x1f603', '0x1f604', '0x1f605', '0x1f606', '0x1f609', '0x1f60a', '0x1f60b', '0x1f60e', '0x1f60d', '0x1f618', '0x1f617', '0x1f619', '0x1f61a', '0x263a', '0x1f642', '0x1f917', '0x1f914', '0x1f610', '0x1f611', '0x1f636', '0x1f644', '0x1f60f', '0x1f623', '0x1f625', '0x1f62e', '0x1f910', '0x1f62f', '0x1f62a', '0x1f62b', '0x1f634', '0x1f60c', '0x1f61b', '0x1f61c', '0x1f61d', '0x1f924', '0x1f6120', '0x1f613', '0x1f614', '0x1f615', '0x1f643', '0x1f911', '0x1f632', '0x2639', '0x1f641', '0x1f616', '0x1f61e', '0x1f61f', '0x1f624', '0x1f622', '0x1f62d', '0x1f626', '0x1f627', '0x1f628', '0x1f629', '0x1f62c', '0x1f630', '0x1f631', '0x1f633', '0x1f635', '0x1f621', '0x1f620', '0x1f637', '0x1f912', '0x1f915', '0x1f922', '0x1f927', '0x1f607', '0x1f920', '0x1f921', '0x1f925', '0x1f913', '0x1f608', '0x1f47f', '0x1f479', '0x1f47a', '0x1f480', '0x1f47b', '0x1f47d', '0x1f916', '0x1f4a9', '0x1f63a', '0x1f638', '0x1f639', '0x1f63b', '0x1f63c', '0x1f63d', '0x1f640', '0x1f63f', '0x1f63e', '0x1f3fb', '0x1f3fc', '0x1f3fd', '0x1f3fe', '0x1f3ff', '0x1f5e3', '0x1f464', '0x1f465', '0x1f46b', '0x1f46c', '0x1f46d', '0x1f442', '0x1f442 0x1f3fb', '0x1f442 0x1f3fc', '0x1f442 0x1f3fd', '0x1f442 0x1f3fe', '0x1f442 0x1f3ff', '0x1f443', '0x1f443 0x1f3fb', '0x1f443 0x1f3fc', '0x1f443 0x1f3fd', '0x1f443 0x1f3fe', '0x1f443 0x1f3ff', '0x1f463', '0x1f440', '0x1f441', '0x1f445', '0x1f444', '0x1f48b', '0x1f453', '0x1f576', '0x1f454', '0x1f455', '0x1f456', '0x1f457', '0x1f458', '0x1f459', '0x1f45a', '0x1f45b', '0x1f45c', '0x1f45d', '0x1f392', '0x1f45e', '0x1f45f', '0x1f460', '0x1f461', '0x1f462', '0x1f451', '0x1f452', '0x1f3a9', '0x1f393', '0x26d1', '0x1f484', '0x1f48d', '0x1f302', '0x1f4bc']
     }
+  },
+  components: {
+    Emotion,
+    vueEmoji
   },
   computed: {
     wechatContents() {
@@ -597,6 +644,57 @@ export default {
     }
   },
   methods: {
+    hideEmoji(e) {
+      var emoji_div = document.getElementById('emoji_div')
+      if (emoji_div) {
+        if (!emoji_div.contains(e.target)) {
+          this.showEmojis = false
+        }
+      }
+    },
+    showMsgs(content) {
+      const qq_reg = "(/::\\)|/::~|\\[囧\\]|\\[挥手\\]|/::B|/::\\||/:8-\\)|/::<|/::\\$|/::X|/::Z|/::'\\(|/::-\\||/::@|/::P|/::D|/::O|/::\\(|/::\\+|/:--b|/::Q|/::T|/:,@P|/:,@-D|/::d|/:,@o|/::g|/:\\|-\\)|/::!|/::L|/::>|/::,@|/:,@f|/::-S|/:\\?|/:,@x|/:,@@|/::8|/:,@!|/:!!!|/:xx|/:bye|/:wipe|/:dig|/:handclap|/:&-\\(|/:B-\\)|/:<@|/:@>|/::-O|/:>-\\||/:P-\\(|/::'\\||/:X-\\)|/::\\*|/:@x|/:8\\*|/:pd|/:<W>|/:beer|/:basketb|/:oo|/:coffee|/:eat|/:pig|/:rose|/:fade|/:showlove|/:heart|/:break|/:cake|/:li|/:bome|/:kn|/:footb|/:ladybug|/:shit|/:moon|/:sun|/:gift|/:hug|/:strong|/:weak|/:share|/:v|/:@\\)|/:jj|/:@@|/:bad|/:lvu|/:no|/:ok|/:love|/:<L>|/:jump|/:shake|/:<O>|/:circle|/:kotow|/:turn|/:skip|/:oY|/:\\#-0|/:hiphot|/:kiss|/:<&|/:&>)"
+      const emoji_reg = this.reg_emojis
+      var array = ''
+      while ((array = content.match(qq_reg)) !== null) {
+        const index = this.unicoded_qq_face.indexOf(array[0])
+        content = content.replace(new RegExp(qq_reg), "<img src='https://res.wx.qq.com/mpres/htmledition/images/icon/emotion/" + index + ".gif' align='middle' width='26px' height='26px'>")
+      }
+      while ((array = content.match(emoji_reg)) !== null) {
+        content = content.replace(new RegExp(emoji_reg), this.emoji1(array[0]))
+      }
+      content = content.replace(/(\r\n)|(\n)/g, '<br>')
+      // console.log(content)
+      return content
+    },
+    handleEmotion(i) {
+      this.showEmojis = false
+      this.$refs.myMessages_div.innerHTML += this.emotion(i)
+    },
+    handleEmotion1(i) {
+      this.showEmojis = false
+      this.$refs.myMessages_div.innerHTML += this.emoji(i)
+    },
+    htmlspecialchars_decode(str) {
+      str = str.replace(/&amp;/g, '&')
+      str = str.replace(/&lt;/g, '<')
+      str = str.replace(/&gt;/g, '>')
+      str = str.replace(/&quot;/g, "''")
+      str = str.replace(/&#039;/g, "'")
+      return str
+    },
+    // 将匹配结果替换QQ表情图片
+    emotion(res) {
+      const word = res.replace(/\#/, '').replace(/\;/, '')
+      const index = this.unicoded_qq_face.indexOf(word)
+      return `<img src="https://res.wx.qq.com/mpres/htmledition/images/icon/emotion/${index}.gif" align="middle" width="26px" height="26px" alt="` + word + `">`
+    },
+    // 将匹配结果替换emoji
+    emotion1(res) {
+      const word = res.replace(/\#|\;/gi, '')
+      const imgName = this.showData(word)
+      return `<img src="../../../static/emoji/` + imgName + `" align="middle" width='26px' height='26px' alt="` + this.findKey(this.emojiData, imgName) + `">`
+    },
     // loading
     openFullScreen() {
       this.loading = this.$loading({
@@ -928,6 +1026,14 @@ export default {
     },
     // 发送消息
     sendMessage(type) {
+      var word = this.$refs.myMessages_div.innerHTML.replace(new RegExp(/&nbsp;/g), ' ').replace(/<br>/g, '\n').replace(/<div(([\s\S])*?)<\/div>/g, '')
+      const patten = /(.*?)<img.+?alt=('|")(.*?)\2.*?>([^<]*)/gi
+      let resultStr = ''
+      let str = ''
+      while ((str = patten.exec(word)) !== null) {
+        resultStr += str[1] + str[3] + str[4]
+      }
+      resultStr = this.htmlspecialchars_decode(resultStr).replace(new RegExp(/&nbsp;/g), ' ').replace(/<br>/g, '\n').replace(/<div(([\s\S])*?)<\/div>/g, '')
       let content = ''
       let mediaUrl = ''
       let json = {}
@@ -936,7 +1042,7 @@ export default {
       const customerId = this.customerId
       const index = this.contents.length
       // 获取div里输入的内容
-      const myMessages = this.transferToWords(this.$refs.myMessages_div.innerText)
+      const myMessages = this.$refs.myMessages_div.innerHTML.indexOf('<img src') > -1 ? resultStr : word
       if (this.customerName === '') {
         this.$message.error('请选择联系人！')
         return false
@@ -964,7 +1070,7 @@ export default {
           this.contents.splice(index, 1, json)
           // 清空文字输入框里的内容
           this.myMessages = ''
-          this.$refs.myMessages_div.innerText = ''
+          this.$refs.myMessages_div.innerHTML = ''
           message = { 'customerId': customerId, 'content': content, 'msgType': 'text', 'sessionId': this.sessionId }
         }
       } else if (type === 'image') {

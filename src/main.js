@@ -17,6 +17,10 @@ import App from './App'
 import router from './router'
 import store from './store'
 
+import { emoji, emoji1 } from './components/Emotion3/emoji.js'
+Vue.prototype.emoji = emoji
+Vue.prototype.emoji1 = emoji1
+
 import '@/icons' // icon
 // import '@/permission' // permission control
 ElementUI.TableColumn.props.resizable.default = false

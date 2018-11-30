@@ -762,7 +762,7 @@ export default {
   },
   methods: {
   // 添加或修改客户微信手机号
-  editCustomerInfos(editCustomerInfo) {
+    editCustomerInfos(editCustomerInfo) {
       var reg = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[0,5-9])|(18[0,5-9]))\d{8}$/
       if (editCustomerInfo.wechatPhone === '' || editCustomerInfo.wechatPhone === null) {
         this.$message.error('请输入客户微信手机号！')
@@ -1888,7 +1888,7 @@ export default {
     getWechatCustomer(localStorage.getItem('agentId')).then(response => {
       this.customerInfos = response.data.data
       history.pushState(null, null, document.URL)
-      window.addEventListener('popstate', function () {
+      window.addEventListener('popstate', function() {
         history.pushState(null, null, document.URL)
       })
       vm = this
@@ -1905,7 +1905,7 @@ export default {
           this.departPermission = true
           departAgents(res.data.departId).then(response => {
             this.agentsOptions = response.data.result.agents
-            this.agents = response.data.result.agents.map(function (item) {
+            this.agents = response.data.result.agents.map(function(item) {
               return item.agent_id
             })
             if (this.$route.query.agent === undefined) {
@@ -1954,7 +1954,7 @@ export default {
         })
       })
       history.pushState(null, null, document.URL)
-      window.addEventListener('popstate', function () {
+      window.addEventListener('popstate', function() {
         history.pushState(null, null, document.URL)
       })
       vm = this
@@ -1977,19 +1977,19 @@ export default {
         vm.summariesInfo = [] // 清空小结节点
         if (response.data.code === 0) {
           if (response.data.data.length > 0) {
-            vm.summariesInfo.push({'id': '', 'name': '所有小结'})
+            vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
             this.handle(response.data.data)
           } else {
-            vm.summariesInfo.push({'id': '', 'name': '所有小结'})
+            vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
           }
         }
       }).catch(error => {
         console.log(error)
-        vm.summariesInfo.push({'id': '', 'name': '所有小结'})
+        vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
       })
       findCampaignByUser().then(res => {
         if (res.data.code === 0) {
-          vm.campaignsInfo.push({campaignId: '', campaignName: '所有活动'})
+          vm.campaignsInfo.push({ campaignId: '', campaignName: '所有活动' })
           if (res.data.data.length > 0) {
             for (let i = 0; i < res.data.data.length; i++) {
               vm.campaignsInfo.push({
@@ -1999,7 +1999,7 @@ export default {
             }
           }
         } else {
-          vm.campaignsInfo.push({campaignId: '', campaignName: '所有活动'})
+          vm.campaignsInfo.push({ campaignId: '', campaignName: '所有活动' })
         }
       })
       // this.req = this.$store.state.dialTask.req
@@ -2039,7 +2039,7 @@ export default {
     getWechatCustomer(localStorage.getItem('agentId')).then(response => {
       this.customerInfos = response.data.data
       history.pushState(null, null, document.URL)
-      window.addEventListener('popstate', function () {
+      window.addEventListener('popstate', function() {
         history.pushState(null, null, document.URL)
       })
       vm = this
@@ -2056,7 +2056,7 @@ export default {
           this.departPermission = true
           departAgents(res.data.departId).then(response => {
             this.agentsOptions = response.data.result.agents
-            this.agents = response.data.result.agents.map(function (item) {
+            this.agents = response.data.result.agents.map(function(item) {
               return item.agent_id
             })
             if (this.$route.query.agent === undefined) {
@@ -2105,7 +2105,7 @@ export default {
         })
       })
       history.pushState(null, null, document.URL)
-      window.addEventListener('popstate', function () {
+      window.addEventListener('popstate', function() {
         history.pushState(null, null, document.URL)
       })
       vm = this
@@ -2128,19 +2128,19 @@ export default {
         vm.summariesInfo = [] // 清空小结节点
         if (response.data.code === 0) {
           if (response.data.data.length > 0) {
-            vm.summariesInfo.push({'id': '', 'name': '所有小结'})
+            vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
             this.handle(response.data.data)
           } else {
-            vm.summariesInfo.push({'id': '', 'name': '所有小结'})
+            vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
           }
         }
       }).catch(error => {
         console.log(error)
-        vm.summariesInfo.push({'id': '', 'name': '所有小结'})
+        vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
       })
       findCampaignByUser().then(res => {
         if (res.data.code === 0) {
-          vm.campaignsInfo.push({campaignId: '', campaignName: '所有活动'})
+          vm.campaignsInfo.push({ campaignId: '', campaignName: '所有活动' })
           if (res.data.data.length > 0) {
             for (let i = 0; i < res.data.data.length; i++) {
               vm.campaignsInfo.push({
@@ -2150,7 +2150,7 @@ export default {
             }
           }
         } else {
-          vm.campaignsInfo.push({campaignId: '', campaignName: '所有活动'})
+          vm.campaignsInfo.push({ campaignId: '', campaignName: '所有活动' })
         }
       })
       // this.req = this.$store.state.dialTask.req
