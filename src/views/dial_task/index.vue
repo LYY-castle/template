@@ -286,10 +286,10 @@
       <el-col :span="5" style="text-align:center">
         <br/>
         <div>
-          <b v-text="customerInfo.customerName"></b>
+          <b title="客户姓名" style="font-size:18px;">{{customerInfo.customerName}}</b>
         </div>
         <div>
-          <span v-text="customerInfo.mobile"></span>
+          <span title="客户手机号" style="font-size:18px;">{{customerInfo.mobile}}</span>
         </div>
         <div>
           <img src="../../../static/images/my_imgs/img_xiegang.png"  alt="横杆"/>
@@ -332,6 +332,16 @@
        </div><br/>
        <div>
          <label>持卡类型：</label><span v-text="customerInfo.bankCardType"></span>
+       </div><br/>
+       <div>
+         <label>微信手机号：</label>
+         <span v-show="customerInfo.wechatPhone">
+           {{customerInfo.wechatPhone}}&nbsp;&nbsp;
+           <el-button plain type="default" icon="el-icon-edit" style="width:45px" title="修改微信手机号" @click="editWechatPhone=true;editCustomerInfo.customerId=customerInfo.customerId;editCustomerInfo.wechatPhone=customerInfo.wechatPhone"></el-button>
+         </span>
+         <span v-show="!customerInfo.wechatPhone">
+           <el-button plain type="default" icon="el-icon-plus" style="width:45px" title="添加微信手机号" @click="addWechatPhone=true;editCustomerInfo.customerId=customerInfo.customerId;editCustomerInfo.wechatPhone=''"></el-button>
+         </span>
        </div>
       </el-col>
       <el-col :span="8" v-if="isRecruit">
@@ -341,6 +351,16 @@
        </div><br/>
        <div>
          <label>地址：</label><span v-text="customerInfo.resideAddress"></span>
+       </div><br/>
+       <div>
+         <label>微信手机号：</label>
+         <span v-show="customerInfo.wechatPhone">
+           {{customerInfo.wechatPhone}}&nbsp;&nbsp;
+           <el-button plain type="default" icon="el-icon-edit" style="width:45px" title="修改微信手机号" @click="editWechatPhone=true;editCustomerInfo.customerId=customerInfo.customerId;editCustomerInfo.wechatPhone=customerInfo.wechatPhone"></el-button>
+         </span>
+         <span v-show="!customerInfo.wechatPhone">
+           <el-button plain type="default" icon="el-icon-plus" style="width:45px" title="添加微信手机号" @click="addWechatPhone=true;editCustomerInfo.customerId=customerInfo.customerId;editCustomerInfo.wechatPhone=''"></el-button>
+         </span>
        </div>
       </el-col>
     </el-row>
@@ -539,6 +559,23 @@
         <el-button type="primary" size="small" @click="returnList()" >返回列表</el-button>
       </div>
     </el-row>
+     <!-- 添加微信手机号dialog -->
+    <el-dialog width="30%" title="添加微信手机号" :visible.sync="addWechatPhone" append-to-body>
+      微信手机号：<el-input v-model="editCustomerInfo.wechatPhone" placeholder="请输入客户微信手机号" maxlength="11" clearable></el-input>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button type="primary" @click="addWechatPhone = false;editCustomerInfos(editCustomerInfo);">确定</el-button>
+        <el-button @click="addWechatPhone = false">取消</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 修改微信手机号dialog -->
+    <el-dialog width="30%" title="添加微信手机号" :visible.sync="editWechatPhone" append-to-body>
+      微信手机号：<el-input v-model="editCustomerInfo.wechatPhone" placeholder="请输入客户微信手机号" maxlength="11" clearable></el-input>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button type="primary" @click="editWechatPhone = false;editCustomerInfos(editCustomerInfo);">确定</el-button>
+        <el-button @click="editWechatPhone = false">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </div>
 </template>
@@ -587,6 +624,7 @@ import {
 } from '@/api/dialTask' // 接口
 import { departAgents, getDepartId } from '@/api/ctiReport'
 import { permsDepart, permsStaff } from '@/api/reportPermission'
+import { editCustomer } from '@/api/customerManagement'// 接口
 import { getWechatCustomer } from '@/api/wechat_list'
 var vm = null
 
@@ -637,6 +675,12 @@ export default {
           label: '过期'
         }
       ],
+      addWechatPhone: false, // 添加微信手机号dialog
+      editWechatPhone: false, // 修改微信手机号dialog
+      editCustomerInfo: {
+        customerId: '',
+        wechatPhone: ''
+      },
       interval: null,
       canContact: 1,
       hideDialTo: false, // 判断超出拨打次数限制时是否将图标置灰
@@ -717,6 +761,27 @@ export default {
     }
   },
   methods: {
+  // 添加或修改客户微信手机号
+  editCustomerInfos(editCustomerInfo) {
+      var reg = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[0,5-9])|(18[0,5-9]))\d{8}$/
+      if (editCustomerInfo.wechatPhone === '' || editCustomerInfo.wechatPhone === null) {
+        this.$message.error('请输入客户微信手机号！')
+        return
+      }
+      if (!reg.test(editCustomerInfo.wechatPhone)) {
+        this.$message.error('请输入正确的微信手机号！')
+        return
+      }
+      editCustomer(editCustomerInfo)
+        .then(response => {
+          if (response.data.code === 0) {
+            this.$message.success(response.data.message)
+            this.customerInfo.wechatPhone = editCustomerInfo.wechatPhone
+          } else {
+            this.$message.error(response.data.messages)
+          }
+        })
+    },
     // 判断客户是否绑定微信公众号
     checkBindWechat(customerId) {
       console.log(customerId)
