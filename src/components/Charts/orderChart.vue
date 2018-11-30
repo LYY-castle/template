@@ -678,7 +678,7 @@
               this.searchEvery('searchEvery')
             }
             if (this.staffPermission) {
-              this.searchEvery1('searchEvery')
+              this.searchEvery1(this.staffAgentid)
             }
           }
         }
