@@ -140,13 +140,81 @@
       <h3>合计表</h3>
       <el-table
         :header-row-style="headerRow"
-        :data="tableData1"
+        :data="tableDataAgent2"
         ref="multipleTable"
         tooltip-effect="dark"
-        :summary-method="getSummaryMethod"
-        show-summary
         border
         style="width: 100%;">
+        <el-table-column
+          align="center"
+          prop="agent_id"
+          :label="statistics_type === 'depart'?'部门合计':'员工合计'">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="count"
+          label="订单数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="total_amount"
+          label="订单总金额">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="avg_amount"
+          label="订单平均金额">
+        </el-table-column>
+      </el-table>
+      <h3>时间合计表</h3>
+      <el-table
+        :header-row-style="headerRow"
+        :data="tableDataTime1"
+        ref="multipleTable"
+        tooltip-effect="dark"
+        border
+        style="width: 100%;margin-top: 1%;">
+        <el-table-column
+          align="center"
+          prop="time_dimension"
+          label="时间段">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="count"
+          label="订单数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="total_amount"
+          label="订单总金额">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="avg_amount"
+          label="订单平均金额">
+        </el-table-column>
+      </el-table>
+      <div style="margin-top: 1%">
+        <el-row>
+          <el-pagination
+            background
+            @current-change="handleCurrentChangeStatics"
+            :current-page.sync="paginationStatics.pageNo"
+            :page-size="paginationStatics.pageSize"
+            layout="total, prev, pager, next, jumper"
+            :total="paginationStatics.totalCount" style="text-align: right">
+          </el-pagination>
+        </el-row>
+      </div>
+      <h3>{{statistics_type === 'depart'?'部门':'员工'}}合计表</h3>
+      <el-table
+        :header-row-style="headerRow"
+        :data="tableDataAgent1"
+        ref="multipleTable"
+        tooltip-effect="dark"
+        border
+        style="width: 100%;margin-top: 1%;">
         <el-table-column
           align="center"
           :label="statistics_type === 'depart'?'下属部门':'下属员工'">
@@ -452,6 +520,12 @@
           totalCount: null,
           totalPage: null
         },
+        paginationStatics: {
+          pageNo: null,
+          pageSize: null,
+          totalCount: null,
+          totalPage: null
+        },
         paginationStaff: [],
         pageNo: [],
         pageSize: [],
@@ -470,7 +544,10 @@
           agentMap: {}
         },
         tableData: [],
-        tableData1: [],
+        tableDataAgent1: [],
+        tableDataAgent2: [],
+        tableDataTime1: [],
+        tableDataTime2: [],
         tableDataAgent: [],
         count: [],
         total_amount: [],
@@ -597,7 +674,7 @@
       websocketonmessage(e) { // 数据接收
         if (e) {
           if (this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone) < Date.parse(new Date()) < this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)) {
-            this.searchEvery('search')
+            this.searchEvery('searchEvery')
           }
         }
       },
@@ -738,6 +815,49 @@
           this.pageSize.splice(this.currentIndex, 1, response.data.pageSize)
           this.totalCount.splice(this.currentIndex, 1, response.data.total_count)
           this.tableData.splice(this.currentIndex, 1, response.data.result)
+        })
+      },
+      handleCurrentChangeStatics(val) {
+        const params = {
+          statistics_type: this.statistics_type,
+          depart_id: this.departId,
+          campaign_id: this.formInline.campaignId,
+          time_dimension: this.formInline.timeClone,
+          // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
+          // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone), // val || val === 'search' ? this.timeValue[1] :
+          pageNo: val && val !== 'search' ? this.formInline.from : 1,
+          pageSize: 10
+        }
+
+        if (!this.timeValueClone[0] || !this.timeValueClone[1]) {
+          Message({
+            message: '请选择操作时间',
+            type: 'error',
+            duration: 3 * 1000
+          })
+          return
+        }
+
+        if (this.timeValueClone[0] && this.timeValueClone[0].getDate()) {
+          params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
+        }
+        if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
+          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
+        }
+
+        if (this.statistics_type === 'depart') {
+          params.sub_depart_id = this.formInline.sub_depart_id.join(',')
+        } else {
+          params.agent_id = this.formInline.agent_id.join(',')
+        }
+        orderstatistics(params).then(response => {
+          this.tableDataTime1 = response.data.result
+          this.paginationStatics = {
+            pageNo: response.data.pageNo,
+            pageSize: response.data.pageSize,
+            totalCount: response.data.total_count,
+            totalPage: null
+          }
         })
       },
       handleCurrentChangeAgent(val) {
@@ -1553,6 +1673,7 @@
         }
         orderstatistics(params).then(response => {
           this.obj = response.data
+          this.tableDataTime1 = this.obj.result
           if (this.obj.result.length) {
             this.count = this.obj.result.map(function(item, index) {
               return item.count
@@ -1572,6 +1693,14 @@
             pageSize: response.data.pageSize,
             totalCount: response.data.total_count,
             totalPage: null
+          }
+          if (val !== 'searchEvery') {
+            this.paginationStatics = {
+              pageNo: response.data.pageNo,
+              pageSize: response.data.pageSize,
+              totalCount: response.data.total_count,
+              totalPage: null
+            }
           }
           this.contentIndex = 0
           this.tableData = []
@@ -1632,7 +1761,8 @@
             params.agent_id = this.formInline.agent_id.join(',')
           }
           ordertotalAgent(params).then(response => {
-            this.tableData1 = response.data.result
+            this.tableDataAgent1 = response.data.result
+            this.tableDataAgent2 = response.data.total_result
           })
           this.teamData(val)
         }
@@ -1672,7 +1802,8 @@
           }
 
           ordertotalAgent(params).then(response => {
-            this.tableData1 = response.data.result
+            this.tableDataAgent1 = response.data.result
+            this.tableDataAgent2 = response.data.total_result
           })
           this.teamData(val)
         }

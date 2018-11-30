@@ -171,44 +171,6 @@
         </el-table-column>
       </el-table>
       <h3>时间合计表</h3>
-      <!--<el-table-->
-      <!--:header-row-style="headerRow"-->
-      <!--:data="tableDataTime2"-->
-      <!--ref="multipleTable"-->
-      <!--tooltip-effect="dark"-->
-      <!--border-->
-      <!--style="width: 100%;">-->
-      <!--<el-table-column-->
-      <!--align="center"-->
-      <!--prop="time_dimension"-->
-      <!--label="时间合计">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-      <!--align="center"-->
-      <!--prop="online_time_duration"-->
-      <!--label="在线时长(秒)">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-      <!--align="center"-->
-      <!--prop="free_time_duration"-->
-      <!--label="空闲时长(秒)">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-      <!--align="center"-->
-      <!--prop="busy_time_duration"-->
-      <!--label="示忙时长(秒)">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-      <!--align="center"-->
-      <!--prop="call_time_duration"-->
-      <!--label="通话时长(秒)">-->
-      <!--</el-table-column>-->
-      <!--<el-table-column-->
-      <!--align="center"-->
-      <!--prop="calls_number"-->
-      <!--label="通话次数">-->
-      <!--</el-table-column>-->
-      <!--</el-table>-->
       <el-table
         :header-row-style="headerRow"
         :data="tableDataTime1"
