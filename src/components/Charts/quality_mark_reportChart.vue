@@ -869,8 +869,8 @@
         qualityReportstatistics(params).then(response => {
           this.tableDataTime1 = this.obj.result
           this.paginationStatics = {
-            pageNo: response.data.pageNo,
-            pageSize: response.data.pageSize,
+            pageNo: Number(response.data.pageNo),
+            pageSize: Number(response.data.pageSize),
             totalCount: response.data.total_count,
             totalPage: null
           }
@@ -1796,8 +1796,8 @@
           }
           if (val !== 'searchEvery') {
             this.paginationStatics = {
-              pageNo: response.data.pageNo,
-              pageSize: response.data.pageSize,
+              pageNo: Number(response.data.pageNo),
+              pageSize: Number(response.data.pageSize),
               totalCount: response.data.total_count,
               totalPage: null
             }
