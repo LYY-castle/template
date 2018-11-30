@@ -674,7 +674,12 @@
       websocketonmessage(e) { // 数据接收
         if (e) {
           if (this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone) < Date.parse(new Date()) < this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)) {
-            this.searchEvery('searchEvery')
+            if (this.departPermission) {
+              this.searchEvery('searchEvery')
+            }
+            if (this.staffPermission) {
+              this.searchEvery1('searchEvery')
+            }
           }
         }
       },
@@ -1831,6 +1836,10 @@
           this.agentChange(val)
           this.searchAgentStaff(val)
         }
+      },
+      searchEvery1(val) {
+        this.agentChange(val)
+        this.searchAgentStaff(val)
       },
       reset() {
         this.formInline.campaignIdClone = ''
