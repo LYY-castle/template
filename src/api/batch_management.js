@@ -24,11 +24,11 @@ export function queryDetailById(batchId) {
   })
 }
 // 确认导入后请求数据
-export function confirmimport(file) {
+export function confirmimport(fileUrl, fileName) {
   return request({
     url: '/batch/validatefile',
     method: 'get',
-    params: { 'fileName': file }
+    params: { 'fileUrl': fileUrl, 'fileName': fileName }
   })
 }
 // 修改批次
@@ -61,5 +61,17 @@ export function batchListimport(addReq) {
     url: '/batch/confirmimport',
     method: 'post',
     data: addReq
+  })
+}
+
+// 获取文件管理服务器预签名的上传地址
+export function getUploadPath(bucketName, objectName) {
+  return request({
+    url: '/upload/presigned-put-url',
+    method: 'get',
+    params: {
+      bucketName: bucketName,
+      objectName: objectName
+    }
   })
 }

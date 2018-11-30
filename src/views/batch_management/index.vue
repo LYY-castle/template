@@ -221,6 +221,7 @@
         <el-button @click="detailVisible = false">返 回</el-button>
       </div>
     </el-dialog>
+    <!-- 上传文件 -->
     <el-dialog
       width="30%"
       :title="uploadData.title"
@@ -230,8 +231,8 @@
         ref="upload"
         :action="uploadData.url"
         :headers="{'Authorization':'Bearer ' +token}"
-        :on-success="uploadSuccess"
         :before-upload="beforeUpload"
+        :http-request="uploadFileInfo"
         :auto-upload="false">
         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
         <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload()">上传</el-button>
@@ -359,7 +360,8 @@ import {
   modifyBatch,
   delBatchById,
   delBatchs,
-  batchListimport
+  batchListimport,
+  getUploadPath
 } from '@/api/batch_management'
 import { getToken } from '@/utils/auth'
 import { rule } from '@/utils/validate'
@@ -380,6 +382,7 @@ export default {
       tableData: [], // 表格数据
       validate: true, // 验证不通过阻止发请求
       failDetail: '',
+      fileUrl: '', // 上传到的文件地址
       pageShow: true, // 分页显示隐藏
       rule: rule,
       ascrislistData: [], // 归属
@@ -428,7 +431,8 @@ export default {
         ascriptionId: '',
         validityTime: '',
         fileName: '',
-        description: ''
+        description: '',
+        filePath: ''
       },
       // 分页数据
       pageInfo: {}
@@ -514,28 +518,72 @@ export default {
     submitUpload() {
       this.$refs.upload.submit()
     },
-    uploadSuccess(response, file, fileList) {
-      if (response.code === 0) {
-        this.$message.success(response.message)
-        this.uploadVisible = false
-        // 上传成功后生成快照
-        if (this.uploadData.type === 2) {
-          confirmimport(file.name).then(response => {
-            if (response.data.code === 0) {
-              this.batchSnapshot = response.data.data.previewData
-              this.$message.success(response.data.message)
-              this.fileList = fileList
-              this.addReq.fileName = file.name
-            }
-          }).catch(error => {
-            console.log(error)
-            this.message(response.data.message)
-          })
-        }
-      } else {
-        this.$message(response.message)
+    uploadFileInfo(file) {
+      if (!this.beforeUpload(file.file)) {
+        return false
       }
+      const d = new Date()
+      const date_str = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate()
+      // 先获取文件管理服务器预签名的上传地址
+      const bucketName = 'crm'
+      const objectName = localStorage.getItem('agentId') + '/' + date_str + '/' + file.file.name
+      this.fileUrl = `${process.env.MINIO_URL}/` + objectName
+      getUploadPath(bucketName, objectName)
+        .then(response => {
+          if (response.data.presignedPutUrl) {
+            // 成功获得地址 准备上传到服务器
+            const xhr = new XMLHttpRequest()
+            xhr.open('PUT', response.data.presignedPutUrl, true)
+            xhr.send(file.file)
+            xhr.onload = () => {
+              if (xhr.status === 200) {
+                // 上传到服务器成功
+                this.$message.success('上传文件成功!')
+                // 验证文件 生成快照
+                confirmimport(this.fileUrl, file.file.name).then(res1 => {
+                  if (res1.data.code === 0) {
+                    this.batchSnapshot = res1.data.data.previewData
+                    this.$message.success(res1.data.message)
+                    this.fileList.length = 0
+                    this.fileList.push(file)
+                    this.addReq.fileName = file.name
+                    this.addReq.filePath = this.fileUrl
+                    this.uploadVisible = false
+                  } else {
+                    this.$message.error(res1.data.message)
+                  }
+                }).catch(error => {
+                  console.log(error)
+                })
+              }
+            }
+          } else {
+            this.$message.error(response.data.message)
+          }
+        })
     },
+    // uploadSuccess(response, file, fileList) {
+    //   if (response.code === 0) {
+    //     this.$message.success(response.message)
+    //     this.uploadVisible = false
+    //     // 上传成功后生成快照
+    //     if (this.uploadData.type === 2) {
+    //       confirmimport(file.name).then(response => {
+    //         if (response.data.code === 0) {
+    //           this.batchSnapshot = response.data.data.previewData
+    //           this.$message.success(response.data.message)
+    //           this.fileList = fileList
+    //           this.addReq.fileName = file.name
+    //         }
+    //       }).catch(error => {
+    //         console.log(error)
+    //         this.message(response.data.message)
+    //       })
+    //     }
+    //   } else {
+    //     this.$message(response.message)
+    //   }
+    // },
     // 清空上传列表
     clearUpload(formName) {
       if (this.$refs[formName] !== undefined) {
