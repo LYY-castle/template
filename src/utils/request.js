@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '../store'
@@ -13,6 +14,16 @@ const service = axios.create({
 
 // request拦截器
 service.interceptors.request.use(config => {
+  if (!!config.params && _.isPlainObject(config.body)) {
+    config.params = _.omitBy(config.params, (v) => {
+      return _.isUndefined(v) || _.isNull(v)
+    })
+  }
+  if (!!config.body && _.isPlainObject(config.body)) {
+    config.body = _.omitBy(config.body, (v) => {
+      return _.isUndefined(v) || _.isNull(v)
+    })
+  }
   if (store.getters.token) {
     config.headers['Authorization'] = 'Bearer ' + getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
   }
