@@ -56,6 +56,20 @@ export function permsmarkreportstaff(id) {
   })
 }
 
+export function permsresultreportdepart(id) {
+  return request({
+    url: '/auth/users/' + id + '/perms/-depart-/GET',
+    method: 'get'
+  })
+}
+
+export function permsresultreportstaff(id) {
+  return request({
+    url: '/auth/users/' + id + '/perms/-staff-/GET',
+    method: 'get'
+  })
+}
+
 export function permsqualityreportdepart(id) {
   return request({
     url: '/auth/users/' + id + '/perms/-depart-quality-report/GET',
