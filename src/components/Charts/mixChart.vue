@@ -602,17 +602,27 @@
         timer: null
       }
     },
-    beforeMount() {
-      var self = this
-      this.timer = setInterval(getTotelNumber, 30000)
-      function getTotelNumber() {
-        self.searchEvery('searchEvery')
-      }
-    },
+    // beforeMount() {
+    //   var self = this
+    //   this.timer = setInterval(getTotelNumber, 30000)
+    //   function getTotelNumber() {
+    //     self.searchEvery('searchEvery')
+    //   }
+    // },
     mounted() {
       getDepartId().then(res => {
         this.staffAgentid = res.data.agentid
         this.departId = res.data.departId
+        var self = this
+        this.timer = setInterval(getTotelNumber, 30000)
+        function getTotelNumber() {
+          if (self.departPermission) {
+            self.searchEvery('searchEvery')
+          }
+          if (self.staffPermission) {
+            self.searchEvery1(self.staffAgentid)
+          }
+        }
         permsdepart(res.data.agentid).then(r => {
           this.departPermission = true
           this.staffPermission = false
@@ -1952,6 +1962,10 @@
           this.agentChange(val)
           this.searchAgentStaff(val)
         }
+      },
+      searchEvery1(val) {
+        this.agentChange(val)
+        this.searchAgentStaff(val)
       },
       reset() {
         this.formInline.from = 1
