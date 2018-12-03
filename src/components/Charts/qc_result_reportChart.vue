@@ -5,7 +5,7 @@
         <el-form-item label="活动名称:" v-show="showActive">
           <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange"> <!--@change="campaignChange" -->
             <el-option value="" label="所有活动"></el-option>
-            <el-option v-for="item in activeNameList" :key="item.activityId" :label="item.activityName" :value="item.activityId"></el-option>
+            <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="质检评分表:" v-show="showActive">
@@ -303,7 +303,7 @@
         <el-form-item label="活动名称:" v-show="showActive">
           <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange">
             <el-option value="" label="所有活动"></el-option>
-            <el-option v-for="item in activeNameList" :key="item.activityId" :label="item.activityName" :value="item.activityId"></el-option>
+            <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="质检评分表:" v-show="showActive">
@@ -457,7 +457,8 @@
   import _ from 'lodash'
   import echarts from 'echarts'
   import resize from './mixins/resize'
-  import { departAgents, getDepartId, grades, qualityResultReportstatistics, qualityResultReporttotalAgent, qualityResultReportreportAgent, findCampaignByUserQuality, getGradesByCampaignId } from '@/api/ctiReport'
+  import { findCampaignAllByUser } from '@/api/monitor_list_single'
+  import { departAgents, getDepartId, grades, qualityResultReportstatistics, qualityResultReporttotalAgent, qualityResultReportreportAgent, getGradesByCampaignId } from '@/api/ctiReport'
   import { Message } from 'element-ui'
   import { permsresultreportstaff, permsresultreportdepart } from '@/api/reportPermission'
   // import { hasOrderInfos } from '@/api/dialTask'
@@ -582,7 +583,7 @@
       }
     },
     mounted() {
-      findCampaignByUserQuality().then(response => {
+      findCampaignAllByUser().then(response => {
         if (response.data.data.length === 0) {
           this.showActive = false
         } else {
