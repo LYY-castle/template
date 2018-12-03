@@ -158,6 +158,36 @@ export function qualityReportreportAgent(obj) {
   })
 }
 
+export function qualityResultReportstatistics(obj) {
+  return request({
+    url: '/qualityResultReport/departOrStaff/statistics',
+    method: 'get',
+    params: _.omitBy(obj, (v) => {
+      return _.trim(v) === ''
+    })
+  })
+}
+
+export function qualityResultReporttotalAgent(obj) {
+  return request({
+    url: '/qualityResultReport/staffTotal/statistics',
+    method: 'get',
+    params: _.omitBy(obj, (v) => {
+      return _.trim(v) === ''
+    })
+  })
+}
+
+export function qualityResultReportreportAgent(obj) {
+  return request({
+    url: '/qualityResultReport/staff/statistics',
+    method: 'get',
+    params: _.omitBy(obj, (v) => {
+      return _.trim(v) === ''
+    })
+  })
+}
+
 export function qualityTaskReportstatistics(obj) {
   return request({
     url: '/quality_task_report/statistics',

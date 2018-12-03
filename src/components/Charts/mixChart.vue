@@ -134,12 +134,101 @@
       <h3>合计表</h3>
       <el-table
         :header-row-style="headerRow"
-        :data="tableData1"
+        :data="tableDataAgent2"
         ref="multipleTable"
         tooltip-effect="dark"
-        show-summary
         border
         style="width: 100%;">
+        <el-table-column
+          align="center"
+          prop="agent_id"
+          :label="statistics_type === 'depart'?'部门合计':'员工合计'">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="online_time_duration"
+          label="在线时长(秒)">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="free_time_duration"
+          label="空闲时长(秒)">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="busy_time_duration"
+          label="示忙时长(秒)">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="call_time_duration"
+          label="通话时长(秒)">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="calls_number"
+          label="通话次数">
+        </el-table-column>
+      </el-table>
+      <h3>时间合计表</h3>
+      <el-table
+        :header-row-style="headerRow"
+        :data="tableDataTime1"
+        ref="multipleTable"
+        tooltip-effect="dark"
+        border
+        style="width: 100%;margin-top: 1%;">
+        <el-table-column
+          align="center"
+          prop="time_dimension"
+          label="时间段">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="online_time_duration"
+          label="在线时长(秒)">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="free_time_duration"
+          label="空闲时长(秒)">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="busy_time_duration"
+          label="示忙时长(秒)">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="call_time_duration"
+          label="通话时长(秒)">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="calls_number"
+          label="通话次数">
+        </el-table-column>
+      </el-table>
+      <div style="margin-top: 1%">
+        <el-row>
+          <el-pagination
+            background
+            @current-change="handleCurrentChangeStatics"
+            :current-page.sync="paginationStatics.pageNo"
+            :page-size="paginationStatics.pageSize"
+            layout="total, prev, pager, next, jumper"
+            :total="paginationStatics.totalCount" style="text-align: right">
+          </el-pagination>
+        </el-row>
+      </div>
+      <h3>{{statistics_type === 'depart'?'部门':'员工'}}合计表</h3>
+      <el-table
+        :header-row-style="headerRow"
+        :data="tableDataAgent1"
+        ref="multipleTable"
+        tooltip-effect="dark"
+        border
+        style="width: 100%;margin-top: 1%;">
         <el-table-column
           align="center"
           :label="statistics_type === 'depart'?'下属部门':'下属员工'">
@@ -452,6 +541,12 @@
           totalCount: null,
           totalPage: null
         },
+        paginationStatics: {
+          pageNo: null,
+          pageSize: null,
+          totalCount: null,
+          totalPage: null
+        },
         paginationStaffPage: {
           pageNo: null,
           pageSize: null,
@@ -479,7 +574,10 @@
           timeClone: 'day'
         },
         tableData: [],
-        tableData1: [],
+        tableDataAgent1: [],
+        tableDataAgent2: [],
+        tableDataTime1: [],
+        tableDataTime2: [],
         tableDataAgent: [],
         online_time_duration: [],
         free_time_duration: [],
@@ -504,17 +602,27 @@
         timer: null
       }
     },
-    beforeMount() {
-      var self = this
-      this.timer = setInterval(getTotelNumber, 30000)
-      function getTotelNumber() {
-        self.searchEvery('search')
-      }
-    },
+    // beforeMount() {
+    //   var self = this
+    //   this.timer = setInterval(getTotelNumber, 30000)
+    //   function getTotelNumber() {
+    //     self.searchEvery('searchEvery')
+    //   }
+    // },
     mounted() {
       getDepartId().then(res => {
         this.staffAgentid = res.data.agentid
         this.departId = res.data.departId
+        var self = this
+        this.timer = setInterval(getTotelNumber, 30000)
+        function getTotelNumber() {
+          if (self.departPermission) {
+            self.searchEvery('searchEvery')
+          }
+          if (self.staffPermission) {
+            self.searchEvery1(self.staffAgentid)
+          }
+        }
         permsdepart(res.data.agentid).then(r => {
           this.departPermission = true
           this.staffPermission = false
@@ -673,6 +781,47 @@
       handleCurrentChange(val) {
         this.formInline.from = val
         this.teamData(val)
+      },
+      handleCurrentChangeStatics(val) {
+        const params = {
+          statistics_type: this.statistics_type,
+          depart_id: this.departId,
+          time_dimension: this.formInline.time,
+          // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
+          // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
+          pageNo: val,
+          pageSize: 10
+        }
+
+        if (!this.timeValueClone[0] || !this.timeValueClone[1]) {
+          Message({
+            message: '请选择操作时间',
+            type: 'error',
+            duration: 3 * 1000
+          })
+          return
+        }
+
+        if (this.timeValueClone[0] && this.timeValueClone[0].getDate()) {
+          params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
+        }
+        if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
+          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+        }
+        if (this.statistics_type === 'depart') {
+          params.sub_depart_id = this.formInline.sub_depart_id.join(',')
+        } else {
+          params.agent_id = this.formInline.agent_id.join(',')
+        }
+        statistics(params).then(response => {
+          this.tableDataTime1 = response.data.result
+          this.paginationStatics = {
+            pageNo: response.data.pageNo,
+            pageSize: response.data.pageSize,
+            totalCount: response.data.total_count,
+            totalPage: null
+          }
+        })
       },
       handleCurrentChangeStaff(val) {
         this.agentChange(this.formInline.staff, val)
@@ -1654,6 +1803,8 @@
 
         statistics(params).then(response => {
           this.obj = response.data
+          this.tableDataTime1 = this.obj.result
+          this.tableDataTime2 = this.obj.total_result
           if (this.obj.result.length) {
             this.calls_number = this.obj.result.map(function(item, index) {
               return item.calls_number
@@ -1679,6 +1830,14 @@
             pageSize: response.data.pageSize,
             totalCount: response.data.total_count,
             totalPage: null
+          }
+          if (val !== 'searchEvery') {
+            this.paginationStatics = {
+              pageNo: response.data.pageNo,
+              pageSize: response.data.pageSize,
+              totalCount: response.data.total_count,
+              totalPage: null
+            }
           }
           this.contentIndex = 0
           this.tableData = []
@@ -1734,7 +1893,8 @@
           }
 
           totalAgent(params).then(responseTotal => {
-            this.tableData1 = responseTotal.data.result
+            this.tableDataAgent1 = responseTotal.data.result
+            this.tableDataAgent2 = responseTotal.data.total_result
           })
           this.teamData(val)
         }
@@ -1770,7 +1930,8 @@
           }
 
           totalAgent(params).then(responseTotal => {
-            this.tableData1 = responseTotal.data.result
+            this.tableDataAgent1 = responseTotal.data.result
+            this.tableDataAgent2 = responseTotal.data.total_result
           })
           this.teamData(val)
         }
@@ -1801,6 +1962,10 @@
           this.agentChange(val)
           this.searchAgentStaff(val)
         }
+      },
+      searchEvery1(val) {
+        this.agentChange(val)
+        this.searchAgentStaff(val)
       },
       reset() {
         this.formInline.from = 1

@@ -2,10 +2,16 @@
   <div style="width: 100%;height: 90%" v-if="departPermission">
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
-        <el-form-item label="活动名称:" v-show="activeNameList && activeNameList.length > 0">
-          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称">
+        <el-form-item label="活动名称:" v-show="showActive">
+          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange"> <!--@change="campaignChange" -->
             <el-option value="" label="所有活动"></el-option>
             <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="质检评分表:" v-show="showActive">
+          <el-select v-model="formInline.productClone" placeholder="质检评分表">
+            <el-option value="" label="所有评分表"></el-option>
+            <el-option v-for="item in productList" :key="item.id" :label="item.gradeName" :value="item.gradeId"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="时间维度:">
@@ -152,23 +158,18 @@
         </el-table-column>
         <el-table-column
           align="center"
-          prop="new_first_dial_task_count"
-          label="新增首拨数量">
+          prop="count"
+          label="质检表单数量">
         </el-table-column>
         <el-table-column
           align="center"
-          prop="new_success_contact_task_count"
-          label="新增成功数量">
+          prop="median"
+          label="计分中位数">
         </el-table-column>
         <el-table-column
           align="center"
-          prop="new_fail_contact_task_count"
-          label="新增失败数量">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="new_appoint_contact_task_count"
-          label="新增预约数量">
+          prop="avg_score"
+          label="计分平均数">
         </el-table-column>
       </el-table>
       <h3>时间合计表</h3>
@@ -186,23 +187,18 @@
         </el-table-column>
         <el-table-column
           align="center"
-          prop="new_first_dial_task_count"
-          label="新增首拨数量">
+          prop="count"
+          label="质检表单数量">
         </el-table-column>
         <el-table-column
           align="center"
-          prop="new_success_contact_task_count"
-          label="新增成功数量">
+          prop="median"
+          label="计分中位数">
         </el-table-column>
         <el-table-column
           align="center"
-          prop="new_fail_contact_task_count"
-          label="新增失败数量">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="new_appoint_contact_task_count"
-          label="新增预约数量">
+          prop="avg_score"
+          label="计分平均数">
         </el-table-column>
       </el-table>
       <div style="margin-top: 1%">
@@ -234,23 +230,18 @@
         </el-table-column>
         <el-table-column
           align="center"
-          prop="new_first_dial_task_count"
-          label="新增首拨数量">
+          prop="count"
+          label="质检表单数量">
         </el-table-column>
         <el-table-column
           align="center"
-          prop="new_success_contact_task_count"
-          label="新增成功数量">
+          prop="median"
+          label="计分中位数">
         </el-table-column>
         <el-table-column
           align="center"
-          prop="new_fail_contact_task_count"
-          label="新增失败数量">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="new_appoint_contact_task_count"
-          label="新增预约数量">
+          prop="avg_score"
+          label="计分平均数">
         </el-table-column>
       </el-table>
       <h3>{{statistics_type === 'depart'?'下属部门详情':'下属员工详情'}}</h3>
@@ -277,23 +268,18 @@
           </el-table-column>
           <el-table-column
             align="center"
-            prop="new_first_dial_task_count"
-            label="新增首拨数量">
+            prop="count"
+            label="质检表单数量">
           </el-table-column>
           <el-table-column
             align="center"
-            prop="new_success_contact_task_count"
-            label="新增成功数量">
+            prop="median"
+            label="计分中位数">
           </el-table-column>
           <el-table-column
             align="center"
-            prop="new_fail_contact_task_count"
-            label="新增失败数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="new_appoint_contact_task_count"
-            label="新增预约数量">
+            prop="avg_score"
+            label="计分平均数">
           </el-table-column>
         </el-table>
         <el-row style="margin-top:1%;">
@@ -314,10 +300,16 @@
   <div style="width: 100%;height: 90%" v-else-if="staffPermission">
     <el-row>
       <el-form :inline="true" class="demo-form-inline" size="small">
-        <el-form-item label="活动名称:" v-show="activeNameList && activeNameList.length > 0">
-          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称">
+        <el-form-item label="活动名称:" v-show="showActive">
+          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange">
             <el-option value="" label="所有活动"></el-option>
             <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="质检评分表:" v-show="showActive">
+          <el-select v-model="formInline.productClone" placeholder="质检评分表">
+            <el-option value="" label="所有评分表"></el-option>
+            <el-option v-for="item in productList" :key="item.id" :label="item.gradeName" :value="item.gradeId"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="时间维度:">
@@ -351,7 +343,7 @@
         </el-form-item>
         <el-form-item v-show="formInline.time === 'week'" label="操作时间：">
           <el-date-picker
-            v-model="timeValue[0]"
+            v-model="timeValue1[0]"
             type="week"
             format="yyyy 第 WW 周"
             placeholder="开始周"
@@ -359,7 +351,7 @@
           </el-date-picker>
           <span>-</span>
           <el-date-picker
-            v-model="timeValue[1]"
+            v-model="timeValue1[1]"
             type="week"
             format="yyyy 第 WW 周"
             placeholder="结束周"
@@ -368,14 +360,14 @@
         </el-form-item>
         <el-form-item v-show="formInline.time === 'month'" label="操作时间：">
           <el-date-picker
-            v-model="timeValue[0]"
+            v-model="timeValue1[0]"
             type="month"
             placeholder="开始月"
             format="yyyy-MM">
           </el-date-picker>
           <span>-</span>
           <el-date-picker
-            v-model="timeValue[1]"
+            v-model="timeValue1[1]"
             type="month"
             placeholder="结束月"
             format="yyyy-MM">
@@ -383,14 +375,14 @@
         </el-form-item>
         <el-form-item v-show="formInline.time === 'year'" label="操作时间：">
           <el-date-picker
-            v-model="timeValue[0]"
+            v-model="timeValue1[0]"
             type="year"
             placeholder="开始年"
             format="yyyy">
           </el-date-picker>
           <span>-</span>
           <el-date-picker
-            v-model="timeValue[1]"
+            v-model="timeValue1[1]"
             type="year"
             placeholder="结束年"
             format="yyyy">
@@ -431,23 +423,18 @@
         </el-table-column>
         <el-table-column
           align="center"
-          prop="new_first_dial_task_count"
-          label="新增首拨数量">
+          prop="count"
+          label="质检表单数量">
         </el-table-column>
         <el-table-column
           align="center"
-          prop="new_success_contact_task_count"
-          label="新增成功数量">
+          prop="median"
+          label="计分中位数">
         </el-table-column>
         <el-table-column
           align="center"
-          prop="new_fail_contact_task_count"
-          label="新增失败数量">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="new_appoint_contact_task_count"
-          label="新增预约数量">
+          prop="avg_score"
+          label="计分平均数">
         </el-table-column>
       </el-table>
       <el-row style="margin-top:1%;">
@@ -470,10 +457,12 @@
   import _ from 'lodash'
   import echarts from 'echarts'
   import resize from './mixins/resize'
-  import { obstatistics, departAgents, getDepartId, obtotalAgent, obreportAgent } from '@/api/ctiReport'
-  import { Message } from 'element-ui'
-  import { permsobdepart, permsobstaff } from '@/api/reportPermission'
   import { findCampaignAllByUser } from '@/api/monitor_list_single'
+  import { departAgents, getDepartId, grades, qualityResultReportstatistics, qualityResultReporttotalAgent, qualityResultReportreportAgent, getGradesByCampaignId } from '@/api/ctiReport'
+  import { Message } from 'element-ui'
+  import { permsresultreportstaff, permsresultreportdepart } from '@/api/reportPermission'
+  // import { hasOrderInfos } from '@/api/dialTask'
+  // import { findAllProduct } from '@/api/campaign'
   import moment from 'moment'
 
   export default {
@@ -512,6 +501,8 @@
         week: {
           firstDayOfWeek: 1
         },
+        allProductList: [],
+        productList: [],
         activeNameList: [],
         departPermission: false,
         staffPermission: false,
@@ -564,8 +555,11 @@
           timeClone: 'day',
           staff: '',
           time_dimension: '',
+          productClone: '',
+          product: '',
           sub_depart_id: [],
-          sub_depart_name: []
+          sub_depart_name: [],
+          agentMap: {}
         },
         tableData: [],
         tableDataAgent1: [],
@@ -573,31 +567,40 @@
         tableDataTime1: [],
         tableDataTime2: [],
         tableDataAgent: [],
-        new_first_dial_task_count: [],
-        new_success_contact_task_count: [],
-        new_fail_contact_task_count: [],
-        new_appoint_contact_task_count: [],
-        new_first_dial_task_countTime: [],
-        new_success_contact_task_countTime: [],
-        new_fail_contact_task_countTime: [],
-        new_appoint_contact_task_countTime: [],
-        new_first_dial_task_countAgent: [],
-        new_success_contact_task_countAgent: [],
-        new_fail_contact_task_countAgent: [],
-        new_appoint_contact_task_countAgent: [],
+        count: [],
+        avg_score: [],
+        median_score: [],
+        countTime: [],
+        avg_scoreTime: [],
+        median_scoreTime: [],
+        countAgent: [],
+        avg_scoreAgent: [],
+        median_scoreAgent: [],
         agentTime: [],
         staffAgentid: null,
-        websock: null
+        websock: null,
+        showActive: true
       }
     },
     mounted() {
       findCampaignAllByUser().then(response => {
+        if (response.data.data.length === 0) {
+          this.showActive = false
+        } else {
+          this.showActive = true
+        }
         this.activeNameList = response.data.data
+      })
+      // findAllProduct().then(res => {
+      //   this.allProductList = res.data.data
+      // })
+      grades().then(res => {
+        this.allProductList = res.data.data
       })
       getDepartId().then(res => {
         this.staffAgentid = res.data.agentid
         this.departId = res.data.departId
-        permsobdepart(res.data.agentid).then(r => {
+        permsresultreportdepart(res.data.agentid).then(r => {
           this.departPermission = true
           this.staffPermission = false
           departAgents(res.data.departId).then(response => {
@@ -649,9 +652,7 @@
               this.formInline.agentMap = _.zipObject(this.formInline.agent_id, this.formInline.agent_real_name)
             }
 
-            this.search(0)
-
-            permsobstaff(res.data.agentid).then(re => {
+            permsresultreportstaff(res.data.agentid).then(re => {
               this.departPermission = false
               this.staffPermission = true
               this.search1(res.data.agentid)
@@ -664,6 +665,9 @@
     },
     created() {
       this.initWebSocket()
+    },
+    destroyed() {
+      this.websock.close()
     },
     beforeDestroy() {
       if (!this.chart) {
@@ -682,12 +686,9 @@
       this.chartTime.dispose()
       this.chartTime = null
     },
-    destroyed() {
-      this.websock.close()
-    },
     methods: {
       initWebSocket() { // 初始化weosocket
-        const wsuri = process.env.TUI_WS_SERVERURL + '/realtime_report_ob'// ws地址
+        const wsuri = process.env.TUI_WS_SERVERURL + '/realtime_report_quality_result'// ws地址
         this.websock = new WebSocket(wsuri)
         this.websock.onopen = this.websocketonopen
         this.websock.onerror = this.websocketonerror
@@ -717,6 +718,50 @@
       // },
       websocketclose(e) { // 关闭
         console.log(e)
+      },
+      getSummaryMethod({ columns, data }) {
+        const sums = []
+        columns.forEach((column, index) => {
+          if (index === 0) {
+            sums[index] = '合计'
+            return
+          }
+          const values = data.map(item => Number(item[column.property]))
+          const totalSum = data.map(item => Number(Number(item.avg_score) * Number(item.count)))
+          const median = (data.map(item => Number(Number(item.median).toFixed(2)))).sort(function(a, b) {
+            return a - b
+          })
+          if (index < columns.length - 1) {
+            if (index === 2) {
+              if (median.length % 2 === 1) {
+                sums[index] = median[parseInt(median.length / 2)].toFixed(2)
+              } else {
+                sums[index] = ((median[median.length / 2] + median[median.length / 2 - 1]) / 2).toFixed(2)
+              }
+            } else {
+              sums[index] = values.reduce((prev, curr) => {
+                const value = Number(curr)
+                if (!isNaN(value)) {
+                  return prev + curr
+                } else {
+                  return prev
+                }
+              }, 0)
+            }
+          } else {
+            sums[index] = totalSum.reduce((prev, curr) => {
+              const value = Number(curr)
+              if (!isNaN(value)) {
+                return prev + curr
+              } else {
+                return prev
+              }
+            }, 0)
+            sums[index] = sums[index] / sums[index - 2] ? sums[index] / sums[index - 2] : 0
+            sums[index] = sums[index].toFixed(2)
+          }
+        })
+        return sums
       },
       getStartTimestamp(timeStr, type) {
         let startTime
@@ -789,10 +834,15 @@
           return ''
         }
       },
+      handleCurrentChange(val) {
+        this.formInline.from = val
+        this.teamData(val)
+      },
       handleCurrentChangeStatics(val) {
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
+          grade_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
@@ -810,32 +860,27 @@
           return
         }
 
-        if (this.timeValueClone[0]) {
+        if (this.timeValueClone[0] && this.timeValueClone[0].getDate()) {
           params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
         }
-        if (this.timeValueClone[1]) {
+        if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
           params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
         }
-
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = this.formInline.sub_depart_id.join(',')
         } else {
           params.agent_id = this.formInline.agent_id.join(',')
         }
 
-        obstatistics(params).then(response => {
-          this.tableDataTime1 = response.data.result
+        qualityResultReportstatistics(params).then(response => {
+          this.tableDataTime1 = this.obj.result
           this.paginationStatics = {
-            pageNo: response.data.pageNo,
-            pageSize: response.data.pageSize,
+            pageNo: Number(response.data.pageNo),
+            pageSize: Number(response.data.pageSize),
             totalCount: response.data.total_count,
             totalPage: null
           }
         })
-      },
-      handleCurrentChange(val) {
-        this.formInline.from = val
-        this.teamData(val)
       },
       handleCurrentChangeStaff(val) {
         this.agentChange(this.formInline.staff, val)
@@ -851,28 +896,27 @@
           statistics_type: this.statistics_type,
           depart_id: this.departId,
           campaign_id: this.formInline.campaignId,
-          time_dimension: this.formInline.time,
-          // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
-          // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
+          time_dimension: this.formInline.timeClone,
+          // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
+          // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone),
           pageNo: val,
           pageSize: this.pageSize[this.currentIndex]
         }
         if (this.timeValueClone[0] && this.timeValueClone[0].getDate()) {
-          params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
+          params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
         }
         if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
-          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
         }
-
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = this.formInline.sub_depart_id[this.currentIndex]
         } else {
           params.agent_id = this.formInline.agent_id[this.currentIndex]
         }
 
-        obreportAgent(params).then(response => {
-          this.pageNo.splice(this.currentIndex, 1, response.data.pageNo)
-          this.pageSize.splice(this.currentIndex, 1, response.data.pageSize)
+        qualityResultReportreportAgent(params).then(response => {
+          this.pageNo.splice(this.currentIndex, 1, Number(response.data.pageNo))
+          this.pageSize.splice(this.currentIndex, 1, Number(response.data.pageSize))
           this.totalCount.splice(this.currentIndex, 1, response.data.total_count)
           this.tableData.splice(this.currentIndex, 1, response.data.result)
         })
@@ -881,24 +925,25 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
+          grade_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
-          time_dimension: this.formInline.time,
+          time_dimension: this.formInline.timeClone,
           agent_id: this.staffAgentid,
-          // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time),
-          // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time),
+          // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
+          // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone),
           pageNo: val,
           pageSize: this.paginationAgent.pageSize
         }
         if (this.timeValueClone[0] && this.timeValueClone[0].getDate()) {
-          params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.time)
+          params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
         }
         if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
-          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.time)
+          params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
         }
-        obreportAgent(params).then(response => {
+        qualityResultReportreportAgent(params).then(response => {
           this.tableDataAgent = response.data.result
-          this.paginationAgent.pageNo = response.data.pageNo
-          this.paginationAgent.pageSize = response.data.pageSize
+          this.paginationAgent.pageNo = Number(response.data.pageNo)
+          this.paginationAgent.pageSize = Number(response.data.pageSize)
           this.paginationAgent.totalCount = response.data.total_count
         })
       },
@@ -912,8 +957,9 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
+          grade_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
-          time_dimension: this.formInline.time,
+          time_dimension: this.formInline.timeClone,
           // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
           // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone),
           pageNo: 1,
@@ -931,9 +977,9 @@
           params.agent_id = this.formInline.agent_id[this.contentIndex]
         }
 
-        obreportAgent(params).then(response => {
-          this.pageNo.push(response.data.pageNo)
-          this.pageSize.push(response.data.pageSize)
+        qualityResultReportreportAgent(params).then(response => {
+          this.pageNo.push(Number(response.data.pageNo))
+          this.pageSize.push(Number(response.data.pageSize))
           this.totalCount.push(response.data.total_count)
           this.tableData.push(response.data.result)
           this.contentIndex++
@@ -944,6 +990,7 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
+          grade_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
@@ -963,10 +1010,10 @@
           params.agent_id = val
         }
 
-        obreportAgent(params).then(response => {
+        qualityResultReportreportAgent(params).then(response => {
           this.tableDataAgent = response.data.result
-          this.paginationAgent.pageNo = response.data.pageNo
-          this.paginationAgent.pageSize = response.data.pageSize
+          this.paginationAgent.pageNo = Number(response.data.pageNo)
+          this.paginationAgent.pageSize = Number(response.data.pageSize)
           this.paginationAgent.totalCount = response.data.total_count
         })
       },
@@ -984,7 +1031,7 @@
         this.chart.setOption({
           backgroundColor: '#344b58',
           title: {
-            text: 'OB报表',
+            text: '质检结果报表',
             x: '20',
             top: '20',
             textStyle: {
@@ -1018,7 +1065,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['新增首拨数量', '新增成功数量', '新增失败数量', '新增预约数量']
+            data: ['质检表单数量', '计分中位数', '计分平均数']
           },
           calculable: true,
           xAxis: [{
@@ -1045,7 +1092,27 @@
           }],
           yAxis: [{
             type: 'value',
-            name: '次数',
+            name: '数量/个',
+            splitLine: {
+              show: false
+            },
+            axisLine: {
+              lineStyle: {
+                color: '#90979c'
+              }
+            },
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              interval: 0
+            },
+            splitArea: {
+              show: false
+            }
+          }, {
+            type: 'value',
+            name: '分',
             splitLine: {
               show: false
             },
@@ -1091,7 +1158,7 @@
             end: 35
           }],
           series: [{
-            name: '新增首拨数量',
+            name: '质检表单数量',
             type: 'bar',
             stack: 'total',
             barMaxWidth: 35,
@@ -1111,32 +1178,16 @@
                 }
               }
             },
-            data: this.new_first_dial_task_count
+            data: this.count
           }, {
-            name: '新增成功数量',
-            type: 'bar',
-            stack: 'total',
-            barMaxWidth: 35,
-            itemStyle: {
-              normal: {
-                color: 'rgba(148,204,209,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.new_success_contact_task_count
-          }, {
-            name: '新增失败数量',
-            type: 'bar',
-            stack: 'total',
+            name: '计分中位数',
+            // type: 'bar',
+            // stack: 'total',
+            // barMaxWidth: 35,
+            type: 'line',
+            // stack: 'total',
+            yAxisIndex: 1,
             symbolSize: 10,
-            barMaxWidth: 35,
             symbol: 'circle',
             itemStyle: {
               normal: {
@@ -1151,17 +1202,20 @@
                 }
               }
             },
-            data: this.new_fail_contact_task_count
+            data: this.median_score
           }, {
-            name: '新增预约数量',
-            type: 'bar',
-            stack: 'total',
-            barMaxWidth: 35,
+            name: '计分平均数',
+            // type: 'bar',
+            // stack: 'total',
+            // barMaxWidth: 35,
+            type: 'line',
+            // stack: 'total',
+            yAxisIndex: 1,
             symbolSize: 10,
             symbol: 'circle',
             itemStyle: {
               normal: {
-                color: 'rgba(252,0,0,1)',
+                color: 'rgba(148,204,209,1)',
                 barBorderRadius: 0,
                 label: {
                   show: true,
@@ -1172,7 +1226,8 @@
                 }
               }
             },
-            data: this.new_appoint_contact_task_count }
+            data: this.avg_score
+          }
           ]
         })
       },
@@ -1182,7 +1237,7 @@
         this.chartStaff.setOption({
           backgroundColor: '#344b58',
           title: {
-            text: this.statistics_type === 'depart' ? '单个时间各部门OB任务报表' : '单个时间各员工OB任务报表',
+            text: this.statistics_type === 'depart' ? '单个时间各部门质检结果报表' : '单个时间各员工质检结果报表',
             x: '20',
             top: '20',
             textStyle: {
@@ -1216,7 +1271,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['新增首拨数量', '新增成功数量', '新增失败数量', '新增预约数量']
+            data: ['质检表单数量', '计分中位数', '计分平均数']
           },
           calculable: true,
           xAxis: [{
@@ -1242,7 +1297,27 @@
           }],
           yAxis: [{
             type: 'value',
-            name: '次数',
+            name: '数量/个',
+            splitLine: {
+              show: false
+            },
+            axisLine: {
+              lineStyle: {
+                color: '#90979c'
+              }
+            },
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              interval: 0
+            },
+            splitArea: {
+              show: false
+            }
+          }, {
+            type: 'value',
+            name: '分',
             splitLine: {
               show: false
             },
@@ -1288,7 +1363,7 @@
             end: 35
           }],
           series: [{
-            name: '新增首拨数量',
+            name: '质检表单数量',
             type: 'bar',
             stack: 'total',
             barMaxWidth: 35,
@@ -1308,33 +1383,16 @@
                 }
               }
             },
-            data: this.new_first_dial_task_countTime
+            data: this.countTime
           }, {
-            name: '新增成功数量',
-            type: 'bar',
-            stack: 'total',
-            barMaxWidth: 35,
-            itemStyle: {
-              normal: {
-                color: 'rgba(148,204,209,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.new_success_contact_task_countTime
-          }, {
-            name: '新增失败数量',
-            type: 'bar',
-            stack: 'total',
-            symbolSize: 10,
-            barMaxWidth: 35,
+            name: '计分中位数',
+            // type: 'bar',
+            // stack: 'total',
+            // barMaxWidth: 35,
+            type: 'line',
             symbol: 'circle',
+            // stack: 'total',
+            yAxisIndex: 1,
             itemStyle: {
               normal: {
                 color: 'rgba(255,144,128,1)',
@@ -1348,17 +1406,19 @@
                 }
               }
             },
-            data: this.new_fail_contact_task_countTime
+            data: this.median_scoreTime
           }, {
-            name: '新增预约数量',
-            type: 'bar',
-            stack: 'total',
-            barMaxWidth: 35,
-            symbolSize: 10,
+            name: '计分平均数',
+            // type: 'bar',
+            // stack: 'total',
+            // barMaxWidth: 35,
+            type: 'line',
             symbol: 'circle',
+            // stack: 'total',
+            yAxisIndex: 1,
             itemStyle: {
               normal: {
-                color: 'rgba(252,0,0,1)',
+                color: 'rgba(148,204,209,1)',
                 barBorderRadius: 0,
                 label: {
                   show: true,
@@ -1369,7 +1429,8 @@
                 }
               }
             },
-            data: this.new_appoint_contact_task_countTime }
+            data: this.avg_scoreTime
+          }
           ]
         })
       },
@@ -1379,7 +1440,7 @@
         this.chartTime.setOption({
           backgroundColor: '#344b58',
           title: {
-            text: this.statistics_type === 'depart' ? '单个部门各时间段OB任务报表' : '单个员工各时间段OB任务报表',
+            text: this.statistics_type === 'depart' ? '单个部门各时间段质检结果报表' : '单个员工各时间段质检结果报表',
             x: '20',
             top: '20',
             textStyle: {
@@ -1413,7 +1474,7 @@
             textStyle: {
               color: '#90979c'
             },
-            data: ['新增首拨数量', '新增成功数量', '新增失败数量', '新增预约数量']
+            data: ['质检表单数量', '计分中位数', '计分平均数']
           },
           calculable: true,
           xAxis: [{
@@ -1439,7 +1500,27 @@
           }],
           yAxis: [{
             type: 'value',
-            name: '次数',
+            name: '数量/个',
+            splitLine: {
+              show: false
+            },
+            axisLine: {
+              lineStyle: {
+                color: '#90979c'
+              }
+            },
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              interval: 0
+            },
+            splitArea: {
+              show: false
+            }
+          }, {
+            type: 'value',
+            name: '分',
             splitLine: {
               show: false
             },
@@ -1485,7 +1566,7 @@
             end: 35
           }],
           series: [{
-            name: '新增首拨数量',
+            name: '质检表单数量',
             type: 'bar',
             stack: 'total',
             barMaxWidth: 35,
@@ -1505,33 +1586,17 @@
                 }
               }
             },
-            data: this.new_first_dial_task_countAgent
+            data: this.countAgent
           }, {
-            name: '新增成功数量',
-            type: 'bar',
-            stack: 'total',
-            barMaxWidth: 35,
-            itemStyle: {
-              normal: {
-                color: 'rgba(148,204,209,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.new_success_contact_task_countAgent
-          }, {
-            name: '新增失败数量',
-            type: 'bar',
-            stack: 'total',
-            symbolSize: 10,
-            barMaxWidth: 35,
+            name: '计分中位数',
+            // type: 'bar',
+            // stack: 'total',
+            // barMaxWidth: 35,
+            type: 'line',
             symbol: 'circle',
+            // stack: 'total',
+            yAxisIndex: 1,
+            symbolSize: 10,
             itemStyle: {
               normal: {
                 color: 'rgba(255,144,128,1)',
@@ -1545,17 +1610,20 @@
                 }
               }
             },
-            data: this.new_fail_contact_task_countAgent
+            data: this.median_scoreAgent
           }, {
-            name: '新增预约数量',
-            type: 'bar',
-            stack: 'total',
-            barMaxWidth: 35,
-            symbolSize: 10,
+            name: '计分平均数',
+            // type: 'bar',
+            // stack: 'total',
+            // barMaxWidth: 35,
+            type: 'line',
             symbol: 'circle',
+            // stack: 'total',
+            yAxisIndex: 1,
+            symbolSize: 10,
             itemStyle: {
               normal: {
-                color: 'rgba(252,0,0,1)',
+                color: 'rgba(148,204,209,1)',
                 barBorderRadius: 0,
                 label: {
                   show: true,
@@ -1566,14 +1634,32 @@
                 }
               }
             },
-            data: this.new_appoint_contact_task_countAgent }
+            data: this.avg_scoreAgent
+          }
           ]
         })
+      },
+      campaignChange(val) {
+        this.productList = []
+        getGradesByCampaignId(val).then(res => {
+          if (res.data.data) {
+            // for (let i = 0; i < this.allProductList.length; i++) {
+            //   if (res.data.data.indexOf(this.allProductList[i].productId) !== -1) {
+            //     this.productList.push(this.allProductList[i])
+            //   }
+            // }
+            this.productList = res.data.data
+          }
+        })
+      },
+      time_dimensionChange(val) {
+        this.timeValue = []
       },
       timeChange(val) {
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
+          grade_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           time: val
@@ -1592,19 +1678,16 @@
           params.agent_id = this.formInline.agent_id.join(',')
         }
 
-        obreportAgent(params).then(response => {
+        qualityResultReportreportAgent(params).then(response => {
           if (response.data.result && response.data.result.length) {
-            this.new_first_dial_task_countTime = response.data.result.map(function(item, index) {
-              return item.new_first_dial_task_count
+            this.countTime = response.data.result.map(function(item, index) {
+              return item.count
             })
-            this.new_success_contact_task_countTime = response.data.result.map(function(item, index) {
-              return item.new_success_contact_task_count
+            this.median_scoreTime = response.data.result.map(function(item, index) {
+              return item.median
             })
-            this.new_fail_contact_task_countTime = response.data.result.map(function(item, index) {
-              return item.new_fail_contact_task_count
-            })
-            this.new_appoint_contact_task_countTime = response.data.result.map(function(item, index) {
-              return item.new_appoint_contact_task_count
+            this.avg_scoreTime = response.data.result.map(function(item, index) {
+              return item.avg_score
             })
             this.initChart1()
           }
@@ -1614,6 +1697,7 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
+          grade_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
@@ -1633,19 +1717,16 @@
           params.agent_id = val
         }
 
-        obreportAgent(params).then(response => {
+        qualityResultReportreportAgent(params).then(response => {
           if (response.data.result && response.data.result.length) {
-            this.new_first_dial_task_countAgent = response.data.result.map(function(item, index) {
-              return item.new_first_dial_task_count
+            this.countAgent = response.data.result.map(function(item, index) {
+              return item.count
             })
-            this.new_success_contact_task_countAgent = response.data.result.map(function(item, index) {
-              return item.new_success_contact_task_count
+            this.avg_scoreAgent = response.data.result.map(function(item, index) {
+              return item.avg_score
             })
-            this.new_fail_contact_task_countAgent = response.data.result.map(function(item, index) {
-              return item.new_fail_contact_task_count
-            })
-            this.new_appoint_contact_task_countAgent = response.data.result.map(function(item, index) {
-              return item.new_appoint_contact_task_count
+            this.median_scoreAgent = response.data.result.map(function(item, index) {
+              return item.median
             })
             this.agentTime = response.data.result.map(function(item, index) {
               return item.time_dimension
@@ -1653,8 +1734,8 @@
             this.initChart2()
           }
           this.paginationStaffPage = {
-            pageNo: response.data.pageNo,
-            pageSize: response.data.pageSize,
+            pageNo: Number(response.data.pageNo),
+            pageSize: Number(response.data.pageSize),
             totalCount: response.data.total_count,
             totalPage: null
           }
@@ -1664,6 +1745,7 @@
         const params = {
           statistics_type: this.statistics_type,
           depart_id: this.departId,
+          grade_id: this.formInline.product,
           campaign_id: this.formInline.campaignId,
           time_dimension: this.formInline.timeClone,
           // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
@@ -1681,52 +1763,47 @@
           return
         }
 
-        if (this.timeValueClone[0]) {
+        if (this.timeValueClone[0] && this.timeValueClone[0].getDate()) {
           params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
         }
-        if (this.timeValueClone[1]) {
+        if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
           params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
         }
-
         if (this.statistics_type === 'depart') {
           params.sub_depart_id = this.formInline.sub_depart_id.join(',')
         } else {
           params.agent_id = this.formInline.agent_id.join(',')
         }
 
-        obstatistics(params).then(response => {
+        qualityResultReportstatistics(params).then(response => {
           this.obj = response.data
           this.tableDataTime1 = this.obj.result
-
-          if (this.obj.result && this.obj.result.length) {
-            this.new_first_dial_task_count = this.obj.result.map(function(item, index) {
-              return item.new_first_dial_task_count
+          if (response.data.result && this.obj.result.length) {
+            this.count = this.obj.result.map(function(item, index) {
+              return item.count
             })
-            this.new_success_contact_task_count = this.obj.result.map(function(item, index) {
-              return item.new_success_contact_task_count
+            this.avg_score = this.obj.result.map(function(item, index) {
+              return item.avg_score
             })
-            this.new_fail_contact_task_count = this.obj.result.map(function(item, index) {
-              return item.new_fail_contact_task_count
-            })
-            this.new_appoint_contact_task_count = this.obj.result.map(function(item, index) {
-              return item.new_appoint_contact_task_count
+            this.median_score = this.obj.result.map(function(item, index) {
+              return item.median
             })
             this.initChart()
           }
-          if (this.obj.time_dimension_data) {
-            this.timeOptions = response.data.time_dimension_data
-            this.formInline.time_dimension = this.timeOptions[0]
-          }
+          this.timeOptions = response.data.result.map(function(item, index) {
+            return item.time_dimension
+          })
+          this.formInline.time_dimension = this.timeOptions[0]
           this.pagination = {
-            pageNo: response.data.pageNo,
-            pageSize: response.data.pageSize,
+            pageNo: Number(response.data.pageNo),
+            pageSize: Number(response.data.pageSize),
             totalCount: response.data.total_count,
             totalPage: null
           }
           if (val !== 'searchEvery') {
             this.paginationStatics = {
-              pageNo: response.data.pageNo,
-              pageSize: response.data.pageSize,
+              pageNo: Number(response.data.pageNo),
+              pageSize: Number(response.data.pageSize),
               totalCount: response.data.total_count,
               totalPage: null
             }
@@ -1751,7 +1828,6 @@
           this.timeValue[0] = this.timeValue1 ? this.timeValue1[0] : null
           this.timeValue[1] = this.timeValue1 ? this.timeValue1[1] : null
         }
-
         if (this.timeValue && this.timeValue[0] && this.timeValue[0].getDate() && this.timeValue[1] && this.timeValue[1].getDate() && (this.timeValue[0] > this.timeValue[1])) {
           Message({
             message: '开始时间不能大于结束时间',
@@ -1759,26 +1835,29 @@
             duration: 3 * 1000
           })
         } else {
-          this.formInline.campaignId = this.formInline.campaignIdClone
-          this.formInline.timeClone = this.formInline.time
           this.timeValueClone[0] = this.timeValue ? this.timeValue[0] : null
           this.timeValueClone[1] = this.timeValue ? this.timeValue[1] : null
+          this.formInline.timeClone = this.formInline.time
           this.pageNo = []
           this.pageSize = []
           this.totalCount = []
+          this.formInline.product = this.formInline.productClone
+          this.formInline.campaignId = this.formInline.campaignIdClone
 
           const params = {
             statistics_type: this.statistics_type,
             depart_id: this.departId,
+            grade_id: this.formInline.product,
             campaign_id: this.formInline.campaignId,
-            time_dimension: this.formInline.timeClone
+            time_dimension: this.formInline.timeClone,
+            sub_depart_id: this.formInline.sub_depart_id.join(',')
             // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
             // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
           }
-          if (this.timeValueClone[0]) {
+          if (this.timeValueClone[0] && this.timeValueClone[0].getDate()) {
             params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
           }
-          if (this.timeValueClone[1]) {
+          if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
             params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
           }
           if (this.statistics_type === 'depart') {
@@ -1786,8 +1865,7 @@
           } else {
             params.agent_id = this.formInline.agent_id.join(',')
           }
-
-          obtotalAgent(params).then(response => {
+          qualityResultReporttotalAgent(params).then(response => {
             this.tableDataAgent1 = response.data.result
             this.tableDataAgent2 = response.data.total_result
           })
@@ -1795,7 +1873,7 @@
         }
       },
       searchEvery(val) {
-        if (this.timeValueClone && this.timeValueClone[0].getDate() && this.timeValueClone[1].getDate() && (this.timeValueClone[0] > this.timeValueClone[1])) {
+        if (this.timeValue && this.timeValue[0] && this.timeValue[0].getDate() && this.timeValue[1] && this.timeValue[1].getDate() && (this.timeValue[0] > this.timeValue[1])) {
           Message({
             message: '开始时间不能大于结束时间',
             type: 'error',
@@ -1809,23 +1887,26 @@
           const params = {
             statistics_type: this.statistics_type,
             depart_id: this.departId,
+            grade_id: this.formInline.product,
             campaign_id: this.formInline.campaignId,
-            time_dimension: this.formInline.timeClone
+            time_dimension: this.formInline.timeClone,
+            sub_depart_id: this.formInline.sub_depart_id.join(',')
             // start_time: this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone),
             // end_time: this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
           }
-          if (this.timeValueClone) {
+          if (this.timeValueClone[0] && this.timeValueClone[0].getDate()) {
             params.start_time = this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone)
+          }
+          if (this.timeValueClone[1] && this.timeValueClone[1].getDate()) {
             params.end_time = this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)
           }
-
           if (this.statistics_type === 'depart') {
             params.sub_depart_id = this.formInline.sub_depart_id.join(',')
           } else {
             params.agent_id = this.formInline.agent_id.join(',')
           }
 
-          obtotalAgent(params).then(response => {
+          qualityResultReporttotalAgent(params).then(response => {
             this.tableDataAgent1 = response.data.result
             this.tableDataAgent2 = response.data.total_result
           })
@@ -1852,6 +1933,7 @@
             duration: 3 * 1000
           })
         } else {
+          this.formInline.product = this.formInline.productClone
           this.formInline.campaignId = this.formInline.campaignIdClone
           this.timeValueClone[0] = this.timeValue ? this.timeValue[0] : null
           this.timeValueClone[1] = this.timeValue ? this.timeValue[1] : null
@@ -1864,11 +1946,9 @@
         this.agentChange(val)
         this.searchAgentStaff(val)
       },
-      time_dimensionChange(val) {
-        this.timeValue = []
-      },
       reset() {
         this.formInline.campaignIdClone = ''
+        this.formInline.productClone = ''
         this.formInline.from = 1
         this.formInline.time = 'day'
         this.timeValue = [new Date(new Date(new Date().toLocaleDateString()).getTime() - 7 * 24 * 3600 * 1000), new Date(new Date(new Date().toLocaleDateString()).getTime())]
