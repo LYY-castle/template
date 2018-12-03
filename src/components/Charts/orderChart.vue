@@ -672,6 +672,7 @@
         console.log('WebSocket连接发生错误')
       },
       websocketonmessage(e) { // 数据接收
+        console.log(e)
         if (e) {
           if (this.getStartTimestamp(Date.parse(this.timeValueClone[0]), this.formInline.timeClone) < Date.parse(new Date()) < this.getEndTimestamp(Date.parse(this.timeValueClone[1]), this.formInline.timeClone)) {
             // if (this.departPermission) {
