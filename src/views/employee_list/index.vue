@@ -9,7 +9,7 @@
           <el-form-item label="员工工号：">
             <el-input placeholder="员工工号（上限45字符）" v-model="formInline.angentId" maxlength="45"></el-input>
           </el-form-item>
-          <el-form-item label="所属组织：">
+          <el-form-item label="所属组织：" v-if="$route.params.id === ':id'">
             <el-select v-model="formInline.departName" placeholder="所属组织">
               <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
             </el-select>
@@ -336,6 +336,7 @@
       }
       return {
         staffData: {},
+        tempRoute: {},
         options: provinceAndCityData,
         timeValue: [],
         pagination: {
@@ -553,6 +554,10 @@
           }
         })
       },
+      setTagsViewTitle() {
+        const route = Object.assign({}, this.tempRoute, { title: this.$route.params.id === ':id' ? this.tempRoute.meta.title : this.tempRoute.meta.title + '-' + sessionStorage.getItem(this.$route.params.id) })
+        this.$store.dispatch('updateVisitedView', route)
+      },
       resetForm(formName) {
         this.$refs[formName].resetFields()
       },
@@ -718,10 +723,10 @@
       }
     },
     created() {
-      if (this.$route.query.departName) {
-        query({ departName: this.$route.query.departName }).then(response => {
+      if (this.$route.params.id !== ':id') {
+        query({ departName: sessionStorage.getItem(this.$route.params.id) }).then(response => {
           this.queryStaff(response)
-          this.formInline.departName = this.$route.query.departName
+          this.formInline.departName = sessionStorage.getItem(this.$route.params.id)
           this.pagination = response.data.pageInfo
         })
       } else {
@@ -736,8 +741,29 @@
         this.visibleDepts = response1.data.data
       })
     },
+    mounted() {
+      this.tempRoute = Object.assign({}, this.$route)
+      this.setTagsViewTitle()
+    },
     activated() {
-      this.searchStaff(this.formInline)
+      this.setTagsViewTitle()
+      if (this.$route.params.id !== ':id') {
+        query({ departName: sessionStorage.getItem(this.$route.params.id) }).then(response => {
+          this.queryStaff(response)
+          this.formInline.departName = sessionStorage.getItem(this.$route.params.id)
+          this.pagination = response.data.pageInfo
+        })
+      } else {
+        query({ pageNo: 1 }).then(response => {
+          this.queryStaff(response)
+        })
+      }
+      queryDepts().then(response => {
+        this.regionOptions = response.data.data
+      })
+      getAllVisibleDepts().then(response1 => {
+        this.visibleDepts = response1.data.data
+      })
     }
     // watch: {
     //   $route(to, pageNo) {

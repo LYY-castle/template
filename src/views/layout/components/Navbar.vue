@@ -1,26 +1,5 @@
 <template>
   <el-menu class="navbar" mode="horizontal">
-    <!-- <div> -->
-      <!-- <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
-     <breadcrumb></breadcrumb>
-      <el-dropdown class="avatar-container" trigger="click">
-        <div class="avatar-wrapper">
-         <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'">
-          <span>10003</span>
-          <i class="el-icon-caret-bottom"></i>
-        </div>
-        <el-dropdown-menu class="user-dropdown" slot="dropdown">
-          <router-link class="inlineBlock" to="/dashboard">
-            <el-dropdown-item>
-              返回顶层
-            </el-dropdown-item>
-          </router-link>
-          <el-dropdown-item divided>
-            <span @click="logout" style="display:block;">注销</span>
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown> -->
-    <!-- </div> -->
   <el-row>
     <!-- logo及按钮 -->
     <div class="navbar-form-container">
@@ -143,25 +122,27 @@
           <!-- <span style="float:left" class="line"></span> -->
 
         </div>
-        <div style="float:right;margin-right:3px;" v-if="havesoftphone">
-          <!-- 微信 -->
-          <el-badge v-model="msgNum_wechat" class="item wechat" :max="999" :hidden="!msgNum_wechat">
-            <el-tooltip placement="bottom">
-              <div slot="content">{{wechatState=="0"?"示忙":"就绪"}}</div>
-              <el-dropdown trigger="click" placement="bottom" @command="changeWechatState" >
-                <el-button type="info" circle><svg-icon icon-class="wechat" class="icon-size"/></el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item>
-                    <div @click="toWeChat">
-                      进入微信聊天
-                    </div>
-                  </el-dropdown-item>
-                  <el-dropdown-item command="1">就绪</el-dropdown-item>
-                  <el-dropdown-item command="0">示忙</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </el-tooltip>
-          </el-badge>
+        <div style="margin-right:2px;" v-if="havesoftphone">
+          <!-- 用户 -->
+          <el-tooltip placement="bottom" class="user">
+            <div slot="content">用户信息</div>
+            <el-dropdown @command="handleCommand" trigger="click" >
+              <el-button type="info" circle><svg-icon icon-class="user" class="icon-size"/></el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item disabled>
+                  <span><b>工号：</b>{{userInfo.staffId}}</span><br/>
+                  <span><b>用户：</b>{{userInfo.userName}}</span><br/>
+                  <span><b>部门：</b>{{userInfo.departName}}</span><br/>
+                </el-dropdown-item>
+                <el-dropdown-item style="text-align:center" divided command="changePWD">
+                  <i class="el-icon-edit-outline">  修改密码</i>
+                </el-dropdown-item>
+                <el-dropdown-item style="text-align:center" divided command="logout">
+                  <i class="el-icon-circle-close">  注销用户</i>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </el-tooltip>
           <!-- 有未读信息 -->
           <div v-show="msgNum_all > 0" class="message">
             <el-badge v-model="msgNum_all" class="item" :max="99">
@@ -188,26 +169,24 @@
               <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()" class="icon-size"></el-button>
             </el-tooltip>
           </div>
-            <!-- 用户 -->
-            <el-tooltip placement="bottom" class="user">
-              <div slot="content">用户信息</div>
-              <el-dropdown @command="handleCommand" trigger="click" >
-                <el-button type="info" circle><svg-icon icon-class="user" class="icon-size"/></el-button>
+          <!-- 微信 -->
+          <el-badge v-model="msgNum_wechat" class="item wechat" :max="999" :hidden="!msgNum_wechat">
+            <el-tooltip placement="bottom">
+              <div slot="content">{{wechatState=="0"?"示忙":"就绪"}}</div>
+              <el-dropdown trigger="click" placement="bottom" @command="changeWechatState" >
+                <el-button type="info" circle><svg-icon icon-class="wechat" class="icon-size"/></el-button>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item disabled>
-                    <span><b>工号：</b>{{userInfo.staffId}}</span><br/>
-                    <span><b>用户：</b>{{userInfo.userName}}</span><br/>
-                    <span><b>部门：</b>{{userInfo.departName}}</span><br/>
+                  <el-dropdown-item>
+                    <div @click="toWeChat">
+                      进入微信聊天
+                    </div>
                   </el-dropdown-item>
-                  <el-dropdown-item style="text-align:center" divided command="changePWD">
-                    <i class="el-icon-edit-outline">  修改密码</i>
-                  </el-dropdown-item>
-                  <el-dropdown-item style="text-align:center" divided command="logout">
-                    <i class="el-icon-circle-close">  注销用户</i>
-                  </el-dropdown-item>
+                  <el-dropdown-item command="1">就绪</el-dropdown-item>
+                  <el-dropdown-item command="0">示忙</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </el-tooltip>
+          </el-badge>
           </div>
         <el-row v-if="!havesoftphone" style="height:75px;">
           <el-col :span="7" class="userInfo" style="float:right;margin-top:-7px;">
@@ -1798,18 +1777,18 @@ export default {
   width:270px;
 }
 .message{
-  float:left;
+  float:right;
   
   margin-right:25px;
   margin-top:9px;
 }
 .user{
-  float:left;
+  float:right;
   margin-right:25px;
   margin-top:10px;
 }
 .wechat{
-  float:left;
+  float:right;
   margin-left:50px;
   margin-right:25px;
   margin-top:10px;
@@ -1850,17 +1829,17 @@ export default {
 }
  @media screen and (min-width: 1281px) and (max-width:1367px){
   .message{
-    float:left;
+    float:right;
     margin-right:5px;
     margin-top:18px;
   }
   .user{
-    float:left;
+    float:right;
     margin-right:5px;
     margin-top:19px;
   }
   .wechat{
-    float:left;
+    float:right;
     margin-left:22px;
     margin-right:5px;
     margin-top:19px;

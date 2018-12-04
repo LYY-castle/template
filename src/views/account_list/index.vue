@@ -17,7 +17,7 @@
               <el-option label="未启用" value="2"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="所属组织：">
+          <el-form-item label="所属组织：" v-if="$route.params.id === ':id'">
             <el-select v-model="formInline.departName" placeholder="所属组织">
               <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
             </el-select>
@@ -264,6 +264,7 @@ export default {
   name: 'account_list',
   data() {
     return {
+      tempRoute: {},
       rule: {
         checkRoleData2: [
           { required: true, message: '请选择角色', trigger: 'change' }
@@ -367,6 +368,8 @@ export default {
     }
   },
   mounted() {
+    this.tempRoute = Object.assign({}, this.$route)
+    this.setTagsViewTitle()
     this.getRoles()
   },
   methods: {
@@ -446,12 +449,12 @@ export default {
             message: '赋予用户角色成功',
             type: 'success'
           })
-          if (this.$route.query.departName) {
-            this.formInline.departName = this.$route.query.departName
+          if (this.$route.params.id !== ':id') {
+            this.formInline.departName = sessionStorage.getItem(this.$route.params.id)
             findAllAccount(this.formInline).then(
               response => {
                 this.queryStaff(response)
-                this.formInline.departName = this.$route.query.departName
+                this.formInline.departName = sessionStorage.getItem(this.$route.params.id)
                 this.pagination = response.data.pageInfo
               }
             )
@@ -845,14 +848,18 @@ export default {
       queryDepts().then(response => {
         this.regionOptions = response.data.data
       })
+    },
+    setTagsViewTitle() {
+      const route = Object.assign({}, this.tempRoute, { title: this.$route.params.id === ':id' ? this.tempRoute.meta.title : this.tempRoute.meta.title + '-' + sessionStorage.getItem(this.$route.params.id) })
+      this.$store.dispatch('updateVisitedView', route)
     }
   },
   created() {
-    if (this.$route.query.departName) {
-      findAllAccount({ departName: this.$route.query.departName }).then(
+    if (this.$route.params.id !== ':id') {
+      findAllAccount({ departName: sessionStorage.getItem(this.$route.params.id) }).then(
         response => {
           this.queryStaff(response)
-          this.formInline.departName = this.$route.query.departName
+          this.formInline.departName = sessionStorage.getItem(this.$route.params.id)
           this.pagination = response.data.pageInfo
         }
       )
@@ -864,7 +871,21 @@ export default {
     this.refreshOrganTo()
   },
   activated() {
-    this.searchStaff(this.formInline)
+    this.setTagsViewTitle()
+    if (this.$route.params.id !== ':id') {
+      findAllAccount({ departName: sessionStorage.getItem(this.$route.params.id) }).then(
+        response => {
+          this.queryStaff(response)
+          this.formInline.departName = sessionStorage.getItem(this.$route.params.id)
+          this.pagination = response.data.pageInfo
+        }
+      )
+    } else {
+      findAllAccount({ departName: '' }).then(response => {
+        this.queryStaff(response)
+      })
+    }
+    this.refreshOrganTo()
   }
   // watch: {
   //   $route(to, from) {
