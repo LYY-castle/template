@@ -87,6 +87,7 @@
         <el-form-item>
           <el-button type="primary" @click="search('search')">查询</el-button>
           <el-button type="danger" @click="reset">重置</el-button>
+          <el-button type="success"><a href="http://node21:9800/crm/report/export/CTI%E6%8A%A5%E8%A1%A8%E6%95%B0%E6%8D%AE_20181128155302.xlsx" download>下载</a></el-button>
         </el-form-item>
       </el-form>
     </el-row>
