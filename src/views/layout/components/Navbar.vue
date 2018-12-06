@@ -322,6 +322,7 @@ import {
 } from '@/utils/tools'
 import cti from '@/utils/ctijs'
 import getDynamicRouter from '@/router/dynamic-router'
+import WebsocketHeartbeatJs from 'websocket-heartbeat-js'
 var vm = null
 var interval = null
 export default {
@@ -1515,7 +1516,6 @@ export default {
             }
           }
         }
-        console.log(this.customerInfo)
         this.$store.commit('SET_WECHATCUSTOMERINFO', this.customerInfo)
         localStorage.setItem('customerInfos', JSON.stringify(this.customerInfo))
       })
@@ -1576,7 +1576,16 @@ export default {
     this.firstgetUnreadMessages(agentId)
 
     this.socket_nofitication = new WebSocket(`${process.env.TUI_WS_SERVERURL}/realtime_notification_${agentId}`)
-    this.socket_wechat = new WebSocket(`${process.env.TUI_WS_SERVERURL}/realtime_wechat_${agentId}`)
+    // this.socket_wechat = new WebSocket(`${process.env.TUI_WS_SERVERURL}/realtime_wechat_${agentId}`)
+    // 微信websocket
+    const options = {
+      url: `${process.env.TUI_WS_SERVERURL}/realtime_wechat_${agentId}`,
+      pingTimeout: 300000, // 每隔5min发送一次心跳
+      pongTimeout: 10000, // 10s内若没收到后端返回的消息就认为是断开连接
+      reconnectTimeout: 2000, // 尝试重连的时间间隔
+      pingMsg: 'ws_heart_beat' // ping内容
+    }
+    this.socket_wechat = new WebsocketHeartbeatJs(options)
 
     this.socket_nofitication.onopen = function(openEvent) {
       console.log(`Connect tui webSocket(notification) addr = ${process.env.TUI_WS_SERVERURL}/realtime_notification_${agentId} successfully.`)
@@ -1634,7 +1643,11 @@ export default {
     }
     // 收到微信消息时
     vm.socket_wechat.onmessage = function(messageEvent) {
-      vm.$root.eventHub.$emit('RECEIVE_MESSAGES', messageEvent.data)
+      if (messageEvent.data === 'ws_heart_beat') {
+        console.log('ws_wechat保持连接中...' + new Date())
+      } else {
+        vm.$root.eventHub.$emit('RECEIVE_MESSAGES', messageEvent.data)
+      }
     }
     vm.socket_nofitication.onclose = function(closeEvent) {
       console.log('Close tui webSocket(notification) client successfully.')
@@ -1643,6 +1656,11 @@ export default {
     vm.socket_wechat.onclose = function(closeEvent) {
       console.log('Close tui webSocket(wechat) client successfully.')
     }
+
+    vm.socket_wechat.onerror = () => {
+      console.log('ws_wechat connect onerror')
+    }
+
     this.$root.eventHub.$on('CHANGE_STATUS', () => {
       this.firstgetUnreadMessages(agentId)
     })
