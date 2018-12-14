@@ -26,7 +26,7 @@ export default (menuData) => {
       }
       for (let j = 0; j < data[i].sub_menus.length; j++) {
         children[j] = {}
-        if (data[i].sub_menus[j].template === 'organization_list') {
+        if (data[i].sub_menus[j].template === 'organization_list' || data[i].sub_menus[j].template === 'employee_list' || data[i].sub_menus[j].template === 'account_list') {
           children[j].path = data[i].sub_menus[j].template + '/:id'
         } else {
           children[j].path = data[i].sub_menus[j].template

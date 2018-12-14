@@ -531,14 +531,16 @@
       handleClickStaff(row) {
         this.$router.push({
           name: 'employee_list',
-          query: { departName: row.departName }
+          params: { id: row.id }
         })
+        sessionStorage.setItem(row.id, row.departName)
       },
       handleClickUser(row) {
         this.$router.push({
           name: 'account_list',
-          query: { departName: row.departName }
+          params: { id: row.id }
         })
+        sessionStorage.setItem(row.id, row.departName)
       },
       handleClick(row) {
         this.dialogFormVisibleReverse = true
