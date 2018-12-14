@@ -162,12 +162,12 @@
       title="活动信息修改"
       :visible.sync="editVisible"
       append-to-body>
-      <el-form label-width="100px" :model="campaignDetail" ref="editCampaign" :rules="rule">
+      <el-form label-width="108px" :model="campaignDetail" ref="editCampaign" :rules="rule">
         <el-form-item label="活动名称" prop="campaignName">
           <el-input v-model="campaignDetail.campaignName" size="small" placeholder="活动名称（限长128字符）" maxlength="128"></el-input>
         </el-form-item>
         <el-form-item label="活动类型" prop="campaignTypeCode">
-          <el-select v-model="campaignDetail.campaignTypeCode" placeholder="请选择产品" style="width: 100%;">
+          <el-select v-model="campaignDetail.campaignTypeCode" placeholder="请选择活动类型" style="width: 100%;">
             <el-option
                 v-for="item in campaignTypes"
                 :key="item.code"
@@ -191,6 +191,28 @@
         </el-form-item>
         <el-form-item label="拨打次数" prop="canContactNum">
           <el-input v-model="campaignDetail.canContactNum" size="small" placeholder="单位：次"></el-input>
+        </el-form-item>
+        <el-form-item label="拨打数量" prop="callNum" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+          <el-input v-model="campaignDetail.callNum" size="small" placeholder="单位：人"></el-input>
+        </el-form-item>
+        <el-form-item label="拨打间隔" prop="callSpacing" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+          <el-input v-model="campaignDetail.callSpacing" size="small" placeholder="单位：分"></el-input>
+        </el-form-item>
+        <el-form-item label="外呼起始时间" prop="outCallTimeStart" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+          <el-time-picker
+            arrow-control
+            value-format='HH:mm:ss'
+            v-model="campaignDetail.outCallTimeStart"
+            placeholder="请选择外呼起始时间">
+          </el-time-picker>
+        </el-form-item>
+        <el-form-item label="外呼结束时间" prop="outCallTimeEnd" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+          <el-time-picker
+            arrow-control
+            value-format='HH:mm:ss'
+            v-model="campaignDetail.outCallTimeEnd"
+            placeholder="请选择外呼结束时间">
+          </el-time-picker>
         </el-form-item>
         <!-- <el-form-item label="活动状态:" prop="status">
           <el-radio-group v-model="campaignDetail.status" size="small">
@@ -289,7 +311,7 @@
       title="新建活动"
       :visible.sync="addVisible"
       append-to-body>
-      <el-form :rules="rule" :model="campaignDetail" ref="campaignDetail" label-width="100px">
+      <el-form :rules="rule" :model="campaignDetail" ref="campaignDetail" label-width="108px">
         <el-form-item label="活动名称" prop="campaignName" >
           <el-input v-model="campaignDetail.campaignName" size="small" placeholder="活动名称（限长128字符）" maxlength="128"></el-input>
         </el-form-item>
@@ -318,6 +340,28 @@
         </el-form-item>
         <el-form-item label="拨打次数" prop="canContactNum">
           <el-input v-model="campaignDetail.canContactNum" size="small" placeholder="单位：次"></el-input>
+        </el-form-item>
+        <el-form-item label="拨打数量" prop="callNum" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+          <el-input v-model="campaignDetail.callNum" size="small" placeholder="单位：人"></el-input>
+        </el-form-item>
+        <el-form-item label="拨打间隔" prop="callSpacing" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+          <el-input v-model="campaignDetail.callSpacing" size="small" placeholder="单位：分"></el-input>
+        </el-form-item>
+        <el-form-item label="外呼起始时间" prop="outCallTimeStart" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+          <el-time-picker
+            arrow-control
+            value-format='HH:mm:ss'
+            v-model="campaignDetail.outCallTimeStart"
+            placeholder="请选择外呼起始时间">
+          </el-time-picker>
+        </el-form-item>
+        <el-form-item label="外呼结束时间" prop="outCallTimeEnd" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+          <el-time-picker
+            arrow-control
+            value-format='HH:mm:ss'
+            v-model="campaignDetail.outCallTimeEnd"
+            placeholder="请选择外呼结束时间">
+          </el-time-picker>
         </el-form-item>
         <!-- <el-form-item label="活动状态" prop="status">
           <el-radio-group v-model="campaignDetail.status" size="small">
@@ -714,6 +758,50 @@ export default {
         callback()
       }
     }
+    // 拨打数量不能超过9999次
+    var checkCallNum = (eule, value, callback) => {
+      if (value > 9999) {
+        return callback(new Error('拨打数量不能超过9999人'))
+      }
+      if (value < 0) {
+        return callback(new Error('拨打数量不能为负数'))
+      }
+      if (!/^\d+$/.test(value)) {
+        return callback(new Error('请输入数字'))
+      } else {
+        callback()
+      }
+    }
+    // 拨打间隔不能超过9999分钟
+    var checkCallSpacing = (eule, value, callback) => {
+      if (value > 9999) {
+        return callback(new Error('拨打间隔不能超过9999分钟'))
+      }
+      if (value < 0) {
+        return callback(new Error('拨打间隔不能为负数'))
+      }
+      if (!/^\d+$/.test(value)) {
+        return callback(new Error('请输入数字'))
+      } else {
+        callback()
+      }
+    }
+    // 外呼起始时间不能大于外呼结束时间
+    var checkTimeStart = (eule, value, callback) => {
+      if (this.campaignDetail.outCallTimeEnd) {
+        if (new Date(value).getTime() > new Date(this.campaignDetail.outCallTimeEnd).getTime()) {
+          return callback(new Error('外呼起始时间不能大于外呼结束时间'))
+        }
+      }
+    }
+    // 外呼结束时间不能小于外呼起始时间
+    var checkTimeEnd = (eule, value, callback) => {
+      if (this.campaignDetail.outCallTimeStart) {
+        if (new Date(value).getTime() < new Date(this.campaignDetail.outCallTimeStart).getTime()) {
+          return callback(new Error('外呼结束时间不能小于外呼起始时间'))
+        }
+      }
+    }
     return {
       rule: {
         campaignName: [
@@ -727,6 +815,22 @@ export default {
         ],
         products: [
           { required: true, message: '请选择产品', trigger: 'change' }
+        ],
+        callNum: [
+          { required: true, message: '请输入拨打人数', trigger: 'change' },
+          { validator: checkCallNum, trigger: 'change' }
+        ],
+        callSpacing: [
+          { required: true, message: '请输入拨打间隔时间', trigger: 'change' },
+          { validator: checkCallSpacing, trigger: 'change' }
+        ],
+        outCallTimeStart: [
+          { required: true, message: '请选择外呼起始时间', trigger: 'change' },
+          { validator: checkTimeStart, trigger: 'change' }
+        ],
+        outCallTimeEnd: [
+          { required: true, message: '请选择外呼结束时间', trigger: 'change' },
+          { validator: checkTimeEnd, trigger: 'change' }
         ],
         listExpiryDate: [
           { required: true, message: '请输入名单有效期', trigger: 'change' },
@@ -806,6 +910,11 @@ export default {
         pageNo: 1
       },
       campaignDetail: {
+        callNum: '', // 自动外呼-一次拨打数量
+        callSpacing: '', // 自动外呼-拨打间隔分钟
+        outCallTimeStart: '', // 自动外呼-时间段开始
+        outCallTimeEnd: '', // 自动外呼-时间段结束
+        outCallFlag: '', // 自动外呼-标志 0关闭 1开启
         campaignTypeCode: '',
         campaignTypeInfo: {},
         productIds: [],
@@ -1041,12 +1150,17 @@ export default {
           if (response.data.code === 0) {
             this.campaignDetail = response.data.data
             this.campaignDetail.departId = parseInt(this.campaignDetail.departId)
+            if (this.campaignDetail.outCallTimeStart) {
+              this.campaignDetail.outCallTimeStart = this.campaignDetail.outCallTimeStart.split(' ')[1]
+            }
+            if (this.campaignDetail.outCallTimeEnd) {
+              this.campaignDetail.outCallTimeEnd = this.campaignDetail.outCallTimeEnd.split(' ')[1]
+            }
             this.$set(this.campaignDetail, 'campaignTypeCode', this.campaignDetail.campaignTypeInfo.code)
           }
           // 遍历查找对应产品名称
           this.productName = []
           this.departName = ''
-          console.log('8585:', this.campaignDetail.products)
           for (var i = 0; i < this.campaignDetail.products.length; i++) {
             list = this.campaignDetail.products[i]
             for (var j = 0; j < this.productData.length; j++) {
@@ -1156,6 +1270,10 @@ export default {
     addCampaign(campaignDetail) {
       if (!this.validate) {
         return false
+      }
+      if (campaignDetail.campaignTypeCode === 'AUTO_OUT_CALL') {
+        // 默认设置自动外呼标志为开启
+        campaignDetail.outCallFlag = '1'
       }
       campaignDetail.productIds = campaignDetail.products
       campaignDetail.status = '1'
