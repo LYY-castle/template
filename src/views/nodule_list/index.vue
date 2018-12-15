@@ -500,8 +500,8 @@ export default {
         .then(response => {
           if (response.data.code === 0) {
             this.summaryDetail = response.data.data
-            this.setTree1 = response.data.data.summaryDetailInfos
-            this.setTree2 = response.data.data.summaryDetailInfos
+            this.setTree1 = response.data.data.summaryDetailInfos ? response.data.data.summaryDetailInfos : []
+            this.setTree2 = response.data.data.summaryDetailInfos ? response.data.data.summaryDetailInfos : []
             console.log(this.summaryDetail)
           }
         })
@@ -631,15 +631,15 @@ export default {
     // 新建节点
     handleAddTop() {
       this.setTree.push({
-        id: ++this.maxexpandId,
-        name: '新建小结',
+        pid: ++this.maxexpandId,
+        name: '新增父节点',
         // pid: '',
         isEdit: false,
         summaryDetailInfos: []
       })
       this.setTree2.push({
-        id: ++this.maxexpandId,
-        name: '新建小结',
+        pid: ++this.maxexpandId,
+        name: '新增父节点',
         // pid: '',
         isEdit: false,
         summaryDetailInfos: []
@@ -656,8 +656,8 @@ export default {
       }
       // 新建数据
       d.summaryDetailInfos.push({
-        id: ++this.maxexpandId,
-        name: '新建小结',
+        pid: ++this.maxexpandId,
+        name: '新增子节点',
         // pid: d.id,
         isEdit: false,
         summaryDetailInfos: []
