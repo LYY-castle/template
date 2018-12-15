@@ -239,7 +239,7 @@
             align="center"
             label="操作"
             :show-overflow-tooltip="true"
-            width="100">
+            width="150">
           <template slot-scope="scope">
             <a v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb)" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);" size="small" type="text">
               <img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</a>
@@ -555,7 +555,7 @@
       <div style="text-align:center">
         <el-checkbox v-if="showAutoDial===true" checked="checked" v-model="autoDialNext">完成后显示下一个客户</el-checkbox>
         <el-checkbox v-if="showSendMessage === true && campaignType !== 'RECRUIT'" v-model="sendMessage" checked="checked">发送支付短信</el-checkbox>
-        <a href="#" @click="generateRecord()"><el-button type="success" size="small" >完成</el-button></a>
+        <a href="javascript:void(0);" @click="generateRecord()"><el-button type="success" size="small" >完成</el-button></a>
         <el-button type="primary" size="small" @click="returnList()" >返回列表</el-button>
       </div>
     </el-row>
@@ -784,9 +784,9 @@ export default {
     },
     // 判断客户是否绑定微信公众号
     checkBindWechat(customerId) {
-      console.log(customerId)
+      // console.log(customerId)
       const customerInfos = JSON.stringify(this.customerInfos)
-      console.log(customerInfos.indexOf(customerId))
+      // console.log(customerInfos.indexOf(customerId))
       if (customerInfos.indexOf(customerId) === -1) {
         return true
       }
@@ -1072,7 +1072,7 @@ export default {
         const arr = []
         for (let i = 0; i < this.campaignsInfo.length; i++) {
           const campaignId = this.campaignsInfo[i].campaignId
-          if (campaignId !== '') {
+          if (campaignId !== '' && arr.indexOf(campaignId) === -1) {
             arr.push(campaignId)
           }
         }
@@ -1443,7 +1443,7 @@ export default {
     },
     // 生成订单/接触记录/修改任务状态
     generateRecord() {
-      // console.log(this.selectedSummarys)
+      console.log(this.selectedSummarys, '11111')
       // console.log(this.recordId + ',' + this.taskId + ',' + this.radio + ',' + this.appointTime + ',' + this.selectedSummarys)
       // 判断 1、是否打电话 2、是否选择任务状态  3、是否勾选小结
       if (this.recordId === '') {
@@ -1640,6 +1640,7 @@ export default {
                     })
                     sessionStorage.removeItem('isDialTask')
                     sessionStorage.removeItem('recordId')
+                    this.$root.eventHub.$emit('DISABLED_DIAL', '')// 发给电话条，看是否需要更改图标
                   } else {
                     this.$message({
                       message: response.data.message,
@@ -1737,8 +1738,10 @@ export default {
     },
     // 返回列表
     returnList() {
+      this.$root.eventHub.$emit('DISABLED_DIAL', '')
       const url = window.location.href
-      window.location.href = url.split('?')[0]
+      // window.location.href = url.split('?')[0]
+      window.location.href = url// 按照原路径返回
       this.isDialTask = true
       this.sendMessageToNavbar(this.isDialTask)
       sessionStorage.removeItem('isDialTask')
@@ -1988,14 +1991,24 @@ export default {
         vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
       })
       findCampaignByUser().then(res => {
+        vm.campaignsInfo = []
         if (res.data.code === 0) {
           vm.campaignsInfo.push({ campaignId: '', campaignName: '所有活动' })
           if (res.data.data.length > 0) {
-            for (let i = 0; i < res.data.data.length; i++) {
-              vm.campaignsInfo.push({
-                campaignId: res.data.data[i].campaignId,
-                campaignName: res.data.data[i].campaignName
-              })
+            for (let i = 0; i < res.data.data.length; i++) { // 返回值活动数组
+              let flag = false// 初始化变量值为否
+              for (let j = 0; j < vm.campaignsInfo.length; j++) { // 活动列表数组
+                if (res.data.data[i].campaignId === vm.campaignsInfo[j].campaignId) { // 如果活动列表已经存在了返回值的数组id
+                  flag = true
+                  break
+                }
+              }
+              if (!flag) { // 如果活动不存在，那么增加活动
+                vm.campaignsInfo.push({
+                  campaignId: res.data.data[i].campaignId,
+                  campaignName: res.data.data[i].campaignName
+                })
+              }
             }
           }
         } else {
@@ -2139,14 +2152,24 @@ export default {
         vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
       })
       findCampaignByUser().then(res => {
+        vm.campaignsInfo = []
         if (res.data.code === 0) {
           vm.campaignsInfo.push({ campaignId: '', campaignName: '所有活动' })
           if (res.data.data.length > 0) {
-            for (let i = 0; i < res.data.data.length; i++) {
-              vm.campaignsInfo.push({
-                campaignId: res.data.data[i].campaignId,
-                campaignName: res.data.data[i].campaignName
-              })
+            for (let i = 0; i < res.data.data.length; i++) { // 返回值活动数组
+              let flag = false// 初始化变量值为否
+              for (let j = 0; j < vm.campaignsInfo.length; j++) { // 活动列表数组
+                if (res.data.data[i].campaignId === vm.campaignsInfo[j].campaignId) { // 如果活动列表已经存在了返回值的数组id
+                  flag = true
+                  break
+                }
+              }
+              if (!flag) { // 如果活动不存在，那么增加活动
+                vm.campaignsInfo.push({
+                  campaignId: res.data.data[i].campaignId,
+                  campaignName: res.data.data[i].campaignName
+                })
+              }
             }
           }
         } else {

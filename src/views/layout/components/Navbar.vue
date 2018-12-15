@@ -1647,7 +1647,12 @@ export default {
       if (str === '1') {
         vm.dialCall = false
       } else {
-        vm.dialCall = true
+        if (localStorage.getItem(localStorage.getItem('agentId')) &&
+        JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode === '0' ||
+        JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode === '13' ||
+        JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode === '14') {
+          vm.dialCall = true
+        }
       }
     })
     this.$root.eventHub.$on('ord_set', (obj) => {
@@ -1676,7 +1681,7 @@ export default {
       } else {
         vm.isDialTaskPage = false
         vm.disabledDial = false
-        vm.dialCall = true
+        // vm.dialCall = true
       }
     })
     this.$root.eventHub.$on('DIAL_TASK_DIALNM', (obj) => {
@@ -1699,6 +1704,7 @@ export default {
     this.agentArray.forEach(ele => { // 清空班长监控下的历史数据
       localStorage.removeItem('m_' + ele)
     })
+    localStorage.removeItem(localStorage.getItem('agentId'))// 清空自己的历史数据
     this.$root.eventHub.$off('DISABLED_DIAL')
     this.$root.eventHub.$off('DIAL_TASK')
     this.$root.eventHub.$off('DIAL_TASK_DIALNM')
