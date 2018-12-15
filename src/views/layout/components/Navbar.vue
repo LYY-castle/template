@@ -122,7 +122,7 @@
           <!-- <span style="float:left" class="line"></span> -->
 
         </div>
-        <div style="margin-right:2px;" v-if="havesoftphone">
+        <div style="margin-right:2px;position: absolute;right:0" v-if="havesoftphone">
           <!-- 用户 -->
           <el-tooltip placement="bottom" class="user">
             <div slot="content">用户信息</div>
