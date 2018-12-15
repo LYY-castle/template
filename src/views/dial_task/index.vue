@@ -241,7 +241,20 @@
             :show-overflow-tooltip="true"
             width="150">
           <template slot-scope="scope">
-            <a v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb)" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);" size="small" type="text">
+            <!-- <a v-if="scope.row.status && scope.row.isBlacklist === '0' && scope.row.isNodisturb === '0' && scope.row.staffId === aId" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);" size="small" type="text">
+              <img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</a>
+            <div v-if="scope.row.staffId !== aId" size="small" type="text">
+              不可拨打</div>
+            <el-tooltip v-if="scope.row.status === '2' || scope.row.status === '3' || scope.row.status === '4'" class="item" effect="dark"  content="该状态不能拨打" placement="left-start">
+              <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
+            </el-tooltip>
+            <el-tooltip v-if="scope.row.isBlacklist === '1'" class="item" effect="dark"  content="该号码为免访客户" placement="left-start">
+              <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
+            </el-tooltip>
+            <el-tooltip v-if="scope.row.isNodisturb === '1'" class="item" effect="dark"  content="该号码处于免访号段中" placement="left-start">
+              <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
+            </el-tooltip> -->
+            <a v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb) && scope.row.staffId === aId" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);" size="small" type="text">
               <img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</a>
             <div v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb)" v-show="scope.row.staffId !== aId" size="small" type="text">
               不可拨打</div>
@@ -596,7 +609,7 @@
 </style>
 
 <script>
-import cti from '@/utils/ctijs' //
+// import cti from '@/utils/ctijs' //
 import { getPhoneOwn } from '@/api/navbar'
 import { formatDateTime } from '@/utils/tools' // 格式化时间
 import { Message } from 'element-ui'
