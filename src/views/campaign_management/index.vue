@@ -132,7 +132,7 @@
             label="操作"
             width="300">
           <template slot-scope="scope">
-            <el-button @click="editVisible=true;delReq.campaignId=scope.row.campaignId;getDeptByCampaignId(scope.row.campaignId);getMarksByCampaignId(scope.row.campaignId);getCampaignById(scope.row.campaignId);" type="text" size="small">修改</el-button>
+            <el-button @click="editVisible=true;delReq.campaignId=scope.row.campaignId;getDeptByCampaignId(scope.row.campaignId);getMarksByCampaignId(scope.row.campaignId);getCampaignById(scope.row.campaignId);outcalltimeInfos=[];failTreatmentInfos=[]" type="text" size="small">修改</el-button>
             <el-button @click="delVisible=true;delReq.campaignId=scope.row.campaignId" type="text" size="small">删除</el-button>
             <!-- <el-button @click="changeVisible=true;delReq.campaignId=scope.row.campaignId;delReq.status=scope.row.status" type="text" size="small">{{scope.row.status==='0'?'禁用':'启用'}}</el-button> -->
             <el-button @click="campaignName=scope.row.campaignName;nameListExclude.campaignId=scope.row.campaignId;nameLists.campaignId=scope.row.campaignId;addList=true;nameLists.pageSize=10;nameListExclude.pageSize=10;nameListExclude.pageNo = 1;nameLists.pageNo = 1;getNameLists(nameLists);getNameListExclude(nameListExclude)" type="text" size="small">添加名单</el-button>
@@ -143,7 +143,7 @@
       </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;clearForm(campaignDetail,'campaignDetail')">新建</el-button>
+        <el-button type="success" size="small" @click="addVisible=true;clearForm(campaignDetail,'campaignDetail');outcalltimeInfos=[];failTreatmentInfos=[];campaignExpiryDate=[]">新建</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         <el-pagination
           background
@@ -158,7 +158,7 @@
     </el-row>
     <el-dialog
       align:left
-      width="30%"
+      width="32%"
       title="活动信息修改"
       :visible.sync="editVisible"
       append-to-body>
@@ -192,34 +192,68 @@
         <el-form-item label="拨打次数" prop="canContactNum">
           <el-input v-model="campaignDetail.canContactNum" size="small" placeholder="单位：次"></el-input>
         </el-form-item>
-        <el-form-item label="拨打数量" prop="callNum" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+        <!-- <el-form-item label="拨打数量" prop="callNum" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
           <el-input v-model="campaignDetail.callNum" size="small" placeholder="单位：人"></el-input>
-        </el-form-item>
-        <el-form-item label="拨打间隔" prop="callSpacing" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
-          <el-input v-model="campaignDetail.callSpacing" size="small" placeholder="单位：分"></el-input>
-        </el-form-item>
-        <el-form-item label="外呼起始时间" prop="outCallTimeStart" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
-          <el-time-picker
-            arrow-control
-            value-format='HH:mm:ss'
-            v-model="campaignDetail.outCallTimeStart"
-            placeholder="请选择外呼起始时间">
-          </el-time-picker>
-        </el-form-item>
-        <el-form-item label="外呼结束时间" prop="outCallTimeEnd" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
-          <el-time-picker
-            arrow-control
-            value-format='HH:mm:ss'
-            v-model="campaignDetail.outCallTimeEnd"
-            placeholder="请选择外呼结束时间">
-          </el-time-picker>
-        </el-form-item>
-        <!-- <el-form-item label="活动状态:" prop="status">
-          <el-radio-group v-model="campaignDetail.status" size="small">
-            <el-radio label='0' border>有效</el-radio>
-            <el-radio label='1' border>无效</el-radio>
-          </el-radio-group>
         </el-form-item> -->
+        <el-form-item label="拨打方式" prop="callType" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+          <el-select v-model="campaignDetail.callType" placeholder="请选择拨打方式" style="width:100%" clearable>
+            <el-option
+              v-for="item in callTypes"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="外呼起止时段"  v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+          <div v-for="(item,indexx) in outcalltimeInfos">
+            <span>{{indexx+1}}.</span>
+            <el-time-picker
+            style="width:40%"
+            arrow-control
+            value-format='HH:mm:ss'
+            v-model="item.outcallTimeStart"
+            placeholder="外呼起始时间">
+          </el-time-picker>
+          <el-time-picker
+            style="width:40%"
+            arrow-control
+            value-format='HH:mm:ss'
+            v-model="item.outcallTimeEnd"
+            placeholder="外呼结束时间">
+          </el-time-picker>
+          <i class="el-icon-delete" style="cursor:pointer;margin:0px 22px;" title="点击删除该时间段" @click="remove(indexx)"></i>
+          </div>
+          <div class="showaddTool">
+            <i class="el-icon-plus" circle title="点击添加一个时间段" @click="addOutCallTimes()"></i>
+          </div>
+        </el-form-item>
+        <el-form-item label="错误处理方式"  v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+          <div v-for="(item,index) in failTreatmentInfos">
+            <span>{{index+1}}.</span>
+            <el-select v-model="item.failType" placeholder="错误类型" clearable style="width:25%">
+              <el-option
+                v-for="item1 in failTypes"
+                :key="item1.value"
+                :label="item1.label"
+                :value="item1.value"
+              ></el-option>
+            </el-select>
+            <el-select v-model="item.treatment" placeholder="处理方式" clearable style="width:30%">
+              <el-option
+                v-for="item2 in treatments"
+                :key="item2.value"
+                :label="item2.label"
+                :value="item2.value"
+              ></el-option>
+            </el-select>
+            <el-input placeholder="失败拨打次数" style="width:25%" type="number" v-model="item.failCallNum"></el-input>
+            <i class="el-icon-delete" style="cursor:pointer;margin:0px 22px;" title="点击删除该处理方式" @click="removeTreatment(index)"></i>
+          </div>
+          <div class="showaddTool">
+            <i class="el-icon-plus" circle title="点击添加一个处理方式" @click="addTreatments()"></i>
+          </div>
+        </el-form-item>
         <el-form-item label="活动组织" prop="departId">
           <el-select v-model="campaignDetail.departId" placeholder="请选择活动组织" style="width: 100%;">
           <el-option
@@ -260,7 +294,7 @@
     </el-dialog>
     <el-dialog
       align:left
-      width="30%"
+      width="32%"
       title="活动信息详情"
       :visible.sync="detailVisible"
       append-to-body>
@@ -277,8 +311,57 @@
         <el-form-item label="名单有效期">
           <span>{{campaignDetail.listExpiryDate+'天'}}</span>
         </el-form-item>
+        <el-form-item label="活动有效期">
+          <span>{{campaignDetail.startTime + '至' + campaignDetail.endTime}}</span>
+        </el-form-item>
         <el-form-item label="拨打次数">
           <span>{{campaignDetail.canContactNum==null?'':(campaignDetail.canContactNum+'次')}}</span>
+        </el-form-item>
+        <el-form-item label="拨打方式">
+          <span v-html="showCallType(campaignDetail.callType)"></span>
+        </el-form-item>
+        <el-form-item label="外呼起止时段">
+          <div v-for="(item,indexx) in outcalltimeInfos">
+            <span>{{indexx+1}}.</span>
+            <el-time-picker
+            style="width:40%"
+            arrow-control
+            value-format='HH:mm:ss'
+            v-model="item.outcallTimeStart"
+            placeholder="拨打时段开始"
+            disabled>
+          </el-time-picker>
+          <el-time-picker
+            style="width:40%"
+            arrow-control
+            value-format='HH:mm:ss'
+            v-model="item.outcallTimeEnd"
+            placeholder="拨打时段结束"
+            disabled>
+          </el-time-picker>
+          </div>
+        </el-form-item>
+        <el-form-item label="呼叫失败处理">
+          <div v-for="(item,index) in failTreatmentInfos">
+            <span>{{index+1}}.</span>
+            <el-select v-model="item.failType" placeholder="失败类型" clearable style="width:25%" disabled>
+              <el-option
+                v-for="item1 in failTypes"
+                :key="item1.value"
+                :label="item1.label"
+                :value="item1.value"
+              ></el-option>
+            </el-select>
+            <el-select v-model="item.treatment" placeholder="处理方式" clearable style="width:30%" disabled>
+              <el-option
+                v-for="item2 in treatments"
+                :key="item2.value"
+                :label="item2.label"
+                :value="item2.value"
+              ></el-option>
+            </el-select>
+            <el-input placeholder="失败拨打次数" style="width:25%" type="number" v-model="item.failCallNum" disabled></el-input>
+          </div>
         </el-form-item>
         <!-- <el-form-item label="活动状态">
           <span>{{campaignDetail.status==='1'?'无效':'有效'}}</span>
@@ -307,7 +390,7 @@
     </el-dialog>
     <el-dialog
       align:left
-      width="30%"
+      width="32%"
       title="新建活动"
       :visible.sync="addVisible"
       append-to-body>
@@ -316,7 +399,7 @@
           <el-input v-model="campaignDetail.campaignName" size="small" placeholder="活动名称（限长128字符）" maxlength="128"></el-input>
         </el-form-item>
         <el-form-item label="活动类型" prop="campaignTypeCode">
-          <el-select v-model="campaignDetail.campaignTypeCode" placeholder="请选择产品" style="width: 100%;">
+          <el-select v-model="campaignDetail.campaignTypeCode" placeholder="请选择活动" style="width: 100%;">
             <el-option
                 v-for="item in campaignTypes"
                 :key="item.code"
@@ -338,37 +421,82 @@
         <el-form-item label="名单有效期" prop="listExpiryDate">
           <el-input v-model="campaignDetail.listExpiryDate" size="small" placeholder="单位：天"></el-input>
         </el-form-item>
+        <el-form-item label="活动有效期">
+          <el-date-picker
+              style="width:100%"
+              v-model="campaignExpiryDate"
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
+              value-format="yyyy-MM-dd HH:mm:ss">
+          </el-date-picker>
+        </el-form-item>
         <el-form-item label="拨打次数" prop="canContactNum">
           <el-input v-model="campaignDetail.canContactNum" size="small" placeholder="单位：次"></el-input>
         </el-form-item>
-        <el-form-item label="拨打数量" prop="callNum" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+        <!-- <el-form-item label="最大拨打量" prop="callNum" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
           <el-input v-model="campaignDetail.callNum" size="small" placeholder="单位：人"></el-input>
-        </el-form-item>
-        <el-form-item label="拨打间隔" prop="callSpacing" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
-          <el-input v-model="campaignDetail.callSpacing" size="small" placeholder="单位：分"></el-input>
-        </el-form-item>
-        <el-form-item label="外呼起始时间" prop="outCallTimeStart" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
-          <el-time-picker
-            arrow-control
-            value-format='HH:mm:ss'
-            v-model="campaignDetail.outCallTimeStart"
-            placeholder="请选择外呼起始时间">
-          </el-time-picker>
-        </el-form-item>
-        <el-form-item label="外呼结束时间" prop="outCallTimeEnd" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
-          <el-time-picker
-            arrow-control
-            value-format='HH:mm:ss'
-            v-model="campaignDetail.outCallTimeEnd"
-            placeholder="请选择外呼结束时间">
-          </el-time-picker>
-        </el-form-item>
-        <!-- <el-form-item label="活动状态" prop="status">
-          <el-radio-group v-model="campaignDetail.status" size="small">
-            <el-radio label='0' border>有效</el-radio>
-            <el-radio label='1' border>无效</el-radio>
-          </el-radio-group>
         </el-form-item> -->
+        <el-form-item label="拨打方式" prop="callType" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+          <el-select v-model="campaignDetail.callType" placeholder="请选择拨打方式" style="width:100%" clearable>
+            <el-option
+              v-for="item in callTypes"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="拨打时段"  v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+          <div v-for="(item,indexx) in outcalltimeInfos">
+            <span>{{indexx+1}}.</span>
+            <el-time-picker
+            style="width:40%"
+            arrow-control
+            value-format='HH:mm:ss'
+            v-model="item.outcallTimeStart"
+            placeholder="拨打时段开始">
+          </el-time-picker>
+          <el-time-picker
+            style="width:40%"
+            arrow-control
+            value-format='HH:mm:ss'
+            v-model="item.outcallTimeEnd"
+            placeholder="拨打时段结束">
+          </el-time-picker>
+          <i class="el-icon-delete" style="cursor:pointer;margin:0px 22px;" title="点击删除该时间段" @click="remove(indexx)"></i>
+          </div>
+          <div class="showaddTool">
+            <i class="el-icon-plus" circle title="点击添加一个时间段" @click="addOutCallTimes()"></i>
+          </div>
+        </el-form-item>
+        <el-form-item label="呼叫失败处理"  v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+          <div v-for="(item,index) in failTreatmentInfos">
+            <span>{{index+1}}.</span>
+            <el-select v-model="item.failType" placeholder="失败类型" clearable style="width:25%">
+              <el-option
+                v-for="item1 in failTypes"
+                :key="item1.value"
+                :label="item1.label"
+                :value="item1.value"
+              ></el-option>
+            </el-select>
+            <el-select v-model="item.treatment" placeholder="处理方式" clearable style="width:30%">
+              <el-option
+                v-for="item2 in treatments"
+                :key="item2.value"
+                :label="item2.label"
+                :value="item2.value"
+              ></el-option>
+            </el-select>
+            <el-input placeholder="失败拨打次数" style="width:25%" type="number" v-model="item.failCallNum"></el-input>
+            <i class="el-icon-delete" style="cursor:pointer;margin:0px 22px;" title="点击删除该处理方式" @click="removeTreatment(index)"></i>
+          </div>
+          <div class="showaddTool">
+            <i class="el-icon-plus" circle title="点击添加一个处理方式" @click="addTreatments()"></i>
+          </div>
+        </el-form-item>
         <el-form-item label="活动组织" prop="departId">
         <el-select v-model="campaignDetail.departId" placeholder="请选择活动组织" style="width: 100%;">
           <el-option
@@ -810,6 +938,9 @@ export default {
         campaignTypeCode: [
           { required: true, message: '请选择活动类型', trigger: 'change' }
         ],
+        callType: [
+          { required: true, message: '请选择拨打方式', trigger: 'change' }
+        ],
         productIds: [
           { required: true, message: '请选择产品', trigger: 'change' }
         ],
@@ -832,9 +963,15 @@ export default {
           { required: true, message: '请选择外呼结束时间', trigger: 'change' },
           { validator: checkTimeEnd, trigger: 'change' }
         ],
+        outcalltimeInfos: [
+          { required: true, message: '请选择外呼起止时段', trigger: 'change' }
+        ],
         listExpiryDate: [
           { required: true, message: '请输入名单有效期', trigger: 'change' },
           { validator: checkExpiryDate, trigger: 'change' }
+        ],
+        treatments: [
+          { required: true, message: '请选择错误处理方式', trigger: 'change' }
         ],
         canContactNum: [
           { required: true, message: '请输入拨打次数', trigger: 'change' },
@@ -850,6 +987,41 @@ export default {
           { required: true, message: '请选择活动组织', trigger: 'change' }
         ]
       },
+      callTypes: [
+        {
+          value: '0',
+          label: '坐席接听'
+        },
+        {
+          value: '1',
+          label: '客户接听'
+        }
+      ],
+      failTypes: [
+        {
+          value: '0',
+          label: '未接听'
+        },
+        {
+          value: '1',
+          label: '停机'
+        },
+        {
+          value: '2',
+          label: '不在服务区'
+        }
+      ],
+      treatments: [
+        {
+          value: '0',
+          label: '不再拨打'
+        },
+        {
+          value: '1',
+          label: '换时间段拨打'
+        }
+      ],
+      campaignExpiryDate: [],
       timeValue: [],
       removeListVisible: false, // 单个移除
       batchListVisible: false, // 批量移除名单
@@ -909,12 +1081,18 @@ export default {
         pageSize: 10,
         pageNo: 1
       },
+      outcalltimeInfos: [],
+      failTreatmentInfos: [],
       campaignDetail: {
-        callNum: '', // 自动外呼-一次拨打数量
-        callSpacing: '', // 自动外呼-拨打间隔分钟
-        outCallTimeStart: '', // 自动外呼-时间段开始
-        outCallTimeEnd: '', // 自动外呼-时间段结束
+        // callNum: '', // 自动外呼-一次拨打数量
+        callType: '', // 自动外呼-拨打方式
+        // outCallTimeStart: '', // 自动外呼-时间段开始
+        // outCallTimeEnd: '', // 自动外呼-时间段结束
         outCallFlag: '', // 自动外呼-标志 0关闭 1开启
+        outcalltimeInfos: [], // 自动外呼-外呼时间段
+        failTreatmentInfos: [], // 自动外呼-错误处理方式
+        startTime: '', // 活动有效期
+        endTime: '', // 活动有效期
         campaignTypeCode: '',
         campaignTypeInfo: {},
         productIds: [],
@@ -970,6 +1148,36 @@ export default {
     this.getAllCampaignTypes()
   },
   methods: {
+    addOutCallTimes() {
+      this.outcalltimeInfos.push({
+        outcallTimeStart: '',
+        outcallTimeEnd: ''
+      })
+    },
+    remove(index) {
+      this.outcalltimeInfos.splice(index, 1)
+    },
+    addTreatments() {
+      this.failTreatmentInfos.push({
+        failCallNum: '',
+        failType: '',
+        treatment: ''
+      })
+    },
+    removeTreatment(index) {
+      this.failTreatmentInfos.splice(index, 1)
+    },
+    showCallType(callType) {
+      if (callType) {
+        if (callType === '0') {
+          return '坐席接听'
+        } else {
+          return '客户接听'
+        }
+      } else {
+        return '无'
+      }
+    },
     // 深度克隆
     clone: clone,
     // 时间戳转年月日时分秒
@@ -1156,6 +1364,12 @@ export default {
             if (this.campaignDetail.outCallTimeEnd) {
               this.campaignDetail.outCallTimeEnd = this.campaignDetail.outCallTimeEnd.split(' ')[1]
             }
+            if (this.campaignDetail.failTreatmentInfos) {
+              this.failTreatmentInfos = this.campaignDetail.failTreatmentInfos
+            }
+            if (this.campaignDetail.outcalltimeInfos) {
+              this.outcalltimeInfos = this.campaignDetail.outcalltimeInfos
+            }
             this.$set(this.campaignDetail, 'campaignTypeCode', this.campaignDetail.campaignTypeInfo.code)
           }
           // 遍历查找对应产品名称
@@ -1268,6 +1482,13 @@ export default {
     },
     // 新建活动
     addCampaign(campaignDetail) {
+      campaignDetail.failTreatmentInfos = this.failTreatmentInfos
+      campaignDetail.outcalltimeInfos = this.outcalltimeInfos
+      if (this.campaignExpiryDate !== '') {
+        campaignDetail.startTime = this.campaignExpiryDate[0]
+        campaignDetail.endTime = this.campaignExpiryDate[1]
+      }
+      console.log(campaignDetail)
       if (!this.validate) {
         return false
       }
@@ -1488,5 +1709,11 @@ export default {
 }
 .el-form-item {
   margin-bottom: 20px;
+}
+.showaddTool {
+  float: right;
+  margin: 0px 65%;
+  height: 20px;
+  cursor: pointer;
 }
 </style>
