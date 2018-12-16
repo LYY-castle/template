@@ -193,7 +193,7 @@ export default {
   beforeMount() {
     var self = this
     // this.timerOnline = setInterval(getTotelOnline, 300000)
-    this.timerNumber = setInterval(getTotelNumber, 600000)
+    this.timerNumber = setInterval(getTotelNumber, 15000)
     function getTotelNumber() {
       getDepartId().then(res => {
         self.departId = res.data.departId
