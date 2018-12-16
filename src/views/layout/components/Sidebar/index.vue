@@ -71,7 +71,7 @@ export default {
     transition: width .3s;
   }
   div.hamberger-bar .opened{
-    width:210px;
+    width:12%;
   }
   div.hamberger-bar .closed{
     width:36px;
@@ -93,7 +93,7 @@ export default {
       top: 3px;
     }
     div.hamberger-bar .opened{
-      width:154px;
+      width:12%;
     }
     div.hamberger-bar .closed{
       width:36px;
@@ -104,7 +104,7 @@ export default {
     top: 3px;
     }
     div.hamberger-bar .opened{
-      width:137px;
+      width:12%;
     }
     div.hamberger-bar .closed{
       width:36px;

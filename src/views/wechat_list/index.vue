@@ -82,7 +82,6 @@
                 </el-col>
               </el-row>
             </div>
-	    
 	          <!-- 表情选择 -->
             <!-- <div v-if="showEmojis" style="position:absolute;top:1025px;left:0;background:#fff;width: 68%;box-shadow:1px 3px 8px 0 rgba(207, 212, 220, 0.3);" id="emoji_div">
               <el-tabs v-model="chooseEmojis" style="margin:0;margin-left:5px;">

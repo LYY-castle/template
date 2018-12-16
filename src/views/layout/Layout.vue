@@ -73,17 +73,19 @@ export default {
   }
   #app .sidebar-container {
     /* margin-top:109px; */
-    width: 210px !important;
+    /* width: 210px !important; */
+    width: 12% !important;
     z-index:100;
   }
   #app .main-container {
     min-height:100%;
     /* margin-left: 210px; */
-    margin-left: 11%;
+    margin-left: 12%;
   }
   @media screen and (min-width: 1281px) and (max-width:1367px){
     #app .sidebar-container {
-      width: 154px !important;
+      /* width: 154px !important; */
+      width: 12% !important;
     }
     #app .sidebar-container span{
       font-size:12px;
@@ -94,7 +96,7 @@ export default {
   }
   @media all and (min-width:1024px) and (max-width:1280px)  {
     #app .sidebar-container {
-      width: 137px !important;
+      width: 12% !important;
     }
     #app .sidebar-container span{
       font-size:10px;
@@ -105,7 +107,8 @@ export default {
   }
   @media all and (min-width:400px) and (max-width:1023px)  {  
     #app .sidebar-container {
-      width: 137px !important;
+      /* width: 137px !important; */
+      width: 12% !important;
     }
     #app .sidebar-container span{
       font-size:8px;

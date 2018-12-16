@@ -1721,7 +1721,7 @@ export default {
   border:none;
 }
 #logo{
-  width:210px;
+  width:12%;
   background:#263445;
   height:108.55px;
   box-sizing: border-box;
@@ -1731,7 +1731,7 @@ export default {
   width:36px;
 }
 #logo.opened{
-  width:210px;
+  width:12%;
 }
 #logo.closed img{
   display:none;
@@ -1925,7 +1925,7 @@ export default {
     width:36px;
   }
   #logo.opened{
-    width:154px;
+    width:12%;
   }
   #logo.closed img{
     display:none;
@@ -1966,7 +1966,7 @@ export default {
     width:36px;
   }
   #logo.opened{
-    width:137px;
+    width:12%;
   }
   #logo.closed img{
     display:none;
