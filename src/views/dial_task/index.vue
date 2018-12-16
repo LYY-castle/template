@@ -992,6 +992,13 @@ export default {
     // 调用cti拨打功能
     normalDial(taskId, campaignId, customerPhone) {
       this.hideDialTo = true
+      if (localStorage.getItem('agentId')) {
+        const reasoncode = JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode
+        if (reasoncode === '-2' || reasoncode === '-3' || reasoncode === '-4' || reasoncode === '0' || reasoncode === '-100' || reasoncode === '-101' || reasoncode === '-5' || reasoncode === '-6') {
+          this.$message.error('该状态下不能拨打号码！')
+          return
+        }
+      }
       // console.log('1,' + localStorage.getItem('DN'))
       // console.log('2,' + localStorage.getItem('callerDN'))
       const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
@@ -1354,6 +1361,11 @@ export default {
       isBlacklist,
       customerPhone
     ) {
+      if (this.$route.query.dialType === 'autocall') {
+        setTimeout(() => {
+          this.getRecordId(this.$route.query.taskId, this.$route.query.campaignId)
+        }, 3000)
+      }
       // 判断活动类型
       getCampaignType(campaignId).then(res1 => {
         if (res1.data.code === 0) {
@@ -1649,7 +1661,8 @@ export default {
                     }
                     this.$message({
                       message: response.data.message,
-                      type: 'success'
+                      type: 'success',
+                      duration: 1000
                     })
                     sessionStorage.removeItem('isDialTask')
                     sessionStorage.removeItem('recordId')
@@ -1881,6 +1894,7 @@ export default {
     }
   },
   created() {
+    vm = this
     if (this.$route.query.dialstatus) { // 说明是页面跳转过来的
       if (typeof this.$route.query.isDialTask === 'undefined') { // 说明是跳查询页面
         this.req.status = this.$route.query.dialstatus
@@ -1892,9 +1906,18 @@ export default {
         }
       } else { // 说明是跳拨打页面
         this.isDialTask = this.$route.query.isDialTask
-        // sessionStorage.setItem('isDialTask', this.isDialTask)
-        this.req.status = this.$route.query.dialstatus
-        this.sendMessageToNavbar(this.isDialTask)
+        if (this.$route.query.data && this.$route.query.dialstatus === 'autocall') { // 自动外呼参数
+          const taskId = this.$route.query.taskId
+          const campaignId = this.$route.query.campaignId
+          const isBlacklist = this.$route.query.isBlacklist
+          const customerPhone = this.$route.query.customerPhone
+          const customerId = this.$route.query.customerId
+          this.showDetailInfos(taskId, campaignId, customerId, isBlacklist, customerPhone)
+        } else {
+          // sessionStorage.setItem('isDialTask', this.isDialTask)
+          this.req.status = this.$route.query.dialstatus
+          this.sendMessageToNavbar(this.isDialTask)
+        }
       }
     }
   },
@@ -1942,8 +1965,10 @@ export default {
               // this.customerIds = this.$store.state.dialTask.customerIds
               // this.isBlacklists = this.$store.state.dialTask.isBlacklists
               this.quickDialto()
+              console.log('kuaisuboda')
             } else {
               this.getParametersFromContactRecordDail()
+              console.log('put')
             }
           })
         }).catch((error) => {
@@ -1958,12 +1983,14 @@ export default {
               this.campaignIds = obj.campaignIds
               this.customerIds = obj.customerIds
               this.isBlacklists = obj.isBlacklists
+              // console.log(obj)
               // this.taskIds = this.$store.state.dialTask.taskIds
               // this.campaignIds = this.$store.state.dialTask.campaignIds
               // this.customerIds = this.$store.state.dialTask.customerIds
               // this.isBlacklists = this.$store.state.dialTask.isBlacklists
               this.quickDialto()
             } else {
+              console.log('dfghfgh')
               this.getParametersFromContactRecordDail()
             }
           })

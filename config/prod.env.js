@@ -17,9 +17,9 @@ const env_conf = {
   },
   master: {
     TUI_WS_SERVERURL:'"ws://119.27.179.175:12123"',
-    CTI_WS_SERVERURL:'"ws://119.27.179.175:9050/"',
+    CTI_WS_SERVERURL:'"ws://52.83.140.209:9050/"',
     FS_SERVER_HOST: '"http://119.27.179.175:9800"',
-    CTI_MONITOR_WS_SERVERURL:'"ws://119.27.179.175:9052/"',
+    CTI_MONITOR_WS_SERVERURL:'"ws://52.83.140.209:9052/"',
     MINIO_URL:'"http://119.27.179.175:9800/crm"',
   },
   sit: {

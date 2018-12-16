@@ -34,11 +34,14 @@
                 <img src="../../../../static/images/nologin_state.png" title="未登录" class="img-all" v-if="agentState1">
                 <img src="../../../../static/images/busy_normal.png" title="示忙"  class="img-all" v-else-if="agentState2">
                 <img src="../../../../static/images/agentStat38_allReady.png" title="就绪"  class="img-all" v-else-if="agentState3">
-                <img src="../../../../static/images/back_state.png" title="坐席状态"  class="img-all" v-else-if="agentState4">
+                <img src="../../../../static/images/back_state.png" title="后处理"  class="img-all" v-else-if="agentState4">
+                <img src="../../../../static/images/autodialAllReady.png" title="外呼就绪"  class="img-all" v-else-if="agentState5">
+                <img src="../../../../static/images/autoDialBusy.png" title="外呼占用"  class="img-all" v-else-if="agentState6">
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="0" :disabled="lockChange">就绪</el-dropdown-item>
                   <el-dropdown-item command="13" :disabled="lockChange">示忙</el-dropdown-item>
                   <el-dropdown-item command="14" :disabled="lockChange">后处理</el-dropdown-item>
+                  <el-dropdown-item command="-5" :disabled="lockChange">外呼就绪</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
               <!-- 号码输入框 -->
@@ -170,7 +173,7 @@
             </el-tooltip>
           </div>
           <!-- 微信 -->
-          <el-badge v-model="msgNum_wechat" class="item wechat" :max="999" :hidden="!msgNum_wechat">
+          <el-badge v-model="msgNum_wechat" class="item wechat" :max="999" :hidden="!msgNum_wechat" style="display:none">
             <el-tooltip placement="bottom">
               <div slot="content">{{wechatState=="0"?"示忙":"就绪"}}</div>
               <el-dropdown trigger="click" placement="bottom" @command="changeWechatState" >
@@ -327,10 +330,12 @@ export default {
       talkStatu: '',
       global_taskId: '',
       islogin: false,
-      agentState1: true,
-      agentState2: false,
-      agentState3: false,
-      agentState4: false,
+      agentState1: true, // 未登录
+      agentState2: false, // 就绪
+      agentState3: false, // 示忙
+      agentState4: false, // 后处理
+      agentState5: false, // 外呼就绪
+      agentState6: false, // 外呼占用
       answerCall: false,
       dialCall: false,
       holdCall1: true,
@@ -583,6 +588,13 @@ export default {
         cti.setAgentACW()
       }
     },
+    agentSetDialInFree() {
+      if (this.telephoneState === '外呼就绪') {
+        return
+      } else {
+        cti.setAgentDialInFree()
+      }
+    },
     changeState(val) {
       if (this.islogin) {
         this.formInline.region = val
@@ -595,6 +607,9 @@ export default {
             break
           case '14':
             this.agentsetACW()
+            break
+          case '-5':
+            this.agentSetDialInFree()
             break
           default:
             console.log(this.formInline.region)
@@ -784,11 +799,19 @@ export default {
       })
     },
     agentdialout() {
+      if (localStorage.getItem(localStorage.getItem('agentId')) && JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode === '0') {
+        Message({
+          message: '不能在就绪的状态下拨打电话，请切换成其他状态！',
+          type: 'error',
+          duration: 1 * 1000
+        })
+        return
+      }
       vm.dialCall = false
       if (vm.isDialTaskPage) {
         // 如果是在拨打页面拨打空时，默认拨打客户
-        if (JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasonCode !== '-101' &&
-        JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasonCode !== '-100') {
+        if (JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode !== '-101' &&
+        JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode !== '-100') {
           vm.$root.eventHub.$emit('NAVBAR', 'transfer')
           // vm.dialCall = true
         }
@@ -866,10 +889,14 @@ export default {
     },
     setbtnStatus(obj) {
       switch (obj) {
-        case 'sessionclosed':this.agentState1 = true
+        case 'sessionclosed':
+          this.agentState1 = true
           this.agentState2 = false
           this.agentState3 = false
-          this.agentState4 = false// 未登录状态
+          this.agentState4 = false
+          this.agentState5 = false
+          this.agentState6 = false// 未登录状态
+
           this.dialCall = false// 不能拨打
           this.answerCall = false// 不能接听
           this.hangupCall = false// 不能挂断
@@ -898,11 +925,43 @@ export default {
           this.holdCall2 = false
           this.holdCall3 = false// 不能保持
           break
+        case 'outcallReady':
+          this.dialCall = false// 不可以拨打电话
+          this.answerCall = false // 不能接听
+          this.hangupCall = false // 不能挂断
+          this.transCall1 = true
+          this.transCall2 = false
+          this.transCall3 = false// 不能转接
+          this.confCall1 = true
+          this.confCall2 = false
+          this.confCall3 = false// 不能三方
+          this.retrieveCall = false // 不能取回
+          this.holdCall1 = true
+          this.holdCall2 = false
+          this.holdCall3 = false// 不能保持
+          break
+        case 'outcallBusy':
+          this.dialCall = false// 不可以拨打电话
+          this.answerCall = false // 不能接听
+          this.hangupCall = false // 不能挂断
+          this.transCall1 = true
+          this.transCall2 = false
+          this.transCall3 = false// 不能转接
+          this.confCall1 = true
+          this.confCall2 = false
+          this.confCall3 = false// 不能三方
+          this.retrieveCall = false // 不能取回
+          this.holdCall1 = true
+          this.holdCall2 = false
+          this.holdCall3 = false// 不能保持
+          break
         case 'logoff':
           this.agentState1 = true
           this.agentState2 = false
           this.agentState3 = false
-          this.agentState4 = false// 未登录状态
+          this.agentState4 = false
+          this.agentState5 = false
+          this.agentState6 = false// 未登录状态
           this.dialCall = false // 不能拨打
           this.answerCall = false // 不能接听
           this.hangupCall = false // 不能挂断
@@ -997,7 +1056,9 @@ export default {
         default:this.agentState1 = true
           this.agentState2 = false
           this.agentState3 = false
-          this.agentState4 = false// 未登录状态
+          this.agentState4 = false
+          this.agentState5 = false
+          this.agentState6 = false// 未登录状态
           this.dialCall = false// 不能拨打
           this.answerCall = false// 不能接听
           this.hangupCall = false// 不能挂断
@@ -1134,12 +1195,12 @@ export default {
         vm.times()
       }
     },
-    on_ringing_event(event, agentid, DN, UUID, callerid, calleeid, ori_ani, other_leg_uuid, queueName, activeLine) {
+    on_ringing_event(event, agentid, DN, UUID, callerid, calleeid, ori_ani, other_leg_uuid, queueName, activeLine, choice, DialData) {
       vm.caller = callerid
       vm.callee = calleeid
       vm.orginCaller = ori_ani
       addComeContact({
-        'event': 'on_ringing_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': callerid, 'calleeid': calleeid, 'ori_ani': ori_ani, 'other_leg_uuid': other_leg_uuid, 'ringing_time': new Date(), 'callDirection': 1
+        'event': 'on_ringing_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': callerid, 'calleeid': calleeid, 'ori_ani': ori_ani, 'other_leg_uuid': other_leg_uuid, 'ringing_time': new Date(), 'callDirection': 1, 'taskId': DialData ? JSON.parse(DialData).data.taskId : null
       }).then(res => {
         console.log('写来电通话记录：' + res)
       }).catch(error => {
@@ -1151,6 +1212,20 @@ export default {
       if (vm.oldtelephonestate !== vm.telephoneState) {
         clearInterval(interval)
         vm.times()
+      }
+      if (DialData) { // 判断为自动外呼
+        console.log(JSON.parse(DialData).data, 'data')
+        const data = JSON.parse(DialData).data
+        const campaignId = data.campaignId
+        const taskId = data.taskId
+        const customerId = data.customerId
+        // const isBlacklist = data.isBlacklist
+        const customerPhone = data.customerPhone
+        vm.$router.push({//
+          name: 'dial_task',
+          query: { 'agent': 'agent', 'dialstatus': '0', 'dialType': 'autocall', 'isDialTask': false, 'campaignId': campaignId, 'taskId': taskId, 'customerId': customerId, 'isBlacklist': '0', 'customerPhone': customerPhone }
+        })
+        // cti.setAgentStatus(agentid, '-5')
       }
     },
     on_reasonchange(event, agentId, DN, reasonCode) {
@@ -1225,6 +1300,7 @@ export default {
           vm.agentState2 = false
           vm.agentState3 = true
           vm.agentState4 = false
+          vm.agentState5 = false
           vm.formInline.region = '就绪'
           vm.setbtnStatus('login')
           if (vm.formInline.DN === DN) {
@@ -1247,6 +1323,7 @@ export default {
           vm.agentState2 = true
           vm.agentState3 = false
           vm.agentState4 = false
+          vm.agentState5 = false
           vm.formInline.region = '示忙'
           vm.setbtnStatus('login')
           if (vm.formInline.DN === DN) {
@@ -1270,8 +1347,59 @@ export default {
           vm.agentState2 = false
           vm.agentState3 = false
           vm.agentState4 = true
+          vm.agentState5 = false
           vm.formInline.region = '后处理'
           vm.setbtnStatus('login')
+          if (vm.formInline.DN === DN) {
+            vm.disabledDN = true
+          } else {
+            vm.disabledDN = false
+            vm.formInline.DN = DN
+          }
+
+          break
+        case '-5':// 外呼就绪
+          vm.lockChange = false
+          vm.islogin = true
+          vm.oldtelephonestate = vm.telephoneState
+          vm.telephoneState = '外呼就绪'
+          if (vm.oldtelephonestate !== vm.telephoneState) {
+            clearInterval(interval)
+            vm.times()
+          }
+          vm.agentState1 = false
+          vm.agentState2 = false
+          vm.agentState3 = false
+          vm.agentState4 = false
+          vm.agentState5 = true
+          vm.agentState6 = false
+          vm.formInline.region = '外呼就绪'
+          vm.setbtnStatus('outcallReady')
+          if (vm.formInline.DN === DN) {
+            vm.disabledDN = true
+          } else {
+            vm.disabledDN = false
+            vm.formInline.DN = DN
+          }
+
+          break
+        case '-6':// 外呼占用
+          vm.lockChange = true
+          vm.islogin = true
+          vm.oldtelephonestate = vm.telephoneState
+          vm.telephoneState = '外呼占用'
+          if (vm.oldtelephonestate !== vm.telephoneState) {
+            clearInterval(interval)
+            vm.times()
+          }
+          vm.agentState1 = false
+          vm.agentState2 = false
+          vm.agentState3 = false
+          vm.agentState4 = false
+          vm.agentState5 = false
+          vm.agentState6 = true
+          vm.formInline.region = '外呼占用'
+          vm.setbtnStatus('outcallBusy')
           if (vm.formInline.DN === DN) {
             vm.disabledDN = true
           } else {
@@ -1366,7 +1494,6 @@ export default {
           break
         case '-3':
         case '-4':
-          vm.lockChange = true
           break
       }
       // }

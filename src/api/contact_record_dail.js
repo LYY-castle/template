@@ -109,6 +109,17 @@ export function queryOrderByTaskId(id) {
     params: { 'taskId': id }
   })
 }
+// 综合查询聊天记录
+export function queryRecords(customerId, pageNo) {
+  return request({
+    url: '/wechat/queryRecords',
+    method: 'post',
+    data: {
+      customerId: customerId,
+      pageNo: pageNo
+    }
+  })
+}
 // 查询订单
 export function querycustomerbyid(id) {
   return request({

@@ -33,8 +33,8 @@ export default (new (function() {
     that.methods.on_reasonchange(event, agentid, DN, reasoncode)
   })
 //Ringing_Event|AgentID|DN|UUID|callerid|calleeid|ori_ani|other-leg-UUID|queueName
-  EventObject.bind('on_ringing_event', function(event, agentid, DN, UUID, callerid, calleeid, ori_ani, other_leg_uuid, queueName, activeLine) {
-    that.methods.on_ringing_event(event, agentid, DN, UUID, callerid, calleeid, ori_ani, other_leg_uuid, queueName, activeLine)
+  EventObject.bind('on_ringing_event', function(event, agentid, DN, UUID, callerid, calleeid, ori_ani, other_leg_uuid, queueName, activeLine,choice,DialData) {
+    that.methods.on_ringing_event(event, agentid, DN, UUID, callerid, calleeid, ori_ani, other_leg_uuid, queueName, activeLine,choice,DialData)
   })
 //RingBack_Event|AgentID|DN|UUID|callerid|calleeid|ori_ani
   EventObject.bind('on_ringback_event', function(event, agentid, DN, UUID, callerid, calleeid, ori_ani, activeLine) {
@@ -190,6 +190,12 @@ export default (new (function() {
         var RI_oriAni = GetEventValue('oriAni', obj.BodyData)
         var RI_otherLegUUID = GetEventValue('otherLegUUID', obj.BodyData)
         var RI_QueueName = GetEventValue('QueueName', obj.BodyData)
+        var RI_choice=GetAttachedValue("choice",obj.AttachedData);
+        var RI_DialData=GetAttachedValue("DialData",obj.AttachedData);
+        if(size(uuid_list)<1)
+        {
+          ori_ani=RI_callerid;
+        }
         if (RI_AgentID != '') {
           add(uuid_list, RI_UUID)
           add(uuid_dn_list, RI_callerid)
@@ -197,7 +203,11 @@ export default (new (function() {
           //ani=GetEventValue("oriAni",obj.BodyData);
           activeLine = size(uuid_list)
           //EventObject.trigger('on_ringing_event',[msg[1],msg[2],msg[3],msg[4],msg[5],msg[6],msg[7],msg[8],activeLine,msg[9]]);
-          EventObject.trigger('on_ringing_event', [RI_AgentID, RI_DN, RI_UUID, RI_callerid, RI_calleeid, RI_oriAni, RI_otherLegUUID, RI_QueueName, activeLine])
+          EventObject.trigger('on_ringing_event', [RI_AgentID, RI_DN, RI_UUID, RI_callerid, RI_calleeid, RI_oriAni, RI_otherLegUUID, RI_QueueName, activeLine,RI_choice,RI_DialData])
+          if(RI_DialData){
+              sleep(1500)
+              answerCall()
+          }
         }
         break
       case 'RingBack_Event':
@@ -468,6 +478,10 @@ export default (new (function() {
 
   this.setAgentACW=function () {
     this.setAgentStatus(AgentID, '14')
+//doSend("SetStatus|" + AgentID + "|" + "14");
+  }
+  this.setAgentDialInFree=function () {
+    this.setAgentStatus(AgentID, '-5')
 //doSend("SetStatus|" + AgentID + "|" + "14");
   }
 

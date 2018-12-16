@@ -118,14 +118,14 @@ export default {
                 Message({
                   message: '请注销再登录',
                   type: 'error',
-                  duration: 5 * 1000
+                  duration: 2 * 1000
                 })
               }
               if (data.code === '1') {
                 Message({
                   message: data.message,
                   type: 'success',
-                  duration: 5 * 1000
+                  duration: 1 * 1000
                 })
                 // 获取主题
                 getCurrentTheme().then(response => {
@@ -144,7 +144,7 @@ export default {
               Message({
                 message: data.message,
                 type: 'error',
-                duration: 5 * 1000
+                duration: 2 * 1000
               })
             } else if (data.code === '5') {
               this.loading = false
@@ -174,7 +174,7 @@ export default {
                     Message({
                       message: '系统繁忙',
                       type: 'error',
-                      duration: 5 * 1000
+                      duration: 2 * 1000
                     })
                   }
                 }).catch(() => {
@@ -182,7 +182,7 @@ export default {
                   Message({
                     message: '连接错误',
                     type: 'error',
-                    duration: 5 * 1000
+                    duration: 2 * 1000
                   })
                 })
               })
@@ -204,7 +204,7 @@ export default {
         Message({
           message: response.data.msg,
           type: 'error',
-          duration: 5 * 1000
+          duration: 2 * 1000
         })
         this.$router.push({ path: '/dashboard' })
       }
