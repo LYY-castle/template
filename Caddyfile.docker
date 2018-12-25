@@ -10,6 +10,8 @@
   proxy / 127.0.0.1:9091 {
     transparent
     websocket
+    keepalive 0
+    timeout 100s
   }
   gzip
   log stdout
