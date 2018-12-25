@@ -103,7 +103,7 @@
           <el-table-column
             align="center"
             label="操作"
-            width="100">1
+            width="100">
           <template slot-scope="scope">
             <el-button @click="editVisible=true;delReq.listId=scope.row.listId;searchByListId(delReq);" type="text" size="small">修改</el-button>
             <el-button @click="delVisible=true;delReq.listId=scope.row.listId" type="text" size="small">删除</el-button>
@@ -113,7 +113,7 @@
       </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;addNamelist.listName='';namelistPageInfo.pageSize=10;searchBatch.pageSize=10;searchBatch.pageNo=1;getBatch(searchBatch);clearForm(searchBatch);searchBatch.validityStatus=0">新建</el-button>
+        <el-button type="success" size="small" @click="addVisible=true;addNamelist.listName='';namelistPageInfo.pageSize=10;searchCustomer.pageSize=10;searchCustomer.pageNo=1;getCustomers(searchCustomer);clearForm(searchCustomer);">新建</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         <el-pagination
           v-if="pageShow"
@@ -167,6 +167,146 @@
       </div>
     </el-dialog>
     <el-dialog
+      top="5vh"
+      width="90%"
+      :visible.sync="addVisible"
+      append-to-body>
+      <div slot="title" style="text-align: center;">
+        <el-button size="small" @click="addVisible = false;" style="float:left;" icon="el-icon-arrow-left">返 回</el-button>
+        <h3 style="display:inline;text-align:center;">新建名单</h3>
+      </div>
+      <el-row>
+        <el-form :inline="true" size="small">
+          <el-form-item>
+            <el-input v-model="searchCustomer.customerId" placeholder="客户编号（限长20字符）" maxlength="20"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input v-model="searchCustomer.customerName" placeholder="客户姓名（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input v-model="searchCustomer.mobile" placeholder="客户电话（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="操作时间：">
+          <el-date-picker
+              v-model="timeValue"
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
+              value-format="yyyy-MM-dd HH:mm:ss">
+          </el-date-picker>
+        </el-form-item>
+          <el-form-item>
+            <el-button size="small" type="primary" @click="searchCustomer.pageNo=1;getCustomers(searchCustomer)">查询</el-button>
+            <el-button size="small" type="danger" @click="clearForm3()">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-row>
+      <el-row>
+        <el-table
+          :data="customerTableData"
+          border
+          @selection-change="namelistSelectionChange">
+          <el-table-column
+            align="center"
+            type="selection"
+            width="55">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="customerId"
+            label="客户编号"
+            :show-overflow-tooltip="true">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="customerName"
+            label="客户姓名"
+            :show-overflow-tooltip="true">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="性别"
+            width="55">
+            <template
+              slot-scope="scope">
+              <div>{{showSex(scope.row.sex)}}</div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="客户电话"
+            :show-overflow-tooltip="true">
+            <template
+              slot-scope="scope">
+              {{hideMobile(scope.row.mobile)}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="身份证"
+            :show-overflow-tooltip="true">
+            <template
+              slot-scope="scope">
+              {{hideIdNumber(scope.row.idNumber)}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="source"
+            label="客户来源">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="modifierName"
+            label="操作人"
+            :show-overflow-tooltip="true">
+            <template slot-scope="scope">
+              {{ scope.row.modifierName }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="modifierTime"
+            width="155"
+            label="操作时间">
+          </el-table-column>
+        </el-table>
+      </el-row>
+      <div slot="footer" style="text-align: right;">
+        <el-pagination
+          v-if="pageShow2"
+          background
+          @size-change="namelistSizeChange"
+          @current-change="namelistPageChange"
+          :current-page='namelistPageInfo.pageNo'
+          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-size='namelistPageInfo.pageSize'
+          layout="total, sizes, prev, pager, next, jumper "
+          :total='namelistPageInfo.totalCount' style="text-align:right;float:left;">
+        </el-pagination>
+        <el-form :inline="true" size="small" :model="addNameList" ref="addNameList" :rules="rule">
+          <el-form-item prop="listName" label="名单名称：">
+            <el-input v-model="addNameList.listName" placeholder="名单名称（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item prop="visible" label="名单状态：">
+            <el-switch
+            v-model="addNameList.visible"
+            active-text="可见"
+            inactive-text="不可见"
+            :active-value=1
+            :inactive-value=0
+            active-color="#67C23A"
+            ></el-switch>
+          </el-form-item>
+          <el-form-item>
+            <el-button size="small" type="success" @click="submitForm('addNameList');newNameList(addNameList)">确 定</el-button>
+            <el-button size="small" @click="addVisible = false;">取 消</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </el-dialog>
+    <!-- <el-dialog
       top="5vh"
       width="90%"
       :visible.sync="addVisible"
@@ -299,7 +439,7 @@
           </el-form-item>
         </el-form>
       </div>
-    </el-dialog>
+    </el-dialog> -->
     <el-dialog
       width="30%"
       title="批量删除"
@@ -339,12 +479,14 @@
 import {
   queryNamelist,
   addNamelist,
+  addNameList,
   queryByListId,
   editNamelist,
   delList,
   batchDelList
 } from '@/api/sc_list_generate'
 import { queryBatch } from '@/api/batch_management'
+import { queryByCustomer } from '@/api/customerManagement'
 import { rule } from '@/utils/validate'
 import { clone } from '@/utils/tools'
 
@@ -352,6 +494,7 @@ export default {
   name: 'sc_list_generate',
   data() {
     return {
+      timeValue: '',
       rule: rule,
       detailVisible: false,
       delVisible: false, // 删除对话框显示隐藏
@@ -361,6 +504,7 @@ export default {
       batchDelVisible: false, // 批量删除对话框显示隐藏
       tableData: [], // 表格数据
       batchTableData: [], // 批次表格
+      customerTableData: [], // 客户信息表格
       validate: true, // 验证不通过阻止发请求
       pageShow: false, // 分页显示隐藏
       pageShow2: false, // 分页显示隐藏
@@ -390,6 +534,16 @@ export default {
         pageNo: 1,
         pageSize: 10
       },
+      searchCustomer: {
+        customerId: '',
+        customerName: '',
+        mobile: '',
+        modifierName: '',
+        startModifierTime: '',
+        endModifierTime: '',
+        pageNo: 1,
+        pageSize: 10
+      },
       searchBatch: {
         batchId: '',
         batchName: '',
@@ -413,6 +567,12 @@ export default {
       addNamelist: {
         listName: '',
         batchIds: [],
+        assignStatus: 1,
+        visible: 1
+      },
+      addNameList: {
+        listName: '',
+        customerIds: [],
         assignStatus: 1,
         visible: 1
       },
@@ -460,6 +620,22 @@ export default {
         }
       })
     },
+    // 身份证号码加密
+    hideIdNumber(idNumber) {
+      if (idNumber) {
+        return idNumber.substring(0, 10) + '****' + idNumber.substring(14, 18)
+      }
+    },
+    // 手机号码加密
+    hideMobile(mobileNo) {
+      if (mobileNo) {
+        return mobileNo.substring(0, 3) + '****' + mobileNo.substring(7, 11)
+      }
+    },
+    // 性别显示判断
+    showSex(code) {
+      return code === 1 ? '女' : '男'
+    },
     // 清空重置
     clearForm(obj, formName) {
       this.req = {
@@ -503,6 +679,19 @@ export default {
         pageNo: this.namelistPageInfo.pageNo
       }
     },
+    clearForm3() {
+      console.log()
+      this.searchCustomer = {
+        customerId: '',
+        customerName: '',
+        mobile: '',
+        modifierName: '',
+        startModifierTime: '',
+        endModifierTime: '',
+        pageSize: this.namelistPageInfo.pageSize,
+        pageNo: this.namelistPageInfo.pageNo
+      }
+    },
     // 查询名单信息
     searchNamelist(req) {
       queryNamelist(req)
@@ -540,6 +729,31 @@ export default {
             }
           } else {
             this.$message(response.data.message)
+            this.pageShow2 = false
+          }
+        })
+        .catch(error => {
+          console.log(error)
+          this.$message('操作失败')
+        })
+    },
+    // 查询客户信息
+    getCustomers(req) {
+      req.startModifierTime = this.timeValue ? this.timeValue[0] : null
+      req.endModifierTime = this.timeValue ? this.timeValue[1] : null
+      queryByCustomer(req)
+        .then(response => {
+          if (response.data.code === 0) {
+            this.customerTableData = response.data.data
+            if (response.data.pageInfo) {
+              this.namelistPageInfo = response.data.pageInfo
+              this.pageShow2 = true
+            } else {
+              this.pageShow2 = false
+            }
+          } else {
+            this.$message(response.data.messages)
+            this.customerTableData = response.data.data
             this.pageShow2 = false
           }
         })
@@ -615,7 +829,7 @@ export default {
         })
       }
     },
-    // 新建名单
+    // 新建名单(通过批次)
     newNamelist(addReq) {
       if (!this.validate) {
         this.$message.error('请输入名单名称')
@@ -635,6 +849,32 @@ export default {
         } else {
           this.$message('新建失败')
         }
+      }).catch(error => {
+        this.$message('新建失败')
+        console.log(error)
+      })
+    },
+    // 新建名单(通过客户信息)
+    newNameList(addReq) {
+      console.log(addReq)
+      if (!this.validate) {
+        this.$message.error('请输入名单名称')
+        return false
+      }
+      if (this.addNameList.customerIds.length === 0) {
+        this.$message.error('请选择需要生成名单的客户')
+        return false
+      }
+      this.addVisible = false
+      addNameList(addReq).then(response => {
+        // if (response.data.code === 0) {
+        //   this.$message.success(response.data.message)
+        //   setTimeout(() => {
+        //     this.searchNamelist(this.req2)
+        //   }, 500)
+        // } else {
+        //   this.$message('新建失败')
+        // }
       }).catch(error => {
         this.$message('新建失败')
         console.log(error)
@@ -668,9 +908,9 @@ export default {
       }
     },
     namelistSelectionChange(val) {
-      this.addNamelist.batchIds.length = 0
+      this.addNameList.customerIds.length = 0
       for (var i = 0; i < val.length; i++) {
-        this.addNamelist.batchIds.push(val[i].batchId)
+        this.addNameList.customerIds.push(val[i].batchId)
       }
     },
     // 页面显示条数
@@ -682,11 +922,13 @@ export default {
       this.searchNamelist(this.req2)
     },
     namelistSizeChange(val) {
-      this.searchBatch.pageSize = val
-      this.searchBatch2.pageSize = val
-      this.searchBatch2.pageNo = 1
-      this.namelistPageInfo.pageNo = 1
-      this.getBatch(this.searchBatch2)
+      this.searchCustomer.pageSize = val
+      this.getCustomers(this.searchCustomer)
+      // this.searchBatch.pageSize = val
+      // this.searchBatch2.pageSize = val
+      // this.searchBatch2.pageNo = 1
+      // this.namelistPageInfo.pageNo = 1
+      // this.getBatch(this.searchBatch2)
     },
     // 分页翻页功能
     handleCurrentChange(val) {
@@ -694,9 +936,12 @@ export default {
       this.searchNamelist(this.req2)
     },
     namelistPageChange(val) {
-      this.searchBatch2.pageSize = this.namelistPageInfo.pageSize
-      this.searchBatch2.pageNo = val
-      this.getBatch(this.searchBatch2)
+      this.searchCustomer.pageSize = this.namelistPageInfo.pageSize
+      this.searchCustomer.pageNo = val
+      this.getCustomers(this.searchCustomer)
+      // this.searchBatch2.pageSize = this.namelistPageInfo.pageSize
+      // this.searchBatch2.pageNo = val
+      // this.getBatch(this.searchBatch2)
     }
   }
 }
