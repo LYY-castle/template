@@ -113,7 +113,7 @@
       </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;addNamelist.listName='';namelistPageInfo.pageSize=10;searchCustomer.pageSize=10;searchCustomer.pageNo=1;getCustomers(searchCustomer);clearForm(searchCustomer);">新建</el-button>
+        <el-button type="success" size="small" @click="addVisible=true;addNameList.listName='';namelistPageInfo.pageSize=10;searchCustomer.pageSize=10;searchCustomer.pageNo=1;getCustomers(searchCustomer);clearForm(searchCustomer);">新建</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         <el-pagination
           v-if="pageShow"
@@ -856,7 +856,6 @@ export default {
     },
     // 新建名单(通过客户信息)
     newNameList(addReq) {
-      console.log(addReq)
       if (!this.validate) {
         this.$message.error('请输入名单名称')
         return false
@@ -867,14 +866,14 @@ export default {
       }
       this.addVisible = false
       addNameList(addReq).then(response => {
-        // if (response.data.code === 0) {
-        //   this.$message.success(response.data.message)
-        //   setTimeout(() => {
-        //     this.searchNamelist(this.req2)
-        //   }, 500)
-        // } else {
-        //   this.$message('新建失败')
-        // }
+        if (response.data.code === 0) {
+          this.$message.success(response.data.message)
+          setTimeout(() => {
+            this.searchNamelist(this.req2)
+          }, 500)
+        } else {
+          this.$message('新建失败')
+        }
       }).catch(error => {
         this.$message('新建失败')
         console.log(error)
