@@ -865,8 +865,6 @@ export default {
         return false
       }
       this.addVisible = false
-      this.addNameList.listName = ''
-      this.clearForm3()
       addNameList(addReq).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
@@ -876,6 +874,8 @@ export default {
         } else {
           this.$message('新建失败')
         }
+        this.addNameList.listName = ''
+        this.clearForm3()
       }).catch(error => {
         this.$message('新建失败')
         console.log(error)
