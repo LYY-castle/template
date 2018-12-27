@@ -280,7 +280,7 @@
           @size-change="namelistSizeChange"
           @current-change="namelistPageChange"
           :current-page='namelistPageInfo.pageNo'
-          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-sizes="[10, 50, 100, 200, 500]"
           :page-size='namelistPageInfo.pageSize'
           layout="total, sizes, prev, pager, next, jumper "
           :total='namelistPageInfo.totalCount' style="text-align:right;float:left;">
@@ -680,7 +680,7 @@ export default {
       }
     },
     clearForm3() {
-      console.log()
+      this.timeValue = ''
       this.searchCustomer = {
         customerId: '',
         customerName: '',
@@ -865,6 +865,8 @@ export default {
         return false
       }
       this.addVisible = false
+      this.addNameList.listName = ''
+      this.clearForm3()
       addNameList(addReq).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
