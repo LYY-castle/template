@@ -911,7 +911,7 @@ export default {
     namelistSelectionChange(val) {
       this.addNameList.customerIds.length = 0
       for (var i = 0; i < val.length; i++) {
-        this.addNameList.customerIds.push(val[i].batchId)
+        this.addNameList.customerIds.push(val[i].customerId)
       }
     },
     // 页面显示条数
