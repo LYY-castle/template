@@ -28,6 +28,13 @@ const env_conf = {
     FS_SERVER_HOST: '"http://119.27.179.175:9800"',
     CTI_MONITOR_WS_SERVERURL:'"ws://119.27.184.157:9052/"',
     MINIO_URL:'"http://119.27.179.175:9800/crm"',
+  },
+  loan: {
+    TUI_WS_SERVERURL:'"ws://119.27.179.175:12268"',
+    CTI_WS_SERVERURL:'"ws://132.232.209.250:9050/"',
+    CTI_MONITOR_WS_SERVERURL:'"ws://132.232.209.250:9052/"',
+    FS_SERVER_HOST: '"http://119.27.179.175:12270"',
+    MINIO_URL:'"http://119.27.179.175:12270/crm"',
   }
 }
 
