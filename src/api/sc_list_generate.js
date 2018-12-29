@@ -32,12 +32,20 @@ export function editNamelist(req) {
     data: req
   })
 }
-// 添加名单
+// 添加名单(通过批次)
 export function addNamelist(req) {
   return request({
     url: `/customer/generatelist`,
     method: 'post',
     data: req
+  })
+}
+// 添加名单(通过客户条件)
+export function addNameList(data) {
+  return request({
+    url: '/customer/generateList',
+    method: 'post',
+    data: data
   })
 }
 // 批量删除
