@@ -75,7 +75,8 @@
             label="客户电话" :show-overflow-tooltip="true">
             <template
               slot-scope="scope">
-              {{hideMobile(scope.row.mobile)}}
+              <!-- {{hideMobile(scope.row.mobile)}} -->
+              {{scope.row.mobile}}
             </template>
           </el-table-column>
           <el-table-column
@@ -160,9 +161,9 @@
             <el-option label="男" value=0></el-option>
           </el-select> -->
         </el-form-item>
-        <el-form-item label="客户电话" prop="mobile">
+        <!-- <el-form-item label="客户电话" prop="mobile">
           <el-input v-model="customerReverseDetail.mobile" size="small" placeholder="上限50字符" maxlength="50"></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="客户地址" prop="resideAddress">
           <el-input v-model="customerReverseDetail.resideAddress" size="small" placeholder="上限200字符" maxlength="200"></el-input>
         </el-form-item>
@@ -368,6 +369,8 @@ export default {
         pageSize: 10
       },
       customerDetail: {
+        isInternalAdmin: '',
+        source: '',
         customerName: '',
         sex: '1',
         mobile: '',
@@ -466,7 +469,7 @@ export default {
     },
     // 性别显示判断
     showSex(code) {
-      return code === 1 ? '女' : '男'
+      return code === 1 || '1' ? '男' : '女'
     },
     // 地址补无
     showAddress(address) {
@@ -529,7 +532,7 @@ export default {
               mobile: data.mobile,
               idNumber: data.idNumber,
               resideAddress: data.resideAddress,
-              sex: typeof data.sex === 'undefined' || this.data.sex === null ? '' : data.sex.toString(),
+              sex: typeof data.sex === 'undefined' || data.sex === null ? '' : data.sex.toString(),
               customerId: data.customerId,
               modifierName: data.modifierName,
               modifierTime: data.modifierTime
@@ -574,6 +577,8 @@ export default {
       if (!this.validate) {
         return false
       }
+      customerDetail.isInternalAdmin = parseInt(localStorage.getItem('is_internal_admin'))
+      customerDetail.source = '其他'
       this.addVisible = false
       addCustomer(customerDetail).then(response => {
         if (response.data.code === 0) {
