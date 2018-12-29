@@ -535,6 +535,7 @@ export default {
         pageSize: 10
       },
       searchCustomer: {
+        isInternalAdmin: parseInt(localStorage.getItem('is_internal_admin')),
         customerId: '',
         customerName: '',
         mobile: '',
@@ -682,6 +683,7 @@ export default {
     clearForm3() {
       this.timeValue = ''
       this.searchCustomer = {
+        isInternalAdmin: parseInt(localStorage.getItem('is_internal_admin')),
         customerId: '',
         customerName: '',
         mobile: '',

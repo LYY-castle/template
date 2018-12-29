@@ -325,13 +325,13 @@
               <div>{{hideIdNumber(scope.row.idNumber)}}</div>
             </template>
           </el-table-column>
-          <el-table-column
+          <!-- <el-table-column
             align="center"
             label="联系方式">
              <template slot-scope="scope">
               <div>{{hideMobile(scope.row.mobile)}}</div>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column
             align="center"
             prop="resideAddress"

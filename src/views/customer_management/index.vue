@@ -398,6 +398,7 @@ export default {
     reset() {
       this.timeValue = []
       this.req = {
+        isInternalAdmin: parseInt(localStorage.getItem('is_internal_admin')),
         customerName: '',
         customerPhone: '',
         modifierName: '',
