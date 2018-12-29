@@ -527,7 +527,7 @@ export default {
               mobile: data.mobile,
               idNumber: data.idNumber,
               resideAddress: data.resideAddress,
-              sex: data.sex.toString(),
+              sex: typeof data.sex === 'undefined' || this.data.sex === null ? '' : data.sex.toString(),
               customerId: data.customerId,
               modifierName: data.modifierName,
               modifierTime: data.modifierTime

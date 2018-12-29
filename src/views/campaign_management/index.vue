@@ -143,7 +143,7 @@
       </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;clearForm(campaignDetail,'campaignDetail');outcalltimeInfos=[];failTreatmentInfos=[];campaignExpiryDate=[]">新建</el-button>
+        <el-button type="success" size="small" @click="addVisible=true;clearForm(campaignDetail,'campaignDetail');outcalltimeInfos=[];failTreatmentInfos=[];campaignExpiryDate=[];customerColumnInfos=[]">新建</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         <el-pagination
           background
@@ -174,6 +174,16 @@
                 :label="item.name"
                 :value="item.code">
             </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="客户配置项">
+          <el-select v-model="customerColumnInfos" placeholder="请选择展示的客户字段" style="width:100%" multiple>
+            <el-option
+              v-for="item in customerParams"
+              :key="item.value"
+              :label="item.name"
+              :value="item.value"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="产品" prop="products" v-if="!(campaignDetail.campaignTypeCode=='RECRUIT')">
@@ -305,6 +315,9 @@
         <el-form-item label="活动类型">
           <span>{{campaignDetail.campaignTypeInfo.name}}</span>
         </el-form-item>
+        <el-form-item label="客户配置项">
+          <span v-for="item in toshowcustomerColumnInfos">{{item+' , '}}</span>
+        </el-form-item>
         <el-form-item label="产品" v-if="!(campaignDetail.campaignTypeInfo.code=='RECRUIT')">
           <span v-for="item in productName">{{item+' , '}}</span>
         </el-form-item>
@@ -406,6 +419,16 @@
                 :label="item.name"
                 :value="item.code">
             </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="客户配置项">
+          <el-select v-model="customerColumnInfos" placeholder="请选择展示的客户字段" style="width:100%" multiple>
+            <el-option
+              v-for="item in customerParams"
+              :key="item.value"
+              :label="item.name"
+              :value="item.value"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="产品" prop="products" v-if="!(campaignDetail.campaignTypeCode=='RECRUIT')">
@@ -1021,6 +1044,44 @@ export default {
           label: '换时间段拨打'
         }
       ],
+      customerParams: [
+        {
+          value: 'customerId',
+          name: '客户编号'
+        },
+        {
+          value: 'customerName',
+          name: '客户姓名'
+        },
+        {
+          value: 'sex',
+          name: '性别'
+        },
+        {
+          value: 'mobile',
+          name: '联系电话'
+        },
+        {
+          value: 'idNumber',
+          name: '身份证'
+        },
+        {
+          value: 'resideAddress',
+          name: '地址'
+        },
+        {
+          value: 'email',
+          name: '邮箱'
+        },
+        {
+          value: 'bankCardType',
+          name: '持卡类型'
+        },
+        {
+          value: 'source',
+          name: '来源'
+        }
+      ],
       campaignExpiryDate: [],
       timeValue: [],
       removeListVisible: false, // 单个移除
@@ -1050,6 +1111,8 @@ export default {
       campaignTypes: [], // 活动类型
       marksData: [], // 评分表
       productName: [], // 产品名称
+      customerColumnInfos: [], // 选择显示的客户字段
+      toshowcustomerColumnInfos: [], // 需要显示在活动详情的客户字段
       departName: '', // 活动组织名称
       summaryName: '', // 小结名称
       campaignName: '', // 活动名称
@@ -1088,6 +1151,7 @@ export default {
         callType: '', // 自动外呼-拨打方式
         // outCallTimeStart: '', // 自动外呼-时间段开始
         // outCallTimeEnd: '', // 自动外呼-时间段结束
+        customerColumnInfos: [], // 显示的客户字段
         outCallFlag: '', // 自动外呼-标志 0关闭 1开启
         outcalltimeInfos: [], // 自动外呼-外呼时间段
         failTreatmentInfos: [], // 自动外呼-错误处理方式
@@ -1371,6 +1435,20 @@ export default {
               this.outcalltimeInfos = this.campaignDetail.outcalltimeInfos
             }
             this.$set(this.campaignDetail, 'campaignTypeCode', this.campaignDetail.campaignTypeInfo.code)
+            // 遍历查找客户字段
+            this.toshowcustomerColumnInfos = []
+            this.customerColumnInfos = []
+            const columns = this.campaignDetail.customerColumnInfos
+            for (var k = 0; k < columns.length; k++) {
+              this.toshowcustomerColumnInfos.push(
+                columns[k].customerColumn === 'customerId' ? '客户编号' : columns[k].customerColumn === 'customerName' ? '客户姓名'
+                  : columns[k].customerColumn === 'sex' ? '性别' : columns[k].customerColumn === 'mobile' ? '联系电话'
+                    : columns[k].customerColumn === 'idNumber' ? '身份证' : columns[k].customerColumn === 'resideAddress' ? '地址'
+                      : columns[k].customerColumn === 'email' ? '邮箱' : columns[k].customerColumn === 'bankCardType' ? '持卡类型'
+                        : columns[k].customerColumn === 'source' ? '来源' : '无'
+              )
+              this.customerColumnInfos.push(columns[k].customerColumn)
+            }
           }
           // 遍历查找对应产品名称
           this.productName = []
@@ -1404,6 +1482,19 @@ export default {
     },
     // 修改活动信息
     editCampaign(campaignDetail) {
+      const arr = this.customerColumnInfos
+      campaignDetail.customerColumnInfos = []
+      for (let i = 0; i < arr.length; i++) {
+        campaignDetail.customerColumnInfos.push({
+          customerColumn: arr[i]
+        })
+      }
+      campaignDetail.failTreatmentInfos = this.failTreatmentInfos
+      campaignDetail.outcalltimeInfos = this.outcalltimeInfos
+      if (this.campaignExpiryDate !== '') {
+        campaignDetail.startTime = this.campaignExpiryDate[0]
+        campaignDetail.endTime = this.campaignExpiryDate[1]
+      }
       if (!this.validate) {
         return false
       }
@@ -1420,6 +1511,44 @@ export default {
       }).catch(error => {
         console.log(error)
         this.$message('操作失败')
+      })
+    },
+    // 新建活动
+    addCampaign(campaignDetail) {
+      const arr = this.customerColumnInfos
+      campaignDetail.customerColumnInfos = []
+      for (let i = 0; i < arr.length; i++) {
+        campaignDetail.customerColumnInfos.push({
+          customerColumn: arr[i]
+        })
+      }
+      campaignDetail.failTreatmentInfos = this.failTreatmentInfos
+      campaignDetail.outcalltimeInfos = this.outcalltimeInfos
+      if (this.campaignExpiryDate !== '') {
+        campaignDetail.startTime = this.campaignExpiryDate[0]
+        campaignDetail.endTime = this.campaignExpiryDate[1]
+      }
+      if (!this.validate) {
+        return false
+      }
+      if (campaignDetail.campaignTypeCode === 'AUTO_OUT_CALL') {
+        // 默认设置自动外呼标志为开启
+        campaignDetail.outCallFlag = '1'
+      }
+      campaignDetail.productIds = campaignDetail.products
+      campaignDetail.status = '1'
+      this.addVisible = false
+      addCampaign(campaignDetail).then(response => {
+        if (response.data.code === 0) {
+          this.$message.success(response.data.message)
+          this.req2.status = ''
+          this.findCampaignByConditions(this.req2)
+        } else {
+          this.$message(response.data.message)
+        }
+      }).catch(error => {
+        this.$message('新建失败')
+        console.log(error)
       })
     },
     // 查询所有产品
@@ -1478,38 +1607,6 @@ export default {
         for (var i = 0; i < response.data.data.length; i++) {
           this.qcdeptData.push(response.data.data[i].departName)
         }
-      })
-    },
-    // 新建活动
-    addCampaign(campaignDetail) {
-      campaignDetail.failTreatmentInfos = this.failTreatmentInfos
-      campaignDetail.outcalltimeInfos = this.outcalltimeInfos
-      if (this.campaignExpiryDate !== '') {
-        campaignDetail.startTime = this.campaignExpiryDate[0]
-        campaignDetail.endTime = this.campaignExpiryDate[1]
-      }
-      console.log(campaignDetail)
-      if (!this.validate) {
-        return false
-      }
-      if (campaignDetail.campaignTypeCode === 'AUTO_OUT_CALL') {
-        // 默认设置自动外呼标志为开启
-        campaignDetail.outCallFlag = '1'
-      }
-      campaignDetail.productIds = campaignDetail.products
-      campaignDetail.status = '1'
-      this.addVisible = false
-      addCampaign(campaignDetail).then(response => {
-        if (response.data.code === 0) {
-          this.$message.success(response.data.message)
-          this.req2.status = ''
-          this.findCampaignByConditions(this.req2)
-        } else {
-          this.$message(response.data.message)
-        }
-      }).catch(error => {
-        this.$message('新建失败')
-        console.log(error)
       })
     },
     // 批量删除
