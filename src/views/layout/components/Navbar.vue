@@ -1672,6 +1672,7 @@ export default {
     getUserInfo().then(res => {
       localStorage.setItem('departId', res.data.departId)
       localStorage.setItem('agentName', res.data.agentName)
+      localStorage.setItem('is_internal_admin', res.data.is_internal_admin)
       this.userInfo.userName = res.data.agentName
       this.userInfo.staffId = res.data.agentId
       this.userInfo.departName = res.data.departName
