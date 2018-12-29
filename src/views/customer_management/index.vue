@@ -348,6 +348,7 @@ export default {
       },
       // 查询 发送请求参数
       req: {
+        isInternalAdmin: parseInt(localStorage.getItem('is_internal_admin')),
         customerId: '',
         customerName: '',
         mobile: '',

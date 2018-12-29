@@ -432,7 +432,8 @@ export default {
         validityTime: '',
         fileName: '',
         description: '',
-        filePath: ''
+        filePath: '',
+        isInternalAdmin: ''
       },
       // 分页数据
       pageInfo: {}
@@ -597,6 +598,7 @@ export default {
       }
       if (this.fileList.length !== 0) {
         this.addVisible = false
+        addReq.isInternalAdmin = localStorage.getItem('is_internal_admin')
         batchListimport(addReq).then(response => {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
