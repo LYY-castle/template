@@ -4,7 +4,7 @@ $.ajaxSetup({
   },
   contentType:'application/json;charset=utf-8',
 })
-var portalUrl = "http://119.27.179.175:8111/linnportal/api/v1";//远程测试
+var portalUrl = "http://119.27.179.175:8111/linnportal/";//远程测试
 // var portalUrl = "http://localhost:8090";//本地测试
 // 获取用户的openid 
 var openid = getQueryString('openid')
