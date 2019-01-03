@@ -1,11 +1,11 @@
-var portalUrl = "http://119.27.184.90:12003/api/v1";//远程测试
-// var portalUrl = "http://localhost:8090";//本地测试
 $.ajaxSetup({
   headers:{
     'Authorization':'Bearer eyJhbGciOiJIUzUxMiJ9.eyJhZ2VudGlkIjoiMTAwMDIiLCJjcmVhdGVUaW1lIjoxNTI2MjgyNDIzNTI0LCJleHBpcmF0aW9uVGltZSI6OTQ2MDgwMDAwMDAsImV4cCI6MTYyMDg5MDQyM30.irCMydZuir8XoCmutSy48IJrcjBgyr6Kaf_tYnWUQdwf0W-23pjeNYkx8kYs9NL0qAwpA4z1SisNI4b9wnluGw'
   },
   contentType:'application/json;charset=utf-8',
 })
+var portalUrl = "http://119.27.179.175:8111/linnportal/api/v1";//远程测试
+// var portalUrl = "http://localhost:8090";//本地测试
 // 获取用户的openid 
 var openid = getQueryString('openid')
 var $toast = $('#toast')
