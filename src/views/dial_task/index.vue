@@ -267,7 +267,7 @@
             <el-tooltip v-else-if="!checkNodisturb(scope.row.isNodisturb)" class="item" effect="dark"  content="该号码处于免访号段中" placement="left-start">
               <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
             </el-tooltip>
-            <el-button type="text" class="el-icon-message wechat-hide" :disabled="!showStatus(scope.row.status) || checkBindWechat(scope.row.customerId)" @click="toChatPage(scope.row.taskId, scope.row.campaignId, scope.row.customerId, scope.row.customerName, scope.row.customerPhone)">微信聊天</el-button>
+            <el-button type="text" class="el-icon-message" :disabled="!showStatus(scope.row.status) || checkBindWechat(scope.row.customerId)" @click="toChatPage(scope.row.taskId, scope.row.campaignId, scope.row.customerId, scope.row.customerName, scope.row.customerPhone)">微信聊天</el-button>
           </template>
           </el-table-column>
         </el-table>
@@ -310,7 +310,7 @@
         <div>
           <img v-if="!hideDialTo" src="../../../static/images/dial_normal.png" alt="拨打" width="28px" height="28px" @click="dialTo(taskId,campaignId,isBlacklist,customerPhone)" style="cursor:pointer;">
           <img v-if="hideDialTo" src="../../../static/images/dial_disable.png" alt="拨打" width="28px" height="28px"  style="cursor:default;">
-          <el-button :disabled="checkBindWechat(telCustomerInfos.customerId)" @click="toWeChat" class="wechat-btn wechat-hide" type="text"><svg-icon icon-class="wechat" class="icon-size" style="padding-bottom:5px;width:25px;height:25px;"/></el-button>
+          <el-button :disabled="checkBindWechat(telCustomerInfos.customerId)" @click="toWeChat" class="wechat-btn" type="text"><svg-icon icon-class="wechat" class="icon-size" style="padding-bottom:5px;width:25px;height:25px;"/></el-button>
         </div>
       </el-col>
       <el-col :span="3"></el-col>
@@ -345,9 +345,6 @@
        <div>
          <label>地址：</label><span v-text="customerInfo.resideAddress"></span>
        </div><br/>
-       <div>
-         <label>aaaa:asdasdasdasd</label>
-       </div>
       </el-col>
       <el-col :span="8" v-if="isRecruit">
         <br/>
@@ -369,7 +366,7 @@
        <div>
          <label>持卡类型：</label><span v-text="customerInfo.bankCardType"></span>
        </div><br/>
-       <div class='wechat-hide'>
+       <div>
          <label>微信手机号：</label>
          <span v-show="customerInfo.wechatPhone">
            {{customerInfo.wechatPhone}}&nbsp;&nbsp;
@@ -379,9 +376,6 @@
            <el-button plain type="default" icon="el-icon-plus" style="width:45px" title="添加微信手机号" @click="addWechatPhone=true;editCustomerInfo.customerId=customerInfo.customerId;editCustomerInfo.wechatPhone=''"></el-button>
          </span>
        </div>
-       <div>
-         <label>aaaa:asdasdasdasd</label>
-       </div><br/>
       </el-col>
       <el-col :span="8" v-if="isRecruit">
         <br/>
@@ -391,7 +385,7 @@
        <div>
          <label>地址：</label><span v-text="customerInfo.resideAddress"></span>
        </div><br/>
-       <div class="wechat-hide">
+       <div>
          <label>微信手机号：</label>
          <span v-show="customerInfo.wechatPhone">
            {{customerInfo.wechatPhone}}&nbsp;&nbsp;
@@ -620,9 +614,6 @@
 </template>
 
 <style lang='scss' scoped>
-.wechat-hide{
-  display: none;
-}
 .wechat-btn{
   color:#30DE72;
   &.is-disabled{
@@ -1401,6 +1392,11 @@ export default {
       switch (item) {
         case 'idNumber':
           this.editCustomerInfo.idNumber = $('#idNumberinput').val()
+          if ($('#idNumberinput').val() === '' || !$('#idNumberinput').val()) {
+            this.$message.error('身份证号不能为空！')
+            this.changeToInput(item)
+            return
+          }
           editCustomer(this.editCustomerInfo).then(response => {
             if (response.data.code === 0) {
               this.$message.success('修改成功！')
@@ -1442,6 +1438,11 @@ export default {
           break
         case 'resideAddress':
           this.editCustomerInfo.resideAddress = $('#resideAddressinput').val()
+          if ($('#resideAddressinput').val() === '' || !$('#resideAddressinput').val()) {
+            this.$message.error('地址不能为空！')
+            this.changeToInput(item)
+            return
+          }
           editCustomer(this.editCustomerInfo).then(response => {
             if (response.data.code === 0) {
               this.$message.success('修改成功！')
@@ -1458,6 +1459,11 @@ export default {
           break
         case 'email':
           this.editCustomerInfo.email = $('#emailinput').val()
+          if ($('#emailinput').val() === '' || !$('#emailinput').val()) {
+            this.$message.error('邮箱不能为空！')
+            this.changeToInput(item)
+            return
+          }
           editCustomer(this.editCustomerInfo).then(response => {
             if (response.data.code === 0) {
               this.$message.success('修改成功！')
@@ -1474,6 +1480,11 @@ export default {
           break
         case 'bankCardType':
           this.editCustomerInfo.bankCardType = $('#bankCardTypeinput').val()
+          if ($('#bankCardTypeinput').val() === '' || !$('#bankCardTypeinput').val()) {
+            this.$message.error('持卡类型不能为空！')
+            this.changeToInput(item)
+            return
+          }
           editCustomer(this.editCustomerInfo).then(response => {
             if (response.data.code === 0) {
               this.$message.success('修改成功！')
@@ -1490,6 +1501,11 @@ export default {
           break
         case 'source':
           this.editCustomerInfo.source = $('#sourceinput').val()
+          if ($('#sourceinput').val() === '' || !$('#sourceinput').val()) {
+            this.$message.error('客户来源不能为空！')
+            this.changeToInput(item)
+            return
+          }
           editCustomer(this.editCustomerInfo).then(response => {
             if (response.data.code === 0) {
               this.$message.success('修改成功！')
