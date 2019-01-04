@@ -1750,6 +1750,7 @@ export default {
     }
     // 收到微信消息时
     vm.socket_wechat.onmessage = function(messageEvent) {
+      console.log('linnnnnnnn:')
       if (messageEvent.data === 'ws_heart_beat') {
         console.log('ws_wechat保持连接中...' + new Date())
       } else {
