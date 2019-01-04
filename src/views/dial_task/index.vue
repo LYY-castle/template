@@ -315,17 +315,18 @@
       </el-col>
       <el-col :span="3"></el-col>
       <el-col :span="16">
-        <div  v-if="item === 'email' ? customerInfo.email : item === 'idNumber' ? customerInfo.idNumber 
-              : item === 'resideAddress' ? customerInfo.resideAddress : item === 'sex' ? showSex(customerInfo.sex)
-              : item === 'source' ? customerInfo.source : ''" v-for="(item,index) in customerColumnInfos" style="width:50%;float:left;margin:8px 0;">
+        <div  v-if="!(item === 'customerName' || item === 'mobile') " 
+               v-for="(item,index) in customerColumnInfos" style="width:50%;float:left;margin:8px 0;">
           <div>
             <b>{{item === 'email' ? 'email:' : item === 'idNumber' ? '身份证:' 
               : item === 'resideAddress' ? '地址:' : item === 'sex' ? '性别:'
-              : item === 'source' ? '来源:' : item === 'customerId' ? '客户编号:' : ''}}</b>
+              : item === 'source' ? '客户来源:' : item === 'customerId' ? '客户编号:'
+              : item === 'wechatPhone' ? '微信手机号:' : item === 'bankCardType' ? '持卡类型:' : ''}}</b>
               
             <span :class="item" v-if="!isInput">{{item === 'email' ? customerInfo.email : item === 'idNumber' ? customerInfo.idNumber 
               : item === 'resideAddress' ? customerInfo.resideAddress : item === 'sex' ? showSex(customerInfo.sex)
-              : item === 'source' ? customerInfo.source : ''}}
+              : item === 'source' ? customerInfo.source : item === 'customerId' ? customerInfo.customerId 
+              : item === 'wechatPhone' ? customerInfo.wechatPhone : item === 'bankCardType' ? customerInfo.bankCardType : ''}}
             </span>
             <el-input style="width:45%;display:none;" :class="item" :id="item+'input'"></el-input>&nbsp;&nbsp;
             <i class="el-icon-circle-check-outline" @click="modifyCustomerInfo(customerInfo.customerId,item)" style="cursor:pointer;display:none;" :id="item+'btn1'"></i>
@@ -796,7 +797,7 @@ export default {
     }
   },
   methods: {
-  // 添加或修改客户微信手机号
+    // 添加或修改客户微信手机号
     editCustomerInfos(editCustomerInfo) {
       var reg = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[0,5-9])|(18[0,5-9]))\d{8}$/
       if (editCustomerInfo.wechatPhone === '' || editCustomerInfo.wechatPhone === null) {
@@ -1378,6 +1379,7 @@ export default {
     changeToInput(item) {
       switch (item) {
         case 'idNumber': $('div.idNumber').toggle(); $('span.idNumber').toggle(); $('#idNumberedit').toggle(); $('#idNumberbtn1').toggle(); $('#idNumberbtn2').toggle(); break
+        case 'wechatPhone': $('div.wechatPhone').toggle(); $('span.wechatPhone').toggle(); $('#wechatPhoneedit').toggle(); $('#wechatPhonebtn1').toggle(); $('#wechatPhonebtn2').toggle(); break
         case 'sex': $('div.sex').toggle(); $('span.sex').toggle(); $('#sexedit').toggle(); $('#sexbtn1').toggle(); $('#sexbtn2').toggle(); break
         case 'customerId': $('div.customerId').toggle(); $('span.customerId').toggle(); $('#customerIdedit').toggle(); $('#customerIdbtn1').toggle(); $('#customerIdbtn2').toggle(); break
         case 'resideAddress': $('div.resideAddress').toggle(); $('span.resideAddress').toggle(); $('#resideAddressedit').toggle(); $('#resideAddressbtn1').toggle(); $('#resideAddressbtn2').toggle(); break
@@ -1387,13 +1389,41 @@ export default {
       }
     },
     modifyCustomerInfo(customerId, item) {
+      const reg_ID = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/
+      const reg_email = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/
       this.editCustomerInfo.customerId = customerId
-      delete this.editCustomerInfo.wechatPhone
       switch (item) {
+        case 'wechatPhone':
+          this.editCustomerInfo.wechatPhone = $('#wechatPhoneinput').val()
+          var reg = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[0,5-9])|(18[0,5-9]))\d{8}$/
+          if ($('#wechatPhoneinput').val() === '' || $('#wechatPhoneinput').val() === null) {
+            this.$message.error('请输入客户微信手机号！')
+            $('#wechatPhoneinput').val('')
+            this.changeToInput(item)
+            return
+          }
+          if (!reg.test($('#wechatPhoneinput').val())) {
+            this.$message.error('请输入正确的微信手机号！')
+            this.changeToInput(item)
+            return
+          }
+          editCustomer(this.editCustomerInfo)
+            .then(response => {
+              if (response.data.code === 0) {
+                this.$message.success(response.data.message)
+                this.customerInfo.wechatPhone = $('#wechatPhoneinput').val()
+              } else {
+                this.$message.error(response.data.messages)
+              }
+            }).catch(error => {
+              console.log(error)
+            })
+          break
         case 'idNumber':
           this.editCustomerInfo.idNumber = $('#idNumberinput').val()
-          if ($('#idNumberinput').val() === '' || !$('#idNumberinput').val()) {
-            this.$message.error('身份证号不能为空！')
+          if (!reg_ID.test($('#idNumberinput').val())) {
+            this.$message.error('请输入正确的身份证！')
+            $('#idNumberinput').val('')
             this.changeToInput(item)
             return
           }
@@ -1415,6 +1445,7 @@ export default {
           this.editCustomerInfo.sex = $('#sexinput').val() === '男' ? 0 : $('#sexinput').val() === '女' ? 1 : null
           if (this.editCustomerInfo.sex === null) {
             this.$message.error('修改失败！')
+            $('#sexinput').val('')
             this.changeToInput(item)
           } else {
             editCustomer(this.editCustomerInfo).then(response => {
@@ -1434,12 +1465,14 @@ export default {
           break
         case 'customerId':
           this.$message.error('客户编号无法修改！')
+          $('#customerIdinput').val('')
           this.changeToInput(item)
           break
         case 'resideAddress':
           this.editCustomerInfo.resideAddress = $('#resideAddressinput').val()
           if ($('#resideAddressinput').val() === '' || !$('#resideAddressinput').val()) {
             this.$message.error('地址不能为空！')
+            $('#resideAddressinput').val('')
             this.changeToInput(item)
             return
           }
@@ -1459,8 +1492,9 @@ export default {
           break
         case 'email':
           this.editCustomerInfo.email = $('#emailinput').val()
-          if ($('#emailinput').val() === '' || !$('#emailinput').val()) {
-            this.$message.error('邮箱不能为空！')
+          if (!reg_email.test($('#emailinput').val())) {
+            this.$message.error('请输入正确的邮箱！')
+            $('#emailinput').val('')
             this.changeToInput(item)
             return
           }
@@ -1482,6 +1516,7 @@ export default {
           this.editCustomerInfo.bankCardType = $('#bankCardTypeinput').val()
           if ($('#bankCardTypeinput').val() === '' || !$('#bankCardTypeinput').val()) {
             this.$message.error('持卡类型不能为空！')
+            $('#bankCardTypeinput').val('')
             this.changeToInput(item)
             return
           }
@@ -1503,6 +1538,7 @@ export default {
           this.editCustomerInfo.source = $('#sourceinput').val()
           if ($('#sourceinput').val() === '' || !$('#sourceinput').val()) {
             this.$message.error('客户来源不能为空！')
+            $('#sourceinput').val('')
             this.changeToInput(item)
             return
           }
