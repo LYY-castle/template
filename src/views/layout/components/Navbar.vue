@@ -173,7 +173,7 @@
             </el-tooltip>
           </div>
           <!-- 微信 -->
-          <el-badge v-model="msgNum_wechat" class="item wechat wechat-hide" :max="999" :hidden="!msgNum_wechat">
+          <el-badge v-model="msgNum_wechat" class="item wechat" :max="999" :hidden="!msgNum_wechat">
             <el-tooltip placement="bottom">
               <div slot="content">{{wechatState=="0"?"示忙":"就绪"}}</div>
               <el-dropdown trigger="click" placement="bottom" @command="changeWechatState" >
@@ -1750,6 +1750,7 @@ export default {
     }
     // 收到微信消息时
     vm.socket_wechat.onmessage = function(messageEvent) {
+      console.log('linnnnnnnn:')
       if (messageEvent.data === 'ws_heart_beat') {
         console.log('ws_wechat保持连接中...' + new Date())
       } else {
@@ -2247,9 +2248,6 @@ export default {
 </style>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-.wechat-hide{
-  display: none;
-}
 .el-button{
   width:auto;
 }

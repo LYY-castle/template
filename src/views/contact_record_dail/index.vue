@@ -63,7 +63,7 @@
           <el-form-item label="接触类型：">
             <el-select placeholder="接触类型：" v-model="req.contactType">
               <el-option label="全部" value=""></el-option>
-              <!-- <el-option label="微信" value="2"></el-option> -->
+              <el-option label="微信" value="2"></el-option>
               <el-option label="电话" value="1"></el-option>
             </el-select>
           </el-form-item>

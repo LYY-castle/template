@@ -1,11 +1,11 @@
-var portalUrl = "http://119.27.179.175:8111/linnnui/api/v1";//远程测试
-// var portalUrl = "http://localhost:8090";//本地测试
 $.ajaxSetup({
   headers:{
-    'Authorization':'Bearer eyJhbGciOiJIUzUxMiJ9.eyJhZ2VudGlkIjoiMTAwMDIiLCJjcmVhdGVUaW1lIjoxNTI2MjgyNDIzNTI0LCJleHBpcmF0aW9uVGltZSI6OTQ2MDgwMDAwMDAsImV4cCI6MTYyMDg5MDQyM30.irCMydZuir8XoCmutSy48IJrcjBgyr6Kaf_tYnWUQdwf0W-23pjeNYkx8kYs9NL0qAwpA4z1SisNI4b9wnluGw'
+    'Authorization':'Bearer eyJhbGciOiJIUzUxMiJ9.eyJhZ2VudGlkIjoiMTAwMjkiLCJjcmVhdGVUaW1lIjoxNTQ2NDk4NzEzOTc4LCJleHBpcmF0aW9uVGltZSI6NzIwMDAwMCwicm9sZXMiOltdLCJpcCI6IlRodSBKYW4gMDMgMTQ6NTg6MzMgQ1NUIDIwMTkiLCJzdGFmZk5hbWUiOiJJdmVyc29uTGlubiIsImxhYmVsIjoid2lzZTJjIiwiZXhwIjoxNTQ2NTA1OTEzfQ.AR54TQt7jX50M1qvw-Br8W4KKu9DtWuBNvqvlJlEyMuBvPgPy3wF0jWZITMGtRDL8oIADyEClMFKCTZULncvjg'
   },
   contentType:'application/json;charset=utf-8',
 })
+var portalUrl = "http://119.27.179.175:8111/linnportal/";//远程测试
+// var portalUrl = "http://localhost:8090";//本地测试
 // 获取用户的openid 
 var openid = getQueryString('openid')
 var $toast = $('#toast')
@@ -68,7 +68,7 @@ function submitBindMobile(){
       type:'post',
       beforeSend: function(request) {
         request.withCredentials = true
-        request.setRequestHeader("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJhZ2VudGlkIjoiMTAwMDIiLCJjcmVhdGVUaW1lIjoxNTI2MjgyNDIzNTI0LCJleHBpcmF0aW9uVGltZSI6OTQ2MDgwMDAwMDAsImV4cCI6MTYyMDg5MDQyM30.irCMydZuir8XoCmutSy48IJrcjBgyr6Kaf_tYnWUQdwf0W-23pjeNYkx8kYs9NL0qAwpA4z1SisNI4b9wnluGw");
+        request.setRequestHeader("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJhZ2VudGlkIjoiMTAwMjkiLCJjcmVhdGVUaW1lIjoxNTQ2NDk4NzEzOTc4LCJleHBpcmF0aW9uVGltZSI6NzIwMDAwMCwicm9sZXMiOltdLCJpcCI6IlRodSBKYW4gMDMgMTQ6NTg6MzMgQ1NUIDIwMTkiLCJzdGFmZk5hbWUiOiJJdmVyc29uTGlubiIsImxhYmVsIjoid2lzZTJjIiwiZXhwIjoxNTQ2NTA1OTEzfQ.AR54TQt7jX50M1qvw-Br8W4KKu9DtWuBNvqvlJlEyMuBvPgPy3wF0jWZITMGtRDL8oIADyEClMFKCTZULncvjg");
       },
       success:function(data){
         if(data.code === 0){
@@ -81,6 +81,8 @@ function submitBindMobile(){
           setTimeout(function(){
             $toast.fadeOut(100);
           },2000);
+        } else if(data.code === "403"){
+          alert('未获取到Authorization，请重试')
         } else {
           alert(data.message)
         }

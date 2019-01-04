@@ -1062,6 +1062,10 @@ export default {
           name: '联系电话'
         },
         {
+          value: 'wechatPhone',
+          name: '微信手机号'
+        },
+        {
           value: 'idNumber',
           name: '身份证'
         },

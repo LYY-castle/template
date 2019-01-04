@@ -205,7 +205,7 @@ export default {
           start_time: self.getStartTimestamp(Date.parse(new Date((new Date()).toLocaleDateString()))),
           end_time: self.getEndTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))
         }).then(response => {
-          console.log(response)
+          // console.log(response)
           self.new_appoint_contact_task_count = response.data.result[0].new_appoint_contact_task_count
           self.new_fail_contact_task_count = response.data.result[0].new_fail_contact_task_count
           self.new_first_dial_task_count = response.data.result[0].new_first_dial_task_count
