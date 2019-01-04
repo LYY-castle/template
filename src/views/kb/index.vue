@@ -153,7 +153,7 @@
               label="发布时间">
               <template slot-scope="scope">
                 <div v-if="scope.row.status==1">{{formatDateTime(scope.row.release_time)}}</div>
-              </template>  
+              </template>
             </el-table-column>
             <el-table-column
               width="273"
@@ -250,7 +250,7 @@
                 label="发布时间">
                 <template slot-scope="scope">
                   <div v-if="scope.row.status==1">{{formatDateTime(scope.row.release_time)}}</div>
-                </template>  
+                </template>
               </el-table-column>
               <el-table-column
                 width="273"
@@ -268,7 +268,7 @@
                 </template>
               </el-table-column>
             </el-table>
-            <div class="smallPaging"> 
+            <div class="smallPaging">
               <el-pagination
                 v-if="titlePageShow"
                 background
@@ -358,7 +358,7 @@
                 label="发布时间">
                 <template slot-scope="scope">
                   <div v-if="scope.row.status==1">{{formatDateTime(scope.row.release_time)}}</div>
-                </template>  
+                </template>
               </el-table-column>
               <el-table-column
                 width="273"
@@ -376,7 +376,7 @@
                 </template>
               </el-table-column>
             </el-table>
-            <div class="smallPaging"> 
+            <div class="smallPaging">
               <el-pagination
                 v-if="bodyPageShow"
                 background
@@ -466,7 +466,7 @@
                 label="发布时间">
                 <template slot-scope="scope">
                   <div v-if="scope.row.status==1">{{formatDateTime(scope.row.release_time)}}</div>
-                </template>  
+                </template>
               </el-table-column>
               <el-table-column
                 width="273"
@@ -484,7 +484,7 @@
                 </template>
               </el-table-column>
             </el-table>
-            <div class="smallPaging"> 
+            <div class="smallPaging">
               <el-pagination
                 v-if="briefPageShow"
                 background
@@ -574,7 +574,7 @@
                 label="发布时间">
                 <template slot-scope="scope">
                   <div v-if="scope.row.status==1">{{formatDateTime(scope.row.release_time)}}</div>
-                </template>  
+                </template>
               </el-table-column>
               <el-table-column
                 width="273"
@@ -592,7 +592,7 @@
                 </template>
               </el-table-column>
             </el-table>
-            <div class="smallPaging"> 
+            <div class="smallPaging">
               <el-pagination
                 v-if="remarkPageShow"
                 background
@@ -801,7 +801,7 @@
         </div>
       </el-dialog>
       <!-- 详情 -->
-      <el-dialog 
+      <el-dialog
         top="5vh"
         width="90%"
         :visible.sync="detailArticles"
@@ -865,7 +865,7 @@
                   <span>{{item.name}}</span><a :href="item.url" style="font-size:16px;" type="text" size="mini" circle download target="_blank"><i style="color:blue;padding:0 8px;" class="el-icon-download"></i></a>
                 </div>
               </el-form-item>
-              
+
               <el-form-item label-width="45px" label="备注:">
                 <div>{{noteDetail.remark}}</div>
               </el-form-item>
@@ -921,10 +921,10 @@
           </div>
         </el-dialog> -->
         <!-- 新建文章输入标题 -->
-        <el-dialog 
-          width="30%" 
-          title="新建文章" 
-          :visible.sync="noteTitleVisiable" 
+        <el-dialog
+          width="30%"
+          title="新建文章"
+          :visible.sync="noteTitleVisiable"
           append-to-body>
           <span style="color:red">*</span><span style="font-size:15px;">标题：</span>
           <el-input type="text" placeholder="请输入标题" size="medium" v-model="noteTitle" maxlength="45"></el-input>
@@ -944,10 +944,10 @@
           </div>
         </el-dialog>
         <!-- 发布的newdays -->
-        <el-dialog 
-          width="30%" 
-          title="填写new标签持续时间" 
-          :visible.sync="releaseVisible" 
+        <el-dialog
+          width="30%"
+          title="填写new标签持续时间"
+          :visible.sync="releaseVisible"
           append-to-body>
           <span style="color:red">*</span><span style="font-size:15px;">天数：</span>
           <el-input type="text" placeholder="请输入天数" size="medium" v-model="newdays"></el-input>
@@ -958,10 +958,10 @@
         </el-dialog>
         <!-- 文章添加链接节点 -->
         <el-dialog
-          top="5vh" 
-          width="30%" 
-          title="添加文章链接目录" 
-          :visible.sync="linkVisiable" 
+          top="5vh"
+          width="30%"
+          title="添加文章链接目录"
+          :visible.sync="linkVisiable"
           append-to-body>
           <div>
             <el-tree class="expand-tree"
@@ -983,7 +983,7 @@
             <el-button @click="linkVisiable = false">取消</el-button>
           </div>
         </el-dialog>
-    </div>   
+    </div>
   </div>
 </template>
 
@@ -1971,18 +1971,14 @@ export default{
     },
     // 获取删除文章的目录
     getDelInfo(row) {
-      // if (this.tableType === 1) {
-      //   this.delCatalogid = this.catalogid
-      // } else {
-      //   this.delCatalogid = null
-      // }
       this.delCatalogid = null
       getArticlesDetail(row.ID).then(response => {
         this.delVisible = true
         this.delRowInfo = response.data
         this.delType(this.delRowInfo)
-        if (this.delRowInfo.catalogs.length === 1) {
+        if (this.delRowInfo && this.delRowInfo.catalogs && this.delRowInfo.catalogs.length === 1) {
           this.delUrl = this.delRowInfo.catalogs[0]
+          this.delCatalogid = this.delRowInfo.catalogs[0].ID
         } else {
           this.delUrls = this.delRowInfo.catalogs
         }

@@ -12,6 +12,7 @@
     "build:master": "prod_env=master node build/build.js",
     "build:sit": "prod_env=sit node build/build.js",
     "build:loan": "prod_env=loan node build/build.js",
+    "build:test": "prod_env=test node build/build.js",
     "lint": "eslint --ext .js,.vue src",
     "test": "npm run lint"
   },
