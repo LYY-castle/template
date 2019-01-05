@@ -38,8 +38,8 @@ const env_conf = {
   },
   test: { // jindian.
     TUI_WS_SERVERURL:'"ws://119.27.179.175:12088"',
-    CTI_WS_SERVERURL:'"ws://ws://119.27.179.175:9050/"',
-    CTI_MONITOR_WS_SERVERURL:'"ws://ws://119.27.179.175:9052/"',
+    CTI_WS_SERVERURL:'"ws://119.27.179.175:9050/"',
+    CTI_MONITOR_WS_SERVERURL:'"ws://119.27.179.175:9052/"',
     FS_SERVER_HOST: '"http://119.27.184.157:12078"',
     MINIO_URL:'"http://119.27.184.157:12078/crm"',
   }
