@@ -1443,15 +1443,17 @@ export default {
             this.toshowcustomerColumnInfos = []
             this.customerColumnInfos = []
             const columns = this.campaignDetail.customerColumnInfos
-            for (var k = 0; k < columns.length; k++) {
-              this.toshowcustomerColumnInfos.push(
-                columns[k].customerColumn === 'customerId' ? '客户编号' : columns[k].customerColumn === 'customerName' ? '客户姓名'
-                  : columns[k].customerColumn === 'sex' ? '性别' : columns[k].customerColumn === 'mobile' ? '联系电话'
-                    : columns[k].customerColumn === 'idNumber' ? '身份证' : columns[k].customerColumn === 'resideAddress' ? '地址'
-                      : columns[k].customerColumn === 'email' ? '邮箱' : columns[k].customerColumn === 'bankCardType' ? '持卡类型'
-                        : columns[k].customerColumn === 'source' ? '来源' : '无'
-              )
-              this.customerColumnInfos.push(columns[k].customerColumn)
+            if (columns && columns.length > 0) {
+              for (var k = 0; k < columns.length; k++) {
+                this.toshowcustomerColumnInfos.push(
+                  columns[k].customerColumn === 'customerId' ? '客户编号' : columns[k].customerColumn === 'customerName' ? '客户姓名'
+                    : columns[k].customerColumn === 'sex' ? '性别' : columns[k].customerColumn === 'mobile' ? '联系电话'
+                      : columns[k].customerColumn === 'idNumber' ? '身份证' : columns[k].customerColumn === 'resideAddress' ? '地址'
+                        : columns[k].customerColumn === 'email' ? '邮箱' : columns[k].customerColumn === 'bankCardType' ? '持卡类型'
+                          : columns[k].customerColumn === 'source' ? '来源' : '无'
+                )
+                this.customerColumnInfos.push(columns[k].customerColumn)
+              }
             }
           }
           // 遍历查找对应产品名称
@@ -1513,7 +1515,7 @@ export default {
           this.$message(response.data.message)
         }
       }).catch(error => {
-        console.log(error)
+        console.error(error)
         this.$message('操作失败')
       })
     },
@@ -1608,8 +1610,10 @@ export default {
     getDeptByCampaignId(campaignId) {
       findDeptByCampaignId(campaignId).then(response => {
         this.qcdeptData = []
-        for (var i = 0; i < response.data.data.length; i++) {
-          this.qcdeptData.push(response.data.data[i].departName)
+        if (response.data && response.data.data && response.data.data.length > 0) {
+          for (var i = 0; i < response.data.data.length; i++) {
+            this.qcdeptData.push(response.data.data[i].departName)
+          }
         }
       })
     },
