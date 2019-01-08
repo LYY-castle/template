@@ -285,12 +285,12 @@
           </el-select>
         </el-form-item>
         <el-form-item label="质检组织">
-          <span v-for="item in qcdeptData" v-if="qcdeptData.length!==0">{{(qcdeptData.length===0)?'无':item+' , '}}</span>
-          <span v-if="qcdeptData.length===0">无</span>
+          <span v-for="item in qcdeptData" v-if="qcdeptData && qcdeptData.length!==0">{{(qcdeptData.length===0)?'无':item+' , '}}</span>
+          <span v-if="qcdeptData && qcdeptData.length===0">无</span>
         </el-form-item>
         <el-form-item label="评分表">
-          <span v-for="item in marksData" v-if="marksData.length!==0">{{(marksData.length===0)?'无':item.gradeName+' , '}}</span>
-          <span v-if="marksData.length===0">无</span>
+          <span v-for="item in marksData" v-if="marksData && marksData.length!==0">{{(marksData.length===0)?'无':item.gradeName+' , '}}</span>
+          <span v-if="marksData && marksData.length===0">无</span>
         </el-form-item>
         <el-form-item label="活动备注" prop="description">
         <el-input v-model="campaignDetail.description" size="small" placeholder="活动备注（限长255字符）" maxlength="255"></el-input>
@@ -386,12 +386,12 @@
           <span>{{summaryName}}</span>
         </el-form-item>
         <el-form-item label="质检组织">
-          <span v-for="item in qcdeptData" v-if="qcdeptData.length!==0">{{(qcdeptData.length===0)?'无':item+' , '}}</span>
-          <span v-if="qcdeptData.length===0">无</span>
+          <span v-for="item in qcdeptData" v-if="qcdeptData && qcdeptData.length!==0">{{(qcdeptData.length===0)?'无':item+' , '}}</span>
+          <span v-if="qcdeptData && qcdeptData.length===0">无</span>
         </el-form-item>
         <el-form-item label="评分表">
-          <span v-for="item in marksData" v-if="marksData.length!==0">{{(marksData.length===0)?'无':item.gradeName+' , '}}</span>
-          <span v-if="marksData.length===0">无</span>
+          <span v-for="item in marksData" v-if="marksData && marksData.length!==0">{{(marksData.length===0)?'无':item.gradeName+' , '}}</span>
+          <span v-if="marksData && marksData.length===0">无</span>
         </el-form-item>
         <el-form-item label="活动备注">
           <span>{{campaignDetail.description}}</span>
