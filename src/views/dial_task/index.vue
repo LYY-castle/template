@@ -315,17 +315,17 @@
       </el-col>
       <el-col :span="3"></el-col>
       <el-col :span="16">
-        <div  v-if="!(item === 'customerName' || item === 'mobile') " 
+        <div  v-if="!(item === 'customerName' || item === 'mobile') "
                v-for="(item,index) in customerColumnInfos" style="width:50%;float:left;margin:8px 0;">
           <div>
-            <b>{{item === 'email' ? 'email:' : item === 'idNumber' ? '身份证:' 
+            <b>{{item === 'email' ? 'email:' : item === 'idNumber' ? '身份证:'
               : item === 'resideAddress' ? '地址:' : item === 'sex' ? '性别:'
               : item === 'source' ? '客户来源:' : item === 'customerId' ? '客户编号:'
               : item === 'wechatPhone' ? '微信手机号:' : item === 'bankCardType' ? '持卡类型:' : ''}}</b>
-              
-            <span :class="item" v-if="!isInput">{{item === 'email' ? customerInfo.email : item === 'idNumber' ? customerInfo.idNumber 
+
+            <span :class="item" v-if="!isInput">{{item === 'email' ? customerInfo.email : item === 'idNumber' ? customerInfo.idNumber
               : item === 'resideAddress' ? customerInfo.resideAddress : item === 'sex' ? showSex(customerInfo.sex)
-              : item === 'source' ? customerInfo.source : item === 'customerId' ? customerInfo.customerId 
+              : item === 'source' ? customerInfo.source : item === 'customerId' ? customerInfo.customerId
               : item === 'wechatPhone' ? customerInfo.wechatPhone : item === 'bankCardType' ? customerInfo.bankCardType : ''}}
             </span>
             <el-input style="width:45%;display:none;" :class="item" :id="item+'input'"></el-input>&nbsp;&nbsp;
@@ -454,8 +454,8 @@
                 v-if="this.productInfo.some(i => i === this.child_insurance)"
                 v-if="this.productInfo.some(i => i=== this.disease_insurance)"
                 -->
-              <el-tab-pane 
-               v-for="(item,index) in products" 
+              <el-tab-pane
+               v-for="(item,index) in products"
                :key="item.templateId"
                :label="item.productName">
                 <div class="text item" hidden>模板类型id：<font style="color:blue;size:14px;font-weight:bold">{{item.productTypeInfo===null?'':item.productTypeInfo.productTypeId}}</font></div>
@@ -467,32 +467,32 @@
                 <div v-if="item.showMessage"><font style="color:blue">Tips:以下带</font><font style="color:red">*</font><font style="color:blue">的为必填项</font></div>
                 <el-form  class="text item" >
                   <!-- <div v-for="(i,index1) in item.propertyInfos"> -->
-                    <el-form-item  v-for="(i,index1) in item.propertyInfos" 
-                      :label="i.propertyName + '：'" style="display:inline"   
+                    <el-form-item  v-for="(i,index1) in item.propertyInfos"
+                      :label="i.propertyName + '：'" style="display:inline"
                       :rules="{required:i.showOrInput === '1' && i.isRequired === '1', message: '此项为必填项', trigger: 'change' }">
                       <span v-if="i.showOrInput === '0' && i.templateType !== 'textarea'">{{i.propertyValue}}</span>
                       <textarea v-if="i.showOrInput === '0' && i.templateType === 'textarea'" readonly>{{i.propertyValue}}</textarea>
-                      <textarea v-if="i.showOrInput === '1' && i.templateType === 'textarea'" 
+                      <textarea v-if="i.showOrInput === '1' && i.templateType === 'textarea'"
                         v-model="i.propertyValue" :placeholder="'限长' + i.propertyLength + '字符'">{{i.propertyValue}}</textarea>
-                      <input v-if="i.templateType === 'text' && i.showOrInput === '1'" 
+                      <input v-if="i.templateType === 'text' && i.showOrInput === '1'"
                         v-model="i.propertyValue" :placeholder="'限长' + i.propertyLength + '字符'" :maxlength="i.propertyLength"  ></input>
-                      <el-radio-group size="mini" v-if="i.templateType === 'radio' && i.showOrInput === '1' && i.showInLine" 
+                      <el-radio-group size="mini" v-if="i.templateType === 'radio' && i.showOrInput === '1' && i.showInLine"
                         v-model="i.propertyValueRadio">
                         <el-radio-button v-for="a in JSON.parse(i.propertyValue)" :label="a">{{a}}</el-radio-button>
                       </el-radio-group>
-                      <el-radio-group size="mini" v-if="i.templateType === 'radio' && i.showOrInput === '1' && !i.showInLine" 
+                      <el-radio-group size="mini" v-if="i.templateType === 'radio' && i.showOrInput === '1' && !i.showInLine"
                         v-model="i.propertyValueRadio">
                         <el-radio v-for="a in JSON.parse(i.propertyValue)" :label="a">{{a}}</el-radio>
                       </el-radio-group>
-                      <el-checkbox-group  size="mini"  v-if="i.templateType === 'checkbox' && i.showOrInput === '1'  && i.showInLine" 
+                      <el-checkbox-group  size="mini"  v-if="i.templateType === 'checkbox' && i.showOrInput === '1'  && i.showInLine"
                         v-model="checks[index1]" @change="getCheckes(checks[index1],i)">
                         <el-checkbox-button   v-for="b in JSON.parse(i.propertyValue)"  :label="b" :key="b">{{b}}</el-checkbox-button>
                       </el-checkbox-group>
-                      <el-checkbox-group  size="mini"  v-if="i.templateType === 'checkbox' && i.showOrInput === '1' && !i.showInLine" 
+                      <el-checkbox-group  size="mini"  v-if="i.templateType === 'checkbox' && i.showOrInput === '1' && !i.showInLine"
                         v-model="checks[index1]" @change="getCheckes(checks[index1],i)">
                         <el-checkbox v-for="b in JSON.parse(i.propertyValue)"  :label="b" :key="b">{{b}}</el-checkbox>
                       </el-checkbox-group>
-                      <el-select   size="mini" v-model="i.propertyValueSelect" placeholder="请选择" 
+                      <el-select   size="mini" v-model="i.propertyValueSelect" placeholder="请选择"
                         v-if="i.templateType === 'select' && i.showOrInput === '1'">
                         <el-option
                           v-for="s in JSON.parse(i.propertyValue)"
@@ -504,7 +504,7 @@
                     </el-form-item>
                   <!-- </div> -->
                 </el-form>
-                    
+
                 <div style="width:25%;float:right">
                   <span>认购数量：</span>
                   <el-input-number v-model="item.number" @change="handleChange(item.templateId,item.price,item.number)" :min="0" :max="1000" label="认购数量" size="mini">
@@ -1018,7 +1018,7 @@ export default {
       if (localStorage.getItem('agentId')) {
         const reasoncode = JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode
         if (reasoncode === '-2' || reasoncode === '-3' || reasoncode === '-4' || reasoncode === '0' || reasoncode === '-100' || reasoncode === '-101' || reasoncode === '-5' || reasoncode === '-6') {
-          this.$message.error('该状态下不能拨打号码！')
+          this.$message.error('请在示忙或后处理状态下拨打号码！')
           return
         }
       }
