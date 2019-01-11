@@ -1,12 +1,13 @@
+var portalUrl = "/api/v1";//远程测试
+
 $.ajaxSetup({
   headers:{
     'Authorization':'Bearer eyJhbGciOiJIUzUxMiJ9.eyJhZ2VudGlkIjoiMTAwMjkiLCJjcmVhdGVUaW1lIjoxNTQ2NDk4NzEzOTc4LCJleHBpcmF0aW9uVGltZSI6NzIwMDAwMCwicm9sZXMiOltdLCJpcCI6IlRodSBKYW4gMDMgMTQ6NTg6MzMgQ1NUIDIwMTkiLCJzdGFmZk5hbWUiOiJJdmVyc29uTGlubiIsImxhYmVsIjoid2lzZTJjIiwiZXhwIjoxNTQ2NTA1OTEzfQ.AR54TQt7jX50M1qvw-Br8W4KKu9DtWuBNvqvlJlEyMuBvPgPy3wF0jWZITMGtRDL8oIADyEClMFKCTZULncvjg'
   },
   contentType:'application/json;charset=utf-8',
 })
-var portalUrl = "http://119.27.179.175:8111/linnportal/";//远程测试
-// var portalUrl = "http://localhost:8090";//本地测试
-// 获取用户的openid 
+
+// 获取用户的openid
 var openid = getQueryString('openid')
 var $toast = $('#toast')
 
@@ -90,12 +91,12 @@ function submitBindMobile(){
     })
   }
 
-    
+
 
   // // 验证验证码是否为空
   // if($('#verifyCode').val().trim() == ''){
   //   alert('请输入验证码！')
-  //   return 
+  //   return
   // } else {
   //   // 发送请求验证是否正确
   //   $.ajax({
@@ -133,7 +134,7 @@ function submitBindMobile(){
   //           }
   //         })
   //       } else {
-  //         // 验证码不匹配 
+  //         // 验证码不匹配
   //         alert(res.message)
   //       }
   //     }
@@ -143,24 +144,24 @@ function submitBindMobile(){
 
 // 定时器 倒计时
 function settime(val,countdown){
-  if (countdown == 0) { 
+  if (countdown == 0) {
     $('#getCode').removeAttr('disabled');
-    val.innerHTML="获取验证码"; 
-  } else if(countdown > 0){ 
+    val.innerHTML="获取验证码";
+  } else if(countdown > 0){
     $('#getCode').prop('disabled', true);
-    val.innerHTML="重新发送(" + countdown + ")"; 
-    countdown--; 
-    setTimeout(function() { 
+    val.innerHTML="重新发送(" + countdown + ")";
+    countdown--;
+    setTimeout(function() {
       settime(val,countdown);
-    },1000) 
-  } 
+    },1000)
+  }
 }
 
 // jquery 截取url参数
-function getQueryString(name) {  
-  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");  
-  var r = window.location.search.substr(1).match(reg);  
-  if (r != null)  
-      return unescape(r[2]);  
-  return null;  
-}  
+function getQueryString(name) {
+  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+  var r = window.location.search.substr(1).match(reg);
+  if (r != null)
+      return unescape(r[2]);
+  return null;
+}
