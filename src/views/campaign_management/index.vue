@@ -183,6 +183,14 @@
               :key="item.value"
               :label="item.name"
               :value="item.value"
+              v-if="show_wechat==='true'"
+            ></el-option>
+            <el-option
+              v-for="item in customerParams1"
+              :key="item.value"
+              :label="item.name"
+              :value="item.value"
+              v-if="show_wechat==='false'"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -422,13 +430,21 @@
           </el-select>
         </el-form-item>
         <el-form-item label="客户配置项">
-          <el-select v-model="customerColumnInfos" placeholder="请选择展示的客户字段" style="width:100%" multiple>
+          <el-select v-model="customerColumnInfos" placeholder="请选择展示的客户字段" style="width:100%" multiple v-if="show_wechat==='true'">
             <el-option
               v-for="item in customerParams"
               :key="item.value"
               :label="item.name"
               :value="item.value"
             ></el-option>
+          </el-select>
+          <el-select v-model="customerColumnInfos" placeholder="请选择展示的客户字段" style="width:100%" multiple v-else>
+            <el-option
+                v-for="item in customerParams1"
+                :key="item.value"
+                :label="item.name"
+                :value="item.value"
+              ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="产品" prop="products" v-if="!(campaignDetail.campaignTypeCode=='RECRUIT')">
@@ -1086,6 +1102,46 @@ export default {
           name: '来源'
         }
       ],
+      customerParams1: [
+        {
+          value: 'customerId',
+          name: '客户编号'
+        },
+        {
+          value: 'customerName',
+          name: '客户姓名'
+        },
+        {
+          value: 'sex',
+          name: '性别'
+        },
+        {
+          value: 'mobile',
+          name: '联系电话'
+        },
+        {
+          value: 'idNumber',
+          name: '身份证'
+        },
+        {
+          value: 'resideAddress',
+          name: '地址'
+        },
+        {
+          value: 'email',
+          name: '邮箱'
+        },
+        {
+          value: 'bankCardType',
+          name: '持卡类型'
+        },
+        {
+          value: 'source',
+          name: '来源'
+        }
+      ],
+      // 是否展示微信相关
+      show_wechat: `${process.env.SHOW_WECHAT}`,
       campaignExpiryDate: [],
       timeValue: [],
       removeListVisible: false, // 单个移除

@@ -264,6 +264,8 @@ export default {
   name: 'account_list',
   data() {
     return {
+      // 是否显示微信相关
+      show_wechat: `${process.env.SHOW_WECHAT}`,
       tempRoute: {},
       rule: {
         checkRoleData2: [
@@ -428,12 +430,20 @@ export default {
               this.roleMenu.push(response.data.result[i])
             }
           }
+          // 判断是否需要展示微信相关
+          if (this.show_wechat === 'false') {
+            for (var j = 0; j < this.roleMenu.length; j++) {
+              if (this.roleMenu[j].id === 58) {
+                this.roleMenu.splice(j, 1)
+              }
+            }
+          }
         } else {
           this.roleMenu.length = 0
         }
       }).catch(error => {
         this.roleMenu = []
-        console.log(error)
+        console.error(error)
       })
     },
     // 赋予角色
