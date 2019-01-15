@@ -311,7 +311,7 @@ export default {
           callback(new Error('身份证号不符合规则'))
         }
       } else {
-        callback(new Error('性别不能为空'))
+        callback()
       }
     }
     return {
@@ -329,11 +329,11 @@ export default {
           { required: true, message: '请输入客户名称', trigger: 'blur' }
         ],
         idNumber: [
-          { required: true, message: '请输入身份证号码', trigger: 'blur' },
+          { required: false, message: '请输入身份证号码', trigger: 'blur' },
           { pattern: /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/, message: '请输入正确的身份证号码' }
         ],
         sex: [
-          { required: true, message: '请选择客户性别', trigger: 'blur' },
+          { required: false, message: '请选择客户性别', trigger: 'blur' },
           { validator: checkSex, trigger: 'change' }
         ],
         mobile: [
@@ -469,7 +469,7 @@ export default {
     },
     // 性别显示判断
     showSex(code) {
-      return code === 1 || '1' ? '男' : '女'
+      return (code === 1 || code === '1') ? '男' : ((code === 0 || code === '0') ? '女' : '')
     },
     // 地址补无
     showAddress(address) {
