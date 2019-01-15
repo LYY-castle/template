@@ -14,6 +14,7 @@ const env_conf = {
     CTI_MONITOR_WS_SERVERURL:'"ws://119.27.179.175:9052/"',
     FS_SERVER_HOST: '"http://119.27.179.175:9800"',
     MINIO_URL:'"http://119.27.179.175:9800/crm"',
+    SHOW_WECHAT:true
   },
   master: {
     TUI_WS_SERVERURL:'"ws://52.83.140.209:8910"',
@@ -21,6 +22,7 @@ const env_conf = {
     CTI_MONITOR_WS_SERVERURL:'"ws://52.83.140.209:9052/"',
     FS_SERVER_HOST: '"http://52.83.140.209:9000"',
     MINIO_URL:'"http://52.83.140.209:9000/crm"',
+    SHOW_WECHAT:true
   },
   sit: {
     TUI_WS_SERVERURL:'"ws://119.27.179.175:12012"',
@@ -28,6 +30,7 @@ const env_conf = {
     CTI_MONITOR_WS_SERVERURL:'"ws://119.27.184.157:9052/"',
     FS_SERVER_HOST: '"http://119.27.179.175:9800"',
     MINIO_URL:'"http://119.27.179.175:9800/crm"',
+    SHOW_WECHAT:false
   },
   loan: {
     TUI_WS_SERVERURL:'"ws://119.27.179.175:12268"',
@@ -35,6 +38,7 @@ const env_conf = {
     CTI_MONITOR_WS_SERVERURL:'"ws://132.232.209.250:9052/"',
     FS_SERVER_HOST: '"http://119.27.179.175:12270"',
     MINIO_URL:'"http://119.27.179.175:12270/crm"',
+    SHOW_WECHAT:false
   },
   test: { // jindian.
     TUI_WS_SERVERURL:'"ws://119.27.179.175:12088"',
@@ -42,6 +46,7 @@ const env_conf = {
     CTI_MONITOR_WS_SERVERURL:'"ws://119.27.179.175:9052/"',
     FS_SERVER_HOST: '"http://119.27.184.157:12078"',
     MINIO_URL:'"http://119.27.184.157:12078/crm"',
+    SHOW_WECHAT:true
   }
 }
 

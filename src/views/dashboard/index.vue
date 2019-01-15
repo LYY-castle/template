@@ -31,6 +31,11 @@ import getDynamicRouter from '@/router/dynamic-router'
 
 export default {
   name: 'Dashboard',
+  data() {
+    return {
+      show_wechat: `${process.env.SHOW_WECHAT}`
+    }
+  },
   computed: {
     ...mapGetters([
       'name',
@@ -41,7 +46,21 @@ export default {
   mounted() {
     const promise = new Promise(resolve => {
       getMenu(localStorage.getItem('agentId')).then(response => {
-        const data = response.data
+        var data = response.data
+        // 判断是否显示微信相关
+        if (this.show_wechat === 'false') {
+          for (var i = 0; i < data.data.length; i++) {
+            if (data.data[i].id === 58) {
+              data.data.splice(i, 1)
+            } else {
+              for (var j = 0; j < data.data[i].sub_menus.length; j++) {
+                if (data.data[i].sub_menus[j].id === 58) {
+                  data.data[i].sub_menus.splice(j, 1)
+                }
+              }
+            }
+          }
+        }
         // 存到session storage
         sessionStorage.setItem('getMenu', JSON.stringify(data))
         // 存到store里面

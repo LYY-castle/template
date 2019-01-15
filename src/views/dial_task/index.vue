@@ -267,7 +267,7 @@
             <el-tooltip v-else-if="!checkNodisturb(scope.row.isNodisturb)" class="item" effect="dark"  content="该号码处于免访号段中" placement="left-start">
               <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
             </el-tooltip>
-            <el-button type="text" class="el-icon-message" :disabled="!showStatus(scope.row.status) || checkBindWechat(scope.row.customerId)" @click="toChatPage(scope.row.taskId, scope.row.campaignId, scope.row.customerId, scope.row.customerName, scope.row.customerPhone)">微信聊天</el-button>
+            <el-button type="text" v-if="show_wechat==='true'"  class="el-icon-message" :disabled="!showStatus(scope.row.status) || checkBindWechat(scope.row.customerId)" @click="toChatPage(scope.row.taskId, scope.row.campaignId, scope.row.customerId, scope.row.customerName, scope.row.customerPhone)">微信聊天</el-button>
           </template>
           </el-table-column>
         </el-table>
@@ -310,7 +310,7 @@
         <div>
           <img v-if="!hideDialTo" src="../../../static/images/dial_normal.png" alt="拨打" width="28px" height="28px" @click="dialTo(taskId,campaignId,isBlacklist,customerPhone)" style="cursor:pointer;">
           <img v-if="hideDialTo" src="../../../static/images/dial_disable.png" alt="拨打" width="28px" height="28px"  style="cursor:default;">
-          <el-button :disabled="checkBindWechat(telCustomerInfos.customerId)" @click="toWeChat" class="wechat-btn" type="text"><svg-icon icon-class="wechat" class="icon-size" style="padding-bottom:5px;width:25px;height:25px;"/></el-button>
+          <el-button :disabled="checkBindWechat(telCustomerInfos.customerId)" @click="toWeChat" class="wechat-btn" type="text" v-if="show_wechat==='true'"><svg-icon icon-class="wechat" class="icon-size" style="padding-bottom:5px;width:25px;height:25px;"/></el-button>
         </div>
       </el-col>
       <el-col :span="3"></el-col>
@@ -667,6 +667,7 @@ export default {
 
   data() {
     return {
+      show_wechat: `${process.env.SHOW_WECHAT}`,
       isInput: false,
       aId: '',
       departPermission: false,
@@ -2181,7 +2182,7 @@ export default {
             }
           })
         }).catch((error) => {
-          console.log(error)
+          console.error(error)
           permsStaff(res.data.agentid).then(re => {
             this.departPermission = false
             this.req.staffId = res.data.agentid
@@ -2235,7 +2236,7 @@ export default {
           }
         }
       }).catch(error => {
-        console.log(error)
+        console.error(error)
         vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
       })
       findCampaignByUser().then(res => {
@@ -2343,7 +2344,7 @@ export default {
             }
           })
         }).catch((error) => {
-          console.log(error)
+          console.error(error)
           permsStaff(res.data.agentid).then(re => {
             this.departPermission = false
             this.req.staffId = res.data.agentid
@@ -2396,7 +2397,7 @@ export default {
           }
         }
       }).catch(error => {
-        console.log(error)
+        console.error(error)
         vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
       })
       findCampaignByUser().then(res => {

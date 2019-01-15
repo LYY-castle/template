@@ -173,7 +173,7 @@
             </el-tooltip>
           </div>
           <!-- 微信 -->
-          <el-badge v-model="msgNum_wechat" class="item wechat" :max="999" :hidden="!msgNum_wechat">
+          <el-badge v-model="msgNum_wechat" class="item wechat" :max="999" :hidden="!msgNum_wechat" v-if="show_wechat === 'true'">
             <el-tooltip placement="bottom">
               <div slot="content">{{wechatState=="0"?"示忙":"就绪"}}</div>
               <el-dropdown trigger="click" placement="bottom" @command="changeWechatState" >
@@ -385,7 +385,8 @@ export default {
       codeUrl: '',
       wechatState: null,
       msgNum_wechat1: null, // 微信消息条数
-      customerInfo: {}
+      customerInfo: {},
+      show_wechat: `${process.env.SHOW_WECHAT}`
     }
   },
   components: {
@@ -530,7 +531,9 @@ export default {
           localStorage.removeItem('m_' + ele)
         })
         this.socket_nofitication.close()
-        this.socket_wechat.close()
+        if (this.show_wechat === 'true') {
+          this.socket_wechat.close()
+        }
         this.logout()
       } else if (command === 'changePWD') {
         this.changePWD.staffId = localStorage.getItem('agentId')
@@ -1586,8 +1589,10 @@ export default {
   },
   mounted() {
     vm = this
-    // 获取微信状态
-    this.getWechatState()
+    if (this.show_wechat === 'true') {
+      // 获取微信状态
+      this.getWechatState()
+    }
     // 查询微信未读消息 ，写死
     navbarQueryRecords(localStorage.getItem('agentId')).then(response => {
       this.msgNum_wechat1 = response.data.pageInfo.totalCount
@@ -1684,21 +1689,45 @@ export default {
 
     this.socket_nofitication = new WebSocket(`${process.env.TUI_WS_SERVERURL}/realtime_notification_${agentId}`)
     // this.socket_wechat = new WebSocket(`${process.env.TUI_WS_SERVERURL}/realtime_wechat_${agentId}`)
-    // 微信websocket
-    const options = {
-      url: `${process.env.TUI_WS_SERVERURL}/realtime_wechat_${agentId}`,
-      pingTimeout: 300000, // 每隔5min发送一次心跳
-      pongTimeout: 10000, // 10s内若没收到后端返回的消息就认为是断开连接
-      reconnectTimeout: 2000, // 尝试重连的时间间隔
-      pingMsg: 'ws_heart_beat' // ping内容
+
+    // 判断是否设置打开微信
+    if (this.show_wechat === 'true') {
+      // 微信websocket
+      const options = {
+        url: `${process.env.TUI_WS_SERVERURL}/realtime_wechat_${agentId}`,
+        pingTimeout: 300000, // 每隔5min发送一次心跳
+        // pingTimeout: 10000, // 每隔10s发送一次心跳
+        pongTimeout: 10000, // 10s内若没收到后端返回的消息就认为是断开连接
+        reconnectTimeout: 2000, // 尝试重连的时间间隔
+        pingMsg: 'ws_heart_beat' // ping内容
+      }
+      this.socket_wechat = new WebsocketHeartbeatJs(options)
+
+      this.socket_wechat.onopen = function(openEvent) {
+        console.log(`Connect tui webSocket(wechat) addr = ${process.env.TUI_WS_SERVERURL}/realtime_wechat_${agentId} successfully.`)
+      }
+
+      // 收到微信消息时
+      vm.socket_wechat.onmessage = function(messageEvent) {
+        console.log('收到消息...')
+        if (messageEvent.data === 'ws_heart_beat') {
+          console.log('ws_wechat保持连接中...' + new Date())
+        } else {
+          vm.$root.eventHub.$emit('RECEIVE_MESSAGES', messageEvent.data)
+        }
+      }
+
+      vm.socket_wechat.onclose = function(closeEvent) {
+        console.log('Close tui webSocket(wechat) client successfully.')
+      }
+
+      vm.socket_wechat.onerror = () => {
+        console.log('ws_wechat connect onerror')
+      }
     }
-    this.socket_wechat = new WebsocketHeartbeatJs(options)
 
     this.socket_nofitication.onopen = function(openEvent) {
       console.log(`Connect tui webSocket(notification) addr = ${process.env.TUI_WS_SERVERURL}/realtime_notification_${agentId} successfully.`)
-    }
-    this.socket_wechat.onopen = function(openEvent) {
-      console.log(`Connect tui webSocket(wechat) addr = ${process.env.TUI_WS_SERVERURL}/realtime_wechat_${agentId} successfully.`)
     }
 
     // 收到消息通知时
@@ -1748,25 +1777,9 @@ export default {
         vm.$root.eventHub.$emit('CHANGE_MYMESSAGELIST')
       }
     }
-    // 收到微信消息时
-    vm.socket_wechat.onmessage = function(messageEvent) {
-      console.log('linnnnnnnn:')
-      if (messageEvent.data === 'ws_heart_beat') {
-        console.log('ws_wechat保持连接中...' + new Date())
-      } else {
-        vm.$root.eventHub.$emit('RECEIVE_MESSAGES', messageEvent.data)
-      }
-    }
+
     vm.socket_nofitication.onclose = function(closeEvent) {
       console.log('Close tui webSocket(notification) client successfully.')
-    }
-
-    vm.socket_wechat.onclose = function(closeEvent) {
-      console.log('Close tui webSocket(wechat) client successfully.')
-    }
-
-    vm.socket_wechat.onerror = () => {
-      console.log('ws_wechat connect onerror')
     }
 
     this.$root.eventHub.$on('CHANGE_STATUS', () => {
@@ -1828,7 +1841,9 @@ export default {
   destroyed() {
     this.$root.eventHub.$off('RECEIVE_MESSAGES')
     this.socket_nofitication.close()
-    this.socket_wechat.close()
+    if (this.show_wechat === 'true') {
+      this.socket_wechat.close()
+    }
     this.$root.eventHub.$off('CHANGE_STATUS')
     this.agentArray.forEach(ele => { // 清空班长监控下的历史数据
       localStorage.removeItem('m_' + ele)

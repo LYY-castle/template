@@ -490,7 +490,7 @@ export default {
     // 下载模版
     getTemp() {
       window.location.href = `/api/v1/batch/downloadtemp?token=Bearer ${this.token}`
-      // window.location.href = `http://localhost:8090/batch/downloadtemp?token=Bearer ${this.token}`
+      // window.location.href = `http://localhost:9091/batch/downloadtemp?token=Bearer ${this.token}`
     },
     // 上传
     // 验证上传文件的格式及大小

@@ -469,7 +469,7 @@ export default {
     },
     // 性别显示判断
     showSex(code) {
-      return code === 1 || '1' ? '男' : '女'
+      return (code === 1 || '1') ? '男' : '女'
     },
     // 地址补无
     showAddress(address) {
