@@ -425,7 +425,9 @@ export default {
         pageNo: 1,
         pageSize: 10
       },
-      batchDetail: {},
+      batchDetail: {
+        validityTime:'',
+      },
       addReq: {
         batchName: '',
         ascriptionId: '',
@@ -488,6 +490,7 @@ export default {
           if (this.ascrislistData && this.ascrislistData.length > 1) {
             // 默认取第二个 (其它).
             this.batchDetail.ascriptionId = this.ascrislistData[1].ascriptionId
+            this.addReq.ascriptionId = this.ascrislistData[1].ascriptionId
           }
         }
       })
