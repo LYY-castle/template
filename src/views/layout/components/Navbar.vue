@@ -276,12 +276,14 @@
 
 <script>
 import { getCurrentTheme } from '@/api/theme'
+import { sendMessage } from '@/api/lingchuangyun_message'
 import TagsView from './TagsView'
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 // import Hamburger from '@/components/Hamburger'
 import { getUserInfo } from '@/api/dashboard'
 import { Message } from 'element-ui'
+import { getAPPID, getSecret, getSendMessageTime } from '@/config/lingchuang_codes'
 import {
   addComeContact,
   addDialContact,
@@ -1151,6 +1153,22 @@ export default {
         vm.orginCaller = ''
         clearInterval(interval)
       }
+      const info = localStorage.getItem(agentid + '_' + UUID) ? JSON.parse(localStorage.getItem(agentid + '_' + UUID)) : ''
+      if (info) {
+        const calltime = Math.floor((new Date().getTime() - info.starttime) / 1000)
+        if (calltime > getSendMessageTime()) {
+          info.endtime = new Date().getTime()
+          info.calltime = calltime
+          vm.sendMessage(info.phone, info)
+        }
+      }
+    },
+    sendMessage(phone, info) {
+      const url = 'http://api.lingchuangyun.cn/send'
+      const data = { 'appid': getAPPID(), 'secret': getSecret(), 'genre': '2', 'mobile': 13480129429, 'content': '【测试短信】测试发送短信功能', 'info': info }
+      sendMessage(url, data).then(res => {
+        console.log('result', res)
+      })
     },
     on_answer_event(event, agentid, DN, UUID, callerid, calleeid, io, other_leg_uuid) {
       addAnswerContact({
@@ -1162,7 +1180,24 @@ export default {
       })
       vm.$root.eventHub.$emit('addCall', true)
       vm.setbtnStatus('talking')
+      const info = {}
+      info.callerid = callerid
+      info.calleeid = calleeid
+      info.starttime = new Date().getTime()
+      info.agentid = agentid
+      // const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
+      const regex = /^\d{4}$/
+      if (regex.test(calleeid)) { // 先满足是手机号
+        info.phone = calleeid
+        localStorage.setItem(agentid + '_' + UUID, JSON.stringify(info))
+      } else if (regex.test(callerid)) {
+        info.phone = callerid
+        localStorage.setItem(agentid + '_' + UUID, JSON.stringify(info))
+      } else {
+        console.log(info)
+      }
     },
+
     on_ringback_event(event, agentid, DN, UUID, callerid, calleeid, ori_ani, activeLine) {
       vm.caller = callerid
       vm.callee = calleeid
