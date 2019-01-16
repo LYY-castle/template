@@ -372,7 +372,7 @@ export default {
         isInternalAdmin: '',
         source: '',
         customerName: '',
-        sex: '1',
+        sex: '',
         mobile: '',
         idNumber: '',
         resideAddress: ''
@@ -380,7 +380,7 @@ export default {
       customerReverseDetail: {
         customerId: '',
         customerName: '',
-        sex: '1',
+        sex: '',
         mobile: '',
         idNumber: '',
         resideAddress: '',
@@ -469,7 +469,7 @@ export default {
     },
     // 性别显示判断
     showSex(code) {
-      return (code === 1 || code === '1') ? '男' : ((code === 0 || code === '0') ? '女' : '')
+      return (code === 1 || code === '1') ? '女' : ((code === 0 || code === '0') ? '男' : '')
     },
     // 地址补无
     showAddress(address) {
