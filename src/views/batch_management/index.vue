@@ -73,7 +73,7 @@
               {{ scope.row.batchName }}
             </template>
           </el-table-column>
-          <el-table-column
+          <!-- <el-table-column
             align="center"
             prop="ascriptionName"
             label="客户归属"
@@ -87,7 +87,7 @@
             prop="validityTime"
             width="100"
             label="有效期">
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column
             align="center"
             prop="customerNumber"
@@ -169,7 +169,7 @@
         <el-form-item label="批次名称" prop="batchName">
           <el-input v-model="batchDetail.batchName" size="small" placeholder="上限100字符" maxlength="100"></el-input>
         </el-form-item>
-        <el-form-item label="批次来源" prop="ascriptionId">
+        <!-- <el-form-item label="批次来源" prop="ascriptionId">
           <el-select v-model="batchDetail.ascriptionId" placeholder="请选择" style="width: 100%;">
             <el-option
                 v-for="item in ascrislistData"
@@ -178,7 +178,7 @@
                 :value="item.ascriptionId">
             </el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="可用性" prop="validityStatus">
           <el-radio-group v-model="batchDetail.validityStatus" size="small">
             <el-radio label='0' border>可用</el-radio>
@@ -191,7 +191,7 @@
         <el-form-item label="操作时间" prop="modifierTime">
           <span>{{batchDetail.modifierTime}}</span>
         </el-form-item>
-        <el-form-item label="有效时间" prop="validityTime">
+        <!-- <el-form-item label="有效时间" prop="validityTime">
           <el-date-picker
               v-model="batchDetail.validityTime"
               type="datetime"
@@ -199,7 +199,7 @@
               value-format="yyyy-MM-dd HH:mm:ss"
               default-time="00:00:00">
           </el-date-picker>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="批次描述" prop="description">
           <el-input v-model="batchDetail.description" size="small" type="textarea" placeholder="上限200字符" maxlength="100"></el-input>
         </el-form-item>
@@ -275,7 +275,7 @@
           <el-form-item prop="batchName" label="批次名称:">
             <el-input v-model="addReq.batchName" placeholder="批次名称（限长100字符）" maxlength="100"></el-input>
           </el-form-item>
-           <el-form-item prop="ascriptionId" label="客户归属:">
+           <!-- <el-form-item prop="ascriptionId" label="客户归属:">
             <el-select v-model="addReq.ascriptionId" placeholder="客户归属" style="width: 100%;">
               <el-option
                   v-for="item in ascrislistData"
@@ -284,8 +284,8 @@
                   :value="item.ascriptionId">
               </el-option>
             </el-select>
-          </el-form-item>
-          <el-form-item prop="validityTime" label="有效时间:">
+          </el-form-item> -->
+          <!-- <el-form-item prop="validityTime" label="有效时间:">
             <el-date-picker
                 v-model="addReq.validityTime"
                 type="datetime"
@@ -293,7 +293,7 @@
                 value-format="yyyy-MM-dd HH:mm:ss"
                 default-time="00:00:00">
             </el-date-picker>
-          </el-form-item>
+          </el-form-item> -->
            <el-form-item prop="description" label="备注:">
             <el-input v-model="addReq.description" placeholder="备注（限长200字符）" maxlength="200"></el-input>
           </el-form-item>
