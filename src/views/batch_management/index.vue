@@ -484,6 +484,11 @@ export default {
       findAscrislist().then(response => {
         if (response.data.code === 0) {
           this.ascrislistData = response.data.data
+
+          if (this.ascrislistData && this.ascrislistData.length > 1) {
+            // 默认取第二个 (其它).
+            this.batchDetail.ascriptionId = this.ascrislistData[1].ascriptionId
+          }
         }
       })
     },
