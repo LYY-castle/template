@@ -427,12 +427,12 @@ export default {
         pageSize: 10
       },
       batchDetail: {
-        validityTime: moment().format('YYYY-MM-DD')
+        validityTime: moment().format('YYYY-MM-DD HH:mm:ss')
       },
       addReq: {
         batchName: '',
         ascriptionId: '',
-        validityTime: moment().format('YYYY-MM-DD'),
+        validityTime: moment().format('YYYY-MM-DD HH:mm:ss'),
         fileName: '',
         description: '',
         filePath: '',
