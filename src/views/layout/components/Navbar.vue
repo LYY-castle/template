@@ -1202,7 +1202,6 @@ export default {
       info.agentId = agentid
       info.agentName = localStorage.getItem('agentName')
       const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
-      console.log(calleeid, 'calleeid')
       if (regex.test(calleeid)) { // 先满足是手机号
         info.phone = calleeid
         localStorage.setItem(agentid + '_' + UUID, JSON.stringify(info))
@@ -1651,7 +1650,6 @@ export default {
     })
     // 实时接收新的消息
     this.$root.eventHub.$on('RECEIVE_MESSAGES', (oneMsg) => {
-      console.log('navbar接收消息')
       let contents = []
       contents = this.$store.state.app.wechat_contents
       if (contents.length !== 0) {
