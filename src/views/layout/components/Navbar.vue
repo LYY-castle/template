@@ -1165,7 +1165,7 @@ export default {
     },
     sendMessage(phone, info) {
       const url = 'http://api.lingchuangyun.cn/send'
-      const data = { 'appid': getAPPID(), 'secret': getSecret(), 'genre': '2', 'mobile': 13480129429, 'content': '【测试短信】测试发送短信功能', 'info': info }
+      const data = { 'appid': getAPPID(), 'secret': getSecret(), 'genre': '3', 'mobile': 13480129429, 'content': '【测试短信】,测试发送短信功能,退订回T', 'info': info }
       sendMessage(url, data).then(res => {
         console.log('result', res)
       })
