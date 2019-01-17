@@ -299,6 +299,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="uploadVisible=true;changeUpload(2);">上传文件</el-button>
+            <el-button type="primary" size="small" @click="getTemp()">下载模板</el-button>
           </el-form-item>
         </el-form>
       </el-row>
