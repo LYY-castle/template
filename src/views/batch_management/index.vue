@@ -366,6 +366,7 @@ import {
 import { getToken } from '@/utils/auth'
 import { rule } from '@/utils/validate'
 import { formatDateTime, clone } from '@/utils/tools'
+import moment from 'moment'
 
 export default {
   name: 'batch_management',
@@ -426,12 +427,12 @@ export default {
         pageSize: 10
       },
       batchDetail: {
-        validityTime:'',
+        validityTime: moment().format('YYYY-MM-DD')
       },
       addReq: {
         batchName: '',
         ascriptionId: '',
-        validityTime: '',
+        validityTime: moment().format('YYYY-MM-DD'),
         fileName: '',
         description: '',
         filePath: '',
@@ -487,10 +488,10 @@ export default {
         if (response.data.code === 0) {
           this.ascrislistData = response.data.data
 
-          if (this.ascrislistData && this.ascrislistData.length > 1) {
+          if (this.ascrislistData && this.ascrislistData.length > 0) {
             // 默认取第二个 (其它).
-            this.batchDetail.ascriptionId = this.ascrislistData[1].ascriptionId
-            this.addReq.ascriptionId = this.ascrislistData[1].ascriptionId
+            this.batchDetail.ascriptionId = this.ascrislistData[0].ascriptionId
+            this.addReq.ascriptionId = this.ascrislistData[0].ascriptionId
           }
         }
       })
