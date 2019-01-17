@@ -315,7 +315,7 @@
             align="center"
             label="性别">
             <template slot-scope="scope">
-              <div>{{scope.row.sex=== 1 ? '男' : '女'}}</div>
+              <div>{{scope.row.sex=== 1 ? '女' : '男'}}</div>
             </template>
           </el-table-column>
           <el-table-column
