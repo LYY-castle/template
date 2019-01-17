@@ -283,7 +283,7 @@ import Breadcrumb from '@/components/Breadcrumb'
 // import Hamburger from '@/components/Hamburger'
 import { getUserInfo } from '@/api/dashboard'
 import { Message } from 'element-ui'
-import { getAPPID, getSecret, getSendMessageTime } from '@/config/lingchuang_codes'
+import { getPlatform, getSendMessageTime, getType, getContent } from '@/config/lingchuang_codes'
 import {
   addComeContact,
   addDialContact,
@@ -1155,18 +1155,33 @@ export default {
       }
       const info = localStorage.getItem(agentid + '_' + UUID) ? JSON.parse(localStorage.getItem(agentid + '_' + UUID)) : ''
       if (info) {
-        const calltime = Math.floor((new Date().getTime() - info.starttime) / 1000)
+        const calltime = Math.floor((new Date().getTime() - info.startTime) / 1000)
         if (calltime > getSendMessageTime()) {
-          info.endtime = new Date().getTime()
-          info.calltime = calltime
+          info.endTime = new Date().getTime()
+          info.callTime = calltime
           vm.sendMessage(info.phone, info)
         }
       }
+      if (localStorage.getItem(agentid + '_' + UUID)) { // 删除缓存
+        localStorage.removeItem(agentid + '_' + UUID)
+      }
     },
     sendMessage(phone, info) {
-      const url = 'http://api.lingchuangyun.cn/send'
-      const data = { 'appid': getAPPID(), 'secret': getSecret(), 'genre': '3', 'mobile': 13480129429, 'content': '【测试短信】,测试发送短信功能,退订回T', 'info': info }
-      sendMessage(url, data).then(res => {
+      const data = {}
+      data.agentId = info.agentId ? info.agentId : ''
+      data.agentName = info.agentName ? info.agentName : ''
+      data.calleeId = info.calleeid
+      data.callerId = info.callerid
+
+      data.talkTime = info.callTime ? info.callTime : 0
+      data.startTime = info.startTime ? info.startTime : null
+      data.endTime = info.endTime ? info.endTime : null
+      data.content = getContent()
+      data.mobile = phone
+      data.platform = getPlatform()
+      data.type = getType()
+
+      sendMessage(data).then(res => {
         console.log('result', res)
       })
     },
@@ -1183,10 +1198,11 @@ export default {
       const info = {}
       info.callerid = callerid
       info.calleeid = calleeid
-      info.starttime = new Date().getTime()
-      info.agentid = agentid
-      // const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
-      const regex = /^\d{4}$/
+      info.startTime = new Date().getTime()
+      info.agentId = agentid
+      info.agentName = localStorage.getItem('agentName')
+      const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
+      console.log(calleeid, 'calleeid')
       if (regex.test(calleeid)) { // 先满足是手机号
         info.phone = calleeid
         localStorage.setItem(agentid + '_' + UUID, JSON.stringify(info))
