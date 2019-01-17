@@ -2175,10 +2175,8 @@ export default {
               // this.customerIds = this.$store.state.dialTask.customerIds
               // this.isBlacklists = this.$store.state.dialTask.isBlacklists
               this.quickDialto()
-              console.log('kuaisuboda')
             } else {
               this.getParametersFromContactRecordDail()
-              console.log('put')
             }
           })
         }).catch((error) => {
@@ -2228,7 +2226,7 @@ export default {
       getSummariesByAgentId(localStorage.getItem('agentId')).then(response => {
         vm.summariesInfo = [] // 清空小结节点
         if (response.data.code === 0) {
-          if (response.data.data.length > 0) {
+          if (response.data && response.data.data && response.data.data.length > 0) {
             vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
             this.handle(response.data.data)
           } else {
@@ -2389,7 +2387,7 @@ export default {
       getSummariesByAgentId(localStorage.getItem('agentId')).then(response => {
         vm.summariesInfo = [] // 清空小结节点
         if (response.data.code === 0) {
-          if (response.data.data.length > 0) {
+          if (response.data && response.data.data && response.data.data.length > 0) {
             vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
             this.handle(response.data.data)
           } else {
