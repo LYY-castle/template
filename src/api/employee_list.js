@@ -64,6 +64,7 @@ export function edit(obj) {
       idNumber: obj.idNumber,
       sex: obj.sex,
       birthday: obj.birthday,
+      hiredate: obj.hiredate,
       departName: obj.departName,
       userPhone: obj.userPhone
     }
@@ -80,6 +81,7 @@ export function addStaff(req) {
       origin: JSON.stringify(req.origin),
       idNumber: req.idNumber,
       sex: req.sex,
+      hiredate: req.hiredate,
       birthday: req.birthday,
       departName: req.departName,
       userPhone: req.userPhone

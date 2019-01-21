@@ -152,6 +152,14 @@
             @change="handleChange()" style="width: 100%;">
           </el-cascader>
         </el-form-item>
+        <el-form-item label="入司日期:" prop="hiredate">
+          <el-date-picker
+            v-model="ruleForm.hiredate"
+            type="date"
+            placeholder="选择入司日期" style="width: 100%;"
+            value-format="yyyy-MM-dd">
+          </el-date-picker>
+        </el-form-item>
         <el-form-item label="出生日期:" prop="birthday">
           <el-date-picker
             v-model="ruleForm.birthday"
@@ -200,6 +208,14 @@
             @change="handleChange" style="width: 100%;">
           </el-cascader>
         </el-form-item>
+        <el-form-item label="入司日期" prop="hiredate">
+          <el-date-picker
+            v-model="ruleFormReverse.hiredate"
+            type="date"
+            placeholder="选择入司日期" style="width: 100%;"
+            value-format="yyyy-MM-dd">
+          </el-date-picker>
+        </el-form-item>
         <el-form-item label="出生日期" prop="birthday">
           <el-date-picker
             v-model="ruleFormReverse.birthday"
@@ -246,6 +262,9 @@
         </el-form-item>
         <el-form-item label="籍贯">
           <span>{{ruleFormReverseDetail.origin}}</span>
+        </el-form-item>
+        <el-form-item label="入司日期">
+          <span>{{ruleFormReverseDetail.hiredate}}</span>
         </el-form-item>
         <el-form-item label="出生日期">
           <span>{{ruleFormReverseDetail.birthday}}</span>
@@ -368,6 +387,7 @@
           origin: [],
           idNumber: '',
           sex: '1',
+          hiredate: '',
           birthday: '',
           departName: '',
           userPhone: ''
@@ -378,12 +398,14 @@
           origin: [],
           idNumber: '',
           sex: '1',
+          hiredate: '',
           birthday: '',
           departName: '',
           userPhone: '',
           angentId: '',
           modifier: '',
           updateTime: ''
+  
         },
         ruleFormReverseDetail: {
           id: null,
@@ -391,12 +413,14 @@
           origin: [],
           idNumber: '',
           sex: '1',
+          hiredate: '',
           birthday: '',
           departName: '',
           userPhone: '',
           angentId: '',
           modifier: '',
           updateTime: ''
+  
         },
         dialogFormVisible: false,
         dialogFormVisibleReverse: false,
@@ -415,6 +439,9 @@
           idNumber: [
             { required: true, message: '请输入身份证号码', trigger: 'blur' },
             { pattern: /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/, message: '请输入正确的身份证号码' }
+          ],
+          hiredate: [
+            { required: true, message: '请输入入司日期', trigger: 'blur' }
           ],
           birthday: [
             { required: true, message: '请输入出生日期', trigger: 'blur' }
@@ -467,6 +494,7 @@
           origin: [],
           idNumber: '',
           sex: '1',
+          hiredate: '',
           birthday: '',
           departName: '',
           userPhone: ''
@@ -623,6 +651,7 @@
           idNumber: row.idNumber,
           sex: typeof row.sex === 'undefined' || row.sex === null ? '' : row.sex.toString(),
           birthday: row.birthday,
+          hiredate: row.hiredate ? row.hiredate : '',
           departName: row.departName,
           userPhone: row.userPhone,
           angentId: row.angentId,
@@ -643,6 +672,7 @@
               origin: isJson(data.origin) && data.origin ? JSON.parse(data.origin) : ['000000', '000000'],
               idNumber: data.idNumber,
               sex: typeof data.sex === 'undefined' || data.sex === null ? '' : data.sex.toString(),
+              hiredate: data.hiredate ? data.hiredate : '',
               birthday: data.birthday,
               departName: data.departName,
               userPhone: data.userPhone,
@@ -661,6 +691,7 @@
           origin: isJson(this.staffData.origin) && this.staffData.origin ? JSON.parse(this.staffData.origin) : ['000000', '000000'],
           idNumber: this.staffData.idNumber,
           sex: typeof this.staffData.sex === 'undefined' || this.staffData.sex === null ? '' : this.staffData.sex.toString(),
+          hiredate: this.staffData.hiredate ? this.staffData.hiredate : '',
           birthday: this.staffData.birthday,
           departName: this.staffData.departName,
           userPhone: this.staffData.userPhone,
