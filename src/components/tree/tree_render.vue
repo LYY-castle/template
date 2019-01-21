@@ -12,7 +12,7 @@
 		:class="[DATA.id > maxexpandId ? 'tree-new tree-label' : 'tree-label']">
 			<span>{{DATA.name}}</span>
 		</span>
-		<span class="tree-btn" v-show="!DATA.isEdit">
+		<span class="tree-btn" v-show="!DATA.isEdit&&NODE.level>2">
 			<i class="el-icon-plus" @click.stop="nodeAdd(STORE,DATA,NODE)"></i>
 			<i class="el-icon-edit" @click.stop="nodeEdit(STORE,DATA,NODE)"></i>
 			<i class="el-icon-delete" @click.stop="nodeDel(STORE,DATA,NODE)"></i>

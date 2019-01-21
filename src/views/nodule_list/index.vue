@@ -502,7 +502,6 @@ export default {
             this.summaryDetail = response.data.data
             this.setTree1 = response.data.data.summaryDetailInfos ? response.data.data.summaryDetailInfos : []
             this.setTree2 = response.data.data.summaryDetailInfos ? response.data.data.summaryDetailInfos : []
-            console.log(this.summaryDetail)
           }
         })
         .catch(error => {
