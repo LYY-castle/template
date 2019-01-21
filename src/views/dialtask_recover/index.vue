@@ -194,7 +194,7 @@
     <el-row style="margin-top:5px;">
       <el-form :inline="true" size="small">
         <el-form-item>
-          <el-button type="primary" @click="checkTransferNum(contactTaskIds);">恢复并转移</el-button>
+          <el-button type="primary" @click="checkTransferNum(contactTaskIds);transfer_dept_id=[]">恢复并转移</el-button>
         </el-form-item>
       </el-form>
         <el-pagination
@@ -385,7 +385,7 @@ export default {
       recoverAndTransfer(paramsMap)
         .then(response => {
           if (response.data && response.data.code === 0) {
-            this.$message.success('操作成功！')
+            this.$message.success(response.data.message)
             this.searchByKeyWords(this.req)
             this.transferVisible = false
           } else {
