@@ -2,9 +2,23 @@
   <div class="container">
     <el-row margin-top:>
       <el-form :inline="true" size="small">
+        <el-form-item label="组织">
+          <el-cascader
+            v-model="selected_dept_id"
+            placeholder="请选择组织"
+            :options="org_options"
+            :props="org_props"
+            show-all-levels
+            filterable
+            size="small"
+            @change="showStaffs"
+            change-on-select
+          ></el-cascader>
+        </el-form-item>
         <el-form-item label="坐席">
           <el-select v-model="req.staffId" clearable>
-            <el-option label="所有坐席" :value="s_staffIds"></el-option>
+            <el-option label="所有坐席" :value="s_staffIds" v-if="hasAgent"></el-option>
+            <el-option label="无" value="" v-if="!hasAgent"></el-option>
             <el-option
               v-for="item in s_staffs"
               :key="item[1]"
@@ -20,16 +34,6 @@
         <el-form-item label="客户电话：">
             <el-input v-model="req.customerPhone" placeholder="客户电话（限长50字符）" maxlength="50" clearable></el-input>
         </el-form-item>
-        <!-- <el-form-item label="任务状态：">
-          <el-select v-model="req.status" placeholder="请选择">
-            <el-option
-              v-for="item in taskStatusOptions"
-              :key="item.value"
-              :value="item.value"
-              :label="item.label">
-            </el-option>
-          </el-select>
-        </el-form-item> -->
         <el-form-item label="话后小结：">
           <el-select v-model="req.summaryId">
             <el-option
@@ -209,10 +213,23 @@
     <!-- 选择转移的坐席dialog -->
     <el-dialog width="30%" title="操作提示" :visible.sync="transferVisible" append-to-body>
       <el-form>
+        <el-form-item label="转移的组织：">
+          <el-cascader
+            v-model="transfer_dept_id"
+            placeholder="请选择组织"
+            :options="org_options"
+            :props="org_props"
+            show-all-levels
+            filterable
+            size="medium"
+            @change="showStaffs1"
+            change-on-select
+          ></el-cascader>
+        </el-form-item>
         <el-form-item label="转移的坐席：">
-          <el-select v-model="transferToAgentId" clearable>
+          <el-select v-model="transferToAgentId" clearable >
             <el-option
-              v-for="item in s_staffs"
+              v-for="item in s_staffs1"
               :key="item[1]"
               :label="item[2]+' ('+item[1]+')'"
               :value="item[1]"
@@ -222,7 +239,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" @click="transferVisible = false;checkTransfer(contactTaskIds,transferToAgentId)">确定</el-button>
+        <el-button type="primary" @click="checkTransfer(contactTaskIds,transferToAgentId)">确定</el-button>
         <el-button @click="transferVisible = false">取消</el-button>
       </div>
     </el-dialog>
@@ -234,9 +251,10 @@
 
 <script>
 import {
-  getAllStaffs,
-  filter_split_agents
-} from '@/api/dialtask_transfer'
+  getAgentsByDeptId,
+  recoverAndTransfer
+} from '@/api/dialtask_recover'
+import { getAllDeptsByCurrent } from '@/utils/tools'
 import {
   queryByKeywords,
   findCampaignByUser,
@@ -248,6 +266,14 @@ export default {
 
   data() {
     return {
+      org_options: [], // 用以展示级联的组织
+      selected_dept_id: [], // 级联选中的组织id
+      transfer_dept_id: [], // 用以dialog中级联选中的组织id
+      org_props: {
+        label: 'departName',
+        value: 'id',
+        children: 'subDeparts'
+      },
       transferVisible: false,
       transferToAgentId: '',
       pageShow: true, // 是否显示分页
@@ -272,6 +298,8 @@ export default {
       s_staffIds: '', // 所有坐席id
       staffs: [], // 当前主管下的所有员工
       s_staffs: [], // 当前主管下的所有坐席
+      s_staffs1: [], //
+      hasAgent: false, // 是否有坐席
       contactTaskIds: [],
       campaignsInfo: [], // 活动下拉选择
       summariesInfo: [] // 小结下拉选择
@@ -300,42 +328,68 @@ export default {
           console.log(error)
         })
     },
-    // 获取当前主管下的坐席人员
-    getAllStaffs() {
-      getAllStaffs()
+    showStaffs(value) {
+      const departId = value[value.length - 1]
+      getAgentsByDeptId(departId)
         .then(res => {
-          if (res.data.code === 1) {
-            var colName = res.data.data
-            var json = []
-            colName.forEach(function(item) {
-              var temp = {}
-              item.forEach(function(value, index) {
-                temp[index] = value
-              })
-              json.push(temp)
-            })
-            this.staffs = json
-            for (var i = 0; i < this.staffs.length; i++) {
-              this.allStaffIds += this.staffs[i][1] + ','
+          if (res.data.code === 0) {
+            this.hasAgent = true
+            this.s_staffs = res.data.data
+            for (var i = 0; i < this.s_staffs.length; i++) {
+              this.s_staffIds += this.s_staffs[i][1] + ','
             }
-            filter_split_agents(this.allStaffIds)
-              .then(response => {
-                if (response.data.result) {
-                  const r2 = response.data.result.R2 // 所有的坐席
-                  for (var j = 0; j < r2.length; j++) {
-                    this.s_staffIds += r2[j] + ',' // 所有的坐席id
-                    for (var k = 0; k < this.staffs.length; k++) {
-                      if (r2[j] === this.staffs[k][1]) {
-                        this.s_staffs.push(this.staffs[k])
-                      }
-                    }
-                  }
-                  this.req.staffId = this.s_staffIds
-                  this.searchByKeyWords(this.req)
-                }
-              })
+            this.req.staffId = this.s_staffIds
           } else {
-            this.$message.error('获取坐席信息失败')
+            this.hasAgent = false
+            this.s_staffs.length = 0
+            this.s_staffIds = ''
+            this.req.staffId = ''
+            console.log(res.data.message)
+          }
+        })
+    },
+    showStaffs1(value) {
+      const departId = value[value.length - 1]
+      getAgentsByDeptId(departId)
+        .then(res => {
+          if (res.data.code === 0) {
+            this.s_staffs1 = res.data.data
+          } else {
+            this.s_staffs1.length = 0
+            this.s_staffs1 = []
+            this.transferToAgentId = ''
+            this.$message.error(res.data.message)
+          }
+        })
+    },
+    // 判断是否选中
+    checkTransferNum(contactTaskIds) {
+      if (contactTaskIds.length === 0) {
+        this.$message.error('未选中任何数据！')
+        return
+      }
+      this.transferToAgentId = ''
+      this.transferVisible = true
+    },
+    // 恢复并且转移的方法
+    checkTransfer(taskIds, transferTo) {
+      if (transferTo === '' || transferTo === null) {
+        this.$message.error('请选择转移的坐席！')
+        return
+      }
+      const paramsMap = {
+        contactTaskIds: taskIds,
+        transferToAgentId: transferTo
+      }
+      // 执行恢复并且转移
+      recoverAndTransfer(paramsMap)
+        .then(response => {
+          if (response.data && response.data.code === 0) {
+            this.$message.success('操作成功！')
+            this.searchByKeyWords(this.req)
+            this.transferVisible = false
+          } else {
+            this.$message.error(response.data.message)
           }
         })
         .catch(error => {
@@ -355,7 +409,11 @@ export default {
       this.req.status = '3'
       this.req.contactedNum = ''
       this.req.summaryId = ''
-      this.req.staffId = this.s_staffIds
+      this.selected_dept_id = []
+      this.hasAgent = false
+      this.s_staffIds = ''
+      this.s_staffs.length = 0
+      this.req.staffId = ''
     },
     handle(obj) {
       for (let i = 0; i < obj.length; i++) {
@@ -454,12 +512,25 @@ export default {
       // console.log(`当前页: ${val}`);
       this.req.pageNo = val
       this.searchByKeyWords(this.req)
+    },
+    // 显示坐席名称+id
+    showStaffName(staffId) {
+      for (var i = 0; i < this.s_staffs.length; i++) {
+        if (staffId === this.s_staffs[i][1]) {
+          return this.s_staffs[i][2] + ' (' + staffId + ')'
+        }
+      }
     }
   },
 
   mounted() {
     vm = this
-    this.getAllStaffs()
+    // this.getAllStaffs()
+    getAllDeptsByCurrent().then(response => {
+      if (response.data && response.data.code === 1) {
+        this.org_options = response.data.data
+      }
+    })
     getSummariesByAgentId(localStorage.getItem('agentId')).then(response => {
       vm.summariesInfo = [] // 清空小结节点
       if (response.data.code === 0) {
