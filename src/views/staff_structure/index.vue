@@ -272,10 +272,7 @@
         // 出生日期
         this.formInline.startBirthday = this.timeValue2 ? this.timeValue2[0] : null
         this.formInline.endBirthday = this.timeValue2 ? this.timeValue2[1] : null
-
-        query(this.formInline).then(response => {
-  
-        })
+        this.searchStaff(this.formInline)
       },
       headerRow({ row, rowIndex }) {
         if (rowIndex === 0) {
