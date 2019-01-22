@@ -386,6 +386,7 @@ export default {
         .then(response => {
           if (response.data && response.data.code === 0) {
             this.$message.success(response.data.message)
+            this.req.pageNo = 1
             this.searchByKeyWords(this.req)
             this.transferVisible = false
           } else {
