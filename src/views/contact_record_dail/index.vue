@@ -461,14 +461,24 @@
         </el-form-item>
         <el-form-item label="话后小结：">
           <el-tree
+            class="summaryTreeEdit"
             ref = "tree"
             :data="detailInfo.summariesInfo"
             show-checkbox
             :default-checked-keys="keys"
             node-key="id"
             default-expand-all
+            :check-strictly='true'
+            @check="summaryIdChange"
             :props="defaultProps">
           </el-tree>
+          <!-- <el-cascader
+              placeholder="请选择小结"
+              v-model='keys'
+              :options="detailInfo.summariesInfo"
+              filterable
+              :props="defaultProps"
+            ></el-cascader> -->
           </el-form-item>
         <el-form-item label="小结备注：" prop="contactInfo.description">
           <el-input type="textarea" v-model="detailInfo.contactInfo.description"></el-input>
@@ -661,9 +671,18 @@ audio {
       edit() {
         this.editVisible = true
         console.log('tree', this.$refs.tree)
+        setTimeout(() => {
+          $('.summaryTreeEdit').find('.el-tree-node__expand-icon').next('.el-checkbox').hide()
+          $('.summaryTreeEdit').find('.el-tree-node__expand-icon.is-leaf').next('.el-checkbox').show()
+        }, 100)
         if (this.$refs.tree) {
           this.$refs.tree.setCheckedKeys(this.keys)
         }
+      },
+      summaryIdChange(node, data) {
+        var keys = []
+        keys.push(node.id)
+        this.$refs.tree.setCheckedKeys(keys)
       },
       changeChoice() {
         switch (this.req.status) {
@@ -752,6 +771,7 @@ audio {
         getSummariesByTaskId(this.ids.taskId).then(response => {
           if (response.data.code === 0) {
             this.detailInfo.summariesInfo = response.data.data
+            console.log(response.data.data)
           }
         })
         getContactByGradeId(this.ids.recordId).then(response => {
@@ -767,6 +787,7 @@ audio {
             })
             this.keys = []
             this.keys = a
+            console.log(this.keys)
           }
         })
         queryrecordbytaskid(this.ids.taskId, this.ids.campaignId).then(response => {

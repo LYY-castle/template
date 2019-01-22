@@ -131,7 +131,7 @@
         </el-form-item>
         <div class="expand">
           <div>
-            <el-button size="small" @click="handleAddTop">新建小结</el-button>
+            <!-- <el-button size="small" @click="handleAddTop">新建小结</el-button> -->
             <el-tree class="expand-tree"
             key="tree-one"
             ref="treeOne"
@@ -200,7 +200,7 @@
         </el-form-item>
         <div class="expand">
           <div>
-            <el-button size="small" @click="handleAddTop">新建小结</el-button>
+            <!-- <el-button size="small" @click="handleAddTop">新建小结</el-button> -->
             <el-tree class="expand-tree"
             key="tree-three"
             ref="treeThree"

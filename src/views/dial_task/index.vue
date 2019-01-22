@@ -86,7 +86,6 @@
                     :key="item.id"
                     :value="item.id"
                     :label="item.name">
-
                   </el-option>
                 </el-select>
             </el-form-item>
@@ -574,7 +573,15 @@
           <div>
             <b>话后小结：</b>
             <!-- @check-change="sendSummaryId" @node-click="checkOrNot" <el-tree :data="nodulesTree" show-checkbox lazy :props="summaryTreeProps" empty-text="该拨打任务暂无小结" :load="loadNodes"></el-tree> -->
-            <el-tree :data="nodulesTree" @check-change="sendSummaryId" show-checkbox default-expand-all node-key="id" ref="tree" highlight-current :props="summaryTreeProps" empty-text="该拨打任务暂无小结"></el-tree>
+            <!-- <el-tree :data="nodulesTree" @check-change="sendSummaryId" show-checkbox default-expand-all node-key="id" ref="tree" highlight-current :props="summaryTreeProps" empty-text="该拨打任务暂无小结"></el-tree> -->
+            <el-cascader
+              placeholder="请选择小结"
+              v-model='selectedSummarys'
+              :options="nodulesTree"
+              filterable
+              :props="summaryTreeProps"
+              :show-all-levels="false"
+            ></el-cascader>
           </div>
           <div>
             <b>小结备注：</b>
@@ -757,7 +764,7 @@ export default {
       summaryTreeProps: {
         children: 'summaryDetailInfos',
         label: 'name',
-        id: 'id'
+        value: 'id'
       },
       selectedSummarys: [], // 选中的小结id
       summary_description: '', // 小结备注
@@ -1081,19 +1088,19 @@ export default {
       }
     },
     // 改变小结数组选中状态
-    sendSummaryId(data, checked, ischildSelected) {
-      if (checked && data.summaryDetailInfos === null) {
-        this.selectedSummarys.push(data.id)
-      } else {
-        if (this.selectedSummarys.some(i => i === data.id)) {
-          // 移除数组中此项id
-          this.selectedSummarys.splice(
-            this.selectedSummarys.indexOf(data.id),
-            1
-          )
-        }
-      }
-    },
+    // sendSummaryId(data, checked, ischildSelected) {
+    //   if (checked && data.summaryDetailInfos === null) {
+    //     this.selectedSummarys.push(data.id)
+    //   } else {
+    //     if (this.selectedSummarys.some(i => i === data.id)) {
+    //       // 移除数组中此项id
+    //       this.selectedSummarys.splice(
+    //         this.selectedSummarys.indexOf(data.id),
+    //         1
+    //       )
+    //     }
+    //   }
+    // },
     // 综合查询
     searchByKeyWords(req) {
       const queryInfo = {}
@@ -1648,6 +1655,7 @@ export default {
       getSummaries(taskId).then(res4 => {
         if (res4.data.code === 0 && res4.data.data.length > 0) {
           this.nodulesTree = res4.data.data
+          console.log(this.nodulesTree)
         }
       })
     },
@@ -1679,6 +1687,7 @@ export default {
     // 生成订单/接触记录/修改任务状态
     generateRecord() {
       console.log(this.selectedSummarys, '11111')
+      var selectedSummarys2 = []
       // console.log(this.recordId + ',' + this.taskId + ',' + this.radio + ',' + this.appointTime + ',' + this.selectedSummarys)
       // 判断 1、是否打电话 2、是否选择任务状态  3、是否勾选小结
       if (this.recordId === '') {
@@ -1700,6 +1709,9 @@ export default {
         this.$message.error('未选择小结！')
         return false
       } else {
+        selectedSummarys2.push(this.selectedSummarys[this.selectedSummarys.length - 1])
+        this.selectedSummarys = selectedSummarys2
+        console.log(this.selectedSummarys, '22222')
         // 生成完整接触记录及小结
         // 判断任务状态radio  2：成功 3：失败  1：预约
         if (this.radio === '2' && this.campaignType !== 'RECRUIT') {
