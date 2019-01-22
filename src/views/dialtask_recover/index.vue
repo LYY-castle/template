@@ -16,7 +16,7 @@
           ></el-cascader>
         </el-form-item>
         <el-form-item label="坐席">
-          <el-select v-model="req.staffId" clearable>
+          <el-select v-model="req.staffId">
             <el-option label="所有坐席" :value="s_staffIds" v-if="hasAgent"></el-option>
             <el-option label="无" value="" v-if="!hasAgent"></el-option>
             <el-option
@@ -31,10 +31,10 @@
         <el-form-item label="客户姓名">
           <el-input v-model="req.customerName" placeholder="客户姓名（限长50字符）" maxlength="50" clearable></el-input>
         </el-form-item>
-        <el-form-item label="客户电话：">
+        <el-form-item label="客户电话">
             <el-input v-model="req.customerPhone" placeholder="客户电话（限长50字符）" maxlength="50" clearable></el-input>
         </el-form-item>
-        <el-form-item label="话后小结：">
+        <el-form-item label="话后小结">
           <el-select v-model="req.summaryId">
             <el-option
               v-for="item in summariesInfo"
@@ -47,7 +47,7 @@
         <el-form-item label="拨打次数">
           <el-input v-model="req.contactedNum" maxlength="4" min="0" type="number"></el-input>
         </el-form-item>
-        <el-form-item label="分配时间：">
+        <el-form-item label="分配时间">
           <el-date-picker
               v-model="req.distributeTimeStart"
               type="datetime"
@@ -64,7 +64,7 @@
               default-time="00:00:00">
           </el-date-picker>
         </el-form-item>&nbsp;&nbsp;
-        <el-form-item label="上次拨打时间：">
+        <el-form-item label="上次拨打时间">
           <el-date-picker
               v-model="req.lastContactTimeStart"
               type="datetime"
@@ -121,15 +121,6 @@
             label="地区"
             prop="customerAddress"
             :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="所属活动"
-            :show-overflow-tooltip="true">
-            <template
-              slot-scope="scope">
-              {{showCampaign(scope.row.campaignId)}}
-            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -254,7 +245,7 @@ import {
   getAgentsByDeptId,
   recoverAndTransfer
 } from '@/api/dialtask_recover'
-import { getAllDeptsByCurrent } from '@/utils/tools'
+import { getAllDeptsByCurrent, getAllAgentsRecursion } from '@/utils/tools'
 import {
   queryByKeywords,
   findCampaignByUser,
@@ -294,10 +285,11 @@ export default {
         pageSize: 10
 
       },
-      allStaffIds: '', // 所有员工id
-      s_staffIds: '', // 所有坐席id
-      staffs: [], // 当前主管下的所有员工
-      s_staffs: [], // 当前主管下的所有坐席
+      allAgentIds: '', // 当前部门关联的所有坐席的id
+      all_staffs: [], // 当前部门关联的所有坐席
+      s_staffIds: '', // 选中的部门的所有坐席id
+      staffs: [], // 当前选中的部门的所有员工
+      s_staffs: [], // 当前选中的部门的所有坐席
       s_staffs1: [], //
       hasAgent: false, // 是否有坐席
       contactTaskIds: [],
@@ -321,6 +313,9 @@ export default {
               this.$message = '无查询结果，请核对查询条件'
               this.tableData = response.data.data
               this.pageShow = false
+            }
+            if (req.staffId === this.allAgentIds) {
+              this.req.staffId = ''
             }
           }
         })
@@ -358,7 +353,6 @@ export default {
             this.s_staffs1.length = 0
             this.s_staffs1 = []
             this.transferToAgentId = ''
-            this.$message.error(res.data.message)
           }
         })
     },
@@ -412,9 +406,9 @@ export default {
       this.req.summaryId = ''
       this.selected_dept_id = []
       this.hasAgent = false
-      this.s_staffIds = ''
+      this.s_staffIds = this.allAgentIds
+      this.req.staffId = this.s_staffIds
       this.s_staffs.length = 0
-      this.req.staffId = ''
     },
     handle(obj) {
       for (let i = 0; i < obj.length; i++) {
@@ -482,6 +476,8 @@ export default {
         if (summaries.length > 0) {
           summaries = summaries.substring(0, summaries.length - 1)
         }
+      } else {
+        summaries = '无'
       }
       return summaries
     },
@@ -516,9 +512,9 @@ export default {
     },
     // 显示坐席名称+id
     showStaffName(staffId) {
-      for (var i = 0; i < this.s_staffs.length; i++) {
-        if (staffId === this.s_staffs[i][1]) {
-          return this.s_staffs[i][2] + ' (' + staffId + ')'
+      for (var i = 0; i < this.all_staffs.length; i++) {
+        if (staffId === this.all_staffs[i][1]) {
+          return this.all_staffs[i][2] + ' (' + staffId + ')'
         }
       }
     }
@@ -526,7 +522,24 @@ export default {
 
   mounted() {
     vm = this
-    // this.getAllStaffs()
+    // 获取所有部门及子部门下的坐席id用以默认查询
+    getAllAgentsRecursion(localStorage.getItem('departId'))
+      .then(response => {
+        if (response.data) {
+          if (response.data.code === 0) {
+            this.all_staffs = response.data.data
+            for (var i = 0; i < response.data.data.length; i++) {
+              this.allAgentIds += response.data.data[i][1] + ','
+            }
+            this.req.staffId = this.allAgentIds
+            this.searchByKeyWords(this.req)
+          }
+        }
+      })
+      .catch(error => {
+        console.error(error)
+      })
+    // 获取所有部门及子部门用以展示级联部门
     getAllDeptsByCurrent().then(response => {
       if (response.data && response.data.code === 1) {
         this.org_options = response.data.data

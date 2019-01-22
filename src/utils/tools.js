@@ -253,6 +253,16 @@ export function getAllDeptsByCurrent() {
   })
 }
 
+export function getAllAgentsRecursion(departId) {
+  return request({
+    url: '/organization/getAllAgentsRecursion',
+    method: 'get',
+    params: {
+      departId: departId
+    }
+  })
+}
+
 export function getAllDeptsToCascader() {
   return request({
     url: '/employee/getAllDeptsToCascader',
