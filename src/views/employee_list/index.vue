@@ -293,7 +293,7 @@
   import { getAllVisibleDepts, queryDepts, query, deleteStaff, addStaff, queryone, edit, deleteAllStaff } from '@/api/employee_list'
   import { Message, MessageBox } from 'element-ui'
   import { provinceAndCityData, CodeToText } from 'element-china-area-data'
-  import { formatDateTime, isJson } from '@/utils/tools'
+  import { formatDateTime, isJson, formatDate } from '@/utils/tools'
 
   export default {
     name: 'employee_list',
@@ -672,7 +672,7 @@
               origin: isJson(data.origin) && data.origin ? JSON.parse(data.origin) : ['000000', '000000'],
               idNumber: data.idNumber,
               sex: typeof data.sex === 'undefined' || data.sex === null ? '' : data.sex.toString(),
-              hiredate: data.hiredate ? data.hiredate : '',
+              hiredate: data.hiredate ? formatDate(data.hiredate) : '',
               birthday: data.birthday,
               departName: data.departName,
               userPhone: data.userPhone,
@@ -691,7 +691,7 @@
           origin: isJson(this.staffData.origin) && this.staffData.origin ? JSON.parse(this.staffData.origin) : ['000000', '000000'],
           idNumber: this.staffData.idNumber,
           sex: typeof this.staffData.sex === 'undefined' || this.staffData.sex === null ? '' : this.staffData.sex.toString(),
-          hiredate: this.staffData.hiredate ? this.staffData.hiredate : '',
+          hiredate: this.staffData.hiredate ? formatDate(this.staffData.hiredate) : '',
           birthday: this.staffData.birthday,
           departName: this.staffData.departName,
           userPhone: this.staffData.userPhone,
