@@ -651,7 +651,7 @@
           idNumber: row.idNumber,
           sex: typeof row.sex === 'undefined' || row.sex === null ? '' : row.sex.toString(),
           birthday: row.birthday,
-          hiredate: row.hiredate ? row.hiredate : '',
+          hiredate: row.hiredate ? formatDate(row.hiredate) : '',
           departName: row.departName,
           userPhone: row.userPhone,
           angentId: row.angentId,
