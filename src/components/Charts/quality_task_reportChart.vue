@@ -90,8 +90,9 @@
         </el-form-item>
       </el-form>
     </el-row>
-    <div :class="className" :id="id" style="height: 100%;width: 100%;"></div>
-    <div style="margin-top: 1%">
+
+    <div :class="className" :id="id" style="height: 100%;width: 100%;display:none;"></div>
+    <!-- <div style="margin-top: 1%">
       <el-row>
         <el-pagination
           background
@@ -102,16 +103,18 @@
           :total="pagination.totalCount" style="text-align: right">
         </el-pagination>
       </el-row>
-    </div>
-    <el-form :inline="true" class="demo-form-inline" size="small" style="margin-top: 10px;margin-bottom: 5px;">
+    </div> -->
+
+    <!-- <el-form :inline="true" class="demo-form-inline" size="small" style="margin-top: 10px;margin-bottom: 5px;">
       <el-form-item label="时间选项:" style="margin-bottom: 0">
         <el-select v-model="formInline.time_dimension" @change="timeChange">
           <el-option v-for="item in timeOptions" :key="item" :label="item" :value="item"></el-option>
         </el-select>
       </el-form-item>
-    </el-form>
-    <div :class="className" id="staff" style="height: 100%;width: 100%;"></div>
-    <el-form :inline="true" class="demo-form-inline" size="small" style="margin-top: 10px;margin-bottom: 5px;">
+    </el-form> -->
+    <div :class="className" id="staff" style="height: 100%;width: 100%;display:none;"></div>
+
+    <!-- <el-form :inline="true" class="demo-form-inline" size="small" style="margin-top: 10px;margin-bottom: 5px;">
       <el-form-item label="部门选项:" style="margin-bottom: 0" v-if="statistics_type === 'depart'">
         <el-select v-model="formInline.staff" @change="agentChange">
           <el-option v-for="item in staffOptions" :key="item.depart_id" :label="item.depart_name" :value="item.depart_id"></el-option>
@@ -122,9 +125,9 @@
           <el-option v-for="item in staffOptions" :key="item.agent_id" :label="item.real_name ? item.real_name + ' (' + item.agent_id + ')' : item.agent_id" :value="item.agent_id"></el-option>
         </el-select>
       </el-form-item>
-    </el-form>
-    <div :class="className" :id="time" style="height: 100%;width: 100%;"></div>
-    <div style="margin-top: 1%">
+    </el-form> -->
+    <div :class="className" :id="time" style="height: 100%;width: 100%;display:none;"></div>
+    <!-- <div style="margin-top: 1%">
       <el-row>
         <el-pagination
           background
@@ -135,7 +138,8 @@
           :total="paginationStaffPage.totalCount" style="text-align: right">
         </el-pagination>
       </el-row>
-    </div>
+    </div> -->
+
     <div style="margin-top: 1%">
       <h3>合计表</h3>
       <el-table
@@ -382,8 +386,9 @@
         </el-form-item>
       </el-form>
     </el-row>
-    <div :class="className" :id="time" style="height: 100%;width: 100%;"></div>
-    <div style="margin-top: 1%">
+
+    <div :class="className" :id="time" style="height: 100%;width: 100%;display:none;"></div>
+    <!-- <div style="margin-top: 1%">
       <el-row>
         <el-pagination
           background
@@ -394,7 +399,8 @@
           :total="paginationStaffPage.totalCount" style="text-align: right">
         </el-pagination>
       </el-row>
-    </div>
+    </div> -->
+
     <div style="margin-top: 1%">
       <h3>详情表</h3>
       <el-table

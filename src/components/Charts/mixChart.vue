@@ -84,8 +84,9 @@
         </el-form-item>
       </el-form>
     </el-row>
-    <div :class="className" :id="id" style="height: 100%;width: 100%;"></div>
-    <div style="margin-top: 1%">
+
+    <div :class="className" :id="id" style="height: 100%;width: 100%;display:none;"></div>
+    <!-- <div style="margin-top: 1%">
       <el-row>
         <el-pagination
           background
@@ -96,16 +97,18 @@
           :total="pagination.totalCount" style="text-align: right">
         </el-pagination>
       </el-row>
-    </div>
-    <el-form :inline="true" class="demo-form-inline" size="small" style="margin-top: 10px;margin-bottom: 5px;">
+    </div> -->
+    
+    <!-- <el-form :inline="true" class="demo-form-inline" size="small" style="margin-top: 10px;margin-bottom: 5px;">
       <el-form-item label="时间选项:" style="margin-bottom: 0">
         <el-select v-model="formInline.time_dimension" @change="timeChange">
           <el-option v-for="item in timeOptions" :key="item" :label="item" :value="item"></el-option>
         </el-select>
       </el-form-item>
-    </el-form>
-    <div :class="className" id="staff" style="height: 100%;width: 100%;"></div>
-    <el-form :inline="true" class="demo-form-inline" size="small" style="margin-top: 10px;margin-bottom: 5px;">
+    </el-form> -->
+    <div :class="className" id="staff" style="height: 100%;width: 100%;display:none;"></div>
+
+    <!-- <el-form :inline="true" class="demo-form-inline" size="small" style="margin-top: 10px;margin-bottom: 5px;">
       <el-form-item label="部门选项:" style="margin-bottom: 0" v-if="statistics_type === 'depart'">
         <el-select v-model="formInline.staff" @change="agentChange">
           <el-option v-for="item in staffOptions" :key="item.depart_id" :label="item.depart_name" :value="item.depart_id"></el-option>
@@ -116,9 +119,9 @@
           <el-option v-for="item in staffOptions" :key="item" :label="item.real_name ? item.real_name + ' (' + item.agent_id + ')' : item.agent_id" :value="item.agent_id"></el-option>
         </el-select>
       </el-form-item>
-    </el-form>
-    <div :class="className" :id="time" style="height: 100%;width: 100%;"></div>
-    <div style="margin-top: 1%">
+    </el-form> -->
+    <div :class="className" :id="time" style="height: 100%;width: 100%;display:none;"></div>
+    <!-- <div style="margin-top: 1%">
       <el-row>
         <el-pagination
           background
@@ -129,7 +132,8 @@
           :total="paginationStaffPage.totalCount" style="text-align: right">
         </el-pagination>
       </el-row>
-    </div>
+    </div> -->
+
     <div style="margin-top: 1%">
       <h3>合计表</h3>
       <el-table
@@ -169,6 +173,13 @@
           prop="calls_number"
           label="通话次数">
         </el-table-column>
+        <el-table-column
+          align="center"
+          label="平均通话时长">
+          <template slot-scope="scope">
+            <div>{{scope.row.calls_number!=0?(scope.row.call_time_duration/scope.row.calls_number).toFixed(2):'0'}}</div>
+          </template>
+        </el-table-column>
       </el-table>
       <h3>时间合计表</h3>
       <el-table
@@ -207,6 +218,13 @@
           align="center"
           prop="calls_number"
           label="通话次数">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          label="平均通话时长">
+          <template slot-scope="scope">
+            <div>{{scope.row.calls_number!=0?(scope.row.call_time_duration/scope.row.calls_number).toFixed(2):'0'}}</div>
+          </template>
         </el-table-column>
       </el-table>
       <div style="margin-top: 1%">
@@ -261,6 +279,13 @@
           prop="calls_number"
           label="通话次数">
         </el-table-column>
+        <el-table-column
+          align="center"
+          label="平均通话时长">
+          <template slot-scope="scope">
+            <div>{{scope.row.calls_number!=0?(scope.row.call_time_duration/scope.row.calls_number).toFixed(2):'0'}}</div>
+          </template>
+        </el-table-column>
       </el-table>
       <h3>{{statistics_type === 'depart'?'下属部门详情':'下属员工详情'}}</h3>
       <div style="margin-top:1%;" v-for="(item, index) in staffOptions">
@@ -308,6 +333,13 @@
             align="center"
             prop="calls_number"
             label="通话次数">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="平均通话时长">
+            <template slot-scope="scope">
+              <div>{{scope.row.calls_number!=0?(scope.row.call_time_duration/scope.row.calls_number).toFixed(2):'0'}}</div>
+            </template>
           </el-table-column>
         </el-table>
         <el-row style="margin-top:1%;">
@@ -410,8 +442,9 @@
         </el-form-item>
       </el-form>
     </el-row>
-    <div :class="className" :id="time" style="height: 100%;width: 100%;"></div>
-    <div style="margin-top: 1%">
+
+    <div :class="className" :id="time" style="height: 100%;width: 100%;display:none;"></div>
+    <!-- <div style="margin-top: 1%">
       <el-row>
         <el-pagination
           background
@@ -422,7 +455,8 @@
           :total="paginationStaffPage.totalCount" style="text-align: right">
         </el-pagination>
       </el-row>
-    </div>
+    </div> -->
+
     <div style="margin-top: 1%">
       <h3>详情表</h3>
       <el-table
@@ -433,9 +467,23 @@
         border
         style="width: 100%;">
         <el-table-column
-              align="center"
-              prop="time_dimension"
-              label="时间段">
+          align="center"
+          label="坐席">
+          <template slot-scope="scope">
+            <div>{{agentName}}</div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          align="center"
+          label="工号">
+          <template slot-scope="scope">
+            <div>{{agentId}}</div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="time_dimension"
+          label="时间段">
         </el-table-column>
         <el-table-column
           align="center"
@@ -461,6 +509,13 @@
           align="center"
           prop="calls_number"
           label="通话次数">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          label="平均通话时长">
+          <template slot-scope="scope">
+            <div>{{scope.row.calls_number!=0?(scope.row.call_time_duration/scope.row.calls_number).toFixed(2):'0'}}</div>
+          </template>
         </el-table-column>
       </el-table>
         <el-row style="margin-top:1%;">
@@ -519,6 +574,8 @@
     // },
     data() {
       return {
+        agentId: localStorage.getItem('agentId'),
+        agentName: localStorage.getItem('agentName'),
         statistics_type: '',
         departId: '',
         departPermission: false,
@@ -1673,6 +1730,7 @@
       },
       time_dimensionChange(val) {
         this.timeValue = []
+        this.formInline.time = val
       },
       timeChange(val) {
         const params = {
@@ -1779,7 +1837,6 @@
           pageNo: val && val !== 'search' ? this.formInline.from : 1,
           pageSize: 10
         }
-
         if (!this.timeValueClone[0] || !this.timeValueClone[1]) {
           Message({
             message: '请选择操作时间',
@@ -1891,7 +1948,6 @@
           } else {
             params.agent_id = this.formInline.agent_id.join(',')
           }
-
           totalAgent(params).then(responseTotal => {
             this.tableDataAgent1 = responseTotal.data.result
             this.tableDataAgent2 = responseTotal.data.total_result

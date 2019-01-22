@@ -96,8 +96,9 @@
         </el-form-item>
       </el-form>
     </el-row>
-    <div :class="className" :id="id" style="height: 100%;width: 100%;"></div>
-    <div style="margin-top: 1%">
+
+    <div :class="className" :id="id" style="height: 100%;width: 100%;display:none;"></div>
+    <!-- <div style="margin-top: 1%">
       <el-row>
         <el-pagination
           background
@@ -108,7 +109,8 @@
           :total="pagination.totalCount" style="text-align: right">
         </el-pagination>
       </el-row>
-    </div>
+    </div> -->
+
     <el-form :inline="true" class="demo-form-inline" size="small" style="margin-top: 10px;margin-bottom: 5px;">
       <el-form-item label="时间选项:" style="margin-bottom: 0">
         <el-select v-model="formInline.time_dimension" @change="timeChange">
@@ -129,8 +131,9 @@
         </el-select>
       </el-form-item>
     </el-form>
-    <div :class="className" :id="time" style="height: 100%;width: 100%;"></div>
-    <div style="margin-top: 1%">
+
+    <div :class="className" :id="time" style="height: 100%;width: 100%;display:none;"></div>
+    <!-- <div style="margin-top: 1%">
       <el-row>
         <el-pagination
           background
@@ -141,7 +144,8 @@
           :total="paginationStaffPage.totalCount" style="text-align: right">
         </el-pagination>
       </el-row>
-    </div>
+    </div> -->
+    
     <div style="margin-top: 1%">
       <h3>合计表</h3>
       <el-table
@@ -394,8 +398,9 @@
         </el-form-item>
       </el-form>
     </el-row>
-    <div :class="className" :id="time" style="height: 100%;width: 100%;"></div>
-    <div style="margin-top: 1%">
+
+    <div :class="className" :id="time" style="height: 100%;width: 100%;display:none;"></div>
+    <!-- <div style="margin-top: 1%">
       <el-row>
         <el-pagination
           background
@@ -406,7 +411,8 @@
           :total="paginationStaffPage.totalCount" style="text-align: right">
         </el-pagination>
       </el-row>
-    </div>
+    </div> -->
+
     <div style="margin-top: 1%">
       <h3>详情表</h3>
       <el-table
