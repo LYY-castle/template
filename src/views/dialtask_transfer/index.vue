@@ -44,7 +44,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="话后小结：">
+        <!-- <el-form-item label="话后小结：">
           <el-select v-model="req.summaryId">
             <el-option
               v-for="item in summariesInfo"
@@ -53,7 +53,8 @@
               :label="item.name">
             </el-option>
           </el-select>
-        </el-form-item><br/>
+        </el-form-item> -->
+        <br/>
         <el-form-item label="拨打次数">
           <el-input v-model="req.contactedNum" maxlength="4" min="0" type="number"></el-input>
         </el-form-item>
@@ -353,7 +354,6 @@ export default {
               this.s_staffIds += this.s_staffs[i][1] + ','
             }
             this.req.staffId = this.s_staffIds
-            console.log(this.req.staffId)
           } else {
             this.hasAgent = false
             this.s_staffs.length = 0

@@ -34,7 +34,7 @@
         <el-form-item label="客户电话">
             <el-input v-model="req.customerPhone" placeholder="客户电话（限长50字符）" maxlength="50" clearable></el-input>
         </el-form-item>
-        <el-form-item label="话后小结">
+        <!-- <el-form-item label="话后小结">
           <el-select v-model="req.summaryId">
             <el-option
               v-for="item in summariesInfo"
@@ -43,7 +43,8 @@
               :label="item.name">
             </el-option>
           </el-select>
-        </el-form-item><br/>
+        </el-form-item> -->
+        <br/>
         <el-form-item label="拨打次数">
           <el-input v-model="req.contactedNum" maxlength="4" min="0" type="number"></el-input>
         </el-form-item>
@@ -302,6 +303,9 @@ export default {
   methods: {
     // 综合查询
     searchByKeyWords(req) {
+      if (this.selected_dept_id.length === 0) {
+        req.staffId = this.allAgentIds
+      }
       queryByKeywords(req)
         .then(response => {
           if (response.data.code === 0) {
@@ -314,7 +318,7 @@ export default {
               this.tableData = response.data.data
               this.pageShow = false
             }
-            if (req.staffId === this.allAgentIds) {
+            if (req.staffId === this.allAgentIds && this.selected_dept_id.length === 0) {
               this.req.staffId = ''
             }
           }
@@ -328,6 +332,7 @@ export default {
       getAgentsByDeptId(departId)
         .then(res => {
           if (res.data.code === 0) {
+            this.s_staffIds = ''
             this.hasAgent = true
             this.s_staffs = res.data.data
             for (var i = 0; i < this.s_staffs.length; i++) {
