@@ -3,11 +3,20 @@
     <div class="filter-container">
       <el-row>
         <el-form :inline="true" class="demo-form-inline" size="small">
- 
+<!--  
           <el-form-item label="所属组织：" >
             <el-select v-model="formInline.departId" placeholder="所属组织">
               <el-option v-for="item in regionOptions" :key="item.id" :label="item.departName" :value="item.id"></el-option>
             </el-select>
+          </el-form-item> -->
+          <el-form-item label="所属组织：" >
+            <el-cascader
+              placeholder="请选择组织"
+              v-model="formInline.departId"
+              :clearable=true
+              :options="regionOptions"
+              change-on-select>
+            </el-cascader>
           </el-form-item>
           <el-form-item label="入司时间：">
             <el-date-picker
@@ -153,8 +162,9 @@
 <script>
   import { getAllVisibleDepts, queryDepts, query } from '@/api/employee_list'
   import { Message } from 'element-ui'
-  import { formatDateTime, formatDate } from '@/utils/tools'
-  export default {
+  import { formatDateTime, formatDate, list2Tree, getChildren } from '@/utils/tools'
+
+export default {
     name: 'staff_structure',
     data() {
       return {
@@ -178,7 +188,7 @@
         tableData: [],
         multipleSelection: [],
         formInline: {
-          departId: '',
+          departId: [],
           angentId: '',
           modifierName: '',
           pageNo: 1,
@@ -200,7 +210,7 @@
         req.endHiredate = this.timeValue1 ? this.timeValue1[1] : null
         req.startBirthday = this.timeValue2 ? this.timeValue2[0] : null
         req.endBirthday = this.timeValue2 ? this.timeValue2[1] : null
-        req.departId = data.departId
+        req.departId = data.departId[data.departId.length - 1]
         req.pageNo = data.pageNo ? data.pageNo : this.pagination.pageNo
         req.pageSize = data.pageSize ? data.pageSize : this.pagination.pageSize
         query(req).then(response => {
@@ -240,7 +250,7 @@
         this.timeValue1 = []
         this.timeValue2 = []
         this.formInline = {
-          departId: '',
+          departId: [],
           angentId: '',
           modifierName: '',
           startTime: '',
@@ -295,7 +305,19 @@
         })
       }
       queryDepts().then(response => {
-        this.regionOptions = response.data.data
+        const arr = []
+        if (response.data.code === 1 && response.data.data.length > 0) {
+          const tempTree = list2Tree({
+            data: response.data.data,
+            rootId: 0,
+            parentIdFielName: 'upId'
+          })
+          for (let i = 0; i < tempTree.length; i++) {
+            const obj = getChildren(tempTree[i], 'id', 'departName')
+            arr.push(obj)
+          }
+          this.regionOptions = arr
+        }
       })
       getAllVisibleDepts().then(response1 => {
         this.visibleDepts = response1.data.data
