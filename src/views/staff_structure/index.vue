@@ -77,7 +77,7 @@
           label="员工姓名"
           :show-overflow-tooltip="true">
           <template slot-scope="scope">
-            <a @click="handleClickDetail(scope.row)">{{scope.row.staffName}}</a>
+          {{scope.row.staffName}}
           </template>
         </el-table-column>
         <el-table-column
@@ -122,27 +122,11 @@
           label="司龄（天）"
           width="155">
         </el-table-column>
-        <!-- <el-table-column
-          align="center"
-          label="操作"
-          width="180">
-          <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
-            <el-button
-              @click.native.prevent="deleteRow(scope.$index, tableData)"
-              type="text"
-              size="small">
-              删除
-            </el-button>
-          </template>
-        </el-table-column> -->
+
       </el-table>
       </el-row>
       <el-row style="margin-top:1%;">
-        <el-col :span="6">
-
-        </el-col>
-        <el-col :span="18">
+        <el-col :span="24">
           <el-pagination
             background
             @size-change="handleSizeChange"
@@ -227,7 +211,7 @@ export default {
         if (this.tableData.length !== 0) {
           for (let i = 0; i <= this.tableData.length; i++) {
             if (this.tableData[i]) {
-              this.tableData[i].hiredTime = this.tableData[i].hiredate ? Math.floor((new Date(new Date().setHours(23, 59, 59, 0)).getTime() - this.tableData[i].hiredate) / (1000 * 60 * 60 * 24)) : ''
+              this.tableData[i].hiredTime = this.tableData[i].hiredate ? Math.floor((new Date(new Date().setHours(23, 59, 59, 0)).getTime() - this.tableData[i].hiredate) / (1000 * 60 * 60 * 24) + 1) : ''
               this.tableData[i].updateTime = formatDateTime(this.tableData[i].updateTime)
               this.tableData[i].hiredate = formatDate(this.tableData[i].hiredate)
               if (this.tableData[i].sex === 1) {
