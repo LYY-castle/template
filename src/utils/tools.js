@@ -20,6 +20,20 @@ export function formatDateTime(inputTime) {
   }
 }
 
+export function formatDate(inputTime) {
+  if (inputTime) {
+    var date = new Date(inputTime)
+    var y = date.getFullYear()
+    var m = date.getMonth() + 1
+    m = m < 10 ? '0' + m : m
+    var d = date.getDate()
+    d = d < 10 ? '0' + d : d
+    return y + '-' + m + '-' + d
+  } else {
+    return ''
+  }
+}
+
 // 手机号码加密
 export function hideMobile(mobileNo) {
   if (mobileNo) {
@@ -397,4 +411,38 @@ export function uploading(FS_SERVER_HOST, url, formData, date, timeStamp, name) 
       }
     }
   }
+}
+// 解析树结构
+export function list2Tree({ data = [], rootId, idFieldName = 'id', parentIdFielName = 'parentId' }) {
+  const r = []
+  const o = {}
+  data.forEach(function(a) {
+    if (o[a[idFieldName]] && o[a[idFieldName]].children) {
+      a.children = o[a[idFieldName]] && o[a[idFieldName]].children
+    }
+    o[a[idFieldName]] = a
+    if (a[parentIdFielName] === rootId) {
+      r.push(a)
+    } else {
+      o[a[parentIdFielName]] = o[a[parentIdFielName]] || {}
+      o[a[parentIdFielName]].children = o[a[parentIdFielName]].children || []
+      o[a[parentIdFielName]].children.push(a)
+    }
+  })
+
+  return r
+}
+// 展示成树结构(obj为数组织数据，value为取值如（id)，label为树结构名称(如name))
+export function getChildren(obj, value, label) {
+  const result = {}
+  result.value = obj[value]
+  result.label = obj[label]
+  if (obj.children && obj.children.length > 0) {
+    const arr = []
+    for (let i = 0; i < obj.children.length; i++) {
+      arr.push(getChildren(obj.children[i], value, label))
+    }
+    result.children = arr
+  }
+  return result
 }
