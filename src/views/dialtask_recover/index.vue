@@ -16,7 +16,7 @@
           ></el-cascader>
         </el-form-item>
         <el-form-item label="坐席">
-          <el-select v-model="req.staffId" clearable>
+          <el-select v-model="req.staffId">
             <el-option label="所有坐席" :value="s_staffIds" v-if="hasAgent"></el-option>
             <el-option label="无" value="" v-if="!hasAgent"></el-option>
             <el-option
@@ -31,20 +31,10 @@
         <el-form-item label="客户姓名">
           <el-input v-model="req.customerName" placeholder="客户姓名（限长50字符）" maxlength="50" clearable></el-input>
         </el-form-item>
-        <el-form-item label="客户电话：">
+        <el-form-item label="客户电话">
             <el-input v-model="req.customerPhone" placeholder="客户电话（限长50字符）" maxlength="50" clearable></el-input>
         </el-form-item>
-        <el-form-item label="任务状态：">
-          <el-select v-model="req.status" placeholder="请选择">
-            <el-option
-              v-for="item in taskStatusOptions"
-              :key="item.value"
-              :value="item.value"
-              :label="item.label">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <!-- <el-form-item label="话后小结：">
+        <!-- <el-form-item label="话后小结">
           <el-select v-model="req.summaryId">
             <el-option
               v-for="item in summariesInfo"
@@ -58,7 +48,7 @@
         <el-form-item label="拨打次数">
           <el-input v-model="req.contactedNum" maxlength="4" min="0" type="number"></el-input>
         </el-form-item>
-        <el-form-item label="分配时间：">
+        <el-form-item label="分配时间">
           <el-date-picker
               v-model="req.distributeTimeStart"
               type="datetime"
@@ -75,7 +65,7 @@
               default-time="00:00:00">
           </el-date-picker>
         </el-form-item>&nbsp;&nbsp;
-        <el-form-item label="上次拨打时间：">
+        <el-form-item label="上次拨打时间">
           <el-date-picker
               v-model="req.lastContactTimeStart"
               type="datetime"
@@ -185,14 +175,6 @@
               <div>{{hasLastContactTime(scope.row.lastContactTime)}}</div>
             </template>
           </el-table-column>
-          <!-- <el-table-column
-            align="center"
-            label="操作时间"
-            width="155">
-            <template slot-scope="scope">
-              <div>{{hasLastContactTime(scope.row.modifyTime)}}</div>
-            </template>
-          </el-table-column> -->
           <el-table-column
             align="center"
             prop="description"
@@ -204,7 +186,7 @@
     <el-row style="margin-top:5px;">
       <el-form :inline="true" size="small">
         <el-form-item>
-          <el-button type="primary" @click="checkTransferNum(contactTaskIds);">转移</el-button>
+          <el-button type="primary" @click="checkTransferNum(contactTaskIds);transfer_dept_id=[]">恢复并转移</el-button>
         </el-form-item>
       </el-form>
         <el-pagination
@@ -237,7 +219,7 @@
           ></el-cascader>
         </el-form-item>
         <el-form-item label="转移的坐席：">
-          <el-select v-model="transferToAgentId" clearable>
+          <el-select v-model="transferToAgentId" clearable >
             <el-option
               v-for="item in s_staffs1"
               :key="item[1]"
@@ -261,26 +243,21 @@
 
 <script>
 import {
-  getAgentsByDeptId
+  getAgentsByDeptId,
+  recoverAndTransfer
 } from '@/api/dialtask_recover'
-import {
-  getAllStaffs,
-  filter_split_agents,
-  transferContactTasks
-} from '@/api/dialtask_transfer'
+import { getAllDeptsByCurrent, getAllAgentsRecursion } from '@/utils/tools'
 import {
   queryByKeywords,
   findCampaignByUser,
   getSummariesByAgentId
 } from '@/api/dialTask' // 接口
-import { getAllDeptsByCurrent, getAllAgentsRecursion } from '@/utils/tools'
-var vm = null
+var vm = this
 export default {
-  name: 'dialtask_transfer',
+  name: 'dialtask_recover',
 
   data() {
     return {
-      hasAgent: false,
       org_options: [], // 用以展示级联的组织
       selected_dept_id: [], // 级联选中的组织id
       transfer_dept_id: [], // 用以dialog中级联选中的组织id
@@ -289,17 +266,16 @@ export default {
         value: 'id',
         children: 'subDeparts'
       },
-      transferToAgentId: '',
       transferVisible: false,
+      transferToAgentId: '',
       pageShow: true, // 是否显示分页
       pageInfo: {}, // 分页信息
       tableData: [],
-      contactTaskIds: [],
       req: {
         staffId: '',
         customerName: '',
         customerPhone: '',
-        status: '0',
+        status: '3', // 失败的情况
         summaryId: '',
         contactedNum: '',
         distributeTimeStart: '',
@@ -316,16 +292,8 @@ export default {
       staffs: [], // 当前选中的部门的所有员工
       s_staffs: [], // 当前选中的部门的所有坐席
       s_staffs1: [], //
-      taskStatusOptions: [
-        {
-          value: '0',
-          label: '首拨'
-        },
-        {
-          value: '1',
-          label: '预约'
-        }
-      ],
+      hasAgent: false, // 是否有坐席
+      contactTaskIds: [],
       campaignsInfo: [], // 活动下拉选择
       summariesInfo: [] // 小结下拉选择
 
@@ -333,14 +301,31 @@ export default {
   },
 
   methods: {
-    // 判断是否选中
-    checkTransferNum(contactTaskIds) {
-      if (contactTaskIds.length === 0) {
-        this.$message.error('未选中任何数据！')
-        return
+    // 综合查询
+    searchByKeyWords(req) {
+      if (this.selected_dept_id.length === 0) {
+        req.staffId = this.allAgentIds
       }
-      this.transferToAgentId = ''
-      this.transferVisible = true
+      queryByKeywords(req)
+        .then(response => {
+          if (response.data.code === 0) {
+            if (response.data.data) {
+              this.tableData = response.data.data
+              this.pageInfo = response.data.pageInfo
+              this.pageShow = true
+            } else {
+              this.$message = '无查询结果，请核对查询条件'
+              this.tableData = response.data.data
+              this.pageShow = false
+            }
+            if (req.staffId === this.allAgentIds && this.selected_dept_id.length === 0) {
+              this.req.staffId = ''
+            }
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
     },
     showStaffs(value) {
       const departId = value[value.length - 1]
@@ -376,47 +361,59 @@ export default {
           }
         })
     },
-    // 获取当前主管下的坐席人员
-    getAllStaffs() {
-      getAllStaffs()
-        .then(res => {
-          if (res.data.code === 1) {
-            var colName = res.data.data
-            var json = []
-            colName.forEach(function(item) {
-              var temp = {}
-              item.forEach(function(value, index) {
-                temp[index] = value
-              })
-              json.push(temp)
-            })
-            this.staffs = json
-            for (var i = 0; i < this.staffs.length; i++) {
-              this.allStaffIds += this.staffs[i][1] + ','
-            }
-            filter_split_agents(this.allStaffIds)
-              .then(response => {
-                if (response.data.result) {
-                  const r2 = response.data.result.R2 // 所有的坐席
-                  for (var j = 0; j < r2.length; j++) {
-                    this.s_staffIds += r2[j] + ',' // 所有的坐席id
-                    for (var k = 0; k < this.staffs.length; k++) {
-                      if (r2[j] === this.staffs[k][1]) {
-                        this.s_staffs.push(this.staffs[k])
-                      }
-                    }
-                  }
-                  this.req.staffId = this.s_staffIds
-                  this.searchByKeyWords(this.req)
-                }
-              })
+    // 判断是否选中
+    checkTransferNum(contactTaskIds) {
+      if (contactTaskIds.length === 0) {
+        this.$message.error('未选中任何数据！')
+        return
+      }
+      this.transferToAgentId = ''
+      this.transferVisible = true
+    },
+    // 恢复并且转移的方法
+    checkTransfer(taskIds, transferTo) {
+      if (transferTo === '' || transferTo === null) {
+        this.$message.error('请选择转移的坐席！')
+        return
+      }
+      const paramsMap = {
+        contactTaskIds: taskIds,
+        transferToAgentId: transferTo
+      }
+      // 执行恢复并且转移
+      recoverAndTransfer(paramsMap)
+        .then(response => {
+          if (response.data && response.data.code === 0) {
+            this.$message.success(response.data.message)
+            this.req.pageNo = 1
+            this.searchByKeyWords(this.req)
+            this.transferVisible = false
           } else {
-            this.$message.error('获取坐席信息失败')
+            this.$message.error(response.data.message)
           }
         })
         .catch(error => {
           console.error(error)
         })
+    },
+    // 清空重置
+    clearForm(obj, formName) {
+      this.req.distributeTimeStart = ''
+      this.req.distributeTimeEnd = ''
+      this.req.lastContactTimeStart = ''
+      this.req.lastContactTimeEnd = ''
+      this.req.customerName = ''
+      this.req.customerPhone = ''
+      this.req.pageNo = this.pageInfo.pageNo
+      this.req.pageSize = this.pageInfo.pageSize
+      this.req.status = '3'
+      this.req.contactedNum = ''
+      this.req.summaryId = ''
+      this.selected_dept_id = []
+      this.hasAgent = false
+      this.s_staffIds = this.allAgentIds
+      this.req.staffId = this.s_staffIds
+      this.s_staffs.length = 0
     },
     handle(obj) {
       for (let i = 0; i < obj.length; i++) {
@@ -430,76 +427,6 @@ export default {
         }
       }
     },
-    // 清空重置
-    clearForm(obj, formName) {
-      this.req.distributeTimeStart = ''
-      this.req.distributeTimeEnd = ''
-      this.req.lastContactTimeStart = ''
-      this.req.lastContactTimeEnd = ''
-      this.req.customerName = ''
-      this.req.customerPhone = ''
-      this.req.pageNo = this.pageInfo.pageNo
-      this.req.pageSize = this.pageInfo.pageSize
-      this.req.status = '0'
-      this.req.contactedNum = ''
-      this.req.summaryId = ''
-      this.selected_dept_id = []
-      this.hasAgent = false
-      this.s_staffIds = this.allAgentIds
-      this.req.staffId = this.s_staffIds
-      this.s_staffs.length = 0
-    },
-    // 确认转移
-    checkTransfer(contactTaskIds, transferToAgentId) {
-      if (transferToAgentId === '' || transferToAgentId === null) {
-        this.$message.error('请选择转移的坐席！')
-        return
-      }
-      const paramsMap = {
-        contactTaskIds: contactTaskIds,
-        transferToAgentId: transferToAgentId
-      }
-      transferContactTasks(paramsMap)
-        .then(response => {
-          if (response.data.code === 0) {
-            this.$message.success(response.data.message)
-            this.req.pageNo = 1
-            this.searchByKeyWords(this.req)
-            this.transferVisible = false
-          } else {
-            this.$message.error('操作失败')
-          }
-        })
-        .catch(error => {
-          console.error(error)
-        })
-    },
-    // 综合查询
-    searchByKeyWords(req) {
-      if (this.selected_dept_id.length === 0) {
-        req.staffId = this.allAgentIds
-      }
-      queryByKeywords(req)
-        .then(response => {
-          if (response.data.code === 0) {
-            if (response.data.data) {
-              this.tableData = response.data.data
-              this.pageInfo = response.data.pageInfo
-              this.pageShow = true
-            } else {
-              this.$message = '无查询结果，请核对查询条件'
-              this.tableData = response.data.data
-              this.pageShow = false
-            }
-            if (req.staffId === this.allAgentIds) {
-              this.req.staffId = ''
-            }
-          }
-        })
-        .catch(error => {
-          console.log(error)
-        })
-    },
     // 表格多选框
     handleSelectionChange(val) {
       this.contactTaskIds.length = 0
@@ -511,14 +438,6 @@ export default {
     hideMobile(mobile) {
       if (mobile) {
         return mobile.substring(0, 3) + '****' + mobile.substring(7, 11)
-      }
-    },
-    // 显示坐席名称+id
-    showStaffName(staffId) {
-      for (var i = 0; i < this.all_staffs.length; i++) {
-        if (staffId === this.all_staffs[i][1]) {
-          return this.all_staffs[i][2] + ' (' + staffId + ')'
-        }
       }
     },
     // 显示活动名称
@@ -595,14 +514,19 @@ export default {
       // console.log(`当前页: ${val}`);
       this.req.pageNo = val
       this.searchByKeyWords(this.req)
+    },
+    // 显示坐席名称+id
+    showStaffName(staffId) {
+      for (var i = 0; i < this.all_staffs.length; i++) {
+        if (staffId === this.all_staffs[i][1]) {
+          return this.all_staffs[i][2] + ' (' + staffId + ')'
+        }
+      }
     }
-
   },
 
   mounted() {
     vm = this
-    // 查询当前主管下的坐席人员(包括自己)
-    // this.getAllStaffs()
     // 获取所有部门及子部门下的坐席id用以默认查询
     getAllAgentsRecursion(localStorage.getItem('departId'))
       .then(response => {

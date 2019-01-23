@@ -267,6 +267,23 @@ export function getAllDeptsByCurrent() {
   })
 }
 
+export function getAllAgentsRecursion(departId) {
+  return request({
+    url: '/organization/getAllAgentsRecursion',
+    method: 'get',
+    params: {
+      departId: departId
+    }
+  })
+}
+
+export function getAllDeptsToCascader() {
+  return request({
+    url: '/employee/getAllDeptsToCascader',
+    method: 'get'
+  })
+}
+
 export function generateValidateCode() {
   request.defaults.headers.common['Accept'] = 'image/webp,image/apng,image/*,*/*;q=0.8'
   return request({
