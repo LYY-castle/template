@@ -240,7 +240,7 @@
                   <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()" style="font-size:30px;"></el-button>
                 </el-tooltip>
               </div>
-            </el-col>        
+            </el-col>
           </el-col>
 
         </el-row>
@@ -1831,7 +1831,7 @@ export default {
         if (obj.callee === obj.caller) {
           vm.$message.error('不能拨打给自己')
         } else {
-          cti.makecall(obj.caller, obj.callee)
+          cti.makecall(obj.caller, obj.callee, obj.campaignId)
         }
       } else {
         vm.$message.error('不在拨打界面，不能拨打客户')
@@ -1946,7 +1946,7 @@ export default {
 }
 .message{
   float:right;
-  
+
   margin-right:25px;
   margin-top:9px;
 }

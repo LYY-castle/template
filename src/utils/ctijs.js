@@ -37,8 +37,8 @@ export default (new (function() {
     that.methods.on_ringing_event(event, agentid, DN, UUID, callerid, calleeid, ori_ani, other_leg_uuid, queueName, activeLine,choice,DialData)
   })
 //RingBack_Event|AgentID|DN|UUID|callerid|calleeid|ori_ani
-  EventObject.bind('on_ringback_event', function(event, agentid, DN, UUID, callerid, calleeid, ori_ani, activeLine) {
-    that.methods.on_ringback_event(event, agentid, DN, UUID, callerid, calleeid, ori_ani, activeLine)
+  EventObject.bind('on_ringback_event', function(event, agentid, DN, UUID, callerid, calleeid, ori_ani, activeLine, RB_campaignId) {
+    that.methods.on_ringback_event(event, agentid, DN, UUID, callerid, calleeid, ori_ani, activeLine, RB_campaignId)
   })
 //Answer_Event|AgentID|DN|UUID|caller|callee|io|other-leg-UUID
   EventObject.bind('on_answer_event', function(event, agentid, DN, UUID, callerid, calleeid, io, other_leg_uuid) {
@@ -219,13 +219,14 @@ export default (new (function() {
         var RB_callerid = GetEventValue('CallerID', obj.BodyData)
         var RB_calleeid = GetEventValue('CalleeID', obj.BodyData)
         var RB_oriAni = GetEventValue('oriAni', obj.BodyData)
+        var RB_campaignId=GetAttachedValue("campaignId",obj.AttachedData);
         add(uuid_list, RB_UUID)
         add(uuid_dn_list, RB_calleeid)
         //add(line_appearance_list,msg[4] + "|" + msg[5]);
         //ani=msg[6];
         activeLine = size(uuid_list)
         //on_ringback_event(event,agentid,DN,UUID,callerid,calleeid,ori_ani,activeLine);
-        EventObject.trigger('on_ringback_event', [RB_AgentID, RB_DN, RB_UUID, RB_callerid, RB_calleeid, RB_oriAni, activeLine])
+        EventObject.trigger('on_ringback_event', [RB_AgentID, RB_DN, RB_UUID, RB_callerid, RB_calleeid, RB_oriAni, activeLine, RB_campaignId])
         if (uuidcount() < 2) {
           sleep(1500)
           answerCall()
@@ -444,11 +445,12 @@ export default (new (function() {
     doSend(answercall_cmd)
   }
 
-  this.makecall=function (srcDN, destDN) {
+  this.makecall=function (srcDN, destDN, campaignId = '') {
     //OutCall|srcDN|destDN
     var makecall_cmd = '{ "BodyData" : [' +
       '{ "BodyHeader":"srcDN" , "BodyValue":"' + srcDN + '" },' +
-      '{ "BodyHeader":"destDN" , "BodyValue":"' + destDN + '"}],' +
+      '{ "BodyHeader":"destDN" , "BodyValue":"' + destDN + '"},' +
+      '{ "BodyHeader":"campaignId" , "BodyValue":"' + campaignId + '"}],' +
       '"CommandName":"OutCall"}'
 
     doSend(makecall_cmd)

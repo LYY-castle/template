@@ -1033,7 +1033,7 @@ export default {
             localStorage.getItem('DN') !== ''
           ) {
             // cti.makecall(localStorage.getItem('DN'), res.data)
-            this.$root.eventHub.$emit('DIAL_TASK_DIALNM', { 'caller': localStorage.getItem('DN'), 'callee': res.data })
+            this.$root.eventHub.$emit('DIAL_TASK_DIALNM', { 'caller': localStorage.getItem('DN'), 'callee': res.data, campaignId })
             setTimeout(() => {
               this.getRecordId(taskId, campaignId)
             }, 3000)
@@ -1049,7 +1049,7 @@ export default {
           localStorage.getItem('DN') !== ''
         ) {
           // cti.makecall(localStorage.getItem('DN'), customerPhone)
-          this.$root.eventHub.$emit('DIAL_TASK_DIALNM', { 'caller': localStorage.getItem('DN'), 'callee': customerPhone })
+          this.$root.eventHub.$emit('DIAL_TASK_DIALNM', { 'caller': localStorage.getItem('DN'), 'callee': customerPhone, campaignId })
           setTimeout(() => {
             this.getRecordId(taskId, campaignId)
           }, 3000)
