@@ -24,8 +24,8 @@ const env_conf = {
   },
   sit: {
     TUI_WS_SERVERURL:'"ws://119.27.179.175:12133"',
-    CTI_WS_SERVERURL:'"ws://119.27.184.157:9050/"',
-    CTI_MONITOR_WS_SERVERURL:'"ws://119.27.184.157:9052/"',
+    CTI_WS_SERVERURL:'"ws://132.232.209.250:9050/"',
+    CTI_MONITOR_WS_SERVERURL:'"ws://132.232.209.250:9052/"',
     FILE_SERVER_URL: '"http://119.27.184.90:9800"',
     SHOW_WECHAT:true
   },
@@ -38,8 +38,8 @@ const env_conf = {
   },
   test: { // jindian.
     TUI_WS_SERVERURL:'"ws://119.27.179.175:12088"',
-    CTI_WS_SERVERURL:'"ws://132.232.209.250:9050/"',
-    CTI_MONITOR_WS_SERVERURL:'"ws://132.232.209.250:9052/"',
+    CTI_WS_SERVERURL:'"ws://119.27.179.175:9050/"',
+    CTI_MONITOR_WS_SERVERURL:'"ws://119.27.179.175:9052/"',
     FILE_SERVER_URL: '"http://119.27.184.157:12078"',
     SHOW_WECHAT:true
   }
