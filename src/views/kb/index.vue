@@ -1496,7 +1496,7 @@ export default{
                 'created_by': localStorage.getItem('agentId'),
                 'ArticleId': this.articleid
               })
-              vm.DLurl.push({ 'name': uploadInfo.file.name, 'url': `${process.env.FS_SERVER_HOST}/crm/${localStorage.getItem('agentId') + '/' + date + '/' + uploadInfo.file.name}` })
+              vm.DLurl.push({ 'name': uploadInfo.file.name, 'url': `${process.env.FILE_SERVER_URL}/crm/${localStorage.getItem('agentId') + '/' + date + '/' + uploadInfo.file.name}` })
             }
           }
         } else {
@@ -2102,7 +2102,7 @@ export default{
             if (response.data.attachments) {
               if (response.data.attachments.length) {
                 for (let i = 0; i < response.data.attachments.length; i++) {
-                  const url = `${process.env.FS_SERVER_HOST}/crm/${response.data.attachments[i].file_path}`
+                  const url = `${process.env.FILE_SERVER_URL}/crm/${response.data.attachments[i].file_path}`
                   const fileName = response.data.attachments[i].file_path.split('/')
                   this.DLurl.push({ 'name': fileName[fileName.length - 1], 'url': url })
                 }

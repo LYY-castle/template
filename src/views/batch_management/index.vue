@@ -538,7 +538,7 @@ export default {
       // 先获取文件管理服务器预签名的上传地址
       const bucketName = 'crm'
       const objectName = localStorage.getItem('agentId') + '/' + date_str + '/' + file.file.name
-      this.fileUrl = `${process.env.MINIO_URL}/` + objectName
+      this.fileUrl = `${process.env.FILE_SERVER_URL}/crm/` + objectName
       getUploadPath(bucketName, objectName)
         .then(response => {
           if (response.data.presignedPutUrl) {

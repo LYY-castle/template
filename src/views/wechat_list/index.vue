@@ -1509,7 +1509,7 @@ export default {
       this.openFullScreen()
       getUploadInfo(uploadInfoReq2).then(response => {
         if (response.data.presignedPutUrl) {
-          uploading(process.env.FS_SERVER_HOST, response.data.presignedPutUrl, formData, date, vm.timeStamp)
+          uploading(process.env.FILE_SERVER_URL, response.data.presignedPutUrl, formData, date, vm.timeStamp)
           if (sessionStorage.getItem('DLurl')) {
             this.loading.close()
             vm.DLurl = JSON.parse(sessionStorage.getItem('DLurl'))
