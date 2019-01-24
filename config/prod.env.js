@@ -47,6 +47,19 @@ const env_conf = {
       content: '"你好，谢谢支持"'
     }
   },
+  crmnb: {
+    TUI_WS_SERVERURL:'"ws://119.27.179.175:12132"',
+    CTI_WS_SERVERURL:'"ws://132.232.209.250:9050/"',
+    CTI_MONITOR_WS_SERVERURL:'"ws://132.232.209.250:9052/"',
+    FILE_SERVER_URL: '"http://118.24.177.4:9800"',
+    SHOW_WECHAT:false,
+    SMS: {
+      platform: '1', // 1:网关，2：领创盛世.
+      type: "4",//4大类营销短信
+      sendMessageTime: 10,//通话多少秒需要发短信
+      content: '"你好，谢谢支持"'
+    }
+  },
   loan: {
     TUI_WS_SERVERURL:'"ws://119.27.179.175:12268"',
     CTI_WS_SERVERURL:'"ws://132.232.209.250:9050/"',
