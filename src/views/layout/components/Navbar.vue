@@ -1678,6 +1678,7 @@ export default {
         }
         this.$store.commit('SET_WECHATCONTENTS', contents)
       }
+
       // 查询聊天列表客户对应未读消息数量
       getUnreadNum(localStorage.getItem('agentId')).then(response => {
         if (localStorage.getItem('customerInfos')) {

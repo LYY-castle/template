@@ -1651,8 +1651,6 @@ export default {
       }
     }
   },
-  created() {
-  },
   watch: {
     // 预约时间显示T+
     addDays: function(val, oldval) {
@@ -1684,6 +1682,7 @@ export default {
     // 查询所有客户列表
     getWechatCustomer(localStorage.getItem('agentId')).then(response => {
       this.customerInfos = response.data.data
+      this.$store.commit('SET_WECHATCUSTOMERINFO', this.customerInfo)
       localStorage.setItem('customerInfos', JSON.stringify(response.data.data))
       if (this.$route.query && this.$route.query.fromDialTask === '0') {
         this.taskId = this.$route.query.taskId
@@ -1714,6 +1713,7 @@ export default {
         for (var i = 1; i < this.customerInfos.length; i++) {
           this.customerInfos[i].isTalking = false
         }
+        this.taskId = customerInfos[0].taskId
         const taskId = customerInfos[0].taskId
         const campaignId = customerInfos[0].campaignId
         const customerId = customerInfos[0].customerId
