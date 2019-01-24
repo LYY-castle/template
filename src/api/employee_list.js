@@ -86,3 +86,11 @@ export function addStaff(req) {
     }
   })
 }
+export function getStaffNameByAgentId(req) {
+  return request({
+    url: '/employee/getStaffNameByAgentId',
+    method: 'get',
+    params: req
+
+  })
+}

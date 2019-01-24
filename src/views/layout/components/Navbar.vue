@@ -283,7 +283,6 @@ import Breadcrumb from '@/components/Breadcrumb'
 // import Hamburger from '@/components/Hamburger'
 import { getUserInfo } from '@/api/dashboard'
 import { Message } from 'element-ui'
-import { getPlatform, getSendMessageTime, getType, getContent } from '@/config/lingchuang_codes'
 import {
   addComeContact,
   addDialContact,
@@ -299,6 +298,9 @@ import {
   getUnreadNum,
   changeRecords
 } from '@/api/wechat_list'
+import {
+  getStaffNameByAgentId
+} from '@/api/employee_list'
 import {
   getMyUnreadMessages,
   generateValidateCode,
@@ -1156,7 +1158,7 @@ export default {
       const info = localStorage.getItem(agentid + '_' + UUID) ? JSON.parse(localStorage.getItem(agentid + '_' + UUID)) : ''
       if (info) {
         const calltime = Math.floor((new Date().getTime() - info.startTime) / 1000)
-        if (calltime > getSendMessageTime()) {
+        if (calltime > process.env.SMS.sendMessageTime) {
           info.endTime = new Date().getTime()
           info.callTime = calltime
           vm.sendMessage(info.phone, info)
@@ -1172,17 +1174,21 @@ export default {
       data.agentName = info.agentName ? info.agentName : ''
       data.calleeId = info.calleeid
       data.callerId = info.callerid
-
+      data.sendMobile = localStorage.getItem('userPhone') ? localStorage.getItem('userPhone') : ''
       data.talkTime = info.callTime ? info.callTime : 0
       data.startTime = info.startTime ? info.startTime : null
       data.endTime = info.endTime ? info.endTime : null
-      data.content = getContent()
+      data.content = process.env.SMS.content
       data.mobile = phone
-      data.platform = getPlatform()
-      data.type = getType()
+      data.platform = process.env.SMS.platform
+      data.type = process.env.SMS.type
 
       sendMessage(data).then(res => {
-        console.log('result', res)
+        if (res.data.code === 0) {
+          console.log(res.data.message)
+        } else {
+          console.log('短信发送失败')
+        }
       })
     },
     on_answer_event(event, agentid, DN, UUID, callerid, calleeid, io, other_leg_uuid) {
@@ -1201,16 +1207,18 @@ export default {
       info.startTime = new Date().getTime()
       info.agentId = agentid
       info.agentName = localStorage.getItem('agentName')
-      const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
-      if (regex.test(calleeid)) { // 先满足是手机号
-        info.phone = calleeid
-        localStorage.setItem(agentid + '_' + UUID, JSON.stringify(info))
-      } else if (regex.test(callerid)) {
-        info.phone = callerid
-        localStorage.setItem(agentid + '_' + UUID, JSON.stringify(info))
-      } else {
-        console.log(info)
-      }
+      info.phone = calleeid
+      localStorage.setItem(agentid + '_' + UUID, JSON.stringify(info))
+      // const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
+      // if (regex.test(calleeid)) { // 先满足是手机号
+      //   info.phone = calleeid
+      //   localStorage.setItem(agentid + '_' + UUID, JSON.stringify(info))
+      // } else if (regex.test(callerid)) {
+      //   info.phone = callerid
+      //   localStorage.setItem(agentid + '_' + UUID, JSON.stringify(info))
+      // } else {
+      //   console.log(info)
+      // }
     },
 
     on_ringback_event(event, agentid, DN, UUID, callerid, calleeid, ori_ani, activeLine) {
@@ -1648,6 +1656,14 @@ export default {
       this.msgNum_wechat1 = response.data.pageInfo.totalCount
       this.$store.commit('CHANGE_WECHATMSG', this.msgNum_wechat1)
     })
+    // 查询用户手机号并存储
+    getStaffNameByAgentId({ 'agentId': localStorage.getItem('agentId') }).then(res => {
+      console.log(res, 'res')
+      if (res.data.code === 1) {
+        const userPhone = res.data.data[0].userPhone ? res.data.data[0].userPhone : ''
+        localStorage.setItem('userPhone', userPhone)
+      }
+    })
     // 实时接收新的消息
     this.$root.eventHub.$on('RECEIVE_MESSAGES', (oneMsg) => {
       let contents = []
@@ -1898,6 +1914,7 @@ export default {
       localStorage.removeItem('m_' + ele)
     })
     localStorage.removeItem(localStorage.getItem('agentId'))// 清空自己的历史数据
+    localStorage.removeItem('userPhone')// 清空自己的历史数据
     this.$root.eventHub.$off('DISABLED_DIAL')
     this.$root.eventHub.$off('DIAL_TASK')
     this.$root.eventHub.$off('DIAL_TASK_DIALNM')
