@@ -35,6 +35,9 @@ export const rule = {
   customerName: [
     { required: true, message: '请输入客户名称', trigger: 'change' }
   ],
+  campaignId: [
+    { required: true, message: '请选择活动', trigger: 'change' }
+  ],
   sex: [
     { required: true, message: '请输入客户性别', trigger: 'change' }
   ],
