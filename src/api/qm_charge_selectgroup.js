@@ -38,10 +38,13 @@ export function queryNodulesById(summaryId) {
   })
 }
 // 获得当前登录人部门下的所有质检部门信息
-export function queryallQcdepts() {
+export function queryallQcdepts(departId) {
   return request({
-    url: '/organization/findNextOrganByNow',
-    method: 'get'
+    url: '/organization/getAllChildrenOrgan',
+    method: 'get',
+    params: {
+      departId: departId
+    }
   })
 }
 // 获得所有评分表
