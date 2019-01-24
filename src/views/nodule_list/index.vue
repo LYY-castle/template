@@ -163,7 +163,7 @@
         </div>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button size="small" @click="editItemVisible=false">取 消</el-button>
+        <el-button size="small" @click="editItemVisible=false">关 闭</el-button>
       </div>
     </el-dialog>
     <el-dialog
