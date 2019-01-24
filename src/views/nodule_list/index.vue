@@ -92,18 +92,19 @@
             label="操作"
             width="200">
           <template slot-scope="scope">
-            <el-button @click="setNoduleVisible=true;noduleObj=scope.row" size="small" type="text" v-show="scope.row.isDelete==='2'">可见</el-button>
-            <el-button @click="setNoduleInvisible=true;noduleObj=scope.row" size="small" type="text" v-show="scope.row.isDelete==='0'">不可见</el-button>
-            <el-button @click="editVisible=true;delReq.noduleId=scope.row.summaryId;summaryDetail.summaryId=scope.row.summaryId;findNoduleByNoduleId(delReq);" type="text" size="small">修改</el-button>
-            <el-button @click="delVisible=true;delReq.noduleId=scope.row.summaryId" type="text" size="small">删除</el-button>
+            <!-- <el-button @click="setNoduleVisible=true;noduleObj=scope.row" size="small" type="text" v-show="scope.row.isDelete==='2'">可见</el-button>
+            <el-button @click="setNoduleInvisible=true;noduleObj=scope.row" size="small" type="text" v-show="scope.row.isDelete==='0'">不可见</el-button> -->
+            <el-button @click="editTitleVisible=true;delReq.noduleId=scope.row.summaryId;summaryDetail.summaryId=scope.row.summaryId;findNoduleByNoduleId(delReq,'title');" type="text" size="small">修改标题</el-button>
+            <!-- <el-button @click="delVisible=true;delReq.noduleId=scope.row.summaryId" type="text" size="small">删除</el-button> -->
+            <el-button @click="editItemVisible=true;delReq.noduleId=scope.row.summaryId;summaryDetail.summaryId=scope.row.summaryId;findNoduleByNoduleId(delReq,'item');" type="text" size="small">修改内容</el-button>
           </template>
           </el-table-column>
         </el-table>
       </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;clearForm(addSummary,'addSummary');setTree=[];">新建</el-button>
-        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
+        <!-- <el-button type="success" size="small" @click="addVisible=true;clearForm(addSummary,'addSummary');setTree=[];">新建</el-button>
+        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button> -->
         <el-pagination
           v-if="pageShow"
           background
@@ -119,19 +120,34 @@
     <el-dialog
       align:left
       width="30%"
-      title="小结信息修改"
-      :visible.sync="editVisible"
+      title="小结标题修改"
+      :visible.sync="editTitleVisible"
       append-to-body>
-      <el-form label-width="100px" :model="summaryDetail" ref="editNodule" :rules="rule">
+      <el-form label-width="100px" :model="summaryTitleDetail" ref="editNoduleTitle" :rules="rule">
         <el-form-item label="小结标题" prop="summaryName">
-          <el-input v-model="summaryDetail.summaryName" size="small" maxlength="50" placeholder="小结标题（限长50字符）"></el-input>
+          <el-input v-model="summaryTitleDetail.summaryName" size="small" maxlength="50" placeholder="小结标题（限长50字符）"></el-input>
         </el-form-item>
         <el-form-item label="备注">
-          <el-input v-model="summaryDetail.description" type="textarea" size="small" maxlength="255"  placeholder="备注（限长255字符）"></el-input>
+          <el-input v-model="summaryTitleDetail.description" type="textarea" size="small" maxlength="255"  placeholder="备注（限长255字符）"></el-input>
         </el-form-item>
+       
+      </el-form>
+      <div slot="footer" style="text-align: right;">
+        <!-- <el-button size="small" type="danger" @click="findNoduleByNoduleId(delReq)">重 置</el-button> -->
+        <el-button size="small" @click="editTitleVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="submitForm('editNoduleTitle');editNoduleTitle(summaryTitleDetail)">确 定</el-button>
+      </div>
+    </el-dialog>
+      <el-dialog
+      align:left
+      width="30%"
+      title="小结内容修改"
+      :visible.sync="editItemVisible"
+      append-to-body>
+      <el-form label-width="100px" :model="summaryItemDetail" ref="editNoduleItem" :rules="rule">
         <div class="expand">
           <div>
-            <el-button size="small" @click="handleAddTop">新建小结</el-button>
+            <!-- <el-button size="small" @click="handleAddTop">新建小结</el-button> -->
             <el-tree class="expand-tree"
             key="tree-one"
             ref="treeOne"
@@ -147,9 +163,7 @@
         </div>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button size="small" type="danger" @click="findNoduleByNoduleId(delReq)">重 置</el-button>
-        <el-button size="small" @click="editVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="submitForm('editNodule');editNodule(summaryDetail)">确 定</el-button>
+        <el-button size="small" @click="editItemVisible=false">关 闭</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -200,7 +214,7 @@
         </el-form-item>
         <div class="expand">
           <div>
-            <el-button size="small" @click="handleAddTop">新建小结</el-button>
+            <!-- <el-button size="small" @click="handleAddTop">新建小结</el-button> -->
             <el-tree class="expand-tree"
             key="tree-three"
             ref="treeThree"
@@ -274,6 +288,11 @@ import {
   findNoduleByNoduleId,
   addNodule,
   editNodule,
+  editNoduleItem,
+  editNoduleTitle,
+  addNoduleOneItem,
+  editNoduleOneItem,
+  delOneNoduleById,
   delNoduleByNoduleId,
   delNodulesByNoduleIds
 } from '@/api/nodule_list'
@@ -296,7 +315,8 @@ export default {
       setNoduleVisible: false,
       setNoduleInvisible: false,
       delVisible: false, // 删除对话框显示隐藏
-      editVisible: false, // 修改对话框显示隐藏
+      editTitleVisible: false, // 修改对话框显示隐藏(标题备注)
+      editItemVisible: false, // 修改对话框显示隐藏(内容)
       addVisible: false, // 新建对话框显示隐藏
       batchDelVisible: false, // 批量删除对话框显示隐藏
       tableData: [], // 表格数据
@@ -332,12 +352,17 @@ export default {
         summaryDetailInfos: [],
         description: ''
       },
-      summaryDetail: {
+      summaryTitleDetail: {// 小结标题，备注，用于修改
         summaryName: '',
-        sex: '',
-        mobile: '',
-        idNumber: '',
-        resideAddress: ''
+        description: '',
+        status: '',
+        summaryId: ''
+      },
+      summaryItemDetail: {// 小结内容，用于修改
+        summaryDetailInfos: [],
+        summaryId: ''
+      },
+      summaryDetail: {// 小结详情
       }, // 小结详情
       // 分页数据
       pageInfo: {},
@@ -495,14 +520,21 @@ export default {
         })
     },
     // 查询小结详情
-    findNoduleByNoduleId(noduleId) {
+    findNoduleByNoduleId(noduleId, str) {
       findNoduleByNoduleId(noduleId)
         .then(response => {
           if (response.data.code === 0) {
             this.summaryDetail = response.data.data
+            this.summaryItemDetail.summaryDetailInfos = response.data.data.summaryDetailInfos ? response.data.data.summaryDetailInfos : []
+            this.summaryItemDetail.summaryId = response.data.data.summaryId
             this.setTree1 = response.data.data.summaryDetailInfos ? response.data.data.summaryDetailInfos : []
             this.setTree2 = response.data.data.summaryDetailInfos ? response.data.data.summaryDetailInfos : []
-            console.log(this.summaryDetail)
+            if (str === 'title') {
+              this.summaryTitleDetail.summaryName = response.data.data.summaryName
+              this.summaryTitleDetail.description = response.data.data.description
+              this.summaryTitleDetail.summaryId = response.data.data.summaryId
+              this.summaryTitleDetail.status = response.data.data.status
+            }
           }
         })
         .catch(error => {
@@ -516,6 +548,45 @@ export default {
       }
       this.editVisible = false
       editNodule(summaryDetail)
+        .then(response => {
+          if (response.data.code === 0) {
+            this.$message.success(response.data.message)
+            this.getNoduleByInfo(this.req2)
+          } else {
+            this.$message(response.data.message)
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    // 修改小结标题
+    editNoduleTitle(summaryTitleDetail) {
+      if (!this.validate) {
+        return false
+      }
+      this.editTitleVisible = false
+      editNoduleTitle(summaryTitleDetail)
+        .then(response => {
+          if (response.data.code === 0) {
+            this.$message.success(response.data.message)
+            this.getNoduleByInfo(this.req2)
+          } else {
+            this.$message(response.data.message)
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    // 修改小结内容
+    editNoduleItem(summaryItemDetail) {
+      if (!this.validate) {
+        return false
+      }
+      console.log(summaryItemDetail, 'summary')
+      // this.editTitleVisible = false
+      editNoduleItem(summaryItemDetail)
         .then(response => {
           if (response.data.code === 0) {
             this.$message.success(response.data.message)
@@ -623,10 +694,44 @@ export default {
         },
         on: {
           nodeAdd: (s, d, n) => that.handleAdd(s, d, n),
+          submitAdd: (s, d, n) => that.handleNoduleOneItem(s, d, n),
           nodeEdit: (s, d, n) => that.handleEdit(s, d, n),
-          nodeDel: (s, d, n) => that.handleDelete(s, d, n)
+          submitEdit: (s, d, n) => that.submitEdit(s, d, n),
+          nodeDel: (s, d, n) => that.handleDelete(s, d, n),
+          nodeCancel: (s, d, n) => that.handleCancel(s, d, n)
+          // nodeEditPass: (s, d, n) => that.handleNoduleOneItem(s, d, n)
         }
       })
+    },
+    handleCancel(s, d, n) {
+      // 删除节点
+      const list = n.parent.data.summaryDetailInfos || n.parent.data // 节点同级数据
+      let _index = 99999 // 要删除的index
+      list.map((c, i) => {
+        if (d.id === c.id) {
+          _index = i
+        }
+      })
+      list.splice(_index, 1)
+    },
+    handleNoduleOneItem(s, d, n) {
+      if (!d.name) {
+        this.$message.error('还未填小结内容！')
+        return
+      }
+      if (d.id) {
+        editNoduleOneItem({ 'id': d.id, 'name': d.name }).then(res => {
+          if (res.data.code !== 0) {
+            this.$message.error('修改失败！')
+          }
+        })
+      } else {
+        addNoduleOneItem({ 'parentId': d.parentid + '', 'name': d.name, 'summaryId': this.summaryItemDetail.summaryId }).then(res => {
+          if (res.data.code !== 0) {
+            this.$message.error('新增失败！')
+          }
+        })
+      }
     },
     // 新建节点
     handleAddTop() {
@@ -645,30 +750,70 @@ export default {
         summaryDetailInfos: []
       })
     },
+    // handleAdd(s, d, n) {
+    //   // 增加节点
+    //   // if (n.level >= 6) {
+    //   //   this.$message.error('最多只支持五级！')
+    //   //   return false
+    //   // }
+    //   if (d.summaryDetailInfos === null) {
+    //     d.summaryDetailInfos = []
+    //   }
+    //   // 新建数据
+    //   d.summaryDetailInfos.push({
+    //     pid: ++this.maxexpandId,
+    //     name: '新增子节点',
+    //     // pid: d.id,
+    //     isEdit: false,
+    //     summaryDetailInfos: []
+    //   })
+    //   // 展开节点
+    //   if (!n.expanded) {
+    //     n.expanded = true
+    //   }
+    // },
     handleAdd(s, d, n) {
-      // 增加节点
-      // if (n.level >= 6) {
-      //   this.$message.error('最多只支持五级！')
-      //   return false
-      // }
-      if (d.summaryDetailInfos === null) {
+      let a = 0
+      const parentid = n.data.id
+      this.editCancel = false
+
+      if (d.summaryDetailInfos) {
+        for (let i = 0; i < d.summaryDetailInfos.length; i++) {
+          if (d.summaryDetailInfos[i].isEdit) {
+            a = a + 1
+            d.summaryDetailInfos.splice(i, 1)
+          }
+        }
+        if (!a) {
+          if (d.summaryDetailInfos === null) {
+            d.summaryDetailInfos = []
+          }
+          // 新建数据
+          d.summaryDetailInfos.push({
+            pid: ++this.maxexpandId,
+            name: '',
+            parentid: parentid,
+            isEdit: true,
+            summaryDetailInfos: []
+          })
+          // 展开节点
+          // if (!n.expanded) {
+          //   n.expanded = true
+          // }
+        }
+      } else {
         d.summaryDetailInfos = []
+        d.summaryDetailInfos.push({
+          pid: ++this.maxexpandId,
+          name: '',
+          parentid: parentid,
+          isEdit: true,
+          summaryDetailInfos: []
+        })
       }
-      // 新建数据
-      d.summaryDetailInfos.push({
-        pid: ++this.maxexpandId,
-        name: '新增子节点',
-        // pid: d.id,
-        isEdit: false,
-        summaryDetailInfos: []
-      })
-      // 展开节点
       if (!n.expanded) {
         n.expanded = true
       }
-    },
-    handleEdit(s, d, n) { // 编辑节点
-      console.log(s, d, n)
     },
     handleDelete(s, d, n) {
       // 删除节点
@@ -688,11 +833,14 @@ export default {
           list.map((c, i) => {
             if (d.id === c.id) {
               _index = i
+              delOneNoduleById({ 'id': d.id }).then(res => {
+                console.log(res, 'rs')
+                list.splice(_index, 1)
+                // console.log(_index,k)
+                this.$message.success('删除成功！')
+              })
             }
           })
-          list.splice(_index, 1)
-          // console.log(_index,k)
-          this.$message.success('删除成功！')
         }
         const isDel = () => {
           that
@@ -711,6 +859,16 @@ export default {
         // 判断是否新建
         d.id > this.non_maxexpandId ? delNode() : isDel()
       }
+    },
+    submitEdit(s, d, n) {
+      console.log(d, '修改')
+      // editCatalogs(d.ID, { 'name': d.name }).then(response => {
+      //   console.log(response.data)
+      //   this.getCatalogs()
+      //   // 展开节点
+      //   this.expandedItem = []
+      //   this.expandedItem.push(d.parentid)
+      // })
     }
   }
 }
@@ -768,6 +926,11 @@ div.expand2 .expand-tree .el-tree-node:hover{
 div.expand2 .expand-tree .is-current>.el-tree-node__content .tree-btn,
 div.expand2 .expand-tree .el-tree-node__content:hover .tree-btn{
   display:none;
+}
+div.expand .expand-tree .el-tree-node__content:hover .tree-btn{
+  display:inline-block;
+  opacity:1;
+  background:rgb(190, 214, 221);
 }
 
 </style>

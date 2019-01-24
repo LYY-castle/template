@@ -32,12 +32,52 @@ export function editNodule(req) {
     data: req
   })
 }
+// 修改小结标题
+export function editNoduleTitle(req) {
+  return request({
+    url: 'nodule/editNoduleTitle',
+    method: 'post',
+    data: req
+  })
+}
+// 修改小结内容
+export function editNoduleItem(req) {
+  return request({
+    url: 'nodule/editNoduleItem',
+    method: 'post',
+    data: req
+  })
+}
+// 增加一条小结内容
+export function addNoduleOneItem(req) {
+  return request({
+    url: 'nodule/addNoduleOneItem',
+    method: 'post',
+    data: req
+  })
+}
+// 修改一条小结内容
+export function editNoduleOneItem(req) {
+  return request({
+    url: 'nodule/editNoduleOneItem',
+    method: 'post',
+    data: req
+  })
+}
 // 删除小结
 export function delNoduleByNoduleId(noduleId) {
   return request({
     url: 'nodule/delNoduleByNoduleId',
     method: 'post',
     data: noduleId
+  })
+}
+// 删除小结详情
+export function delOneNoduleById(id) {
+  return request({
+    url: 'nodule/delOneNoduleById',
+    method: 'post',
+    data: id
   })
 }
 // 批量删除小结
