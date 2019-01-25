@@ -1182,14 +1182,15 @@ export default {
       data.mobile = phone
       data.platform = process.env.SMS.platform
       data.type = process.env.SMS.type
-
-      sendMessage(data).then(res => {
-        if (res.data.code === 0) {
-          console.log(res.data.message)
-        } else {
-          console.log('短信发送失败')
-        }
-      })
+      if (process.env.SMS.enable) {
+        sendMessage(data).then(res => {
+          if (res.data.code === 0) {
+            console.log(res.data.message)
+          } else {
+            console.log('短信发送失败')
+          }
+        })
+      }
     },
     on_answer_event(event, agentid, DN, UUID, callerid, calleeid, io, other_leg_uuid) {
       addAnswerContact({
