@@ -61,7 +61,7 @@ const env_conf = {
       platform: '1', // 1:网关，2：领创盛世.
       type: "4",//4大类营销短信
       sendMessageTime: 10,//通话多少秒需要发短信
-      content: '"【安安直贷】尊敬的客户，您已成功领取3000元额度、线上自动审核，24小时内有效http://www.anancash.com/html_aa/regist/app.html?code=ssszzz01退订回T"'
+      content: '"【安安直贷】尊敬的客户，您已成功领取3000元额度、线上自动审核，24小时内有效 http://www.anancash.com/html_aa/regist/app.html?code=ssszzz01 退订回T"'
     }
   },
   loan: {
