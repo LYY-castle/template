@@ -1659,7 +1659,6 @@ export default {
     })
     // 查询用户手机号并存储
     getStaffNameByAgentId({ 'agentId': localStorage.getItem('agentId') }).then(res => {
-      console.log(res, 'res')
       if (res.data.code === 1) {
         const userPhone = res.data.data[0].userPhone ? res.data.data[0].userPhone : ''
         localStorage.setItem('userPhone', userPhone)
