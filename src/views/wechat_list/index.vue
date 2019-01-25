@@ -919,6 +919,7 @@ export default {
         // 修改任务状态
         updateTaskStatus(this.taskId, this.taskRadio, this.appointTime).then(response => {
           if (response.data.code === 0) {
+            this.getCustomerDetail()
             // console.log('成功修改任务状态')
             // 修改小结备注
             updateRecordInfo(this.sessionId, this.taskRadio, this.selectedSummarys, this.summary_description)
@@ -974,6 +975,80 @@ export default {
           }
         })
       }
+    },
+    getCustomerDetail() {
+      // 查询所有客户列表
+      getWechatCustomer(localStorage.getItem('agentId')).then(response => {
+        this.customerInfos = response.data.data
+        this.$store.commit('SET_WECHATCUSTOMERINFO', this.customerInfo)
+        localStorage.setItem('customerInfos', JSON.stringify(response.data.data))
+        if (this.$route.query && this.$route.query.fromDialTask === '0') {
+          this.taskId = this.$route.query.taskId
+          this.campaignId = this.$route.query.campaignId
+          this.customerId = this.$route.query.customerId
+          this.customerPhone = this.$route.query.customerPhone
+          for (var a = 0; a < this.customerInfos.length; a++) {
+            if (this.customerInfos[a].customerId === this.$route.query.customerId) {
+              this.customerInfos[a].isTalking = true
+              this.customerActive = a.toString()
+            } else {
+              this.customerInfos[a].isTalking = false
+            }
+          }
+          localStorage.setItem('customerInfos', JSON.stringify(this.customerInfo))
+          // 展示客户信息
+          this.showCustomerInfos(this.taskId, this.campaignId, this.customerId, this.customerPhone)
+          // 获取聊天记录
+          this.getChatRecords(this.$route.query.customerId, null)
+          const contentDiv = document.getElementById('short-message-content')
+          setTimeout(() => {
+            contentDiv.scrollTop = contentDiv.scrollHeight
+          }, 10)
+        } else {
+          this.customerActive = '0'
+          const customerInfos = JSON.parse(localStorage.getItem('customerInfos'))
+          this.customerInfos[0].isTalking = true
+          for (var i = 1; i < this.customerInfos.length; i++) {
+            this.customerInfos[i].isTalking = false
+          }
+          this.taskId = customerInfos[0].taskId
+          const taskId = customerInfos[0].taskId
+          const campaignId = customerInfos[0].campaignId
+          const customerId = customerInfos[0].customerId
+          const customerPhone = customerInfos[0].customerPhone
+          this.customerId = customerInfos[0].customerId
+          // 展示客户信息
+          this.showCustomerInfos(taskId, campaignId, customerId, customerPhone)
+          // 获取聊天记录
+          this.getChatRecords(customerId, null)
+          const contentDiv = document.getElementById('short-message-content')
+          setTimeout(() => {
+            contentDiv.scrollTop = contentDiv.scrollHeight
+          }, 10)
+        }
+        // 查询客户列表对应显示的未读数量
+        getUnreadNum(localStorage.getItem('agentId')).then(response => {
+          if (response.data.data.length === 0) {
+            for (var n = 0; n < this.customerInfos.length; n++) {
+              this.customerInfos[n].unreadNum = 0
+            }
+          } else {
+            for (let i = 0; i < this.customerInfos.length; i++) {
+              const res = JSON.stringify(response.data.data)
+              if (res.indexOf(this.customerInfos[i].customerId) === -1) {
+                this.customerInfos[i].unreadNum = 0
+              }
+              for (let j = 0; j < response.data.data.length; j++) {
+                if (this.customerInfos[i].customerId === response.data.data[j].customerId) {
+                  this.customerInfos[i].unreadNum = response.data.data[j].num
+                }
+              }
+            }
+          }
+          this.$store.commit('SET_WECHATCUSTOMERINFO', this.customerInfos)
+          localStorage.setItem('customerInfos', JSON.stringify(this.customerInfos))
+        })
+      })
     },
     handleChange(templateId, price, number) {
       this.sumInfo.set(templateId, { price: price, number: number })

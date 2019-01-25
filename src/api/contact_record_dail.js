@@ -110,12 +110,12 @@ export function queryOrderByTaskId(id) {
   })
 }
 // 综合查询聊天记录
-export function queryRecords(customerId, pageNo) {
+export function queryRecords(sessionId, pageNo) {
   return request({
     url: '/wechat/queryRecords',
     method: 'post',
     data: {
-      customerId: customerId,
+      sessionId: sessionId,
       pageNo: pageNo
     }
   })
