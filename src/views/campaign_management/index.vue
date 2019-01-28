@@ -223,7 +223,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="外呼起止时段"  v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+        <el-form-item label="拨打时段"  v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
           <div v-for="(item,indexx) in outcalltimeInfos">
             <span>{{indexx+1}}.</span>
             <el-time-picker
@@ -246,7 +246,7 @@
             <i class="el-icon-plus" circle title="点击添加一个时间段" @click="addOutCallTimes()"></i>
           </div>
         </el-form-item>
-        <el-form-item label="错误处理方式"  v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+        <el-form-item label="呼叫失败处理"  v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
           <div v-for="(item,index) in failTreatmentInfos">
             <span>{{index+1}}.</span>
             <el-select v-model="item.failType" placeholder="错误类型" clearable style="width:25%">
@@ -1560,6 +1560,22 @@ export default {
       if (!this.validate) {
         return false
       }
+      if (campaignDetail.customerColumnInfos.length === 0) {
+        this.$message.error('请选择客户配置项')
+        return
+      }
+      if (campaignDetail.campaignTypeCode === 'AUTO_OUT_CALL') {
+        // 默认设置自动外呼标志为开启
+        campaignDetail.outCallFlag = '1'
+        if (campaignDetail.outcalltimeInfos.length === 0) {
+          this.$message.error('请选择拨打时段！')
+          return
+        }
+        if (campaignDetail.failTreatmentInfos.length === 0) {
+          this.$message.error('请选择呼叫失败处理！')
+          return
+        }
+      }
       this.editVisible = false
       campaignDetail.productIds = campaignDetail.products
       modifyCampaign(campaignDetail).then(response => {
@@ -1593,9 +1609,21 @@ export default {
       if (!this.validate) {
         return false
       }
+      if (campaignDetail.customerColumnInfos.length === 0) {
+        this.$message.error('请选择客户配置项')
+        return
+      }
       if (campaignDetail.campaignTypeCode === 'AUTO_OUT_CALL') {
         // 默认设置自动外呼标志为开启
         campaignDetail.outCallFlag = '1'
+        if (campaignDetail.outcalltimeInfos.length === 0) {
+          this.$message.error('请选择拨打时段！')
+          return
+        }
+        if (campaignDetail.failTreatmentInfos.length === 0) {
+          this.$message.error('请选择呼叫失败处理！')
+          return
+        }
       }
       campaignDetail.productIds = campaignDetail.products
       campaignDetail.status = '1'
