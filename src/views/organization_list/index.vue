@@ -10,11 +10,22 @@
             <el-input placeholder="组织名（限长45字符）" v-model="formInline.organ_name" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item label="上级组织：" v-if="$route.params.id === ':id'">
-            <el-select v-model="formInline.parent_organ_id" placeholder="上级组织">
+            <el-cascader
+              v-model="selected_dept_id"
+              placeholder="请选择组织"
+              :options="allDepts"
+              :props="org_props"
+              show-all-levels
+              filterable
+              size="small"
+              change-on-select
+              clearable
+            ></el-cascader>
+            <!-- <el-select v-model="formInline.parent_organ_id" placeholder="上级组织">
               <el-option label="所有上级组织" value=""></el-option>
               <el-option label="一级组织" value="0"></el-option>
               <el-option v-for="item in allDepts" :key="item.departName" :label="item.departName" :value="item.id"></el-option>
-            </el-select>
+            </el-select> -->
           </el-form-item>
           <el-form-item label="操作人：">
             <el-input placeholder="操作人（限长45字符）" v-model="formInline.creator" maxlength="45"></el-input>
@@ -123,7 +134,7 @@
       </el-row>
       <el-row style="margin-top:1%;">
         <el-col :span="4">
-          <el-button type="success" size="small"  @click="dialogFormVisible = true;ruleForm.id = '';ruleForm.comment = ''">新建</el-button>
+          <el-button type="success" size="small"  @click="dialogFormVisible = true;ruleForm.id = '';ruleForm.comment = '';new_dept_ids=[]">新建</el-button>
           <el-button type="danger" size="small" @click="deleteAll">批量删除</el-button>
         </el-col>
         <el-col :span="20">
@@ -146,10 +157,21 @@
           <el-input v-model="ruleForm.departName" placeholder="上限45字符" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="上级组织">
-          <el-select v-model="ruleForm.id" placeholder="请选择部门" style="width: 100%;">
+          <el-cascader
+            v-model="new_dept_ids"
+            placeholder="请选择组织"
+            :options="regionOptions"
+            :props="org_props"
+            show-all-levels
+            filterable
+            size="small"
+            change-on-select
+            clearable
+          ></el-cascader>
+          <!-- <el-select v-model="ruleForm.id" placeholder="请选择部门" style="width: 100%;">
             <el-option label="根组织" value=""></el-option>
             <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.id"></el-option>
-          </el-select>
+          </el-select> -->
         </el-form-item>
         <el-form-item label="组织状态">
           <el-switch
@@ -180,10 +202,21 @@
           <el-input v-model="ruleFormReverse.departName" placeholder="上限45字符" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="上级组织">
-          <el-select v-model="ruleFormReverse.upId" placeholder="请选择部门" style="width: 100%;">
+          <el-cascader
+            v-model="edit_dept_ids"
+            placeholder="请选择组织"
+            :options="regionOptions"
+            :props="org_props"
+            show-all-levels
+            filterable
+            size="small"
+            change-on-select
+            clearable
+          ></el-cascader>
+          <!-- <el-select v-model="ruleFormReverse.upId" placeholder="请选择部门" style="width: 100%;">
             <el-option label="根组织" value=""></el-option>
             <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.id"></el-option>
-          </el-select>
+          </el-select> -->
         </el-form-item>
         <el-form-item label="组织状态">
           <el-switch
@@ -233,13 +266,22 @@
 <script>
   import { queryDepts, verifyDept, modifyOrganStatus, modifyOrgan, delOrgan, addOrganization, delOrgansByOrganIds, findAllOrganPost, findAllOrganTo } from '@/api/organization_list'
   import { Message, MessageBox } from 'element-ui'
-  import { formatDateTime } from '@/utils/tools'
+  import { formatDateTime, list2Tree } from '@/utils/tools'
   import { validSpace } from '@/utils/validate'
 
   export default {
     name: 'organization_list',
     data() {
       return {
+        selected_dept_id: [], // 查询条件
+        new_dept_ids: [], // 新建组织
+        edit_dept_ids: [], // 修改组织
+        reverse_edit_dept_ids: [], // 用以回显修改组织
+        org_props: {
+          label: 'departName',
+          value: 'id',
+          children: 'children'
+        },
         tagName: '',
         tempRoute: {},
         timeValue: [],
@@ -371,6 +413,7 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             let obj = {}
+            this.new_dept_ids.length === 0 ? this.ruleForm.id = '' : this.ruleForm.id = this.new_dept_ids[this.new_dept_ids.length - 1]
             if (this.ruleForm.id) {
               obj = {
                 organ_cn: this.ruleForm.departName,
@@ -438,11 +481,15 @@
               creator: this.ruleFormReverse.creator,
               createTime: this.ruleFormReverse.createTime
             }
-
-            if (this.ruleFormReverse.upId) {
-              obj.select_uporgan = this.ruleFormReverse.upId
+  
+            if (this.edit_dept_ids.length === 0) {
+              obj.select_uporgan = ''
+            } else {
+              obj.select_uporgan = this.edit_dept_ids[this.edit_dept_ids.length - 1]
             }
-
+            // if (this.ruleFormReverse.upId) {
+            //   obj.select_uporgan = this.ruleFormReverse.upId
+            // }
             modifyOrgan(obj).then(response => {
               if (response.data.exchange.body.code === 1) {
                 this.$message.success('修改成功！')
@@ -466,9 +513,21 @@
       },
       resetForm(formName) {
         this.$refs[formName].resetFields()
+        if (formName === 'ruleForm') {
+          this.ruleForm.departName = ''
+          this.new_dept_ids = []
+          this.ruleForm.visible = 1
+          this.ruleForm.comment = ''
+        } else {
+          this.ruleFormReverse.departName = ''
+          this.edit_dept_ids = []
+          this.ruleFormReverse.visible = 1
+          this.ruleFormReverse.comment = ''
+        }
       },
       reset() {
         this.timeValue = []
+        this.selected_dept_id = []
         this.formInline = {
           organ_id: '',
           organ_name: '',
@@ -520,6 +579,7 @@
         })
       },
       handleClickOrgan(row) {
+        this.selected_dept_id = []
         this.$router.push({
           name: 'organization_list',
           // query: { parent_organ: row.departName }
@@ -549,6 +609,24 @@
             // 由于按照ID查询后台返回数组 可以写死0位置
             const data = response.data.data[0]
             this.organData = data
+  
+            /** 回显上级组织的逻辑 start */
+            let arr = []
+            arr = data.idPath.split('/')
+            for (var i = 0; i < arr.length; i++) {
+              if (arr[i] === null || arr[i] === '') {
+                arr.splice(i, 1)
+                i = i - 1
+              }
+            }
+            arr.splice(arr.length - 1, 1)
+            for (var j = 0; j < arr.length; j++) {
+              arr[j] = parseInt(arr[j])
+            }
+            this.edit_dept_ids = arr
+            this.reverse_edit_dept_ids = arr
+            /** 回显上级组织的逻辑 end */
+  
             this.ruleFormReverse = {
               upId: data.upId ? data.upId : '',
               id: data.id,
@@ -565,6 +643,7 @@
         // row已经包含了单个的数据
       },
       resetReverse() {
+        this.edit_dept_ids = this.reverse_edit_dept_ids
         this.ruleFormReverse = {
           upId: this.organData.upId,
           id: this.organData.id,
@@ -622,6 +701,20 @@
         // 根据老版本的逻辑 查询只能传分页页码的第一页
         this.formInline.startTime = this.timeValue ? this.timeValue[0] : null
         this.formInline.stopTime = this.timeValue ? this.timeValue[1] : null
+        if (this.selected_dept_id.length === 0) {
+          if (this.$route.params.id === ':id') {
+            req.parent_organ_id = ''
+          } else {
+            req.parent_organ_id = this.$route.params.id
+          }
+        } else {
+          req.parent_organ_id = this.selected_dept_id[this.selected_dept_id.length - 1]
+        }
+        // if (this.selected_dept_id.length === 0 && this.$route.params.id === ':id') {
+        //   req.parent_organ_id = ''
+        // } else {
+        //   req.parent_organ_id = this.selected_dept_id[this.selected_dept_id.length - 1]
+        // }
         findAllOrganPost(req).then(response => {
           this.queryOrgan(response)
         })
@@ -648,10 +741,22 @@
       },
       refreshOrganTo() {
         findAllOrganTo().then(response => {
-          this.regionOptions = response.data.data
+          const map = {
+            data: response.data.data,
+            rootId: 0,
+            idFieldName: 'id',
+            parentIdFielName: 'upId'
+          }
+          this.regionOptions = list2Tree(map)
         })
-        queryDepts().then(response1 => {
-          this.allDepts = response1.data.data
+        queryDepts().then(res => {
+          const map = {
+            data: res.data.data,
+            rootId: 0,
+            idFieldName: 'id',
+            parentIdFielName: 'upId'
+          }
+          this.allDepts = list2Tree(map)
         })
       }
     },

@@ -18,9 +18,20 @@
             </el-select>
           </el-form-item>
           <el-form-item label="所属组织：" v-if="$route.params.id === ':id'">
-            <el-select v-model="formInline.departName" placeholder="所属组织">
+            <el-cascader
+              v-model="selected_dept_id"
+              placeholder="请选择组织"
+              :options="regionOptions"
+              :props="org_props"
+              show-all-levels
+              filterable
+              size="small"
+              change-on-select
+              clearable
+            ></el-cascader>
+            <!-- <el-select v-model="formInline.departName" placeholder="所属组织">
               <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
-            </el-select>
+            </el-select> -->
           </el-form-item>
           <el-form-item label="操作人：">
             <el-input placeholder="操作人（限长45字符）" v-model="formInline.creator" maxlength="45"></el-input>
@@ -258,12 +269,18 @@ import {
   editRole
 } from '@/api/account_list'
 import { Message, MessageBox } from 'element-ui'
-import { formatDateTime } from '@/utils/tools'
+import { formatDateTime, list2Tree } from '@/utils/tools'
 
 export default {
   name: 'account_list',
   data() {
     return {
+      selected_dept_id: [], // 查询条件
+      org_props: {
+        label: 'departName',
+        value: 'departName',
+        children: 'children'
+      },
       // 是否显示微信相关
       show_wechat: `${process.env.SHOW_WECHAT}`,
       tempRoute: {},
@@ -639,6 +656,7 @@ export default {
     },
     reset() {
       this.timeValue = []
+      this.selected_dept_id = []
       this.formInline = {
         staffName: '',
         angentId: '',
@@ -653,7 +671,6 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
-      console.log(val)
     },
     handleCheckAgent(value) {
       this.check(value, 'agent')
@@ -850,13 +867,25 @@ export default {
       req.pageNo = 1
       req.start_time = this.timeValue ? this.timeValue[0] : null
       req.end_time = this.timeValue ? this.timeValue[1] : null
+      if (this.selected_dept_id.length === 0) {
+        req.departName = ''
+      } else {
+        req.departName = this.selected_dept_id[this.selected_dept_id.length - 1]
+      }
+      console.log(req)
       findAllAccount(req).then(response => {
         this.queryStaff(response)
       })
     },
     refreshOrganTo() {
       queryDepts().then(response => {
-        this.regionOptions = response.data.data
+        const map = {
+          data: response.data.data,
+          rootId: 0,
+          idFieldName: 'id',
+          parentIdFielName: 'upId'
+        }
+        this.regionOptions = list2Tree(map)
       })
     },
     setTagsViewTitle() {

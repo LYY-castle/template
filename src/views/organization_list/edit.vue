@@ -632,7 +632,6 @@
       },
       setTagsViewTitle() {
         const route = Object.assign({}, this.tempRoute, { title: this.$route.params.id === ':id' ? '组织管理' : this.$route.params.id })
-        console.log(route)
         this.$store.dispatch('updateVisitedView', route)
       },
       refreshOrgan() {

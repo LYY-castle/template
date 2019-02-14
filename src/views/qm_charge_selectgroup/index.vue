@@ -70,8 +70,8 @@
           </el-table-column>
           <el-table-column align="center" label="操作">
             <template slot-scope="scope">
-              <el-button type="text" @click="qcdept='';grade=[];assignParams.activityId=scope.row.campaignId;assignParams.activityName=scope.row.activityName;searchByCampaignId(scope.row.campaignId);searchQcDepts(scope.row.campaignId);searchGrades(scope.row.campaignId);"  v-if="scope.row.departName === null && scope.row.gradeNames === null">指定</el-button>
-              <el-button type="text" @click="assignParams.activityId=scope.row.campaignId;assignParams.activityName=scope.row.activityName;searchByCampaignId(scope.row.campaignId);searchQcDepts(scope.row.campaignId);searchGrades(scope.row.campaignId);showQcDeptByCampaignId(scope.row.campaignId);showGradeNamesByCampaignId(scope.row.campaignId)"  v-if="scope.row.departName !== null || scope.row.gradeNames !== null">修改</el-button>
+              <el-button type="text" @click="appoint_qcdept=[];qcdept='';grade=[];assignParams.activityId=scope.row.campaignId;assignParams.activityName=scope.row.activityName;searchByCampaignId(scope.row.campaignId);searchQcDepts();searchGrades(scope.row.campaignId);"  v-if="scope.row.departName === null && scope.row.gradeNames === null">指定</el-button>
+              <el-button type="text" @click="assignParams.activityId=scope.row.campaignId;assignParams.activityName=scope.row.activityName;searchByCampaignId(scope.row.campaignId);searchQcDepts();searchGrades(scope.row.campaignId);showQcDeptByCampaignId(scope.row.campaignId);showGradeNamesByCampaignId(scope.row.campaignId)"  v-if="scope.row.departName !== null || scope.row.gradeNames !== null">修改</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -117,13 +117,24 @@
           <div>{{campaignDetail.summaryName}}</div>
         </el-form-item>
         <el-form-item label="质检组织：">
-          <el-select v-model="qcdept" placeholder="请选择质检组织" clearable @change="selectQcDept">
+          <el-cascader
+            v-model="appoint_qcdept"
+            placeholder="请选择组织"
+            :options="qcdepts"
+            :props="org_props"
+            :show-all-levels='false'
+            filterable
+            size="small"
+            change-on-select
+            clearable
+          ></el-cascader>
+          <!-- <el-select v-model="qcdept" placeholder="请选择质检组织" clearable @change="selectQcDept">
               <el-option
                 v-for="qcdepart in qcdepts"
                 :label="qcdepart.departName"
                 :value="qcdepart.id">
               </el-option>
-          </el-select>
+          </el-select> -->
         </el-form-item>
         <el-form-item label="评分表：">
           <el-select v-model="grade" multiple placeholder="请选择评分表" clearable @change="selectMarks">
@@ -162,15 +173,23 @@ import {
   queryGradeNamesByCampaignId,
   completeAssignGroupsAndGrades
 } from '@/api/qm_charge_selectgroup'
+import { list2Tree } from '@/utils/tools'
 export default {
   name: 'qm_charge_selectgroup',
 
   data() {
     return {
+      appoint_qcdept: [], // 级联选中的
+      org_props: {
+        label: 'departName',
+        value: 'id',
+        children: 'children'
+      },
       tableData: [], // 表格数据
       pageShow: false, // 分页显示与否
       pageInfo: {}, // 分页信息
       appointVisiable: false, // 指定组织/评分表的dialog
+      beforeTransfer_qcdepts: [], // 转换为树结构之前的下属所有质检组织
       qcdepts: [], // 下属所有质检组织
       grades: [], // 所有的评分表
       qcdept: '', // 选中的或回显的质检组织
@@ -201,7 +220,6 @@ export default {
         activityId: '',
         activityName: ''
       }
-
     }
   },
 
@@ -297,11 +315,18 @@ export default {
         })
     },
     // 查询下属质检组织
-    searchQcDepts(campaignId) {
-      queryallQcdepts()
+    searchQcDepts() {
+      queryallQcdepts(localStorage.getItem('departId'))
         .then(response => {
           if (response.data.code === 1) {
-            this.qcdepts = response.data.data
+            this.beforeTransfer_qcdepts = response.data.data
+            const map = {
+              data: response.data.data,
+              rootId: 0,
+              idFieldName: 'id',
+              parentIdFielName: 'upId'
+            }
+            this.qcdepts = list2Tree(map)
           }
         })
     },
@@ -314,13 +339,6 @@ export default {
           }
         })
     },
-    // showDialog() {
-    //   if (this.campaignDetail.summaryName && this.campaignDetail.departName) {
-    //     this.appointVisiable = true
-    //   } else {
-    //     this.appointVisiable = false
-    //   }
-    // },
     // 显示活动状态
     showStatus(status) {
       if (status === '0') {
@@ -346,12 +364,23 @@ export default {
       queryQcDeptByCampaignId(campaignId)
         .then(response => {
           if (response.data.code === 0) {
-            this.qcdept = response.data.data[0].departName
-            this.qcdeptId = response.data.data[0].departId
-            // this.assignParams.qcdeptId = response.data.data[0].departId
-            // this.assignParams.qcdeptName = response.data.data[0].departName
-            // this.assignParams.activityId = response.data.data[0].activityId
-            // this.assignParams.activityName = response.data.data[0].activityName
+            const departId = parseInt(response.data.data[0].departId)
+            let arr = []
+            for (var i = 0; i < this.beforeTransfer_qcdepts.length; i++) {
+              if (departId === this.beforeTransfer_qcdepts[i].id) {
+                arr = this.beforeTransfer_qcdepts[i].idPath.split('/')
+              }
+            }
+            for (var j = 0; j < arr.length; j++) {
+              if (arr[j] === null || arr[j] === '') {
+                arr.splice(j, 1)
+                j = j - 1
+              }
+            }
+            for (var k = 0; k < arr.length; k++) {
+              arr[k] = parseInt(arr[k])
+            }
+            this.appoint_qcdept = arr
           }
         })
     },
@@ -389,17 +418,20 @@ export default {
     },
     // 完成指定或修改
     completeAssign() {
-      this.assignParams.qcdeptId = this.qcdeptId
-      this.assignParams.qcdeptName = this.qcdept
+      if (this.appoint_qcdept.length === 0) {
+        this.$message.error('请选择质检组织！')
+        return
+      }
+      this.assignParams.qcdeptId = this.appoint_qcdept[this.appoint_qcdept.length - 1]
+      for (var i = 0; i < this.beforeTransfer_qcdepts.length; i++) {
+        if (this.assignParams.qcdeptId === this.beforeTransfer_qcdepts[i].id) {
+          this.assignParams.qcdeptName = this.beforeTransfer_qcdepts[i].departName
+        }
+      }
       this.assignParams.grades = []
       this.assignParams.grades = this.gradeIds
-      // console.log(this.assignParams.qcdeptId + ',' + this.assignParams.qcdeptName + ',' + this.assignParams.grades + ',' + this.assignParams.activityId + ',' + this.assignParams.activityName)
       if (this.assignParams.grades.length === 0) {
         this.$message.error('未选中任何评分表！')
-        return false
-      }
-      if (this.assignParams.qcdeptName === '') {
-        this.$message.error('未指定质检组织！')
         return false
       }
       completeAssignGroupsAndGrades(this.assignParams)
@@ -417,17 +449,7 @@ export default {
 
   mounted() {
     this.searchByCampaign(this.req)
-  },
-
-  watch: {},
-
-  components: {},
-
-  mixins: [],
-
-  vuex: {},
-
-  created() {}
+  }
 
 }
 

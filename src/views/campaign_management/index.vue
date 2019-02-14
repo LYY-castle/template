@@ -272,15 +272,26 @@
             <i class="el-icon-plus" circle title="点击添加一个处理方式" @click="addTreatments()"></i>
           </div>
         </el-form-item>
-        <el-form-item label="活动组织" prop="departId">
-          <el-select v-model="campaignDetail.departId" placeholder="请选择活动组织" style="width: 100%;">
+        <el-form-item label="活动组织">
+          <el-cascader
+            v-model="edit_dept_ids"
+            placeholder="请选择组织"
+            :options="visibleDepts"
+            :props="org_props"
+            show-all-levels
+            filterable
+            size="small"
+            change-on-select
+            clearable
+          ></el-cascader>
+          <!-- <el-select v-model="campaignDetail.departId" placeholder="请选择活动组织" style="width: 100%;">
           <el-option
               v-for="item in visibleDepts"
               :key="item.id"
               :label="item.departName"
               :value="item.id">
           </el-option>
-        </el-select>
+        </el-select> -->
         </el-form-item>
         <el-form-item label="话后小结" prop="summaryId">
           <el-select v-model="campaignDetail.summaryId" placeholder="请选择小结" style="width: 100%;">
@@ -536,15 +547,26 @@
             <i class="el-icon-plus" circle title="点击添加一个处理方式" @click="addTreatments()"></i>
           </div>
         </el-form-item>
-        <el-form-item label="活动组织" prop="departId">
-        <el-select v-model="campaignDetail.departId" placeholder="请选择活动组织" style="width: 100%;">
-          <el-option
-              v-for="item in visibleDepts"
-              :key="item.id"
-              :label="item.departName"
-              :value="item.id">
-          </el-option>
-        </el-select>
+        <el-form-item label="活动组织">
+          <el-cascader
+            v-model="new_dept_ids"
+            placeholder="请选择组织"
+            :options="visibleDepts"
+            :props="org_props"
+            show-all-levels
+            filterable
+            size="small"
+            change-on-select
+            clearable
+          ></el-cascader>
+          <!-- <el-select v-model="campaignDetail.departId" placeholder="请选择活动组织" style="width: 100%;">
+            <el-option
+                v-for="item in visibleDepts"
+                :key="item.id"
+                :label="item.departName"
+                :value="item.id">
+            </el-option>
+          </el-select> -->
       </el-form-item>
       <el-form-item label="话后小结" prop="summaryId">
         <el-select v-model="campaignDetail.summaryId" placeholder="请选择小结" style="width: 100%;">
@@ -898,7 +920,7 @@ import {
   assignCampaignAndList,
   removeList
 } from '@/api/campaign_management'
-import { formatDateTime, clone } from '@/utils/tools'
+import { formatDateTime, clone, list2Tree } from '@/utils/tools'
 
 export default {
   name: 'campaign_management',
@@ -969,6 +991,12 @@ export default {
         }
       }
     }
+    // 选择活动组织
+    var checkDept = (rule, value, callback) => {
+      if (this.new_dept_ids.length === 0) {
+        callback(new Error('请选择组织！'))
+      }
+    }
     return {
       rule: {
         campaignName: [
@@ -1020,10 +1048,10 @@ export default {
         //   { required: true, message: '请选择活动状态', trigger: 'change' }
         // ],
         departId: [
-          { required: true, message: '请选择活动组织', trigger: 'change' }
+          { required: true, validator: checkDept, trigger: 'change' }
         ],
         summaryId: [
-          { required: true, message: '请选择活动组织', trigger: 'change' }
+          { required: true, message: '请选择话后小结', trigger: 'change' }
         ]
       },
       callTypes: [
@@ -1140,6 +1168,15 @@ export default {
           name: '来源'
         }
       ],
+      new_dept_ids: [], // 新建活动
+      edit_dept_ids: [], // 修改活动
+      reverse_edit_dept_ids: [], // 用以回显修改组织
+      org_props: {
+        label: 'departName',
+        value: 'id',
+        children: 'children'
+      },
+      beforeTransfer_visibleDepts: [], // 所有可见组织 - 转成树结构之前
       // 是否展示微信相关
       show_wechat: `${process.env.SHOW_WECHAT}`,
       campaignExpiryDate: [],
@@ -1378,7 +1415,13 @@ export default {
       if (this.$refs[formName] !== undefined) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.validate = true
+            if (this.new_dept_ids.length === 0) {
+              this.$message.error('请选择活动组织')
+              this.validate = false
+              return
+            } else {
+              this.validate = true
+            }
           } else {
             this.$message.error('请检查是否填写正确')
             this.validate = false
@@ -1480,6 +1523,26 @@ export default {
         .then(response => {
           var list
           if (response.data.code === 0) {
+            /** 回显上级组织的逻辑 start */
+            let arr = []
+            for (var q = 0; q < this.beforeTransfer_visibleDepts.length; q++) {
+              if (this.beforeTransfer_visibleDepts[q].id === parseInt(response.data.data.departId)) {
+                arr = this.beforeTransfer_visibleDepts[q].idPath.split('/')
+              }
+            }
+            for (var w = 0; w < arr.length; w++) {
+              if (arr[w] === null || arr[w] === '') {
+                arr.splice(w, 1)
+                w = w - 1
+              }
+            }
+            for (var e = 0; e < arr.length; e++) {
+              arr[e] = parseInt(arr[e])
+            }
+            this.edit_dept_ids = arr
+            this.reverse_edit_dept_ids = arr
+            /** 回显上级组织的逻辑 end */
+
             this.campaignDetail = response.data.data
             this.campaignDetail.departId = parseInt(this.campaignDetail.departId)
             if (this.campaignDetail.outCallTimeStart) {
@@ -1627,6 +1690,7 @@ export default {
       }
       campaignDetail.productIds = campaignDetail.products
       campaignDetail.status = '1'
+      campaignDetail.departId = this.new_dept_ids[this.new_dept_ids.length - 1]
       this.addVisible = false
       addCampaign(campaignDetail).then(response => {
         if (response.data.code === 0) {
@@ -1669,7 +1733,14 @@ export default {
     // 查询所有可见组织
     getVisibleDepts() {
       getAllVisibleDepts().then(response => {
-        this.visibleDepts = response.data.data
+        this.beforeTransfer_visibleDepts = response.data.data
+        const map = {
+          data: response.data.data,
+          rootId: 0,
+          idFieldName: 'id',
+          parentIdFielName: 'upId'
+        }
+        this.visibleDepts = list2Tree(map)
       })
     },
     // 查询所有小结
