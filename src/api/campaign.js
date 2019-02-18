@@ -3,8 +3,9 @@ import request from '@/utils/request'
 // 获取所有的产品
 export function findAllProduct() {
   return request({
-    url: `/productServer/findAllProduct`,
-    method: 'get'
+    // url: `/productServer/findAllProduct`,
+    url: `/product/findAllProduct`,
+    method: 'post'
   })
 }
 

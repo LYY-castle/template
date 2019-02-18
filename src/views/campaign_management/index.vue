@@ -196,11 +196,17 @@
         </el-form-item>
         <el-form-item label="产品" prop="products" v-if="!(campaignDetail.campaignTypeCode=='RECRUIT')">
           <el-select v-model="campaignDetail.products" multiple placeholder="请选择产品" style="width: 100%;">
-            <el-option
+            <!-- <el-option
                 v-for="item in productData"
                 :key="item.templateId"
                 :label="item.productName"
                 :value="item.templateId">
+            </el-option> -->
+            <el-option
+                v-for="item in productData"
+                :key="item.productId"
+                :label="item.productName"
+                :value="item.productId">
             </el-option>
           </el-select>
         </el-form-item>
@@ -462,9 +468,9 @@
           <el-select v-model="campaignDetail.products" multiple placeholder="请选择产品" style="width: 100%;">
             <el-option
                 v-for="item in productData"
-                :key="item.templateId"
+                :key="item.productId"
                 :label="item.productName"
-                :value="item.templateId">
+                :value="item.productId">
             </el-option>
           </el-select>
         </el-form-item>
@@ -1467,7 +1473,7 @@ export default {
         for (var i = 0; i < productIds.length; i++) {
           list = productIds[i]
           for (var j = 0; j < this.productData.length; j++) {
-            if (list === this.productData[j].templateId) {
+            if (list === this.productData[j].productId) {
               if (this.productName.indexOf() === -1) {
                 productNames.push(this.productData[j].productName)
               }
@@ -1581,7 +1587,7 @@ export default {
           for (var i = 0; i < this.campaignDetail.products.length; i++) {
             list = this.campaignDetail.products[i]
             for (var j = 0; j < this.productData.length; j++) {
-              if (list === this.productData[j].templateId) {
+              if (list === this.productData[j].productId) {
                 if (this.productName.indexOf() === -1) {
                   this.productName.push(this.productData[j].productName)
                 }
