@@ -22,11 +22,11 @@
         <!--</span>-->
         <el-input name="extensionNumber" type="text" v-model="loginForm.extensionNumber" autoComplete="on" placeholder="请输入分机号码" />
       </el-form-item>
-      <el-form-item>
+      <!-- <el-form-item> -->
         <el-button type="primary" style="width:100%;" :loading="loading" @click.native.prevent="handleLogin">
           登 录
         </el-button>
-      </el-form-item>
+      <!-- </el-form-item> -->
       <!--<div class="tips">-->
         <!--<span style="margin-right:20px;">username: admin</span>-->
         <!--<span> password: admin</span>-->

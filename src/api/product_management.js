@@ -45,3 +45,10 @@ export function queryProductTypes() {
     method: 'get'
   })
 }
+export function modifyProductsStatus(req) {
+  return request({
+    url: '/productServer/products/status',
+    method: 'post',
+    data: req
+  })
+}
