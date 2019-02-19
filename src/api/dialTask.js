@@ -202,3 +202,11 @@ export function addMoreOrder(obj) {
     data: obj
   })
 }
+
+export function modifyProduct(obj) {
+  return request({
+    url: '/product/modifyProductNum',
+    method: 'post',
+    data: obj
+  })
+}
