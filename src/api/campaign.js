@@ -5,7 +5,7 @@ export function findAllProduct() {
   return request({
     // url: `/productServer/findAllProduct`,
     url: `/product/findAllProduct`,
-    method: 'post'
+    method: 'get'
   })
 }
 
