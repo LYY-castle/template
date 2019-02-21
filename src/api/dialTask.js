@@ -61,7 +61,7 @@ export function queryContactRecord(taskId, campaignId) {
 
 export function hasOrderInfos(campaignId) {
   return request({
-    url: '/productServer/findAllProductByCampaignId',
+    url: '/product/findAllProductByCampaignId',
     method: 'get',
     params: {
       campaignId: campaignId
