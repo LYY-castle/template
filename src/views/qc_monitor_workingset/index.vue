@@ -1,48 +1,57 @@
 <template>
-  <div class="app-container">
+  <div class="app-container work-bench">
     <div>
       <el-row :gutter="5">
         <el-col :span="8">
-          <el-card shadow="hover" style="background-color:#339999;">
+          <el-card shadow="never" class="card-container">
             <div slot="header" class="clearfix">
-              <div style="display: inline-block;line-height: 50px;cursor: pointer" @click="">
+              <div>
+                <b>质检任务情况</b>
+              </div>
+              <!-- <div style="display: inline-block;line-height: 50px;cursor: pointer" @click="">
                 <font style="font-size:large;color:#fff;padding-right: 5px">质检任务情况 </font>
                 <font style="font-size:large;color:rgb(255,255,0);"></font>
-              </div>
-              <div style="float: right;line-height: 50px;cursor: pointer" @click="checkNum('0')">
-                <font style="font-size:medium;color:#fff;padding-right: 5px">未开始: </font>
-                <font style="font-size:medium;color:rgb(255,255,0);">{{noCompleteNum}}</font>
+              </div> -->
+              <div class="font12" style="line-height: 50px;cursor: pointer" @click="checkNum('0')">
+                <font style="padding-right: 5px">未开始: </font>
+                <font class="bold under-line">{{noCompleteNum}}</font>
               </div>
             </div>
             <div class="text item">
               <el-row>
                 <el-col :span="8">
-                  <el-card shadow="hover" style="background-color:#36a9ce">
-                    <div class="circle" style="border:solid #36a9ce 1px;background-color:#fff;">
-                      <a @click="checkNum('2')"><font class="line-center" style="color:#36a9ce;">{{temporaryNum}}</font></a>
+                  <el-card shadow="never" class="no-border">
+                    <div class="item-content">
+                      <a class="bold" @click="checkNum('2')">
+                        <font class="line-center font30 under-line">{{temporaryNum}}</font>
+                      </a>
                     </div>
                     <div style="text-align: center">
-                      <font class="text-align-center" style="font-size: small">未完成</font>
+                      <font class="font12" style="height:40px;">未完成</font>
                     </div>
                   </el-card>
                 </el-col>
                 <el-col :span="8">
-                  <el-card shadow="hover" style="background-color:#eb7f36">
-                    <div class="circle"  style="border:solid #eb7f36 1px;background-color:#fff;">
-                      <a @click="checkNum('1')"><font class="line-center" style="color:#eb7f36;">{{completeNum}}</font></a>
+                  <el-card shadow="never" class="no-border">
+                    <div class="item-content">
+                      <a class="bold" @click="checkNum('1')">
+                        <font class="line-center font30 under-line">{{completeNum}}</font>
+                      </a>
                     </div>
                     <div style="text-align: center">
-                      <font class="text-align-center" style="font-size: small">已完成</font>
+                      <font class="font12" style="height:40px;">已完成</font>
                     </div>
                   </el-card>
                 </el-col>
                 <el-col :span="8">
-                  <el-card shadow="hover" style="background-color:#36a9ce">
-                    <div class="circle"  style="border:solid #36a9ce 1px;background-color:#fff;">
-                      <a @click="checkNum('4')"><font class="line-center" style="color:#36a9ce;">{{todayCompleteNum}}</font></a>
+                  <el-card shadow="never" class="no-border">
+                    <div class="item-content">
+                      <a class="bold" @click="checkNum('4')">
+                        <font class="line-center font30 under-line">{{todayCompleteNum}}</font>
+                      </a>
                     </div>
                     <div style="text-align: center">
-                      <font class="text-align-center" style="font-size: small">当日完成</font>
+                      <font class="font12" style="height:40px;">当日完成</font>
                     </div>
                   </el-card>
                 </el-col>
@@ -51,22 +60,27 @@
           </el-card>
         </el-col>
         <el-col :span="8">
-          <el-card shadow="hover" style="background-color:#339999;">
+          <el-card shadow="never" class="card-container">
             <div slot="header" class="clearfix">
-              <div style="display: inline-block;line-height: 50px;cursor: pointer">
-                <font style="font-size:large;color:#fff;padding-right: 5px">质检任务数</font>
-                <font style="font-size:large;color:rgb(255,255,0);"></font>
+              <div>
+                <b>质检任务数</b>
+              </div>
+              <div style="display: inline-block;height:48px;line-height: 50px;cursor: pointer">
+                <!-- <font style="font-size:large;color:#fff;padding-right: 5px">质检任务数</font>
+                <font style="font-size:large;color:rgb(255,255,0);"></font> -->
               </div>
             </div>
             <div class="text item">
                 <el-row>
-                  <el-col :span="10" :offset="3">
-                    <el-card shadow="hover" style="background-color:#36a9ce">
-                      <div class="circle" style="border:solid #36a9ce 1px;background-color:#fff;">
-                        <a @click="checkNum('3')"><font class="line-center" style="color:#36a9ce;">{{totalNum}}</font></a>
+                  <el-col :span="10">
+                    <el-card shadow="never" class="no-border">
+                      <div class="item-content">
+                        <a @click="checkNum('3')">
+                          <font class="line-center font30 under-line">{{totalNum}}</font>
+                        </a>
                       </div>
                       <div style="text-align: center">
-                        <font class="text-align-center" style="font-size: small">总任务</font>
+                        <font class="font12">总任务</font>
                       </div>
                     </el-card>
                   </el-col>

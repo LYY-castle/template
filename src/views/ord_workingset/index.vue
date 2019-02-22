@@ -1,17 +1,20 @@
 <template>
-  <div class="app-container">
+  <div class="app-container work-bench">
     <div>
       <el-row :gutter="5">
         <el-col :span="8">
-          <el-card shadow="hover" style="background-color:#339999;">
+          <el-card shadow="never" class="card-container">
             <div slot="header" class="clearfix">
-              <div style="display: inline-block;line-height: 50px;cursor: pointer" @click="changeToDailTask('0','agent')">
-                <font style="font-size:large;color:#fff;padding-right: 5px">首拨数量: </font>
-                <font style="font-size:large;color:rgb(255,255,0);">{{rowData.firstCallTotal}}</font>
+              <div>
+                <b>数量统计</b>
               </div>
-              <div style="float: right;line-height: 50px;cursor: pointer" @click="changeToDailTask('1','agent')">
-                <font style="font-size:medium;color:#fff;padding-right: 5px">预约数量: </font>
-                <font style="font-size:medium;color:rgb(255,255,0);">{{rowData.appointCallTotal}}</font>
+              <div class="font12" style="display: inline-block;line-height: 50px;cursor: pointer" @click="changeToDailTask('0','agent')">
+                <span style="padding-right: 5px">首拨数量: </span>
+                <b class="bold under-line">{{rowData.firstCallTotal}}</b>
+              </div>
+              <div class="font12" style="float: right;line-height: 50px;cursor: pointer" @click="changeToDailTask('1','agent')">
+                <span style="padding-right: 5px">预约数量: </span>
+                <b class="bold under-line">{{rowData.appointCallTotal}}</b>
               </div>
             </div>
             <div class="text item">
@@ -26,23 +29,27 @@
                     <!--</div>-->
                   <!--</el-card>-->
                 <!--</el-col>-->
-                <el-col :span="8" :offset="3">
-                  <el-card shadow="hover" style="background-color:#36a9ce">
-                    <div class="circle" style="border:solid #36a9ce 1px;background-color:#fff;">
-                      <a @click="changeToDailTask('2','agent')"><font class="line-center" style="color:#36a9ce;">{{new_success_contact_task_count}}</font></a>
+                <el-col :span="8">
+                  <el-card shadow="never" class="no-border">
+                    <div class="item-content">
+                      <a class="bold" @click="changeToDailTask('2','agent')">
+                        <span class="line-center font30 under-line">{{new_success_contact_task_count}}</span>
+                      </a>
                     </div>
-                    <div style="text-align: center">
-                      <font class="text-align-center" style="font-size: small">今日成功量</font>
+                    <div style="text-align: center;">
+                      <span class="font12" style="height:40px;">今日成功量</span>
                     </div>
                   </el-card>
                 </el-col>
-                <el-col :span="8" :offset="3">
-                  <el-card shadow="hover" style="background-color:#eb7f36">
-                    <div class="circle"  style="border:solid #eb7f36 1px;background-color:#fff;">
-                      <a @click="changeToDailTask('3','agent')"><font class="line-center" style="color:#eb7f36;">{{new_fail_contact_task_count}}</font></a>
+                <el-col :span="8">
+                  <el-card shadow="never" class="no-border">
+                    <div class="item-content">
+                      <a class="bold" @click="changeToDailTask('3','agent')">
+                        <span class="line-center font30 under-line">{{new_fail_contact_task_count}}</span>
+                      </a>
                     </div>
                     <div style="text-align: center">
-                      <font class="text-align-center" style="font-size: small">今日失败量</font>
+                      <span class="font12" style="height:40px;">今日失败量</span>
                     </div>
                   </el-card>
                 </el-col>
@@ -51,32 +58,35 @@
           </el-card>
         </el-col>
         <el-col :span="8">
-          <el-card shadow="hover" style="background-color:#339999;">
+          <el-card shadow="never" class="card-container">
             <div slot="header" class="clearfix">
-              <div style="display: inline-block;line-height: 50px;cursor: pointer" @click="changeToOrderManagement('0')">
-                <font style="font-size:large;color:#fff;padding-right: 5px">订单数量: </font>
-                <font style="font-size:large;color:rgb(255,255,0);">{{count}}</font>
+              <div>
+                <b>订单</b>
+              </div>
+              <div class="font12" style="display: inline-block;line-height: 50px;cursor: pointer" @click="changeToOrderManagement('0')">
+                <span style="padding-right: 5px">订单数量: </span>
+                <b class="bold under-line">{{count}}</b>
               </div>
             </div>
             <div class="text item">
               <el-row>
-                <el-col :span="8" :offset="3">
-                  <el-card shadow="hover" style="background-color:#36a9ce">
-                    <div class="circle" style="border:solid #36a9ce 1px;background-color:#fff;">
-                      <font class="line-center" style="color:#36a9ce;">{{total_amount}}</font>
+                <el-col :span="8">
+                  <el-card shadow="never" class="no-border">
+                    <div class="item-content" style="cursor:default">
+                      <span class="line-center font30" style="font-weigth:bold;">{{total_amount}}</span>
                     </div>
                     <div style="text-align: center">
-                      <font class="text-align-center" style="font-size: small">订单总金额</font>
+                      <span class="font12" style="height:40px;">订单总金额</span>
                     </div>
                   </el-card>
                 </el-col>
-                <el-col :span="8" :offset="3">
-                  <el-card shadow="hover" style="background-color:#eb7f36">
-                    <div class="circle"  style="border:solid #eb7f36 1px;background-color:#fff;">
-                      <font class="line-center" style="color:#eb7f36;">{{avg_amount}}</font>
+                <el-col :span="8">
+                  <el-card shadow="never" class="no-border">
+                    <div class="item-content" style="cursor:default">
+                      <span class="line-center font30" style="font-weigth:bold;">{{avg_amount}}</span>
                     </div>
                     <div style="text-align: center">
-                      <font class="text-align-center" style="font-size: small">订单平均金额</font>
+                      <font class="font12" style="height:40px;">订单平均金额</font>
                     </div>
                   </el-card>
                 </el-col>
@@ -85,46 +95,49 @@
           </el-card>
         </el-col>
         <el-col :span="8">
-          <el-card shadow="hover" style="background-color:#339999;">
+          <el-card shadow="never" class="card-container">
             <div slot="header" class="clearfix">
-              <div style="display: inline-block;line-height: 50px;">
-                <font style="font-size:medium;color:#fff;padding-right: 5px">通话时间: </font>
-                <font style="font-size:medium;color:rgb(255,255,0);">{{ord_call_time_duration}}</font>
+              <div>
+                <b>通话统计</b>
               </div>
-              <div style="float: right;line-height: 50px">
-                <font style="font-size:medium;color:#fff;padding-right: 5px">通话次数: </font>
-                <font style="font-size:medium;color:rgb(255,255,0);">{{calls_number}}</font>
+              <div class="font12" style="display: inline-block;line-height: 50px;">
+                <span style="padding-right: 5px">通话时间: </span>
+                <b class="bold">{{ord_call_time_duration}}</b>
+              </div>
+              <div class="font12" style="float: right;line-height: 50px">
+                <span style="padding-right: 5px">通话次数: </span>
+                <b class="bold">{{calls_number}}</b>
               </div>
             </div>
             <div class="text item">
               <el-row>
                 <el-col :span="8">
-                  <el-card shadow="hover" style="background-color:#eb7f36">
-                    <div class="circle"  style="border:solid #eb7f36 1px;background-color:#fff;">
-                      <font class="line-center" style="color:#eb7f36;">{{ord_online_time_duration}}</font>
+                  <el-card shadow="never" class="no-border"> 
+                    <div style="height: 65px;line-height: 65px;text-align: center;">
+                      <font class="line-center font30">{{ord_online_time_duration}}</font>
                     </div>
                     <div style="text-align: center">
-                      <font class="text-align-center" style="font-size: small">在线时长</font>
+                      <font class="font12" style="height:40px;">在线时长</font>
                     </div>
                   </el-card>
                 </el-col>
                 <el-col :span="8">
-                  <el-card shadow="hover" style="background-color:#36a9ce">
-                    <div class="circle" style="border:solid #36a9ce 1px;background-color:#fff;">
-                      <font class="line-center" style="color:#36a9ce;">{{ord_free_time_duration}}</font>
+                  <el-card shadow="never" class="no-border">
+                    <div style="height: 65px;line-height: 65px;text-align: center;">
+                      <font class="line-center font30">{{ord_free_time_duration}}</font>
                     </div>
                     <div style="text-align: center">
-                      <font class="text-align-center" style="font-size: small">空闲时长</font>
+                      <font class="font12" style="height:40px">空闲时长</font>
                     </div>
                   </el-card>
                 </el-col>
                 <el-col :span="8">
-                  <el-card shadow="hover" style="background-color:#eb7f36">
-                    <div class="circle"  style="border:solid #eb7f36 1px;background-color:#fff;">
-                      <font class="line-center" style="color:#eb7f36;">{{ord_busy_time_duration}}</font>
+                  <el-card shadow="never" class="no-border">
+                    <div style="height: 65px;line-height: 65px;text-align: center;">
+                      <font class="line-center font30">{{ord_busy_time_duration}}</font>
                     </div>
                     <div style="text-align: center">
-                      <font class="text-align-center" style="font-size: small">示忙时长</font>
+                      <font class="font12" style="height:40px;">示忙时长</font>
                     </div>
                   </el-card>
                 </el-col>
@@ -602,42 +615,16 @@ export default {
   }
 }
 </script>
-<style>
-.el-card__body{
-  padding: 2%
+
+<style rel="stylesheet/scss" lang="scss">
+@media screen and (min-width: 1281px) and (max-width:1367px){
+  .work-bench .font30 {
+    font-size: 27px !important;
+  }
 }
-.circle{
-  width:6em;
-  height:40px;
-  border-radius:40px;
-  /*float:left;*/
-  margin: 0 auto;
-  text-align:center;
-}
-.line-center{
-  line-height:40px;
-  font-size:14px;
-  font-weight:bold;
-}
-.p-item{
-  margin-top:23%;
-  margin-left:-4%;
-  float:left
-}
-.text-align-center{
-  font-size:large;
-  color:#fff;
-  margin-top:1%;
-  line-height:50px;
-}
-.squash-item{
-  width: 80px;
-  height: 25px;
-  border-bottom-right-radius:10px;
-  border-top-right-radius:10px;
-  border:solid #36a9ce 1px;
-  line-height: 25px;
-  font-weight:500;
-  background-color:#36a9ce;
+@media all and (min-width:1024px) and (max-width:1280px)  {
+  .work-bench .font30 {
+    font-size: 25px !important;
+  }
 }
 </style>

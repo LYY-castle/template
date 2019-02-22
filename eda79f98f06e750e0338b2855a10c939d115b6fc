@@ -1,0 +1,4305 @@
+[33mcommit 3693f974a6d8ec7110c8ea5591abd5ebdaa4f3a1[m[33m ([m[1;36mHEAD -> [m[1;32mguoji#942-2[m[33m, [m[1;31morigin/guoji#942-2[m[33m)[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Fri Feb 22 09:23:43 2019 +0800
+
+    优化质检员工作台和质检主管工作台
+
+[33mcommit eda79f98f06e750e0338b2855a10c939d115b6fc[m
+Merge: 8dd2785 49fceec
+Author: 郭基 <lovelykal@163.com>
+Date:   Thu Feb 21 16:34:59 2019 +0800
+
+    Merge branch 'guoji#942' into guoji#942-2
+
+[33mcommit 8dd27853e7478dc77e4ccc226361dec38da4bec6[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmaster[m[33m)[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Feb 21 16:03:12 2019 +0800
+
+    修改产品请求方式
+
+[33mcommit 49fceec1cdab76d8ddcb9e7924357cbdbae8c6fb[m[33m ([m[1;31morigin/guoji#942[m[33m, [m[1;32mguoji#942[m[33m)[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Thu Feb 21 15:14:16 2019 +0800
+
+    优化现场主管工作台
+
+[33mcommit 4e77de4ed824b37882320a0793533517bd443c4d[m
+Merge: edcc40a dab9e64
+Author: 郭基 <lovelykal@163.com>
+Date:   Thu Feb 21 15:13:31 2019 +0800
+
+    Merge branch 'guoji#942' of http://119.27.184.90/crm/nui into guoji#942
+
+[33mcommit edcc40a1a30ea36da9adabec49f64c8ed6a9935f[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Thu Feb 21 10:22:15 2019 +0800
+
+    修改cit dev地址为"ws://119.27.184.157:9050
+
+[33mcommit 2eff7a53857ad565919a366b0eb30abc0d248036[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Wed Feb 20 18:50:47 2019 +0800
+
+    修改
+
+[33mcommit 68b0fa95bdbfb4902ab335651b4a284ac9fd70c8[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Wed Feb 20 18:33:52 2019 +0800
+
+    坐席工作台界面优化
+
+[33mcommit c9650a1ffce1d73cd18680f4beee8884e47ef148[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Wed Feb 20 10:13:56 2019 +0800
+
+    修改
+
+[33mcommit 1e8564d2874c4794e9ec41929496a24120026440[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Feb 21 11:54:58 2019 +0800
+
+    修改产品访问地址
+
+[33mcommit dab9e647dfa86ccecfab2fbef0a1892c91705301[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Thu Feb 21 10:22:15 2019 +0800
+
+    修改cit dev地址为"ws://119.27.184.157:9050
+
+[33mcommit f10bdb995fdf2e2d5bb0783697c0ff3c71b27e9e[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Wed Feb 20 18:50:47 2019 +0800
+
+    修改
+
+[33mcommit fdfbaa3741206d03f378974c2c282d2c9a6c3f24[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Wed Feb 20 18:33:52 2019 +0800
+
+    坐席工作台界面优化
+
+[33mcommit be7c42391105e99dbe65230a284001de055f6d5a[m
+Merge: d5c885b d101c5e
+Author: 郭基 <lovelykal@163.com>
+Date:   Wed Feb 20 10:31:38 2019 +0800
+
+    Merge branch 'guoji#942' of http://119.27.184.90/crm/nui into guoji#942
+
+[33mcommit d5c885b342ade8a4ea91c5eed45393bd63acec75[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Wed Feb 20 10:13:56 2019 +0800
+
+    修改
+
+[33mcommit d101c5eca18642869f19c8563feb057fdc56f163[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Wed Feb 20 10:13:56 2019 +0800
+
+    修改
+
+[33mcommit e9dcf3b3f489f266b83f5f2a709e50c5022a6960[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Feb 19 16:45:07 2019 +0800
+
+    拨打任务产品修改
+
+[33mcommit fb75847283accef12b813501a1c1725b8194378c[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Feb 18 11:28:48 2019 +0800
+
+    活动修改
+
+[33mcommit 664da4bb5d4972dc3c06b3c936c0c6037a2c703a[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Feb 18 10:51:08 2019 +0800
+
+    产品模块修改
+
+[33mcommit 19ba9ecbf580e69d14b665e951a21b13b18caef6[m
+Merge: 3c2d8f4 1cc500e
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Thu Feb 14 02:33:05 2019 +0000
+
+    Merge branch 'linn#924' into 'master'
+    
+    完成issue#924
+    
+    See merge request crm/nui!168
+
+[33mcommit 3c2d8f4f38852466096994de8d77a59c60d608ba[m
+Merge: 23d29c9 4bf5c66
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Thu Feb 14 01:46:38 2019 +0000
+
+    Merge branch 'linn#1-28' into 'master'
+    
+    complete fix bug
+    
+    See merge request crm/nui!169
+
+[33mcommit 23d29c9a92ed9ab8b2709c4d6ab390ea8d5a8270[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Feb 11 16:06:11 2019 +0800
+
+    修改微信支付演示页面金额
+
+[33mcommit 9fb303bb9d5a23d9758aeefc6bb8eb409d9ea752[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Jan 31 18:12:40 2019 +0800
+
+    添加微信支付测试界面
+
+[33mcommit 452cd3b872ea9b9c5b63bc7454de2f76a1aa23b9[m
+Merge: efcbd72 de3899b
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Wed Jan 30 09:56:47 2019 +0800
+
+    Merge commit 'de3899bde328ebaff4ee6390e7a9ee5246668eee'
+
+[33mcommit efcbd7237cc6a92fdf263e7991b92ad8d545f23b[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Tue Jan 29 09:59:36 2019 +0800
+
+    optimize sit env configuration.
+
+[33mcommit 4bf5c662ac591a56d116832a38ed3fe7f20e3c13[m[33m ([m[1;31morigin/linn#1-28[m[33m)[m
+Author: linn <linqf@wise2c.com>
+Date:   Mon Jan 28 11:21:10 2019 +0800
+
+    complete fix bug
+
+[33mcommit 753de65ad7475da636ff76a9c7f4839c4eb9bf55[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Fri Jan 25 14:42:00 2019 +0800
+
+    optimize sms content in crmnb env.
+
+[33mcommit 2de4ae6679d730c6f2516058ffa5ee3cda8d2d13[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Fri Jan 25 11:53:05 2019 +0800
+
+    update sms content in nb env.
+
+[33mcommit 50bdba80dcdbf5041b1e20c776ff30d323ab42be[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Jan 25 11:25:20 2019 +0800
+
+    修改接触记录查询微信信息失败和聊天界面上个信息未清空bug
+
+[33mcommit de3899bde328ebaff4ee6390e7a9ee5246668eee[m[33m ([m[1;31morigin/guoji#932[m[33m, [m[1;32mguoji#932[m[33m)[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Fri Jan 25 11:19:56 2019 +0800
+
+    1.修复微信客户接触历史里查询聊天记录不正确的bug
+    2.修复微信客户完成订单后客户详情依然显示的bug
+
+[33mcommit 875881fb81f228e5b68c9907fdb665cf26d2de78[m
+Merge: ae4f260 ff0d9b5
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Fri Jan 25 02:09:52 2019 +0000
+
+    Merge branch 'temp_branch' into 'master'
+    
+    Temp branch
+    
+    See merge request crm/nui!166
+
+[33mcommit ff0d9b5c4d121089f5a8bff537cb3cc975a57348[m[33m ([m[1;31morigin/temp_branch[m[33m)[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Fri Jan 25 09:54:16 2019 +0800
+
+    增加短信发送的开关逻辑
+
+[33mcommit 65f6c7ec6a396b547942ce963e5d723e4963d4e3[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Fri Jan 25 09:40:56 2019 +0800
+
+    增加短信开关
+
+[33mcommit ae4f2607e60bdc20319fc49246a5def7a82803df[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Jan 24 18:45:29 2019 +0800
+
+    添加crmnb 配置
+
+[33mcommit dbae7bda1d36d4775bd85a94a9db1d02b7867e93[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Jan 24 18:02:56 2019 +0800
+
+    添加宁波环境配置
+
+[33mcommit 9a8428630726f9c95420803ba33456b76b3a68a8[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Jan 24 16:39:32 2019 +0800
+
+    微信界面bug修改
+
+[33mcommit f4f3832b9ec43da54ec1d87a8f147d4e0d9b7a98[m
+Merge: b243dcf ad2792f
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Jan 24 16:24:35 2019 +0800
+
+    Merge branch 'clh_issue906'
+    
+    # Conflicts:
+    #       config/prod.env.js
+
+[33mcommit b243dcfe8244caa29593ed8e1d3aea728c7ab3f8[m
+Merge: 74bf813 864e457
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Thu Jan 24 08:07:36 2019 +0000
+
+    Merge branch 'guoji#922' into 'master'
+    
+    Guoji#922
+    
+    See merge request crm/nui!164
+
+[33mcommit 864e457b0e1c0283e22a03f2b7e0829e1ce584d3[m[33m ([m[1;31morigin/guoji#922[m[33m)[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Thu Jan 24 16:03:49 2019 +0800
+
+    把短信内容修改的取消改为关闭
+
+[33mcommit ad2792ff6d634a0411f9ced6aae1442ac116eb81[m[33m ([m[1;31morigin/clh_issue906[m[33m)[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Thu Jan 24 15:59:43 2019 +0800
+
+    修改短信内容
+
+[33mcommit 1cc500e64f832232b8e0df5ff47fb874e0fbfd0f[m[33m ([m[1;31morigin/linn#924[m[33m)[m
+Author: linn <linqf@wise2c.com>
+Date:   Thu Jan 24 14:46:01 2019 +0800
+
+    将所有选择组织的地方改为级联选择组织
+
+[33mcommit e1a8ade86a4ee11a2f0cbc128f3e9309f53a7cf7[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Thu Jan 24 14:31:05 2019 +0800
+
+    修改按钮
+
+[33mcommit b529cc7da435f506c9fba0dc57e758fb509bc2cc[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Thu Jan 24 13:36:09 2019 +0800
+
+    修改
+
+[33mcommit 74bf8133f42f50b42640a99f3b3572a479800349[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Jan 24 10:08:40 2019 +0800
+
+    名单报表功能
+
+[33mcommit f01a47a1e73d7b0037586d3477eac234fe60e62b[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Wed Jan 23 15:50:46 2019 +0800
+
+    修改sit 环境cti配置
+
+[33mcommit 5d91b48fa13bdabecbf12ef1240bf65620302c5e[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Wed Jan 23 14:45:56 2019 +0800
+
+    add campaignId in cti.
+
+[33mcommit f938f944cf1d569b467a435057423173958fd580[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Wed Jan 23 14:33:50 2019 +0800
+
+    修改sit环境配置，修改minio配置
+
+[33mcommit f435ee8a942e427d766887906e547b6a4361b549[m[33m ([m[1;32mguoji#922[m[33m)[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Wed Jan 23 10:23:19 2019 +0800
+
+    修复不能增加三级节点的bug
+
+[33mcommit d256d2cf1795d6547285152374890d1f4a5f3433[m
+Merge: 5d8f393 ba07362
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Wed Jan 23 01:41:30 2019 +0000
+
+    Merge branch 'linn#920' into 'master'
+    
+    完成issue#920
+    
+    See merge request crm/nui!161
+
+[33mcommit ba073624bca4d07a5fbb6fcd89786a8a87bffdaa[m[33m ([m[1;31morigin/linn#920[m[33m)[m
+Author: linn <linqf@wise2c.com>
+Date:   Tue Jan 22 17:38:00 2019 +0800
+
+    暂定隐藏小结 待小结统一为一个时恢复
+
+[33mcommit 079c8859beaed4a897737070e76cce6ffd8f55d4[m
+Author: linn <linqf@wise2c.com>
+Date:   Tue Jan 22 16:44:22 2019 +0800
+
+    增加级联选择组织
+
+[33mcommit 5d8f393c68703c764eaa4039c928eb3c1b748b04[m
+Merge: d5d1a24 c29c4da
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Tue Jan 22 07:57:12 2019 +0000
+
+    Merge branch 'clh_issue919' into 'master'
+    
+    Clh issue919
+    
+    See merge request crm/nui!160
+
+[33mcommit c29c4da0b38eb197600f31af23a8b57e3d3fe00d[m[33m ([m[1;31morigin/clh_issue919[m[33m)[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Tue Jan 22 15:51:35 2019 +0800
+
+    修改人员结构样式
+
+[33mcommit 463b99f62553388206a54eb4675fd8635189abb4[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Tue Jan 22 15:05:38 2019 +0800
+
+    员工信息展示
+
+[33mcommit 2f1c91ecb0cd1b723b616f548b6cc2d974ff14ed[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Tue Jan 22 14:48:56 2019 +0800
+
+    修改员工界面，修改员工信息中的入司日期回显问题
+
+[33mcommit 0e12d1b4fd75e6cf4b4bd8e70711ca9dcf59a0b3[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Tue Jan 22 14:00:06 2019 +0800
+
+    解决树结构展示组织的问题
+
+[33mcommit f61a36f1dfd091e99d1c8a87f9381919708bbc33[m
+Author: linn <linqf@wise2c.com>
+Date:   Tue Jan 22 11:29:48 2019 +0800
+
+    修复一个分页问题
+
+[33mcommit c714db796fdf0294ff3a08b524af4d045ebd1dd8[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Tue Jan 22 10:25:17 2019 +0800
+
+    1.修改新建小结时前2级固定不允许修改，并去掉新建根节点的按钮
+    2.修改接触历史选择小结树节点时只能选择最后一级节点，并只能单选
+
+[33mcommit d5d1a244091be41c3e009c7d2852cce902a9e7ac[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Jan 22 09:35:27 2019 +0800
+
+    修改订单报表的显示名称等
+
+[33mcommit b556f3e0310adfa069b2d3fbca6fddc0a16824ca[m
+Author: linn <linqf@wise2c.com>
+Date:   Mon Jan 21 18:02:22 2019 +0800
+
+    fix bug
+
+[33mcommit 3da8c1a5bd8f535c2309effe8b3e3c95c453a8f7[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Mon Jan 21 18:00:18 2019 +0800
+
+    修改页面上改变页面不查询的问题
+
+[33mcommit 17a5fd5b470f34e1428cefe53cf330e17304c313[m
+Author: linn <linqf@wise2c.com>
+Date:   Mon Jan 21 17:03:33 2019 +0800
+
+    complete issue#920
+
+[33mcommit 6232f9b78937b438f0b4e193264db117e7713a85[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Mon Jan 21 15:46:56 2019 +0800
+
+    提交代码
+
+[33mcommit 03d67d9920652d08e36995316647d7f8c4dc005f[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Mon Jan 21 11:44:32 2019 +0800
+
+    隐藏前 2 级操作按钮
+
+[33mcommit 0aee40755c78e5db45ea9776c4f9e52119a82aa0[m
+Author: linn <linqf@wise2c.com>
+Date:   Mon Jan 21 11:09:33 2019 +0800
+
+    stash
+
+[33mcommit 55a76cbfa324c2a612d5512224b9b2bdaa1d740f[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Thu Jan 17 17:19:15 2019 +0800
+
+    测试短信模板
+
+[33mcommit 83dd573c3ba2b691b4e1deb34bc6dfc8731bc469[m
+Merge: b588cee 0acb850
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Thu Jan 17 08:35:50 2019 +0000
+
+    Merge branch 'linn#908' into 'master'
+    
+    add download template button
+    
+    See merge request crm/nui!158
+
+[33mcommit 8be63d01ad6e7faf7915ed6b59b27ce36b155ea6[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Thu Jan 17 15:41:16 2019 +0800
+
+    提交短信发送的代码
+
+[33mcommit 5808f1b5f20ac68d9d1ba2836b99e2b52aa232d9[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Thu Jan 17 15:34:44 2019 +0800
+
+    暂存数据
+
+[33mcommit 0acb850904897e690cdd78fb35e7dfb5c2c42177[m[33m ([m[1;31morigin/linn#908[m[33m)[m
+Author: linn <linqf@wise2c.com>
+Date:   Thu Jan 17 15:14:24 2019 +0800
+
+    add download template button
+
+[33mcommit b588cee910a8ab15e00939efcf5d643d8d2cd818[m
+Merge: 3b0438b be7115f
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Thu Jan 17 06:57:51 2019 +0000
+
+    Merge branch 'linn#908' into 'master'
+    
+    complete
+    
+    See merge request crm/nui!157
+
+[33mcommit be7115f6682cec26753ffb5a8b58e3b0d0d54193[m
+Author: linn <linqf@wise2c.com>
+Date:   Thu Jan 17 14:54:54 2019 +0800
+
+    complete
+
+[33mcommit b2dbcb8dec1a7df955bac05bf2c362f0beb6b45c[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Thu Jan 17 10:12:50 2019 +0800
+
+    暂存
+
+[33mcommit 3b0438b31ed75b9b980326d363746eb240361fd0[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Jan 17 09:29:46 2019 +0800
+
+    correct sex in import.
+
+[33mcommit 15535a274f819c0ef8d3dd99f68db174615a4a63[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Jan 17 09:19:01 2019 +0800
+
+    fix import error.
+
+[33mcommit eca5b0cce73eca98e07b02cf657edb0c6b8a3247[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Jan 17 09:04:54 2019 +0800
+
+    fix error in import customer.
+
+[33mcommit 32c270047964a523abfd0d9e87fb41af019737ed[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Jan 17 01:03:17 2019 +0800
+
+    fix error in import customer.
+
+[33mcommit 73c427536ba9ef19d15b9083d8c7d805293f3f83[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Jan 17 00:46:18 2019 +0800
+
+    fix error in import customer.
+
+[33mcommit fbd129cba8d240378ebf52aa44dfde1dd09a61d4[m
+Merge: 81e13dc b8b2e97
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Jan 17 00:17:11 2019 +0800
+
+    Merge commit 'b8b2e97032eafbc002a45c56d46e83da30e3dcc9'
+
+[33mcommit 81e13dcd4e8a85edc2347795c3f6b4884acb3615[m
+Merge: 1027a0f e2c38d5
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Jan 17 00:16:49 2019 +0800
+
+    Merge commit 'e2c38d52e7cb616a4a1f99c8e8c7252341fa29c7'
+
+[33mcommit 742471bf5324d1b3dba13f0a45a9131b0a7f3373[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Wed Jan 16 18:45:38 2019 +0800
+
+    暂存通话超过时长发送短信的代码
+
+[33mcommit b8b2e97032eafbc002a45c56d46e83da30e3dcc9[m[33m ([m[1;31morigin/wx-#904[m[33m)[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Wed Jan 16 15:11:15 2019 +0800
+
+    暂存
+
+[33mcommit e2c38d52e7cb616a4a1f99c8e8c7252341fa29c7[m[33m ([m[1;31morigin/clh_issue902[m[33m)[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Wed Jan 16 10:35:12 2019 +0800
+
+    修改性别代码1女，0男
+
+[33mcommit 1027a0f52607b1127fd706df19b0802dba8a02f5[m
+Merge: 2558867 2bdc46e
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Tue Jan 15 10:27:33 2019 +0000
+
+    Merge branch 'linn#901' into 'master'
+    
+    完成抽取开启微信的全局配置
+    
+    See merge request crm/nui!154
+
+[33mcommit 2558867aa09cd1c0dc9388a869c1332ee413149c[m
+Merge: 9fcd729 83794f7
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Tue Jan 15 10:27:13 2019 +0000
+
+    Merge branch 'clh_issue902' into 'master'
+    
+    取消客户身份证、性别为必填项的验证
+    
+    See merge request crm/nui!155
+
+[33mcommit 2bdc46e9b0b5f6249b74048b7fe906c634e1b7e7[m[33m ([m[1;31morigin/linn#901[m[33m)[m
+Author: linn <linqf@wise2c.com>
+Date:   Tue Jan 15 16:52:55 2019 +0800
+
+    错误操作 恢复编辑
+
+[33mcommit bcaffc23c32953318ce37bdbbb7b39331c1d5df8[m
+Author: linn <linqf@wise2c.com>
+Date:   Tue Jan 15 16:47:52 2019 +0800
+
+    complete issue #901
+
+[33mcommit 83794f73460a66dcfd5717cce9f8720d9412c0eb[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Tue Jan 15 14:16:03 2019 +0800
+
+    取消客户身份证、性别为必填项的验证
+
+[33mcommit 9fcd729bce8c20c5e6027447905d81634ed7ba6b[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Fri Jan 11 15:58:36 2019 +0800
+
+    fix portal api url in wechat bind phone page.
+
+[33mcommit bde26c15ffc608629ce81273978d8ae1eff92166[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Jan 10 09:13:44 2019 +0800
+
+    optimize cannot dia tip at ready status.
+
+[33mcommit 9f27d96dbdd49509aca9505db6fa05332a101b71[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Tue Jan 8 19:09:08 2019 +0800
+
+    optimize check length logic in edit campaign.
+
+[33mcommit 9842263b437289a514708b1973a769bb3f110909[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Tue Jan 8 18:31:07 2019 +0800
+
+    fix error in edit campaign.
+
+[33mcommit e0675a1a881a96fa2275947b7a77f04cfea5d147[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Sat Jan 5 14:24:52 2019 +0800
+
+    fix wrong address in test env.
+
+[33mcommit 34e7bc2c92d841fb7b5a5fe0b25de271aa7890db[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Fri Jan 4 16:56:44 2019 +0800
+
+    add build:test script for jindian & add test env configuration & fix error in delete article only in one catalog.
+
+[33mcommit a89d27f538fde5746073393ef128a58efe9946b2[m
+Merge: 527a2d2 78d0055
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Fri Jan 4 08:36:49 2019 +0000
+
+    Merge branch 'linn#892' into 'master'
+    
+    恢复微信
+    
+    See merge request crm/nui!153
+
+[33mcommit 78d00559b208c488aab78ce98240df189e3dfc4d[m[33m ([m[1;31morigin/linn#892[m[33m)[m
+Author: linn <linqf@wise2c.com>
+Date:   Fri Jan 4 16:16:34 2019 +0800
+
+    add wechatPhone
+
+[33mcommit ebee7a1ee0504b3113dc4be2f32ac71af8bc4715[m
+Author: linn <linqf@wise2c.com>
+Date:   Fri Jan 4 11:00:17 2019 +0800
+
+    test
+
+[33mcommit fe348d2e00eb7e2879246a452a7103acaabf64ed[m
+Author: linn <linqf@wise2c.com>
+Date:   Thu Jan 3 15:28:20 2019 +0800
+
+    test6
+
+[33mcommit 7546519af44501055ba493d5a86e5f76f1921944[m
+Author: linn <linqf@wise2c.com>
+Date:   Thu Jan 3 15:03:33 2019 +0800
+
+    test5
+
+[33mcommit 06c16ecb687a3cc3a1d167fa7bcc42623117e009[m
+Author: linn <linqf@wise2c.com>
+Date:   Thu Jan 3 14:59:40 2019 +0800
+
+    test4
+
+[33mcommit 17278cc9b7294febef6fb864687fd686f70ea2a9[m
+Author: linn <linqf@wise2c.com>
+Date:   Thu Jan 3 14:43:35 2019 +0800
+
+    test3
+
+[33mcommit f016cb581898a15c3629b612e1bf754a50f66133[m
+Author: linn <linqf@wise2c.com>
+Date:   Thu Jan 3 13:36:38 2019 +0800
+
+    test
+
+[33mcommit 527a2d23844e1ff8c00bec3af9fe5236a134fe64[m
+Author: linn <linqf@wise2c.com>
+Date:   Sat Dec 29 21:50:50 2018 +0800
+
+    commit
+
+[33mcommit f740d13d5eac3518a3824d33bba70d6468b5912a[m
+Author: linn <linqf@wise2c.com>
+Date:   Sat Dec 29 18:23:31 2018 +0800
+
+    test
+
+[33mcommit b7ec22ec649c2922b1e4af5084aa9e6d2c03ec10[m
+Merge: 9a8ea35 0d790e9
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Sat Dec 29 06:36:03 2018 +0000
+
+    Merge branch 'linn#889' into 'master'
+    
+    完成issue#889
+    
+    See merge request crm/nui!151
+
+[33mcommit 0d790e926e0841ec7fe1feb3926df17e79547a15[m[33m ([m[1;31morigin/linn#889[m[33m)[m
+Author: linn <linqf@wise2c.com>
+Date:   Sat Dec 29 14:05:54 2018 +0800
+
+    完成issue#889
+
+[33mcommit 9a8ea351d7275fd3868f3bd9d46ab0369db7b42b[m
+Merge: 895ba9d 0a48c28
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Sat Dec 29 03:33:28 2018 +0000
+
+    Merge branch 'linn#886' into 'master'
+    
+    完成issue#886
+    
+    See merge request crm/nui!150
+
+[33mcommit 895ba9d709e9a59b1945665c8cad5e912cd5c479[m
+Merge: e7b6f48 91df79e
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Sat Dec 29 11:32:09 2018 +0800
+
+    Merge branch 'master' of http://119.27.184.90/crm/nui
+
+[33mcommit e7b6f48081a35f34da6b958263bb373a79163e35[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Sat Dec 29 11:30:46 2018 +0800
+
+    add build:loan script.
+
+[33mcommit 91df79ef2f5d5e504b7be001af64d36a77f59640[m
+Merge: 20c5686 dbcfb1b
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Sat Dec 29 03:26:38 2018 +0000
+
+    Merge branch 'linn#883' into 'master'
+    
+    complete issue#883
+    
+    See merge request crm/nui!149
+
+[33mcommit 20c56868e985808765200e68b590640f8bdc54e8[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Sat Dec 29 11:19:34 2018 +0800
+
+    add configuration for loan env.
+
+[33mcommit dbcfb1bd8cfe9d57fde07a80ab5dde57b89c0665[m[33m ([m[1;31morigin/linn#883[m[33m)[m
+Author: linn <linqf@wise2c.com>
+Date:   Fri Dec 28 10:13:23 2018 +0800
+
+    fix bug
+
+[33mcommit 53ec29d135158368aeece9a8d414c1cb4e4812bd[m
+Author: linn <linqf@wise2c.com>
+Date:   Thu Dec 27 11:24:29 2018 +0800
+
+    fixed
+
+[33mcommit 09a11743c05a17d070177374ae465665b60a0dff[m
+Author: linn <linqf@wise2c.com>
+Date:   Thu Dec 27 10:56:02 2018 +0800
+
+    fix bug
+
+[33mcommit 3980b74beb57537107963e4c18692ed8cb34fec2[m
+Author: linn <linqf@wise2c.com>
+Date:   Wed Dec 26 17:14:34 2018 +0800
+
+    complete issue#883
+
+[33mcommit 0a48c28a77fbb9ba2712348b486170638b4663ec[m[33m ([m[1;31morigin/linn#886[m[33m)[m
+Author: linn <linqf@wise2c.com>
+Date:   Wed Dec 26 12:18:04 2018 +0800
+
+    complete issue#886
+
+[33mcommit 73d48ff7baa863a82fff565265fed249fd26d6e8[m
+Author: linn <linqf@wise2c.com>
+Date:   Tue Dec 25 14:18:29 2018 +0800
+
+    stash
+
+[33mcommit 84464cd1425f7f77a95fe2ed16b2474c7d559593[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Dec 25 11:15:09 2018 +0800
+
+    修改客户信息错误BUG
+
+[33mcommit bc543e5ada80d267c239d89f409f632381efdf2b[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Dec 17 17:24:25 2018 +0800
+
+    update port
+
+[33mcommit 4d4ec1f1634f89c2fc138ab3fb2b8815e1205ee6[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Dec 17 12:07:50 2018 +0800
+
+    隐藏微信相关
+
+[33mcommit 0324672215ed1149deae5b4751fff3fac62e79f9[m[33m ([m[1;32mguoji#888[m[33m)[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Dec 17 02:16:49 2018 +0800
+
+    自动弹屏
+
+[33mcommit 90182483ad2063ade390a7f76274687ad6d18d00[m[33m ([m[1;31morigin/test[m[33m)[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Sun Dec 16 15:56:54 2018 +0800
+
+    知识库附件问题
+
+[33mcommit f77540160a5126870265c0a054a2b20325d43a80[m
+Merge: 561b178 98fa9b2
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Sun Dec 16 07:45:25 2018 +0000
+
+    Merge branch 'wx-wei-#876' into 'master'
+    
+    接触历史查询修改
+    
+    See merge request crm/nui!145
+
+[33mcommit 98fa9b2292ff74ef1fb3e9866e6276aaa3361f54[m[33m ([m[1;31morigin/wx-wei-#876[m[33m)[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Sun Dec 16 15:43:36 2018 +0800
+
+    接触历史查询修改
+
+[33mcommit 561b178a41e209ac9fcdee857b1a22e04832d02e[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Sun Dec 16 15:11:27 2018 +0800
+
+    活动界面修改 - 自动外呼
+
+[33mcommit 7f1108c3aeec5d165099d96c2f111faf227a21bd[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Sun Dec 16 11:12:57 2018 +0800
+
+    修改页面缩小数据被挡住BUG
+
+[33mcommit 6eefe76bf8f886278d4b234cca16fbc2665299e9[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Sun Dec 16 10:31:05 2018 +0800
+
+    modify interval time from 600000 (10 minutes) to 15000 (15 seconds).
+
+[33mcommit 3e448c29eb2ea41e2bd3242ed88c249e3fff2f59[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Sat Dec 15 16:52:08 2018 +0800
+
+    修改拨打按钮状态错误BUG
+
+[33mcommit 8633e577317ce7e259583778ac96f6ac64b6354e[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Sat Dec 15 13:58:43 2018 +0800
+
+    修改navbar样式
+
+[33mcommit e403f06b72950b83032cbe97460d079ae1cee606[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Sat Dec 15 13:20:04 2018 +0800
+
+    小结相关bug
+
+[33mcommit a073d8ac702e4627cbfbdfe41c58c49785319d3a[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Sat Dec 15 13:19:06 2018 +0800
+
+    修改电话图标逻辑
+
+[33mcommit 09720cd4bc7c5dcb018adfa749f5bbad7f816efb[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Dec 14 16:20:08 2018 +0800
+
+    活动自动外呼参数
+
+[33mcommit b1cc65d4d1b9954ea1b88844f0503b4c8be158af[m
+Merge: 470b7f6 d57ba9e
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Fri Dec 14 08:07:05 2018 +0000
+
+    Merge branch 'liuDownload' into 'master'
+    
+    Liu download
+    
+    See merge request crm/nui!136
+
+[33mcommit d57ba9e82edb783a4c54796874959639ad158ae9[m[33m ([m[1;31morigin/liuDownload[m[33m)[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Fri Dec 14 16:05:01 2018 +0800
+
+    comment out download report data button.
+
+[33mcommit 470b7f63e55f7d42373e20c2ec2b71e3c00a7f8d[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Dec 14 16:00:38 2018 +0800
+
+    修改tab栏无法滚动问题
+
+[33mcommit ae82bc664d36ef8a041f2c73044e1b85d2fb0c2b[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Dec 6 15:01:32 2018 +0800
+
+    websocket 重连机制
+
+[33mcommit bb67223a099c1cc1bbf39e59d1f643d539896034[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Dec 5 14:18:54 2018 +0800
+
+    xiugai
+
+[33mcommit a280ca8d4548792c71395c303c989f327ea59fa0[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Dec 4 16:45:25 2018 +0800
+
+    xiugai
+
+[33mcommit 737b373ad14ac17eeb0f25361874c28b0a94f519[m
+Merge: 016e6bf e8f8fa5
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Mon Dec 3 09:31:08 2018 +0000
+
+    Merge branch 'xiugaiReport' into 'master'
+    
+    Xiugai report
+    
+    See merge request crm/nui!133
+
+[33mcommit e8f8fa528e5e013e0e7ac8197a7ca298c20b6770[m[33m ([m[1;31morigin/xiugaiReport[m[33m)[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Mon Dec 3 16:11:14 2018 +0800
+
+    xiugai
+
+[33mcommit 58aa2047663913212aa6cb35ec0fe2e59f75a8c2[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Mon Dec 3 11:33:09 2018 +0800
+
+    xiugai
+
+[33mcommit 59dfc3289bc3f739d9b69b053b8fdbd8d82bb7a6[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Mon Dec 3 11:07:49 2018 +0800
+
+    xiugai
+
+[33mcommit 646f96203b14fe9232866c7e3e64374b42e7cfd2[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Mon Dec 3 10:29:58 2018 +0800
+
+    xiugai
+
+[33mcommit 3976d2acbbd34b3256a127a9b2a2b0cb046aab5e[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Mon Dec 3 10:01:29 2018 +0800
+
+    xiugaiReport
+
+[33mcommit 4a10ed5a89d3e4372bc1ea91734c8a2913805608[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Nov 30 18:40:43 2018 +0800
+
+    xiugai
+
+[33mcommit c25b2404334c5c6e8b885ddde4ed16743d29093c[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Nov 30 18:10:03 2018 +0800
+
+    xiugai
+
+[33mcommit 016e6bf8599445f4f2b5b37f28cddfabad59a906[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Nov 30 18:07:45 2018 +0800
+
+    微信聊天支持表情
+
+[33mcommit 7157a37fea3065e3c5d547a2a043c7f7fe3cee71[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Fri Nov 30 15:24:11 2018 +0800
+
+    optimize common request interceptors add default request content-type application/json.
+
+[33mcommit 1454eab2f16afd4b8a83cdfb02acded81be48d46[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Nov 30 15:15:56 2018 +0800
+
+    质检结果爆表
+
+[33mcommit c9e412faf2e23781e97458334f160c520406c58c[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Nov 30 14:14:24 2018 +0800
+
+    xiugai
+
+[33mcommit 5ec178f8b5851fd536004c04eaf459968f69c3ef[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Fri Nov 30 13:32:45 2018 +0800
+
+    add common interceptors to omit null fields in query-string and body.
+
+[33mcommit a81434c69bd31b714ded898bc6f2de962f7038b8[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Nov 30 11:43:51 2018 +0800
+
+    微信手机号
+
+[33mcommit 8d9b6cd5100e89a181d204fdde2988c65d14f354[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Nov 30 11:39:34 2018 +0800
+
+    xiugai
+
+[33mcommit 5da9d66da2014ca37a15cc6e553b4be574823dab[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Nov 30 11:31:01 2018 +0800
+
+    批次导入修改到minio
+
+[33mcommit 1a4e5ade9d2796aacb753848dd820240c9c56c6a[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Thu Nov 29 18:21:35 2018 +0800
+
+    xiugai
+
+[33mcommit 3f792520b02318add9041b248a7d84f6af43c651[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Thu Nov 29 17:30:14 2018 +0800
+
+    xiugai
+
+[33mcommit 1032a46d8d9e3bcfd81d4562e5d548a6b37fa702[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Nov 29 16:53:08 2018 +0800
+
+    微信聊天功能
+
+[33mcommit bd33a1344713eb4070b9ae07abbac70b6885df4c[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Nov 29 11:44:54 2018 +0800
+
+    rollback api config.
+
+[33mcommit 7595c7db18fa7ab478f340d2e381754d78b37acd[m
+Merge: 12a6029 d4748c3
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Nov 29 11:22:45 2018 +0800
+
+    Merge branch 'master' of http://119.27.184.90/crm/nui
+
+[33mcommit 12a60294f96d2fa0dce0172dfcbb4bb7e1eacdf5[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Wed Nov 28 18:30:50 2018 +0800
+
+    optimize no operate time warn logic.
+
+[33mcommit 68bd05e9c37a6180039beefa5ddc5a484c01e561[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Wed Nov 28 18:25:37 2018 +0800
+
+    fix search time.
+
+[33mcommit 28d3bce26279410aade15f9450b823aa5b634d84[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Nov 28 11:39:07 2018 +0800
+
+    xiugai
+
+[33mcommit c36d0263749a94b480fd58094f2c6f9e570bc1c8[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Nov 28 10:40:24 2018 +0800
+
+    xiugai
+
+[33mcommit c7cc19eacd9795ac49868f26173bda7961728ff6[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Nov 27 18:11:59 2018 +0800
+
+    xiugai
+
+[33mcommit e3e6a4a0c45945e9c5e88bf9bb8f5c2222689ac0[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Nov 27 17:52:03 2018 +0800
+
+    xiugai
+
+[33mcommit bb4c00eb9e8f2b971395ecfbc7e29abdf4f510da[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Nov 27 17:28:13 2018 +0800
+
+    xiugai
+
+[33mcommit b5dd3546c76d9e6c61bbab91779ded903a6eb722[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Nov 27 15:28:56 2018 +0800
+
+    xiugai
+
+[33mcommit 709110ba53755d3a7fadad1d90d61eff36195133[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Mon Nov 26 14:59:22 2018 +0800
+
+    xuanxiang
+
+[33mcommit 612cf78a25ae97ceb95a6bcb62964687d4912775[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Thu Nov 22 09:58:47 2018 +0800
+
+    xiugai
+
+[33mcommit ca44c809751e6d95ff163b270701faae412b1b89[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Nov 20 16:48:39 2018 +0800
+
+    微信手机绑定界面
+
+[33mcommit 99dc511577889734452171c23d0000565ff87f72[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Mon Nov 19 18:12:52 2018 +0800
+
+    修改时间问题
+
+[33mcommit ab942ff41267879e44f60dff6dc2db1e7e3d16f8[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Fri Nov 16 11:15:59 2018 +0800
+
+    修改时间插件问题
+
+[33mcommit 8a59e06b7bb10f089e2e92f3e3dddf337fa5f445[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Nov 14 11:23:05 2018 +0800
+
+    xiugai
+
+[33mcommit e885789ff6a46d7866e26f26ab15b4615f61b538[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Nov 14 11:02:17 2018 +0800
+
+    xiugai
+
+[33mcommit 655a83cda4b396a8ca73f2985dd7b4df858d5286[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Thu Nov 29 11:06:12 2018 +0800
+
+    暂存配置
+
+[33mcommit d4748c3cac10a1bec232eac0b3a1e7ee97bb4e5c[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Wed Nov 28 18:30:50 2018 +0800
+
+    optimize no operate time warn logic.
+
+[33mcommit 560bbf88e24271792c106c924b87479d588f2561[m
+Merge: e590b49 2a00053
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Wed Nov 28 18:25:50 2018 +0800
+
+    Merge branch 'master' of http://119.27.184.90/crm/nui
+
+[33mcommit e590b49b1435d8edf9d6893c5a3e6d61c83c89d3[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Wed Nov 28 18:25:37 2018 +0800
+
+    fix search time.
+
+[33mcommit 2a0005367d4298ead3a7556c9c727f82cf3b5260[m
+Merge: 112e351 55a68c9
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Wed Nov 28 10:20:40 2018 +0000
+
+    Merge branch 'liuOption' into 'master'
+    
+    Liu option
+    
+    See merge request crm/nui!127
+
+[33mcommit 55a68c9aebaa8126ef722cdaf8352ff25b71c6df[m[33m ([m[1;31morigin/liuOption[m[33m)[m
+Merge: e8d6fae 112e351
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Wed Nov 28 10:19:59 2018 +0000
+
+    Merge branch 'master' into 'liuOption'
+    
+    # Conflicts:
+    #   src/views/account_list/index.vue
+    #   src/views/employee_list/index.vue
+    #   src/views/organization_list/index.vue
+
+[33mcommit e8d6fae0f09a9efcb2782d931c276fecf92c8ecb[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Nov 28 11:39:07 2018 +0800
+
+    xiugai
+
+[33mcommit df859bbdd36f82ee67781d9b4134452cfef63690[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Nov 28 10:40:24 2018 +0800
+
+    xiugai
+
+[33mcommit 9fbc09984b85677abe434739e3f91450711fc4fa[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Nov 27 18:11:59 2018 +0800
+
+    xiugai
+
+[33mcommit cfb18c59c359e25d94b1245fbeafbf55016230cd[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Nov 27 17:52:03 2018 +0800
+
+    xiugai
+
+[33mcommit ff50b4b6a9e23965dc5f70f470840d3d3505a67d[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Nov 27 17:28:13 2018 +0800
+
+    xiugai
+
+[33mcommit d9a23542be17d4e32e7507097376649e3d3813ee[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Tue Nov 27 15:34:36 2018 +0800
+
+    回调配置
+
+[33mcommit 3afd4940ba67a02e9dda52ead853ddef1e73bf67[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Tue Nov 27 15:32:57 2018 +0800
+
+    基本法配置ui暂存，api接口未调
+
+[33mcommit 195cfbf490328608ed2d357fc5c93092c2822d24[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Nov 27 15:28:56 2018 +0800
+
+    xiugai
+
+[33mcommit 4da4e4abb350060a935aecac563618403f957a72[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Mon Nov 26 14:59:22 2018 +0800
+
+    xuanxiang
+
+[33mcommit 112e351e32ffe24996ed3ceb41c8021a49976942[m
+Merge: cb9e9cd 68fbbc1
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Sat Nov 24 05:26:28 2018 +0000
+
+    Merge branch 'clh_issue781' into 'master'
+    
+    Clh issue781
+    
+    See merge request crm/nui!126
+
+[33mcommit b579cab3be799a5cb87b6f1b262b9d25a34f9d0f[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Fri Nov 23 10:06:27 2018 +0800
+
+    提交修改
+
+[33mcommit 5d4a8e7c34e2762770aef595c2be393ddb416bac[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Thu Nov 22 09:58:47 2018 +0800
+
+    xiugai
+
+[33mcommit ba6dfa0695472a6fd4c7dfecdbe0f0b89d9815da[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Wed Nov 21 15:33:39 2018 +0800
+
+    暂存基本法基本数据配置管理的ui
+
+[33mcommit cb9e9cd129952b009e67a0a95621cc8b89c7249a[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Nov 20 16:48:39 2018 +0800
+
+    微信手机绑定界面
+
+[33mcommit 68fbbc1e65b119fe87150aa6283a23365e0edaf6[m[33m ([m[1;31morigin/clh_issue781[m[33m)[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Mon Nov 19 18:12:52 2018 +0800
+
+    修改时间问题
+
+[33mcommit 2daa66efe324b09175b9cde4a825df5bc990a24e[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Fri Nov 16 11:15:59 2018 +0800
+
+    修改时间插件问题
+
+[33mcommit 58499945a36d2687856b95e742ec9bfb380f5ade[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Nov 14 11:23:05 2018 +0800
+
+    xiugai
+
+[33mcommit 3da28f5486c41200b0db2f58916a78d291fe576e[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Nov 14 11:02:17 2018 +0800
+
+    xiugai
+
+[33mcommit d2ce2c1b559efbdfc2858d44e87e7d6050f20441[m
+Merge: 8e5beab a975c02
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Wed Nov 14 01:13:59 2018 +0000
+
+    Merge branch 'clh_issue760' into 'master'
+    
+    修改拨打界面传参
+    
+    See merge request crm/nui!122
+
+[33mcommit a975c022db4130807812eadf17e5b0ff71dd9a56[m[33m ([m[1;31morigin/clh_issue760[m[33m)[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Tue Nov 13 10:53:33 2018 +0800
+
+    修改拨打界面传参
+
+[33mcommit 8e5beab8b01bec1648d29089461c9b1ba7e34c93[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Tue Nov 13 09:36:11 2018 +0800
+
+    remove select about product in order report.
+
+[33mcommit 950469c1133242a491e0833bfe43aab2f4461b11[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Fri Nov 9 10:24:25 2018 +0800
+
+    update tui ws server url configuration at master and sit env.
+
+[33mcommit 6af8ffe251a5eada32fbc5aa2f8a9a9be2e8de27[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Nov 8 18:15:21 2018 +0800
+
+    删除所有的序号列
+
+[33mcommit 82a73bbd2c6b9102432800171856c0f5713f528b[m
+Merge: bfad21c 00a018a
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Nov 8 14:11:46 2018 +0800
+
+    Merge branch 'liuNewWork'
+    
+    * liuNewWork:
+      xiugai
+    
+    # Conflicts:
+    #       src/views/ord_qc_workingset/index.vue
+    #       src/views/qc_monitor_workingset/index.vue
+
+[33mcommit 00a018a390b9f82dcfb2d25ef37e91cb031d1a8d[m[33m ([m[1;31morigin/liuNewWork[m[33m)[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Thu Nov 8 12:05:01 2018 +0800
+
+    xiugai
+
+[33mcommit bfad21cb96694ece4e63e26e10907cc01374ca9b[m
+Merge: 0e0726a ee0003c
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Nov 8 11:53:33 2018 +0800
+
+    Merge branch 'clh_check'
+    
+    * clh_check:
+      修改登录登出话机对班长监控功能的影响
+      班长坐席在强插，强拆，监听，耳语功能是，必须先登录话机
+      修改质检查询条件
+      修改质检权限判断，电话监控逻辑
+    
+    # Conflicts:
+    #       src/api/reportPermission.js
+
+[33mcommit 0e0726acddf4847864e8358bca577909a91c11c6[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Nov 8 11:40:24 2018 +0800
+
+    remove useless logs.
+
+[33mcommit c3a1ddb6129963d96294aa57ed499ad984da1104[m
+Merge: 12025b3 56c8fd9
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Thu Nov 8 03:18:14 2018 +0000
+
+    Merge branch 'liuNewWork' into 'master'
+    
+    Liu new work
+    
+    See merge request crm/nui!119
+
+[33mcommit 56c8fd91a6585eb86262949f59349bf86c5c4904[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Thu Nov 8 11:16:46 2018 +0800
+
+    xiugai
+
+[33mcommit 1dedb74091c72f19c0f6d8eded7964a651339d94[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Nov 7 18:13:37 2018 +0800
+
+    tag
+
+[33mcommit ee0003c032069dd9e12600fd79a396036f4f6d8c[m[33m ([m[1;31morigin/clh_check[m[33m)[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Wed Nov 7 14:17:21 2018 +0800
+
+    修改登录登出话机对班长监控功能的影响
+
+[33mcommit 12025b3e726f922ec6d426e17fcb2a8683918437[m
+Merge: c601f5e b829285
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Wed Nov 7 01:57:36 2018 +0000
+
+    Merge branch 'liuWorkingSet' into 'master'
+    
+    xiugai
+    
+    See merge request crm/nui!117
+
+[33mcommit c1bb57be5268210c2061930e7e357b99b2c80710[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Wed Nov 7 09:35:17 2018 +0800
+
+    班长坐席在强插，强拆，监听，耳语功能是，必须先登录话机
+
+[33mcommit b829285575c1a1b8a359ec5d164c58742f530a7e[m[33m ([m[1;31morigin/liuWorkingSet[m[33m)[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Nov 6 19:29:35 2018 +0800
+
+    xiugai
+
+[33mcommit d4819c6b03a8df04c849cfa53d35454cabcf3b79[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Tue Nov 6 17:55:01 2018 +0800
+
+    修改质检查询条件
+
+[33mcommit 6a7436f11a0827718b21ddd6e497b0d8387da037[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Tue Nov 6 17:02:44 2018 +0800
+
+    修改质检权限判断，电话监控逻辑
+
+[33mcommit c601f5e76e127c42b1a439eeff0f842a24de8069[m
+Merge: 0060a9f d904d65
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Tue Nov 6 08:04:56 2018 +0000
+
+    Merge branch 'liuWorkingSet' into 'master'
+    
+    Liu working set
+    
+    See merge request crm/nui!114
+
+[33mcommit d904d659785d3a762ed1ff92d098800301fa9aa0[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Nov 6 16:03:54 2018 +0800
+
+    xiugai
+
+[33mcommit 82a6c0bd5b8cc8ebc69cd2f209087ba1a63faeee[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Nov 6 14:44:37 2018 +0800
+
+    xiugai
+
+[33mcommit 0060a9f261a0d58ed0620610aaa3717144ac1bb3[m
+Merge: 666efcd 0723d5d
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Tue Nov 6 06:08:27 2018 +0000
+
+    Merge branch 'clh_issue507' into 'master'
+    
+    修改不能拨打自己的逻辑
+    
+    See merge request crm/nui!116
+
+[33mcommit 666efcd4ce5d837a3ef86e18cf17c92c9e4d7023[m
+Merge: 93792d6 1ff4e06
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Tue Nov 6 06:03:47 2018 +0000
+
+    Merge branch 'clh_issue744' into 'master'
+    
+    质检平台跳转页面
+    
+    See merge request crm/nui!115
+
+[33mcommit 1ff4e066109ab5d5e87447564500aa78ee19f946[m[33m ([m[1;31morigin/clh_issue744[m[33m)[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Tue Nov 6 11:26:12 2018 +0800
+
+    修改员工工号为坐席工号
+
+[33mcommit 0723d5d2def550338da1b8d7e7b7267ca9cd0bb3[m[33m ([m[1;31morigin/clh_issue507[m[33m)[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Tue Nov 6 11:06:25 2018 +0800
+
+    修改不能拨打自己的逻辑
+
+[33mcommit f93e2cff66eed6d7b4afff09e47bcd2306177b7c[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Tue Nov 6 10:47:59 2018 +0800
+
+    提交修改
+
+[33mcommit 75f1944e3ef489e3ab9a49ddf2ba35b32a062cff[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Mon Nov 5 18:25:24 2018 +0800
+
+    修改质检工作平台的逻辑
+
+[33mcommit 93792d665ad43eaae004039ba7f6d8081085a1d8[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Mon Nov 5 16:58:15 2018 +0800
+
+    optimize render product select logic.
+
+[33mcommit 383310d8b0a5e0ef3198e4e8d71464dd774b2adb[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Nov 2 18:04:29 2018 +0800
+
+    xiugai
+
+[33mcommit 3148f1006401ec31f5ff79cfebacddd635fbe589[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Nov 2 17:48:05 2018 +0800
+
+    xiugai
+
+[33mcommit 3d15e61df83e82dccbffe366741cbc7b7fe5c510[m
+Merge: a026c5c e8912da
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Fri Nov 2 08:57:58 2018 +0000
+
+    Merge branch 'modify_monitorphone' into 'master'
+    
+    修改电话监控页面
+    
+    See merge request crm/nui!113
+
+[33mcommit e8912daacefefbce545e43577f5b6f4475787744[m[33m ([m[1;31morigin/modify_monitorphone[m[33m)[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Fri Nov 2 15:38:38 2018 +0800
+
+    修改电话监控页面
+
+[33mcommit 3383f99b0eb0aa277db703c0d67c61933f322ba7[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Nov 2 14:45:33 2018 +0800
+
+    xiugai
+
+[33mcommit a026c5c1a3923f36a57c08835685480106ff7e40[m
+Merge: 665a7af 4214336
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Nov 1 17:46:28 2018 +0800
+
+    Merge branch 'master' of http://119.27.184.90/crm/nui
+    
+    * 'master' of http://119.27.184.90/crm/nui:
+      添加页面初始化跳转
+      提交修改
+      修改质检任务接口
+      提交质检工作台功能
+      质检工作台
+
+[33mcommit 665a7af9950fe234a9ca8b7b5c21f627d67e41d1[m
+Merge: 61e14ca 2ddde7e
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Nov 1 17:46:17 2018 +0800
+
+    Merge branch 'clh_issue715'
+    
+    * clh_issue715:
+      班长坐席
+      暂存
+      提交修改
+      暂存工作平台
+    
+    # Conflicts:
+    #       src/views/monitor_workingset/index.vue
+
+[33mcommit 421433625be68d6fac671aaf9844168f90e66c09[m
+Merge: 61e14ca 6ccac6d
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Thu Nov 1 09:40:00 2018 +0000
+
+    Merge branch 'clh_issue684' into 'master'
+    
+    质检工作平台
+    
+    See merge request crm/nui!111
+
+[33mcommit 6ccac6d917983ed965103daf4fb3229df0bb6417[m[33m ([m[1;31morigin/clh_issue684[m[33m)[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Thu Nov 1 16:55:41 2018 +0800
+
+    添加页面初始化跳转
+
+[33mcommit 2ddde7efcb3862a16e7cef9acdf706893ff47148[m[33m ([m[1;31morigin/clh_issue715[m[33m)[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Thu Nov 1 16:51:56 2018 +0800
+
+    班长坐席
+
+[33mcommit 8f985a7d62c81184632c7b2847a05a36e5671052[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Thu Nov 1 10:20:58 2018 +0800
+
+    暂存
+
+[33mcommit 89c29bd7f0a3560ce938a00326332fea24391ac2[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Oct 31 18:01:11 2018 +0800
+
+    xiugai
+
+[33mcommit ca3523682a8769b8ae3911d7a1bd272b09341075[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Oct 31 17:47:38 2018 +0800
+
+    xiugai
+
+[33mcommit 6e23f545991783e118ee0286709b20fcbd3414f8[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Wed Oct 31 17:12:10 2018 +0800
+
+    提交修改
+
+[33mcommit d3ea942a62054e420653c2881f811f31babfed20[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Oct 31 16:00:25 2018 +0800
+
+    xiugai
+
+[33mcommit 8d6de82ffc9af9fc89b4307edb711ab40b7165ec[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Wed Oct 31 15:42:06 2018 +0800
+
+    修改质检任务接口
+
+[33mcommit cd5cb4dfd0bb86711ec7de0feb9def6c8b819fc9[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Oct 31 11:22:40 2018 +0800
+
+    xiugai
+
+[33mcommit 4c10377d85e6ca2da23cb182b34a78a8579c4d0c[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Tue Oct 30 18:26:09 2018 +0800
+
+    提交质检工作台功能
+
+[33mcommit 61e14cabbe0a6dd40d3dbf137a273201b7405304[m
+Merge: 277716e 8d8df28
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Tue Oct 30 10:04:08 2018 +0000
+
+    Merge branch 'nuiguoji670' into 'master'
+    
+    Nuiguoji670
+    
+    See merge request crm/nui!109
+
+[33mcommit 8d8df2827bd15bb731aaceba2fdc2c67d496dc66[m
+Merge: 44cf542 277716e
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Tue Oct 30 10:04:00 2018 +0000
+
+    Merge branch 'master' into 'nuiguoji670'
+    
+    # Conflicts:
+    #   config/dev.env.js
+    #   config/prod.env.js
+
+[33mcommit 0f3a1ee99af1df427183c2d65f68053e75e2f223[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Tue Oct 30 17:58:05 2018 +0800
+
+    提交修改
+
+[33mcommit 277716ede9677157d050b2ec0200c609259d7b42[m
+Merge: ae6299a bd39368
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Tue Oct 30 09:55:14 2018 +0000
+
+    Merge branch 'liuWorkingSet' into 'master'
+    
+    Liu working set
+    
+    See merge request crm/nui!110
+
+[33mcommit bd393681d2de3766e7894f8a75acea8216156c8a[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Oct 30 17:12:14 2018 +0800
+
+    xiugai
+
+[33mcommit d42214520b7a4ea72a93d9f9fc8034d4c254d534[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Oct 30 16:49:48 2018 +0800
+
+    xiugai
+
+[33mcommit 6ffd0a2a6d1ccb52da6211e07db3018981a8d10e[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Oct 30 16:46:55 2018 +0800
+
+    xiugai
+
+[33mcommit 95844ec7c9b73170858abf10a1e76ba78f936a5d[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Oct 30 15:48:33 2018 +0800
+
+    中位数与工作台
+
+[33mcommit ff15c934aead67af86b36c0378d76f99ac320747[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Oct 30 10:38:49 2018 +0800
+
+    中位数
+
+[33mcommit ae6299a227afb0f6153cc199d235e528657a73e6[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Oct 29 18:23:07 2018 +0800
+
+    add templateId
+
+[33mcommit 44cf542bec0eedf5256a5faf7c19240fc930bf14[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Mon Oct 29 17:26:54 2018 +0800
+
+    增加根据权限隐藏发布状态表单
+
+[33mcommit cc5ce7534584e7dfb9ae66d372bb2fe4e2761706[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Mon Oct 29 17:04:01 2018 +0800
+
+    修改字段与路径
+
+[33mcommit af8edae7583e1d29ece1bc77919bfd6a6396b601[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Mon Oct 29 16:47:10 2018 +0800
+
+    修改布局
+
+[33mcommit ca56cee4e06de1992280cf507bb70227ce156b99[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Mon Oct 29 16:39:21 2018 +0800
+
+    质检工作台
+
+[33mcommit 2cda2f5276e6edcc10d077406abbe81e6b2b58af[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Mon Oct 29 16:10:27 2018 +0800
+
+    普通查询增加按发布及未发布状态查询
+
+[33mcommit bbe2eda56babef408cfa5481555e3d1621742d57[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Mon Oct 29 11:54:28 2018 +0800
+
+    增加删除前提示路径和选择删除哪个路径下文章的功能
+
+[33mcommit 055f81732e2d683dcb00dd36bb82a9a9a98b4033[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Fri Oct 26 18:30:34 2018 +0800
+
+    暂存工作平台
+
+[33mcommit c1f03e6ad9dd129b2ed31112316f036bbbdb6a50[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Fri Oct 26 17:39:37 2018 +0800
+
+    修改
+
+[33mcommit 121f65a72814de9a49c79986ef832e6262356b72[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Fri Oct 26 17:19:32 2018 +0800
+
+    按权限增加status字段
+
+[33mcommit 05c65a5b5ca3501bcc418b80f05eec2976bf0703[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Fri Oct 26 17:02:34 2018 +0800
+
+    修复按标题查询分页影响内容查询分页的bug
+
+[33mcommit 19312c92fa776424386d03c9406be57ad841daaa[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Fri Oct 26 16:38:42 2018 +0800
+
+    增加newdays设定，权限管理，文章路径显示
+
+[33mcommit 5a240ca835a7a48705a39573fd620926fba855e5[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Oct 26 15:50:46 2018 +0800
+
+    xiuggai
+
+[33mcommit cbc97b33d03859b9562493658a9e31fe0b1875c7[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Fri Oct 26 09:11:08 2018 +0800
+
+    修改高级查询分类布局
+
+[33mcommit 79e39767acc16454301a9720b1a47faf0ee06a5d[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Wed Oct 24 16:38:32 2018 +0800
+
+    修复查询文章详情会失败的bug
+
+[33mcommit ea423187f31b1965962056c4f816db186c337cce[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Wed Oct 24 16:15:36 2018 +0800
+
+    模糊查询改分类查询功能
+
+[33mcommit fe7691646d56e40d4ea6af7bcd5f461fa2e0a00d[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Oct 24 10:18:55 2018 +0800
+
+    xiugai
+
+[33mcommit dbcce40d1d527037ea36ef6dde7662912e360066[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Tue Oct 23 17:49:44 2018 +0800
+
+    增加下载页面的提示语
+
+[33mcommit 0ca34b3e28d6298ae1afcb8c5aa4ae46b4239c54[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Tue Oct 23 17:26:58 2018 +0800
+
+    修改
+
+[33mcommit 1ddde6791f6533be9ad1b0bd3b9088f6e42b81c7[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Tue Oct 23 17:26:32 2018 +0800
+
+    修复上传修改后附件数量不正确的bug
+
+[33mcommit 75e06e4aed8764ca50814be3c180f87a26307c71[m
+Merge: 43a98da dda1048
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Tue Oct 23 08:57:01 2018 +0000
+
+    Merge branch 'liuWorkingSet1' into 'master'
+    
+    质检任务报表
+    
+    See merge request crm/nui!108
+
+[33mcommit dda1048e1f294403c3d9843bf7ee0237f7eb6efc[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Oct 23 16:39:37 2018 +0800
+
+    质检任务报表
+
+[33mcommit 2909e4c75384b7f5d7ed1b7410b19b5b5db9a2f9[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Tue Oct 23 14:39:54 2018 +0800
+
+    增加pdf，ppt格式的上传验证
+
+[33mcommit 5a98f2065a4ac8747aecf5bd50688e47b885583c[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Tue Oct 23 10:39:57 2018 +0800
+
+    增加文件不存在的情况判断
+
+[33mcommit b8450c24ce583e09b43696a6787031030fe898d8[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Tue Oct 23 10:21:01 2018 +0800
+
+    修复菜单栏缩回时，如果session为null，导致展开不一致的bug
+
+[33mcommit f7ebc1fdf3fe07db41075e77e02aec4b608dfb57[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Tue Oct 23 10:05:53 2018 +0800
+
+    修复目录横向滚动条超出文档区，低分辨率下布局错乱的bug
+
+[33mcommit 0c45d2133f47a0bc28db9665bc3382c6e8e5a423[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Mon Oct 22 18:36:06 2018 +0800
+
+    增加删除的api，修复详情页内容溢出的问题
+
+[33mcommit 43a98daf308ae00aae18f98eeb4f7aaa904ba2af[m
+Merge: 93c6322 48622e0
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Mon Oct 22 09:53:04 2018 +0000
+
+    Merge branch 'liuWorkingSet' into 'master'
+    
+    Liu working set
+    
+    See merge request crm/nui!100
+
+[33mcommit 48622e0dcad49b3f1a1af775c636502cb2d388a8[m
+Merge: ccd1373 93c6322
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Mon Oct 22 09:52:51 2018 +0000
+
+    Merge branch 'master' into 'liuWorkingSet'
+    
+    # Conflicts:
+    #   src/views/dial_task/index.vue
+    #   src/views/ord_workingset/index.vue
+
+[33mcommit 93c63224f652e1877cbeb7c4a5a8bfff6ea3631b[m
+Merge: 86e4b22 1c0924c
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Mon Oct 22 09:50:37 2018 +0000
+
+    Merge branch 'wx-workingset' into 'master'
+    
+    Wx workingset
+    
+    See merge request crm/nui!104
+
+[33mcommit 86e4b22aae5d0a6edd18ca0ccc66ed6c8d4393d6[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Oct 22 17:17:14 2018 +0800
+
+    拨打按钮控制
+
+[33mcommit 81678eb082f30e177565513fbe1f1fa97efb953b[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Mon Oct 22 15:38:08 2018 +0800
+
+    修改布局
+
+[33mcommit 0bce70fe0b113f2e7e0b2b8d12be8aa8a7f1591d[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Mon Oct 22 15:36:30 2018 +0800
+
+    修改布局，修复新建不显示
+
+[33mcommit ff354d906b4e855a61dc0b4aa3f0e98980d203c5[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Oct 22 15:16:34 2018 +0800
+
+    免访客户、免访号段可见/不可见
+
+[33mcommit b925cef415b18eb815f62b2605a512363bd5372a[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Mon Oct 22 11:39:23 2018 +0800
+
+    目录点击后强制不换行
+
+[33mcommit 2297896cb02d316cb37683cba5b02b778c59e953[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Sun Oct 21 18:03:32 2018 +0800
+
+    增加横向滚动条，以修复侧边栏显示不全的bug
+
+[33mcommit ccd13736efd6fce287e799d1730486d0a7e60076[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Oct 19 17:53:03 2018 +0800
+
+    xiugai
+
+[33mcommit 4ca595d92577b949936d2f906e3404981cc16649[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Fri Oct 19 17:51:59 2018 +0800
+
+    普通查询，没有关键字时删除title字段
+
+[33mcommit 48a3406b16c2e553a6c290a4d72f1fb1cab9f2f8[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Oct 19 16:51:55 2018 +0800
+
+    xiugai
+
+[33mcommit 73802d08362d0fedc43209cf92b9d78b8c3703dc[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Oct 19 16:39:18 2018 +0800
+
+    0xiugai
+
+[33mcommit 49f2d25c5cd2b5a081ae9213630545fee103626b[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Fri Oct 19 16:30:09 2018 +0800
+
+    修复 修改节点时请求地址错误，和取消编辑的bug
+
+[33mcommit ce0dce653683b20f0dbaee5af134b934b85d9d48[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Oct 19 16:26:56 2018 +0800
+
+    将logo上传地址修改为变量
+
+[33mcommit f452b7f29915018b6d6eaba827024fcc373f9a9b[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Fri Oct 19 15:07:41 2018 +0800
+
+    提交知识库页面代码
+
+[33mcommit 5b105ac96939edd20417517ca0d760de0bff32a5[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Oct 18 18:35:32 2018 +0800
+
+    名单可见/不可见
+
+[33mcommit 0f2449ee04ab7d5de1ecc1992015728e61547916[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Thu Oct 18 17:34:59 2018 +0800
+
+    修复bug与质检计分
+
+[33mcommit c9b1270bf736de68991c86be9fc070030f7ab48a[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Wed Oct 17 17:45:05 2018 +0800
+
+    组织可见/不可见
+
+[33mcommit 1c0924c2aac22674fda15cb2782e4291a54a98f7[m[33m ([m[1;31morigin/wx-workingset[m[33m)[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Wed Oct 17 17:14:50 2018 +0800
+
+    坐席主管工作台的修改
+
+[33mcommit 23f360c61ef98a6b5cd9335aacfa4fbbdcd0f49e[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Wed Oct 17 15:23:20 2018 +0800
+
+    活动可见/不可见
+
+[33mcommit d7f3eb07552bc0ca096344931894e59578e4ea12[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Wed Oct 17 15:21:33 2018 +0800
+
+    修改接触历史里成功和失败还可以再拨打bug
+
+[33mcommit 3bc27929edb8210505e76122e939d057c9187194[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Wed Oct 17 11:58:15 2018 +0800
+
+    更改ob坐席数据
+
+[33mcommit 82d66d576a3514f9d3c0d5f904a5b07463e48ce1[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Tue Oct 16 18:18:34 2018 +0800
+
+    延迟执行方法
+
+[33mcommit 2f9f21b0bca6bb82c89dc6a57775f4d22443c468[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Tue Oct 16 17:26:28 2018 +0800
+
+    添加显示工号
+
+[33mcommit 9954d8a2d78b68d95955a27415e89e472ead538c[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Tue Oct 16 15:53:37 2018 +0800
+
+    现场主管工作台
+
+[33mcommit e8ecbb32510b4446d04f94c0eb6feb345a612411[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Tue Oct 16 15:04:23 2018 +0800
+
+    optimize report ui show select item logic.
+
+[33mcommit 41a56075ba91c767226d24d07e17d47768a850e2[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Tue Oct 16 09:49:36 2018 +0800
+
+    optimize report ui show select item logic.
+
+[33mcommit 0fde9fbf1a5cbc39c5ef15e13b315a3ae05fc855[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Oct 15 11:36:55 2018 +0800
+
+    修改角色页面报错问题
+
+[33mcommit e63fbe0ecacf1503eeb4d727fce3eef1d6239a66[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Oct 15 10:35:45 2018 +0800
+
+    修改生成订单金额可以为0
+
+[33mcommit 0347c5e8dcc49e6cc4fffd7f3c325d0329b91dce[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Sat Oct 13 10:31:14 2018 +0800
+
+    split out CTI_MONITOR_WS_SERVERURL to configuration.
+
+[33mcommit cda3e082476d3d69731fccbe5a63b069bf83591b[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Fri Oct 12 19:03:00 2018 +0800
+
+    主管坐席台
+
+[33mcommit 1c75dd849b56a8475688bc2dbd55f9a8ddb64ef2[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Fri Oct 12 18:53:14 2018 +0800
+
+    optimize show select campaign element logic.
+
+[33mcommit c7cc58af0e074d8d2d0039fa88643f95a0037ae8[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Oct 12 16:40:02 2018 +0800
+
+    xiugai
+
+[33mcommit 955d84d78d1c147034385ff963cef1edf1b5bc8b[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Oct 12 14:47:02 2018 +0800
+
+    小结添加可见不可见功能
+
+[33mcommit b05a02cfaf9322752c20915fa62ac1978274a25a[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Oct 12 13:50:10 2018 +0800
+
+    xiugai
+
+[33mcommit ee1423a8f357d1a523d1b5ef854c55b9aa41dcb1[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Oct 11 18:46:26 2018 +0800
+
+    修改订单支付界面
+
+[33mcommit 0f50c06ae11025a50d5b519a4875e06fa37d626b[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Oct 11 18:41:21 2018 +0800
+
+    修改质检状态名称
+
+[33mcommit 9f5ff5464cbd311092b8979c959c7a368db57b65[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Thu Oct 11 18:39:26 2018 +0800
+
+    xiugai
+
+[33mcommit 8a9744b77da177002114fb9f230bd1656c9116c3[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Thu Oct 11 17:32:37 2018 +0800
+
+    xiugai
+
+[33mcommit f77631aebc47fa45f28186514e1b5596c1d420c2[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Oct 11 16:37:30 2018 +0800
+
+    fix ui bug in cti report page.
+
+[33mcommit e710b6f93df90e9b65e6f55be8f1903c5eafeb49[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Thu Oct 11 16:13:11 2018 +0800
+
+    工作台
+
+[33mcommit 55ebe6b58ac01f7ddc06e828b5c822f90583a76c[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Wed Oct 10 18:12:27 2018 +0800
+
+    fix ui bug.
+
+[33mcommit cca30c23b5811680f6775ef4247c4c8dbaae1def[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Wed Oct 10 18:07:22 2018 +0800
+
+    rollback cti ws serverurl configuration in dev.
+
+[33mcommit 23e4ba1cc31524fa2cf011113bac24ba0eb21782[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Wed Oct 10 14:28:29 2018 +0800
+
+    修改支付页面产品展示
+
+[33mcommit 36639b963c2368a90590f53a0e8c894221b4a317[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Oct 9 18:23:41 2018 +0800
+
+    让拨打界面不能点浏览器返回按钮
+
+[33mcommit fa9320e9163a6d5d53a04c4e84c976567915c740[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Oct 9 14:14:25 2018 +0800
+
+    评分表添加启用禁用状态
+
+[33mcommit e68801789546a2941094c3bdc58322c4cead43b2[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Oct 9 11:50:27 2018 +0800
+
+    添加主题&logo&标题切换功能
+
+[33mcommit 7cbb94b513b39e62bdceec5a0a71999041972c46[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Oct 8 12:22:05 2018 +0800
+
+    字段控制
+
+[33mcommit c0fd0d5688f6184517a350af1ebc8325e4505d19[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Sun Oct 7 09:28:44 2018 +0800
+
+    delete logging.
+
+[33mcommit dd71cb95561e9b22fdfc9fb45907879120943edf[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Sun Oct 7 00:47:35 2018 +0800
+
+    fix missing xAxis in cti report & optimize ui style.
+
+[33mcommit ff4e4f9c38842b19dd9061c6a30b8881a26ba159[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Wed Oct 3 00:00:39 2018 +0800
+
+    add logging.
+
+[33mcommit d23c95cc2432b89f0f351b5294865a44ba011094[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Sun Sep 30 16:00:11 2018 +0800
+
+    fix merge prod env conf logic.
+
+[33mcommit a2846bdb901d5b0c696737e72be1e54b2321cbf8[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Sun Sep 30 15:07:12 2018 +0800
+
+    optimize tui_ws_serverurl configuration in prod env.
+
+[33mcommit 805bedd91c4b5c51330d15e15886d98b340d1d9c[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Sun Sep 30 14:53:41 2018 +0800
+
+    correct router path in master.
+
+[33mcommit 096924b4cede49485dcece0a6cde117b8310ff68[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Sun Sep 30 13:42:22 2018 +0800
+
+    split configuration to support different production env.
+
+[33mcommit 90bd05ebb82a1224980dd1a92b21df348e557b28[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Sat Sep 29 09:46:54 2018 +0800
+
+    optimize code.
+
+[33mcommit 453ac1da36f639ab8198b1a597b70ba60a4f1f7b[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Fri Sep 28 18:23:15 2018 +0800
+
+    fix edit depart under root depart cause id_path been setted empty.
+
+[33mcommit d687573d7a2adf6192efc627cd5dac84d33eb086[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Fri Sep 28 16:43:16 2018 +0800
+
+    fix order、cti、ob report search by agent bugs.
+
+[33mcommit f0b2345f619cc7717479dca7aff36ece7860010e[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Sep 28 14:46:31 2018 +0800
+
+    修改质检评分订单展示
+
+[33mcommit 0c6d47d56dd6350628aec92ec7a6ac2ac2f1ff79[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Sep 27 20:05:01 2018 +0800
+
+    fix order、cti、ob report bugs.
+
+[33mcommit 1ebbf6798175640b67cc02c9adcab50d5124b4f7[m
+Merge: 08da5df 4c2baa7
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Sep 27 19:29:06 2018 +0800
+
+    Merge branch 'master' of http://119.27.184.90/crm/nui
+    
+    * 'master' of http://119.27.184.90/crm/nui:
+      修改接触历史订单信息，拨打界面上修改
+
+[33mcommit 08da5dff371edfced811647caec422b58d25db53[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Sep 27 19:28:41 2018 +0800
+
+    fix order-report bugs.
+
+[33mcommit 4c2baa7288f6c374baaa30c994300f9363d2dc00[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Sep 27 18:47:23 2018 +0800
+
+    修改接触历史订单信息，拨打界面上修改
+
+[33mcommit 3c2f44a6a18ec05677dbe9131dd5d0efbdf190f1[m[33m ([m[1;31morigin/clh_issue657[m[33m)[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Wed Sep 26 19:19:39 2018 +0800
+
+    产品管理修改
+
+[33mcommit 3eca5cd658be6d3ccec196e3f7d8e21b69f3aa9c[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Wed Sep 26 19:16:19 2018 +0800
+
+    修改消息通知为长连接
+
+[33mcommit 8dfc616cf8373f0e1c04d59479ccd69aa7c226ad[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Sep 25 11:34:50 2018 +0800
+
+    需要菜单栏显示隐藏
+
+[33mcommit 01584a23db4b1cc54e75919fa39a02ef35955428[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Sep 21 18:31:22 2018 +0800
+
+    修改刷新左边没有缩回
+
+[33mcommit 6531e83b7f25421f93a0e07e86bef927cb6e0005[m
+Merge: dc5090a 7046c68
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Fri Sep 21 10:22:41 2018 +0000
+
+    Merge branch 'liuReverseReport' into 'master'
+    
+    Liu reverse report
+    
+    See merge request crm/nui!85
+
+[33mcommit dc5090a2a49cf27a14ff7f1f1fefe631c669e3de[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Sep 21 17:49:48 2018 +0800
+
+    修改改变分辨率样式不对问题
+
+[33mcommit 379af63bb2649bc077c0dcc04a2c2dd03781d14f[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Sep 20 17:02:47 2018 +0800
+
+    拨打任务添加查询字段-活动
+
+[33mcommit 0ad47204bb4c247c4302118ece97b930992f9ed6[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Sep 20 17:00:02 2018 +0800
+
+    修改产品展示
+
+[33mcommit 6912ccee3f2115baafb873cc961250a98590ca8a[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Sep 20 16:40:33 2018 +0800
+
+    修改样式
+
+[33mcommit 428ac3ade83114ab81a246fd7f4a92537fcfcb34[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Sep 20 16:08:40 2018 +0800
+
+    修改样式和活动产品被全选问题
+
+[33mcommit 7046c684afbc71c269e64ef1f02c1cff14ed480c[m[33m ([m[1;31morigin/liuReverseReport[m[33m)[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Thu Sep 20 15:41:35 2018 +0800
+
+    xiugai
+
+[33mcommit b724277dae9e8fc66910260b4c1612cbad35962a[m
+Merge: 10b0e6d 684c3f8
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Thu Sep 20 06:07:08 2018 +0000
+
+    Merge branch 'wx-product' into 'master'
+    
+    Wx product
+    
+    See merge request crm/nui!82
+
+[33mcommit 684c3f86caf7b066eb3ffcb0180e32b06e830ce1[m[33m ([m[1;31morigin/wx-product[m[33m)[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Thu Sep 20 11:46:54 2018 +0800
+
+    产品管理
+
+[33mcommit 10b0e6d03753a6e29a3bc6fe0e5435f508b69c76[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Sep 20 11:46:22 2018 +0800
+
+    去掉批次上传模板功能
+
+[33mcommit 335380e686506cf9d271392dc4f5882796636d30[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Wed Sep 19 18:26:25 2018 +0800
+
+    产品管理
+
+[33mcommit b6a190a07fd8a934e8a22349e568b1e58011d71a[m
+Merge: aea70d2 caa2101
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Wed Sep 19 03:46:30 2018 +0000
+
+    Merge branch 'linn#613' into 'master'
+    
+    完成issue#613
+    
+    See merge request crm/nui!79
+
+[33mcommit aea70d243e59b8e23810aee6e4dc0939f6959616[m
+Merge: 4eeb99c 8030d6f
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Wed Sep 19 03:45:49 2018 +0000
+
+    Merge branch 'nuiguoji567' into 'master'
+    
+    Nuiguoji567
+    
+    See merge request crm/nui!80
+
+[33mcommit 2771915930ed320b4adfa1e6842c88efb57decf7[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Wed Sep 19 11:23:10 2018 +0800
+
+    产品管理
+
+[33mcommit 8030d6f395cabb94f5cb08d0c40c33a88ecc4876[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Wed Sep 19 11:06:01 2018 +0800
+
+    1、修复登入后不能更改状态的bug
+    2、修复菜单栏全部展开后滚动不到末尾的bug
+    3、修复低分辨率下出现滚动条后将布局打乱的bug
+
+[33mcommit d39d5f220a9246a25562b4af7626e3a26c33f082[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Tue Sep 18 19:14:04 2018 +0800
+
+    tab修正
+
+[33mcommit ad650f69c21884e5b75df0403d68164d447436db[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Tue Sep 18 19:10:30 2018 +0800
+
+    修改菜单控制按钮位置，修改布局
+
+[33mcommit caa21014c184268d2043fbe5e243cec9f2c5c166[m
+Author: linn <linqf@wise2c.com>
+Date:   Tue Sep 18 16:30:58 2018 +0800
+
+    解决工号无法查询的bug
+
+[33mcommit 34ced9fcfb8dcbaa543e03a5a6373fba4a46f0f7[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Sep 18 15:17:21 2018 +0800
+
+    xiugai
+
+[33mcommit 0675d9c37b9e5fbf5a6a205337358c3098158f7c[m
+Author: linn <linqf@wise2c.com>
+Date:   Tue Sep 18 14:54:57 2018 +0800
+
+    添加填写问卷记录
+
+[33mcommit a611a6d6cdd757f228ffe65f37441f57b0385d06[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Tue Sep 18 14:45:04 2018 +0800
+
+    产品管理
+
+[33mcommit 4eeb99c7365b88a84d0180f1e0970a6dbda3ddce[m[33m ([m[1;31morigin/clh_issue622[m[33m)[m
+Merge: 57865d8 513fbe5
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Tue Sep 18 02:34:43 2018 +0000
+
+    Merge branch 'wx-message-send' into 'master'
+    
+    Wx message send
+    
+    See merge request crm/nui!78
+
+[33mcommit 57865d816ca83612dddde9248166e97504f915c2[m
+Merge: 2aa6de8 2a523ae
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Tue Sep 18 02:34:35 2018 +0000
+
+    Merge branch 'wx-message-#607' into 'master'
+    
+    Wx message #607
+    
+    See merge request crm/nui!73
+
+[33mcommit 6bb908d430adaecb0763485a2eb73b09de175f8b[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Tue Sep 18 10:18:54 2018 +0800
+
+    改正logo为Logo，首字母大写
+
+[33mcommit 513fbe54ac3f68ab42255437b1977303fb4af382[m[33m ([m[1;31morigin/wx-message-send[m[33m)[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Tue Sep 18 10:18:52 2018 +0800
+
+    短信发送
+
+[33mcommit 36b5e72a61888904db08e67b34c4d5050e3fcf5b[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Tue Sep 18 10:01:16 2018 +0800
+
+    修正eslint报错
+
+[33mcommit a80473cbe0212c33c24ab2e2cff21575b0683360[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Mon Sep 17 17:54:26 2018 +0800
+
+    修改logo外边距
+
+[33mcommit 9b1575cf6e5bda65efa7d6cb2dc42d82ae388457[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Mon Sep 17 17:23:57 2018 +0800
+
+    logo和登入图标漏上传
+
+[33mcommit 8d092ca83833adc912c8930948154ab28c06256e[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Mon Sep 17 17:14:30 2018 +0800
+
+    产品管理
+
+[33mcommit 0d6ac50f34ba3030c36fe13b576d9e2c74ccead6[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Mon Sep 17 16:55:35 2018 +0800
+
+    新版navbar
+    包含：
+    1、navbar高度增加，按功能分类，功能按钮加大
+    2、TAB栏选择了很多菜单后，没有翻页回到最开始选择的菜单
+    3、header和tab增加背景色去掉分割线
+
+[33mcommit da091df0f209e7f19829fbb416f09314580d31a4[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Mon Sep 17 15:54:25 2018 +0800
+
+    产品管理
+
+[33mcommit 2aa6de852e580600dde666448f8e298474ebfced[m
+Merge: b9c513b dae962a
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Fri Sep 14 10:03:46 2018 +0000
+
+    Merge branch 'liuorderReport' into 'master'
+    
+    Liuorder report
+    
+    See merge request crm/nui!77
+
+[33mcommit dae962a81386b15af0d5d31f8572531a5ebfacc2[m[33m ([m[1;31morigin/liuorderReport[m[33m)[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Sep 14 18:00:16 2018 +0800
+
+    xiugai
+
+[33mcommit b42b0eb6114ff5703506f8a7ddd53222543a0bd9[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Sep 14 17:57:16 2018 +0800
+
+    xiugai
+
+[33mcommit e1786c6818f49edbb0675566a195afe50d0a744e[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Fri Sep 14 17:34:04 2018 +0800
+
+    短信发送
+
+[33mcommit 712aceaff040ddac7f336a5e94813891e91b7f3b[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Fri Sep 14 16:38:04 2018 +0800
+
+    产品模板
+
+[33mcommit 0890ea94a47f23f65b64eba74bd43f5983badfb9[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Sep 14 15:33:37 2018 +0800
+
+    xiugai
+
+[33mcommit 9b4f32d6afb36cbf5adae62257e555dfd3174c9c[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Sep 14 13:59:00 2018 +0800
+
+    xiugai
+
+[33mcommit 42ae12af1fe9aeffd7939f8707933d4287b1e529[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Thu Sep 13 17:45:18 2018 +0800
+
+    产品管理
+
+[33mcommit b9c513b03674829c1b5d7196de91a324712d6373[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Sep 13 17:25:59 2018 +0800
+
+    add .overfl class for batch_management module.
+
+[33mcommit f19b1a541e6523f681e12052be0b3e0a5a9cfd0c[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Thu Sep 13 16:51:31 2018 +0800
+
+    xiugai
+
+[33mcommit 0312bd1b7082c041dad35bfe81dcddcd0032249c[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Sep 13 11:24:17 2018 +0800
+
+    问卷模板管理页面优化
+
+[33mcommit e7d0297ebee45c8c1d7d64c6a61cf7c3a6e07787[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Sep 13 11:21:05 2018 +0800
+
+    拨打界面切换保持
+
+[33mcommit 7b2b10c69012c05da56c7a9fd8ecc1a8eac34778[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Sep 11 18:33:56 2018 +0800
+
+    产品类型管理功能
+
+[33mcommit b9b63d104d25101449a050619901070b426283e1[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Sep 11 17:53:08 2018 +0800
+
+    order
+
+[33mcommit f3ab861a125cabbc733093130b74b0afffa5148e[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Sep 11 15:14:46 2018 +0800
+
+    优化navbar
+
+[33mcommit 69ed38a07d5eef340664784510fbfd10be85ab33[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Sep 11 14:33:19 2018 +0800
+
+    修改拨打界面拨打按钮状态不一致问题
+
+[33mcommit b1568c754b31b1a1fbb6dfe19315831bc57b9d5b[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Tue Sep 11 10:10:33 2018 +0800
+
+    #617
+
+[33mcommit 814a90a6dcbb71d73b158cec8bbdc8556dfd9d98[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Mon Sep 10 15:03:36 2018 +0800
+
+    xiugai
+
+[33mcommit 4b1d99702980bf7bd12b8c28cc5bbda40d0ad7ad[m
+Merge: c16540c a664159
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Fri Sep 7 09:48:02 2018 +0000
+
+    Merge branch 'liuReport' into 'master'
+    
+    Liu report
+    
+    See merge request crm/nui!71
+
+[33mcommit c16540c5229cd71e00cab77266feb93290735e93[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Sep 7 12:02:13 2018 +0800
+
+    修改lable名称
+
+[33mcommit 3182d7dd7644d0666a47b7003b77c50724e4a534[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Sep 7 11:14:21 2018 +0800
+
+    修改接触历史坐席查询到其他数据问题
+
+[33mcommit a664159508eec68fd2f7512e9db11ddb2c574c6d[m[33m ([m[1;31morigin/liuReport[m[33m)[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Sep 7 11:05:04 2018 +0800
+
+    ob
+
+[33mcommit 2201ab6d5ae7204454dade81463e4504ea529d06[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Sep 7 10:44:13 2018 +0800
+
+    ob
+
+[33mcommit 0ac27560a59e2de033901ea6eea6d5edad05e9bf[m[33m ([m[1;31morigin/syncphonestatus[m[33m)[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Sep 7 10:35:13 2018 +0800
+
+    当为登录状态时，分机号不能修改
+
+[33mcommit a42ea1e146ae1febf77f16a8202e95428742a6dd[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Sep 6 18:29:50 2018 +0800
+
+    案例学习功能
+
+[33mcommit 43c24b4364d5c114f33947ca1b97453387a749c0[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Sep 6 18:28:17 2018 +0800
+
+    名单监控分页功能
+
+[33mcommit 5b8b87b1e0e950c47cb00045d206248d2a055163[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Sep 6 18:18:49 2018 +0800
+
+    修改拨打界面
+
+[33mcommit 2a523aee3c9460b2c7e6dbf95d76109b661dab13[m[33m ([m[1;31morigin/wx-message-#607[m[33m)[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Thu Sep 6 16:10:15 2018 +0800
+
+    #607
+
+[33mcommit a327a644518774c8d0a49e5a158eaafa7318fcf8[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Sep 6 12:38:07 2018 +0800
+
+    笔记管理界面美化
+
+[33mcommit 0f2d3b8d6d94fead78e3b905eda1fa8f3a6b7f27[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Sep 6 11:58:23 2018 +0800
+
+    添加消息撤回功能
+
+[33mcommit 19aab830189e569a45d9299c7ff3cbaa50b61b7c[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Thu Sep 6 11:51:59 2018 +0800
+
+    cti
+
+[33mcommit 6b7ef26824f26cf3379a711ae74908298e739bd4[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Sep 6 11:50:27 2018 +0800
+
+    修改员工性别显示不正常和质检添加评分等级字段
+
+[33mcommit 28857c0e8fe930333936d2a235d19d863865d206[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Sep 6 11:40:36 2018 +0800
+
+    完善拨打界面
+
+[33mcommit d116b1b179ab4f8487c279ec0d3b438867dafff9[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Thu Sep 6 10:24:39 2018 +0800
+
+    add .npmrc file set sass_binary_site.
+
+[33mcommit 350887abd166cfbc8af2146894a23c7daaa516f6[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Wed Sep 5 18:39:21 2018 +0800
+
+    #607
+
+[33mcommit 5d3d81bb01b9334cb946c19ffabaf36e903c6f3d[m
+Merge: db421d6 acc8582
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Wed Sep 5 08:51:05 2018 +0000
+
+    Merge branch 'wx-history' into 'master'
+    
+    Wx history
+    
+    See merge request crm/nui!64
+
+[33mcommit acc85826eb601aef7943431015c6f3ac242db55d[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Wed Sep 5 16:17:25 2018 +0800
+
+    #572
+
+[33mcommit 378ab53852583efdd353e6ec642f3fe60cdec808[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Tue Sep 4 18:37:42 2018 +0800
+
+    #572
+
+[33mcommit cd486249e1e41ed9f73cf0ea9a2f67b43c75dc62[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Tue Sep 4 18:18:08 2018 +0800
+
+    #572
+
+[33mcommit 7485fee8baf84ed45910c23d567360133bb3fca1[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Tue Sep 4 18:02:44 2018 +0800
+
+    #572
+
+[33mcommit e4b4c223d30e17648efa452001c8b9a517a57ae6[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Tue Sep 4 15:36:58 2018 +0800
+
+    #572
+
+[33mcommit db421d6620935704b6cc6fad4aef76c335b75fee[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Sep 3 18:29:10 2018 +0800
+
+    修改一些图标和按钮问题
+
+[33mcommit c3b579a8fb16db2a06d4e541093b7a672e96b536[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Sep 3 15:50:21 2018 +0800
+
+    修改招聘活动显示的数据
+
+[33mcommit 0b22ef800ff4e81f5380ea6e10da5a846d79034a[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Mon Sep 3 15:18:54 2018 +0800
+
+    xiaoxitongzhi
+
+[33mcommit bc15b7422d7ebb72f670c0341ca797aacbb23952[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Sep 3 11:53:19 2018 +0800
+
+    手机号归属地判断修改
+
+[33mcommit 20c4f719e3daabb90f3c550b1824c6e39aa10904[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Sun Sep 2 12:01:42 2018 +0800
+
+    接触历史列表显示状态字段
+
+[33mcommit 616cb966a3453858a9aa6bb0404f131d9bf4987c[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Sun Sep 2 11:26:27 2018 +0800
+
+    接触历史重置清空活动
+
+[33mcommit 1c2b3e98a9bee35e98d850aaee7d2b79068a6961[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Sun Sep 2 00:48:59 2018 +0800
+
+    修改几个bug
+    
+    1, 接触历史查询界面重置问题
+    2. 拨打界面点击进入下一个按钮一直存在问题
+    3. 消息重复提示问题
+
+[33mcommit 85e45dadd1ee62f21cd7345a8d92aad3ed82f759[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Sat Sep 1 22:33:32 2018 +0800
+
+    修改页面报错
+
+[33mcommit d0ae1c47497effff1951e1dd006d048bf0293d4b[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Sat Sep 1 22:58:13 2018 +0800
+
+    修改接触历史跳转到拨打页面的bug
+
+[33mcommit 41000cc4b3eb9d64040c6d77fb319b6153fd85ff[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Aug 31 18:53:37 2018 +0800
+
+    操作人、编号等添加
+
+[33mcommit 2911ad430b8adbc4a6aa6fb884c3daa2c4e1daab[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Aug 31 18:06:30 2018 +0800
+
+    修改按钮,Lable等样式
+
+[33mcommit 9ad5fe0c7ab27476e1c2b6d41c097301a92928a3[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Aug 31 17:41:21 2018 +0800
+
+    bug修改
+
+[33mcommit 404bc132c73711993ee09d18d40d4438aa049f12[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Aug 31 17:05:12 2018 +0800
+
+    质检备注未清空
+
+[33mcommit 06bcecf3138fcb2bb251b179cf3e457a2f181e63[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Aug 31 15:29:17 2018 +0800
+
+    修改跳转问题
+
+[33mcommit e9603b3f85873f313ee8eb8b52825b81bbfe7b5b[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Aug 31 14:45:02 2018 +0800
+
+    接触历史列表添加小结
+
+[33mcommit 02a3f4e2678c7096194cbb05ea3588e3a247228a[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Aug 31 11:11:03 2018 +0800
+
+    订单界面合并和接触记录活动接口修改
+
+[33mcommit c4942642738ccd579f35368bb731fcece0599101[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Aug 31 00:00:42 2018 +0800
+
+    修改添加接触记录数据问题
+
+[33mcommit 49bb4abc9c887a5fb1eaf046ea22dcbc6ae63b09[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Aug 30 23:59:01 2018 +0800
+
+    拨打任务界面添加查询条件
+
+[33mcommit c0343d113f9a8caf5f595a2be4c43c9a0d9d0525[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Aug 30 16:27:29 2018 +0800
+
+    预约时间快捷方式，修改拨打bug
+
+[33mcommit 897b8f5e9b53f171509f6300363b7562646dfd62[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Wed Aug 29 17:04:15 2018 +0800
+
+    消息通知功能
+
+[33mcommit 92c251b305d57af5ee282150fcbf9aaad1cb7372[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Wed Aug 29 14:42:27 2018 +0800
+
+    坐席工作平台
+
+[33mcommit 2777e539e8c858f92a5e20bfcec8bc7704efa9f4[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Wed Aug 29 10:55:39 2018 +0800
+
+    add missing util function.
+
+[33mcommit 0db0699ed36217379bfdb4b33f359c1b216cb0c5[m
+Merge: 906eaeb c4787e0
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Wed Aug 29 01:32:19 2018 +0000
+
+    Merge branch 'wx-fen-#549' into 'master'
+    
+    Wx fen #549
+    
+    See merge request crm/nui!49
+
+[33mcommit c4787e0b146520dde2e553e23189687fc8a04149[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Tue Aug 28 18:47:10 2018 +0800
+
+    #549修改字段名称
+
+[33mcommit 93189904ad5e1f99d322d57973d6bf066a10a1b1[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Tue Aug 28 17:38:28 2018 +0800
+
+    #549修改bug
+
+[33mcommit 906eaeb7696e6a8f5081cc0c71076afbf6750185[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Aug 28 16:58:04 2018 +0800
+
+    修改一些bug
+    
+    1、登录时清空tab
+    2、修改，添加小结code！=0的时候的提示语，确认分配参数，清空data的方式
+    3、质检任务分配，数量输入框取消自适应
+    4、客户管理，增加客户来源展示
+    5、活动管理，修改后添加不清空表单的bug
+    6、增加录音详情，修复录音详情内容过多将表格撑开
+
+[33mcommit 78368f375a1de1397cf4b912e329ee72c00e74c4[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Tue Aug 28 15:52:20 2018 +0800
+
+    #549需求
+
+[33mcommit 257bd421bab0cb9cb74891acbd1de572db237342[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Aug 28 11:57:48 2018 +0800
+
+    兼容数据
+
+[33mcommit 9a7902cbb7cf6c353665a022eabfc6b4194e40c4[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Aug 28 11:03:56 2018 +0800
+
+    修改员工管理界面兼容老数据
+
+[33mcommit 4340ead2c911bfbe8dce4dba21c35621ae3aa0d0[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Mon Aug 27 18:22:49 2018 +0800
+
+    暂存
+
+[33mcommit 0c9ac31da25b4cbf8f429ec8a313e27e35c259a3[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Mon Aug 27 18:13:31 2018 +0800
+
+    fix merge error.
+
+[33mcommit b72a85d28790eedf9e4c80e2028a7c0352198192[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Mon Aug 27 11:50:28 2018 +0800
+
+    fix merge errors.
+
+[33mcommit bcca0e1da3e5372497b457d2a45738e1d0e34549[m
+Merge: 7116ff3 30c8ec8
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Mon Aug 27 03:41:48 2018 +0000
+
+    Merge branch 'liuReport' into 'master'
+    
+    Liu report
+    
+    See merge request crm/nui!47
+
+[33mcommit 30c8ec8aa5d817feedc8f307be8d5732b1f6875f[m
+Merge: 95ff06f 7116ff3
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Mon Aug 27 03:41:41 2018 +0000
+
+    Merge branch 'master' into 'liuReport'
+    
+    # Conflicts:
+    #   src/views/account_list/index.vue
+    #   src/views/campaign_management/index.vue
+    #   src/views/captain_list_newdistribute_group/index.vue
+    #   src/views/customer_novisit/index.vue
+    #   src/views/employee_list/index.vue
+    #   src/views/nodisturbphones_management/index.vue
+    #   src/views/organization_list/index.vue
+    #   src/views/qm_charge_appointtask/index.vue
+    #   src/views/qm_charge_newrecycle/index.vue
+    #   src/views/qm_charge_scorelist/index.vue
+    #   src/views/query_quality_mark/index.vue
+
+[33mcommit 95ff06f30c9cb7f582559152400b130375d5cf58[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Mon Aug 27 11:25:23 2018 +0800
+
+    xiugai
+
+[33mcommit 7116ff344dbd6275a66658fac750c3c276a6b295[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Aug 27 11:20:30 2018 +0800
+
+    修改密码功能
+
+[33mcommit a0049933d2549acb9798d89cd314d24f44b71368[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Aug 27 11:15:29 2018 +0800
+
+    添加pageSize，修复下载功能
+
+[33mcommit 45dbaa059c914bef9cdf9963c24818ebc6370a7d[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Aug 27 09:46:59 2018 +0800
+
+    电话监控主管
+
+[33mcommit 8821e3953c0ee61aa868a32d5748a49d9de993fa[m
+Merge: 2fd533a 4a780f6
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Fri Aug 24 09:08:23 2018 +0000
+
+    Merge branch 'wx-message' into 'master'
+    
+    修改前端提示
+    
+    See merge request crm/nui!43
+
+[33mcommit 4a780f61c7aceaf72de7f0cadb47528fc7f95fe4[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Fri Aug 24 16:56:44 2018 +0800
+
+    修改前端提示
+
+[33mcommit 2fd533a51a1d0d26709a8942fc7786feda4bf40b[m
+Merge: e3cf1f4 613123f
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Fri Aug 24 07:38:05 2018 +0000
+
+    Merge branch 'wx-campaign-#550' into 'master'
+    
+    Wx campaign #550
+    
+    See merge request crm/nui!42
+
+[33mcommit 613123faed2e70e6191d664626d204c509634a64[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Fri Aug 24 11:50:04 2018 +0800
+
+    需求#550
+
+[33mcommit 7911e4033ab4101f97b064f5c2a0d01b794fdf9d[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Aug 24 11:00:44 2018 +0800
+
+    xiugai
+
+[33mcommit f4f357af38c86527a347858b95bdc9d326079fd4[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Thu Aug 23 11:52:42 2018 +0800
+
+    修改活动有效显示错误等bug
+
+[33mcommit 92a5a0f86a431ce1f07f7388ea2fb38e27af08bb[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Aug 22 17:16:40 2018 +0800
+
+    xiugai
+
+[33mcommit e3cf1f46367e3ccbb75fa71152a98bad61dc3640[m
+Merge: b452703 ad9fbfa
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Wed Aug 22 03:12:40 2018 +0000
+
+    Merge branch 'wx-list-#551' into 'master'
+    
+    Wx list #551
+    
+    See merge request crm/nui!41
+
+[33mcommit ad9fbfa39ce48f4e556d2014de6451093d6c2a5a[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Wed Aug 22 11:12:00 2018 +0800
+
+    修改方法名及标题
+
+[33mcommit c49714a05c9b4278298ad94c91a6fdcbe4f3d9af[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Aug 22 11:01:04 2018 +0800
+
+    xiugai
+
+[33mcommit 00821198de13773810e4cc0de0b2bc516f08c442[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Wed Aug 22 10:44:04 2018 +0800
+
+    清除分页缓存
+
+[33mcommit 05e79996d4d2c393f80e2f1c5a2214460e77d720[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Tue Aug 21 18:22:46 2018 +0800
+
+    增加活动移除名单
+
+[33mcommit b452703e24e01a8baacdb339af04a614695cf47c[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Aug 21 14:04:15 2018 +0800
+
+    修改查询质检评分界面
+
+[33mcommit e9b2189b9aaab3d545f941940c9f1c31623cfbef[m
+Merge: 752b093 b266089
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Tue Aug 21 01:22:53 2018 +0000
+
+    Merge branch 'wx-customer-#537' into 'master'
+    
+    免访客户修改校验#537
+    
+    See merge request crm/nui!39
+
+[33mcommit 752b09383da8ea0bb6c1336d5e9f76b0bf5eb311[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Aug 20 19:09:02 2018 +0800
+
+    解决活动小结和评分表修改导致的问题
+
+[33mcommit b2660893f628ee2780ef803413472721eada3888[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Mon Aug 20 18:14:11 2018 +0800
+
+    免访客户修改校验#537
+
+[33mcommit 5b4c50e99bfaef97a58e9b36cb1dd54209aeed80[m
+Merge: fe2454d a57dd6e
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Mon Aug 20 08:01:11 2018 +0000
+
+    Merge branch 'liuReport' into 'master'
+    
+    Liu report
+    
+    See merge request crm/nui!38
+
+[33mcommit a57dd6e131184f330d4959bb56f1a4b36d740ed0[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Mon Aug 20 16:07:04 2018 +0800
+
+    xiugai
+
+[33mcommit fe2454db4175df7e12cd7e027d6f8d8d8b76c3f4[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Aug 20 15:40:08 2018 +0800
+
+    修改登录成功后访问登录页面导致没有菜单的问题
+
+[33mcommit 01ff5a3715d5a66f9a4e9fe513a0dfa68f36f271[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Mon Aug 20 10:00:28 2018 +0800
+
+    xiugai
+
+[33mcommit f52b21467acf873d71789f3aa0c3ba5a0360d4bc[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Fri Aug 17 18:31:22 2018 +0800
+
+    删除不用的文件
+
+[33mcommit 1e70b6411f6ffa5c84fd392b1f01e42a74137c8d[m
+Merge: 5b6d88b 6bf5ccc
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Fri Aug 17 17:41:09 2018 +0800
+
+    Merge branch 'wx-history-#444'
+    
+    * wx-history-#444: (24 commits)
+      修改字段
+      添加跳转
+      修改样式
+      接触历史合并
+      去掉无用的getMenu
+      修改刷新导致404问题
+      查询质检评分、tab页、弹窗被遮住
+      判断用户软电话权限
+      xiugai
+      登陆token更新
+      Update dev.env.js
+      账号角色界面重构
+      拨打界面拨打功能
+      提交ZH页面
+      修改请求超时时间
+      软电话转接和三方功能
+      xiugai
+      xiugai
+      软电话条 拨打功能实现
+      笔记管理
+      ...
+    
+    # Conflicts:
+    #       src/utils/request.js
+    #       src/views/dial_task/index.vue
+    #       src/views/find_dail_charge/index.vue
+    #       src/views/find_dail_staff/index.vue
+    #       src/views/layout/components/Navbar.vue
+    #       src/views/login/index.vue
+
+[33mcommit 5b6d88b7b597bda76c8a69c1923baa3584498afa[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Aug 17 16:19:59 2018 +0800
+
+    修改超时时间
+
+[33mcommit 6bf5cccd0e5df94da642fcd9d3d765b2ec2a1592[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Fri Aug 17 14:57:37 2018 +0800
+
+    修改字段
+
+[33mcommit ae5aadf3874be9640e6f8aaad5d6d2d97478c9d6[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Fri Aug 17 14:24:44 2018 +0800
+
+    添加跳转
+
+[33mcommit fecba684eda197c1d732497dbb3ac25ef3410227[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Aug 16 22:39:21 2018 +0800
+
+    软电话，硬电话状态不一致问题
+    电话监控（组长）
+
+[33mcommit 92d01932021a61283fa3540cd9d7401c6ed510a0[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Aug 16 18:27:20 2018 +0800
+
+    去掉名单监控默认查询
+
+[33mcommit 7b2cd1b515e49a2a9cfa8482aef092f3ee578b9c[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Thu Aug 16 16:55:27 2018 +0800
+
+    修改样式
+
+[33mcommit 1f844c74e41856c3e943b743368435e83c83cf64[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Aug 16 16:20:43 2018 +0800
+
+    修改点回退和刷新报错问题
+
+[33mcommit dce56132dfba443b0d9a2d799620bf6752272d65[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Thu Aug 9 17:08:02 2018 +0800
+
+    接触历史合并
+
+[33mcommit 45f3028989835ef7a75da0194a5ee5b55b7259d3[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Wed Aug 15 15:59:55 2018 +0800
+
+    去掉无用的getMenu
+
+[33mcommit e857e37fffe6f350d1286f5a1d0a0aac1ab0aedb[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Wed Aug 15 15:24:56 2018 +0800
+
+    修改刷新导致404问题
+
+[33mcommit 360934805275b85f6a2543503ca42c1e834ea4cf[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Wed Aug 15 13:59:20 2018 +0800
+
+    查询质检评分、tab页、弹窗被遮住
+
+[33mcommit 2f3e5152c0474c5badb989caad001be7e1b92d29[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Wed Aug 15 10:27:38 2018 +0800
+
+    判断用户软电话权限
+
+[33mcommit 4bce4e5a985c2b83da33e43f2b3367e833a20338[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Aug 15 10:04:30 2018 +0800
+
+    xiugai
+
+[33mcommit e3ab867ea7ce905f65e6bbdb93d7625835610e52[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Tue Aug 14 17:58:03 2018 +0800
+
+    登陆token更新
+
+[33mcommit d5496fddb57c7df5d47595d8f90a7039ce8adf1d[m
+Author: 刘少林 <liusl@wise2c.com>
+Date:   Tue Aug 14 08:39:54 2018 +0000
+
+    Update dev.env.js
+
+[33mcommit de85eee55525b1caf23955aa7ca2d30e331854dd[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Aug 14 14:54:57 2018 +0800
+
+    账号角色界面重构
+
+[33mcommit ec05b6d56df405a00a21fa81ac397a3b52fc456a[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Aug 10 17:40:11 2018 +0800
+
+    拨打界面拨打功能
+
+[33mcommit 8ea41f985814d723dc9fb8f6cc5d3296565105f0[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Aug 9 17:25:41 2018 +0800
+
+    提交ZH页面
+
+[33mcommit 0d8cb20f8e75e7b988a95629e79a96a93e38c152[m
+Author: 刘少林 <liusl@wise2c.com>
+Date:   Thu Aug 9 08:49:46 2018 +0000
+
+    修改请求超时时间
+
+[33mcommit 352aa2cf5a040f5056d0407255ecb9f5233b856b[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Aug 9 10:21:52 2018 +0800
+
+    软电话转接和三方功能
+
+[33mcommit 45382e14002caa74b0865a611412a2e03303ccb4[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Aug 7 10:06:21 2018 +0800
+
+    xiugai
+
+[33mcommit f1a6303c4fac9e2f95259bf0880051f5b1761320[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Aug 7 09:57:02 2018 +0800
+
+    xiugai
+
+[33mcommit 3e1f3a642f829b71223ddd40f12a5740f5b1ca83[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Aug 6 16:39:55 2018 +0800
+
+    软电话条 拨打功能实现
+
+[33mcommit 40d42d5c4af5499bee0bcb487ac1f1bf96dc17d5[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Aug 6 14:30:28 2018 +0800
+
+    笔记管理
+
+[33mcommit 91298d37c6897f1a33c3bf36518608e044c43185[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Mon Aug 6 14:14:52 2018 +0800
+
+    xiugai
+
+[33mcommit 41d7566b55d26c9e2b639fd2388f55004030b57c[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Thu Aug 16 11:59:11 2018 +0800
+
+    修改名字
+
+[33mcommit 8a8601dd0399d17a1a3dff953ea279503a54cb1a[m
+Merge: b0fbfcb cb84366
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Thu Aug 16 03:42:15 2018 +0000
+
+    Merge branch 'wx-login-#480' into 'master'
+    
+    登陆token更新
+    
+    See merge request crm/nui!36
+
+[33mcommit cb84366a49c0742c11c0b8765926957c46abaaf8[m
+Merge: ba9d6e7 b0fbfcb
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Thu Aug 16 03:38:02 2018 +0000
+
+    Merge branch 'master' into 'wx-login-#480'
+    
+    # Conflicts:
+    #   config/dev.env.js
+
+[33mcommit 9b6f1b19515ca97503a08c7c2fbb2ced1b954a73[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Aug 15 18:16:47 2018 +0800
+
+    xiugai
+
+[33mcommit b0fbfcb00b5e095c8f7641633ec33ed79d0e3288[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Wed Aug 15 15:59:55 2018 +0800
+
+    去掉无用的getMenu
+
+[33mcommit a1ae023793c10b7013233e9b8be8571dfd084610[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Wed Aug 15 15:24:56 2018 +0800
+
+    修改刷新导致404问题
+
+[33mcommit cccc6e539465f408f7274cefb359a098f85c7ccf[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Aug 15 15:09:13 2018 +0800
+
+    xiugai
+
+[33mcommit e4535a63c44a8df6b6450fd85a218564ba9fa64f[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Wed Aug 15 13:59:20 2018 +0800
+
+    查询质检评分、tab页、弹窗被遮住
+
+[33mcommit 98bf5ec49ce1463cc22d5897e7f657a15bc731cf[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Wed Aug 15 10:27:38 2018 +0800
+
+    判断用户软电话权限
+
+[33mcommit e882ac2841ebd33d4c7df81d3ccd86471cbdcbf9[m
+Merge: 4e2fa5a 84571d3
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Wed Aug 15 02:02:06 2018 +0000
+
+    Merge branch 'liuIssue' into 'master'
+    
+    Liu issue
+    
+    See merge request crm/nui!34
+
+[33mcommit 84571d385684209426e0d7de594fe88731179869[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Aug 15 10:04:30 2018 +0800
+
+    xiugai
+
+[33mcommit ba9d6e7029984e29953fcc712aa45a4530fcc470[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Tue Aug 14 17:58:03 2018 +0800
+
+    登陆token更新
+
+[33mcommit 4e2fa5a1ca12b476d0cc3b6c4ed666b05004bfbd[m
+Author: 刘少林 <liusl@wise2c.com>
+Date:   Tue Aug 14 08:39:54 2018 +0000
+
+    Update dev.env.js
+
+[33mcommit 278b33615fa077a4d9224c9e4f9632986ce5482d[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Aug 14 14:54:57 2018 +0800
+
+    账号角色界面重构
+
+[33mcommit e6a955a56a396cfdbb524b6e17eefb391fa96497[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Aug 10 17:40:11 2018 +0800
+
+    拨打界面拨打功能
+
+[33mcommit 0cebfb36b36f216050b4493a924eeae09aaa5c3e[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Thu Aug 9 18:42:44 2018 +0800
+
+    修改详情被叫显示错误
+
+[33mcommit e63db78f6cbe2df8e5df57043bfd0bdb1501f5b4[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Aug 9 17:25:41 2018 +0800
+
+    提交ZH页面
+
+[33mcommit 7ca8bbbfe22a1754052e0abb8ed5d464e2c91d93[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Thu Aug 9 17:08:02 2018 +0800
+
+    接触历史合并
+
+[33mcommit cd5325756a0e24ed3980a5071e87d2da2519a854[m
+Author: 刘少林 <liusl@wise2c.com>
+Date:   Thu Aug 9 08:49:46 2018 +0000
+
+    修改请求超时时间
+
+[33mcommit cc651c4711cb28058f427f561f1eba866e763cc9[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Aug 9 10:21:52 2018 +0800
+
+    软电话转接和三方功能
+
+[33mcommit 0e0bd4a01e86ca0441ae9dc97ad1dfd94cd9520f[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Aug 7 10:06:21 2018 +0800
+
+    xiugai
+
+[33mcommit 45f039f7fe446e10a033967efbeffaf4629f4a46[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Aug 7 09:57:02 2018 +0800
+
+    xiugai
+
+[33mcommit 13e95d81d5e31c781d65acca84c64389bad87797[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Aug 6 16:39:55 2018 +0800
+
+    软电话条 拨打功能实现
+
+[33mcommit 897439b47dd43e77998a9620446756924a2e41f5[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Aug 6 14:30:28 2018 +0800
+
+    笔记管理
+
+[33mcommit 263c3a48f887b90d2afe08e66e2c11bdc75edf6a[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Mon Aug 6 14:14:52 2018 +0800
+
+    xiugai
+
+[33mcommit 00f87c5478f6a4c2a02dc1ed1320876b1c7b3655[m
+Merge: 76fb69a 5dcc9e5
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Wed Aug 1 09:23:04 2018 +0000
+
+    Merge branch 'wx-message-#448' into 'master'
+    
+    Wx message #448
+    
+    See merge request crm/nui!25
+
+[33mcommit 76fb69a3ad90072eb999e282481de7d0fc34fc31[m
+Merge: 95c3458 67c0278
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Wed Aug 1 09:21:42 2018 +0000
+
+    Merge branch 'wx-message' into 'master'
+    
+    Wx message
+    
+    See merge request crm/nui!26
+
+[33mcommit 67c02786564880a1b9c6c3856e95ebe560147e6d[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Wed Aug 1 17:08:26 2018 +0800
+
+    修改弹框宽度
+
+[33mcommit 99cf5fff601a1f7e44498267eb56dbb2dfbe9bdd[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Wed Aug 1 16:27:56 2018 +0800
+
+    短信模板详情
+
+[33mcommit 95c34582bb6316d8f13939b57d669d5f65597da7[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Jul 31 18:21:03 2018 +0800
+
+    update dev.env.js
+
+[33mcommit 11ac2680964d523bc59045507d10a2cfb48eedf9[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Jul 31 18:17:18 2018 +0800
+
+    固定header
+
+[33mcommit e0a53be7959897a6f0ee1f75ed90b4d872d7a4d8[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Jul 31 18:15:31 2018 +0800
+
+    质检评分功能
+
+[33mcommit 3d5084782dd66dd418eee184b42d92c389cbf77a[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Tue Jul 31 18:01:30 2018 +0800
+
+    短信模板
+
+[33mcommit 9e3abfbfcca4f9ad92ebef255139298965b5a956[m
+Merge: e346211 d2ede36
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Tue Jul 31 09:41:42 2018 +0000
+
+    Merge branch 'liuIssue' into 'master'
+    
+    xiugai
+    
+    See merge request crm/nui!22
+
+[33mcommit d2ede362997e37717ee5348cf2087c8f9119df02[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Jul 31 17:44:41 2018 +0800
+
+    xiugai
+
+[33mcommit e346211febe39359cc5addb6e008aab7dd8a03bc[m
+Merge: 83cd39e 70e9ef1
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Tue Jul 31 08:52:05 2018 +0000
+
+    Merge branch 'clh_issue394' into 'master'
+    
+    Clh issue394
+    
+    See merge request crm/nui!21
+
+[33mcommit 83cd39e0eab520647122a60b2734e7a8502fc3d5[m
+Merge: 3d27d93 d91d62f
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Tue Jul 31 08:49:09 2018 +0000
+
+    Merge branch 'liuIssue' into 'master'
+    
+    xiugai
+    
+    See merge request crm/nui!19
+
+[33mcommit 70e9ef1fb36243462261768f7e7c060f606df6a7[m[33m ([m[1;31morigin/clh_issue394[m[33m)[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Tue Jul 31 15:31:21 2018 +0800
+
+    序号叠加问题
+
+[33mcommit e5c3e1bf16d0a7d44a160f1dabad5a24e3b69af1[m
+Author: Administrator <admin@example.com>
+Date:   Tue Jul 31 07:04:32 2018 +0000
+
+    Delete testpipeline
+    删除流水线测试文件
+
+[33mcommit 7991fc0bee46d7e266a1c7bf7e4bfebbb586f740[m
+Author: Administrator <admin@example.com>
+Date:   Tue Jul 31 07:01:51 2018 +0000
+
+    Update testpipeline
+
+[33mcommit 378973d29a95b1c629ec5855add38b9f481e17ed[m
+Author: Administrator <admin@example.com>
+Date:   Tue Jul 31 06:56:57 2018 +0000
+
+    增加一个文件测试流水线自动触发
+
+[33mcommit 0d2e792f4103c05a6aaa024980f464cba2411fcd[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Tue Jul 31 11:35:26 2018 +0800
+
+    修改连续增加不清空缓存的bug
+
+[33mcommit 3d27d93fc26b9830c4e4d8d52f0af44eb55fbd60[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Jul 31 10:04:24 2018 +0800
+
+    调查问卷
+
+[33mcommit a2c29a76f9a11702a11ab2fc49b59bbea096fee8[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Jul 30 21:50:52 2018 +0800
+
+    质检任务管理功能
+
+[33mcommit 3228576fc5386836df6a1ab403de546b28160305[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Jul 30 21:44:14 2018 +0800
+
+    修改第一次进入404问题和去掉面包屑
+
+[33mcommit 5dcc9e5948c87baff70a8d0b135802ba517b46e3[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Mon Jul 30 17:37:25 2018 +0800
+
+    缺省字段
+
+[33mcommit 4fce586e9b2359d067b8b97ea92410e3f026b67a[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Mon Jul 30 16:38:59 2018 +0800
+
+    短信模板组
+
+[33mcommit d91d62fc2d94180f142c27a890dc5067b921ec8b[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Mon Jul 30 14:58:14 2018 +0800
+
+    xiugai
+
+[33mcommit a0e0e1ca270e0b0da65936c8d63da347f10a03be[m
+Merge: b917b80 b59a8d0
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Mon Jul 30 01:40:46 2018 +0000
+
+    Merge branch 'liu1' into 'master'
+    
+    OB
+    
+    See merge request crm/nui!16
+
+[33mcommit b59a8d055d368693a975dbbf785e4b986daa9cec[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Jul 27 18:38:04 2018 +0800
+
+    OB
+
+[33mcommit b917b80a828a337f60c8dd8954f996a9b36fe8c2[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Jul 26 17:56:44 2018 +0800
+
+    修改样式和添加cti.js
+
+[33mcommit 60ba0ff0b3453abe8a8bb9de31e81010be0704b1[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Thu Jul 26 16:03:31 2018 +0800
+
+    修复添加名单页面不能翻页的bug
+
+[33mcommit 24237f2cb1baf3ccdb5bc9def305d6de640e506b[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Wed Jul 25 17:15:46 2018 +0800
+
+    修改评分表标题的框大小
+
+[33mcommit cf6e3ba2621a5e381863b9b4c2cd4b3ee01cf97f[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Wed Jul 25 16:18:18 2018 +0800
+
+    修改了重置按钮，以及调整了页面大小
+
+[33mcommit 7a9c62b2e0212a0869baf86bdb4368edd833e030[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Wed Jul 25 14:31:17 2018 +0800
+
+    remove useless files to passing eslint in master-ci pipeline.
+
+[33mcommit dc63c6e038e1629c26369d105529e17761f91366[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Wed Jul 25 14:09:02 2018 +0800
+
+    fixing wrong merge problem.
+
+[33mcommit 1b62610e85b128260fd216ac1c5317b4a4c1e6fd[m
+Merge: 44a8ed7 97fc6d8
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Wed Jul 25 04:38:34 2018 +0000
+
+    Merge branch 'liu' into 'master'
+    
+    Liu
+    
+    See merge request crm/nui!14
+
+[33mcommit 97fc6d8840f851458ea831ac4cbf24dc6d19011f[m[33m ([m[1;31morigin/liu[m[33m)[m
+Merge: a5b4144 44a8ed7
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Wed Jul 25 04:38:28 2018 +0000
+
+    Merge branch 'master' into 'liu'
+    
+    # Conflicts:
+    #   src/store/getters.js
+
+[33mcommit a5b4144e0ffbc0263a4d4e15dfec8dcaaed053b4[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Jul 25 12:13:01 2018 +0800
+
+    xiugai
+
+[33mcommit 771c2d774e2af9ebc6e421d6e9b3d1fa7fa74b20[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Jul 25 11:46:51 2018 +0800
+
+    xiugai
+
+[33mcommit 44a8ed7333daa7007371826e0a845ff321281c8c[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Wed Jul 25 11:29:51 2018 +0800
+
+    修复引入了没有使用的function，导致构件失败的问题
+
+[33mcommit eebef3c385636c7e57aa91e6696e69551a60ca84[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Jul 25 11:25:49 2018 +0800
+
+    xiugai
+
+[33mcommit f0ff4e77301589e629581c9f9fca549129f995d3[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Jul 25 09:56:44 2018 +0800
+
+    xiugai
+
+[33mcommit b9c7c5f3373e250b7156df451e8cd72d6afc3997[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Jul 24 22:41:48 2018 +0800
+
+    质检回收
+
+[33mcommit 224ede5125d80ccbe45603bf05ff64bb10de63d6[m
+Author: 郭基 <lovelykal@163.com>
+Date:   Tue Jul 24 10:10:24 2018 +0800
+
+    修改分页翻页bug
+
+[33mcommit d2404b858947754d77683a4dcb4b5ccf1c8f2f38[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Mon Jul 23 18:54:04 2018 +0800
+
+    提交修改判定显示删除按键的逻辑，处理没有评分表子项而导致的问题
+
+[33mcommit 8b089ae9e4cda557de25a0150ac54c13afbf7040[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Mon Jul 23 17:56:27 2018 +0800
+
+    修改只为0不展示的问题
+
+[33mcommit d368b3930dfbc9cd689af9eb4435fcbf86632b2b[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Mon Jul 23 10:08:00 2018 +0800
+
+    拨打界面
+
+[33mcommit 23938ff0619799ae4dbb3a221dc00793dfb618a0[m
+Author: cn.shperry <cn.shperry@gmail.com>
+Date:   Mon Jul 23 10:03:36 2018 +0800
+
+    update .gitignore file.
+
+[33mcommit e4738a87121655df5d7560fd54b46ff0ddfb631d[m
+Merge: 9765ba7 5ce69fb
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Mon Jul 23 01:56:47 2018 +0000
+
+    Merge branch 'wx-396' into 'master'
+    
+    免访客户nui
+    
+    See merge request crm/nui!11
+
+[33mcommit 5ce69fbbab68e95e2c32012baf0bccf7be409b94[m
+Merge: 609793c 9765ba7
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Mon Jul 23 01:56:29 2018 +0000
+
+    Merge branch 'master' into 'wx-396'
+    
+    # Conflicts:
+    #   src/utils/tools.js
+
+[33mcommit 9765ba7e0374e8b28f0932b034713b9d94fdfb87[m
+Merge: a319db6 b2f31e1
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Mon Jul 23 01:54:48 2018 +0000
+
+    Merge branch 'wx-tel-397' into 'master'
+    
+    免访号段nui
+    
+    See merge request crm/nui!12
+
+[33mcommit 707d3e1b2ce0f0dcc6d325bffab747a6342da3fe[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Mon Jul 23 09:47:11 2018 +0800
+
+    修改了展示比例
+
+[33mcommit b2f31e145ee7ba29dbdec452f2b264ec7725b61c[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Mon Jul 23 09:42:29 2018 +0800
+
+    修改页面字段
+
+[33mcommit a319db6a7b69c9142dd6bf780622301c26bd0fb9[m
+Author: liushaolin <liusl@wise2c.com>
+Date:   Sat Jul 21 17:53:21 2018 +0800
+
+    dos2unix
+
+[33mcommit d9c44fdfdd7f5ab62f7538f3895e4ebe024a8a9a[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Sat Jul 21 16:44:04 2018 +0800
+
+    质检任务分配功能
+
+[33mcommit 05826af32630a0e92f6bb7668a18e8dbe30b76f9[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Jul 20 18:37:35 2018 +0800
+
+    小结管理功能
+
+[33mcommit 2ad529ef85221b9f0a2a456c2952430bde99a4df[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Fri Jul 20 17:45:57 2018 +0800
+
+    调整样式
+
+[33mcommit 73ccced2e8df02ccd280aefd7b1d4df41c7bd8a8[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Fri Jul 20 17:18:35 2018 +0800
+
+    修改免访号段页面
+
+[33mcommit 15f700d6f13ec957932910ddb00e410e381ee224[m
+Author: chenlinghua <clh@wise2c.com>
+Date:   Fri Jul 20 17:05:16 2018 +0800
+
+    完成质检评分表的相关功能
+
+[33mcommit 609793c921111f1e6ed5a310e74f61ec9b45ac00[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Fri Jul 20 16:39:08 2018 +0800
+
+    修改免访客户bug
+
+[33mcommit 88940729e12bd27bd7bb7908028deca172af4000[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Fri Jul 20 09:29:31 2018 +0800
+
+    免访号段
+
+[33mcommit f1b2070d5e3c19910b18701f08b3b9c57fec93aa[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Jul 18 18:23:52 2018 +0800
+
+    xiugai
+
+[33mcommit ee5338462805b9c11b3d5fa19815977f849cd0b2[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Jul 18 15:59:10 2018 +0800
+
+    xiugai
+
+[33mcommit 7b44b66ff1ebba7ebf4de51faf393ef746e341e5[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Jul 18 11:01:23 2018 +0800
+
+    xiugai
+
+[33mcommit 03801bb3c445d9925241abf100c30d34bad9503d[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Jul 18 10:15:28 2018 +0800
+
+    xiugai
+
+[33mcommit 4a777eb843341fb5d9a6eb4299c614f398443d32[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Jul 17 22:09:45 2018 +0800
+
+    活动与质检页面
+
+[33mcommit e7dfca1fe164f49517a01b568c7e271a46c16df6[m
+Author: wen.xing <wenxing@wise2c.com>
+Date:   Tue Jul 17 18:28:22 2018 +0800
+
+    免访客户
+
+[33mcommit f7e4267a68e4fb89da2b8b0d108a46c89446b8da[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Jul 17 17:17:07 2018 +0800
+
+    CTI
+
+[33mcommit 4ca7f0ff876496be19c858b8562d1606511282db[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Mon Jul 16 10:24:41 2018 +0800
+
+    xiugai
+
+[33mcommit 682c99c4e1c1c9422f1b2832b0fe96b6a9322d4b[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Fri Jul 13 16:25:29 2018 +0800
+
+    修改字段校验规则
+
+[33mcommit 02b1354f1ecc8c476e94882963c6f40432dd9540[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Thu Jul 12 16:23:33 2018 +0800
+
+    xiugai
+
+[33mcommit cc4f5984a9106bd35410ba926124fced0df9162c[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Thu Jul 12 14:35:23 2018 +0800
+
+    xiugai
+
+[33mcommit 11d97db4f8e4cbd9c745878f1f99ba22916033da[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Thu Jul 12 13:58:13 2018 +0800
+
+    xiugai
+
+[33mcommit d0c25b3741ca6c80c005623df8352cbccc4c54e3[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Thu Jul 12 10:20:16 2018 +0800
+
+    名单管理功能
+
+[33mcommit 3044c5a997869aee3629b1b4a19145f8e40e0d38[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Jul 11 18:22:37 2018 +0800
+
+    xiugai
+
+[33mcommit c229f09b71bbbfd598849123062615c9d3364575[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Jul 10 19:13:37 2018 +0800
+
+    xiugai
+
+[33mcommit b39a19bfdeb3a15eabb22bc72a289fd49d43979e[m
+Merge: afb5221 7dedfd4
+Author: Shu Peipei <shupp@wise2c.com>
+Date:   Tue Jul 10 07:35:42 2018 +0000
+
+    Merge branch 'liu' into 'master'
+    
+    Liu
+    
+    See merge request crm/nui!3
+
+[33mcommit afb52214a4cd6a0aac29eb2bd2007e906e39859e[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Jul 10 14:55:12 2018 +0800
+
+    批次管理功能
+
+[33mcommit e5cce956e175558493140f7a0e03338326d98cea[m
+Author: linn <linqf@wise2c.com>
+Date:   Mon Jul 9 18:28:36 2018 +0800
+
+    完成接触历史(主管)页面
+
+[33mcommit ae8bab5ed0d18be3248a245bcf79d2c3ee46c7e7[m
+Author: linn <linqf@wise2c.com>
+Date:   Mon Jul 9 16:27:30 2018 +0800
+
+    完成订单管理两个页面、拨打任务主界面、接触历史坐席主界面
+
+[33mcommit 7dedfd4d4ffd0cebb75a5ebe6fdf9a917c6d1afa[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Mon Jul 9 14:13:14 2018 +0800
+
+    xiugai
+
+[33mcommit 51d702d2de2cb0fbb44ff49318a9d8b541560ff3[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Jul 6 16:31:35 2018 +0800
+
+    xiugai
+
+[33mcommit 42bbc40eab3e8d4b74e430a2f44494c9970e2035[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Jul 6 11:24:45 2018 +0800
+
+    xiugai
+
+[33mcommit aecc8175aa2888fb41f628fa6c38096fc1bdba32[m
+Author: kevinkang <kevinkang@wise2c.com>
+Date:   Fri Jul 6 11:06:30 2018 +0800
+
+    将获取路由数据放到dashboard页面
+
+[33mcommit b674da6a3273448d12e4dc6ce63609ff56130f76[m
+Author: kevinkang <kevinkang@wise2c.com>
+Date:   Fri Jul 6 10:50:40 2018 +0800
+
+    动态路由显示问题修复
+
+[33mcommit 3c7f2a21e80a1c59ed2bf49cb2321477e8b5a817[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Jul 6 10:20:37 2018 +0800
+
+    xiugai
+
+[33mcommit e2d4088412b5a0b0334951e28fd6e53dba6c5f4f[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Thu Jul 5 17:38:09 2018 +0800
+
+    xiugai
+
+[33mcommit b2360e77baf9e4dc51d3b3d5dc2ab83c2349d039[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Wed Jul 4 14:49:54 2018 +0800
+
+    修改bug
+
+[33mcommit fef4c993effc8c4273ca0e22f88655b70b6766a2[m
+Author: linn <linqf@wise2c.com>
+Date:   Wed Jul 4 10:12:35 2018 +0800
+
+    完成issue #350
+
+[33mcommit 89de1e5e68eb8c6c71fd866b734f1550bb82a16b[m
+Author: liusl@wise2c.com <liusl@wise2c.com>
+Date:   Tue Jul 3 10:24:09 2018 +0800
+
+    活动管理页面
+
+[33mcommit be635e31b2aee94265dfe8aba78223ba0387dfcb[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Jun 26 17:48:48 2018 +0800
+
+    修改bug
+
+[33mcommit 860eba933e2948afa4735f0f83383610026e7fc6[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Jun 26 16:56:28 2018 +0800
+
+    去掉json
+
+[33mcommit a5dce026b01616ee5d51e708f628214ddb574089[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Tue Jun 26 16:41:58 2018 +0800
+
+    加了json文件
+
+[33mcommit 8f49ddcc0ae0f1b9f1f407d9a838809f16964d68[m
+Author: lovelykal <lovelykal@163.com>
+Date:   Tue Jun 26 14:39:29 2018 +0800
+
+    修复查询点击事件
+
+[33mcommit 5369ff3155941fa00ca3d6d55231e475aa5aab73[m
+Author: kevinkang <kevinkang@wise2c.com>
+Date:   Mon Jun 25 12:42:31 2018 +0800
+
+    动态路由显示问题
+
+[33mcommit f73aaabf6b6fc69408e48a7b45f9ca644811a8df[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Jun 22 15:02:39 2018 +0800
+
+    xiugai
+
+[33mcommit 024b81bd7feb37d8d8520450d0ae0c175a694cd1[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Jun 22 14:48:12 2018 +0800
+
+    xiugai
+
+[33mcommit 9646eba1ae35e229b150aaea0c995b80f3d00fb0[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Jun 22 12:08:54 2018 +0800
+
+    xiugai
+
+[33mcommit 8503293b4cd18569741bd7574c44149065f5c6bd[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Jun 22 11:58:51 2018 +0800
+
+    xiugai
+
+[33mcommit 69abe690d474a1536bcea7410d1d5bb06e441a1e[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Jun 22 11:42:19 2018 +0800
+
+    xiugai
+
+[33mcommit 8f5011f329422599f3184738f619193b55717cb7[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Jun 22 11:27:50 2018 +0800
+
+    xiugai
+
+[33mcommit e7f73c7a193901cb76420fbd6b3b7c292445d499[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Thu Jun 21 17:10:54 2018 +0800
+
+    xiugai
+
+[33mcommit bb1a64ed8f9ce7eb6e72bdffa2414956d48e6666[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Thu Jun 21 16:53:36 2018 +0800
+
+    xiugai
+
+[33mcommit 6caceb9b011ca9e5017e97f22f768d5dcb51c034[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Thu Jun 21 16:50:18 2018 +0800
+
+    部署
+
+[33mcommit 71e5d433d0395678fbab34836b65e773bca9b0bd[m
+Author: lovelykal <lovelykal@163.com>
+Date:   Fri Jun 15 13:42:34 2018 +0800
+
+    上传客户管理页面（文件夹改为小写）
+
+[33mcommit 5a6e4028312d6ec36ba45bbcce57e3cb36830804[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Jun 15 11:54:18 2018 +0800
+
+    xiugai
+
+[33mcommit 0811912044f99797e99cfc4bf7561101f4a1312a[m
+Author: lovelykal <lovelykal@163.com>
+Date:   Fri Jun 15 11:41:23 2018 +0800
+
+    文件夹重命名
+
+[33mcommit 950e6cc6b4a6373dfc6ba3c95f04f48db229fe33[m
+Author: lovelykal <lovelykal@163.com>
+Date:   Fri Jun 15 11:31:57 2018 +0800
+
+    转时间戳function改为公用工具
+
+[33mcommit 7d8556b7695b815ef75f2ac5be6169526d1de0b0[m
+Author: lovelykal <lovelykal@163.com>
+Date:   Fri Jun 15 11:22:49 2018 +0800
+
+    增加身份证验证和手机验证
+
+[33mcommit a9784699a5eb6e3b5b578ccd7a69695a71bf1f93[m
+Author: lovelykal <lovelykal@163.com>
+Date:   Fri Jun 15 11:08:04 2018 +0800
+
+    客户管理请求
+
+[33mcommit 168fbb823591f14841079172e70b6782939d90db[m
+Author: lovelykal <lovelykal@163.com>
+Date:   Fri Jun 15 10:43:36 2018 +0800
+
+    header增加面包屑导航，增加客户管理组件
+
+[33mcommit 735eef00e0d7fbc0502688a63d5c4fab04ed2ac2[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Jun 15 10:13:54 2018 +0800
+
+    员工页面
+
+[33mcommit 0d7fb08c9036ff4eaa8091af99511d7b6d53c427[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Jun 8 16:01:25 2018 +0800
+
+    修改
+
+[33mcommit 4f9be367c68da37a7c50a0d2b4937a90646551e3[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Jun 8 15:58:14 2018 +0800
+
+    修改
+
+[33mcommit ca9b664d7dcd5dc1258c74ae23ba966e2817c061[m
+Author: lovelykal <lovelykal@163.com>
+Date:   Fri Jun 8 13:58:59 2018 +0800
+
+    修改header导航
+
+[33mcommit 9dc29a601582bf911011fda87db7c7164d201786[m
+Author: liuhuihuang <liuhh@wise2c.com>
+Date:   Fri Jun 8 12:12:08 2018 +0800
+
+    vue
+
+[33mcommit 8efd15334b154ec7b33b7aa3fee783f216196727[m
+Author: 梁文智 <liangwz@wise2c.com>
+Date:   Thu Jun 7 05:09:02 2018 +0000
+
+    Add new file

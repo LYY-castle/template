@@ -12,10 +12,10 @@
         <hamburger style="margin-top:35px;" class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
       </el-col> -->
         <!-- 表单 -->
-        <div style="float:left;height:75px;margin-left:22px;" v-if="havesoftphone">
+        <div style="float:left;height:72px;margin-left:22px;" v-if="havesoftphone">
           <!-- 分机号和状态选项 -->
           <div class="navbar-forms">
-            <el-form :inline="true" size="mini">
+            <el-form :inline="true" size="mini" style="width:417px;">
               <el-popover trigger="click" placement="bottom">
                 <el-form :inline="true" size="mini" style="padding-top:20px;">
                   <!-- 分机号登入 -->
@@ -27,16 +27,16 @@
                     <el-button type="primary" size="mini" style="display:inline;" v-if="islogin" @click="agentLogoff()">登出</el-button>
                   </el-form-item>
                 </el-form>
-                <img slot="reference" src="../../../../static/images/enter_disable.png" title="登入" class="img-all icon-container" style="width:53px;">
+                <img slot="reference" src="../../../../static/images/enter_disable.png" title="登入" class="img-all icon-container">
               </el-popover>
               <!-- 状态 -->
               <el-dropdown trigger="click" placement="bottom" @command="changeState" >
-                <img src="../../../../static/images/nologin_state.png" title="未登录" class="img-all" v-if="agentState1">
-                <img src="../../../../static/images/busy_normal.png" title="示忙"  class="img-all" v-else-if="agentState2">
-                <img src="../../../../static/images/agentStat38_allReady.png" title="就绪"  class="img-all" v-else-if="agentState3">
-                <img src="../../../../static/images/back_state.png" title="后处理"  class="img-all" v-else-if="agentState4">
-                <img src="../../../../static/images/autodialAllReady.png" title="外呼就绪"  class="img-all" v-else-if="agentState5">
-                <img src="../../../../static/images/autoDialBusy.png" title="外呼占用"  class="img-all" v-else-if="agentState6">
+                <img src="../../../../static/images/nologin_state.png" title="未登录" class="img-all icon-container" v-if="agentState1">
+                <img src="../../../../static/images/busy_normal.png" title="示忙"  class="img-all icon-container" v-else-if="agentState2">
+                <img src="../../../../static/images/agentStat38_allReady.png" title="就绪"  class="img-all icon-container" v-else-if="agentState3">
+                <img src="../../../../static/images/back_state.png" title="后处理"  class="img-all icon-container" v-else-if="agentState4">
+                <img src="../../../../static/images/autodialAllReady.png" title="外呼就绪"  class="img-all icon-container" v-else-if="agentState5">
+                <img src="../../../../static/images/autoDialBusy.png" title="外呼占用"  class="img-all icon-container" v-else-if="agentState6">
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="0" :disabled="lockChange">就绪</el-dropdown-item>
                   <el-dropdown-item command="13" :disabled="lockChange">示忙</el-dropdown-item>
@@ -45,72 +45,74 @@
                 </el-dropdown-menu>
               </el-dropdown>
               <!-- 号码输入框 -->
-              <img src="../../../../static/images/answer_disable.png" title="接听(不可用)"  class="img-all" v-show="!answerCall" style="width:53px;">
-              <img src="../../../../static/images/answer_normal.gif" title="接听"  class="img-all" v-show="answerCall" @click="agentanswercall()" style="width:53px;">
+              <img src="../../../../static/images/answer_disable.png" title="接听(不可用)"  class="img-all icon-container" v-show="!answerCall">
+              <img src="../../../../static/images/answer_normal.gif" title="接听"  class="img-all icon-container" v-show="answerCall" @click="agentanswercall()">
+              <!-- <div class="icon-container"> -->
+              <img src="../../../../static/images/dial_disable.png" title="拨号(不可用)" class="img-all icon-container" v-show="!dialCall" style="margin-right:0;">
+              <img src="../../../../static/images/dial_normal.png" title="拨号"  class="img-all icon-container" v-show="dialCall" @click="agentdialout()" style="margin-right:0;">
+              <!-- </div> -->
               <el-form-item class="numberBox">
-                <!-- <el-col :span="24"> -->
-                  <el-input v-model="formInline.user" size="mini" :disabled="disabledDial"></el-input>
-                <!-- </el-col> -->
+                <el-input v-model="formInline.user" size="medium" :disabled="disabledDial" style="margin-left:-6px;"></el-input>
               </el-form-item>
             </el-form>
           </div>
-          <div class="navbar-buttons">
-            <div style="float:left;margin-left:5px;" class="icon-container">
-              <img src="../../../../static/images/dial_disable.png" title="拨号(不可用)" class="img-all" v-show="!dialCall">
-              <img src="../../../../static/images/dial_normal.png" title="拨号"  class="img-all" v-show="dialCall" @click="agentdialout()">
+          <div class="navbar-buttons" style="float:left;">
+            <!-- <div style="float:left;" class="icon-container">
+              <img src="../../../../static/images/dial_disable.png" title="拨号(不可用)" class="img-all icon-container" v-show="!dialCall">
+              <img src="../../../../static/images/dial_normal.png" title="拨号"  class="img-all icon-container" v-show="dialCall" @click="agentdialout()">
+            </div> -->
+            <div style="float:left;margin-right: 15px;" class="icon-container">
+              <img src="../../../../static/images/hold_disable.png" title="保持(不可用)" class="img-all icon-container" v-show="holdCall1">
+              <img src="../../../../static/images/hold_normal.png" title="保持" class="img-all icon-container" v-show="holdCall2" @click="agenthold()">
+              <img src="../../../../static/images/holding_state.gif" title="保持" class="img-all icon-container" v-show="holdCall3"  @click="agenthold()">
             </div>
-            <div style="float:left;margin-left:5px;" class="icon-container">
-              <img src="../../../../static/images/hold_disable.png" title="保持(不可用)" class="img-all" v-show="holdCall1">
-              <img src="../../../../static/images/hold_normal.png" title="保持" class="img-all" v-show="holdCall2" @click="agenthold()">
-              <img src="../../../../static/images/holding_state.gif" title="保持" class="img-all" v-show="holdCall3"  @click="agenthold()">
+            <div style="float:left;margin-right: 15px;" class="icon-container">
+              <img src="../../../../static/images/trans_disable.png" title="转接(不可用)" class="img-all icon-container" v-show="transCall1">
+              <img src="../../../../static/images/trans_normal.png" title="转接" class="img-all icon-container" v-show="transCall2" @click="agentstarttransfer()">
+              <img src="../../../../static/images/comtrans_normal.gif" title="转接中" class="img-all icon-container" v-show="transCall3" @click="agentstarttransfer()">
             </div>
-            <div style="float:left;margin-left:5px;" class="icon-container">
-              <img src="../../../../static/images/trans_disable.png" title="转接(不可用)" class="img-all" v-show="transCall1">
-              <img src="../../../../static/images/trans_normal.png" title="转接" class="img-all" v-show="transCall2" @click="agentstarttransfer()">
-              <img src="../../../../static/images/comtrans_normal.gif" title="转接中" class="img-all" v-show="transCall3" @click="agentstarttransfer()">
+            <div style="float:left;margin-right: 15px;" class="icon-container">
+              <img src="../../../../static/images/conf_disable.png" title="三方(不可用)" class="img-all icon-container" v-show="confCall1">
+              <img src="../../../../static/images/conf_normal.png" title="三方" class="img-all icon-container" v-show="confCall2" @click="agentstartconffer()">
+              <img src="../../../../static/images/comconf_normal.gif" title="三方" class="img-all icon-container" v-show="confCall3" @click="agentstartconffer()">
             </div>
-            <div style="float:left;margin-left:5px;" class="icon-container">
-              <img src="../../../../static/images/conf_disable.png" title="三方(不可用)" class="img-all" v-show="confCall1">
-              <img src="../../../../static/images/conf_normal.png" title="三方" class="img-all" v-show="confCall2" @click="agentstartconffer()">
-              <img src="../../../../static/images/comconf_normal.gif" title="三方" class="img-all" v-show="confCall3" @click="agentstartconffer()">
+            <div style="float:left;margin-right: 15px;" class="icon-container">
+              <img src="../../../../static/images/retrieve_disable.png" title="取回(不可用)" class="img-all icon-container" v-show="!retrieveCall">
+              <img src="../../../../static/images/retrieve_normal.png" title="取回" class="img-all icon-container" v-show="retrieveCall" @click=" agentretrieve()">
             </div>
-            <div style="float:left;margin-left:5px;" class="icon-container">
-              <img src="../../../../static/images/retrieve_disable.png" title="取回(不可用)" class="img-all" v-show="!retrieveCall">
-              <img src="../../../../static/images/retrieve_normal.png" title="取回" class="img-all" v-show="retrieveCall" @click=" agentretrieve()">
-            </div>
-            <div style="float:left;margin-left:5px;" class="icon-container">
-              <img src="../../../../static/images/hangup_disable.png" title="挂断(不可用)" class="img-all" v-show="!hangupCall">
-              <img src="../../../../static/images/hangup_normal.png" title="挂断" class="img-all" v-show="hangupCall" @click="agenthangup()">
+            <div style="float:left;" class="icon-container">
+              <img src="../../../../static/images/hangup_disable.png" title="挂断(不可用)" class="img-all icon-container" v-show="!hangupCall">
+              <img src="../../../../static/images/hangup_normal.png" title="挂断" class="img-all icon-container" v-show="hangupCall" @click="agenthangup()">
             </div>
           </div>
           <span style="float:left" class="line"></span>
           <div class="status-container">
             <div style="clear:both;diaplay:inline-block;">
-              <b>状态：</b>
+              <span class="item">状态：</span>
               <el-popover trigger="hover" placement="bottom" :content="telephoneState">
-                <span slot="reference">{{telephoneState}}</span>
+                <span slot="reference" class="content">{{telephoneState}}</span>
               </el-popover>
             </div>
             <br>
             <div style="clear:both;display:inline-block;margin-top:32px;">
-              <b>时长：</b>
+              <span class="item">时长：</span>
               <el-popover trigger="hover" placement="bottom" :content="timeCount">
-                <span slot="reference">{{timeCount}}</span>
+                <span slot="reference" class="content">{{timeCount}}</span>
               </el-popover>
             </div>
           </div>
           <div class="status-container call">
               <div style="clear:both;display:inline-block;">
-                <b>主叫：</b>
+                <span class="item">主叫：</span>
                 <el-popover trigger="hover" placement="bottom" :content="caller">
-                  <span slot="reference">{{caller}}</span>
+                  <span slot="reference" class="content">{{caller}}</span>
                 </el-popover>
               </div>
             <br>
               <div style="clear:both;display:inline-block;margin-top:32px;">
-                <b>被叫：</b>
+                <span class="item">被叫：</span>
                 <el-popover trigger="hover" placement="bottom" :content="callee">
-                  <span slot="reference">{{callee}}</span>
+                  <span slot="reference" class="content">{{callee}}</span>
                 </el-popover>
               </div>
             <!-- <br>
@@ -125,12 +127,13 @@
           <!-- <span style="float:left" class="line"></span> -->
 
         </div>
+        <span style="float:left" class="line"></span>
         <div style="margin-right:2px;position: absolute;right:0" v-if="havesoftphone">
           <!-- 用户 -->
           <el-tooltip placement="bottom" class="user">
             <div slot="content">用户信息</div>
             <el-dropdown @command="handleCommand" trigger="click" >
-              <el-button type="info" circle><svg-icon icon-class="user" class="icon-size"/></el-button>
+              <el-button circle style="background:none;color:#AAACAE;border:none;padding:5.5px;"><svg-icon icon-class="user" class="icon-size"/></el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item disabled>
                   <span><b>工号：</b>{{userInfo.staffId}}</span><br/>
@@ -156,7 +159,8 @@
                   <!-- 未读特提：{{msgNum_sm}} 条<br/>
                   未读特急：{{msgNum_eu}} 条<br/> -->
                 </div>
-                <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()" class="icon-size"></el-button>
+                <!-- <el-button icon="el-icon-message" style="background:none;color:#AAACAE;border:none;" circle @click="checkMessageList()" class="icon-size"></el-button> -->
+                <div @click="checkMessageList()" style="cursor:pointer;"><img src="../../../../static/images/message.png"></div>
               </el-tooltip>
             </el-badge>
           </div>
@@ -169,7 +173,8 @@
                 <!-- 未读特提：{{msgNum_sm}} 条<br/>
                 未读特急：{{msgNum_eu}} 条<br/> -->
               </div>
-              <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()" class="icon-size"></el-button>
+              <!-- <el-button icon="el-icon-message" style="background:none;color:#AAACAE;border:none;" circle @click="checkMessageList()" class="icon-size"></el-button> -->
+              <div @click="checkMessageList()" style="cursor:pointer;"><img src="../../../../static/images/message.png"></div>
             </el-tooltip>
           </div>
           <!-- 微信 -->
@@ -177,7 +182,8 @@
             <el-tooltip placement="bottom">
               <div slot="content">{{wechatState=="0"?"示忙":"就绪"}}</div>
               <el-dropdown trigger="click" placement="bottom" @command="changeWechatState" >
-                <el-button type="info" circle><svg-icon icon-class="wechat" class="icon-size"/></el-button>
+                <!-- <el-button circle style="background:none;border:none;"><img src="../../../../static/images/wechat_online.png"></el-button> -->
+                <div style="cursor:pointer;"><img :src="wechatImgUrl"></div>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item>
                     <div @click="toWeChat">
@@ -193,10 +199,10 @@
           </div>
         <el-row v-if="!havesoftphone" style="height:75px;">
           <el-col :span="7" class="userInfo" style="float:right;margin-top:-7px;">
-             <el-col :span="3" style="margin-top:18px;float:right;margin-left:10px;">
+             <el-col :span="3" style="margin-top:21px;float:right;margin-left:10px;">
               <!-- 用户 -->
-              <el-dropdown @command="handleCommand" trigger="click" >
-                <el-button type="info" circle><svg-icon icon-class="user" style="font-size:30px;"/></el-button>
+              <el-dropdown @command="handleCommand" trigger="click">
+                <el-button circle style="background:none;color:#AAACAE;border:none;padding:5.5px;"><svg-icon icon-class="user" class="icon-size"/></el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item disabled>
                     <span><b>工号：</b>{{userInfo.staffId}}</span><br/>
@@ -213,7 +219,7 @@
               </el-dropdown>
             </el-col>
 
-            <el-col :span="3"  style="margin-top:18px;float:right;margin-left:10px;">
+            <el-col :span="3"  style="margin-top:28px;float:right;margin-left:10px;">
               <!-- 有未读信息 -->
               <div v-show="msgNum_all > 0">
                 <el-badge v-model="msgNum_all" class="item" :max="99">
@@ -224,7 +230,8 @@
                       <!-- 未读特提：{{msgNum_sm}} 条<br/>
                       未读特急：{{msgNum_eu}} 条<br/> -->
                     </div>
-                    <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()" style="font-size:30px;"></el-button>
+                    <!-- <el-button icon="el-icon-message" circle @click="checkMessageList()" style="font-size:30px;background:none;color:#AAACAE;border:none;"></el-button> -->
+                    <div @click="checkMessageList()" style="cursor:pointer;"><img src="../../../../static/images/message.png"></div>
                   </el-tooltip>
                 </el-badge>
               </div>
@@ -237,7 +244,8 @@
                     <!-- 未读特提：{{msgNum_sm}} 条<br/>
                     未读特急：{{msgNum_eu}} 条<br/> -->
                   </div>
-                  <el-button type="success" icon="el-icon-message" circle @click="checkMessageList()" style="font-size:30px;"></el-button>
+                  <!-- <el-button icon="el-icon-message" circle @click="checkMessageList()" style="background:none;color:#AAACAE;border:none;font-size:30px;"></el-button> -->
+                  <div @click="checkMessageList()" style="cursor:pointer;"><img src="../../../../static/images/message.png"></div>
                 </el-tooltip>
               </div>
             </el-col>
@@ -248,7 +256,7 @@
         <!-- tab -->
         <div>
           <el-col :span="20">
-            <tags-view></tags-view>
+            <tags-view style="border-top:1px solid #ccc;"></tags-view>
           </el-col>
         </div>
 
@@ -315,6 +323,7 @@ export default {
   name: 'layout',
   data() {
     return {
+      wechatImgUrl: '../../../../static/images/wechat_online.png',
       agentArray: [], // 部门下属成员
       lockChange: false, // 默认不禁用切换状态框
       isOrdSet: false, // 是否为普通坐席界面
@@ -426,10 +435,12 @@ export default {
         if (response.data.code === 1) {
           if (response.data.data[0].online === 0) {
             console.log('示忙')
-            $('.wechat').addClass('outline')
+            // $('.wechat').addClass('outline')
+            this.wechatImgUrl = '../../../../static/images/wechat_outline.png'
           } else {
             console.log('就绪')
-            $('.wechat').removeClass('outline')
+            // $('.wechat').removeClass('outline')
+            this.wechatImgUrl = '../../../../static/images/wechat_online.png'
           }
           this.wechatState = response.data.online
         } else {
@@ -453,13 +464,15 @@ export default {
               this.$message({
                 message: '修改微信状态为示忙'
               })
-              $('.wechat').addClass('outline')
+              // $('.wechat').addClass('outline')
+              this.wechatImgUrl = '../../../../static/images/wechat_outline.png'
             } else if (val === '1') {
               this.$message({
                 message: '修改微信状态为就绪',
                 type: 'success'
               })
-              $('.wechat').removeClass('outline')
+              // $('.wechat').removeClass('outline')
+              this.wechatImgUrl = '../../../../static/images/wechat_online.png'
             }
           } else {
             this.$message({
@@ -1600,8 +1613,14 @@ export default {
       // logo缩放
       if (this.$store.state.app.sidebar.opened) {
         this.$store.commit('SET_LOGOCLASS', 'opened')
+        $('.hamburger i').addClass('el-icon-arrow-left').removeClass('el-icon-arrow-right')
+        $('.tags-view-container').width('90.5%')
+        $('div.hamberger-bar').addClass('opened')
       } else {
         this.$store.commit('SET_LOGOCLASS', 'closed')
+        $('.hamburger i').addClass('el-icon-arrow-right').removeClass('el-icon-arrow-left')
+        $('.tags-view-container').width('98%')
+        $('div.hamberger-bar').addClass('closed')
       }
     },
     logout() {
@@ -1728,11 +1747,20 @@ export default {
     }
     if (sessionStorage.getItem('sidebarStatus') === '0') {
       this.$store.commit('SET_LOGOCLASS', 'opened')
+      $('.hamburger i').addClass('el-icon-arrow-left').removeClass('el-icon-arrow-right')
+      $('.tags-view-container').width('90.5%')
+      $('div.hamberger-bar').addClass('opened')
     } else if (sessionStorage.getItem('sidebarStatus') === null) {
       this.$store.commit('OPEN_SIDEBAR')
       this.$store.commit('SET_LOGOCLASS', 'opened')
+      $('.hamburger i').addClass('el-icon-arrow-left').removeClass('el-icon-arrow-right')
+      $('.tags-view-container').width('90.5%')
+      $('div.hamberger-bar').addClass('opened')
     } else {
       this.$store.commit('SET_LOGOCLASS', 'closed')
+      $('.hamburger i').addClass('el-icon-arrow-right').removeClass('el-icon-arrow-left')
+      $('.tags-view-container').width('98%')
+      $('div.hamberger-bar').addClass('closed')
     }
     checkSoftphonePerm(agentId).then(res => {
       this.havesoftphone = true
@@ -1924,25 +1952,36 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
-.message .el-badge__content.is-fixed{
-  top: 3px;
-  right: 20px;
+.navbar{
+  .el-input{
+    .el-input__inner{
+      border-radius: 1.6px;
+    }
+  }
 }
+// .message .el-badge__content.is-fixed{
+//   top: 3px;
+//   right: 20px;
+// }
 .el-menu--horizontal {
   border:none;
 }
 #logo{
-  width:12%;
+  width:9.5%;
   background:#263445;
-  height:108.55px;
+  // height:108.7px;
   box-sizing: border-box;
   transition: width .3s;
+  padding:11px 30px 30px 23px;
 }
 #logo.closed{
   width:36px;
+  padding:0;
+  height:108.7px;
 }
 #logo.opened{
-  width:12%;
+  width:164px;
+  padding:11px 30px 30px 23px;
 }
 #logo.closed img{
   display:none;
@@ -1950,10 +1989,11 @@ export default {
 #logo img{
   width:100%;
   margin:4.4px 0;
-  height:100.55px;
+  height:59px;
 }
 .icon-container{
-  width:53px;
+  width:36px;
+  height:36px;
 }
 // .hamburger{
 //   margin-left:-2px;
@@ -1963,34 +2003,29 @@ export default {
 //   position:relative;
 // }
 .line{
-  margin-top:15px;
-  padding:23px 0;
-  border-left:2px solid #000;
-  border-right:2px solid #8B8B8B;
+  padding:38px 0;
+  border-right:1px solid #cccccc;
 }
 .numberBox{
-  width:43%;
-  margin-top:13px;
+  width:47%;
 }
-// .numberBox .el-form-item__content{
-  // width:55%;
-  // margin-top:4%;
-// }
+.numberBox .el-form-item__content{
+  width:100%;
+}
 .icon-container-status{
   margin-top:-8px;
 }
 .navbar-buttons{
   float:left;
-  // margin-left:20px;
   margin-right:20px;
-  margin-top:11px;
+  margin-top:18px;
 }
 .navbar-forms{
   float:left;
-  padding-top:12px;
+  padding-top:18px;
 }
 .icon-size{
-  font-size:30px;
+  font-size:34px;
 }
 // .status-container div{
 //   text-overflow: ellipsis;
@@ -2007,26 +2042,37 @@ export default {
   overflow: hidden;
   margin-left:20px;
   margin-right:21px;
+  .item{
+    font-family: PingFangSC-Light;
+    font-size: 12px;
+    color: #999999;
+    letter-spacing: 0.25px;
+  }
+  .content{
+    font-family: PingFangSC-Medium;
+    font-size: 12px;
+    color: #333333;
+    letter-spacing: 0.25px;
+  }
 }
 .status-container.call{
   width:270px;
 }
 .message{
   float:right;
-
   margin-right:25px;
-  margin-top:9px;
+  margin-top:28px;
 }
 .user{
   float:right;
   margin-right:25px;
-  margin-top:10px;
+  margin-top:18px;
 }
 .wechat{
   float:right;
   margin-left:50px;
-  margin-right:25px;
-  margin-top:10px;
+  margin-right:28px;
+  margin-top:28px;
   .el-button{
     border-color:#2AA145;
     background:#2AA145;
@@ -2071,12 +2117,14 @@ export default {
   .user{
     float:right;
     margin-right:5px;
-    margin-top:19px;
+    font-size:25px;
+    margin-top:7px;
+    padding:0;
   }
   .wechat{
     float:right;
     margin-left:22px;
-    margin-right:5px;
+    margin-right:16px;
     margin-top:19px;
     .el-button{
       border-color:#2AA145;
@@ -2123,28 +2171,30 @@ export default {
     width:150px;
   }
   .icon-size{
-    font-size:15px;
+    font-size:35px;
   }
   #logo{
-    width:154px;
+    width:164px;
     background:#263445;
-    height:108.55px;
+    // height:108.7px;
     box-sizing: border-box;
     transition: width .3s;
+    padding:11px 30px 30px 23px;
   }
   #logo.closed{
     width:36px;
+    padding:0;
+    height:108.7px;
   }
   #logo.opened{
-    width:12%;
+    width:164px;
+    padding:11px 30px 30px 23px;
   }
   #logo.closed img{
     display:none;
   }
   #logo img{
     width:100%;
-    margin:14.4px 0;
-    height:78.55px;
   }
   // .icon-container{
   //   margin-top:10px;
@@ -2154,50 +2204,60 @@ export default {
     margin-top:-4px;
   }
   .numberBox{
-    // width:25%;
-    margin-top:12px;
+    width:28%;
   }
   .navbar-buttons{
     margin-left:4px;
-    margin-top:12px;
   }
   .navbar-forms{
     width:324px;
   }
 }
 @media all and (min-width:1024px) and (max-width:1280px)  {
+  .numberBox{
+    width:28%;
+  }
   #logo{
-    width:137px;
+    width:164px;
     background:#263445;
-    height:108.55px;
+    // height:108.7px;
     box-sizing: border-box;
     transition: width .3s;
+    padding:11px 30px 30px 23px;
   }
   #logo.closed{
     width:36px;
+    height:108.7px;
+    padding:0;
   }
   #logo.opened{
-    width:12%;
+    width:164px;
+    padding:11px 30px 30px 23px;
   }
   #logo.closed img{
     display:none;
   }
   #logo img{
     width:100%;
-    margin:14.4px 0;
-    height:78.55px;
   }
   .message{
     margin-right:3px;
     margin-top:19px;
   }
+  // .user{
+  //   margin-right:3px;
+  //   margin-top:20px;
+  // }
   .user{
-    margin-right:3px;
-    margin-top:20px;
+    float:right;
+    margin-right:5px;
+    font-size:30px;
+    margin-top:9px;
+    padding:0;
   }
   .wechat{
-    margin-right:3px;
-    margin-top:20px;
+    margin-right:13px;
+    margin-top:19px;
     margin-left:20px;
     .el-button{
       border-color:#2AA145;
@@ -2243,7 +2303,7 @@ export default {
     width:120px;
   }
   .icon-size{
-    font-size:25px;
+    font-size:34px;
   }
   .el-button.is-circle {
     border-radius: 50%;
@@ -2255,19 +2315,19 @@ export default {
   // }
   .navbar-buttons{
     margin-left:4px;
-    margin-top:11px;
   }
   .navbar-forms{
     width:321px;
   }
 }
-// @media all and (min-width:400px) and (max-width:1023px)  {
-
-// }
 .img-all{
-  cursor:pointer;width:100%;
-  border-radius:5px;
-  border:3px solid #909399;
+  background:#fff;
+  cursor:pointer;
+  border-radius:1.6px;
+  border:.8px solid #CCCCCC;
+  padding:5.5px;
+  margin-right:15px;
+  box-sizing:border-box;
 }
 .img-all:hover{
   transition:box-shadow .5s;
@@ -2282,7 +2342,7 @@ export default {
   // box-shadow:  0 4px 5px #888;
   .el-form-item{
     margin-bottom:0;
-    height:30px;
+    height:36px;
   }
   .el-breadcrumb{
     height:20px;
@@ -2299,14 +2359,13 @@ export default {
   }
   .txtDN .el-form-item__content{
     margin-top:3%;
-    // width:53% !important;
   }
   .txtDN label{
     margin-bottom:4%;
   }
   .state_now .el-form-item__content{
     // margin-top:4%;
-    width:100% !important;
+    width:100% 
   }
   .state_now{
     // margin-top:1%;

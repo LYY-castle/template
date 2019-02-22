@@ -148,31 +148,41 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
 .tags-view-container {
   position: absolute;
+  border-bottom:1px solid #ccc;
   top:75px;
-  width:89%;
+  width:90.5%;
+  height:45px;
   z-index:999;
+  transition:width .3s; 
   .tags-view-wrapper {
     background: #F8F8F8;
-    height: 34px;
+    height: 100%;
     .tags-view-item {
+      box-sizing: border-box;
       display: inline-block;
       position: relative;
-      height: 26px;
-      line-height: 26px;
+      top:13px;
+      height: 30px;
+      // line-height:100%;
+      // vertical-align: middle;
       border: 1px solid #d8dce5;
-      color: #495060;
       background: #fff;
-      padding: 0 8px;
+      padding: 0 3px;
       font-size: 12px;
       margin-left: 5px;
-      margin-top: 4px;
+      font-size: 14px;
+      color: #333333;
+      letter-spacing: 0.29px;
       &:first-of-type {
+        height: 30px;
         margin-left: 20px;
       }
       &.active {
+        height: 30px;
         background-color: #42b983;
-        color: #fff;
+        color: #333333;
         border-color: #42b983;
+        border-bottom:2px solid #54B8FF;
         &::before {
           content: '';
           background: #fff;
@@ -213,24 +223,44 @@ export default {
 <style rel="stylesheet/scss" lang="scss">
 //reset element css of el-icon-close
 .tags-view-wrapper {
+  .scroll-wrapper{
+    height:45px;
+  }
   .tags-view-item {
     cursor: pointer;
+    box-sizing:border-box;
     .el-icon-close {
       width: 16px;
       height: 16px;
-      vertical-align: 2px;
+      vertical-align: 6px;
       border-radius: 50%;
       text-align: center;
       transition: all .3s cubic-bezier(.645, .045, .355, 1);
       transform-origin: 100% 50%;
-      background-color: #b4bccc;
-      color: #fff;
+      // background-color: #b4bccc;
+      color:#ccc;
+      display:none;
       &:before {
+        display:none;
         font-weight:bold;
-        font-size:16px;
+        font-size:14px;
+        transform: scale(.6);
+        vertical-align: -1px;
+        position:absolute;
+        top: 1px;
+        right: 3.5px;
+      }
+    }
+  }
+  .tags-view-item.active{
+    .el-icon-close {
+      display:inline-block;
+      &::before {
+        font-weight:bold;
+        font-size:14px;
         transform: scale(.6);
         display: inline-block;
-        vertical-align: -3px;
+        vertical-align: -1px;
       }
       &:hover {
         background-color: #b4bccc;
