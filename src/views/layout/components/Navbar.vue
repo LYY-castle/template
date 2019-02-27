@@ -33,10 +33,10 @@
               <el-dropdown trigger="click" placement="bottom" @command="changeState" >
                 <img src="../../../../static/images/nologin_state.png" title="未登录" class="img-all icon-container" v-if="agentState1">
                 <img src="../../../../static/images/busy_normal.png" title="示忙"  class="img-all icon-container" v-else-if="agentState2">
-                <img src="../../../../static/images/agentStat38_allReady.png" title="就绪"  class="img-all icon-container" v-else-if="agentState3">
+                <img src="../../../../static/images/agent_stat38_all_ready.png" title="就绪"  class="img-all icon-container" v-else-if="agentState3">
                 <img src="../../../../static/images/back_state.png" title="后处理"  class="img-all icon-container" v-else-if="agentState4">
-                <img src="../../../../static/images/autodialAllReady.png" title="外呼就绪"  class="img-all icon-container" v-else-if="agentState5">
-                <img src="../../../../static/images/autoDialBusy.png" title="外呼占用"  class="img-all icon-container" v-else-if="agentState6">
+                <img src="../../../../static/images/auto_dial_all_ready.png" title="外呼就绪"  class="img-all icon-container" v-else-if="agentState5">
+                <img src="../../../../static/images/auto_dial_busy.png" title="外呼占用"  class="img-all icon-container" v-else-if="agentState6">
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="0" :disabled="lockChange">就绪</el-dropdown-item>
                   <el-dropdown-item command="13" :disabled="lockChange">示忙</el-dropdown-item>
@@ -1069,6 +1069,7 @@ export default {
           this.hangupCall = true // 可以挂断
           break
         case 'ringback':
+          console.log('ringback')
           this.dialCall = false // 不能拨号
           this.answerCall = false // 不能接听
           this.hangupCall = true // 可以挂断

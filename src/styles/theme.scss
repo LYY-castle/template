@@ -2,6 +2,11 @@
 body{
   font-family: PingFangSC-Light,'helvetica neue',arial,'hiragino sans gb','microsoft yahei ui','microsoft yahei',simsun,sans-serif !important;
 }
+ul,p,h1,h2,h3,h4,h5,h6,dl,dd{
+  margin:0;
+  padding:0;
+  list-style:none;
+}
 .font12{
   font-size: 12px;
   color: #999999;
@@ -327,6 +332,18 @@ $menu2ItemHover2:#503029 !default;
     }
   }
   //按钮
+  // text
+  .el-button--primary{
+    border-color: $btnPrimary2 !important;
+    &:hover{
+      border-color: $btnPrimary2 !important;
+      opacity:0.7;
+    }
+    &:active{
+      border-color: $btnPrimary2 !important;
+      opacity:1;
+    }
+  }
   //primary
   .el-button--primary{
     background-color: $btnPrimary2 !important;
@@ -419,10 +436,10 @@ $user:#e98341 !default;
 $theme:#2C6075 !default;
 $main:#F3F5FA !default;
 $thead:#F3F5FA !default;
-$btnPrimary:#90B644 !default;
+$btnPrimary:#57AFFF !default;
 $btnSuccess:#90B644 !default;
 $btnDanger:#E98341 !default;
-$pageAct:#2C6075 !default;
+$pageAct:#4880FF !default;
 $menu:#242A2E !default;
 //memu一级菜单
 $menuItem1:#242A2E !default;
@@ -502,6 +519,11 @@ $menu2ItemHover1:#57AFFF !default;
       border-color: $btnPrimary !important;
       opacity:1;
     }
+    &.is-plain{
+      background: rgba(87,175,255,0.10) !important;
+      border: 1px solid #57AFFF !important;
+      border-radius: 2px !important;
+    }
   }
   //success
   .el-button--success{
@@ -533,13 +555,25 @@ $menu2ItemHover1:#57AFFF !default;
       opacity:1;
     }
   }
+  .el-button.is-disabled, .el-button.is-disabled:focus, .el-button.is-disabled:hover{ //禁用的样式
+    color: #fff !important;
+    cursor: not-allowed !important;
+    background-image: none !important;
+    background-color: #ccc !important;
+    border-color: #ccc !important;
+    &.el-button--text{
+      background:none !important;
+      border:none !important;
+      color:#ccc !important;
+    }
+  }
   //激活的页码
   .el-pagination.is-background .el-pager li:not(.disabled).active {
     background-color: $pageAct !important;
-    color: #fff;
+    // color: #fff;
   }
   .el-pagination.is-background .el-pager li:not(.disabled):hover {
-    color: #90B644 !important;
+    color: $pageAct !important;
   }
   //hamberger
   .hamberger-bar .hamburger{

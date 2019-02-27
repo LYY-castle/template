@@ -32,7 +32,7 @@
   background: #FFFFFF;
   box-shadow: 0 0 10px 0 rgba(39,48,69,0.10);
   border-radius: 2px;
-  padding:22px;
+  padding:20px;
   .el-table{
     font-weight: normal;
     font-size: 12px !important;
@@ -50,11 +50,11 @@
    border-bottom-color:#CED4E2 !important;
  }
  .el-table--border::after, .el-table--group::after, .el-table::before{
-  background:#CED4E2;
+   background:#CED4E2;
  }
- .el-table /deep/ tbody{
-   border-bottom:1px solid #CED4E2 !important;
- }
+//  .el-table /deep/ tbody{
+  //  border-bottom:1px solid #CED4E2 !important;
+//  }
  .el-table td /deep/ div.cell .el-popover__reference {
    white-space: nowrap;
    overflow:hidden;
@@ -93,4 +93,73 @@
  .el-popover {
   padding:5px;
 }
-
+//radio 颜色
+.radio-success{
+  color:#ccc;
+  &:hover{
+    .el-radio__inner{
+      border-color:#57AFFF;
+    }
+    .el-radio__label{
+      color:#57AFFF
+    }
+  }
+}
+.radio-fail{
+  color:#ccc;
+  &:hover{
+    .el-radio__inner{
+      border-color:#ED2135;
+    }
+    .el-radio__label{
+      color:#ED2135
+    }
+  }
+}
+.radio-order{
+  color:#ccc;
+  &:hover{
+    .el-radio__inner{
+      border-color:#28CC6C;
+    }
+    .el-radio__label{
+      color:#28CC6C
+    }
+  }
+}
+//success
+.radio-success.is-checked{
+  span.el-radio__input.is-checked{
+    .el-radio__inner{
+      background:#57AFFF;
+      border:#57AFFF;
+    }
+  }
+  span.el-radio__label{
+    color:#57AFFF;
+  }
+}
+// fail
+.radio-fail.is-checked{
+  span.el-radio__input.is-checked{
+    .el-radio__inner{
+      background:#ED2135;
+      border:#ED2135;
+    }
+  }
+  span.el-radio__label{
+    color:#ED2135;
+  }
+}
+// order
+.radio-order.is-checked{
+  span.el-radio__input.is-checked{
+    .el-radio__inner{
+      background:#28CC6C;
+      border:#28CC6C;
+    }
+  }
+  span.el-radio__label{
+    color:#28CC6C;
+  }
+}

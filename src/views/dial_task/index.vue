@@ -1,5 +1,5 @@
 <template>
-<div class='container'>
+<div class='container dial-task'>
   <!-- 隐藏的getSummariesDetail -->
   <!-- 拨打任务列表div层 -->
   <div  v-if="isDialTask===true">
@@ -132,12 +132,11 @@
       <el-col>
         <el-table
           :data="tableData"
-          border
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
             type="selection"
-            width="55">
+            width="50">
           </el-table-column>
           <el-table-column
             align="center"
@@ -238,7 +237,7 @@
             align="center"
             label="操作"
             :show-overflow-tooltip="true"
-            width="150">
+            width="130">
           <template slot-scope="scope">
             <!-- <a v-if="scope.row.status && scope.row.isBlacklist === '0' && scope.row.isNodisturb === '0' && scope.row.staffId === aId" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);" size="small" type="text">
               <img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</a>
@@ -253,7 +252,7 @@
             <el-tooltip v-if="scope.row.isNodisturb === '1'" class="item" effect="dark"  content="该号码处于免访号段中" placement="left-start">
               <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
             </el-tooltip> -->
-            <a v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb) && scope.row.staffId === aId" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);" size="small" type="text">
+            <a v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb) && scope.row.staffId === aId" @click="sumTotal=0;products=[];customerNote='';changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);" size="small" type="text">
               <img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</a>
             <div v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb)" v-show="scope.row.staffId !== aId" size="small" type="text">
               不可拨打</div>
@@ -294,120 +293,39 @@
 
   <!-- 客户详情 div层 -->
   <div v-else>
-    <el-row :gutter="20">
-      <el-col :span="5" style="text-align:center">
-        <br/>
-        <div>
-          <b title="客户姓名" style="font-size:18px;">{{customerInfo.customerName}}</b>
-        </div>
-        <div>
-          <span title="客户手机号" style="font-size:18px;">{{customerInfo.mobile}}</span>
-        </div>
-        <div>
-          <img src="../../../static/images/my_imgs/img_xiegang.png"  alt="横杆"/>
-        </div>
-        <div>
-          <img v-if="!hideDialTo" src="../../../static/images/dial_normal.png" alt="拨打" width="28px" height="28px" @click="dialTo(taskId,campaignId,isBlacklist,customerPhone)" style="cursor:pointer;">
-          <img v-if="hideDialTo" src="../../../static/images/dial_disable.png" alt="拨打" width="28px" height="28px"  style="cursor:default;">
-          <el-button :disabled="checkBindWechat(telCustomerInfos.customerId)" @click="toWeChat" class="wechat-btn" type="text" v-if="show_wechat==='true'"><svg-icon icon-class="wechat" class="icon-size" style="padding-bottom:5px;width:25px;height:25px;"/></el-button>
-        </div>
-      </el-col>
-      <el-col :span="3"></el-col>
-      <el-col :span="16">
-        <div  v-if="!(item === 'customerName' || item === 'mobile') "
-               v-for="(item,index) in customerColumnInfos" style="width:50%;float:left;margin:8px 0;">
-          <div>
-            <b>{{item === 'email' ? 'email:' : item === 'idNumber' ? '身份证:'
-              : item === 'resideAddress' ? '地址:' : item === 'sex' ? '性别:'
-              : item === 'source' ? '客户来源:' : item === 'customerId' ? '客户编号:'
-              : item === 'wechatPhone' ? '微信手机号:' : item === 'bankCardType' ? '持卡类型:' : ''}}</b>
-
-            <span :class="item" v-if="!isInput">{{item === 'email' ? customerInfo.email : item === 'idNumber' ? customerInfo.idNumber
-              : item === 'resideAddress' ? customerInfo.resideAddress : item === 'sex' ? showSex(customerInfo.sex)
-              : item === 'source' ? customerInfo.source : item === 'customerId' ? customerInfo.customerId
-              : item === 'wechatPhone' ? customerInfo.wechatPhone : item === 'bankCardType' ? customerInfo.bankCardType : ''}}
-            </span>
-            <el-input style="width:45%;display:none;" :class="item" :id="item+'input'"></el-input>&nbsp;&nbsp;
-            <i class="el-icon-circle-check-outline" @click="modifyCustomerInfo(customerInfo.customerId,item)" style="cursor:pointer;display:none;" :id="item+'btn1'"></i>
-            <i class="el-icon-circle-close-outline" @click="changeToInput(item)" style="cursor:pointer;display:none;" :id="item+'btn2'"></i>
-            <i class="el-icon-edit" :id="item+'edit'" @click="changeToInput(item)" style="color:blue;cursor:pointer;"></i>
-          </div>
-        </div>
-      </el-col>
-      <!-- <el-col :span="8" v-if="!isRecruit">
-        <br/>
-       <div>
-         <label>性别：</label><span v-text="showSex(customerInfo.sex)"></span>
-       </div><br/>
-       <div>
-         <label>卡号：</label><span v-text="customerInfo.bankCard"></span>
-       </div><br/>
-       <div>
-         <label>地址：</label><span v-text="customerInfo.resideAddress"></span>
-       </div><br/>
-      </el-col>
-      <el-col :span="8" v-if="isRecruit">
-        <br/>
-       <div>
-         <label>性别：</label><span v-text="showSex(customerInfo.sex)"></span>
-       </div><br/>
-       <div>
-         <label>来源：</label><span v-text="customerInfo.source"></span>
-       </div><br/>
-       <div>
-         <label>备注：</label><span v-text="customerInfo.comment"></span>
-       </div>
-      </el-col>
-      <el-col :span="8" v-if="!isRecruit">
-        <br/>
-        <div>
-         <label>身份证：</label><span v-text="customerInfo.idNumber"></span>
-       </div><br/>
-       <div>
-         <label>持卡类型：</label><span v-text="customerInfo.bankCardType"></span>
-       </div><br/>
-       <div>
-         <label>微信手机号：</label>
-         <span v-show="customerInfo.wechatPhone">
-           {{customerInfo.wechatPhone}}&nbsp;&nbsp;
-           <el-button plain type="default" icon="el-icon-edit" style="width:45px" title="修改微信手机号" @click="editWechatPhone=true;editCustomerInfo.customerId=customerInfo.customerId;editCustomerInfo.wechatPhone=customerInfo.wechatPhone"></el-button>
-         </span>
-         <span v-show="!customerInfo.wechatPhone">
-           <el-button plain type="default" icon="el-icon-plus" style="width:45px" title="添加微信手机号" @click="addWechatPhone=true;editCustomerInfo.customerId=customerInfo.customerId;editCustomerInfo.wechatPhone=''"></el-button>
-         </span>
-       </div>
-      </el-col>
-      <el-col :span="8" v-if="isRecruit">
-        <br/>
-        <div>
-         <label>身份证：</label><span v-text="customerInfo.idNumber"></span>
-       </div><br/>
-       <div>
-         <label>地址：</label><span v-text="customerInfo.resideAddress"></span>
-       </div><br/>
-       <div>
-         <label>微信手机号：</label>
-         <span v-show="customerInfo.wechatPhone">
-           {{customerInfo.wechatPhone}}&nbsp;&nbsp;
-           <el-button plain type="default" icon="el-icon-edit" style="width:45px" title="修改微信手机号" @click="editWechatPhone=true;editCustomerInfo.customerId=customerInfo.customerId;editCustomerInfo.wechatPhone=customerInfo.wechatPhone"></el-button>
-         </span>
-         <span v-show="!customerInfo.wechatPhone">
-           <el-button plain type="default" icon="el-icon-plus" style="width:45px" title="添加微信手机号" @click="addWechatPhone=true;editCustomerInfo.customerId=customerInfo.customerId;editCustomerInfo.wechatPhone=''"></el-button>
-         </span>
-       </div>
-      </el-col> -->
-    </el-row>
-    <br/><br/>
-    <el-row>
-      <el-collapse v-model="activeNames">
-        <!-- 接触记录 -->
-        <el-collapse-item name="1" >
-          <template slot="title">
-            <b>接触记录<i class="el-icon-d-caret"></i></b>
-          </template>
-          <el-table
-          :data="contactRecord"
-          border>
+    <div class="table-container">
+      <b class="font14">客户信息</b>
+      <div style="display:inline-block;position:relative;top:3px;margin-left:10px;">
+        <img v-if="!hideDialTo" style="height:16px;cursor:pointer;" src="../../../static/images/dial_normal.png" alt="拨打" @click="dialTo(taskId,campaignId,isBlacklist,customerPhone)">
+        <img v-if="hideDialTo" style="height:16px;cursor:disable;" src="../../../static/images/dial_disable.png" alt="拨打">
+        <el-button :disabled="checkBindWechat(telCustomerInfos.customerId)" @click="toWeChat" class="wechat-btn" type="text" v-if="show_wechat==='true'"><svg-icon icon-class="wechat" class="icon-size" style="width:20px;height:16px;"/></el-button>
+      </div>
+      <el-row class="customerinfo-container">
+        <el-col :span="6" class="font12">
+          <span style="color:#666666;">客户姓名：</span>
+          <b style="color:#020202;">{{customerInfo.customerName}}</b>
+        </el-col>
+        <el-col :span="6" class="font12">
+          <span>手机号码：</span>
+          <b style="color:#020202;">{{customerInfo.mobile}}</b>
+        </el-col>
+        <el-col :span="6" class="font12" v-if="!(item === 'customerName' || item === 'mobile')" v-for="(item,index) in customerColumnInfos">
+          <span>{{item === 'email' ? 'email:' : item === 'idNumber' ? '身份证:': item === 'resideAddress' ? '地址:' : item === 'sex' ? '性别:': item === 'source' ? '客户来源:' : item === 'customerId' ? '客户编号:': item === 'wechatPhone' ? '微信手机号:' : item === 'bankCardType' ? '持卡类型:' : ''}}</span>
+          <b style="color:#020202;" :class="item" v-if="!isInput">{{item === 'email' ? customerInfo.email : item === 'idNumber' ? customerInfo.idNumber: item === 'resideAddress' ? customerInfo.resideAddress : item === 'sex' ? showSex(customerInfo.sex): item === 'source' ? customerInfo.source : item === 'customerId' ? customerInfo.customerId: item === 'wechatPhone' ? customerInfo.wechatPhone : item === 'bankCardType' ? customerInfo.bankCardType : ''}}</b>
+          <el-input size="mini" style="width:45%;display:none;" :class="item" :id="item+'input'"></el-input>&nbsp;&nbsp;
+          <i class="el-icon-circle-check-outline" @click="modifyCustomerInfo(customerInfo.customerId,item)" style="cursor:pointer;display:none;" :id="item+'btn1'"></i>
+          <i class="el-icon-circle-close-outline" @click="changeToInput(item)" style="cursor:pointer;display:none;" :id="item+'btn2'"></i>
+          <i :id="item+'edit'" @click="changeToInput(item)" style="cursor:pointer;">
+            <img src="../../../static/images/edit_btn.png">
+          </i>
+        </el-col>
+      </el-row>
+      <el-row style="width:100%;border-top:1px solid #ccc;margin:20px 0;"></el-row>
+      <el-row>
+        <b class="font14">接触记录</b>
+        <el-table
+          style="margin-top:20px;"
+          :data="contactRecord">
           <el-table-column align="center" label="记录编号" width="170" prop="recordId">
           </el-table-column>
           <el-table-column align="center" label="拨打时间" width="170" prop="callTime">
@@ -439,128 +357,205 @@
             </template>
           </el-table-column>
           </el-table>
-        </el-collapse-item>
+      </el-row>
+    </div>
+    <el-row type="flex">
+      <el-col class="table-container" style="width:60.1%;">
+        <b class="font14">产品信息</b>
+        <!-- <el-row style="margin-top:20px;"> -->
+          <!-- <el-form :inline="true" size="mini">
+            <el-form-item>
+              <el-input placeholder="请输入搜索内容" maxlength="50">
+                 <i slot="prefix" class="el-input__icon el-icon-search" style="cursor:pointer;"></i>
+              </el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-select placeholder="请选择类型"> -->
 
-        <!-- 产品信息 -->
-        <el-collapse-item name="2" v-if="hasProductInfo===true && !isRecruit">
-          <template slot="title">
-            <b>产品信息<i class="el-icon-d-caret"></i></b>
-          </template>
-          <div>
-            <el-tabs v-model="activeTab" type="border-card" @tab-click="">
-              <el-tab-pane
-               v-for="(item,index) in products"
-               :key="item.productId"
-               :label="item.productName">
-                <div class="text item">产品类型：<font style="color:blue;size:14px;font-weight:bold">{{item.productType===null?'':item.productType === '0' ? '实体产品' : '虚拟产品'}}</font></div>
-                <div class="text item">产品编号：<font style="color:blue;size:14px;font-weight:bold">{{item.productId}}</font></div>
-                <div class="text item">产品名称：<font style="color:blue;size:14px;font-weight:bold">{{item.productName}}</font></div>
-                <div class="text item">产品单价：<font style="color:red;font-weight:bold">￥&nbsp;</font><font style="color:blue;font-weight:bold">{{item.price===null?0:item.price}}</font></div>
-                <div class="text item">产品库存：<font style="color:blue;size:14px;font-weight:bold">{{item.productNum}}</font></div>
-                <div class="text item">产品概述：{{item.description}}</div>
+                <!-- <el-option
+                  v-for="item in taskStatusOptions"
+                  :key="item.value"
+                  :value="item.value"
+                  :label="item.label">
 
-                <div style="width:25%;float:right" v-if="item.productNum !== null && item.productNum > 0 || item.number">
-                  <span>认购数量：</span>
-                  <el-input-number v-model="item.number" @change="handleChange(item.productId,item.price,item.number,index)" :min="0" :max="1000" label="认购数量" size="mini">
-                      {{item.number}}
-                  </el-input-number>
-                </div>
+                </el-option> -->
 
-                <div style="width:25%;float:right" v-if="item.productNum !== null && item.productNum === 0 && !item.number">
-                  <span style="color:red;size:14px;font-weight:bold">该产品库存不足！</span>
-                </div>
-              </el-tab-pane>
-            </el-tabs>
-
-            <div style="width:50%;float:left">
-              <label>客户留言:</label><el-input placeholder="有特别要求请注明，限100字符" maxlength="100" style="width:80%" v-model="customerNote"></el-input>
-            </div>
-            <div style="width:50%;float:right">
-              <label>选购清单：</label>
-              <el-card shadow="hover" v-for="(item,index) in products" v-if="item.number">
-                  <div style="margin-left:5%;color:blue;font-weight:700;font-size:14px">{{item.productName}}</div>
-                  <div style="color:blue;font-weight:bold;text-align:right">
-                    {{(typeof item.price==='undefined'||item.price===null)?0:item.price}}
-                    <span style="color:red;font-weight:bold;margin:0 3%">*</span>
-                    <el-input-number v-model="item.number" @change="handleChange(item.productId,item.price,item.number,index)" :min="0" :max="1000" label="预购数量" size="mini">
-                      {{item.number}}
-                    </el-input-number>
-                    <span style="color:black;margin:0 2%">=</span>
-                    <span v-model="item.sum">{{item.price * item.number ? (item.price * item.number).toFixed(2) : 0 }}</span>
-                  </div>
-              </el-card>
-              <div style="color:blue;font-weight:bold;text-align:left;width:20%;float:right">
-                <label>总价：</label><font style="color:red;font-weight:bold">￥ {{sumTotal}}&nbsp;</font>
-              </div>
-            </div>
-          </div>
-        </el-collapse-item>
-
-        <!-- 任务状态 -->
-        <el-collapse-item name="3">
-          <template slot="title">
-            <b>任务状态<i class="el-icon-d-caret"></i></b>
-          </template>
-          <div>
-            <el-row :gutter="20">
-              <el-col :span="8">
-                &nbsp;&nbsp;&nbsp;&nbsp;
-                <el-radio v-model="radio" label="2" name="2" border @change="setSendMessage(radio)"><span style="color:#67C23A">成功</span></el-radio>
-                <el-radio v-model="radio" label="3" name="3" border @change="setSendMessage(radio)"><span style="color:#F56C6C">失败</span></el-radio>
-                <el-radio v-model="radio" label="1" name="1" border @change="setSendMessage(radio)" v-show="isLastContactTime===false"><span style="color:#409EFF">预约</span></el-radio>
-              </el-col>
-              <el-col :span="8" v-show="this.radio === '1'">
-                <span style="color:#F56C6C">*</span>请选择预约时间：
-                <span><b>T + </b></span>
-                <el-input style="width:100px" type="text" v-model="addDays"
-                onkeyup="if(! /^d+$/.test(this.addDays)){this.addDays='';}"></el-input>
-                <el-date-picker
-                  v-model="appointTime"
-                  value-format="yyyy-MM-dd HH:mm:ss"
-                  default-time="00:00:00"
-                  type="datetime" style="width:55%">
-                </el-date-picker>
-              </el-col>
-            </el-row>
-          </div>
-        </el-collapse-item>
-
-        <!-- 话后小结 -->
-        <el-collapse-item name="4">
-          <template slot="title">
-            <b>小结与备注<i class="el-icon-d-caret"></i></b>
-          </template>
-          <div>
-            <b>话后小结：</b>
-            <!-- @check-change="sendSummaryId" @node-click="checkOrNot" <el-tree :data="nodulesTree" show-checkbox lazy :props="summaryTreeProps" empty-text="该拨打任务暂无小结" :load="loadNodes"></el-tree> -->
-            <!-- <el-tree :data="nodulesTree" @check-change="sendSummaryId" show-checkbox default-expand-all node-key="id" ref="tree" highlight-current :props="summaryTreeProps" empty-text="该拨打任务暂无小结"></el-tree> -->
+              <!-- </el-select>
+            </el-form-item>
+          </el-form>
+        </el-row> -->
+        <el-row style="margin-top:20px;">
+          <el-table
+            :data="products">
+            <el-table-column
+              align="center"
+              prop="productName"
+              label="名称">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              label="产品类型"
+              :show-overflow-tooltip="true">
+              <template 
+                slot-scope="scope">
+                {{scope.row.productType===null?'':scope.row.productType === '0' ? '实体产品' : '虚拟产品'}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              label="产品编号"
+              prop="productId"
+              :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              label="产品单价" 
+              :show-overflow-tooltip="true">
+              <template
+                slot-scope="scope">
+                {{scope.row.price===null?'￥ '+ 0:'￥ '+scope.row.price}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              label="产品库存"
+              prop="productNum"
+              :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="description"
+              label="产品描述">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              label="操作"
+              width="100">
+            <template slot-scope="scope">
+              <el-button type="primary" :disabled="scope.row.productNum===0||scope.row.number!==0" @click.native="handleChange(scope.row.productId,scope.row.price,1,scope.$index)" size="mini" style="width:30px;height:20px;text-align:center;vertical-align:middle;padding:0;">+</el-button>
+            </template>
+            </el-table-column>
+          </el-table>
+        </el-row>
+        <!-- <el-row style="margin-top:5px;">
+          <el-pagination
+            v-if="pageShow"
+            @size-change="handleSizeChange123"
+            @current-change="handleCurrentChange123"
+            :current-page='pageInfo.pageNo'
+            :page-sizes="[10, 20, 30, 40, 50]"
+            :page-size='pageInfo.pageSize'
+            layout="total, prev, pager, next, jumper "
+            :total='pageInfo.totalCount' 
+            style="text-align: right;float:right;">
+          </el-pagination>
+        </el-row> -->
+      </el-col>
+      <el-col class="table-container" style="padding:20px 0;width:38.4%;margin-left:1.9%;float:right">
+        <b class="font14" style="margin-left:20px;">选购清单</b>
+        <ul class="shopping-list">
+          <li v-if="!sumTotal">
+            <span class="empty-text">暂无清单</span>
+          </li>
+          <li class="font12" v-for="(item,index) in products" v-if="item.number" style="padding:0 20px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis;">
+            <el-popover trigger="hover" placement="bottom" :content="item.productName" class="product-name">
+              <span slot="reference" style="width:100%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">{{item.productName}}</span>
+            </el-popover>
+            <el-popover trigger="hover" placement="bottom" :content="'￥ '+item.price">
+              <span slot="reference" style="width:100%">{{(typeof item.price==='undefined'||item.price===null)?0:'￥ '+item.price}}</span>
+            </el-popover>
+            <span style="width:3%">X</span>
+            <el-input-number style="width:25%;" v-model="item.number" @change="handleChange(item.productId,item.price,item.number,index)" :min="1" :max="item.productNum" size="mini">0</el-input-number>
+            <span style="width:3%">=</span>
+            <el-popover trigger="hover" placement="bottom" :content="'￥ '+(item.price * item.number ? (item.price * item.number).toFixed(2) : 0 )">
+              <span slot="reference" v-model="item.sum" style="width:100%">{{'￥ '+(item.price * item.number ? (item.price * item.number).toFixed(2) : 0 )}}</span>
+            </el-popover>
+            <el-button type="text" @click="delList(index,(item.price * item.number ? (item.price * item.number).toFixed(2) : 0))">删除</el-button>
+          </li>
+        </ul>
+        <div style="float:right;margin:20px 44px 27px 0;" v-if="sumTotal">
+          <b>总计：</b>
+          <b style="color:#ED2135;">￥ {{sumTotal}}</b>
+        </div>
+        <div style="padding:0 20px;">
+          <b class="font14" style="display:inline-block;margin:20px 0;">客户留言</b>
+          <el-input
+            type="textarea"
+            :maxlength="100"
+            :autosize="{ minRows: 4, maxRows: 6}"
+            placeholder="有特别的要求请注明，限100字。"
+            v-model="customerNote">
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <el-row class="table-container task-status" style="margin-bottom:20px;">
+      <el-row>
+        <el-form :inline="true" size="mini">
+          <el-col :span="8" style="height:48px;">
+            <el-form-item label="任务状态：">
+              <el-radio v-model="radio" label="2" name="2" @change="setSendMessage(radio)" class="radio-success"><span>成功</span></el-radio>
+              <el-radio v-model="radio" label="3" name="3" @change="setSendMessage(radio)" class="radio-fail"><span>失败</span></el-radio>
+              <el-radio v-model="radio" label="1" name="1" @change="setSendMessage(radio)" v-show="isLastContactTime===false" class="radio-order"><span>预约</span></el-radio>
+            </el-form-item>
+          </el-col>
+          <el-col :span="16" v-show="this.radio === '1'">
+            <span style="color:red;line-height:34px;">*</span>
+            <el-form-item label="请选择预约时间：" class="working-date-form">
+              <b style="font-size: 16px;color: #333333;letter-spacing: 0;text-align: left;">T + </b>
+              <el-input style="width:70px" type="text" v-model="addDays" onkeyup="if(! /^d+$/.test(this.addDays)){this.addDays='';}"></el-input>
+            </el-form-item>
+            <el-form-item class="time-picker-form">
+              <el-date-picker
+                v-model="appointTime"
+                placeholder="请选择日期"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                default-time="00:00:00"
+                type="datetime" style="width:200px">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8" style="height:48px;line-height:34px;">
+            <el-checkbox v-if="showAutoDial===true" checked="checked" v-model="autoDialNext">完成后显示下一个客户</el-checkbox>
+            <el-checkbox v-if="showSendMessage === true && campaignType !== 'RECRUIT'" v-model="sendMessage" checked="checked">发送支付短信</el-checkbox>
+          </el-col>
+        </el-form>
+      </el-row>
+      <el-row>
+        <el-form>
+          <el-form-item label="话后小结：" style="margin-bottom:12px;">
             <el-cascader
+              size="mini"
               placeholder="请选择小结"
               v-model='selectedSummarys'
               :options="nodulesTree"
               filterable
               :props="summaryTreeProps"
-              :show-all-levels="false"
-            ></el-cascader>
-          </div>
-          <div>
-            <b>小结备注：</b>
-            <el-input type="textarea" v-model="summary_description" rows="3">/</el-input>
-          </div>
-        </el-collapse-item>
-      </el-collapse>
-    </el-row><br/>
-
-    <!-- footer 按钮 -->
-    <el-row>
-      <div style="text-align:center">
-        <el-checkbox v-if="showAutoDial===true" checked="checked" v-model="autoDialNext">完成后显示下一个客户</el-checkbox>
-        <el-checkbox v-if="showSendMessage === true && campaignType !== 'RECRUIT'" v-model="sendMessage" checked="checked">发送支付短信</el-checkbox>
-        <a href="javascript:void(0);" @click="generateRecord()"><el-button type="success" size="small" >完成</el-button></a>
-        <el-button type="primary" size="small" @click="returnList()" >返回列表</el-button>
-      </div>
+              :show-all-levels="false">
+            </el-cascader>
+          </el-form-item>
+          <el-form-item>
+            <el-col :span="16">
+              <b class="font12" style="color:#020202;">小结备注：</b>
+              <el-input
+                type="textarea"
+                :maxlength="100"
+                :autosize="{ minRows: 4, maxRows: 6}"
+                v-model="summary_description">
+              </el-input>
+            </el-col>
+          </el-form-item>
+        </el-form>
+      </el-row>
+      <el-row>
+        <div style="text-align:center">
+          <el-button plain type="primary" size="small" @click="returnList();customerNote='';sumTotal=0;products=[];" style="margin-right:40px;">返 回</el-button>
+          <a href="javascript:void(0);" @click="generateRecord()"><el-button type="primary" size="small">完 成</el-button></a>
+        </div>
+      </el-row>
     </el-row>
-     <!-- 添加微信手机号dialog -->
+   
+    <!-- 添加微信手机号dialog -->
     <el-dialog width="30%" title="添加微信手机号" :visible.sync="addWechatPhone" append-to-body>
       微信手机号：<el-input v-model="editCustomerInfo.wechatPhone" placeholder="请输入客户微信手机号" maxlength="11" clearable></el-input>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
@@ -580,27 +575,124 @@
   </div>
 </div>
 </template>
+<style lang='scss'>
+  .dial-task .el-form-item__label{
+    font-size: 12px !important;
+    color: #020202 !important;
+    letter-spacing: 0.25px !important;
+  }
+</style>
 
 <style lang='scss' scoped>
-.wechat-btn{
-  color:#30DE72;
-  &.is-disabled{
-    color:#787878;
+.dial-task{
+  .wechat-btn.is-disabled{
+    background:none !important;
+    color:#ccc !important;
+    border:none;
   }
-  &.is-disabled:hover{
-    opacity:1 !important;
+  .customerinfo-container{
+    .font12{
+      margin-top:2px;
+      height:30px;
+      line-height:30px;
+    }
   }
-  &:hover{
-    opacity:0.7;
+  .shopping-list{
+    border-top:1px solid #CED4E2;
+    border-bottom:1px solid #CED4E2;
+    max-height:270px;
+    margin-top:20px;
+    overflow-y:auto;
+    li {
+      .empty-text{
+        font-size:14px;
+        width:100%;
+        color: #909399;
+      }
+      height:45px;
+      line-height:44px;
+      color:#020202;
+      border-bottom:1px solid #eee;
+      box-sizing:border-box;
+      span{
+        display:inline-block;
+        text-align:center;
+        vertical-align: middle;
+        overflow: hidden;
+        text-overflow:ellipsis;
+        white-space: nowrap;
+      }
+      .product-name{
+        width:37%;
+      }
+    }
+  }
+  .task-status{
+    .el-form-item__label{
+      font-size: 12px !important;
+      color: #020202 !important;
+      letter-spacing: 0.25px !important;
+    }
+    .working-date-form{
+      .el-form-item__label{
+        font-size: 12px !important;
+        color: #020202 !important;
+        letter-spacing: 0.25px !important;
+      }
+    }
+    .time-picker-form{
+      .el-form-item__label{
+        font-size: 12px !important;
+        color: #020202 !important;
+        letter-spacing: 0.25px !important;
+      }
+    }
+  }
+  .wechat-btn{
+    padding:0;
+    color:#57AFFF;
+    position:relative;
+    bottom:4px;
+    &.is-disabled{
+      color:#ccc;
+    }
+    &.is-disabled:hover{
+      opacity:1 !important;
+    }
+    &:hover{
+      opacity:0.7;
+    }
+  }
+}
+@media screen and (min-width: 1281px) and (max-width:1367px){
+  .dial-task {
+    .shopping-list{
+      li{
+        .product-name{
+          width:22%;
+        }
+      }
+    }
+  }
+}
+@media all and (min-width:1024px) and (max-width:1280px)  {
+  .dial-task {
+    .shopping-list{
+      li{
+        .product-name{
+          width:19%;
+        }
+      }
+    }
   }
 }
 </style>
 
 <script>
 // import cti from '@/utils/ctijs' //
+import { Message, MessageBox } from 'element-ui'
 import { getPhoneOwn } from '@/api/navbar'
 import { formatDateTime } from '@/utils/tools' // 格式化时间
-import { Message } from 'element-ui'
 import getDynamicRouter from '@/router/dynamic-router'
 import {
   queryByKeywords,
@@ -1236,6 +1328,7 @@ export default {
     },
     // 跳转拨打页面
     changeToCustomerDetail(taskId, campaignId, customerId, isBlacklist, customerPhone) {
+      this.sumInfo = new Map()
       sessionStorage.setItem('setDetail', JSON.stringify({ 'taskId': taskId, 'campaignId': campaignId, 'customerId': customerId, 'isBlacklist': isBlacklist, 'customerPhone': customerPhone }))
       this.telCustomerInfos = JSON.parse(sessionStorage.getItem('setDetail'))
       // this.$store.dispatch('setDetail', [taskId, campaignId, customerId, isBlacklist, customerPhone])
@@ -1348,14 +1441,14 @@ export default {
     },
     changeToInput(item) {
       switch (item) {
-        case 'idNumber': $('div.idNumber').toggle(); $('span.idNumber').toggle(); $('#idNumberedit').toggle(); $('#idNumberbtn1').toggle(); $('#idNumberbtn2').toggle(); break
-        case 'wechatPhone': $('div.wechatPhone').toggle(); $('span.wechatPhone').toggle(); $('#wechatPhoneedit').toggle(); $('#wechatPhonebtn1').toggle(); $('#wechatPhonebtn2').toggle(); break
-        case 'sex': $('div.sex').toggle(); $('span.sex').toggle(); $('#sexedit').toggle(); $('#sexbtn1').toggle(); $('#sexbtn2').toggle(); break
-        case 'customerId': $('div.customerId').toggle(); $('span.customerId').toggle(); $('#customerIdedit').toggle(); $('#customerIdbtn1').toggle(); $('#customerIdbtn2').toggle(); break
-        case 'resideAddress': $('div.resideAddress').toggle(); $('span.resideAddress').toggle(); $('#resideAddressedit').toggle(); $('#resideAddressbtn1').toggle(); $('#resideAddressbtn2').toggle(); break
-        case 'email': $('div.email').toggle(); $('span.email').toggle(); $('#emailedit').toggle(); $('#emailbtn1').toggle(); $('#emailbtn2').toggle(); break
-        case 'bankCardType': $('div.bankCardType').toggle(); $('span.bankCardType').toggle(); $('#bankCardTypeedit').toggle(); $('#bankCardTypebtn1').toggle(); $('#bankCardTypebtn2').toggle(); break
-        case 'source': $('div.source').toggle(); $('span.source').toggle(); $('#sourceedit').toggle(); $('#sourcebtn1').toggle(); $('#sourcebtn2').toggle(); break
+        case 'idNumber': $('div.idNumber').toggle(); $('b.idNumber').toggle(); $('#idNumberedit').toggle(); $('#idNumberbtn1').toggle(); $('#idNumberbtn2').toggle(); break
+        case 'wechatPhone': $('div.wechatPhone').toggle(); $('b.wechatPhone').toggle(); $('#wechatPhoneedit').toggle(); $('#wechatPhonebtn1').toggle(); $('#wechatPhonebtn2').toggle(); break
+        case 'sex': $('div.sex').toggle(); $('b.sex').toggle(); $('#sexedit').toggle(); $('#sexbtn1').toggle(); $('#sexbtn2').toggle(); break
+        case 'customerId': $('div.customerId').toggle(); $('b.customerId').toggle(); $('#customerIdedit').toggle(); $('#customerIdbtn1').toggle(); $('#customerIdbtn2').toggle(); break
+        case 'resideAddress': $('div.resideAddress').toggle(); $('b.resideAddress').toggle(); $('#resideAddressedit').toggle(); $('#resideAddressbtn1').toggle(); $('#resideAddressbtn2').toggle(); break
+        case 'email': $('div.email').toggle(); $('b.email').toggle(); $('#emailedit').toggle(); $('#emailbtn1').toggle(); $('#emailbtn2').toggle(); break
+        case 'bankCardType': $('div.bankCardType').toggle(); $('b.bankCardType').toggle(); $('#bankCardTypeedit').toggle(); $('#bankCardTypebtn1').toggle(); $('#bankCardTypebtn2').toggle(); break
+        case 'source': $('div.source').toggle(); $('b.source').toggle(); $('#sourceedit').toggle(); $('#sourcebtn1').toggle(); $('#sourcebtn2').toggle(); break
       }
     },
     modifyCustomerInfo(customerId, item) {
@@ -1421,7 +1514,7 @@ export default {
             editCustomer(this.editCustomerInfo).then(response => {
               if (response.data.code === 0) {
                 this.$message.success('修改成功！')
-                this.customerInfo.idNumber = $('#idNumberinput').val()
+                this.customerInfo.sex = $('#sexinput').val()
                 this.changeToInput(item)
               } else {
                 this.$message.error('修改失败！')
@@ -1581,6 +1674,7 @@ export default {
               this.productNums = []
               for (let i = 0; i < this.products.length; i++) {
                 this.productNums.push(this.products[i].productNum)
+                this.$set(this.products[i], 'number', 0)
               }
             }
           })
@@ -1601,6 +1695,11 @@ export default {
       }
     },
     handleChange(productId, price, number, index) {
+      if (!this.products[index].number) {
+        this.products[index].number = 1
+      }
+      // console.log(index)
+      // console.log(this.products[index])
       if (number % 1 !== 0) {
         this.products[index].productNum = this.productNums[index]
         this.products[index].number = 0
@@ -1611,14 +1710,14 @@ export default {
       if (number >= 0) {
         if (number > this.productNums[index]) {
           this.products[index].productNum = this.productNums[index]
-          this.products[index].number = 0
-          this.sumTotal = 0
           this.$message.error('购买的数量不能超过产品库存！')
           return false
-        } else {
-          this.products[index].productNum = this.productNums[index] - number
         }
+        // else {
+        //   this.products[index].productNum = this.productNums[index] - number
+        // }
       }
+      // this.products[index].addList = true
       this.sumInfo.set(productId, { price: price, number: number })
       this.sumTotal = 0
       this.sumInfo.forEach((val, key) => {
@@ -1627,6 +1726,15 @@ export default {
         }
       })
       this.sumTotal = this.sumTotal.toFixed(2)
+    },
+    delList(index, price) {
+      MessageBox.confirm('是否删除此商品？', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(() => {
+        this.products[index].number = 0
+        this.sumTotal = this.sumTotal - price
+      })
     },
     //
     showCallDirection(callDirection) {
@@ -1814,6 +1922,7 @@ export default {
     },
     // 返回列表
     returnList() {
+      this.sumInfo = new Map()
       this.$root.eventHub.$emit('DISABLED_DIAL', '')
       const url = window.location.href
       // window.location.href = url.split('?')[0]
