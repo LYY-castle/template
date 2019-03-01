@@ -523,6 +523,7 @@ $menu2ItemHover1:#57AFFF !default;
       background: rgba(87,175,255,0.10) !important;
       border: 1px solid #57AFFF !important;
       border-radius: 2px !important;
+      color: #666666;
     }
   }
   //success
@@ -568,13 +569,13 @@ $menu2ItemHover1:#57AFFF !default;
     }
   }
   //激活的页码
-  .el-pagination.is-background .el-pager li:not(.disabled).active {
-    background-color: $pageAct !important;
+  // .el-pagination.is-background .el-pager li:not(.disabled).active {
+    // background-color: $pageAct !important;
     // color: #fff;
-  }
-  .el-pagination.is-background .el-pager li:not(.disabled):hover {
-    color: $pageAct !important;
-  }
+  // }
+  // .el-pagination.is-background .el-pager li:not(.disabled):hover {
+  //   color: $pageAct !important;
+  // }
   //hamberger
   .hamberger-bar .hamburger{
     background:url(../../static/images/menu_btn.png) !important;

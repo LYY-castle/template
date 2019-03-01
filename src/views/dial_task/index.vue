@@ -293,7 +293,7 @@
 
   <!-- 客户详情 div层 -->
   <div v-else>
-    <div class="table-container">
+    <div class="table-container" style="margin-top:0;">
       <b class="font14">客户信息</b>
       <div style="display:inline-block;position:relative;top:3px;margin-left:10px;">
         <img v-if="!hideDialTo" style="height:16px;cursor:pointer;" src="../../../static/images/dial_normal.png" alt="拨打" @click="dialTo(taskId,campaignId,isBlacklist,customerPhone)">
@@ -549,8 +549,8 @@
       </el-row>
       <el-row>
         <div style="text-align:center">
-          <el-button plain type="primary" size="small" @click="returnList();customerNote='';sumTotal=0;products=[];" style="margin-right:40px;">返 回</el-button>
-          <a href="javascript:void(0);" @click="generateRecord()"><el-button type="primary" size="small">完 成</el-button></a>
+          <el-button plain type="primary" size="small" @click="returnList();customerNote='';sumTotal=0;products=[];" style="margin-right:40px;">返回</el-button>
+          <a href="javascript:void(0);" @click="generateRecord()"><el-button type="primary" size="small">完成</el-button></a>
         </div>
       </el-row>
     </el-row>

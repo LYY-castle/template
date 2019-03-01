@@ -81,7 +81,7 @@
 
     <el-row>
       <el-col>
-        <el-table :data="tableData" border>
+        <el-table :data="tableData">
             <el-table-column align="center" label="客户编号" width="135">
             <template slot-scope="scope">
                 <div>{{scope.row.customerId}}</div>
@@ -171,105 +171,99 @@
     </el-row>
   </div>
   <!-- 详情 -->
-  <div class='container' v-else>
-    <div class="el-icon-info">接触记录详情</div>
-    <el-row :gutter="0">
-        <el-form  :model="detailInfo" ref="contactDetailForm" label-width="90px">
-          <el-col :span="5">
-            <div class="grid-content bg-purple">
-              <el-form-item label="接触编号:" prop="contactInfo.recordId" class="el-form-div">
-                <span>{{detailInfo.contactInfo.recordId}}</span>
-              </el-form-item>
-              <el-form-item  label="通话时长:" prop="contactInfo.talkTime" class="el-form-div">
-                <span>{{formatSeconds(detailInfo.contactInfo.talkTime)}}</span>
-              </el-form-item>
-              <el-form-item  label="小结备注:" prop="contactInfo.description"  class="el-form-div">
-                <div style='width:80px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;' :title="detailInfo.contactInfo.description?detailInfo.contactInfo.description:'无'">{{detailInfo.contactInfo.description?detailInfo.contactInfo.description:"无"}}</div>
-              </el-form-item>
-            </div>
-          </el-col>
-          <el-col :span="4">
-            <div class="grid-content bg-purple">
-              <el-form-item  label="员工姓名:" class="el-form-div">
-                <span>{{detailInfo.staffInfo.staffName}}</span>
-              </el-form-item>
-               <el-form-item  label="员工工号:" prop="contactInfo.staffId" class="el-form-div">
-                <span>{{detailInfo.contactInfo.staffId}}</span>
-              </el-form-item>
+  <div class="container record-dail" v-else>
+    <div class="table-container" style="margin-top:0;">
+      <b class="font14" style="padding-top:10px;">{{detailInfo.contactInfo.recordId}}</b>
+      <el-row style="padding-top:20px;">
+        <div style="width:20%;float:left;">
+          <el-row class="font12">
+            <span style="color:#666666;">员工姓名：</span>
+            <b style="color:#020202;" :title="detailInfo.staffInfo.staffName">{{detailInfo.staffInfo.staffName}}</b>
+          </el-row>
+          <el-row class="font12">
+            <span style="color:#666666;">客户姓名：</span>
+            <b style="color:#020202;" :title="detailInfo.contactInfo.customerName">{{detailInfo.contactInfo.customerName}}</b>
+          </el-row>
+          <el-row class="font12">
+            <span style="color:#666666;">话后小结：</span>
+            <b style="color:#020202;" :title="showSummaryInfo(detailInfo.contactInfo.summaryDetailInfos)">{{showSummaryInfo(detailInfo.contactInfo.summaryDetailInfos)}}</b>
+          </el-row>
+        </div> 
 
-                <el-form-item  label="话后小结:" class="el-form-div">
-                   <div  style='width:80px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;' :title="showSummaryInfo(detailInfo.contactInfo.summaryDetailInfos)">{{showSummaryInfo(detailInfo.contactInfo.summaryDetailInfos)}}</div>
-                  <!-- <el-tree
-                    ref = "tree"
-                    :data="detailInfo.summariesInfo"
-                    show-checkbox
-                    node-key="id"
-                    default-expand-all
-                    :props="defaultProps">
-                  </el-tree> -->
-               </el-form-item>
-            </div>
-          </el-col>
-          <!-- <el-col :span="3">
-            <div class="grid-content bg-purple">
-              <el-form-item  label="员工工号：" prop="contactInfo.staffId">
-                <span>{{detailInfo.contactInfo.staffId}}</span>
-              </el-form-item>
-              <el-form-item  label="身份证：" prop="customerInfo.idNumber">
-                <span>{{hideIdNumber(detailInfo.customerInfo.idNumber)}}</span>
-              </el-form-item>
-            </div>
-          </el-col> -->
-          <el-col :span="4">
-             <el-form-item  label="主叫号码:" prop="contactInfo.callerNumber" class="el-form-div">
-                <span>{{detailInfo.contactInfo.callerNumber}}</span>
-              </el-form-item>
-              <el-form-item   label="被叫号码:" prop="contactInfo.calleeNumber" class="el-form-div">
-                  <span>{{hideMobile(detailInfo.contactInfo.calleeNumber)}}</span>
-              </el-form-item>
-              <el-form-item  label="客户姓名:" prop="contactInfo.customerName" size="small" class="el-form-div">
-                <span>{{detailInfo.contactInfo.customerName}}</span>
-              </el-form-item>
-          </el-col>
-          <el-col :span="5">
-            <div class="grid-content bg-purple">
-              <el-form-item label="拨打时间:" prop="contactInfo.callTime" class="el-form-div">
-                <span>{{detailInfo.contactInfo.callTime}}</span>
-              </el-form-item>
-              <el-form-item  label="接听时间:" prop="contactInfo.answerTime" class="el-form-div">
-                <span>{{(detailInfo.contactInfo.answerTime)== null?'无':(detailInfo.contactInfo.answerTime)}}</span>
-              </el-form-item>
-               <el-form-item  label="身份证号:" prop="customerInfo.idNumber" class="el-form-div">
-                <span>{{hideIdNumber(detailInfo.customerInfo.idNumber)}}</span>
-              </el-form-item>
-            </div>
-          </el-col>
-          <el-col :span="6">
-            <div class="grid-content bg-purple">
-               <el-form-item  label="任务状态:" class="el-form-div">
-                  <span v-if="detailInfo.dialTaskInfo.status=='2'">成功</span>
-                  <span v-if="detailInfo.dialTaskInfo.status=='3'">失败</span>
-                  <span v-if="detailInfo.dialTaskInfo.status=='1'">预约</span>
-               </el-radio-group>
-              </el-form-item>
-              <el-form-item  label="预约时间:" prop="dialTaskInfo.appointTime"  v-if="detailInfo.dialTaskInfo.status=='1'"  class="el-form-div">
-                <span>{{detailInfo.dialTaskInfo.appointTime?detailInfo.dialTaskInfo.appointTime:'无'}}</span>
-              </el-form-item>
-              <el-form-item v-if="contactType=='1'" label="电话录音:" prop="contactInfo.soundRecordUrl" class="el-form-div">
-                <audio v-bind:src="detailInfo.contactInfo.soundRecordUrl" controls="controls" style="height:40"></audio>
-              </el-form-item>
-            </div>
-          </el-col>
-      </el-form>
-    </el-row>
-    <div slot="footer" style="text-align: right;">
-          <el-button @click="isMainPage = true">取 消</el-button>
-          <el-button type="primary" @click="edit();editVisible=true">修改</el-button>
+        <div style="width:20%;float:left;">
+          <el-row class="font12">
+            <span style="color:#666666;">员工工号：</span>
+            <b style="color:#020202;" :title="detailInfo.contactInfo.staffId">{{detailInfo.contactInfo.staffId}}</b>
+          </el-row>
+          <el-row class="font12">
+            <span style="color:#666666;">身份证号：</span>
+            <b style="color:#020202;" :title="hideIdNumber(detailInfo.customerInfo.idNumber)">{{hideIdNumber(detailInfo.customerInfo.idNumber)}}</b>
+          </el-row>
+          <el-row class="font12">
+            <span style="color:#666666;">小结备注：</span>
+            <b style="color:#020202;" :title="detailInfo.contactInfo.description?detailInfo.contactInfo.description:'无'">{{detailInfo.contactInfo.description?detailInfo.contactInfo.description:"无"}}</b>
+          </el-row>
+        </div> 
+
+        <div style="width:20%;float:left;">
+          <el-row class="font12">
+            <span style="color:#666666;">主叫号码：</span>
+            <b style="color:#020202;" :title="detailInfo.contactInfo.callerNumber">{{detailInfo.contactInfo.callerNumber}}</b>
+          </el-row>
+          <el-row class="font12">
+            <span style="color:#666666;">被叫号码：</span>
+            <b style="color:#020202;" :title="hideMobile(detailInfo.contactInfo.calleeNumber)">{{hideMobile(detailInfo.contactInfo.calleeNumber)}}</b>
+          </el-row>
+        </div> 
+
+        <div style="width:20%;float:left;">
+          <el-row class="font12">
+            <span style="color:#666666;">拨打时间：</span>
+            <b style="color:#020202;" :title="detailInfo.contactInfo.callTime">{{detailInfo.contactInfo.callTime}}</b>
+          </el-row>
+          <el-row class="font12">
+            <span style="color:#666666;">接听时间：</span>
+            <b style="color:#020202;" :title="(detailInfo.contactInfo.answerTime)== null?'无':(detailInfo.contactInfo.answerTime)">{{(detailInfo.contactInfo.answerTime)== null?'无':(detailInfo.contactInfo.answerTime)}}</b>
+          </el-row>
+        </div> 
+
+        <div style="width:20%;float:left;">
+          <el-row class="font12">
+            <span style="color:#666666;">通话时间：</span>
+            <b style="color:#020202;" :title="formatSeconds(detailInfo.contactInfo.talkTime)">{{formatSeconds(detailInfo.contactInfo.talkTime)}}</b>
+          </el-row>
+          <el-row class="font12">
+            <span style="color:#666666;">任务状态：</span>
+            <b style="color:#54B8FF;" v-if="detailInfo.dialTaskInfo.status=='2'">● 成功</b>
+            <b style="color:#ED2135;" v-if="detailInfo.dialTaskInfo.status=='3'">● 失败</b>
+            <b style="color:#28CC6C;" v-if="detailInfo.dialTaskInfo.status=='1'">● 预约</b>
+            <b style="color:#28CC6C;" v-if="detailInfo.dialTaskInfo.status=='1'&&detailInfo.dialTaskInfo.appointTime">({{detailInfo.dialTaskInfo.appointTime?detailInfo.dialTaskInfo.appointTime:'无'}})</b>
+
+          </el-row>
+        </div>
+      </el-row>
+      <el-row>
+        <div style="width:20%;float:left;">
+          <el-row class="font12">
+            <b style="color:#020202;">电话录音</b>
+          </el-row>
+          <el-row class="font12">
+            <audio class="audio-style" v-bind:src="detailInfo.contactInfo.soundRecordUrl" controls="controls"></audio>
+          </el-row>
+        </div> 
+      </el-row>
+      <el-row style="width:100%;border-top:1px solid #ccc;margin:20px 0;"></el-row>
+      <el-row>
+        <div style="text-align:center">
+          <el-button plain type="primary" @click="isMainPage = true" style="margin-right:40px;">返回</el-button>
+          <el-button type="primary" @click="edit();editVisible=true">编辑</el-button>
+        </div>
+      </el-row>
     </div>
-  <div class="el-icon-info title-class">相关接触记录列表</div>
-  <el-row v-if="contactType=='1'">
-      <el-col>
-        <el-table :data="detailInfo.recordInfo" border>
+    <div class="table-container" v-if="contactType=='1'">
+      <b class="font14">相关接触记录</b>
+      <el-row style="margin-top:20px;">
+        <el-table :data="detailInfo.recordInfo">
           <el-table-column align="center" label="记录编号" :show-overflow-tooltip="true">
             <template slot-scope="item">
               <a @click="ids.recordId=item.row.recordId;resetDetai();contactDetail()" size="medium">{{item.row.recordId}}</a>
@@ -316,59 +310,64 @@
             </template>
           </el-table-column>
         </el-table>
-      </el-col>
-    </el-row>
-    <el-row v-if="contactType=='2'">
-      <el-col>
-        <div id="short-message-content" style="height:55vh;overflow-x:auto;">
+      </el-row>
+    </div>
+    <div :class="isWechat('wechatRecord')" v-if="contactType=='2'">
+        <div id="short-message-content">
           <!-- 点击加载更多div -->
           <div style="font-size:14px;color:#35ABE2;text-align:center" v-if="hasMoreRecords">
-            <a @click="getChatRecords(sessionId,queryPageNum);queryPageNum++">查看更多消息</a>
+            <a @click="getChatRecords(sessionId,queryPageNum);queryPageNum++" style="color:#57AFFF;">查看更多消息</a>
           </div>
           <div v-for="(item,index) in contents">
           <!-- 来自客户的消息 -->
-          <el-row style="color:#BFBFBF;min-height: 5vh;;line-height:5vh;text-align:center;border-radius: 4px;font-size:14px;" v-if="'0'===item.direction">{{formatDateTime(item.createTime)}}</el-row>
-          <el-row style="min-height: 8vh;border-radius: 4px;text-align:left;word-break:break-all;" v-if="'0'===item.direction">
-            <el-col :span="19" :offset="0">
-              <div>
-                <span class="el-icon-loading" v-if="'2'===item.code" style="margin-left:4px;line-height:40px;"></span>
-                <span class="el-icon-warning" v-if="'4'===item.code" style="margin-left:4px;line-height:40px;"></span>
-                <div v-if="item.msgType=='text'" style="min-height:40px;color:#3A2424;padding:10px;background-color:#fff;float:left;border-radius: 4px">{{item.content}}</div>
-                <div v-if="item.msgType=='image'" style="width:220px;color:#3A2424;padding:10px;background-color:#fff;float:left;border-radius: 4px">
-                  <img :src="item.mediaUrl" style="width:100%;cursor:pointer;" @click="imageDetailVisible=true;imgsrc=item.mediaUrl">
+          <el-row style="min-height:30px;border-radius: 2px;text-align:left;word-break:break-all;" v-if="'0'===item.direction">
+            <div style="margin-left:9px;">
+              <span class="el-icon-loading" v-if="'2'===item.code" style="margin-left:4px;line-height:32px;"></span>
+              <span class="el-icon-warning" v-if="'4'===item.code" style="margin-left:4px;line-height:32px;"></span>
+              <div v-if="item.msgType=='text'" class="font12 left chat-container fl">{{item.content}}</div>
+              <div v-if="item.msgType=='link'" class="font12 left chat-container fl">
+                <a class="link" style="color:#115DFF;" @click="jump(item.content)">{{item.content}}</a>
+              </div>
+              <div v-if="item.msgType=='image'" class="font12 left chat-container fl">
+                <img :src="item.mediaUrl" style="width:100%;" @click="imageDetailVisible=true;imgsrc=item.mediaUrl">
+              </div>
+              <div v-if="item.msgType=='voice'" class="font12 left chat-container fl">
+                <audio controls="controls" :src="item.mediaUrl" style="width:240px;background: #F3F5FA;border-radius: 1px;height:32px;"></audio>
+              </div>
+            </div>
+          </el-row>
+          <el-row style="text-align:left;margin-bottom:22px;" v-if="'0'===item.direction">
+            <span class="font12" style="padding-left:9px;color:#ccc;">{{formatDateTime(item.createTime)}}</span>
+          </el-row>
+          <!-- 我发出的消息  -->
+          <el-row style="min-height:30px;border-radius: 2px;text-align:left;word-break:break-all;" v-if="'1'===item.direction">
+            <!-- <el-col :span="19" :offset="5"> -->
+              <div style="float:right;margin-right:9px;">
+                <span class="el-icon-loading" v-if="'2'===item.code" style="margin-right:4px;line-height:32px;"></span>
+                <a class="el-icon-warning" v-if="'4'===item.code" @click="sendMessageAgainVisible=true;sendMessageAgain_Obj=item;sendMessageAgain_Index=index;" style="margin-right:4px;line-height:40px;color:red;"></a>
+                <div v-if="item.msgType=='text'" class="font12 right chat-container fr">{{item.content}}</div>
+                <div v-if="item.msgType=='link'" class="font12 right chat-container fr">
+                  <a class="link" style="color:#115DFF;text-shadow:1px 1px 1px #fff;" @click="jump(item.content)">{{decodeURI(item.content)}}</a>
                 </div>
-                <div v-if="item.msgType=='voice'" style="color:#3A2424;padding:10px;background-color:#fff;float:left;border-radius: 4px">
+                <div v-if="item.msgType=='image'" class="font12 right chat-container fr">
+                  <img :src="item.mediaUrl" style="width:100%;" @click="imageDetailVisible=true;imgsrc=item.mediaUrl">
+                </div>
+                <div v-if="item.msgType=='voice'" class="font12 right chat-container fr">
                   <audio controls="controls" :src="item.mediaUrl"></audio>
                 </div>
               </div>
-            </el-col>
+            <!-- </el-col> -->
           </el-row>
-
-          <!-- 我发出的消息  -->
-          <el-row style="color:#BFBFBF;min-height: 5vh;;line-height:5vh;text-align:center;border-radius: 4px;font-size:14px;" v-if="'1'===item.direction">{{formatDateTime(item.createTime)}}</el-row>
-          <el-row style="border-radius: 4px;text-align:left;word-break:break-all" v-if="'1'===item.direction">
-            <el-col :span="19" :offset="5">
-              <div style="float:right">
-                <span class="el-icon-loading" v-if="'2'===item.code" style="margin-left:26px;line-height:40px;"></span>
-                <a class="el-icon-warning" v-if="'4'===item.code" @click="sendMessageAgainVisible=true;sendMessageAgain_Obj=item;sendMessageAgain_Index=index;" style="margin-left:26px;line-height:40px;"></a>
-                <div v-if="item.msgType=='text'" style="min-height:40px;color:#3A2424;padding:10px;background-color:#67c23a;float:right;border-radius: 4px">{{item.content}}</div>
-                <div v-if="item.msgType=='image'" style="width:220px;color:#3A2424;padding:10px;background-color:#67c23a;float:right;border-radius: 4px">
-                  <img :src="item.mediaUrl" style="width:100%;cursor:pointer;" @click="imageDetailVisible=true;imgsrc=item.mediaUrl">
-                </div>
-                <div v-if="item.msgType=='voice'" style="color:#3A2424;padding:10px;background-color:#67c23a;float:right;border-radius: 4px">
-                  <audio controls="controls" :src="audiosrc"></audio>
-                </div>
-              </div>
-            </el-col>
+          <el-row style="text-align:right;margin-bottom:22px;" v-if="'1'===item.direction">
+            <span class="font12" style="padding-right:9px;color:#ccc;">{{formatDateTime(item.createTime)}}</span>
           </el-row>
         </div>
       </div>
-      </el-col>
-    </el-row>
-  <div class="el-icon-info title-class">订单信息</div>
-    <el-row>
-      <el-col>
-        <el-table :data="detailInfo.orderInfo" border>
+    </div>
+    <div :class="isWechat('order')">
+      <b class="font14">订单详情</b>
+      <el-row style="margin-top:20px;">
+        <el-table :data="detailInfo.orderInfo">
           <el-table-column align="center" label="订单编号" :show-overflow-tooltip="true">
             <template slot-scope="scope">
               <a @click="detailVisible=true;orderId=scope.row.orderId;quertOrderDetail()" size="medium">{{scope.row.orderId}}</a>
@@ -393,8 +392,8 @@
             </template>
           </el-table-column>
         </el-table>
-      </el-col>
-    </el-row>
+      </el-row>
+    </div>
       <!-- 订单详情 -->
       <el-dialog
       align:left
@@ -494,6 +493,82 @@
 </template>
 
 <style lang='scss' scoped>
+.record-dail{
+  .table-container{
+    &.is-wechat{
+      float:left;
+      width:49%
+    }
+    
+    .font12{
+      height:30px;
+    }
+    .audio-style{
+      width:406px;
+      background: #F3F5FA;
+      border-radius: 1px;
+      height:32px;
+    }
+    .left,.right{
+        min-height: 40px;
+        position: relative;
+        display: table;
+    }
+    .left > p,.right > p{    /*使内容居中*/
+        display: table-cell;
+        vertical-align: middle;
+        padding: 0 10px;
+    }
+    .left:before,.right:after{   /*用伪类写出小三角形*/
+        content: '';
+        display: block;
+        width: 0;
+        height: 0;
+        border: 8px solid transparent;
+        position: absolute;
+        top: 7px;
+    }
+    /*分别给左右两边的小三角形定位*/
+    .left:before{    
+        border-right: 8px solid #ccc;
+        left: -16px;
+    }
+    .right:after{    
+        border-left: 8px solid #57AFFF;
+        right: -16px;
+    }
+    &.chat-record-container{
+      padding:10px;
+      height:45vh;
+      overflow-y:auto;
+    }
+    .chat-container{
+      max-width:290px;
+      text-align:left;
+      word-break:break-all;
+      color:#020202;
+      padding:7px 10px;
+      min-height:30px;
+      background-color:#fff;
+      border-radius: 2px;
+      border: 1px solid #57AFFF;
+      &.fl{
+        background-color:#fff;
+        border: 1px solid #CCCCCC;
+      }
+      &.fr{
+        background: #57AFFF;
+        color:#fff;
+      }
+    }
+  }
+  .fr{
+    float:right !important;
+  }
+  .fl{
+    float:left !important;
+  }
+}
 audio {
     width: 250px;
     height: 50px;
@@ -505,7 +580,24 @@ audio {
 .el-form-div{
   margin-bottom: 0px;
 }
-
+@media screen and (min-width: 1281px) and (max-width:1367px){
+  .record-dail{
+    .table-container{
+      &.chat-record-container{
+        height:37vh;
+      }
+    }
+  }
+}
+@media all and (min-width:1024px) and (max-width:1280px)  {
+  .record-dail{
+    .table-container{
+      &.chat-record-container{
+        height:33vh;
+      }
+    }
+  }
+}
 </style>
 
 <script>
@@ -655,6 +747,15 @@ audio {
       this.req.pageNo = 1
     },
     methods: {
+      isWechat(type) {
+        if (this.contactType === '2' && type === 'order') {
+          return 'table-container is-wechat fr'
+        } else if (this.contactType === '2' && type === 'wechatRecord') {
+          return 'chat-record-container table-container is-wechat'
+        } else {
+          return 'table-container'
+        }
+      },
       // 展示产品信息
       showProducts(item) {
         let productStr = ''
