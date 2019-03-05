@@ -322,7 +322,7 @@ export default {
             this.beforeTransfer_qcdepts = response.data.data
             const map = {
               data: response.data.data,
-              rootId: 0,
+              rootId: parseInt(localStorage.getItem('departId')),
               idFieldName: 'id',
               parentIdFielName: 'upId'
             }
