@@ -1615,7 +1615,7 @@ export default {
       if (this.$store.state.app.sidebar.opened) {
         this.$store.commit('SET_LOGOCLASS', 'opened')
         $('.hamburger i').addClass('el-icon-arrow-left').removeClass('el-icon-arrow-right')
-        $('.tags-view-container').width('90.5%')
+        $('.tags-view-container').width('91.5%')
         $('div.hamberger-bar').addClass('opened')
       } else {
         this.$store.commit('SET_LOGOCLASS', 'closed')
@@ -1698,7 +1698,11 @@ export default {
         }
         this.$store.commit('SET_WECHATCONTENTS', contents)
       }
-
+      const contentDiv = document.getElementById('short-message-content')
+      const contentDivBox = document.getElementById('short-message-content-container')
+      setTimeout(() => {
+        contentDivBox.scrollTop = contentDiv.scrollHeight
+      }, 10)
       // 查询聊天列表客户对应未读消息数量
       getUnreadNum(localStorage.getItem('agentId')).then(response => {
         if (localStorage.getItem('customerInfos')) {
@@ -1749,13 +1753,13 @@ export default {
     if (sessionStorage.getItem('sidebarStatus') === '0') {
       this.$store.commit('SET_LOGOCLASS', 'opened')
       $('.hamburger i').addClass('el-icon-arrow-left').removeClass('el-icon-arrow-right')
-      $('.tags-view-container').width('90.5%')
+      $('.tags-view-container').width('91.5%')
       $('div.hamberger-bar').addClass('opened')
     } else if (sessionStorage.getItem('sidebarStatus') === null) {
       this.$store.commit('OPEN_SIDEBAR')
       this.$store.commit('SET_LOGOCLASS', 'opened')
       $('.hamburger i').addClass('el-icon-arrow-left').removeClass('el-icon-arrow-right')
-      $('.tags-view-container').width('90.5%')
+      $('.tags-view-container').width('91.5%')
       $('div.hamberger-bar').addClass('opened')
     } else {
       this.$store.commit('SET_LOGOCLASS', 'closed')

@@ -1,396 +1,432 @@
 <template>
 <div class="container wechat-list" @click="hideEmoji">
-  <div style="height:100%;border:1px solid #ECECEC;">
-    <el-container>
-      <el-aside>
-        <el-header>
-          <b>最近联系人</b>
-        </el-header>
-        <el-menu 
-        active-text-color="#409EFF" 
-        :default-active="customerActive"
-        style="overflow:auto;border-right:none;width:100%;background-color: #DEDEDE;text-align:left;" 
-        >
-          <div v-for="(item,index) in wechatCustomerInfos">
-            <el-menu-item :index="index+''" slot="reference" @click="showNameAndSearchRecords(item.customerName,item.taskId,item.campaignId,item.customerId,item.unreadNum);dailTaskCustomer=item;customerActive=index.toString();changeCustomerTalking(index)">
-              <span slot="title">{{item.customerName+'('+item.customerPhone+')'}}</span>
-              <!-- 未读消息 div -->
-              <div v-if="item.isTalking==false&&item.unreadNum>0" style="width:16px;height:16px;font-size:5px;line-height:16px;border-radius: 15px;text-align:center;background:red;color:#fff;float:right;margin-top:13px;padding-right:3px;">
-                {{item.unreadNum}}
-              </div>
-            </el-menu-item>
-          </div>
-        </el-menu>
-      </el-aside>
-
-      <el-container style="width:48%;max-width:48%">
-        <el-main style="background-color:#F5F5F5;padding:0;">
-          <!-- 客户姓名div-->
-          <div style="background-color:#F5F5F5;border-bottom:1px solid #E7E7E7;line-height:61px;height:61px;width:100%;text-align:left;font-size:20px;">
-            <span style="margin-left:1%">
-              {{customerName ? customerName : '暂无联系人'}}
-            </span>
-            <el-button style="float:right;margin-right:1.8%;margin-top:12px;" @click="toDialTask(dailTaskCustomer)">拨打电话</el-button>
-          </div>
-
-          <!-- 聊天记录 对话框 div -->
-          <div id="short-message-content" style="position:relative;padding:10px;height: 595px;background-color:#F5F5F5;overflow-x:hidden" ref="refContentMessage">
-            <!-- 点击加载更多div -->
-            <div style="font-size:14px;color:#35ABE2" v-if="hasMoreRecords">
-              <a @click="getChatRecords(customerId,queryPageNum);queryPageNum++;">查看更多消息</a>
+  <div style="height:100%;">
+    <div style="float:left;width:54%;box-shadow: 0 0 10px 0 rgba(39,48,69,0.10);border-radius: 2px;">
+      <el-container>
+        <el-aside>
+          <el-header>
+            <b class="font14">最近联系人</b>
+          </el-header>
+          <el-menu 
+          active-text-color="#409EFF" 
+          :default-active="customerActive"
+          style="borderoverflow:auto;width:100%;text-align:left;" 
+          >
+            <div v-for="(item,index) in wechatCustomerInfos">
+              <el-menu-item class="font12" :index="index+''" slot="reference" @click="showNameAndSearchRecords(item.customerName,item.customerPhone,item.taskId,item.campaignId,item.customerId,item.unreadNum);dailTaskCustomer=item;customerActive=index.toString();changeCustomerTalking(index)">
+                <div style="margin-bottom:7px;">
+                  <span>{{item.customerName}}</span>
+                  <b v-if="item.isTalking==false&&item.unreadNum>0" style="color:#ED2135;">({{item.unreadNum>99?'99+':item.unreadNum}})</b>
+                </div>
+                <div>
+                  <span style="float:left;">{{item.customerPhone}}</span>
+                  <!-- <span style="float:right;color:#ccc;">时间</span> -->
+                </div>
+              </el-menu-item>
             </div>
-            <div v-for="(item,index) in wechatContents">
-              <!-- 来自客户的消息 -->
-              <el-row style="color:#737373;min-height: 5vh;;line-height:5vh;text-align:center;border-radius: 4px;font-size:14px;" v-if="item.direction=='0'">{{formatDateTime(item.createTime)}}</el-row>
-              <el-row style="border-radius: 4px;text-align:left;word-break:break-all;" v-if="item.direction=='0'">
-                <el-col :span="19" :offset="0">
-                  <div>
-                    <span class="el-icon-loading" v-if="item.code=='2'" style="margin-left:4px;line-height:40px;"></span>
-                    <span class="el-icon-warning" v-if="item.code=='4'" style="margin-left:4px;line-height:40px;"></span>
-                    <div v-if="item.msgType=='text'" style="line-height:26px;min-height:26px;color:#3A2424;padding:13px 10px 7px;background-color:#fff;float:left;border-radius: 4px" v-html="showMsgs(item.content)"></div>
-                    <div v-if="item.msgType=='link'" style="min-height:40px;color:#3A2424;padding:10px;background-color:#fff;float:left;border-radius: 4px">
-                      <a class="link" style="color:#4190E7;" @click="jump(item.content)">{{item.content}}</a>
+          </el-menu>
+        </el-aside>
+        <el-container class="chat-record-container">
+          <!-- 客户姓名div-->
+          <div class="chat-header">
+            <b class="font12" style="margin-left:1%;color:#020202;">
+              {{customerName ? customerName : '暂无联系人'}}
+            </b>
+            <b class="font12" style="margin-left:1%;color:#020202;">
+              {{customerPhoneHeader}}
+            </b>
+            <img style="width:25px;position: relative;bottom: -6px;cursor:pointer;" src="../../../static/images/dial_normal.png"  @click="toDialTask(dailTaskCustomer)" alt="拨打电话">
+          </div>
+          <div id="short-message-content-container" style="background-color:#FBFBFB;padding:0;height:55.1vh;overflow-y:auto;">
+            <!-- 聊天记录 对话框 div -->
+            <div id="short-message-content" style="position:relative;padding:10px;background-color:#FBFBFB;overflow-x:hidden" ref="refContentMessage">
+              <!-- 点击加载更多div -->
+              <div style="font-size:14px;color:#35ABE2;text-align:center" v-if="hasMoreRecords">
+                <a @click="getChatRecords(customerId,queryPageNum);queryPageNum++;">查看更多消息</a>
+              </div>
+              <div v-for="(item,index) in wechatContents">
+                <!-- 来自客户的消息 -->
+                <el-row style="min-height:30px;border-radius: 2px;text-align:left;word-break:break-all;" v-if="item.direction=='0'">
+                  <div style="margin-left:9px;">
+                    <span class="el-icon-loading" v-if="item.code=='2'" style="margin-left:4px;line-height:32px;"></span>
+                    <span class="el-icon-warning" v-if="item.code=='4'" style="margin-left:4px;line-height:32px;"></span>
+                    <div v-if="item.msgType=='text'" class="font12 left chat-container fl" v-html="showMsgs(item.content)"></div>
+                    <div v-if="item.msgType=='link'"  class="font12 left chat-container fl">
+                      <a class="link" style="color:#115DFF;" @click="jump(item.content)">{{item.content}}</a>
                     </div>
-                    <div v-if="item.msgType=='image'" style="width:220px;color:#3A2424;padding:10px;background-color:#fff;float:left;border-radius: 4px">
+                    <div v-if="item.msgType=='image'"  class="font12 left chat-container fl">
                       <img :src="item.mediaUrl" style="width:100%;cursor:pointer;" @click="imageDetailVisible=true;imgsrc=item.mediaUrl">
                     </div>
-                    <div v-if="item.msgType=='voice'" style="color:#3A2424;padding:10px;background-color:#fff;float:left;border-radius: 4px">
-                      <audio controls="controls" :src="item.mediaUrl"></audio>
+                    <div v-if="item.msgType=='voice'"  class="font12 left chat-container fl">
+                      <audio controls="controls" :src="item.mediaUrl" style="width:240px;background: #F3F5FA;border-radius: 1px;height:32px;"></audio>
                     </div>
                   </div>
-                </el-col>
-              </el-row>
-              <!-- 我发出的消息  -->
-              <el-row style="color:#737373;min-height: 5vh;;line-height:5vh;text-align:center;border-radius: 4px;font-size:14px;" v-if="item.direction=='1'">{{formatDateTime(item.createTime)}}</el-row>
-              <el-row v-if="item.direction=='1'" style="text-align:right;color:rgb(191, 191, 191);font-size:16px;">{{"坐席工号："+item.staffId}}</el-row>
-              <el-row style="border-radius: 4px;text-align:left;word-break:break-all" v-if="item.direction=='1'">
-                <el-col :span="19" :offset="5">
-                  <div style="float:right">
-                    <span class="el-icon-loading" v-if="item.code=='2'" style="margin-left:26px;line-height:40px;"></span>
-                    <a class="el-icon-warning" v-if="item.code=='4'" @click="sendMessageAgainVisible=true;sendMessageAgain_Obj=item;sendMessageAgain_Index=index;" style="margin-left:26px;line-height:40px;"></a>
-                    <div v-if="item.msgType=='text'" style="line-height:26px;min-height:26px;color:#3A2424;padding:13px 10px 7px;background-color:#fff;float:left;border-radius: 4px" v-html="showMsgs(item.content)"></div>
-                    <div v-if="item.msgType=='file'" style="min-height:40px;color:#3A2424;padding:10px;background-color:#67c23a;float:right;border-radius: 4px">
-                      <a class="link" style="color:#4190E7;" @click="jump(item.content)">{{decodeURI(item.content)}}</a>
+                </el-row>
+                <el-row style="text-align:left;margin-bottom:22px;" v-if="item.direction=='0'">
+                  <span class="font12" style="padding-left:9px;color:#ccc;">{{formatDateTime(item.createTime)}}</span>
+                </el-row>
+                <!-- 我发出的消息  -->
+                <!-- <el-row style="color:#737373;min-height: 5vh;;line-height:5vh;text-align:center;border-radius: 4px;font-size:14px;" v-if="item.direction=='1'">{{formatDateTime(item.createTime)}}</el-row> -->
+                <!-- <el-row v-if="item.direction=='1'" style="text-align:right;color:rgb(191, 191, 191);font-size:16px;">{{"坐席工号："+item.staffId}}</el-row> -->
+                <el-row style="min-height:30px;border-radius: 2px;text-align:left;word-break:break-all;" v-if="item.direction=='1'">
+                  <div style="float:right;margin-right:9px;">
+                    <span class="el-icon-loading" v-if="item.code=='2'" style="margin-right:4px;line-height:32px;"></span>
+                    <a class="el-icon-warning" v-if="item.code=='4'" @click="sendMessageAgainVisible=true;sendMessageAgain_Obj=item;sendMessageAgain_Index=index;" style="margin-right:4px;line-height:40px;color:red;"></a>
+                    <div v-if="item.msgType=='text'" class="font12 right chat-container fr" v-html="showMsgs(item.content)"></div>
+                    <div v-if="item.msgType=='file'" class="font12 right chat-container fr">
+                      <a class="link" style="color:#115DFF;text-shadow:1px 1px 1px #fff;" @click="jump(item.content)">{{decodeURI(item.content)}}</a>
                     </div>
                     <div v-if="item.msgType=='link'" style="min-height:40px;color:#3A2424;padding:10px;background-color:#67c23a;float:right;border-radius: 4px">
-                      <a class="link" style="color:#4190E7;" @click="jump(item.content)">{{decodeURI(item.content)}}</a>
+                      <a class="link" style="color:#115DFF;text-shadow:1px 1px 1px #fff;" @click="jump(item.content)">{{decodeURI(item.content)}}</a>
                     </div>
-                    <div v-if="item.msgType=='image'" style="width:220px;color:#3A2424;padding:10px;background-color:#67c23a;float:right;border-radius: 4px">
+                    <div v-if="item.msgType=='image'" class="font12 right chat-container fr">
                       <img :src="item.mediaUrl" style="width:100%;cursor:pointer;" @click="imageDetailVisible=true;imgsrc=item.mediaUrl">
                     </div>
                   </div>
-                </el-col>
-              </el-row>
+                </el-row>
+                <el-row style="text-align:right;margin-bottom:22px;" v-if="'1'===item.direction">
+                  <span class="font12" style="padding-right:9px;color:#ccc;">{{formatDateTime(item.createTime)}}</span>
+                </el-row>
+              </div>
+              <!-- 表情选择 -->
+              <!-- <div v-if="showEmojis" style="position:absolute;top:1025px;left:0;background:#fff;width: 68%;box-shadow:1px 3px 8px 0 rgba(207, 212, 220, 0.3);" id="emoji_div">
+                <el-tabs v-model="chooseEmojis" style="margin:0;margin-left:5px;">
+                  <el-tab-pane label="QQ表情" name="qq_face">
+                    <emotion @emotion="handleEmotion" :height="230" ></emotion>
+                  </el-tab-pane>
+                  <el-tab-pane label="emoji表情" name="emoji_face">
+                    <vue-emoji @select="handleEmotion1"></vue-emoji>
+                  </el-tab-pane>
+                </el-tabs>
+              </div> -->
             </div>
-	          <!-- 表情选择 -->
-            <!-- <div v-if="showEmojis" style="position:absolute;top:1025px;left:0;background:#fff;width: 68%;box-shadow:1px 3px 8px 0 rgba(207, 212, 220, 0.3);" id="emoji_div">
-              <el-tabs v-model="chooseEmojis" style="margin:0;margin-left:5px;">
-                <el-tab-pane label="QQ表情" name="qq_face">
-                  <emotion @emotion="handleEmotion" :height="230" ></emotion>
-                </el-tab-pane>
-                <el-tab-pane label="emoji表情" name="emoji_face">
-                  <vue-emoji @select="handleEmotion1"></vue-emoji>
-                </el-tab-pane>
-              </el-tabs>
-            </div> -->
           </div>
-        </el-main>
-        <!-- 是否重新发送消息dialog -->
-          <el-dialog width="30%" title="操作提示" :visible.sync="sendMessageAgainVisible">
-            <span style="font-size:15px;">是否重新发送消息？</span>
-            <div slot="footer" class="dialog-footer" style="text-align: center;">
-              <el-button type="primary" @click="sendMessageAgainVisible=false;sendMessageAgain(sendMessageAgain_Obj,sendMessageAgain_Index)">确定</el-button>
-              <el-button @click="sendMessageAgainVisible = false">取消</el-button>
-            </div>
-          </el-dialog>
+          <!-- 是否重新发送消息dialog -->
+            <el-dialog width="30%" title="操作提示" :visible.sync="sendMessageAgainVisible">
+              <span style="font-size:15px;">是否重新发送消息？</span>
+              <div slot="footer" class="dialog-footer" style="text-align: center;">
+                <el-button type="primary" @click="sendMessageAgainVisible=false;sendMessageAgain(sendMessageAgain_Obj,sendMessageAgain_Index)">确定</el-button>
+                <el-button @click="sendMessageAgainVisible = false">取消</el-button>
+              </div>
+            </el-dialog>
 
-        <el-footer style="position:relative;border-top:1px solid #ECECEC;height:178px;background-color:#FFFFFF;padding:0;">
-          <!-- 表情选择 -->
-            <div v-if="showEmojis" style="line-height:0;position:absolute;top:-286px;left:0px;background:#fff;width: 80%;box-shadow:1px 3px 8px 0 rgba(207, 212, 220, 0.3);" id="emoji_div">
-              <el-tabs v-model="chooseEmojis" style="margin:0;margin-left:5px;">
-                <el-tab-pane label="QQ表情" name="qq_face">
-                  <emotion @emotion="handleEmotion" :height="230" ></emotion>
-                </el-tab-pane>
-                <el-tab-pane label="emoji表情" name="emoji_face">
-                  <vue-emoji @select="handleEmotion1"></vue-emoji>
-                </el-tab-pane>
-              </el-tabs>
+          <el-footer style="position:relative;border-top:1px solid #ECECEC;background-color:#FBFBFB;padding:0;">
+            <!-- 表情选择 -->
+              <div v-if="showEmojis" style="line-height:0;position:absolute;top:-286px;left:0px;background:#FBFBFB;width: 80%;box-shadow:1px 3px 8px 0 rgba(207, 212, 220, 0.3);" id="emoji_div">
+                <el-tabs v-model="chooseEmojis" style="margin:0;margin-left:5px;">
+                  <el-tab-pane label="QQ表情" name="qq_face">
+                    <emotion @emotion="handleEmotion" :height="230" ></emotion>
+                  </el-tab-pane>
+                  <el-tab-pane label="emoji表情" name="emoji_face">
+                    <vue-emoji @select="handleEmotion1"></vue-emoji>
+                  </el-tab-pane>
+                </el-tabs>
+              </div>
+            <!-- 发送图片及录音 -->
+            <div class="multi" style="color:#909399;line-height:0;height:35px;text-align:left;background:#FBFBFB;">
+            <a title="表情" class="select_emojis" href="javascript:;" @click="showEmojis=!showEmojis;chooseEmojis='qq_face'"></a>
+              <el-upload
+                class="upload-demo"
+                ref="upload"
+                :action="updateUrl"
+                :http-request="uploadFile"
+                :disabled="uploadDisabled"
+                accept="image/*">
+                <i slot="trigger" @click="checkCustomerName" class="el-icon-picture-outline" style="margin-left:10px;line-height:35px;font-size:30px;cursor:pointer;" title="发送图片"></i>
+              </el-upload>
+              <el-upload
+                class="upload-demo"
+                ref="upload"
+                :action="updateUrl"
+                :http-request="uploadFile"
+                :disabled="uploadDisabled">
+                <i slot="trigger" @click="checkCustomerName" style="margin-left:10px;line-height:35px;font-size:30px;cursor:pointer;" title="发送文件"><svg-icon icon-class="file" class="icon-size" style="width:27px;height:27px;vertical-align:-3px;"/></i>
+              </el-upload>
+              <!-- <i @click="recordingbtn" class="el-icon-service" style="margin-left:10px;line-height:35px;font-size:30px;cursor:pointer" title="录音"></i> -->
+              <!-- <b @click="recVisible=true" style="margin-left:10px;line-height:35px;font-size:18px;color:#000;">录音时长:{{recTime}}s</b> -->
             </div>
-          <!-- 发送图片及录音 -->
-          <div class="multi" style="color:#909399;line-height:0;height:35px;text-align:left;background:#fff;">
-	        <a title="表情" class="select_emojis" href="javascript:;" @click="showEmojis=!showEmojis;chooseEmojis='qq_face'"></a>
-            <el-upload
-              class="upload-demo"
-              ref="upload"
-              :action="updateUrl"
-              :http-request="uploadFile"
-              :disabled="uploadDisabled"
-              accept="image/*">
-              <i slot="trigger" @click="checkCustomerName" class="el-icon-picture-outline" style="margin-left:10px;line-height:35px;font-size:30px;cursor:pointer;" title="发送图片"></i>
-            </el-upload>
-            <el-upload
-              class="upload-demo"
-              ref="upload"
-              :action="updateUrl"
-              :http-request="uploadFile"
-              :disabled="uploadDisabled">
-              <i slot="trigger" @click="checkCustomerName" style="margin-left:10px;line-height:35px;font-size:30px;cursor:pointer;" title="发送文件"><svg-icon icon-class="file" class="icon-size" style="width:27px;height:27px;vertical-align:-3px;"/></i>
-            </el-upload>
-            <!-- <i @click="recordingbtn" class="el-icon-service" style="margin-left:10px;line-height:35px;font-size:30px;cursor:pointer" title="录音"></i> -->
-            <!-- <b @click="recVisible=true" style="margin-left:10px;line-height:35px;font-size:18px;color:#000;">录音时长:{{recTime}}s</b> -->
-          </div>
-          <!-- 编辑文本消息-->
-          <div contenteditable="true" style="line-height:1;padding:3px 10px;overflow-x:hidden;text-align:left;height:103px;word-wrap:break-word;font-size:18px" ref="myMessages_div" @keyup.enter="sendMessage('text')">
-          </div>
-          <!-- 发送按钮div -->
-          <div style="text-align:right;line-height:40px;z-index:999;width:100%;margin: 0px 0px" >
-            <!-- <el-button v-if="recVisible&&!stoprecVisible" style="background:#F5F5F5;margin-right:10px;" @click="startRecording();recVisible=false;stoprecVisible=true">开始录音</el-button>
-            <el-button v-if="stoprecVisible" style="background:#F5F5F5;margin-right:10px;" @click="stopRecording();">停止录音</el-button> -->
-            <el-button style="background:#F5F5F5;margin-right:10px;" v-if="sendVisible" @click="sendMessage('text');recVisible=false;stoprecVisible=false">发送</el-button>
-          </div>
-        </el-footer>
+            <!-- 编辑文本消息-->
+            <div contenteditable="true" style="line-height:1;padding:3px 10px;overflow-x:hidden;text-align:left;height:103px;word-wrap:break-word;font-size:18px" ref="myMessages_div" @keyup.enter="sendMessage('text')">
+            </div>
+            <!-- 发送按钮div -->
+            <div style="text-align:right;line-height:40px;z-index:999;width:100%;margin: 0px 0px" >
+              <!-- <el-button v-if="recVisible&&!stoprecVisible" style="background:#F5F5F5;margin-right:10px;" @click="startRecording();recVisible=false;stoprecVisible=true">开始录音</el-button>
+              <el-button v-if="stoprecVisible" style="background:#F5F5F5;margin-right:10px;" @click="stopRecording();">停止录音</el-button> -->
+              <el-button style="background:#F5F5F5;margin-right:10px;" v-if="sendVisible" @click="sendMessage('text');recVisible=false;stoprecVisible=false">发送</el-button>
+            </div>
+          </el-footer>
+        </el-container>
+
+      
       </el-container>
-
-      <div class="elaside1"  style="overflow-x:hidden;background:#EDEDED;">
-        <el-collapse v-model="activeNames">
-          <!--  客户基本信息  -->
-          <el-collapse-item name="1" style="text-align:left;">
-            <template slot="title">
-              <b style="margin-left:2%">基本信息<i class="el-icon-d-caret"></i></b>
-            </template>
-            <el-row :gutter="20">
-              <el-col :span="5" style="text-align:center">
-                <br/>
-                <div>
-                  <b v-text="customerInfo.customerName" style="font-size:18px"></b>
-                </div><br/>
-                <div>
-                  <span v-text="customerInfo.mobile"></span>
-                </div>
-              </el-col>
-              <el-col :span="3"></el-col>
-              <el-col :span="8" v-if="!isRecruit">
-                <br/>
-              <div>
-                <label>性别：</label><span v-text="showSex(customerInfo.sex)"></span>
-              </div><br/>
-              <div>
-                <label>卡号：</label><span v-text="customerInfo.bankCard"></span>
-              </div><br/>
-              <div>
-                <label>地址：</label><span v-text="customerInfo.resideAddress"></span>
-              </div>
-              </el-col>
-              <el-col :span="8" v-if="isRecruit">
-                <br/>
-              <div>
-                <label>性别：</label><span v-text="showSex(customerInfo.sex)"></span>
-              </div><br/>
-              <div>
-                <label>来源：</label><span v-text="customerInfo.source"></span>
-              </div><br/>
-              <div>
-                <label>备注：</label><span v-text="customerInfo.comment"></span>
-              </div>
-              </el-col>
-              <el-col :span="8" v-if="!isRecruit">
-                <br/>
-                <div>
-                <label>身份证：</label><span v-text="customerInfo.idNumber"></span>
-              </div><br/>
-              <div>
-                <label>持卡类型：</label><span v-text="customerInfo.bankCardType"></span>
-              </div>
-              </el-col>
-              <el-col :span="8" v-if="isRecruit">
-                <br/>
-                <div>
-                <label>身份证：</label><span v-text="customerInfo.idNumber"></span>
-              </div><br/>
-              <div>
-                <label>地址：</label><span v-text="customerInfo.resideAddress"></span>
-              </div>
-              </el-col>
-            </el-row>
-          </el-collapse-item>
-
-          <!--  客户接触信息  -->
-          <el-collapse-item name="2" style="text-align:left;">
-            <template slot="title">
-              <b style="margin-left:2%">接触记录<i class="el-icon-d-caret"></i></b>
-            </template>
+    </div>
+    
+    <div class="elaside1"  style="position:relative;height:78vh;overflow-x:hidden;background:#FBFBFB;float:right;width:44%;box-shadow: 0 0 10px 0 rgba(39,48,69,0.10);border-radius: 2px;">
+      <el-tabs v-model="activeName" type="card" style="background: #F3F5FA;">
+        <el-tab-pane label="用户信息" name="1" class="userinfo-container">
+          <el-row :gutter="20" style="height:120px;padding:24px 20px;" v-if="!isRecruit">
+            <el-col :span="5" class="font12 nowrap">
+              <span>性别：</span>
+              <b style="color:#020202;" v-text="showSex(customerInfo.sex)" :title="showSex(customerInfo.sex)"></b>
+            </el-col>
+            <el-col :span="7" class="font12 nowrap">
+              <span>身份证：</span>
+              <b style="color:#020202;" v-text="customerInfo.idNumber" :title="customerInfo.idNumber"></b>
+            </el-col>
+            <el-col :span="6" class="font12 nowrap">
+              <span>持卡类型：</span>
+              <b style="color:#020202;" v-text="customerInfo.bankCardType" :title="customerInfo.bankCardType"></b>
+            </el-col>
+            <el-col :span="6" class="font12 nowrap">
+              <span>卡号：</span>
+              <b style="color:#020202;" v-text="customerInfo.bankCard" :title="customerInfo.bankCard"></b>
+            </el-col>
+            <el-col :span="12" class="font12 nowrap">
+              <span>地址：</span>
+              <b style="color:#020202;" v-text="customerInfo.resideAddress" :title="customerInfo.resideAddress"></b>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" style="height:120px;padding:24px 20px;" v-if="isRecruit">
+            <el-col :span="6" class="font12 nowrap">
+              <span>性别：</span>
+              <b style="color:#020202;" v-text="showSex(customerInfo.sex)" :title="showSex(customerInfo.sex)"></b>
+            </el-col>
+            <el-col :span="6" class="font12 nowrap">
+              <span>身份证：</span>
+              <b style="color:#020202;" v-text="customerInfo.idNumber" :title="customerInfo.idNumber"></b>
+            </el-col>
+            <el-col :span="6" class="font12 nowrap">
+              <span>来源：</span>
+              <b style="color:#020202;" v-text="customerInfo.source" :title="customerInfo.source"></b>
+            </el-col>
+            <el-col :span="6" class="font12 nowrap">
+              <span>备注：</span>
+              <b style="color:#020202;" v-text="customerInfo.comment" :title="customerInfo.comment"></b>
+            </el-col>
+            <el-col :span="12" class="font12 nowrap">
+              <span>地址：</span>
+              <b style="color:#020202;" v-text="customerInfo.resideAddress" :title="customerInfo.resideAddress"></b>
+            </el-col>
+          </el-row>
+          <el-row>
+            <b class="font14 fl" style="margin-left:20px;margin-bottom:10px;">接触记录</b>
             <el-table
-            :data="contactRecord"
-            border>
-              <el-table-column align="center" label="序号" width="55">
+              :data="contactRecord">
+              <!-- <el-table-column align="center" label="序号" width="55">
                 <template slot-scope="scope">
                   <div>{{scope.$index + 1}}</div>
                 </template>
-              </el-table-column>
+              </el-table-column> -->
               <el-table-column align="center" label="记录编号" width="170" prop="recordId">
               </el-table-column>
-              <el-table-column align="center" label="任务小结" width="">
+              <el-table-column align="center" label="任务小结">
                 <template slot-scope="scope">
                   <div v-html="showSummarys(scope.row.summaryDetailInfos)"></div>
                 </template>
               </el-table-column>
-              <el-table-column align="center" label="小结备注" width="" >
+              <el-table-column align="center" label="小结备注">
                 <template slot-scope="scope">
                   <div v-html="showDescription(scope.row.description)"></div>
                 </template>
               </el-table-column>
             </el-table>
-          </el-collapse-item>
+          </el-row>
 
-           <!--  产品信息  -->
-          <el-collapse-item name="3" style="text-align:left;">
-            <template slot="title">
-              <b style="margin-left:2%">产品信息<i class="el-icon-d-caret"></i></b>
-            </template>
-            <div>
-            <el-tabs v-model="activeTab" type="border-card" @tab-click="">
-              <!--
-                v-if="this.productInfo.some(i => i=== this.car_insurance)"
-                v-if="this.productInfo.some(i => i === this.child_insurance)"
-                v-if="this.productInfo.some(i => i=== this.disease_insurance)"
-                -->
-              <el-tab-pane 
-               v-for="(item,index) in products" 
-               :label="item.productName">
-                <div class="text item" hidden>模板类型id：<font style="color:blue;size:14px;font-weight:bold">{{item.productTypeInfo===null?'':item.productTypeInfo.productTypeId}}</font></div>
-                <div class="text item">模板类型：<font style="color:blue;size:14px;font-weight:bold">{{item.productTypeInfo===null?'':item.productTypeInfo.productTypeName}}</font></div>
-                <div class="text item">模板编号：<font style="color:blue;size:14px;font-weight:bold">{{item.templateId}}</font></div>
-                <div class="text item">模板名称：<font style="color:blue;size:14px;font-weight:bold">{{item.productName}}</font></div>
-                <div class="text item">产品单价：<font style="color:red;font-weight:bold">￥&nbsp;</font><font style="color:blue;font-weight:bold">{{item.price===null?0:item.price}}</font></div>
-                <div class="text item">产品概述：{{item.description}}</div>
-                <div v-if="item.showMessage"><font style="color:blue">Tips:以下带</font><font style="color:red">*</font><font style="color:blue">的为必填项</font></div>
-                <el-form  class="text item" >
-                  <!-- <div v-for="(i,index1) in item.propertyInfos"> -->
-                    <el-form-item  v-for="(i,index1) in item.propertyInfos" 
-                      :label="i.propertyName + '：'" style="display:inline"   
-                      :rules="{required:i.showOrInput === '1' && i.isRequired === '1', message: '此项为必填项', trigger: 'change' }">
-                      <span v-if="i.showOrInput === '0' && i.templateType !== 'textarea'">{{i.propertyValue}}</span>
-                      <textarea v-if="i.showOrInput === '0' && i.templateType === 'textarea'" readonly>{{i.propertyValue}}</textarea>
-                      <textarea v-if="i.showOrInput === '1' && i.templateType === 'textarea'" 
-                        v-model="i.propertyValue" :placeholder="'限长' + i.propertyLength + '字符'">{{i.propertyValue}}</textarea>
-                      <input v-if="i.templateType === 'text' && i.showOrInput === '1'" 
-                        v-model="i.propertyValue" :placeholder="'限长' + i.propertyLength + '字符'" :maxlength="i.propertyLength"  ></input>
-                      <el-radio-group size="mini" v-if="i.templateType === 'radio' && i.showOrInput === '1' && i.showInLine" 
-                        v-model="i.propertyValueRadio">
-                        <el-radio-button v-for="a in JSON.parse(i.propertyValue)" :label="a">{{a}}</el-radio-button>
-                      </el-radio-group>
-                      <el-radio-group size="mini" v-if="i.templateType === 'radio' && i.showOrInput === '1' && !i.showInLine" 
-                        v-model="i.propertyValueRadio">
-                        <el-radio v-for="a in JSON.parse(i.propertyValue)" :label="a">{{a}}</el-radio>
-                      </el-radio-group>
-                      <el-checkbox-group  size="mini"  v-if="i.templateType === 'checkbox' && i.showOrInput === '1'  && i.showInLine" 
-                        v-model="checks[index1]" @change="getCheckes(checks[index1],i)">
-                        <el-checkbox-button   v-for="b in JSON.parse(i.propertyValue)"  :label="b">{{b}}</el-checkbox-button>
-                      </el-checkbox-group>
-                      <el-checkbox-group  size="mini"  v-if="i.templateType === 'checkbox' && i.showOrInput === '1' && !i.showInLine" 
-                        v-model="checks[index1]" @change="getCheckes(checks[index1],i)">
-                        <el-checkbox v-for="b in JSON.parse(i.propertyValue)"  :label="b">{{b}}</el-checkbox>
-                      </el-checkbox-group>
-                      <el-select   size="mini" v-model="i.propertyValueSelect" placeholder="请选择" 
-                        v-if="i.templateType === 'select' && i.showOrInput === '1'">
-                        <el-option
-                          v-for="s in JSON.parse(i.propertyValue)"
-                          :label="s"
-                          :value="s">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>
-                  <!-- </div> -->
-                </el-form>
-                    
-                <div style="width:25%;float:right">
-                  <span>认购数量：</span>
-                  <el-input-number v-model="item.number" @change="handleChange(item.templateId,item.price,item.number)" :min="0" :max="1000" label="认购数量" size="mini">
-                      {{item.number}}
-                  </el-input-number>
-                </div>
-              </el-tab-pane>
-            </el-tabs>
-            <div style="width:50%;float:left">
-              <label>客户留言:</label><el-input placeholder="有特别要求请注明，限100字符" maxlength="100" style="width:80%" v-model="customerNote"></el-input>
-            </div>
-            <div style="width:50%;float:right">
-              <label>选购清单：</label>
-              <el-card shadow="hover" v-for="(item,index) in products">
-                  <div style="margin-left:5%;color:blue;font-weight:700;font-size:14px">{{item.productName}}</div>
-                  <div style="color:blue;font-weight:bold;text-align:right">
-                    {{(typeof item.price==='undefined'||item.price===null)?0:item.price}}
-                    <span style="color:red;font-weight:bold;margin:0 3%">*</span>
-                    <el-input-number v-model="item.number" @change="handleChange(item.templateId,item.price,item.number)" :min="0" :max="1000" label="预购数量" size="mini">
-                      {{item.number}}
-                    </el-input-number>
-                    <span style="color:black;margin:0 2%">=</span>
-                    <span v-model="item.sum">{{item.price * item.number ? (item.price * item.number).toFixed(2) : 0 }}</span>
-                  </div>
-              </el-card>
-              <div style="color:blue;font-weight:bold;text-align:left;width:20%;float:right">
-                <label>总价：</label><font style="color:red;font-weight:bold">￥ {{sumTotal}}&nbsp;</font>
-              </div>
-            </div>
+        </el-tab-pane>
+        <el-tab-pane label="产品信息" name="2">
+          <!-- <el-row style="margin-top:20px;"> -->
+            <!-- <el-form :inline="true" size="mini">
+              <el-form-item>
+                <el-input placeholder="请输入搜索内容" maxlength="50">
+                  <i slot="prefix" class="el-input__icon el-icon-search" style="cursor:pointer;"></i>
+                </el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-select placeholder="请选择类型"> -->
+
+                  <!-- <el-option
+                    v-for="item in taskStatusOptions"
+                    :key="item.value"
+                    :value="item.value"
+                    :label="item.label">
+
+                  </el-option> -->
+
+                <!-- </el-select>
+              </el-form-item>
+            </el-form>
+          </el-row> -->
+          <el-row style="margin-top:20px;">
+            <el-table
+              :data="products">
+              <el-table-column
+                align="center"
+                prop="productName"
+                label="名称">
+              </el-table-column>
+              <el-table-column
+                align="center"
+                label="产品类型"
+                :show-overflow-tooltip="true">
+                <template 
+                  slot-scope="scope">
+                  {{scope.row.productType===null?'':scope.row.productType === '0' ? '实体产品' : '虚拟产品'}}
+                </template>
+              </el-table-column>
+              <el-table-column
+                align="center"
+                label="产品编号"
+                prop="productId"
+                :show-overflow-tooltip="true">
+              </el-table-column>
+              <el-table-column
+                align="center"
+                label="产品单价" 
+                :show-overflow-tooltip="true">
+                <template
+                  slot-scope="scope">
+                  {{scope.row.price===null?'￥ '+ 0:'￥ '+scope.row.price}}
+                </template>
+              </el-table-column>
+              <el-table-column
+                align="center"
+                label="产品库存"
+                prop="productNum"
+                :show-overflow-tooltip="true">
+              </el-table-column>
+              <el-table-column
+                align="center"
+                prop="description"
+                label="产品描述">
+              </el-table-column>
+              <el-table-column
+                align="center"
+                label="操作"
+                width="100">
+              <template slot-scope="scope">
+                <el-button type="primary" :disabled="scope.row.productNum===0||scope.row.number!==0" @click.native="handleChange(scope.row.productId,scope.row.price,1,scope.$index)" size="mini" style="width:30px;height:20px;text-align:center;vertical-align:middle;padding:0;">+</el-button>
+              </template>
+              </el-table-column>
+            </el-table>
+          </el-row>
+          <!-- <el-row style="margin-top:5px;">
+            <el-pagination
+              v-if="pageShow"
+              @size-change="handleSizeChange123"
+              @current-change="handleCurrentChange123"
+              :current-page='pageInfo.pageNo'
+              :page-sizes="[10, 20, 30, 40, 50]"
+              :page-size='pageInfo.pageSize'
+              layout="total, prev, pager, next, jumper "
+              :total='pageInfo.totalCount' 
+              style="text-align: right;float:right;">
+            </el-pagination>
+          </el-row> -->
+        </el-tab-pane>
+        <el-tab-pane label="选购清单" name="3">
+          <div class="font14" style="margin:20px 0 20px 20px;text-align:left;">
+            <b>总计：</b>
+            <b style="color:#ED2135;">￥ {{sumTotal}}</b>
           </div>
-          </el-collapse-item>
-
-           <!--  任务状态  -->
-          <el-collapse-item name="4" style="text-align:left;">
-            <template slot="title">
-              <b style="margin-left:2%">任务状态<i class="el-icon-d-caret"></i></b>
-            </template>
-
-            <div>
-              <el-row :gutter="20">
-                <el-col :span="24">
-                  &nbsp;&nbsp;&nbsp;&nbsp;
-                  <el-radio v-model="taskRadio" label="2" name="2" border @change="setSendMessage(taskRadio)"><span style="color:#67C23A">成功</span></el-radio>
-                  <el-radio v-model="taskRadio" label="3" name="3" border @change="setSendMessage(taskRadio)"><span style="color:#F56C6C">失败</span></el-radio>
-                  <el-radio v-model="taskRadio" label="1" name="1" border @change="setSendMessage(taskRadio)" v-show="isLastContactTime===false"><span style="color:#409EFF">预约</span></el-radio>
-                </el-col><br/><br/><br/>
-                <div :span="4" v-show="this.taskRadio === '1'">
-                  <div style="margin-left:3%">
-                    <span style="color:#F56C6C">*</span>请选择预约时间：
-                    <span><b>T + </b></span>
-                    <el-input style="width:100px" type="text" v-model="addDays"
-                    onkeyup="if(! /^d+$/.test(this.addDays)){this.addDays='';}"></el-input>
-                    <el-date-picker
-                      v-model="appointTime"
-                      value-format="yyyy-MM-dd HH:mm:ss"
-                      default-time="00:00:00"
-                      type="datetime" style="width:55%">
-                    </el-date-picker>
-                  </div>
-                </div>
-              </el-row>
-            </div>
-
-          </el-collapse-item>
-
-           <!--  任务小结  -->
-          <el-collapse-item name="5" style="text-align:left;">
-            <template slot="title">
-              <b style="margin-left:2%">小结与备注<i class="el-icon-d-caret"></i></b>
-            </template>
-            <div>
-              <b>任务小结：</b>
-              <!-- @check-change="sendSummaryId" @node-click="checkOrNot" <el-tree :data="nodulesTree" show-checkbox lazy :props="summaryTreeProps" empty-text="该拨打任务暂无小结" :load="loadNodes"></el-tree> -->
-              <el-tree :data="nodulesTree" @check-change="sendSummaryId" show-checkbox default-expand-all node-key="id" ref="tree" highlight-current :props="summaryTreeProps" empty-text="暂无小结"></el-tree>
-            </div>
-            <div>
-              <b>小结备注：</b>
-              <el-input type="textarea" v-model="summary_description" rows="3">/</el-input>
-            </div>
-          </el-collapse-item>
-        </el-collapse>
-        <div style="text-align:center"><br/>
-          <!-- <el-checkbox v-if="showAutoDial===true" checked="checked" v-model="autoDialNext">完成后显示下一个客户</el-checkbox> -->
-          <el-checkbox v-if="showSendMessage === true && campaignType !== 'RECRUIT'" v-model="sendMessageOrNot" checked="checked">发送支付短信</el-checkbox>
-          <el-button type="success" size="small"  @click="completeTask()">完成</el-button>
-        </div>
+          <ul class="shopping-list">
+            <li v-if="!sumTotal">
+              <span class="empty-text">暂无清单</span>
+            </li>
+            <li class="font12" v-for="(item,index) in products" v-if="item.number" style="padding:0 20px;white-space: nowrap;overflow: hidden;text-overflow:ellipsis;">
+              <el-popover trigger="hover" placement="bottom" :content="item.productName" class="product-name">
+                <span slot="reference" style="width:100%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">{{item.productName}}</span>
+              </el-popover>
+              <el-popover trigger="hover" placement="bottom" :content="'￥ '+item.price">
+                <span slot="reference" style="width:100%">{{(typeof item.price==='undefined'||item.price===null)?0:'￥ '+item.price}}</span>
+              </el-popover>
+              <span style="width:3%">X</span>
+              <el-input-number style="width:25%;" v-model="item.number" @change="handleChange(item.productId,item.price,item.number,index)" :min="1" :max="item.productNum" size="mini">0</el-input-number>
+              <span style="width:3%">=</span>
+              <el-popover trigger="hover" placement="bottom" :content="'￥ '+(item.price * item.number ? (item.price * item.number).toFixed(2) : 0 )">
+                <span slot="reference" v-model="item.sum" style="width:100%">{{'￥ '+(item.price * item.number ? (item.price * item.number).toFixed(2) : 0 )}}</span>
+              </el-popover>
+              <el-button type="text" @click="delList(index,(item.price * item.number ? (item.price * item.number).toFixed(2) : 0))">删除</el-button>
+            </li>
+          </ul>
+          <div style="padding:0 20px;">
+            <b class="font14 fl" style="display:inline-block;margin:20px 0;">客户留言</b>
+            <el-input
+              type="textarea"
+              :maxlength="100"
+              :autosize="{ minRows: 4, maxRows: 6}"
+              placeholder="有特别的要求请注明，限100字。"
+              v-model="customerNote">
+            </el-input>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="任务详情" name="4" style="padding:20px 20px 0 20px;">
+          <el-row>
+            <el-form :inline="true" size="mini">
+              <div style="height:48px;" class="fl">
+                <el-form-item label="任务状态：">
+                  <el-radio v-model="taskRadio" label="2" name="2" @change="setSendMessage(taskRadio)" class="radio-success"><span>成功</span></el-radio>
+                  <el-radio v-model="taskRadio" label="3" name="3" @change="setSendMessage(taskRadio)" class="radio-fail"><span>失败</span></el-radio>
+                  <el-radio v-model="taskRadio" label="1" name="1" @change="setSendMessage(taskRadio)" v-show="isLastContactTime===false" class="radio-order"><span>预约</span></el-radio>
+                </el-form-item>
+              </div>
+              <div v-show="this.taskRadio === '1'" class="fl">
+                <span style="color:red;line-height:34px;">*</span>
+                <el-form-item label="预约日期：" class="working-date-form">
+                  <b style="font-size: 16px;color: #333333;letter-spacing: 0;text-align: left;">T + </b>
+                  <el-input style="width:60px" type="text" v-model="addDays" onkeyup="if(! /^d+$/.test(this.addDays)){this.addDays='';}"></el-input>
+                </el-form-item>
+                <el-form-item class="time-picker-form">
+                  <el-date-picker
+                    v-model="appointTime"
+                    placeholder="请选择日期"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+                    default-time="00:00:00"
+                    type="datetime" style="width:180px">
+                  </el-date-picker>
+                </el-form-item>
+              </div>
+              <el-col :span="8" style="height:48px;line-height:34px;" v-if="showSendMessage === true && campaignType !== 'RECRUIT'">
+                <el-checkbox v-model="sendMessageOrNot" checked="checked">发送支付短信</el-checkbox>
+              </el-col>
+              <!-- <el-col :span="8" style="height:48px;line-height:34px;" v-if="showAutoDial===true">
+                <el-checkbox checked="checked" v-model="autoDialNext">完成后显示下一个客户</el-checkbox>
+              </el-col> -->
+            </el-form>
+          </el-row>
+          <el-row>
+            <el-form>
+              <el-form-item label="话后小结：" style="margin-bottom:12px;text-align:left;">
+                <el-cascader
+                  size="mini"
+                  placeholder="请选择小结"
+                  v-model='selectedSummarys'
+                  :options="nodulesTree"
+                  filterable
+                  :props="summaryTreeProps"
+                  :show-all-levels="false">
+                </el-cascader>
+              </el-form-item>
+              <el-form-item>
+                <el-col style="text-align:left;">
+                  <b class="font12" style="color:#020202;">小结备注：</b>
+                  <el-input
+                    type="textarea"
+                    :maxlength="100"
+                    :autosize="{ minRows: 4, maxRows: 6}"
+                    v-model="summary_description">
+                  </el-input>
+                </el-col>
+              </el-form-item>
+            </el-form>
+          </el-row>
+        </el-tab-pane>
+      </el-tabs>
+      <div style="text-align: center;border-top: 1px solid rgb(220, 220, 220);margin-top: 20px;position: absolute;bottom: 0px;width: 100%;height: 68px;background: #fbfbfb;"><br/>
+        <!-- <el-checkbox v-if="showAutoDial===true" checked="checked" v-model="autoDialNext">完成后显示下一个客户</el-checkbox> -->
+        <!-- <el-checkbox v-if="showSendMessage === true && campaignType !== 'RECRUIT'" v-model="sendMessageOrNot" checked="checked">发送支付短信</el-checkbox> -->
+        <el-button type="primary" size="small"  @click="completeTask()">完成</el-button>
       </div>
-    </el-container>
+    </div>
   </div>
   <el-dialog
       width="30%"
@@ -448,64 +484,226 @@
 </style>
 
 <style lang='scss'>
-
-.wechat-list{
-  .el-container{
-    height:100%;
-  }
-  .el-aside {
-    background-color: #EDEDED;
-    color: #333;
-    text-align: center;
-    width:220px !important;
-    height:834px;
-    li{
-      line-height: 40px;
-      height: 40px;
-      padding-right:4px;
-    } 
-  }
-  .elaside1 {
-    width: 41%;
-    color: #333;
-    text-align: center;
-    height:834px;
-  }
-  .el-menu-item:hover {
-    background:#DAD9D9;
-  }
-  .el-menu-item:focus{
-    background:#C3C3C4;
-  }
-  .el-menu-item.is-active{
-    background:#C3C3C4;
-  }
-  .el-main {
-    color: #333;
-    text-align: center;
-  }
-  .el-header,.el-footer {
-    background-color: #DBD9D8;
-    color: #333;
-    text-align: center;
-    height: 500px;
-    line-height: 65px;
-  }
-  .multi i:hover{ 
-    color:#000;
-  }
-  .multi{
-    i{
-      color:rgb(144, 147, 153);
+#app{
+  .wechat-list{
+    .el-form-item__label{
+      font-size: 12px !important;
+      color: #020202 !important;
+      letter-spacing: 0.25px !important;
     }
-    .upload-demo{
-      display:inline-block;
+    .nowrap{
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
-    .el-upload-list{
-      display:none;
+    .el-container{
+      width:100%;
+    }
+    .chat-header{
+        border-bottom: 1px solid #dedede;
+        background: #F3F5FA;
+        height: 4.6vh !important;
+        min-height: 4.6vh !important;
+        padding: 0px 0 0px 8px;
+        line-height: 4.6vh;
+    }
+    .el-aside {
+      .el-menu{
+        border:none;
+        border-right:1px solid #F3F5FA;
+      }
+      border-right:1px solid #dedede;
+      .el-header{
+        border-bottom: 1px solid #dedede;
+        background: #F3F5FA;
+        height: 4.6vh !important;
+        min-height: 4.6vh !important;
+        padding: 0px 0 0px 8px;
+        line-height: 4.6vh;
+        div{
+          width:100%;
+          height:100%;
+          text-align:left;
+        }
+      }
+      background-color: #fff;
+      color: #333;
+      width:210px !important;
+    }
+    .elaside1 {
+      width: 41%;
+      color: #333;
+      text-align: center;
+      height:834px;
+      .el-tabs__header{
+        margin-bottom:0;
+        height:4.6vh;
+      }
+      .el-tabs--card>.el-tabs__header .el-tabs__nav{
+        border:none;
+        border-right:1px solid #dedede;
+        transform:none !important;
+        div{
+          height:4.6vh;
+        }
+      }
+      .el-tabs__nav-scroll{
+        height:4.6vh;
+      }
+      .el-tabs__content{
+        overflow-y: auto;
+        height: 643px;
+        background:#FBFBFB;
+      }
+      .el-tabs--card>.el-tabs__header .el-tabs__item.is-active{
+        background:#FBFBFB;
+        border-bottom:1px solid #FBFBFB;
+        height:4.6vh;
+        line-height:4.6vh;
+      }
+      .shopping-list{
+        border-top:1px solid #CED4E2;
+        border-bottom:1px solid #CED4E2;
+        max-height:270px;
+        margin-top:20px;
+        overflow-y:auto;
+        li {
+          .empty-text{
+            font-size:14px;
+            width:100%;
+            color: #909399;
+          }
+          height:45px;
+          line-height:44px;
+          color:#020202;
+          border-bottom:1px solid #eee;
+          box-sizing:border-box;
+          span{
+            display:inline-block;
+            text-align:center;
+            vertical-align: middle;
+            overflow: hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
+          }
+          .product-name{
+            width:37%;
+          }
+        }
+      }
+      .userinfo-container{
+        .el-row{
+          box-sizing:border-box;
+          background:#FBFBFB;
+        }
+        .font12{
+          margin-top:2px;
+          height:30px;
+          line-height:30px;
+          text-align:left;
+        }
+      }
+    }
+    .el-menu-item{
+      box-sizing:border-box;
+      height: 46px;
+      padding:5px 9px 5px 11px !important;
+      line-height:normal;
+      color:#333 !important;
+      border-bottom:1px solid #dedede;
+      &:hover {
+        background:#E8E8E8;
+      }
+      &:focus{
+        background:#E8E8E8;
+      }
+      &.is-active{
+        background:#E8E8E8;
+      }
+    }
+    .audio-style{
+      width:406px;
+      background: #F3F5FA;
+      border-radius: 1px;
+      height:32px;
+    }
+    .left,.right{
+        min-height: 40px;
+        position: relative;
+        display: table;
+    }
+    .left > p,.right > p{    /*使内容居中*/
+        display: table-cell;
+        vertical-align: middle;
+        padding: 0 10px;
+    }
+    .left:before,.right:after{   /*用伪类写出小三角形*/
+        content: '';
+        display: block;
+        width: 0;
+        height: 0;
+        border: 8px solid transparent;
+        position: absolute;
+        top: 7px;
+    }
+    /*分别给左右两边的小三角形定位*/
+    .left:before{    
+        border-right: 8px solid #ccc;
+        left: -16px;
+    }
+    .right:after{    
+        border-left: 8px solid #57AFFF;
+        right: -16px;
+    }
+    .chat-record-container{
+      height:78vh;
+      overflow-y:auto;
+    }
+    .chat-container{
+      max-width:290px;
+      text-align:left;
+      word-break:break-all;
+      color:#020202;
+      padding:7px 10px;
+      min-height:30px;
+      background-color:#fff;
+      border-radius: 2px;
+      border: 1px solid #57AFFF;
+      &.fl{
+        background-color:#fff;
+        border: 1px solid #CCCCCC;
+      }
+      &.fr{
+        background: #57AFFF;
+        color:#fff;
+      }
+    }
+    .fr{
+      float:right !important;
+    }
+    .fl{
+      float:left !important;
+    }
+    .el-footer{
+      height:auto !important;
+    }
+    .multi i:hover{ 
+      color:#000;
+    }
+    .multi{
+      i{
+        color:rgb(144, 147, 153);
+      }
+      .upload-demo{
+        display:inline-block;
+      }
+      .el-upload-list{
+        display:none;
+      }
     }
   }
 }
+
 .select_emojis {
   width: 30px;
   height: 30px;
@@ -520,6 +718,7 @@
 
 
 <script>
+import { MessageBox } from 'element-ui'
 import {
   clone,
   formatDateTime,
@@ -548,7 +747,8 @@ import {
   updateRecordInfo,
   changeRecords,
   getWechatCustomer,
-  getUnreadNum
+  getUnreadNum,
+  modifyProduct
 } from '@/api/wechat_list' // 接口
 import { navbarQueryRecords } from '@/api/navbar'
 import getDynamicRouter from '@/router/dynamic-router'
@@ -561,6 +761,7 @@ export default {
   name: 'wechat_list1',
   data() {
     return {
+      customerPhoneHeader: '',
       emojidata: emojidata,
       reg_emojis: reg_emoji,
       finalContent: '',
@@ -592,10 +793,15 @@ export default {
       contents: this.$store.state.app.wechat_contents, // 聊天记录
       customerInfos: [], // 缓存中的客户数据
       nodulesTree: [], // 需要展示的小结树 数据
+      // summaryTreeProps: {
+      //   children: 'summaryDetailInfos',
+      //   label: 'name',
+      //   id: 'id'
+      // },
       summaryTreeProps: {
         children: 'summaryDetailInfos',
         label: 'name',
-        id: 'id'
+        value: 'id'
       },
       showSendMessage: false, // 是否展示发送支付短信
       sendMessageOrNot: true, //  发送支付短信checkbox
@@ -622,7 +828,7 @@ export default {
       isRecruit: false, // 活动类型的判断
       customerInfo: {}, // 客户基本信息
       contactRecord: [], // 接触记录信息
-      activeNames: ['1'], // 折叠板默认打开项
+      activeName: '1', // 折叠板默认打开项
       msgIds: [],
       dailTaskCustomer: {},
       customerActive: null,
@@ -735,185 +941,137 @@ export default {
           createInfo.campaignId = this.campaignId // 活动id
           createInfo.taskId = this.taskId // 任务id
           createInfo.description = this.customerNote // 客户留言
-
           createInfo.customerId = this.customerId // 客户id
           createInfo.customerName = this.customerInfo.customerName // 客户姓名
           createInfo.customerPhone = this.customerPhone // 客户手机
-
           createInfo.totalAmount = this.sumTotal
           // 创建产品逻辑
           const productTempInfo = []
-
-          let flag = true // 默认校验正确
-
-          for (let j = 0; j < this.products.length; j++) {
-            if (this.products[j].number > 0 && this.products[j].propertyInfos !== null) {
-              const propertyInfos = this.products[j].propertyInfos
-
-              for (let k = 0; k < propertyInfos.length; k++) {
-                if (propertyInfos[k].isRequired === '1' && propertyInfos[k].showOrInput === '1') {
-                  switch (propertyInfos[k].templateType) {
-                    case 'text':
-                      if (propertyInfos[k].propertyValue === '') {
-                        flag = false
-                        this.$message.error('预购订单还有必填项：' + propertyInfos[k].propertyName + '没有完成')
-                        return
-                      }
-                      break
-                    case 'input':
-                      if (propertyInfos[k].propertyValue === '') {
-                        flag = false
-                        this.$message.error('预购订单还有必填项：' + propertyInfos[k].propertyName + '没有完成')
-                        return
-                      }
-                      break
+          for (let i = 0; i < this.products.length; i++) {
+            if (this.products[i].number > 0) {
+              const productInfo = this.products[i]
+              const result = {}
+              result.description = productInfo.description
+              result.price = productInfo.price
+              result.number = productInfo.number
+              result.productName = productInfo.productName
+              result.productId = productInfo.productId
+              result.productTypeName = productInfo.productTypeName
+              result.status = productInfo.status
+              // 回复选择情况
+              const propertyInfos = []
+              // if (productInfo.propertyInfos !== null && productInfo.propertyInfos.length > 0) {
+              if (productInfo) {
+                for (let j = 0; j < productInfo.length; j++) {
+                  const obj = productInfo[j]
+                  const propertyInfo = {}
+                  propertyInfo.isRequired = obj.isRequired
+                  propertyInfo.mark = obj.mark
+                  propertyInfo.propertyKey = obj.propertyKey
+                  propertyInfo.propertyLength = obj.propertyLength
+                  propertyInfo.propertyName = obj.propertyName
+                  propertyInfo.propertyType = obj.propertyType
+                  switch (obj.templateType) {
                     case 'radio':
-                      if (typeof propertyInfos[k].propertyValueRadio === 'undefined' || propertyInfos[k].propertyValueRadio === '') {
-                        flag = false
-                        this.$message.error('预购订单还有必填项：' + propertyInfos[k].propertyName + '没有完成')
-                        return
+                      propertyInfo.propertyValue = obj.propertyValueRadio
+                      break
+                    case 'checkbox':
+                      if (typeof obj.propertyValueCheckbox !== 'undefined' && obj.propertyValueCheckbox !== '') {
+                        propertyInfo.propertyValue = '[' + obj.propertyValueCheckbox.join(',') + ']'
+                      } else {
+                        propertyInfo.propertyValue = '[]'
                       }
                       break
                     case 'select':
-                      if (typeof propertyInfos[k].propertyValueSelect === 'undefined' || propertyInfos[k].propertyValueSelect === '') {
-                        flag = false
-                        this.$message.error('预购订单还有必填项：' + propertyInfos[k].propertyName + '没有完成')
-                        return
-                      }
-                      break
-                    case 'checkbox':
-                      if (typeof propertyInfos[k].propertyValueCheckbox === 'undefined' || propertyInfos[k].propertyValueCheckbox === '') {
-                        flag = false
-                        this.$message.error('预购订单还有必填项：' + propertyInfos[k].propertyName + '没有完成')
-                        return
-                      }
-                      break
-                    case 'textarea':
-                      if (propertyInfos[k].propertyValue === '') {
-                        flag = false
-                        this.$message.error('预购订单还有必填项：' + propertyInfos[k].propertyName + '没有完成')
-                        return
-                      }
+                      propertyInfo.propertyValue = obj.propertyValueSelect
                       break
                     default:
-                      if (propertyInfos[k].propertyValue === '') {
-                        flag = false
-                        this.$message.error('预购订单还有必填项：' + propertyInfos[k].propertyName + '  没有完成')
-                        return
-                      }
+                      propertyInfo.propertyValue = obj.propertyValue
                       break
                   }
+                  propertyInfo.showOrInput = obj.showOrInput
+                  propertyInfo.sort = obj.sort
+                  propertyInfo.templateType = obj.templateType
+                  propertyInfos.push(propertyInfo)
                 }
               }
+              result.propertyInfos = propertyInfos
+              productTempInfo.push(result)
             }
           }
-          if (flag) {
-            for (let i = 0; i < this.products.length; i++) {
-              if (this.products[i].number > 0) {
-                const productInfo = this.products[i]
-                const result = {}
-                result.description = productInfo.description
-                result.price = productInfo.price
-                result.number = productInfo.number
-                result.productName = productInfo.productName
-                result.productTypeId = productInfo.productTypeInfo.productTypeId
-                result.productTypeName = productInfo.productTypeInfo.productTypeName
-                result.status = productInfo.status
-                // 回复选择情况
-                const propertyInfos = []
-                if (productInfo.propertyInfos !== null && productInfo.propertyInfos.length > 0) {
-                  for (let j = 0; j < productInfo.propertyInfos.length; j++) {
-                    const obj = productInfo.propertyInfos[j]
-                    const propertyInfo = {}
-                    propertyInfo.isRequired = obj.isRequired
-                    propertyInfo.mark = obj.mark
-                    propertyInfo.propertyKey = obj.propertyKey
-                    propertyInfo.propertyLength = obj.propertyLength
-                    propertyInfo.propertyName = obj.propertyName
-                    propertyInfo.propertyType = obj.propertyType
-                    switch (obj.templateType) {
-                      case 'radio':
-                        propertyInfo.propertyValue = obj.propertyValueRadio
-                        break
-                      case 'checkbox':
-                        if (typeof obj.propertyValueCheckbox !== 'undefined' && obj.propertyValueCheckbox !== '') {
-                          propertyInfo.propertyValue = '[' + obj.propertyValueCheckbox.join(',') + ']'
-                        } else {
-                          propertyInfo.propertyValue = '[]'
-                        }
-                        break
-                      case 'select':
-                        propertyInfo.propertyValue = obj.propertyValueSelect
-                        break
-                      default:
-                        propertyInfo.propertyValue = obj.propertyValue
-                        break
-                    }
-                    propertyInfo.showOrInput = obj.showOrInput
-                    propertyInfo.sort = obj.sort
-                    propertyInfo.templateType = obj.templateType
-                    propertyInfos.push(propertyInfo)
-                  }
-                }
-                result.propertyInfos = propertyInfos
-                productTempInfo.push(result)
+          // 请求后台处理创建订单
+          batchCreatProduct(productTempInfo).then(res => {
+            if (res.data.code === 0) {
+              for (let a = 0; a < productTempInfo.length; a++) {
+                productTempInfo[a].productId = res.data.data[a]
               }
+              // 拼接订单信息
+              const productInfos = []
+              for (let b = 0; b < productTempInfo.length; b++) {
+                const productInfo = {}
+                productInfo.productId = productTempInfo[b].productId
+                productInfo.productName = productTempInfo[b].productName
+                productInfo.productNum = productTempInfo[b].number
+                productInfo.productId = productTempInfo[b].productId
+                productInfo.productTypeName = productTempInfo[b].productTypeName
+                productInfos.push(productInfo)
+              }
+              createInfo.productInfos = productInfos
+              // 生成订单逻辑
+              addMoreOrder(createInfo).then(response => {
+                const vm = this
+                if (response.data.code === 0) {
+                  vm.customerNote = ''
+                  vm.products = []
+                  vm.sumTotal = 0
+                  vm.sumInfo = new Map()
+
+                  // 成功生成订单
+                  // 将产品库存减掉  调用修改产品接口
+                  var map = {}
+                  var arr = []
+                  for (var n = 0; n < createInfo.productInfos.length; n++) {
+                    var params = {}
+                    params.productId = createInfo.productInfos[n].productId
+                    params.productNum = createInfo.productInfos[n].productNum
+                    arr.push(params)
+                  }
+                  map.productUpdateNumInfoList = arr
+                  // 修改产品库存
+                  modifyProduct(map)
+
+                  // 判断是否发送短信
+                  if (this.sendMessage === true) {
+                    sendMessageToCustomer(
+                      response.data.data,
+                      this.customerInfo.mobile
+                    )
+                  }
+                  vm.$message({
+                    message: response.data.message,
+                    type: 'success',
+                    duration: 1000
+                  })
+                  sessionStorage.removeItem('isDialTask')
+                  sessionStorage.removeItem('recordId')
+                  this.$root.eventHub.$emit('DISABLED_DIAL', '')// 发给电话条，看是否需要更改图标
+                } else {
+                  vm.$message({
+                    message: response.data.message,
+                    type: 'error'
+                  })
+                  return
+                }
+              })
+            } else {
+              this.$message.error(res.data.message)
+              return
             }
-            // 请求后台处理创建订单
-            batchCreatProduct(productTempInfo).then(res => {
-              if (res.data.code === 0) {
-                for (let a = 0; a < productTempInfo.length; a++) {
-                  productTempInfo[a].productId = res.data.data[a]
-                }
-                // 拼接订单信息
-                const productInfos = []
-                for (let b = 0; b < productTempInfo.length; b++) {
-                  const productInfo = {}
-                  productInfo.productId = productTempInfo[b].productId
-                  productInfo.productName = productTempInfo[b].productName
-                  productInfo.productNum = productTempInfo[b].number
-                  productInfo.productTypeId = productTempInfo[b].productTypeId
-                  productInfo.productTypeName = productTempInfo[b].productTypeName
-                  productInfos.push(productInfo)
-                }
-                createInfo.productInfos = productInfos
-                // 生成订单逻辑
-                addMoreOrder(createInfo).then(response => {
-                  if (response.data.code === 0) {
-                    vm.customerNote = ''
-                    vm.products = []
-                    vm.sumTotal = 0
-                    vm.sumInfo = new Map()
-                    // 成功生成订单 判断是否发送短信
-                    if (this.sendMessage === true) {
-                      sendMessageToCustomer(
-                        response.data.data,
-                        this.customerInfo.mobile
-                      )
-                    }
-                    this.$message({
-                      message: response.data.message,
-                      type: 'success'
-                    })
-                    sessionStorage.removeItem('isDialTask')
-                    sessionStorage.removeItem('recordId')
-                  } else {
-                    this.$message({
-                      message: response.data.message,
-                      type: 'error'
-                    })
-                    return
-                  }
-                })
-              } else {
-                this.$message.error(res.data.message)
-                return
-              }
-            })
-          } else {
-            this.$message.error('订单还有未填的必填项')
-            return
-          }
+          })
+          // } else {
+          //   this.$message.error('订单还有未填的必填项')
+          //   return
+          // }
         }
         // 选择失败、预约 或 成功但没有产品(如招聘)的情况
         // 修改任务状态
@@ -951,7 +1109,7 @@ export default {
                     this.nodulesTree = []
                     this.summary_description = ''
                     this.hasMoreRecords = false
-                    this.showNameAndSearchRecords(this.customerInfos[0].customerName, this.customerInfos[0].taskId, this.customerInfos[0].campaignId, this.customerInfos[0].customerId, this.customerInfos[0].unreadNum)
+                    this.showNameAndSearchRecords(this.customerInfos[0].customerName, this.customerInfos[0].customerPhone, this.customerInfos[0].taskId, this.customerInfos[0].campaignId, this.customerInfos[0].customerId, this.customerInfos[0].unreadNum)
                   } else {
                     // 无客户 清空当前页面的聊天记录 客户信息等
                     this.taskId = ''
@@ -1001,10 +1159,11 @@ export default {
           // 获取聊天记录
           this.getChatRecords(this.$route.query.customerId, null)
           const contentDiv = document.getElementById('short-message-content')
+          const contentDivBox = document.getElementById('short-message-content-container')
           setTimeout(() => {
-            contentDiv.scrollTop = contentDiv.scrollHeight
+            contentDivBox.scrollTop = contentDiv.scrollHeight
           }, 10)
-        } else {
+        } else if (this.customerInfos.length) {
           this.customerActive = '0'
           const customerInfos = JSON.parse(localStorage.getItem('customerInfos'))
           this.customerInfos[0].isTalking = true
@@ -1022,9 +1181,14 @@ export default {
           // 获取聊天记录
           this.getChatRecords(customerId, null)
           const contentDiv = document.getElementById('short-message-content')
+          const contentDivBox = document.getElementById('short-message-content-container')
           setTimeout(() => {
-            contentDiv.scrollTop = contentDiv.scrollHeight
+            contentDivBox.scrollTop = contentDiv.scrollHeight
           }, 10)
+        } else {
+          this.customerPhoneHeader = ''
+          this.contents = []
+          this.$store.commit('SET_WECHATCONTENTS', this.contents)
         }
         // 查询客户列表对应显示的未读数量
         getUnreadNum(localStorage.getItem('agentId')).then(response => {
@@ -1050,8 +1214,32 @@ export default {
         })
       })
     },
-    handleChange(templateId, price, number) {
-      this.sumInfo.set(templateId, { price: price, number: number })
+    handleChange(productId, price, number, index) {
+      if (!this.products[index].number) {
+        this.products[index].number = 1
+      }
+      if (number % 1 !== 0) {
+        this.products[index].productNum = this.productNums[index]
+        this.products[index].number = 0
+        this.sumTotal = 0
+        this.$message.error('购买数量只能为整数！')
+        return false
+      }
+      if (number >= 0) {
+        if (number > this.productNums[index]) {
+          this.products[index].productNum = this.productNums[index]
+          this.$message.error('购买的数量不能超过产品库存！')
+          return false
+        }
+        // else {
+        //   this.products[index].productNum = this.productNums[index] - number
+        // }
+      }
+      // this.products[index].addList = true
+      if (this.sumTotal === 0) {
+        this.sumInfo = new Map()
+      }
+      this.sumInfo.set(productId, { price: price, number: number })
       this.sumTotal = 0
       this.sumInfo.forEach((val, key) => {
         if (val !== null && typeof val.price !== 'undefined') {
@@ -1059,6 +1247,16 @@ export default {
         }
       })
       this.sumTotal = this.sumTotal.toFixed(2)
+    },
+    // 删除购物清单列表项
+    delList(index, price) {
+      MessageBox.confirm('是否删除此商品？', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(() => {
+        this.products[index].number = 0
+        this.sumTotal = this.sumTotal - price
+      })
     },
     // 时间戳转年月日时分秒
     formatDateTime: formatDateTime,
@@ -1166,7 +1364,6 @@ export default {
         this.$refs.myMessages_div.innerText = ''
         message = { 'customerId': customerId, 'content': encodeURI(mediaUrl), 'msgType': 'file', 'sessionId': this.sessionId }
       }
-      const contentDiv = document.getElementById('short-message-content')
       sendMsgTo(message)
         .then(response => {
           if (response.data.code === 0) {
@@ -1185,11 +1382,12 @@ export default {
           this.contents.splice(index, 1, json)
           console.log(error)
         })
-
-      this.contents.splice(index, 1, json)
+      const contentDiv = document.getElementById('short-message-content')
+      const contentDivBox = document.getElementById('short-message-content-container')
       setTimeout(() => {
-        contentDiv.scrollTop = contentDiv.scrollHeight
+        contentDivBox.scrollTop = contentDiv.scrollHeight
       }, 10)
+      this.contents.splice(index, 1, json)
     },
     // 再次请求发送消息
     sendMessageAgain(item, index) {
@@ -1224,7 +1422,7 @@ export default {
         })
     },
     // 点击列表时显示客户姓名 获取聊天记录
-    showNameAndSearchRecords(customerName, taskId, campaignId, customerId, unreadNum) {
+    showNameAndSearchRecords(customerName, customerPhone, taskId, campaignId, customerId, unreadNum) {
       // 将之前isTalking(如果有)设置为false
       for (var i = 0; i < this.customerInfos.length; i++) {
         if (this.customerInfos[i].isTalking === true) {
@@ -1249,6 +1447,8 @@ export default {
       }
       // 客户姓名
       this.customerName = customerName
+      this.customerPhoneHeader = customerPhone
+      console.log(this.customerPhoneHeader)
       this.taskId = taskId
       this.campaignId = campaignId
       this.customerId = customerId
@@ -1261,8 +1461,9 @@ export default {
       this.getChatRecords(customerId, null)
       this.queryPageNum = 2
       const contentDiv = document.getElementById('short-message-content')
+      const contentDivBox = document.getElementById('short-message-content-container')
       setTimeout(() => {
-        contentDiv.scrollTop = contentDiv.scrollHeight
+        contentDivBox.scrollTop = contentDiv.scrollHeight
       }, 10)
     },
     // websocket接受到消息后需要调用的方法
@@ -1313,6 +1514,11 @@ export default {
               if (queryPageNum === null) {
                 // 不传页数默认查询第一页 把第一页数据直接放数组中
                 this.contents = response.data.data
+                const contentDiv = document.getElementById('short-message-content')
+                const contentDivBox = document.getElementById('short-message-content-container')
+                setTimeout(() => {
+                  contentDivBox.scrollTop = contentDiv.scrollHeight
+                }, 10)
                 this.$store.commit('SET_WECHATCONTENTS', this.contents)
                 // 判断是否还有更多消息记录
                 if (response.data.pageInfo.totalPage > 1) {
@@ -1321,16 +1527,10 @@ export default {
                   this.hasMoreRecords = false
                 }
               } else {
-                // 传了页数 将查询的数据插入数组的最前
-                const contentDiv = document.getElementById('short-message-content')
-                const y = contentDiv.scrollTop
                 for (var i = response.data.data.length - 1; i >= 0; i--) {
                   this.contents.unshift(response.data.data[i])
                 }
                 this.$store.commit('SET_WECHATCONTENTS', this.contents)
-                setTimeout(() => {
-                  contentDiv.scrollTop = y
-                }, 10)
                 // 判断是否还有更多消息记录
                 if (response.data.pageInfo.totalPage > queryPageNum) {
                   this.hasMoreRecords = true
@@ -1340,6 +1540,7 @@ export default {
               }
             } else {
               this.contents = []
+              this.$store.commit('SET_WECHATCONTENTS', this.contents)
             }
             this.msgIds = []
             for (let i = 0; i < response.data.data.length; i++) {
@@ -1422,7 +1623,7 @@ export default {
         this.showSendMessage = true
       } else {
         this.showSendMessage = false
-        this.sendMessageOrNot = false
+        this.sendMessage = false
       }
     },
     sendSummaryId(data, checked, ischildSelected) {
@@ -1486,42 +1687,15 @@ export default {
           getProducts(res3.data.data).then(res => {
             if (res.data.code === 0 && res.data.data.length > 0) {
               this.products = res.data.data
+              this.productNums = []
               for (let i = 0; i < this.products.length; i++) {
-                const tempValue = this.products[i].propertyInfos
-                this.products[i].showMessage = false
-                if (
-                  typeof tempValue !== 'undefined' &&
-                  tempValue !== null &&
-                  tempValue.length > 0
-                ) {
-                  for (let j = 0; j < tempValue.length; j++) {
-                    if (
-                      tempValue[j].templateType === 'checkbox' &&
-                      tempValue[j].showOrInput === '1'
-                    ) {
-                      this.$set(this.checks, j, [])
-                    }
-                    if (tempValue[j].templateType === 'checkbox' || tempValue[j].templateType === 'radio') {
-                      const arr = JSON.parse(tempValue[j].propertyValue)
-                      this.products[i].propertyInfos[j].showInLine = true
-                      for (let k = 0; k < arr.length; k++) {
-                        if (arr[k].length > 4) {
-                          this.products[i].propertyInfos[j].showInLine = false
-                          break
-                        }
-                      }
-                    }
-                    if (tempValue[j].showOrInput === '1' && tempValue[j].isRequired === '1') {
-                      this.products[i].showMessage = true
-                    }
-                  }
-                }
+                this.productNums.push(this.products[i].productNum)
+                this.$set(this.products[i], 'number', 0)
               }
             }
           })
         }
       })
-
       // 根任务id获取小结
       getSummaries(taskId).then(res4 => {
         if (res4.data.code === 0 && res4.data.data.length > 0) {
@@ -1751,58 +1925,73 @@ export default {
       this.dailTaskCustomer.campaignId = this.$route.query.campaignId
       this.dailTaskCustomer.customerId = this.$route.query.customerId
       this.dailTaskCustomer.customerPhone = this.$route.query.customerPhone
+      this.customerPhoneHeader = this.$route.query.customerPhone
     } else if (!this.dailTaskCustomer) {
       this.dailTaskCustomer = this.customerInfos[0]
+      this.customerPhoneHeader = this.customerInfos[0].customerPhone
     }
     // 查询所有客户列表
     getWechatCustomer(localStorage.getItem('agentId')).then(response => {
       this.customerInfos = response.data.data
       this.$store.commit('SET_WECHATCUSTOMERINFO', this.customerInfo)
       localStorage.setItem('customerInfos', JSON.stringify(response.data.data))
-      if (this.$route.query && this.$route.query.fromDialTask === '0') {
-        this.taskId = this.$route.query.taskId
-        this.campaignId = this.$route.query.campaignId
-        this.customerId = this.$route.query.customerId
-        this.customerPhone = this.$route.query.customerPhone
-        for (var a = 0; a < this.customerInfos.length; a++) {
-          if (this.customerInfos[a].customerId === this.$route.query.customerId) {
-            this.customerInfos[a].isTalking = true
-            this.customerActive = a.toString()
-          } else {
-            this.customerInfos[a].isTalking = false
+      if (this.customerInfos.length) {
+        if (this.$route.query && this.$route.query.fromDialTask === '0') {
+          this.taskId = this.$route.query.taskId
+          this.campaignId = this.$route.query.campaignId
+          this.customerId = this.$route.query.customerId
+          this.customerPhone = this.$route.query.customerPhone
+          this.customerPhoneHeader = this.$route.query.customerPhone
+          for (var a = 0; a < this.customerInfos.length; a++) {
+            if (this.customerInfos[a].customerId === this.$route.query.customerId) {
+              this.customerInfos[a].isTalking = true
+              this.customerActive = a.toString()
+            } else {
+              this.customerInfos[a].isTalking = false
+            }
           }
+          localStorage.setItem('customerInfos', JSON.stringify(this.customerInfo))
+          // 展示客户信息
+          this.showCustomerInfos(this.taskId, this.campaignId, this.customerId, this.customerPhone)
+          // 获取聊天记录
+          this.getChatRecords(this.$route.query.customerId, null)
+          const contentDiv = document.getElementById('short-message-content')
+          const contentDivBox = document.getElementById('short-message-content-container')
+          setTimeout(() => {
+            contentDivBox.scrollTop = contentDiv.scrollHeight
+          }, 10)
+        } else {
+          this.customerActive = '0'
+          const customerInfos = JSON.parse(localStorage.getItem('customerInfos'))
+          this.customerInfos[0].isTalking = true
+          for (var i = 1; i < this.customerInfos.length; i++) {
+            this.customerInfos[i].isTalking = false
+          }
+          this.taskId = customerInfos[0].taskId
+          const taskId = customerInfos[0].taskId
+          const campaignId = customerInfos[0].campaignId
+          const customerId = customerInfos[0].customerId
+          const customerPhone = customerInfos[0].customerPhone
+          this.customerId = customerInfos[0].customerId
+          this.customerPhoneHeader = customerInfos[0].customerPhone
+          this.customerName = customerInfos[0].customerName
+          // 展示客户信息
+          this.showCustomerInfos(taskId, campaignId, customerId, customerPhone)
+          // 获取聊天记录
+          this.getChatRecords(customerId, null)
+          const contentDiv = document.getElementById('short-message-content')
+          const contentDivBox = document.getElementById('short-message-content-container')
+          setTimeout(() => {
+            contentDivBox.scrollTop = contentDiv.scrollHeight
+          }, 10)
         }
-        localStorage.setItem('customerInfos', JSON.stringify(this.customerInfo))
-        // 展示客户信息
-        this.showCustomerInfos(this.taskId, this.campaignId, this.customerId, this.customerPhone)
-        // 获取聊天记录
-        this.getChatRecords(this.$route.query.customerId, null)
-        const contentDiv = document.getElementById('short-message-content')
-        setTimeout(() => {
-          contentDiv.scrollTop = contentDiv.scrollHeight
-        }, 10)
       } else {
-        this.customerActive = '0'
-        const customerInfos = JSON.parse(localStorage.getItem('customerInfos'))
-        this.customerInfos[0].isTalking = true
-        for (var i = 1; i < this.customerInfos.length; i++) {
-          this.customerInfos[i].isTalking = false
-        }
-        this.taskId = customerInfos[0].taskId
-        const taskId = customerInfos[0].taskId
-        const campaignId = customerInfos[0].campaignId
-        const customerId = customerInfos[0].customerId
-        const customerPhone = customerInfos[0].customerPhone
-        this.customerId = customerInfos[0].customerId
-        // 展示客户信息
-        this.showCustomerInfos(taskId, campaignId, customerId, customerPhone)
-        // 获取聊天记录
-        this.getChatRecords(customerId, null)
-        const contentDiv = document.getElementById('short-message-content')
-        setTimeout(() => {
-          contentDiv.scrollTop = contentDiv.scrollHeight
-        }, 10)
+        console.log(123)
+        this.contents = []
+        this.customerPhoneHeader = ''
+        this.$store.commit('SET_WECHATCONTENTS', this.contents)
       }
+
       // 查询客户列表对应显示的未读数量
       getUnreadNum(localStorage.getItem('agentId')).then(response => {
         if (response.data.data.length === 0) {

@@ -302,7 +302,7 @@
       </div>
       <el-row class="customerinfo-container">
         <el-col :span="6" class="font12">
-          <span style="color:#666666;">客户姓名：</span>
+          <span>客户姓名：</span>
           <b style="color:#020202;">{{customerInfo.customerName}}</b>
         </el-col>
         <el-col :span="6" class="font12">
@@ -501,7 +501,7 @@
           </el-col>
           <el-col :span="16" v-show="this.radio === '1'">
             <span style="color:red;line-height:34px;">*</span>
-            <el-form-item label="请选择预约时间：" class="working-date-form">
+            <el-form-item label="预约日期：" class="working-date-form">
               <b style="font-size: 16px;color: #333333;letter-spacing: 0;text-align: left;">T + </b>
               <el-input style="width:70px" type="text" v-model="addDays" onkeyup="if(! /^d+$/.test(this.addDays)){this.addDays='';}"></el-input>
             </el-form-item>
@@ -515,9 +515,11 @@
               </el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="8" style="height:48px;line-height:34px;">
-            <el-checkbox v-if="showAutoDial===true" checked="checked" v-model="autoDialNext">完成后显示下一个客户</el-checkbox>
-            <el-checkbox v-if="showSendMessage === true && campaignType !== 'RECRUIT'" v-model="sendMessage" checked="checked">发送支付短信</el-checkbox>
+          <el-col :span="8" style="height:48px;line-height:34px;" v-if="showSendMessage === true && campaignType !== 'RECRUIT'">
+            <el-checkbox v-model="sendMessage" checked="checked">发送支付短信</el-checkbox>
+          </el-col>
+          <el-col :span="8" style="height:48px;line-height:34px;" v-if="showAutoDial===true">
+            <el-checkbox checked="checked" v-model="autoDialNext">完成后显示下一个客户</el-checkbox>
           </el-col>
         </el-form>
       </el-row>

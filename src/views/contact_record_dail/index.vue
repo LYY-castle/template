@@ -312,6 +312,7 @@
         </el-table>
       </el-row>
     </div>
+    <!-- 微信聊天记录 -->
     <div :class="isWechat('wechatRecord')" v-if="contactType=='2'">
         <div id="short-message-content">
           <!-- 点击加载更多div -->
@@ -324,7 +325,7 @@
             <div style="margin-left:9px;">
               <span class="el-icon-loading" v-if="'2'===item.code" style="margin-left:4px;line-height:32px;"></span>
               <span class="el-icon-warning" v-if="'4'===item.code" style="margin-left:4px;line-height:32px;"></span>
-              <div v-if="item.msgType=='text'" class="font12 left chat-container fl">{{item.content}}</div>
+              <div v-if="item.msgType=='text'" class="font12 left chat-container fl" v-html="showMsgs(item.content)"></div>
               <div v-if="item.msgType=='link'" class="font12 left chat-container fl">
                 <a class="link" style="color:#115DFF;" @click="jump(item.content)">{{item.content}}</a>
               </div>
@@ -345,7 +346,7 @@
               <div style="float:right;margin-right:9px;">
                 <span class="el-icon-loading" v-if="'2'===item.code" style="margin-right:4px;line-height:32px;"></span>
                 <a class="el-icon-warning" v-if="'4'===item.code" @click="sendMessageAgainVisible=true;sendMessageAgain_Obj=item;sendMessageAgain_Index=index;" style="margin-right:4px;line-height:40px;color:red;"></a>
-                <div v-if="item.msgType=='text'" class="font12 right chat-container fr">{{item.content}}</div>
+                <div v-if="item.msgType=='text'" class="font12 right chat-container fr" v-html="showMsgs(item.content)"></div>
                 <div v-if="item.msgType=='link'" class="font12 right chat-container fr">
                   <a class="link" style="color:#115DFF;text-shadow:1px 1px 1px #fff;" @click="jump(item.content)">{{decodeURI(item.content)}}</a>
                 </div>
@@ -499,7 +500,6 @@
       float:left;
       width:49%
     }
-    
     .font12{
       height:30px;
     }
@@ -620,12 +620,18 @@ audio {
     getStaffByDepartId,
     queryRecords
   } from '@/api/contact_record_dail' // api接口引用
+  import Emotion from '@/components/Emotion1/index'
+  import vueEmoji from '@/components/Emotion3/emoji.vue'
+  import emojidata from '@/components/Emotion3/emoji-data.js'
+  import reg_emoji from '@/components/Emotion3/reg_emojis.js'
 
   export default {
     name: 'contact_record_dail',
 
     data() {
       return {
+        emojidata: emojidata,
+        reg_emojis: reg_emoji,
         keys: [],
         editVisible: false, // 修改
         showTalkTime: true,
@@ -693,10 +699,15 @@ audio {
         hasMoreRecords: false,
         queryPageNum: 2,
         sessionId: null,
-        contactType: ''
+        contactType: '',
+        unicoded_qq_face: ['/::)', '/::~', '/::B', '/::|', '/:8-)', '/::<', '/::$', '/::X', '/::Z', "/::'(", '/::-|', '/::@', '/::P', '/::D', '/::O', '/::(', '/::+', '[囧]', '/::Q', '/::T', '/:,@P', '/:,@-D', '/::d', '/:,@o', '/::g', '/:|-)', '/::!', '/::L', '/::>', '/::,@', '/:,@f', '/::-S', '/:?', '/:,@x', '/:,@@', '/::8', '/:,@!', '/:!!!', '/:xx', '/:bye', '/:wipe', '/:dig', '/:handclap', '/:&-(', '/:B-)', '/:<@', '/:@>', '/::-O', '/:>-|', '/:P-(', "/::'|", '/:X-)', '/::*', '/:@x', '/:8*', '/:pd', '/:<W>', '/:beer', '/:basketb', '/:oo', '/:coffee', '/:eat', '/:pig', '/:rose', '/:fade', '/:showlove', '/:heart', '/:break', '/:cake', '/:li', '/:bome', '/:kn', '/:footb', '/:ladybug', '/:shit', '/:moon', '/:sun', '/:gift', '/:hug', '/:strong', '/:weak', '/:share', '/:v', '/:@)', '/:jj', '/:@@', '/:bad', '/:lvu', '/:no', '/:ok', '/:love', '/:<L>', '/:jump', '/:shake', '/:<O>', '/:circle', '/:kotow', '/:turn', '/:skip', '[挥手]', '/:#-0', '/:hiphot', '/:<&', '/:&>'],
+        unicoded_emoji_face: ['0x1f600', '0x1f601', '0x1f602', '0x1f923', '0x1f603', '0x1f604', '0x1f605', '0x1f606', '0x1f609', '0x1f60a', '0x1f60b', '0x1f60e', '0x1f60d', '0x1f618', '0x1f617', '0x1f619', '0x1f61a', '0x263a', '0x1f642', '0x1f917', '0x1f914', '0x1f610', '0x1f611', '0x1f636', '0x1f644', '0x1f60f', '0x1f623', '0x1f625', '0x1f62e', '0x1f910', '0x1f62f', '0x1f62a', '0x1f62b', '0x1f634', '0x1f60c', '0x1f61b', '0x1f61c', '0x1f61d', '0x1f924', '0x1f6120', '0x1f613', '0x1f614', '0x1f615', '0x1f643', '0x1f911', '0x1f632', '0x2639', '0x1f641', '0x1f616', '0x1f61e', '0x1f61f', '0x1f624', '0x1f622', '0x1f62d', '0x1f626', '0x1f627', '0x1f628', '0x1f629', '0x1f62c', '0x1f630', '0x1f631', '0x1f633', '0x1f635', '0x1f621', '0x1f620', '0x1f637', '0x1f912', '0x1f915', '0x1f922', '0x1f927', '0x1f607', '0x1f920', '0x1f921', '0x1f925', '0x1f913', '0x1f608', '0x1f47f', '0x1f479', '0x1f47a', '0x1f480', '0x1f47b', '0x1f47d', '0x1f916', '0x1f4a9', '0x1f63a', '0x1f638', '0x1f639', '0x1f63b', '0x1f63c', '0x1f63d', '0x1f640', '0x1f63f', '0x1f63e', '0x1f3fb', '0x1f3fc', '0x1f3fd', '0x1f3fe', '0x1f3ff', '0x1f5e3', '0x1f464', '0x1f465', '0x1f46b', '0x1f46c', '0x1f46d', '0x1f442', '0x1f442 0x1f3fb', '0x1f442 0x1f3fc', '0x1f442 0x1f3fd', '0x1f442 0x1f3fe', '0x1f442 0x1f3ff', '0x1f443', '0x1f443 0x1f3fb', '0x1f443 0x1f3fc', '0x1f443 0x1f3fd', '0x1f443 0x1f3fe', '0x1f443 0x1f3ff', '0x1f463', '0x1f440', '0x1f441', '0x1f445', '0x1f444', '0x1f48b', '0x1f453', '0x1f576', '0x1f454', '0x1f455', '0x1f456', '0x1f457', '0x1f458', '0x1f459', '0x1f45a', '0x1f45b', '0x1f45c', '0x1f45d', '0x1f392', '0x1f45e', '0x1f45f', '0x1f460', '0x1f461', '0x1f462', '0x1f451', '0x1f452', '0x1f3a9', '0x1f393', '0x26d1', '0x1f484', '0x1f48d', '0x1f302', '0x1f4bc']
       }
     },
-
+    components: {
+      Emotion,
+      vueEmoji
+    },
     mounted() {
       new Promise((resolve, reject) => {
         getStaffByDepartId(localStorage.getItem('departId')).then(response => {
@@ -747,6 +758,57 @@ audio {
       this.req.pageNo = 1
     },
     methods: {
+      hideEmoji(e) {
+        var emoji_div = document.getElementById('emoji_div')
+        if (emoji_div) {
+          if (!emoji_div.contains(e.target)) {
+            this.showEmojis = false
+          }
+        }
+      },
+      showMsgs(content) {
+        const qq_reg = "(/::\\)|/::~|\\[囧\\]|\\[挥手\\]|/::B|/::\\||/:8-\\)|/::<|/::\\$|/::X|/::Z|/::'\\(|/::-\\||/::@|/::P|/::D|/::O|/::\\(|/::\\+|/:--b|/::Q|/::T|/:,@P|/:,@-D|/::d|/:,@o|/::g|/:\\|-\\)|/::!|/::L|/::>|/::,@|/:,@f|/::-S|/:\\?|/:,@x|/:,@@|/::8|/:,@!|/:!!!|/:xx|/:bye|/:wipe|/:dig|/:handclap|/:&-\\(|/:B-\\)|/:<@|/:@>|/::-O|/:>-\\||/:P-\\(|/::'\\||/:X-\\)|/::\\*|/:@x|/:8\\*|/:pd|/:<W>|/:beer|/:basketb|/:oo|/:coffee|/:eat|/:pig|/:rose|/:fade|/:showlove|/:heart|/:break|/:cake|/:li|/:bome|/:kn|/:footb|/:ladybug|/:shit|/:moon|/:sun|/:gift|/:hug|/:strong|/:weak|/:share|/:v|/:@\\)|/:jj|/:@@|/:bad|/:lvu|/:no|/:ok|/:love|/:<L>|/:jump|/:shake|/:<O>|/:circle|/:kotow|/:turn|/:skip|/:oY|/:\\#-0|/:hiphot|/:kiss|/:<&|/:&>)"
+        const emoji_reg = this.reg_emojis
+        var array = ''
+        while ((array = content.match(qq_reg)) !== null) {
+          const index = this.unicoded_qq_face.indexOf(array[0])
+          content = content.replace(new RegExp(qq_reg), "<img src='https://res.wx.qq.com/mpres/htmledition/images/icon/emotion/" + index + ".gif' align='middle' width='26px' height='26px'>")
+        }
+        while ((array = content.match(emoji_reg)) !== null) {
+          content = content.replace(new RegExp(emoji_reg), this.emoji1(array[0]))
+        }
+        content = content.replace(/(\r\n)|(\n)/g, '<br>')
+        // console.log(content)
+        return content
+      },
+      handleEmotion(i) {
+        this.showEmojis = false
+        this.$refs.myMessages_div.innerHTML += this.emotion(i)
+      },
+      handleEmotion1(i) {
+        this.showEmojis = false
+        this.$refs.myMessages_div.innerHTML += this.emoji(i)
+      },
+      htmlspecialchars_decode(str) {
+        str = str.replace(/&amp;/g, '&')
+        str = str.replace(/&lt;/g, '<')
+        str = str.replace(/&gt;/g, '>')
+        str = str.replace(/&quot;/g, "''")
+        str = str.replace(/&#039;/g, "'")
+        return str
+      },
+      // 将匹配结果替换QQ表情图片
+      emotion(res) {
+        const word = res.replace(/\#/, '').replace(/\;/, '')
+        const index = this.unicoded_qq_face.indexOf(word)
+        return `<img src="https://res.wx.qq.com/mpres/htmledition/images/icon/emotion/${index}.gif" align="middle" width="26px" height="26px" alt="` + word + `">`
+      },
+      // 将匹配结果替换emoji
+      emotion1(res) {
+        const word = res.replace(/\#|\;/gi, '')
+        const imgName = this.showData(word)
+        return `<img src="../../../static/emoji/` + imgName + `" align="middle" width='26px' height='26px' alt="` + this.findKey(this.emojiData, imgName) + `">`
+      },
       isWechat(type) {
         if (this.contactType === '2' && type === 'order') {
           return 'table-container is-wechat fr'

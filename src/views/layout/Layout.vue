@@ -60,7 +60,7 @@ export default {
       if (this.$store.state.app.sidebar.opened) {
         this.$store.commit('SET_LOGOCLASS', 'opened')
         $('.hamburger i').addClass('el-icon-arrow-left').removeClass('el-icon-arrow-right')
-        $('.tags-view-container').width('90.5%')
+        $('.tags-view-container').width('91.5%')
       } else {
         this.$store.commit('SET_LOGOCLASS', 'closed')
         $('.hamburger i').addClass('el-icon-arrow-right').removeClass('el-icon-arrow-left')

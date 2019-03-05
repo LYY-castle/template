@@ -120,6 +120,14 @@ export function addMoreOrder(obj) {
     data: obj
   })
 }
+// 修改库存
+export function modifyProduct(obj) {
+  return request({
+    url: '/product/modifyProductNum',
+    method: 'post',
+    data: obj
+  })
+}
 // 发送消息
 export function sendMsgTo(obj) {
   return request({
