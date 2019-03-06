@@ -23,10 +23,10 @@ const env_conf = {
     }
   },
   master: {
-    TUI_WS_SERVERURL:'"ws://52.83.140.209:8910"',
-    CTI_WS_SERVERURL:'"ws://52.83.140.209:9050/"',
-    CTI_MONITOR_WS_SERVERURL:'"ws://52.83.140.209:9052/"',
-    FILE_SERVER_URL: '"http://52.83.140.209:9000"',
+    TUI_WS_SERVERURL:'"ws://119.27.179.175:12010"',
+    CTI_WS_SERVERURL:'"ws://119.27.184.157:9050/"',
+    CTI_MONITOR_WS_SERVERURL:'"ws://119.27.184.157:9052/"',
+    FILE_SERVER_URL: '"http://119.27.179.175:9800"',
     SHOW_WECHAT:true,
     SMS: {
       enable: true,
