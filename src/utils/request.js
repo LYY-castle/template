@@ -48,14 +48,18 @@ service.interceptors.response.use(
       setToken(authorization)
     }
     const res = response.data
+    const route = router.currentRoute
     if (res.code !== 20000) {
       if (res.code === '403') {
-        Message({
-          message: res.msg,
-          type: 'error',
-          duration: 5 * 1000
-        })
-        router.replace({ path: '/login' })
+        if (route.fullPath === `/login`) {
+          router.replace({ path: `/login` })
+        } else {
+          Message({
+            message: res.msg,
+            type: 'error'
+          })
+          router.replace({ path: `/login` })
+        }
       }
       return Promise.resolve(response)
     }
