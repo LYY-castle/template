@@ -2,6 +2,14 @@
   <div class="tags-view-container">
     <scroll-pane ref="scrollPane" class="tags-view-wrapper">
       <router-link
+        ref="tag"
+        :class="($route.path=='/dashboard/index')?'active':''"
+        :to="{ path: '/dashboard/index' }"
+        tag="span"
+        class="tags-view-item">
+        首页
+      </router-link>
+      <router-link
         v-for="tag in visitedViews"
         ref="tag"
         :class="isActive(tag)?'active':''"
@@ -26,6 +34,7 @@
 <script>
 import ScrollPane from '@/components/ScrollPane'
 // import { generateTitle } from '@/utils/i18n'
+// import { clone } from '@/utils/tools'
 
 export default {
   components: { ScrollPane },
@@ -106,7 +115,8 @@ export default {
           if (latestView) {
             this.$router.push(latestView)
           } else {
-            this.$router.push('/')
+            // this.$router.push('/')
+            this.$router.push('/dashboard/index')
           }
         }
       })
@@ -119,7 +129,8 @@ export default {
     },
     closeAllTags() {
       this.$store.dispatch('delAllViews')
-      this.$router.push('/')
+      // this.$router.push('/')
+      this.$router.push('/dashboard/index')
     },
     openMenu(tag, e) {
       const menuMinWidth = 105
@@ -163,13 +174,10 @@ export default {
       position: relative;
       top:13px;
       height: 30px;
-      // line-height:100%;
-      // vertical-align: middle;
       border: 1px solid #d8dce5;
-      background: #fff;
       padding: 0 3px;
       font-size: 12px;
-      margin-left: 5px;
+      margin-left: 11px;
       font-size: 14px;
       color: #333333;
       letter-spacing: 0.29px;
@@ -229,9 +237,11 @@ export default {
   .tags-view-item {
     cursor: pointer;
     box-sizing:border-box;
+    line-height:30px;
+    background:none;
     .el-icon-close {
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
       vertical-align: 6px;
       border-radius: 50%;
       text-align: center;
@@ -239,7 +249,10 @@ export default {
       transform-origin: 100% 50%;
       // background-color: #b4bccc;
       color:#ccc;
-      display:none;
+      // display:none;
+      position:absolute;
+      top: 1px;
+      right: -11px;
       &:before {
         display:none;
         font-weight:bold;
@@ -247,8 +260,8 @@ export default {
         transform: scale(.6);
         vertical-align: -1px;
         position:absolute;
-        top: 1px;
-        right: 3.5px;
+        top: 0px;
+        right: 0px;
       }
     }
   }

@@ -4,6 +4,7 @@
       <hamburger :class="hamburger" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
     </div> -->
     <el-menu
+      :unique-opened="true"
       style="margin-top:109px;z-index:1;"
       mode="vertical"
       :show-timeout="200"
