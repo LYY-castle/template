@@ -1886,6 +1886,9 @@ export default {
                       this.isLastContactTime = false
                       this.showDetailInfos(this.taskIds[0], this.campaignIds[0], this.customerIds[0], this.isBlacklists[0], null)
                     } else {
+                      if (localStorage.getItem('autocall')) {
+                        this.$root.eventHub.$emit('autocallReady', true)
+                      }
                       // 没勾选自动拨打下一个 返回列表
                       this.radio = ''
                       this.recordId = ''

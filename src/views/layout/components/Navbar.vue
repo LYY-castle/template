@@ -588,6 +588,7 @@ export default {
       })
     },
     agentReady() {
+      localStorage.setItem('autocall', false)
       if (this.telephoneState === '就绪') {
         return
       } else {
@@ -595,6 +596,7 @@ export default {
       }
     },
     agentnotReady() {
+      localStorage.setItem('autocall', false)
       if (this.telephoneState === '示忙') {
         return
       } else {
@@ -602,6 +604,7 @@ export default {
       }
     },
     agentsetACW() {
+      localStorage.setItem('autocall', false)
       if (this.telephoneState === '后处理') {
         return
       } else {
@@ -609,6 +612,7 @@ export default {
       }
     },
     agentSetDialInFree() {
+      localStorage.setItem('autocall', true)
       if (this.telephoneState === '外呼就绪') {
         return
       } else {
@@ -1883,6 +1887,9 @@ export default {
 
     this.$root.eventHub.$on('CHANGE_STATUS', () => {
       this.firstgetUnreadMessages(agentId)
+    })
+    this.$root.eventHub.$on('autocallReady', () => {
+      this.setAgentDialInFree()
     })
     this.$root.eventHub.$on('DISABLED_DIAL', (str) => {
       if (str === '1') {
