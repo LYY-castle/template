@@ -176,7 +176,10 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="客户配置项">
+        <el-form-item>
+          <span slot="label">
+            <span style="color:#f56c6c">*</span> 客户配置项
+          </span>
           <el-select v-model="customerColumnInfos" placeholder="请选择展示的客户字段" style="width:100%" multiple>
             <el-option
               v-for="item in customerParams"
@@ -196,12 +199,6 @@
         </el-form-item>
         <el-form-item label="产品" prop="products" v-if="!(campaignDetail.campaignTypeCode=='RECRUIT')">
           <el-select v-model="campaignDetail.products" multiple placeholder="请选择产品" style="width: 100%;">
-            <!-- <el-option
-                v-for="item in productData"
-                :key="item.templateId"
-                :label="item.productName"
-                :value="item.templateId">
-            </el-option> -->
             <el-option
                 v-for="item in productData"
                 :key="item.productId"
@@ -216,9 +213,6 @@
         <el-form-item label="拨打次数" prop="canContactNum">
           <el-input v-model="campaignDetail.canContactNum" size="small" placeholder="单位：次"></el-input>
         </el-form-item>
-        <!-- <el-form-item label="拨打数量" prop="callNum" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
-          <el-input v-model="campaignDetail.callNum" size="small" placeholder="单位：人"></el-input>
-        </el-form-item> -->
         <el-form-item label="拨打方式" prop="callType" v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
           <el-select v-model="campaignDetail.callType" placeholder="请选择拨打方式" style="width:100%" clearable>
             <el-option
@@ -229,7 +223,10 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="拨打时段"  v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+        <el-form-item  v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+          <span slot="label">
+            <span style="color:#f56c6c">*</span> 拨打时段
+          </span>
           <div v-for="(item,indexx) in outcalltimeInfos">
             <span>{{indexx+1}}.</span>
             <el-time-picker
@@ -252,7 +249,10 @@
             <i class="el-icon-plus" circle title="点击添加一个时间段" @click="addOutCallTimes()"></i>
           </div>
         </el-form-item>
-        <el-form-item label="呼叫失败处理"  v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+        <el-form-item  v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+          <span slot="label">
+            <span style="color:#f56c6c">*</span> 呼叫失败处理
+          </span>
           <div v-for="(item,index) in failTreatmentInfos">
             <span>{{index+1}}.</span>
             <el-select v-model="item.failType" placeholder="错误类型" clearable style="width:25%">
@@ -278,7 +278,10 @@
             <i class="el-icon-plus" circle title="点击添加一个处理方式" @click="addTreatments()"></i>
           </div>
         </el-form-item>
-        <el-form-item label="活动组织">
+        <el-form-item>
+          <span slot="label">
+            <span style="color:#f56c6c">*</span> 活动组织
+          </span>
           <el-cascader
             v-model="edit_dept_ids"
             placeholder="请选择组织"
@@ -290,14 +293,6 @@
             change-on-select
             clearable
           ></el-cascader>
-          <!-- <el-select v-model="campaignDetail.departId" placeholder="请选择活动组织" style="width: 100%;">
-          <el-option
-              v-for="item in visibleDepts"
-              :key="item.id"
-              :label="item.departName"
-              :value="item.id">
-          </el-option>
-        </el-select> -->
         </el-form-item>
         <el-form-item label="话后小结" prop="summaryId">
           <el-select v-model="campaignDetail.summaryId" placeholder="请选择小结" style="width: 100%;">
@@ -446,7 +441,10 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="客户配置项">
+        <el-form-item >
+          <span slot="label">
+            <span style="color:#f56c6c">*</span> 客户配置项
+          </span>
           <el-select v-model="customerColumnInfos" placeholder="请选择展示的客户字段" style="width:100%" multiple v-if="show_wechat==='true'">
             <el-option
               v-for="item in customerParams"
@@ -504,7 +502,10 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="拨打时段"  v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+        <el-form-item  v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+          <span slot="label">
+            <span style="color:#f56c6c">*</span> 拨打时段
+          </span>
           <div v-for="(item,indexx) in outcalltimeInfos">
             <span>{{indexx+1}}.</span>
             <el-time-picker
@@ -527,7 +528,10 @@
             <i class="el-icon-plus" circle title="点击添加一个时间段" @click="addOutCallTimes()"></i>
           </div>
         </el-form-item>
-        <el-form-item label="呼叫失败处理"  v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+        <el-form-item v-if="campaignDetail.campaignTypeCode==='AUTO_OUT_CALL'">
+          <span slot="label">
+            <span style="color:#f56c6c">*</span> 呼叫失败处理
+          </span>
           <div v-for="(item,index) in failTreatmentInfos">
             <span>{{index+1}}.</span>
             <el-select v-model="item.failType" placeholder="失败类型" clearable style="width:25%">
@@ -553,7 +557,10 @@
             <i class="el-icon-plus" circle title="点击添加一个处理方式" @click="addTreatments()"></i>
           </div>
         </el-form-item>
-        <el-form-item label="活动组织">
+        <el-form-item>
+          <span slot="label">
+            <span style="color:#f56c6c">*</span> 活动组织
+          </span>
           <el-cascader
             v-model="new_dept_ids"
             placeholder="请选择组织"
@@ -565,14 +572,6 @@
             change-on-select
             clearable
           ></el-cascader>
-          <!-- <el-select v-model="campaignDetail.departId" placeholder="请选择活动组织" style="width: 100%;">
-            <el-option
-                v-for="item in visibleDepts"
-                :key="item.id"
-                :label="item.departName"
-                :value="item.id">
-            </el-option>
-          </el-select> -->
       </el-form-item>
       <el-form-item label="话后小结" prop="summaryId">
         <el-select v-model="campaignDetail.summaryId" placeholder="请选择小结" style="width: 100%;">
@@ -616,16 +615,6 @@
         <el-button size="small" type="primary" @click="batchDelVisible = false;batchDelCampaigns(batchDelReq);">确 定</el-button>
       </div>
     </el-dialog>
-    <!-- <el-dialog
-      width="30%"
-      :visible.sync="changeVisible"
-      append-to-body>
-      <span style="font-size:20px;">确定切换活动状态吗？</span>
-      <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button size="small" @click="changeVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="changeVisible = false;changeStatus(delReq);">确 定</el-button>
-      </div>
-    </el-dialog> -->
     <el-dialog
       top="5vh"
       width="90%"
@@ -1005,6 +994,9 @@ export default {
     }
     return {
       rule: {
+        campaignDepartment: [
+          { required: true, validator: checkDept, trigger: 'change' }
+        ],
         campaignName: [
           { required: true, message: '请输入活动名称', trigger: 'change' }
         ],
@@ -1421,12 +1413,22 @@ export default {
       if (this.$refs[formName] !== undefined) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            if (this.new_dept_ids.length === 0) {
-              this.$message.error('请选择活动组织')
-              this.validate = false
-              return
+            if (formName === 'campaignDetail') {
+              if (this.new_dept_ids.length === 0) {
+                this.$message.error('请选择活动组织')
+                this.validate = false
+                return
+              } else {
+                this.validate = true
+              }
             } else {
-              this.validate = true
+              if (this.edit_dept_ids.length === 0) {
+                this.$message.error('请选择活动组织')
+                this.validate = false
+                return
+              } else {
+                this.validate = true
+              }
             }
           } else {
             this.$message.error('请检查是否填写正确')
@@ -1647,6 +1649,7 @@ export default {
       }
       this.editVisible = false
       campaignDetail.productIds = campaignDetail.products
+      campaignDetail.departId = this.edit_dept_ids[this.edit_dept_ids.length - 1]
       modifyCampaign(campaignDetail).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)

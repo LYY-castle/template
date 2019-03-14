@@ -437,7 +437,6 @@ export default {
       return hours + ':' + minutes + ':' + seconds
     },
     sumTotal(obj) {
-      console.log(obj, '1111111111')
       // 初始化示忙时间，通话时间，空闲时间和在线时间
       let busy_time_duration = baseinfo.busy_time_duration
       let call_time_duration = baseinfo.call_time_duration
