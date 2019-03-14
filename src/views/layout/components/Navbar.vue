@@ -1889,7 +1889,7 @@ export default {
       this.firstgetUnreadMessages(agentId)
     })
     this.$root.eventHub.$on('autocallReady', () => {
-      this.setAgentDialInFree()
+      this.agentSetDialInFree()
     })
     this.$root.eventHub.$on('DISABLED_DIAL', (str) => {
       if (str === '1') {
@@ -1945,6 +1945,7 @@ export default {
     })
   },
   destroyed() {
+    localStorage.setItem('autocall', false)
     this.$root.eventHub.$off('RECEIVE_MESSAGES')
     this.socket_nofitication.close()
     if (this.show_wechat === 'true') {
