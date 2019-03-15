@@ -304,6 +304,15 @@ export function changePassword(info) {
     }
   })
 }
+export function findRegionByRegionParentId(regionParentId) {
+  return request({
+    url: '/customer/regioninfo',
+    method: 'get',
+    params: {
+      'regionParentId': regionParentId
+    }
+  })
+}
 
 /**
 * 将秒数转化为 时分秒   sec --> hour:min:sec

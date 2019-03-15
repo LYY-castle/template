@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function findCampaignNameListAssignInfo(obj) {
   return request({
-    url: '/campaign/findCampaignNameListAssignInfo',
+    url: '/campaign/taskListAssignInfo',
     method: 'get',
     params: obj
   })
@@ -21,5 +21,11 @@ export function assignTaskInfo(obj) {
     url: '/nameList/assignTaskInfo',
     method: 'post',
     data: obj
+  })
+}
+export function findAllBatch() {
+  return request({
+    url: '/customer/batch/all',
+    method: 'get'
   })
 }

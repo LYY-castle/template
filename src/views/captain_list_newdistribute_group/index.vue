@@ -1,27 +1,85 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
+
+      <el-row :gutter="5">
+        <el-row  class="table-container">
+          <el-form :inline="true" size="small" :model="req" style="padding:0px">
+            <el-row>
+            <el-form-item label="活动名称:" >
+              <el-select v-model="req.campaignId" @change="selectActive">
+                <el-option value="" label="请选择活动"></el-option>
+                <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
+              </el-select>
+            </el-form-item>
+            </el-row>
+            <el-row>
+            
+            <div class="work-title-style font14 bold" style="padding-bottom:9px">筛选条件 <a href="javascript:void(0)" @click="optionVisible=true" v-if="optionVisible==false" style="color: #57AFFF !important">展开<i class="el-icon-arrow-down"></i></a><a href="javascript:void(0)" @click="optionVisible=false" v-if="optionVisible==true" style="color: #57AFFF !important">收起<i class="el-icon-arrow-up"></i></a></div>
+            </el-row>
+            <el-row v-if="optionVisible==true" style="padding-left:14px">
+              <el-form-item label="批次名称:">
+                <el-select v-model="req.customerBatchId">
+                  <el-option value="" label="请选择批次"></el-option>
+                  <el-option v-for="item in batchList" :key="item.batchId" :label="item.batchName" :value="item.batchId"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="性别:">
+                <el-select v-model="req.customerSex">
+                  <el-option value="" label="全部"></el-option>
+                  <el-option value="0" label="男"></el-option>
+                  <el-option value="1" label="女"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="客户质量评分:">
+                <el-input v-model="req.customerScoreStart" placeholder="客户质量评分" size="mini"></el-input>
+              </el-form-item>
+              <el-form-item label="-">
+                <el-input v-model="req.customerScoreEnd" placeholder="客户质量评分" size="mini"></el-input>
+              </el-form-item>
+              <br>
+            <el-form-item label="地区:">
+                <el-select v-model="req.customerProvince" @change="findRegionByRegionParentId(req.customerProvince,2)">
+                  <el-option value="" label="--省份/地区--"></el-option>
+                  <el-option v-for="item in provinceInfo" :key="item.regionCode" :label="item.regionName" :value="item.regionCode"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item >
+                <el-select v-model="req.customerCity" @change="findRegionByRegionParentId(req.customerCity,3)">
+                  <el-option value="" label="--城市--"></el-option>
+                  <el-option v-for="item in cityInfo" :key="item.regionCode" :label="item.regionName" :value="item.regionCode"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item >
+                <el-select v-model="req.customerDistrict">
+                  <el-option value="" label="--区/县--"></el-option>
+                  <el-option v-for="item in countryInfo" :key="item.regionCode" :label="item.regionName" :value="item.regionCode"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-row>
+            
+
+              <el-row v-if="optionVisible==true" style="text-align:right">
+    
+                  <el-form-item style="margin-bottom:0px">
+                  <el-button size="small" type="primary" @click="selectActive">查询</el-button>
+                  <el-button size="small"  @click="resetReq('searchForm');">重置</el-button>
+                  </el-form-item>
+              </el-row>
+            
+            
+          </el-form>
+       </el-row>
+
+
+
+    <div class="table-container">
       <el-row>
-        <el-form :inline="true" class="demo-form-inline" size="small">
-          <el-form-item label="活动名称:">
-            <el-select v-model="formInline.campaignId" @change="selectActive">
-              <el-option value="" label="请选择活动"></el-option>
-              <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="分配数量:">
-            <el-input-number v-model="formInline.num" :step="10" @change="handleChange"></el-input-number>
-            <span>未分配量：{{formInline.noUseNum}}</span>
-            <span>数量总计：{{formInline.totalNum}}</span>
-          </el-form-item>
-          <el-form-item label="分配方式:">
-            <el-radio v-model="formInline.radio" label="0">顺序分配</el-radio>
-            <el-radio v-model="formInline.radio" label="1">平均分配</el-radio>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" :loading="loading" @click="confirm(formInline)">确认分配</el-button>
-          </el-form-item>
-        </el-form>
+        <div class="work-title-style font14 bold">可分配名单</div>
+      </el-row>
+      <el-row style="margin-top:20px;">
+        <el-col>
+
         <el-table
           :header-row-style="headerRow"
           :data="tableData"
@@ -51,13 +109,13 @@
           </el-table-column>
           <el-table-column
             align="center"
-            prop="noUseNum"
-            label="名单未分配数量">
+            prop="totalNum"
+            label="总数量">
           </el-table-column>
           <el-table-column
             align="center"
-            prop="totalNum"
-            label="名单总数量">
+            prop="noUseNum"
+            label="可分配数量">
           </el-table-column>
           <el-table-column
             align="center"
@@ -76,7 +134,8 @@
           </el-table-column>
         </el-table>
         <el-row style="margin-top:1%;">
-          <el-col :span="22">
+          <el-col :span="12"><div style="margin-top:1%;">已选中名单统计：总数量<span style="color:red">{{formInline.totalNum}}</span>，可分配数量<span style="color:red">{{formInline.noUseNum}} </span></div></el-col>
+          <el-col :span="12">
             <el-pagination
               background
               @size-change="handleSizeChange"
@@ -89,13 +148,45 @@
             </el-pagination>
           </el-col>
         </el-row>
+
+        </el-col>
+      </el-row>
+    </div>
+
+
+
+  <div class="table-container" style="margin-bottom:20px">
+      <el-row>
+        <el-form :inline="true" size="small">
+          <el-form-item label="本次分配数量:">
+            <el-input-number v-model="formInline.num" :step="10" @change="handleChange"></el-input-number>
+          </el-form-item>
+          <el-form-item label="分配方式:">
+            <el-radio v-model="formInline.radio" label="0">顺序分配</el-radio>
+            <el-radio v-model="formInline.radio" label="1">平均分配</el-radio>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" :loading="loading" @click="confirm(formInline)">确认分配</el-button>
+          </el-form-item>
+        </el-form>
+      </el-row>
+      <el-row>
+        <div>
+          <span  style="color:red;font-size:13px">
+            提示：可在下方表格中最后一列手动填写分配数量或由系统自动完成分配动作。
+          </span>
+          
+        </div>
+      </el-row>
+      <el-row style="margin-top:20px;">
+        <el-col>
+        
         <el-table
           :header-row-style="headerRow"
           :data="tableData2"
           ref="multipleTable"
           tooltip-effect="dark"
           border
-          style="margin-top:2%;"
           @selection-change="handleSelectionChange2">
           <el-table-column
             align="center"
@@ -134,21 +225,28 @@
             </template>
           </el-table-column>
         </el-table>
+        
+        </el-col>
+      </el-row>
+    </div>
+     
+     
       </el-row>
     </div>
   </div>
 </template>
 
 <script>
-  import { findCampaignNameListAssignInfo, findDownNamelistInfoByCampaignAndDepart, assignTaskInfo } from '@/api/captain_list_newdistribute_group'
+  import { findCampaignNameListAssignInfo, findDownNamelistInfoByCampaignAndDepart, assignTaskInfo, findAllBatch } from '@/api/captain_list_newdistribute_group'
   import { Message } from 'element-ui'
   import { findCampaignByUser, getDownInfoByCurrentUser } from '@/api/monitor_list_single'
-  import { formatDateTime } from '@/utils/tools'
+  import { formatDateTime, findRegionByRegionParentId } from '@/utils/tools'
 
   export default {
     name: 'captain_list_newdistribute_group',
     data() {
       return {
+        optionVisible: false,
         loading: false,
         type: '',
         totalNum: 0,
@@ -160,6 +258,10 @@
         tableData: [],
         tableData2: [],
         activeNameList: [],
+        batchList: [],
+        provinceInfo: [], // 省
+        cityInfo: [], // 城市
+        countryInfo: [], // 县
         formInline: {
           radio: '0',
           campaignId: '',
@@ -173,20 +275,115 @@
           totalCount: 0,
           totalPage: null
         },
-        pageing: {
-          campaignId: null,
+        // 查询 发送请求参数
+        req: {
+          campaignId: '',
+          departId: localStorage.getItem('departId'),
+          customerBatchId: '',
+          customerSex: '',
+          customerProvince: '',
+          customerCity: '',
+          customerDistrict: '',
+          customerScoreStart: '',
+          customerScoreEnd: '',
           pageNo: 1,
           pageSize: 10
         }
       }
     },
+    mounted() {
+      this.findAllBatch()
+      this.findRegionByRegionParentId('0', 1)
+    },
     methods: {
+      findAllBatch() {
+        findAllBatch().then(response => {
+          if (response.data.code === 0) {
+            this.batchList = response.data.data
+          } else {
+            Message({
+              message: response.data.message,
+              type: 'error',
+              duration: 3 * 1000
+            })
+          }
+        })
+      },
+      findRegionByRegionParentId(regionParentId, level) {
+        console.log('regionParentId:', regionParentId)
+        if (regionParentId === '') {
+          if (level === 1) {
+            this.provinceInfo = []
+            this.cityInfo = []
+            this.countryInfo = []
+            this.req.customerProvince = ''
+            this.req.customerCity = ''
+            this.req.customerDistrict = ''
+          } else if (level === 2) {
+            this.cityInfo = []
+            this.countryInfo = []
+            this.req.customerCity = ''
+            this.req.customerDistrict = ''
+          } else if (level === 3) {
+            this.countryInfo = []
+            this.req.customerDistrict = ''
+          }
+          return
+        }
+        findRegionByRegionParentId(regionParentId).then(response => {
+          if (response.data.code === 0) {
+            console.log('region:', response.data)
+            if (level === 1) {
+              this.provinceInfo = response.data.data
+              this.cityInfo = []
+              this.countryInfo = []
+              this.req.customerCity = ''
+              this.req.customerDistrict = ''
+            } else if (level === 2) {
+              this.cityInfo = response.data.data
+              this.countryInfo = []
+              this.req.customerCity = ''
+              this.req.customerDistrict = ''
+            } else if (level === 3) {
+              this.countryInfo = response.data.data
+              this.req.customerDistrict = ''
+            }
+          } else {
+            Message({
+              message: response.data.message,
+              type: 'error',
+              duration: 3 * 1000
+            })
+          }
+        })
+      },
+      resetReq() {
+        this.req = {
+          campaignId: '',
+          departId: localStorage.getItem('departId'),
+          customerBatchId: '',
+          customerSex: '',
+          customerProvince: '',
+          customerCity: '',
+          customerDistrict: '',
+          customerScoreStart: '',
+          customerScoreEnd: '',
+          pageNo: 1,
+          pageSize: 10
+        }
+      },
       selectActive(val) {
-        this.pageing.campaignId = val
-        this.pageing.campaignId = val
-        this.pageing.pageNo = 1
-        this.pageing.pageSize = 10
-        findCampaignNameListAssignInfo(this.pageing).then(response => {
+        if (!this.req.campaignId) {
+          Message({
+            message: '请选择活动',
+            type: 'error',
+            duration: 3 * 1000
+          })
+          return
+        }
+        this.req.pageNo = 1
+        this.req.pageSize = 10
+        findCampaignNameListAssignInfo(this.req).then(response => {
           if (response.data.code === 0) {
             this.tableData = response.data.data
             this.pagination = response.data.pageInfo
@@ -233,11 +430,10 @@
         })
       },
       handleSizeChange(val) {
-        this.pageing.campaignId = this.formInline.campaignId
-        this.pageing.pageSize = val
-        this.pageing.pageNo = 1
+        this.req.pageSize = val
+        this.req.pageNo = 1
         this.pagination.pageNo = 1
-        findCampaignNameListAssignInfo(this.pageing).then(response => {
+        findCampaignNameListAssignInfo(this.req).then(response => {
           if (response.data.code === 0) {
             this.tableData = response.data.data
             this.pagination = response.data.pageInfo
@@ -258,9 +454,8 @@
         })
       },
       handleCurrentChange(val) {
-        this.pageing.campaignId = this.formInline.campaignId
-        this.pageing.pageNo = val
-        findCampaignNameListAssignInfo(this.pageing).then(response => {
+        this.req.pageNo = val
+        findCampaignNameListAssignInfo(this.req).then(response => {
           if (response.data.code === 0) {
             this.tableData = response.data.data
             this.pagination = response.data.pageInfo
@@ -388,13 +583,13 @@
             assignNum: String(this.formInline.num),
             assignType: this.formInline.radio,
             listIds: listIds,
-            campaignId: this.formInline.campaignId,
+            campaignId: this.req.campaignId,
             data: data,
             type: this.type
           }).then(response => {
             this.loading = false
             if (response.data.code === 0) {
-              this.selectActive(this.formInline.campaignId)
+              this.selectActive(this.req.campaignId)
               this.formInline.num = ''
               this.formInline.radio = '0'
             } else {
@@ -434,3 +629,9 @@
     }
   }
 </script>
+<style>
+.el-card__body{
+   padding:20px !important
+}
+</style>
+
