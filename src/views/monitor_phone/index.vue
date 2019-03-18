@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-row>
-        <div>
-          <label v-if="showStaff">小组成员在线情况</label>
-          <label v-if="showTeam">各小组在线综合情况</label>
+      <el-row class="table-container">
+        <div class="margin-bottom-20">
+          <label class="font14 bold" v-if="showStaff">小组成员在线情况</label>
+          <label class="font14 bold" v-if="showTeam">各小组在线综合情况</label>
         </div>
         <br/>
         <div  v-if="showStaff">
@@ -126,10 +126,10 @@
           </div>
         </el-col>
       </el-row>
-      <el-row style="margin-top:3%">
-        <div>
-          <label v-if="showStaff">监控小组成员</label>
-          <label v-if="showTeam">监控各个小组</label>
+      <el-row style="margin-top:20px" class="table-container">
+        <div class="margin-bottom-20">
+          <label class="font14 bold" v-if="showStaff">监控小组成员</label>
+          <label class="font14 bold" v-if="showTeam">监控各个小组</label>
         </div>
         <div style="margin-top:1%"  v-if="showStaff">
           <el-button :disabled="btnunIntrudeIn" @click="monitorIntrudeCall()">强插</el-button>

@@ -1,48 +1,54 @@
 <template>
-  <div class="container" >
-    <el-row margin-top:>
-      <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item prop="templateid" label="模板编号:">
-          <el-input v-model="req.templateid" placeholder="模板编号（上限45字符）" maxlength="45"></el-input>
-        </el-form-item>
-        <el-form-item prop="templateName" label="模板名称:">
-          <el-input v-model="req.templateName" placeholder="模板名称（上限45字符）" maxlength="45"></el-input>
-        </el-form-item>
-        <el-form-item prop="mobile" label="电话号码:">
-          <el-input v-model="req.mobile" placeholder="电话号码（上限20字符）" maxlength="20"></el-input>
-        </el-form-item>
-        <el-form-item prop="code" label="短信状态:">
-           <el-select v-model="req.code">
-            <el-option label="全部" value="" selected></el-option>
-            <el-option label="成功" value="000000"></el-option>
-            <el-option label="失败" value="100001"></el-option>
-           </el-select>
-        </el-form-item>
-        <el-form-item prop="creator" label="操作人:">
-          <el-input v-model="req.creator" placeholder="操作人（上限45字符）" maxlength="45"></el-input>
-        </el-form-item>
-        <el-form-item label="操作时间：">
-             <el-date-picker
-              v-model="timeValue"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss">
-            </el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;messageSendRecords(req);">查询</el-button>
-          <el-button type="danger" @click="reset();">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
-     <!-- 表格 -->
-    <el-row>
-      <el-col>
+  <div class="container">
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small" :model="req" ref="searchForm">
+          <el-form-item prop="templateid" label="模板编号:">
+            <el-input v-model="req.templateid" placeholder="模板编号（上限45字符）" maxlength="45"></el-input>
+          </el-form-item>
+          <el-form-item prop="templateName" label="模板名称:">
+            <el-input v-model="req.templateName" placeholder="模板名称（上限45字符）" maxlength="45"></el-input>
+          </el-form-item>
+          <el-form-item prop="mobile" label="电话号码:">
+            <el-input v-model="req.mobile" placeholder="电话号码（上限20字符）" maxlength="20"></el-input>
+          </el-form-item>
+          <el-form-item prop="code" label="短信状态:">
+            <el-select v-model="req.code">
+              <el-option label="全部" value="" selected></el-option>
+              <el-option label="成功" value="000000"></el-option>
+              <el-option label="失败" value="100001"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item prop="creator" label="操作人:">
+            <el-input v-model="req.creator" placeholder="操作人（上限45字符）" maxlength="45"></el-input>
+          </el-form-item>
+          <el-form-item label="操作时间：">
+              <el-date-picker
+                v-model="timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
+              </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="req.pageNo=1;messageSendRecords(req);">查询</el-button>
+            <el-button @click="reset();">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">短信表</div>
+      </el-row>
+      <el-row class="margin-bottom-20">
+        <el-button type="info" size="small" @click="sendVisible=true;dynamicValidateForm.name='';resetForm('dynamicValidateForm')">发送短信</el-button>
+      </el-row>
+      <el-row>
         <el-table
-          :data="tableData"
-          border>
+          :data="tableData">
           <el-table-column
             align="center"
             label="模板编号"
@@ -67,9 +73,11 @@
           <el-table-column
             align="center"
             label="短信状态">
-             <template slot-scope="scope">
-                {{showStatus(scope.row.code)}}
-            </template>
+              <template slot-scope="scope">
+                <div :class="scope.row.code==='000000'?'visible':'invisible'">
+                  <span>{{scope.row.code==='000000'?'成功':'失败'}}</span>
+                </div>
+              </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -86,13 +94,10 @@
             </template>
           </el-table-column>
         </el-table>
-      </el-col>
-    </el-row>
-    <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="sendVisible=true;dynamicValidateForm.name='';resetForm('dynamicValidateForm')">发送短信</el-button>
+      </el-row>
+      <el-row style="margin-top:20px;">
         <el-pagination
           v-if="pageShow"
-          background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page='pageInfo.pageNo'
@@ -101,7 +106,10 @@
           layout="total, sizes, prev, pager, next, jumper "
           :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
+      </el-row>
     </el-row>
+    
+    
      <!-- 发送短信 -->
     <el-dialog
       align:left
@@ -109,7 +117,7 @@
       title="发送短信"
       :visible.sync="sendVisible"
       append-to-body>
-      <el-form :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="100px">
+      <el-form size="small" :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="100px">
         <el-form-item
           prop="name"
           label="短信模板"
@@ -135,12 +143,12 @@
           { pattern: /^\d{1,11}$/, message: '请输入不超过11位数字',trigger:'blur'}
           ]">
           <el-input v-model="domain.value" size="small" style="width:82%" placeholder="电话号码（上限20字符）"></el-input>
-          <el-button type="error" size="small" @click.prevent="removeDomain(domain)">删除</el-button>
+          <el-button type="danger" size="small" @click.prevent="removeDomain(domain)">删除</el-button>
         </el-form-item>
         <el-form-item style="text-align: right;">
           <el-button type="success" @click="addDomain">新增号码</el-button>
           <el-button type="primary" @click="validate('dynamicValidateForm')">发送</el-button>
-          <el-button type="danger" @click="resetForm('dynamicValidateForm')">重置</el-button>
+          <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -176,15 +184,14 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="messageReq.pageNo=1;findTemplateList(messageReq);">查询</el-button>
-          <el-button type="danger" @click="resetMessageReq();">重置</el-button>
+          <el-button @click="resetMessageReq();">重置</el-button>
         </el-form-item>
       </el-form>
        <!-- 表格 -->
     <el-row>
       <el-col>
         <el-table
-          :data="messageTableData"
-          border>
+          :data="messageTableData">
           <el-table-column
             align="center"
              label="选择">
@@ -235,7 +242,6 @@
     <el-row style="margin-top:5px;">
         <el-pagination
           v-if="messagePageShow"
-          background
           @size-change="messageHandleSizeChange"
           @current-change="messageHandleCurrentChange"
           :current-page='messagePageInfo.pageNo'
@@ -246,7 +252,7 @@
         </el-pagination>
     </el-row>
     <el-row style="text-align: right; margin-top:10px">
-      <el-button type="danger" @click="radio='';messageVisible=false">取消</el-button>
+      <el-button type="primary" plain @click="radio='';messageVisible=false">取消</el-button>
       <el-button type="primary" @click="selectedMessage()">确定</el-button>
     </el-row>
     </el-dialog>
@@ -258,8 +264,8 @@
       append-to-body>
       <span style="font-size:20px;">确定发送短信吗？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="send = false">取 消</el-button>
-        <el-button type="primary" @click="sendMessage();">确 定</el-button>
+        <el-button type="primary" plain @click="send = false">取消</el-button>
+        <el-button type="primary" @click="sendMessage();">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -272,6 +278,8 @@ export default {
   name: 'message_send_list',
   data() {
     return {
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       send: false,
       rules: {
         name: [
@@ -326,10 +334,19 @@ export default {
     }
   },
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     this.messageSendRecords()
     this.getAllTemplateGroup()
   },
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     validate(item) {
       this.$refs[item].validate((valid) => {
         if (this.dynamicValidateForm.domains && this.dynamicValidateForm.domains.length > 0 && this.dynamicValidateForm.domains[0].value) {

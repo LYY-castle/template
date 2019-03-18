@@ -1,101 +1,106 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-row>
-        <el-form :inline="true" class="demo-form-inline" size="small">
-          <el-form-item label="产品类型编号：">
-            <el-input placeholder="类型编号（上限20字）" v-model="formInline.productTypeId" maxlength="20"></el-input>
-          </el-form-item>
-          <el-form-item label="产品类型名称：">
-            <el-input placeholder="类型名称（上限100字）" v-model="formInline.productTypeName" maxlength="100"></el-input>
-          </el-form-item>
-                 <el-form-item label="操作人：">
-            <el-input placeholder="操作人（上限45字）" v-model="formInline.modifierName" maxlength="45"></el-input>
-          </el-form-item>
-          <el-form-item label="操作时间："> 
-            <el-date-picker
-              v-model="timeValue"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss">
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="formInline.pageNo = 1;queryList()">查询</el-button>
-            <el-button type="danger" @click="reset">重置</el-button>
-          </el-form-item>
-        </el-form>
-        <el-table
-        :header-row-style="headerRow"
-        :data="tableData"
-        ref="multipleTable"
-        tooltip-effect="dark"
-        border
-        @selection-change="handleSelectionChange">
-        <el-table-column
-          align="center"
-          type="selection"
-          width="55">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="productTypeId"
-          label="产品类型编号"
-          :show-overflow-tooltip="true">
-          <template slot-scope="scope">
-            <a @click="handleClickDetail(scope.row)">{{scope.row.productTypeId}}</a>
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="productTypeName"
-          label="产品类型名称"
-          :show-overflow-tooltip="true">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="description"
-          label="描述"
-          :show-overflow-tooltip="true">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="modifierName"
-          label="操作人"
-          :show-overflow-tooltip="true">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="modifyTime"
-          label="操作时间"
-          width="155">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          label="操作"
-          width="180">
-          <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
-            <el-button
-              @click.native.prevent="deleteRow(scope.$index, tableData)"
-              type="text"
-              size="small">
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      </el-row>
-      <el-row style="margin-top:1%;">
-        <el-col :span="4">
+      <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+        <el-collapse-item title="筛选条件" name="1">
+          <el-form :inline="true" class="demo-form-inline" size="small">
+            <el-form-item label="产品类型编号：">
+              <el-input placeholder="类型编号（上限20字）" v-model="formInline.productTypeId" maxlength="20"></el-input>
+            </el-form-item>
+            <el-form-item label="产品类型名称：">
+              <el-input placeholder="类型名称（上限100字）" v-model="formInline.productTypeName" maxlength="100"></el-input>
+            </el-form-item>
+                  <el-form-item label="操作人：">
+              <el-input placeholder="操作人（上限45字）" v-model="formInline.modifierName" maxlength="45"></el-input>
+            </el-form-item>
+            <el-form-item label="操作时间："> 
+              <el-date-picker
+                v-model="timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="formInline.pageNo = 1;queryList()">查询</el-button>
+              <el-button @click="reset">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-collapse-item>
+      </el-collapse>
+      <el-row class="table-container">
+        <el-row class="margin-bottom-20">
+          <div class="font14 bold">产品类型表</div>
+        </el-row>
+        <el-row class="margin-bottom-20">
           <el-button type="success" size="small"  @click="addProductType()">新建</el-button>
           <el-button type="danger" size="small" @click="deleteAll">批量删除</el-button>
-        </el-col>
-        <el-col :span="18">
+        </el-row>
+        <el-row>
+          <el-table
+            :header-row-style="headerRow"
+            :data="tableData"
+            ref="multipleTable"
+            tooltip-effect="dark"
+            @selection-change="handleSelectionChange">
+            <el-table-column
+              align="center"
+              type="selection"
+              width="55">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="productTypeId"
+              label="产品类型编号"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                <a @click="handleClickDetail(scope.row)">{{scope.row.productTypeId}}</a>
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="productTypeName"
+              label="产品类型名称"
+              :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="description"
+              label="描述"
+              :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="modifierName"
+              label="操作人"
+              :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="modifyTime"
+              label="操作时间"
+              width="155">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              label="操作"
+              width="180">
+              <template slot-scope="scope">
+                <el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
+                <el-button
+                  @click.native.prevent="deleteRow(scope.$index, tableData)"
+                  type="text"
+                  size="small">
+                  删除
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-row>
+        <el-row style="margin-top:20px;">
           <el-pagination
-            background
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page.sync="pagination.pageNo"
@@ -104,26 +109,26 @@
             layout="total, sizes, prev, pager, next, jumper "
             :total="pagination.totalCount" style="text-align: right">
           </el-pagination>
-        </el-col>
+        </el-row>
       </el-row>
     </div>
     <el-dialog title="新建产品类型" :visible.sync="dialogFormVisible" width="30%" @close="resetForm('ruleForm')" append-to-body>
-      <el-form :model="ruleForm" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+      <el-form size="small" :model="ruleForm" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="类型名称:" prop="productTypeName">
           <el-input v-model="ruleForm.productTypeName" maxlength="100" placeholder="上限100字符"></el-input>
         </el-form-item>
         <el-form-item label="描述:" prop="description">
-          <el-input v-model="ruleForm.description" placeholder="上限255字符" maxlength="255" type="textarea"></el-input>
+          <el-input v-model="ruleForm.description" placeholder="上限255字符" maxlength="255" type="textarea" :rows="4"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="resetForm('ruleForm')">重置</el-button>
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')" :disabled="clickTwice">确 定</el-button>
+        <el-button @click="resetForm('ruleForm')">重置</el-button>
+        <el-button type="primary" plain @click="dialogFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')" :disabled="clickTwice">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="修改产品类型" :visible.sync="dialogFormVisibleReverse" width="30%" @close="resetForm('ruleFormReverse')" append-to-body>
-      <el-form :model="ruleFormReverse" ref="ruleFormReverse" label-width="100px" class="demo-ruleForm">
+      <el-form size="small" :model="ruleFormReverse" ref="ruleFormReverse" label-width="100px" class="demo-ruleForm">
         <el-form-item label="产品类型id" prop="productTypeId" hidden>
           <span>{{ruleFormReverse.productTypeId}}</span>
         </el-form-item>
@@ -131,17 +136,17 @@
           <el-input v-model="ruleFormReverse.productTypeName" maxlength="100" placeholder="上限100字符"></el-input>
         </el-form-item>
         <el-form-item label="描述:" prop="description">
-          <el-input v-model="ruleFormReverse.description" placeholder="上限255字符" maxlength="255" type="textarea"></el-input>
+          <el-input v-model="ruleFormReverse.description" placeholder="上限255字符" maxlength="255" type="textarea" :rows="4"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="resetReverse">重置</el-button>
-        <el-button @click="dialogFormVisibleReverse = false">取 消</el-button>
+        <el-button @click="resetReverse">重置</el-button>
+        <el-button type="primary" plain @click="dialogFormVisibleReverse = false">取消</el-button>
         <el-button type="primary" @click="submitFormReverse('ruleFormReverse')" :disabled="clickTwiceReverse">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="产品类型详情" :visible.sync="dialogFormVisibleDetail" width="30%" append-to-body>
-      <el-form :model="ruleFormReverseDetail" ref="ruleFormReverseDetail" label-width="100px" class="demo-ruleForm">
+      <el-form size="small" :model="ruleFormReverseDetail" ref="ruleFormReverseDetail" label-width="100px" class="demo-ruleForm">
         <el-form-item label="产品类型id" prop="productTypeId">
           <span>{{ruleFormReverseDetail.productTypeId}}</span>
         </el-form-item>
@@ -149,7 +154,7 @@
           <el-input v-model="ruleFormReverseDetail.productTypeName" maxlength="100" placeholder="上限100字符"></el-input>
         </el-form-item>
         <el-form-item label="描述:" prop="description">
-          <el-input v-model="ruleFormReverseDetail.description" placeholder="上限255字符" maxlength="255" type="textarea"></el-input>
+          <el-input v-model="ruleFormReverseDetail.description" placeholder="上限255字符" maxlength="255" type="textarea" :rows="4"></el-input>
         </el-form-item>
         <el-form-item label="操作人：">
           <span>{{ruleFormReverseDetail.modifier}}</span>
@@ -159,7 +164,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogFormVisibleDetail = false">返回</el-button>
+        <el-button type="primary" plain @click="dialogFormVisibleDetail = false">返回</el-button>
       </div>
     </el-dialog>
   </div>
@@ -174,6 +179,9 @@
     name: 'product_type',
     data() {
       return {
+        visibleClass: '',
+        formContainerOpen: '1',
+        formContainer: this.$store.state.app.formContainer,
         clickTwice: false, // “确定”按钮多次点击
         clickTwiceReverse: false, // “确定”按钮多次点击
         info: {},
@@ -222,6 +230,13 @@
       }
     },
     methods: {
+      handleChangeAcitve(active = ['1']) {
+        if (active.length) {
+          $('.form-more').text('收起')
+        } else {
+          $('.form-more').text('更多')
+        }
+      },
       addProductType() {
         this.dialogFormVisible = true
         this.clickTwice = false
@@ -254,11 +269,11 @@
             }
           })
         }).catch(() => {
-          Message({
-            message: '已经取消删除',
-            type: 'error',
-            duration: 1500
-          })
+          // Message({
+          //   message: '已经取消删除',
+          //   type: 'error',
+          //   duration: 1500
+          // })
         })
       },
       submitForm(formName) {
@@ -339,11 +354,11 @@
             }
           })
         }).catch(() => {
-          Message({
-            message: '已经取消删除',
-            type: 'error',
-            duration: 3 * 1000
-          })
+          // Message({
+          //   message: '已经取消删除',
+          //   type: 'error',
+          //   duration: 3 * 1000
+          // })
         })
       },
       handleClickDetail(row) {
@@ -443,6 +458,8 @@
       }
     },
     mounted() {
+      this.formContainer()
+      this.handleChangeAcitve()
       this.queryList()
     }
   }

@@ -1,44 +1,52 @@
 <template>
   <div class="container campaignManagement">
-    <el-row margin-top:>
-      <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item prop="campaignId" label="活动编号：">
-          <el-input v-model="req.campaignId" placeholder="活动编号（限长20字符）" maxlength="20"></el-input>
-        </el-form-item>
-        <el-form-item prop="campaignName" label="活动名称：">
-          <el-input v-model="req.campaignName" placeholder="活动名称（限长128字符）" maxlength="128"></el-input>
-        </el-form-item>
-        <el-form-item label="活动状态：" prop="status">
-          <el-radio-group v-model="req.status" size="small">
-            <el-radio label=''>所有</el-radio>
-            <el-radio label='0'>有效</el-radio>
-            <el-radio label='1'>无效</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item prop="modifierName" label="操作人：">
-          <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="操作时间：">
-          <el-date-picker
-              v-model="timeValue"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-button size="small" type="primary" @click="req.pageNo=1;findCampaignByConditions(req);req2=clone(req)">查询</el-button>
-          <el-button size="small" type="danger" @click="timeValue=[],resetReq('searchForm');">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
-    <el-row>
-      <el-col>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small" :model="req" ref="searchForm">
+          <el-form-item prop="campaignId" label="活动编号：">
+            <el-input v-model="req.campaignId" placeholder="活动编号（限长20字符）" maxlength="20"></el-input>
+          </el-form-item>
+          <el-form-item prop="campaignName" label="活动名称：">
+            <el-input v-model="req.campaignName" placeholder="活动名称（限长128字符）" maxlength="128"></el-input>
+          </el-form-item>
+          <el-form-item label="活动状态：" prop="status">
+            <el-radio-group v-model="req.status" size="small">
+              <el-radio label=''>所有</el-radio>
+              <el-radio label='0'>有效</el-radio>
+              <el-radio label='1'>无效</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item prop="modifierName" label="操作人：">
+            <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="操作时间：">
+            <el-date-picker
+                v-model="timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button size="small" type="primary" @click="req.pageNo=1;findCampaignByConditions(req);req2=clone(req)">查询</el-button>
+            <el-button size="small" @click="timeValue=[],resetReq('searchForm');">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">活动管理表</div>
+      </el-row>
+      <el-row class="margin-bottom-20">
+        <el-button type="success" @click="addVisible=true;clearForm(campaignDetail,'campaignDetail');outcalltimeInfos=[];failTreatmentInfos=[];campaignExpiryDate=[];customerColumnInfos=[]">新建</el-button>
+        <el-button type="danger" @click="batchDelVisible=true">批量删除</el-button>
+      </el-row>
+      <el-row>
         <el-table
           :data="tableData"
-          border
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
@@ -118,7 +126,9 @@
             align="center"
             label="状态">
             <template slot-scope="scope">
-              <div>{{(scope.row.status == 0) ? '有效':'无效'}}</div>
+              <div :class="scope.row.status == 0?'visible':'invisible'">
+                <span>{{scope.row.status == 0?'有效':'无效'}}</span>
+              </div>
             </template>
           </el-table-column>
           <el-table-column
@@ -140,11 +150,8 @@
           </template>
           </el-table-column>
         </el-table>
-      </el-col>
-    </el-row>
-    <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;clearForm(campaignDetail,'campaignDetail');outcalltimeInfos=[];failTreatmentInfos=[];campaignExpiryDate=[];customerColumnInfos=[]">新建</el-button>
-        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
+      </el-row>
+      <el-row style="margin-top:20px;">
         <el-pagination
           background
           @size-change="handleSizeChange"
@@ -155,6 +162,7 @@
           layout="total, sizes, prev, pager, next, jumper "
           :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
+      </el-row>
     </el-row>
     <el-dialog
       align:left
@@ -162,17 +170,17 @@
       title="活动信息修改"
       :visible.sync="editVisible"
       append-to-body>
-      <el-form label-width="108px" :model="campaignDetail" ref="editCampaign" :rules="rule">
+      <el-form size="small" label-width="108px" :model="campaignDetail" ref="editCampaign" :rules="rule">
         <el-form-item label="活动名称" prop="campaignName">
           <el-input v-model="campaignDetail.campaignName" size="small" placeholder="活动名称（限长128字符）" maxlength="128"></el-input>
         </el-form-item>
         <el-form-item label="活动类型" prop="campaignTypeCode">
           <el-select v-model="campaignDetail.campaignTypeCode" placeholder="请选择活动类型" style="width: 100%;">
             <el-option
-                v-for="item in campaignTypes"
-                :key="item.code"
-                :label="item.name"
-                :value="item.code">
+              v-for="item in campaignTypes"
+              :key="item.code"
+              :label="item.name"
+              :value="item.code">
             </el-option>
           </el-select>
         </el-form-item>
@@ -283,6 +291,7 @@
             <span style="color:#f56c6c">*</span> 活动组织
           </span>
           <el-cascader
+            style="width:100%;"
             v-model="edit_dept_ids"
             placeholder="请选择组织"
             :options="visibleDepts"
@@ -317,9 +326,9 @@
       </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button size="small" type="danger" @click="getCampaignById(delReq.campaignId)">重 置</el-button>
-        <el-button size="small" @click="editVisible = false;">取 消</el-button>
-        <el-button size="small" type="primary" @click="submitForm('editCampaign');editCampaign(campaignDetail)">确 定</el-button>
+        <el-button size="small" @click="getCampaignById(delReq.campaignId)">重置</el-button>
+        <el-button size="small" type="primary" plain @click="editVisible = false;">取消</el-button>
+        <el-button size="small" type="primary" @click="submitForm('editCampaign');editCampaign(campaignDetail)">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -328,7 +337,7 @@
       title="活动信息详情"
       :visible.sync="detailVisible"
       append-to-body>
-      <el-form label-width="100px" >
+      <el-form label-width="100px" size="small">
         <el-form-item label="活动名称">
           <span>{{campaignDetail.campaignName}}</span>
         </el-form-item>
@@ -418,7 +427,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button size='small' @click="detailVisible = false">返 回</el-button>
+        <el-button type="primary" plain size='small' @click="detailVisible = false">返回</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -427,7 +436,7 @@
       title="新建活动"
       :visible.sync="addVisible"
       append-to-body>
-      <el-form :rules="rule" :model="campaignDetail" ref="campaignDetail" label-width="108px">
+      <el-form size="small" :rules="rule" :model="campaignDetail" ref="campaignDetail" label-width="108px">
         <el-form-item label="活动名称" prop="campaignName" >
           <el-input v-model="campaignDetail.campaignName" size="small" placeholder="活动名称（限长128字符）" maxlength="128"></el-input>
         </el-form-item>
@@ -562,6 +571,7 @@
             <span style="color:#f56c6c">*</span> 活动组织
           </span>
           <el-cascader
+            style="width:100%;"
             v-model="new_dept_ids"
             placeholder="请选择组织"
             :options="visibleDepts"
@@ -588,9 +598,9 @@
       </el-form-item>
       </el-form>
         <div slot="footer" style="text-align: right;">
-          <el-button size="small" type="danger" @click="resetForm('campaignDetail');">重 置</el-button>
-          <el-button size="small" @click="addVisible = false">取 消</el-button>
-          <el-button size="small" type="primary" @click="submitForm('campaignDetail');addCampaign(campaignDetail);">确 定</el-button>
+          <el-button size="small" @click="resetForm('campaignDetail');">重置</el-button>
+          <el-button size="small" plain type="primary" @click="addVisible = false">取消</el-button>
+          <el-button size="small" type="primary" @click="submitForm('campaignDetail');addCampaign(campaignDetail);">确定</el-button>
         </div>
     </el-dialog>
     <el-dialog
@@ -600,8 +610,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除此内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button size="small" @click="delVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="delVisible = false;delCampaign(delReq);">确 定</el-button>
+        <el-button size="small" type="primary" plain @click="delVisible = false">取消</el-button>
+        <el-button size="small" type="primary" @click="delVisible = false;delCampaign(delReq);">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -611,8 +621,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除选定内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button size="small" @click="batchDelVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="batchDelVisible = false;batchDelCampaigns(batchDelReq);">确 定</el-button>
+        <el-button size="small" type="primary" plain @click="batchDelVisible = false">取消</el-button>
+        <el-button size="small" type="primary" @click="batchDelVisible = false;batchDelCampaigns(batchDelReq);">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -621,7 +631,6 @@
       :visible.sync="addList"
       append-to-body>
       <div slot="title" style="text-align: center;">
-        <el-button @click="addList = false;" style="float:left;" icon="el-icon-arrow-left">返 回</el-button>
         <h3 style="display:inline;">活动名称：{{campaignName}}</h3>
       </div>
       <el-row>
@@ -660,7 +669,6 @@
         </el-row>
         <el-table
           :data="nameListExcludeTablel"
-          border
           @selection-change="nameListSelectionChange">
           <el-table-column
             align="center"
@@ -701,7 +709,6 @@
       <el-row>
         <el-pagination
           v-if="pageShow2"
-          background
           @size-change="nameListExcludeSizeChange"
           @current-change="nameListExcludeChange"
           :current-page='nameListExcludePageinfo.pageNo'
@@ -716,8 +723,7 @@
           <h2 style="display:inline" >已选名单列表</h2>
         </el-row>
         <el-table
-          :data="nameListsTable"
-          border>
+          :data="nameListsTable">
           <el-table-column
             align="center"
             prop="listId"
@@ -752,7 +758,6 @@
       <el-row>
         <el-pagination
           v-if="pageShow3"
-          background
           @size-change="nameListSizeChange"
           @current-change="nameListChange"
           :current-page='nameListsPageinfo.pageNo'
@@ -763,8 +768,8 @@
         </el-pagination>
       </el-row>
       <div slot="footer" style="text-align: right;">
-        <el-button size="small" type="success" @click="addCampaignAndList(addNameList);">添 加</el-button>
-        <el-button size="small" type="danger" @click="addList = false;">取 消</el-button>
+        <el-button size="small" type="success" @click="addCampaignAndList(addNameList);">添加</el-button>
+        <el-button size="small" type="primary" plain @click="addList = false;">取消</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -774,8 +779,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除此内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button size="small" @click="delVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="delVisible = false;delCampaign(delReq);">确 定</el-button>
+        <el-button size="small" type="primary" plain @click="delVisible = false">取消</el-button>
+        <el-button size="small" type="primary" @click="delVisible = false;delCampaign(delReq);">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -785,8 +790,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除选定内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button size="small" @click="batchDelVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="batchDelVisible = false;batchDelCampaigns(batchDelReq);">确 定</el-button>
+        <el-button size="small" type="primary" plain @click="batchDelVisible = false">取消</el-button>
+        <el-button size="small" type="primary" @click="batchDelVisible = false;batchDelCampaigns(batchDelReq);">确定</el-button>
       </div>
     </el-dialog>
 
@@ -797,14 +802,12 @@
       :visible.sync="removeVisible"
       append-to-body>
       <div slot="title" style="text-align: center;">
-        <el-button @click="removeVisible = false;" style="float:left;" icon="el-icon-arrow-left">返 回</el-button>
         <h3 style="display:inline;">活动名称：{{campaignName}}</h3>
       </div>
       <el-row>
         <el-row>
           <h2 style="display:inline">名单列表</h2>
           <el-pagination
-            background
             @current-change="nameListChange"
             :current-page=nameListsPageinfo.pageNo
             :page-sizes="[10, 20, 30, 50]"
@@ -815,7 +818,6 @@
         </el-row>
         <el-table
           :data="nameListsTable"
-          border
           @selection-change="removeListSelectionChange">
           <el-table-column
             align="center"
@@ -862,8 +864,8 @@
         </el-table>
       </el-row>
       <div slot="footer" style="text-align: right;">
-        <el-button size="small" type="success" @click="batchListVisible=true;">批量移除</el-button>
-        <el-button size="small" type="danger" @click="removeVisible = false;">取 消</el-button>
+        <el-button size="small" type="danger" @click="batchListVisible=true;">批量移除</el-button>
+        <el-button size="small" type="primary" plain @click="removeVisible = false;">取消</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -873,8 +875,8 @@
       append-to-body>
       <span style="font-size:20px;">确定移除选定内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="batchListVisible = false">取 消</el-button>
-        <el-button type="primary" @click="batchListVisible = false;removeList();">确 定</el-button>
+        <el-button type="primary" plain @click="batchListVisible = false">取消</el-button>
+        <el-button type="primary" @click="batchListVisible = false;removeList();">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -884,8 +886,8 @@
       append-to-body>
       <span style="font-size:20px;">确定移除吗？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="removeListVisible = false">取 消</el-button>
-        <el-button type="primary" @click="removeListVisible = false;removeList();">确 定</el-button>
+        <el-button type="primary" plain @click="removeListVisible = false">取消</el-button>
+        <el-button type="primary" @click="removeListVisible = false;removeList();">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -993,6 +995,8 @@ export default {
       }
     }
     return {
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       rule: {
         campaignDepartment: [
           { required: true, validator: checkDept, trigger: 'change' }
@@ -1298,6 +1302,8 @@ export default {
     }
   },
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     this.findCampaignByConditions(this.req)
     this.getAllProduct()
     this.getDepts()
@@ -1307,6 +1313,13 @@ export default {
     this.getAllCampaignTypes()
   },
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     addOutCallTimes() {
       this.outcalltimeInfos.push({
         outcallTimeStart: '',
@@ -1962,23 +1975,8 @@ export default {
   }
 }
 </script>
-<style rel="stylesheet/scss" lang="scss">
-.el-table thead {
-  color: #000 !important;
-}
-
-</style>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-.el-table {
-  border: 1px solid #ecebe9;
-  thead th .cell {
-    color: #000;
-  }
-}
-.el-form-item {
-  margin-bottom: 20px;
-}
 .showaddTool {
   float: right;
   margin: 0px 65%;

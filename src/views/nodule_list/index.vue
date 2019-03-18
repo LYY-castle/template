@@ -1,44 +1,48 @@
 <template>
   <div class="container">
-    <el-row>
-      <el-form :inline="true" size="small">
-        <el-form-item label="小结编号:">
-          <el-input v-model="req.summaryId" placeholder="小结编号（限长50字符）" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="小结标题:">
-          <el-input v-model="req.summaryName" placeholder="小结标题（限长50字符）" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="操作人:">
-          <el-input v-model="req.modify_name" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="操作时间：">
-          <el-date-picker
-              v-model="req.modifyTimeStart"
-              type="datetime"
-              placeholder="开始时间"
-              value-format="yyyy-MM-dd hh:mm:ss"
-              default-time="00:00:00">
-          </el-date-picker>
-          到
-          <el-date-picker
-              v-model="req.modifyTimeEnd"
-              type="datetime"
-              placeholder="结束时间"
-              value-format="yyyy-MM-dd hh:mm:ss"
-              default-time="00:00:00">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="req2=clone(req);req.pageNo=1;getNoduleByInfo(req)">查询</el-button>
-          <el-button type="danger" @click="reset">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
-    <el-row>
-      <el-col>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small">
+          <el-form-item label="小结编号:">
+            <el-input v-model="req.summaryId" placeholder="小结编号（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="小结标题:">
+            <el-input v-model="req.summaryName" placeholder="小结标题（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="操作人:">
+            <el-input v-model="req.modify_name" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="操作时间：">
+            <el-date-picker
+                v-model="req.modifyTimeStart"
+                type="datetime"
+                placeholder="开始时间"
+                value-format="yyyy-MM-dd hh:mm:ss"
+                default-time="00:00:00">
+            </el-date-picker>
+            到
+            <el-date-picker
+                v-model="req.modifyTimeEnd"
+                type="datetime"
+                placeholder="结束时间"
+                value-format="yyyy-MM-dd hh:mm:ss"
+                default-time="00:00:00">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="req2=clone(req);req.pageNo=1;getNoduleByInfo(req)">查询</el-button>
+            <el-button @click="reset">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">小结管理表</div>
+      </el-row>
+      <el-row>
         <el-table
           :data="tableData"
-          border
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
@@ -100,14 +104,12 @@
           </template>
           </el-table-column>
         </el-table>
-      </el-col>
-    </el-row>
-    <el-row style="margin-top:5px;">
+      </el-row>
+      <el-row style="margin-top:20px;">
         <!-- <el-button type="success" size="small" @click="addVisible=true;clearForm(addSummary,'addSummary');setTree=[];">新建</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button> -->
         <el-pagination
           v-if="pageShow"
-          background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page='pageInfo.pageNo'
@@ -116,29 +118,29 @@
           layout="total, sizes, prev, pager, next, jumper "
           :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
-    </el-row>
+      </el-row>
+    </el-row>  
     <el-dialog
       align:left
       width="30%"
       title="小结标题修改"
       :visible.sync="editTitleVisible"
       append-to-body>
-      <el-form label-width="100px" :model="summaryTitleDetail" ref="editNoduleTitle" :rules="rule">
+      <el-form size="small" label-width="100px" :model="summaryTitleDetail" ref="editNoduleTitle" :rules="rule">
         <el-form-item label="小结标题" prop="summaryName">
           <el-input v-model="summaryTitleDetail.summaryName" size="small" maxlength="50" placeholder="小结标题（限长50字符）"></el-input>
         </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="summaryTitleDetail.description" type="textarea" size="small" maxlength="255"  placeholder="备注（限长255字符）"></el-input>
         </el-form-item>
-       
       </el-form>
       <div slot="footer" style="text-align: right;">
         <!-- <el-button size="small" type="danger" @click="findNoduleByNoduleId(delReq)">重 置</el-button> -->
-        <el-button size="small" @click="editTitleVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="submitForm('editNoduleTitle');editNoduleTitle(summaryTitleDetail)">确 定</el-button>
+        <el-button size="small" type="primary" plain @click="editTitleVisible = false">取消</el-button>
+        <el-button size="small" type="primary" @click="submitForm('editNoduleTitle');editNoduleTitle(summaryTitleDetail)">确定</el-button>
       </div>
     </el-dialog>
-      <el-dialog
+    <el-dialog
       align:left
       width="30%"
       title="小结内容修改"
@@ -163,7 +165,7 @@
         </div>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button size="small" @click="editItemVisible=false">关 闭</el-button>
+        <el-button size="small" type="primary" plain @click="editItemVisible=false">关闭</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -196,7 +198,7 @@
         </div>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button size="small" @click="detailVisible = false">返 回</el-button>
+        <el-button type="primary" plain size="small" @click="detailVisible = false">返回</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -229,34 +231,36 @@
           </div>
         </div>
       </el-form>
-        <div slot="footer" style="text-align: right;">
-          <el-button size="small" type="danger" @click="resetForm('addSummary');setTree=[]">重 置</el-button>
-          <el-button size="small" @click="addVisible = false">取 消</el-button>
-          <el-button size="small" type="primary" @click="submitForm('addSummary');addNodule(addSummary);">确 定</el-button>
-        </div>
-      </el-dialog>
+      <div slot="footer" style="text-align: right;">
+        <el-button size="small" type="danger" @click="resetForm('addSummary');setTree=[]">重 置</el-button>
+        <el-button size="small" @click="addVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="submitForm('addSummary');addNodule(addSummary);">确 定</el-button>
+      </div>
+    </el-dialog>
+
     <el-dialog
       width="30%"
       title="删除"
       :visible.sync="delVisible"
       append-to-body>
-    <span style="font-size:20px;">确定删除此内容？</span>
-    <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button size="small" @click="delVisible = false">取 消</el-button>
-      <el-button size="small" type="primary" @click="delVisible = false;delNoduleByNoduleId(delReq);">确 定</el-button>
-    </div>
-  </el-dialog>
-  <el-dialog
-    width="30%"
-    title="批量删除"
-    :visible.sync="batchDelVisible"
-    append-to-body>
-    <span style="font-size:20px;">确定删除选定内容？</span>
-    <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button size="small" @click="batchDelVisible = false">取 消</el-button>
-      <el-button size="small" type="primary" @click="batchDelVisible = false;delNodulesByNoduleIds(batchDelReq);">确 定</el-button>
-    </div>
-  </el-dialog>
+      <span style="font-size:20px;">确定删除此内容？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button size="small" type="primary" plain @click="delVisible = false">取消</el-button>
+        <el-button size="small" type="primary" @click="delVisible = false;delNoduleByNoduleId(delReq);">确定</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog
+      width="30%"
+      title="批量删除"
+      :visible.sync="batchDelVisible"
+      append-to-body>
+      <span style="font-size:20px;">确定删除选定内容？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button size="small" type="primary" plain  @click="batchDelVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="batchDelVisible = false;delNodulesByNoduleIds(batchDelReq);">确 定</el-button>
+      </div>
+    </el-dialog>
 
   <el-dialog
     width="30%"
@@ -265,8 +269,8 @@
     append-to-body>
     <span style="font-size:20px;">确认设置该小结为可见？</span>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button size="small" @click="setNoduleVisible = false">取 消</el-button>
-      <el-button size="small" type="primary" @click="setNoduleVisible = false;setVisibleStatus(noduleObj);">确 定</el-button>
+      <el-button size="small" type="primary" plain  @click="setNoduleVisible = false">取消</el-button>
+      <el-button size="small" type="primary" @click="setNoduleVisible = false;setVisibleStatus(noduleObj);">确定</el-button>
     </div>
   </el-dialog>
   <el-dialog
@@ -276,8 +280,8 @@
     append-to-body>
     <span style="font-size:20px;">确认设置该小结为不可见？</span>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button size="small" @click="setNoduleInvisible = false">取 消</el-button>
-      <el-button size="small" type="primary" @click="setNoduleInvisible = false;setVisibleStatus(noduleObj);">确 定</el-button>
+      <el-button size="small" type="primary" plain  @click="setNoduleInvisible = false">取消</el-button>
+      <el-button size="small" type="primary" @click="setNoduleInvisible = false;setVisibleStatus(noduleObj);">确定</el-button>
     </div>
   </el-dialog>
   </div>
@@ -303,6 +307,9 @@ export default {
   name: 'nodule_list',
   data() {
     return {
+      visibleClass: '',
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       rule: {
         summaryName: [
           { required: true, message: '请输入小结标题', trigger: 'blur' }
@@ -382,10 +389,19 @@ export default {
     }
   },
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     this.getNoduleByInfo(this.req)
     this.initExpand()
   },
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     // 设置小结状态可见/不可见
     setVisibleStatus(obj) {
       // isDelete  0:可见  1:删除 2:不可见
@@ -874,9 +890,6 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
-.el-table thead {
-  color: #000 !important;
-}
 // tree样式
 .expand{
   width:100%;
@@ -936,13 +949,4 @@ div.expand .expand-tree .el-tree-node__content:hover .tree-btn{
 </style>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-.el-table {
-  border: 1px solid #ecebe9;
-  thead th .cell {
-    color: #000;
-  }
-}
-.el-form-item {
-  margin-bottom: 20px;
-}
 </style>

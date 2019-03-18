@@ -1,86 +1,89 @@
 <template>
-
   <div class='container' v-if="isMainPage===true">
-    <el-row>
-      <el-form :inline="true" size="small">
-         <el-form-item label="客户编号：">
-          <el-input placeholder="客户编号（限长20字符）" v-model="req.customerId" maxlength="20"></el-input>
-        </el-form-item>
-        <el-form-item label="活动名称：" prop="campaignId">
-          <el-select placeholder="请选择活动"  @change="selectOneCampaign(campaignId)" v-model="campaignId">
-            <el-option label="所有情况" value=""></el-option>
-            <el-option
-            v-for="item in campaigns"
-            :label="item.campaignName"
-            :value="item.campaignId">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <!-- 下属是部门 -->
-        <el-form-item label="操作人：" prop="angentId" v-if="isManager">
-          <el-select placeholder=""  v-model="req.agentid">
-            <el-option label="本部门人员" value=""></el-option>
-            <el-option
-            v-for="item in staffs"
-            :label="item.staffName"
-            :value="item.angentId">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="客户姓名：">
-          <el-input placeholder="客户姓名（上限50字符）" v-model="req.customerName" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="主叫：">
-          <el-input placeholder="主叫号码（上限20字符）" maxlength="20" v-model="req.caller"></el-input>
-        </el-form-item>
-        <el-form-item label="被叫：">
-          <el-input placeholder="被叫号码(上限20字符)" maxlength="20" v-model="req.callee"></el-input>
-        </el-form-item>
-        <el-form-item label="联系时间：">
-          <el-date-picker
-              v-model="req.startTime"
-              type="datetime"
-              placeholder="开始时间"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
-          </el-date-picker>
-          到
-          <el-date-picker
-              v-model="req.endTime"
-              type="datetime"
-              placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
-          </el-date-picker>
-        </el-form-item>
-          <el-form-item label="接通状态：">
-            <el-radio-group v-model="req.status"  @change="changeChoice()">
-              <el-radio-button label="-1">所有情况</el-radio-button>
-              <el-radio-button label="1">已接通</el-radio-button>
-              <el-radio-button label="0">未接通</el-radio-button>
-            </el-radio-group>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small">
+          <el-form-item label="客户编号：">
+            <el-input placeholder="客户编号（限长20字符）" v-model="req.customerId" maxlength="20"></el-input>
           </el-form-item>
-          <el-form-item label="接触类型：">
-            <el-select placeholder="接触类型：" v-model="req.contactType">
-              <el-option label="全部" value=""></el-option>
-              <el-option label="微信" value="2"></el-option>
-              <el-option label="电话" value="1"></el-option>
+          <el-form-item label="活动名称：" prop="campaignId">
+            <el-select placeholder="请选择活动"  @change="selectOneCampaign(campaignId)" v-model="campaignId">
+              <el-option label="所有情况" value=""></el-option>
+              <el-option
+              v-for="item in campaigns"
+              :label="item.campaignName"
+              :value="item.campaignId">
+              </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="通话时长：" v-if="showTalkTime">
-            <el-input v-model="req.stime" style="width:80px" @change="checkNo(req.stime)" onkeypress="return event.keyCode>=48&&event.keyCode<=57" :maxlength="3"></el-input>
-            至
-            <el-input v-model="req.etime" style="width:80px" @change="checkNo(req.stime)" onkeypress="return event.keyCode>=48&&event.keyCode<=57" :maxlength="3"></el-input>分钟
+          <!-- 下属是部门 -->
+          <el-form-item label="操作人：" prop="angentId" v-if="isManager">
+            <el-select placeholder=""  v-model="req.agentid">
+              <el-option label="本部门人员" value=""></el-option>
+              <el-option
+              v-for="item in staffs"
+              :label="item.staffName"
+              :value="item.angentId">
+              </el-option>
+            </el-select>
           </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req);">查询</el-button>
-          <el-button type="danger" @click="campaignId='';resetReq();">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
-
-    <el-row>
-      <el-col>
+          <el-form-item label="客户姓名：">
+            <el-input placeholder="客户姓名（上限50字符）" v-model="req.customerName" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="主叫：">
+            <el-input placeholder="主叫号码（上限20字符）" maxlength="20" v-model="req.caller"></el-input>
+          </el-form-item>
+          <el-form-item label="被叫：">
+            <el-input placeholder="被叫号码(上限20字符)" maxlength="20" v-model="req.callee"></el-input>
+          </el-form-item>
+          <el-form-item label="联系时间：">
+            <el-date-picker
+                v-model="req.startTime"
+                type="datetime"
+                placeholder="开始时间"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                default-time="00:00:00">
+            </el-date-picker>
+            到
+            <el-date-picker
+                v-model="req.endTime"
+                type="datetime"
+                placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                default-time="00:00:00">
+            </el-date-picker>
+          </el-form-item>
+            <el-form-item label="接通状态：">
+              <el-radio-group v-model="req.status"  @change="changeChoice()">
+                <el-radio-button label="-1">所有情况</el-radio-button>
+                <el-radio-button label="1">已接通</el-radio-button>
+                <el-radio-button label="0">未接通</el-radio-button>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="接触类型：">
+              <el-select placeholder="接触类型：" v-model="req.contactType">
+                <el-option label="全部" value=""></el-option>
+                <el-option label="微信" value="2"></el-option>
+                <el-option label="电话" value="1"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="通话时长：" v-if="showTalkTime">
+              <el-input v-model="req.stime" style="width:80px" @change="checkNo(req.stime)" onkeypress="return event.keyCode>=48&&event.keyCode<=57" :maxlength="3"></el-input>
+              至
+              <el-input v-model="req.etime" style="width:80px" @change="checkNo(req.stime)" onkeypress="return event.keyCode>=48&&event.keyCode<=57" :maxlength="3"></el-input>分钟
+            </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req);">查询</el-button>
+            <el-button @click="campaignId='';resetReq();">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">接触历史表</div>
+      </el-row>
+      <el-row>
         <el-table :data="tableData">
             <el-table-column align="center" label="客户编号" width="135">
             <template slot-scope="scope">
@@ -134,7 +137,9 @@
           </el-table-column>
           <el-table-column align="center" label="状态">
             <template slot-scope="scope">
-              <div v-html="showStatus(scope.row.status)"></div>
+              <div :class="scope.row.status==='1'?'visible':'invisible'">
+                <span>{{scope.row.status==='1'?'接通':'未接通'}}</span>
+              </div>
             </template>
           </el-table-column>
           <el-table-column align="center" label="通话时长">
@@ -154,21 +159,21 @@
             </template>
           </el-table-column>
         </el-table>
-      </el-col>
-    </el-row>
-    <el-row style="margin-top:5px;">
+      </el-row>
+      <el-row style="margin-top:20px;">
         <el-pagination
           v-if="pageShow"
-          background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page=pageInfo.pageNo
+          :current-page="pageInfo.pageNo"
           :page-sizes="[10, 20, 30, 40, 50]"
-          :page-size=pageInfo.pageSize
+          :page-size="pageInfo.pageSize"
           layout="total, sizes, prev, pager, next, jumper "
-          :total=pageInfo.totalCount style="text-align: right;float:right;">
+          :total="pageInfo.totalCount" style="text-align: right;float:right;">
         </el-pagination>
+      </el-row>
     </el-row>
+   
   </div>
   <!-- 详情 -->
   <div class="container record-dail" v-else>
@@ -630,6 +635,9 @@ audio {
 
     data() {
       return {
+        visibleClass: '',
+        formContainerOpen: '1',
+        formContainer: this.$store.state.app.formContainer,
         emojidata: emojidata,
         reg_emojis: reg_emoji,
         keys: [],
@@ -709,6 +717,8 @@ audio {
       vueEmoji
     },
     mounted() {
+      this.formContainer()
+      this.handleChangeAcitve()
       new Promise((resolve, reject) => {
         getStaffByDepartId(localStorage.getItem('departId')).then(response => {
           const lists = response.data.dataAll
@@ -758,6 +768,13 @@ audio {
       this.req.pageNo = 1
     },
     methods: {
+      handleChangeAcitve(active = ['1']) {
+        if (active.length) {
+          $('.form-more').text('收起')
+        } else {
+          $('.form-more').text('更多')
+        }
+      },
       hideEmoji(e) {
         var emoji_div = document.getElementById('emoji_div')
         if (emoji_div) {
@@ -883,6 +900,7 @@ audio {
             const isBlacklist = response.data.data.isBlacklist
             sessionStorage.setItem('isDialTask', false)
             this.$router.push({
+              path: 'dial_task',
               name: 'dial_task',
               query: {// 通过query 传递参数
                 taskId: taskId, campaignId: campaignId, customerId: customerId, isBlacklist: isBlacklist, customerPhone: customerPhone
@@ -907,14 +925,6 @@ audio {
           this.isStaff = false
         })
         return true
-      },
-      // 显示状态
-      showStatus(status) {
-        if (status === '1') {
-          return '<span style=\'color:#409EFF\'>接通</span>'
-        } else {
-          return '<span style=\'color:#f56c6c\'>未接通</span>'
-        }
       },
       // 显示小结信息
       showSummarys(nodules) {

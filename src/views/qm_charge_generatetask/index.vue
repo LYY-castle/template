@@ -1,55 +1,63 @@
  <template>
   <div class="container">
-    <el-row>
-      <el-form :inline="true" size="small">
-        <el-form-item label="任务编号:">
-          <el-input v-model="req.taskId" placeholder="任务编号（限长45字符）" maxlength="45"></el-input>
-        </el-form-item>
-        <el-form-item label="任务名称:">
-          <el-input v-model="req.taskName" placeholder="任务名称（限长45字符）" maxlength="45"></el-input>
-        </el-form-item>
-        <el-form-item label="活动名称:">
-          <el-select v-model="req.activityId" placeholder="活动名称" style="width: 100%;">
-            <el-option value='' label="所有活动"></el-option>
-            <el-option
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small">
+          <el-form-item label="任务编号:">
+            <el-input v-model="req.taskId" placeholder="任务编号（限长45字符）" maxlength="45"></el-input>
+          </el-form-item>
+          <el-form-item label="任务名称:">
+            <el-input v-model="req.taskName" placeholder="任务名称（限长45字符）" maxlength="45"></el-input>
+          </el-form-item>
+          <el-form-item label="活动名称:">
+            <el-select v-model="req.activityId" placeholder="活动名称" style="width: 100%;">
+              <el-option value='' label="所有活动"></el-option>
+              <el-option
                 v-for="item in campsData"
                 :key="item.campaignId"
                 :label="item.campaignName"
                 :value="item.campaignId">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="操作人:">
-          <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="操作时间：">
-          <el-date-picker
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="操作人:">
+            <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="操作时间：">
+            <el-date-picker
               v-model="req.startTime"
               type="datetime"
               placeholder="开始时间"
               value-format="yyyy-MM-dd HH:mm:ss"
               default-time="00:00:00">
-          </el-date-picker>
-          到
-          <el-date-picker
+            </el-date-picker>
+            到
+            <el-date-picker
               v-model="req.stopTime"
               type="datetime"
               placeholder="结束时间"
               value-format="yyyy-MM-dd HH:mm:ss"
               default-time="00:00:00">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;req2=clone(req);searchTask(req)">查询</el-button>
-          <el-button type="danger" @click="reset">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
-    <el-row>
-      <el-col>
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="req.pageNo=1;req2=clone(req);searchTask(req)">查询</el-button>
+            <el-button @click="reset">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">质检任务管理表</div>
+      </el-row>
+      <el-row class="margin-bottom-20">
+        <el-button type="success" size="small" @click="addVisible=true;clearForm(getRecords);getRecords.getAll=1;recodeTable=[];pageShow=false;addTask.taskName=''">新建</el-button>
+        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
+      </el-row>
+      <el-row>
         <el-table
           :data="tableData"
-          border
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
@@ -112,13 +120,9 @@
           </template>
           </el-table-column>
         </el-table>
-      </el-col>
-    </el-row>
-    <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;clearForm(getRecords);getRecords.getAll=1;recodeTable=[];pageShow=false;addTask.taskName=''">新建</el-button>
-        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
+      </el-row>
+      <el-row style="margin-top:20px;">
         <el-pagination
-          background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page='req2.pageNo'
@@ -127,14 +131,16 @@
           layout="total, sizes, prev, pager, next, jumper "
           :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
+      </el-row>
     </el-row>
+    
     <el-dialog
       align:left
       width="30%"
       title="修改质检任务信息"
       :visible.sync="editVisible"
       append-to-body>
-      <el-form label-width="100px" :model="taskDetail" ref="editTask" :rules="rule">
+      <el-form size="small" label-width="100px" :model="taskDetail" ref="editTask" :rules="rule">
         <el-form-item label="任务编号">
           <span>{{taskDetail.taskId}}</span>
         </el-form-item>
@@ -155,8 +161,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button type="danger" @click="getoneByTaskId(delReq)">重 置</el-button>
-        <el-button @click="editVisible = false">取 消</el-button>
+        <el-button @click="getoneByTaskId(delReq)">重 置</el-button>
+        <el-button type="primary" plain @click="editVisible = false">取 消</el-button>
         <el-button type="primary" @click="submitForm('editTask');editTask(editReq)">确 定</el-button>
       </div>
     </el-dialog>
@@ -166,18 +172,17 @@
       :visible.sync="addVisible"
       append-to-body>
       <div slot="title" style="text-align: center;">
-        <el-button @click="addVisible = false;" style="float:left;" icon="el-icon-arrow-left">返 回</el-button>
-        <h3 style="display:inline;">新建</h3>
+        <h3 style="display:inline;">新建质检任务</h3>
       </div>
       <el-row>
         <el-form :inline="true" size="small" :model="getRecords" ref="addTask" :rules="rule">
           <el-form-item label="活动名称:">
             <el-select v-model="getRecords.campaign" placeholder="活动名称" @change="getActivityName" style="width: 100%;">
               <el-option
-                  v-for="item in campsData"
-                  :key="item.campaignId"
-                  :label="item.campaignName"
-                  :value="item.campaignId">
+                v-for="item in campsData"
+                :key="item.campaignId"
+                :label="item.campaignName"
+                :value="item.campaignId">
               </el-option>
             </el-select>
           </el-form-item>
@@ -186,35 +191,36 @@
           </el-form-item>
           <el-form-item label="拨打时间：">
             <el-date-picker
-                v-model="getRecords.startTime"
-                type="datetime"
-                placeholder="开始时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
+              v-model="getRecords.startTime"
+              type="datetime"
+              placeholder="开始时间"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              default-time="00:00:00">
             </el-date-picker>
             到
             <el-date-picker
-                v-model="getRecords.endTime"
-                type="datetime"
-                placeholder="结束时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
+              v-model="getRecords.endTime"
+              type="datetime"
+              placeholder="结束时间"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              default-time="00:00:00">
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="通话时长" prop="resideAddress">
-            <el-input v-model="getRecords.stime" size="small" style="width:15%" type="number"></el-input>
+          <el-form-item class="talktime-form" label="通话时长" prop="resideAddress">
+            <el-input v-model="getRecords.stime" size="small" style="width:65px;" type="number"></el-input>
             到
-            <el-input v-model="getRecords.etime" size="small" style="width:15%" type="number"></el-input>
+            <el-input v-model="getRecords.etime" size="small" style="width:65px;" type="number"></el-input>
             分钟
+          </el-form-item>
+          <el-form-item>
             <el-button type="primary" @click="getRecordsByConditions(getRecords)">查询</el-button>
-            <el-button type="danger" @click="clearForm(getRecords);getRecords.getAll=1;">重置</el-button>
+            <el-button @click="clearForm(getRecords);getRecords.getAll=1;">重置</el-button>
           </el-form-item>
         </el-form>
       </el-row>
       <el-row>
         <el-table
-          :data="recodeTable"
-          border>
+          :data="recodeTable">
           <el-table-column
             align="center"
             prop="recordId"
@@ -274,7 +280,6 @@
       <div slot="footer" style="text-align: right;">
         <el-pagination
           v-if="pageShow"
-          background
           :current-page='recodePage.pageNo'
           :page-sizes="[10, 20, 30, 40, 50]"
           :page-size='recodePage.pageSize'
@@ -283,11 +288,11 @@
         </el-pagination>
         <el-form :inline="true" size="small"  :model="addTask" ref="addTask" :rules="rule">
           <el-form-item prop="taskName">
-            <el-input v-model="addTask.taskName" size="small" placeholder="质检任务名称（限长45字符）" maxlength="45"></el-input>
+            <el-input v-model="addTask.taskName" size="small" placeholder="质检任务名称" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="success" @click="submitForm('addTask');addTasks(addTask);">确 定</el-button>
-            <el-button type="danger" @click="addVisible = false;">取 消</el-button>
+            <el-button type="primary" @click="submitForm('addTask');addTasks(addTask);">确定</el-button>
+            <el-button plain type="primary" @click="addVisible = false;">取消</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -297,34 +302,34 @@
       title="删除"
       :visible.sync="delVisible"
       append-to-body>
-    <span style="font-size:20px;">确定删除此内容？</span>
-    <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button @click="delVisible = false">取 消</el-button>
-      <el-button type="primary" @click="delVisible = false;delTask(delReq);">确 定</el-button>
-    </div>
-  </el-dialog>
+      <span style="font-size:20px;">确定删除此内容？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button type="primary" plain @click="delVisible = false">取消</el-button>
+        <el-button type="primary" @click="delVisible = false;delTask(delReq);">确定</el-button>
+      </div>
+    </el-dialog>
     <el-dialog
       width="30%"
       title="移除"
       :visible.sync="removeVisible"
       append-to-body>
-    <span style="font-size:20px;">确定移除此任务对应活动？</span>
-    <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button @click="removeVisible = false">取 消</el-button>
-      <el-button type="primary" @click="removeVisible = false;removeCamp(editReq);">确 定</el-button>
-    </div>
-  </el-dialog>
-  <el-dialog
-    width="30%"
-    title="批量删除"
-    :visible.sync="batchDelVisible"
-    append-to-body>
-  <span style="font-size:20px;">确定删除选定内容？</span>
-  <div slot="footer" class="dialog-footer" style="text-align: right;">
-    <el-button @click="batchDelVisible = false">取 消</el-button>
-    <el-button type="primary" @click="batchDelVisible = false;batchDelTask(batchDelReq);">确 定</el-button>
-  </div>
-  </el-dialog>
+      <span style="font-size:20px;">确定移除此任务对应活动？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button type="primary" plain @click="removeVisible = false">取消</el-button>
+        <el-button type="primary" @click="removeVisible = false;removeCamp(editReq);">确定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
+      width="30%"
+      title="批量删除"
+      :visible.sync="batchDelVisible"
+      append-to-body>
+      <span style="font-size:20px;">确定删除选定内容？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
+        <el-button type="primary" @click="batchDelVisible = false;batchDelTask(batchDelReq);">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -344,6 +349,9 @@ export default {
   name: 'qm_charge_generatetask',
   data() {
     return {
+      visibleClass: '',
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       detailVisible: false,
       delVisible: false, // 删除对话框显示隐藏
       editVisible: false, // 修改对话框显示隐藏
@@ -416,10 +424,19 @@ export default {
     }
   },
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     this.searchTask(this.req)
     this.getAllCamps()
   },
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     // 深度克隆
     clone: clone,
     getAllCamps() {
@@ -706,22 +723,9 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
-.el-table thead {
-  color: #000 !important;
-}
-</style>
-
-<style rel="stylesheet/scss" lang="scss" scoped>
-.el-table {
-  border: 1px solid #ecebe9;
-  thead th .cell {
-    color: #000;
+  .talktime-form{
+    .el-form-item__content{
+      width:200px;
+    }
   }
-}
-.el-form-item {
-  margin-bottom: 20px;
-}
-// el-dialog .el-form-item{
-//   margin-bottom:50px;
-// }
 </style>

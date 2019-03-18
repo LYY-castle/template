@@ -1,134 +1,138 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-row>
-        <el-form :inline="true" class="demo-form-inline" size="small">
-<!--  
-          <el-form-item label="所属组织：" >
-            <el-select v-model="formInline.departId" placeholder="所属组织">
-              <el-option v-for="item in regionOptions" :key="item.id" :label="item.departName" :value="item.id"></el-option>
-            </el-select>
-          </el-form-item> -->
-          <el-form-item label="所属组织：" >
-            <el-cascader
-              placeholder="请选择组织"
-              v-model="formInline.departId"
-              :clearable=true
-              :options="regionOptions"
-              change-on-select>
-            </el-cascader>
-          </el-form-item>
-          <el-form-item label="入司时间：">
-            <el-date-picker
-              v-model="timeValue1"
-              type="daterange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd">
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item label="出生日期：">
-            <el-date-picker
-              v-model="timeValue2"
-              type="daterange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd">
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item label="操作时间：">
-            <el-date-picker
-              v-model="timeValue"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss">
-            </el-date-picker>
-          </el-form-item>
-           <el-form-item>
-            <el-button type="primary" @click="formInline.pageNo = 1;searchStaff(formInline)">查询</el-button>
-            <el-button type="danger" @click="reset">重置</el-button>
-          </el-form-item>
-        </el-form>
-        <el-table
-        :header-row-style="headerRow"
-        :data="tableData"
-        ref="multipleTable"
-        tooltip-effect="dark"
-        border
-        @selection-change="handleSelectionChange">
-        <el-table-column
-          align="center"
-          type="selection"
-          width="55">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="angentId"
-          label="员工工号"
-          :show-overflow-tooltip="true">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="staffName"
-          label="员工姓名"
-          :show-overflow-tooltip="true">
-          <template slot-scope="scope">
-          {{scope.row.staffName}}
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="staffSex"
-          label="性别"
-          width="55">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="departName"
-          label="所属组织"
-          :show-overflow-tooltip="true">
-          <template slot-scope="scope">
-            {{ scope.row.departName }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="userPhone"
-          label="联系方式"
-          :show-overflow-tooltip="true">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="birthday"
-          label="出生日期"
-          :show-overflow-tooltip="true">
-          <template slot-scope="scope">
-            {{ scope.row.birthday }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="hiredate"
-          label="入司日期"
-          width="155">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="hiredTime"
-          label="司龄（天）"
-          width="155">
-        </el-table-column>
+      <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+        <el-collapse-item title="筛选条件" name="1">
+          <el-form :inline="true" class="demo-form-inline" size="small">
+            <!-- <el-form-item label="所属组织：" >
+              <el-select v-model="formInline.departId" placeholder="所属组织">
+                <el-option v-for="item in regionOptions" :key="item.id" :label="item.departName" :value="item.id"></el-option>
+              </el-select>
+            </el-form-item> -->
+            <el-form-item label="所属组织：" >
+              <el-cascader
+                placeholder="请选择组织"
+                v-model="formInline.departId"
+                :clearable=true
+                :options="regionOptions"
+                change-on-select>
+              </el-cascader>
+            </el-form-item>
+            <el-form-item label="入司时间：">
+              <el-date-picker
+                v-model="timeValue1"
+                type="daterange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd">
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item label="出生日期：">
+              <el-date-picker
+                v-model="timeValue2"
+                type="daterange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd">
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item label="操作时间：">
+              <el-date-picker
+                v-model="timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="formInline.pageNo = 1;searchStaff(formInline)">查询</el-button>
+              <el-button @click="reset">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-collapse-item>
+      </el-collapse>
+      <el-row class="table-container">
+        <el-row class="margin-bottom-20">
+          <div class="font14 bold">人员结构报表</div>
+        </el-row>
+        <el-row>
+          <el-table
+            :header-row-style="headerRow"
+            :data="tableData"
+            ref="multipleTable"
+            tooltip-effect="dark"
+            @selection-change="handleSelectionChange">
+            <el-table-column
+              align="center"
+              type="selection"
+              width="55">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="angentId"
+              label="员工工号"
+              :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="staffName"
+              label="员工姓名"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+              {{scope.row.staffName}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="staffSex"
+              label="性别"
+              width="55">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="departName"
+              label="所属组织"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{ scope.row.departName }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="userPhone"
+              label="联系方式"
+              :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="birthday"
+              label="出生日期"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{ scope.row.birthday }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="hiredate"
+              label="入司日期"
+              width="155">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="hiredTime"
+              label="司龄（天）"
+              width="155">
+            </el-table-column>
 
-      </el-table>
-      </el-row>
-      <el-row style="margin-top:1%;">
-        <el-col :span="24">
+          </el-table>
+        </el-row>
+        <el-row style="margin-top:20px;">
           <el-pagination
-            background
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page.sync="pagination.pageNo"
@@ -137,8 +141,9 @@
             layout="total, sizes, prev, pager, next, jumper "
             :total="pagination.totalCount" style="text-align: right">
           </el-pagination>
-        </el-col>
+        </el-row>
       </el-row>
+      
     </div>
   </div>
 </template>
@@ -152,6 +157,8 @@ export default {
     name: 'staff_structure',
     data() {
       return {
+        formContainerOpen: '1',
+        formContainer: this.$store.state.app.formContainer,
         staffData: {},
         tempRoute: {},
         timeValue: [], // 操作时间
@@ -183,7 +190,13 @@ export default {
       }
     },
     methods: {
-
+      handleChangeAcitve(active = ['1']) {
+        if (active.length) {
+          $('.form-more').text('收起')
+        } else {
+          $('.form-more').text('更多')
+        }
+      },
       searchStaff(data) {
         // 根据老版本的逻辑 查询只能传分页页码的第一页
         const req = {}
@@ -308,6 +321,8 @@ export default {
       })
     },
     mounted() {
+      this.formContainer()
+      this.handleChangeAcitve()
       this.searchStaff(this.formInline)
     }
   

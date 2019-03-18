@@ -1,72 +1,73 @@
 <template>
   <div class="container">
-    <el-row margin-top:>
-      <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item prop="contactTaskId" v-if="n==2||n==3" label="坐席编号:">
-          <el-input v-model="req.contactTaskId" placeholder="坐席任务编号（限50字符）" maxlength="50" v-if="n==2||n==3"></el-input>
-        </el-form-item>
-        <el-form-item prop="qualityTaskId" v-if="n==1||n==4" label="质检任务编号:">
-          <el-input v-model="req.qualityTaskId" placeholder="质检任务编号（限50字符）" maxlength="50" v-if="n==1||n==4"></el-input>
-        </el-form-item>
-        <el-form-item v-if="n==1||n==4" prop="activityId" label="质检活动:">
-          <el-select v-model="req.activityId" placeholder="质检活动">
-            <el-option
-                v-for="item in campData"
-                :key="item.activityId"
-                :label="item.activityName"
-                :value="item.activityId">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item prop="gradeId" label="质检评分表:">
-          <el-select v-model="req.gradeId" placeholder="质检评分表">
-            <el-option
-                v-for="item in gradeForm"
-                :key="item.gradeId"
-                :label="item.gradeName"
-                :value="item.gradeId">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item prop="agentid" v-if="n==1||n==4" label="坐席工号:">
-          <el-input v-model="req.agentid" placeholder="坐席工号（限50字符）" maxlength="50" v-if="n==1||n==4"></el-input>
-        </el-form-item>
-        <el-form-item prop="qcAgentid" v-if="n==2||n==3" label="质检员工:">
-          <el-input v-model="req.qcAgentid" placeholder="质检员工号（限50字符）" maxlength="50" v-if="n==2||n==3"></el-input>
-        </el-form-item>
-        <el-form-item label="质检结束时间:" prop="timeValue">
-          <el-date-picker
-              v-model="timeValue"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss">
-          </el-date-picker>
-        </el-form-item>
-        <!-- <br> -->
-        <el-form-item label="质检评分分数" prop="min" class="min">
-          <!-- <el-col :span="1"> -->
-            <el-input v-model="req.min" size="small" v-on:blur="checkMin()"></el-input>
-          <!-- </el-col>  -->
-        </el-form-item>
-        <b style="display:inline-block;padding-top:8px;font-size:14px;color: #606266;">到</b>
-        <el-form-item prop="max" class="max">
-          <!-- <el-col :span="1"> -->
-            <el-input v-model="req.max" size="small" v-on:blur="checkMax()"></el-input>
-          <!-- </el-col> -->
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;findQualityResultByInfo(req);req2=clone(req);">查询</el-button>
-          <el-button type="danger" @click="resetForm('searchForm');">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
-    <el-row v-if="n==1||n==4">
-      <el-col>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small" :model="req" ref="searchForm">
+          <el-form-item prop="contactTaskId" v-if="n==2||n==3" label="坐席编号:">
+            <el-input v-model="req.contactTaskId" placeholder="坐席任务编号（限50字符）" maxlength="50" v-if="n==2||n==3"></el-input>
+          </el-form-item>
+          <el-form-item prop="qualityTaskId" v-if="n==1||n==4" label="质检任务编号:">
+            <el-input v-model="req.qualityTaskId" placeholder="质检任务编号（限50字符）" maxlength="50" v-if="n==1||n==4"></el-input>
+          </el-form-item>
+          <el-form-item v-if="n==1||n==4" prop="activityId" label="质检活动:">
+            <el-select v-model="req.activityId" placeholder="质检活动">
+              <el-option
+                  v-for="item in campData"
+                  :key="item.activityId"
+                  :label="item.activityName"
+                  :value="item.activityId">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item prop="gradeId" label="质检评分表:">
+            <el-select v-model="req.gradeId" placeholder="质检评分表">
+              <el-option
+                  v-for="item in gradeForm"
+                  :key="item.gradeId"
+                  :label="item.gradeName"
+                  :value="item.gradeId">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item prop="agentid" v-if="n==1||n==4" label="坐席工号:">
+            <el-input v-model="req.agentid" placeholder="坐席工号（限50字符）" maxlength="50" v-if="n==1||n==4"></el-input>
+          </el-form-item>
+          <el-form-item prop="qcAgentid" v-if="n==2||n==3" label="质检员工:">
+            <el-input v-model="req.qcAgentid" placeholder="质检员工号（限50字符）" maxlength="50" v-if="n==2||n==3"></el-input>
+          </el-form-item>
+          <el-form-item label="质检结束时间:" prop="timeValue">
+            <el-date-picker
+                v-model="timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
+            </el-date-picker>
+          </el-form-item>
+          <!-- <br> -->
+          <el-form-item label="质检评分分数" prop="min" class="min">
+            <!-- <el-col :span="1"> -->
+              <el-input v-model="req.min" size="small" v-on:blur="checkMin()"></el-input>
+            <!-- </el-col>  -->
+          </el-form-item>
+          <b style="display:inline-block;padding-top:8px;font-size:14px;color: #606266;">到</b>
+          <el-form-item prop="max" class="max">
+            <!-- <el-col :span="1"> -->
+              <el-input v-model="req.max" size="small" v-on:blur="checkMax()"></el-input>
+            <!-- </el-col> -->
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="req.pageNo=1;findQualityResultByInfo(req);req2=clone(req);">查询</el-button>
+            <el-button @click="resetForm('searchForm');">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row v-if="n==1||n==4" class="table-container">
+      <el-row>
         <el-table
-          :data="tableData"
-          border>
+          :data="tableData">
           <el-table-column
             align="center"
             label="质检评分编号"
@@ -161,17 +162,28 @@
             :show-overflow-tooltip="true"
             label="备注">
             <template slot-scope="scope">
-             {{scope.row.complete==0?'未完成':(scope.row.complete==1?'已完成':'')}}
+              {{scope.row.complete==0?'未完成':(scope.row.complete==1?'已完成':'')}}
             </template>
           </el-table-column>
         </el-table>
-      </el-col>
+      </el-row>
+      <el-row style="margin-top:20px;">
+        <el-pagination
+          v-if="pageShow"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pageInfo.pageNo"
+          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-size="pageInfo.pageSize"
+          layout="total, sizes, prev, pager, next, jumper "
+          :total="pageInfo.totalCount" style="text-align: right;float:right;">
+        </el-pagination>
+      </el-row>
     </el-row>
-    <el-row v-if="n==2||n==3">
-      <el-col>
+    <el-row v-if="n==2||n==3" class="table-container">
+      <el-row>
         <el-table
-          :data="tableData"
-          border>
+          :data="tableData">
           <el-table-column
             align="center"
             label="质检评分编号"
@@ -260,21 +272,21 @@
             </template>
           </el-table-column>
         </el-table>
-      </el-col>
+      </el-row>
+      <el-row style="margin-top:20px;">
+        <el-pagination
+          v-if="pageShow"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pageInfo.pageNo"
+          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-size="pageInfo.pageSize"
+          layout="total, sizes, prev, pager, next, jumper "
+          :total="pageInfo.totalCount" style="text-align: right;float:right;">
+        </el-pagination>
+      </el-row>
     </el-row>
-    <el-row style="margin-top:5px;">
-      <el-pagination
-        v-if="pageShow"
-        background
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page=pageInfo.pageNo
-        :page-sizes="[10, 20, 30, 40, 50]"
-        :page-size=pageInfo.pageSize
-        layout="total, sizes, prev, pager, next, jumper "
-        :total=pageInfo.totalCount style="text-align: right;float:right;">
-      </el-pagination>
-    </el-row>
+    
      <el-dialog :visible.sync="detailVisible" top="5vh" width="90%" @close="cleanInfo()" append-to-body>
       <div slot="title" style="text-align: center;">
         <el-button @click="detailVisible = false;" style="float:left;" icon="el-icon-arrow-left">返 回</el-button>
@@ -292,7 +304,6 @@
           :data="contactRecordData"
           ref="multipleTable"
           tooltip-effect="dark"
-          border
           style="width: 100%;">
           <el-table-column
             width="80"
@@ -493,7 +504,7 @@
         append-to-body>
       <div>{{recodingContent}}</div>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" @click="recodeVisible = false;">返 回</el-button>
+        <el-button type="primary" plain @click="recodeVisible = false;">返回</el-button>
       </div>
     </el-dialog>
   </div>
@@ -528,6 +539,8 @@ export default {
   name: 'query_quality_mark',
   data() {
     return {
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       orderActiveName: '',
       addScopeUrl: '',
       recodingContent: '',
@@ -586,6 +599,8 @@ export default {
     }
   },
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     this.findQmCampaignByUser()
     this.findAllGradeForm()
     this.findQmCampaign()
@@ -655,6 +670,13 @@ export default {
     }
   },
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     // 验证最小值
     checkMin() {
       var reg = /^(0|(\-?)[1-9][0-9]{0,2})$/
@@ -1144,29 +1166,10 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
-.el-table thead {
-  color: #000 !important;
-}
 .min .el-form-item__content{
   width:70px;
 }
 .max .el-form-item__content{
   width:70px;
 }
-</style>
-
-<style rel="stylesheet/scss" lang="scss" scoped>
-
-.el-table {
-  border: 1px solid #ecebe9;
-  thead th .cell {
-    color: #000;
-  }
-}
-.el-form-item {
-  margin-bottom: 20px;
-}
-// el-dialog .el-form-item{
-//   margin-bottom:50px;
-// }
 </style>

@@ -2,34 +2,42 @@
   <div class='container'>
     <!-- 管理主页div -->
     <div  v-show="isMainPage===true && isDetail === false">
-      <el-row>
-        <el-form :inline="true" size="small">
-          <el-form-item label="问卷模板名称"> 
-            <el-input type="text" v-model="req.name" size="medium" placeholder="问卷模板名称（限长45字符）" maxlength="45"></el-input>
-          </el-form-item>
-          <el-form-item label="操作人">
-            <el-input type="text" v-model="req.modifier" size="medium" placeholder="操作人（限长45字符）" maxlength="45"></el-input>
-          </el-form-item>
-          <el-form-item label="操作时间">
-            <el-date-picker
-                v-model="timeValue"
-                type="datetimerange"
-                range-separator="-"
-                start-placeholder="开始时间"
-                end-placeholder="结束时间"
-                value-format="yyyy-MM-dd HH:mm:ss">
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary"  @click="req.pageNo=1;req.accurate='0';searchByKeyWords(req)">查询</el-button>
-            <el-button type="danger"  @click="resetQueryCondition()">重置</el-button>
-          </el-form-item>
-        </el-form>
-      </el-row>
-
-      <el-row>
-        <el-col>
-          <el-table :data="tableData" border @selection-change="handleSelectionChange">
+      <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+        <el-collapse-item title="筛选条件" name="1">
+          <el-form :inline="true" size="small">
+            <el-form-item label="问卷模板名称"> 
+              <el-input type="text" v-model="req.name" placeholder="问卷模板名称（限长45字符）" maxlength="45"></el-input>
+            </el-form-item>
+            <el-form-item label="操作人">
+              <el-input type="text" v-model="req.modifier" placeholder="操作人（限长45字符）" maxlength="45"></el-input>
+            </el-form-item>
+            <el-form-item label="操作时间">
+              <el-date-picker
+                  v-model="timeValue"
+                  type="datetimerange"
+                  range-separator="-"
+                  start-placeholder="开始时间"
+                  end-placeholder="结束时间"
+                  value-format="yyyy-MM-dd HH:mm:ss">
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="req.pageNo=1;req.accurate='0';searchByKeyWords(req)">查询</el-button>
+              <el-button @click="resetQueryCondition()">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-collapse-item>
+      </el-collapse>
+      <el-row class="table-container">
+        <el-row class="margin-bottom-20">
+          <div class="font14 bold">问卷表</div>
+        </el-row>
+        <el-row class="margin-bottom-20">
+          <el-button type="success" size="small" @click="questionnaireName='';questionnaireTitleVisiable=true">新建</el-button>
+          <el-button type="danger" size="small" @click="isSelectIds(batchdel.ids)" >批量删除</el-button>
+        </el-row>
+        <el-row>
+          <el-table :data="tableData" @selection-change="handleSelectionChange">
             <el-table-column align="center" type="selection" width="55"></el-table-column>
             <el-table-column align="center" label="问卷模板名称">
               <template slot-scope="scope">
@@ -53,23 +61,19 @@
               </template>
             </el-table-column>
           </el-table>
-        </el-col>
-      </el-row>
-
-      <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="questionnaireName='';questionnaireTitleVisiable=true">新建</el-button>
-        <el-button type="danger" size="small" @click="isSelectIds(batchdel.ids)" >批量删除</el-button>
-        <el-pagination
-            v-if="pageShow"
-            background
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page='pageInfo.pageNo'
-            :page-sizes="[10, 20, 30, 40, 50]"
-            :page-size='req.pageSize'
-            layout="total, sizes, prev, pager, next, jumper "
-            :total='pageInfo.totalCount' style="text-align: right;float:right;">
-        </el-pagination>
+        </el-row>
+        <el-row style="margin-top:20px;">
+          <el-pagination
+              v-if="pageShow"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page='pageInfo.pageNo'
+              :page-sizes="[10, 20, 30, 40, 50]"
+              :page-size='req.pageSize'
+              layout="total, sizes, prev, pager, next, jumper "
+              :total='pageInfo.totalCount' style="text-align: right;float:right;">
+          </el-pagination>
+        </el-row>
       </el-row>
 
       <!-- 新建问卷dialog -->
@@ -78,7 +82,7 @@
         <el-input type="text" placeholder="请输入问卷模板标题（限长45字符）" size="medium" v-model="questionnaireName" maxlength="45"></el-input>
         <div slot="footer" class="dialog-footer" style="text-align: center;">
           <el-button type="primary" @click="checkTitleIsNullOrNot();questionnaireTitleVisiable = false">确定</el-button>
-          <el-button @click="questionnaireTitleVisiable = false">取消</el-button>
+          <el-button type="primary" plain @click="questionnaireTitleVisiable = false">取消</el-button>
         </div>
       </el-dialog>
 
@@ -87,7 +91,7 @@
         <span style="font-size:15px;">确定删除此问卷模板？</span>
         <div slot="footer" class="dialog-footer" style="text-align: right;">
           <el-button type="primary" @click="deleteVisiable = false;deleteQuestionnaire(deleteReq.id);">确定</el-button>
-          <el-button @click="deleteVisiable = false">取消</el-button>
+          <el-button type="primary" plain @click="deleteVisiable = false">取消</el-button>
         </div>
       </el-dialog>
 
@@ -96,7 +100,7 @@
         <span style="font-size:15px;">确定删除这些问卷模板？</span>
         <div slot="footer" class="dialog-footer" style="text-align: right;">
           <el-button type="primary" @click="batchdeleteVisiable = false;batchdeleteQuestionnaire(batchdel.ids);">确定</el-button>
-          <el-button @click="batchdeleteVisiable = false">取消</el-button>
+          <el-button type="primary" plain @click="batchdeleteVisiable = false">取消</el-button>
         </div>
       </el-dialog>
 
@@ -135,9 +139,9 @@
 
                 <div class="quest-box">
                   <!--  单选  -->
-                    <el-form>
+                    <el-form size="small">
                       <h5 v-if="this.singelItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;单选:</h5><br/>
-                        <div style="margin-top:-25px">
+                        <div style="margin-top:-8px">
                           <el-form-item v-for="(item,index) in singelItems">
                             <div class="topic-type-content">
                                 <span>{{index+1}}.</span>
@@ -167,9 +171,9 @@
                   
 
                   <!--  多选  -->
-                  <el-form>
+                  <el-form size="small">
                     <h5 v-if="this.multiItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多选:</h5><br/>
-                    <div style="margin-top:-25px">
+                    <div style="margin-top:-8px">
                       <el-form-item v-for="(item,index) in multiItems">
                         <div class="topic-type-content">
                           <span>{{index+1}}.</span>
@@ -198,9 +202,9 @@
                   </el-form>
 
                   <!--  单行填空  -->
-                   <el-form>
+                   <el-form size="small">
                     <h5 v-if="this.fillBlanks.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;单行填空:</h5><br/>
-                      <div style="margin-top:-25px">
+                      <div style="margin-top:-8px">
                         <el-form-item v-for="(item,index) in fillBlanks">
                           <div class="topic-type-content">
                             <span>{{index+1}}.</span>
@@ -217,9 +221,9 @@
                   </el-form>
 
                   <!--  多行填空  -->
-                   <el-form>
+                   <el-form size="small">
                     <h5 v-if="this.multiBlanks.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多行填空:</h5><br/>
-                      <div style="margin-top:-25px">
+                      <div style="margin-top:-8px">
                         <el-form-item v-for="(item,index) in multiBlanks">
                           <div class="topic-type-content">
                             <span>{{index+1}}.</span>
@@ -239,7 +243,7 @@
                 <div class="lastbuttons" >
                   <div style="margin-top:8px">
                     <el-button size="small" type="primary" @click="makeQuestionnaire(questionnaireName,singelItems,multiItems,fillBlanks,multiBlanks)">生成</el-button>
-                    <el-button size="small" type="default" @click="isMainPage=true;isDetail=false;questionnaireName='';singelItems=[];multiItems=[];fillBlanks=[];multiBlanks=[]">取消</el-button>
+                    <el-button size="small" type="primary" plain @click="isMainPage=true;isDetail=false;questionnaireName='';singelItems=[];multiItems=[];fillBlanks=[];multiBlanks=[]">取消</el-button>
                   </div>
                 </div>
               </el-header>
@@ -269,29 +273,29 @@
 
                 <div class="quest-box">
                   <!--  单选  -->
-                    <el-form>
-                      <h5 v-if="hasSingle===true">&nbsp;&nbsp;&nbsp;&nbsp;单选:</h5><br/>
-                        <div style="margin-top:-25px">
-                          <el-form-item v-for="(item,index) in oneDetails.titles" v-if="item.type===0">
-                            <div class="topic-type-content">
-                                <span>{{index+1}}.</span>
-                                <!-- <el-input size="small" v-model="item.name" placeholder="标题" style="width:493px;margin:3px" clearable maxlength="45"></el-input> -->
-                                <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
-                                <div v-for="(a,radioIndex) in item.options" class="options">
-                                  <el-radio :label="radioIndex" v-model="selectOption_single[index]">
-                                    {{a.content}}
-                                  </el-radio>
-                                </div>
-                            </div>
-                          </el-form-item>
-                        </div>
-                    </el-form>
+                  <el-form size="small">
+                    <h5 v-if="hasSingle===true">&nbsp;&nbsp;&nbsp;&nbsp;单选:</h5><br/>
+                      <div style="margin-top:-8px">
+                        <el-form-item v-for="(item,index) in oneDetails.titles" v-if="item.type===0">
+                          <div class="topic-type-content">
+                              <span>{{index+1}}.</span>
+                              <!-- <el-input size="small" v-model="item.name" placeholder="标题" style="width:493px;margin:3px" clearable maxlength="45"></el-input> -->
+                              <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
+                              <div v-for="(a,radioIndex) in item.options" class="options">
+                                <el-radio :label="radioIndex" v-model="selectOption_single[index]">
+                                  {{a.content}}
+                                </el-radio>
+                              </div>
+                          </div>
+                        </el-form-item>
+                      </div>
+                  </el-form>
                   
 
                   <!--  多选  -->
-                  <el-form>
+                  <el-form size="small">
                     <h5 v-if="hasMulti===true">&nbsp;&nbsp;&nbsp;&nbsp;多选:</h5><br/>
-                    <div style="margin-top:-25px">
+                    <div style="margin-top:-8px">
                       <el-form-item v-for="(item,index) in oneDetails.titles" v-if="item.type===1">
                         <div class="topic-type-content">
                           <span>{{index+1}}.</span>
@@ -305,9 +309,9 @@
                   </el-form>
 
                   <!--  单行填空  -->
-                   <el-form>
+                   <el-form size="small">
                     <h5 v-if="hasBlanks===true">&nbsp;&nbsp;&nbsp;&nbsp;单行填空:</h5><br/>
-                      <div style="margin-top:-25px">
+                      <div style="margin-top:-8px">
                         <el-form-item v-for="(item,index) in oneDetails.titles" v-if="item.type===2">
                           <div class="topic-type-content">
                             <span>{{index+1}}.</span>
@@ -321,9 +325,9 @@
                   </el-form>
 
                   <!--  多行填空  -->
-                   <el-form>
+                   <el-form size="small">
                     <h5 v-if="hasMultiBlanks===true">&nbsp;&nbsp;&nbsp;&nbsp;多行填空:</h5><br/>
-                      <div style="margin-top:-25px">
+                      <div style="margin-top:-8px">
                         <el-form-item v-for="(item,index) in oneDetails.titles" v-if="item.type===3">
                           <div class="topic-type-content">
                             <span>{{index+1}}.</span>
@@ -339,7 +343,7 @@
                 </div>
                 <div class="lastbuttons" >
                   <div style="margin-top:8px">
-                    <el-button type="primary" size="small" @click="isMainPage=true;isDetail=false;">返回</el-button><br/><br/>
+                    <el-button type="primary" plain size="small" @click="isMainPage=true;isDetail=false;">返回</el-button><br/><br/>
                   </div>
                 </div>
 
@@ -386,41 +390,41 @@
 
                 <div class="quest-box">
                   <!--  单选  -->
-                    <el-form>
-                      <h5 v-if="this.singelItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;单选:</h5><br/>
-                        <div style="margin-top:-25px">
-                          <el-form-item v-for="(item,index) in singelItems">
-                            <div class="topic-type-content">
-                                <span>{{index+1}}.</span>
-                                <el-input size="small" v-model="item.name" placeholder="标题" style="width:493px;margin:3px" clearable maxlength="45"></el-input>
-                                <div v-for="(a,radioIndex) in item.options" class="options">
-                                  <el-radio label="1" name="1"  disabled>
-                                    <span class="showEditOption">
-                                      <el-input size="small" type="text" placeholder='选项' style="width:456px;margin:2px" v-model="a.content" clearable maxlength="45"></el-input>&nbsp;&nbsp;
-                                        <span class="editoptions">
-                                          <el-button icon="el-icon-arrow-up" type="text" size="mini" title="上移" @click="upOption(item.options,radioIndex,item.options.length)"></el-button>
-                                          <el-button icon="el-icon-arrow-down" type="text" size="mini" title="下移" @click="downOption(item.options,radioIndex,item.options.length)"></el-button>
-                                          <el-button icon="el-icon-delete" type="text" size="mini" title="删除" @click="removeRadio(item.options,radioIndex)"></el-button>
-                                        </span>
-                                    </span>
-                                  </el-radio>
-                                </div>
-                                <div class="showaddTool">
-                                  <i class="el-icon-plus" style="cursor:pointer" @click="addRadio(item.options)" title="新建一个单选项"></i>
-                                </div>
-                                <div class="showdeleteTool">
-                                  <i class="el-icon-delete" style="cursor:pointer" @click="removeSingle(index)" title="点击删除该单选题"></i>
-                                </div>
-                            </div>
-                          </el-form-item>
-                        </div>
-                    </el-form>
+                  <el-form size="small">
+                    <h5 v-if="this.singelItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;单选:</h5><br/>
+                      <div style="margin-top:-8px">
+                        <el-form-item v-for="(item,index) in singelItems">
+                          <div class="topic-type-content">
+                              <span>{{index+1}}.</span>
+                              <el-input size="small" v-model="item.name" placeholder="标题" style="width:493px;margin:3px" clearable maxlength="45"></el-input>
+                              <div v-for="(a,radioIndex) in item.options" class="options">
+                                <el-radio label="1" name="1"  disabled>
+                                  <span class="showEditOption">
+                                    <el-input size="small" type="text" placeholder='选项' style="width:456px;margin:2px" v-model="a.content" clearable maxlength="45"></el-input>&nbsp;&nbsp;
+                                      <span class="editoptions">
+                                        <el-button icon="el-icon-arrow-up" type="text" size="mini" title="上移" @click="upOption(item.options,radioIndex,item.options.length)"></el-button>
+                                        <el-button icon="el-icon-arrow-down" type="text" size="mini" title="下移" @click="downOption(item.options,radioIndex,item.options.length)"></el-button>
+                                        <el-button icon="el-icon-delete" type="text" size="mini" title="删除" @click="removeRadio(item.options,radioIndex)"></el-button>
+                                      </span>
+                                  </span>
+                                </el-radio>
+                              </div>
+                              <div class="showaddTool">
+                                <i class="el-icon-plus" style="cursor:pointer" @click="addRadio(item.options)" title="新建一个单选项"></i>
+                              </div>
+                              <div class="showdeleteTool">
+                                <i class="el-icon-delete" style="cursor:pointer" @click="removeSingle(index)" title="点击删除该单选题"></i>
+                              </div>
+                          </div>
+                        </el-form-item>
+                      </div>
+                  </el-form>
                   
 
                   <!--  多选  -->
-                  <el-form>
+                  <el-form size="small">
                     <h5 v-if="this.multiItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多选:</h5><br/>
-                    <div style="margin-top:-25px">
+                    <div style="margin-top:-8px">
                       <el-form-item v-for="(item,index) in multiItems">
                         <div class="topic-type-content">
                           <span>{{index+1}}.</span>
@@ -449,9 +453,9 @@
                   </el-form>
 
                   <!--  单行填空  -->
-                   <el-form>
+                   <el-form size="small">
                     <h5 v-if="this.fillBlanks.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;单行填空:</h5><br/>
-                      <div style="margin-top:-25px">
+                      <div style="margin-top:-8px">
                         <el-form-item v-for="(item,index) in fillBlanks">
                           <div class="topic-type-content">
                             <span>{{index+1}}.</span>
@@ -468,9 +472,9 @@
                   </el-form>
 
                   <!--  多行填空  -->
-                   <el-form>
+                   <el-form size="small">
                     <h5 v-if="this.multiBlanks.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多行填空:</h5><br/>
-                      <div style="margin-top:-25px">
+                      <div style="margin-top:-8px">
                         <el-form-item v-for="(item,index) in multiBlanks">
                           <div class="topic-type-content">
                             <span>{{index+1}}.</span>
@@ -489,8 +493,8 @@
                 </div>
                 <div class="lastbuttons" >
                   <div style="margin-top:8px">
-                    <el-button size="small" type="primary" @click="editQuestionnaire(editQuestionnaireId,questionnaireName1,singelItems,multiItems,fillBlanks,multiBlanks)">修改</el-button>
-                    <el-button size="small" type="default" @click="isMainPage=true;isDetail=false;questionnaireName='';questionnaireName1='';singelItems=[];multiItems=[];fillBlanks=[];multiBlanks=[]">返回</el-button>
+                    <el-button size="small" type="primary" @click="editQuestionnaire(editQuestionnaireId,questionnaireName1,singelItems,multiItems,fillBlanks,multiBlanks)">确定</el-button>
+                    <el-button size="small" type="primary" plain @click="isMainPage=true;isDetail=false;questionnaireName='';questionnaireName1='';singelItems=[];multiItems=[];fillBlanks=[];multiBlanks=[]">返回</el-button>
                   </div>
                 </div>
 
@@ -501,7 +505,7 @@
                   <div slot="footer" class="dialog-footer" style="text-align: center;">
                     <span style="color:red" v-if="hasQuestionnaireName===false">模板名称不能为空</span>
                     <el-button type="primary" @click="editQuestionnaireName=false;questionnaireName=questionnaireName1" v-if="hasQuestionnaireName===true">确定</el-button>
-                    <el-button @click="editQuestionnaireName = false" v-if="hasQuestionnaireName===true">取消</el-button>
+                    <el-button type="primary" plain @click="editQuestionnaireName = false" v-if="hasQuestionnaireName===true">取消</el-button>
                   </div>
                 </el-dialog>
               </el-header>
@@ -649,6 +653,8 @@ export default {
 
   data() {
     return {
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       selectOption_single: [],
       selectOption_multi: [],
       selectOption_blanks: [],
@@ -705,6 +711,13 @@ export default {
   },
 
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     // 上移
     upOption(arr, index, length) {
       if (index !== 0) {
@@ -1186,6 +1199,8 @@ export default {
   },
 
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     this.searchByKeyWords(this.req)
   },
 

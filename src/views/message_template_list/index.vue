@@ -1,41 +1,49 @@
 <template>
   <div class="container">
-      <el-row margin-top:>
-      <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item prop="name" label="模板组名称:">
-          <el-input v-model="req.name" placeholder="模板组名称（限长45字符）" maxlength="45"></el-input>
-        </el-form-item>
-        <el-form-item label="上级模板组:">
-          <el-select v-model="req.upId" placeholder="上级模板组">
-            <el-option label="全部" value=""></el-option>
-            <el-option v-for="item in messageOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item  prop="modifier" label="操作人:">
-          <el-input v-model="req.modifier" placeholder="操作人（限长45字符）" maxlength="45"></el-input>
-        </el-form-item>
-        <el-form-item label="操作时间：">
-             <el-date-picker
-              v-model="timeValue"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss">
-            </el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;paginationReq=cloneData(req);getTemplateList(req);">查询</el-button>
-          <el-button type="danger" @click="reset();">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small" :model="req" ref="searchForm">
+          <el-form-item prop="name" label="模板组名称:">
+            <el-input v-model="req.name" placeholder="模板组名称（限长45字符）" maxlength="45"></el-input>
+          </el-form-item>
+          <el-form-item label="上级模板组:">
+            <el-select v-model="req.upId" placeholder="上级模板组">
+              <el-option label="全部" value=""></el-option>
+              <el-option v-for="item in messageOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item  prop="modifier" label="操作人:">
+            <el-input v-model="req.modifier" placeholder="操作人（限长45字符）" maxlength="45"></el-input>
+          </el-form-item>
+          <el-form-item label="操作时间：">
+              <el-date-picker
+                v-model="timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
+              </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="req.pageNo=1;paginationReq=cloneData(req);getTemplateList(req);">查询</el-button>
+            <el-button @click="reset();">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
     <!-- 表格 -->
-    <el-row>
-      <el-col>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">短信模板组表</div>
+      </el-row>
+      <el-row class="margin-bottom-20">
+        <el-button type="success" size="small" @click="addVisible=true;clearForm(addMessageTemplateDetail,'addMessageForm');">新建</el-button>
+        <!-- <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button> -->
+      </el-row>
+      <el-row>
         <el-table
           :data="tableData"
-          border
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
@@ -87,14 +95,10 @@
           </template>
           </el-table-column>
         </el-table>
-      </el-col>
-    </el-row>
-    <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;clearForm(addMessageTemplateDetail,'addMessageForm');">新建</el-button>
-        <!-- <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button> -->
+      </el-row>
+      <el-row style="margin-top:20px;">
         <el-pagination
           v-if="pageShow"
-          background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page='pageInfo.pageNo'
@@ -103,79 +107,80 @@
           layout="total, sizes, prev, pager, next, jumper "
           :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
+      </el-row>
     </el-row>
     <!-- 新建模板组 -->
-     <el-dialog
+    <el-dialog
       align:left
       width="30%"
       title="新建模板组"
       :visible.sync="addVisible"
       append-to-body>
-      <el-form :rules="rule" :model="addMessageTemplateDetail" ref="addMessageForm" label-width="120px">
+      <el-form size="small" :rules="rule" :model="addMessageTemplateDetail" ref="addMessageForm" label-width="120px">
         <el-form-item label="模板组标题：" prop="name">
-           <el-input v-model="addMessageTemplateDetail.name" size="small" placeholder="模板组标题（限长45字符）" maxlength="45"></el-input>
+          <el-input v-model="addMessageTemplateDetail.name" size="small" placeholder="模板组标题（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="上级模板组：" prop="upId">
-          <el-select v-model="addMessageTemplateDetail.upId" placeholder="上级模板组">
+          <el-select style="width:100%" v-model="addMessageTemplateDetail.upId" placeholder="上级模板组">
             <el-option label="无" value=""></el-option>
             <el-option v-for="item in messageOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
-        <div slot="footer" style="text-align: right;">
-          <el-button type="danger" @click="resetForm('addMessageForm')">重 置</el-button>
-          <el-button @click="addVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitForm('addMessageForm',addMessageTemplateDetail);addTemplateGroup(addMessageTemplateDetail);">确 定</el-button>
-        </div>
-      </el-dialog>
-      <!-- 批量删除 -->
-      <el-dialog
-        width="30%"
-        title="批量删除"
-        :visible.sync="batchDelVisible"
-        append-to-body>
-        <span style="font-size:20px;">确定删除选定内容？</span>
-        <div slot="footer" class="dialog-footer" style="text-align: right;">
-          <el-button @click="batchDelVisible = false">取 消</el-button>
-          <el-button type="primary" @click="batchDelVisible = false;batchdel(batchDelReq);">确 定</el-button>
-        </div>
-      </el-dialog>
-      <!-- 删除 -->
-      <el-dialog
+      <div slot="footer" style="text-align: right;">
+        <el-button @click="resetForm('addMessageForm')">重置</el-button>
+        <el-button type="primary" plain @click="addVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitForm('addMessageForm',addMessageTemplateDetail);addTemplateGroup(addMessageTemplateDetail);">确定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 批量删除 -->
+    <!-- <el-dialog
+      width="30%"
+      title="批量删除"
+      :visible.sync="batchDelVisible"
+      append-to-body>
+      <span style="font-size:20px;">确定删除选定内容？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
+        <el-button type="primary" @click="batchDelVisible = false;batchdel(batchDelReq);">确定</el-button>
+      </div>
+    </el-dialog> -->
+    <!-- 删除 -->
+    <el-dialog
       width="30%"
       title="删除"
       :visible.sync="delVisible"
       append-to-body>
       <span style="font-size:20px;">确定删吗？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="delVisible = false">取 消</el-button>
-        <el-button type="primary" @click="delVisible = false;delTemplateGroup(delReq.id);">确 定</el-button>
+        <el-button type="primary" plain @click="delVisible = false">取消</el-button>
+        <el-button type="primary" @click="delVisible = false;delTemplateGroup(delReq.id);">确定</el-button>
       </div>
     </el-dialog>
-      <!-- 修改模板组 -->
-      <el-dialog
+    <!-- 修改模板组 -->
+    <el-dialog
       align:left
       width="30%"
       title="修改模板组"
       :visible.sync="editVisible"
       append-to-body>
-      <el-form :rules="rule" :model="editTemplateGroupDetail" ref="editTemplateGroupDeForm" label-width="120px">
-       <el-form-item label="模板组标题：" prop="name">
-           <el-input v-model="editTemplateGroupDetail.name" size="small" placeholder="模板组标题（限长45字符）" maxlength="45"></el-input>
+      <el-form size="small" :rules="rule" :model="editTemplateGroupDetail" ref="editTemplateGroupDeForm" label-width="120px">
+        <el-form-item label="模板组标题：" prop="name">
+          <el-input v-model="editTemplateGroupDetail.name" size="small" placeholder="模板组标题（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="上级模板组：" prop="upId">
-          <el-select v-model="editTemplateGroupDetail.upId" placeholder="上级模板组">
+          <el-select style="width:100%" v-model="editTemplateGroupDetail.upId" placeholder="上级模板组">
             <el-option label="无" value=""></el-option>
             <el-option v-for="item in messageOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
-        <div slot="footer" style="text-align: right;">
-          <el-button type="danger" @click="getTemplateListById(delReq.id)">重 置</el-button>
-          <el-button @click="editVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitForm('editTemplateGroupDeForm',editTemplateGroupDetail);editTemplateGroup(editTemplateGroupDetail);">确 定</el-button>
-        </div>
-      </el-dialog>
+      <div slot="footer" style="text-align: right;">
+        <el-button @click="getTemplateListById(delReq.id)">重置</el-button>
+        <el-button type="primary" plain @click="editVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitForm('editTemplateGroupDeForm',editTemplateGroupDetail);editTemplateGroup(editTemplateGroupDetail);">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -192,6 +197,9 @@ export default {
       }
     }
     return {
+      visibleClass: '',
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       delVisible: false, // 删除对话框显示隐藏
       editVisible: false, // 修改对话框显示隐藏
       batchDelVisible: false, // 批量删除对话框显示隐藏
@@ -252,10 +260,18 @@ export default {
   created() {
     this.getAllTemplateGroup(this.req)
   },
-  // mounted() {
-  //   this.getTemplateList(this.req)
-  // },
+  mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
+  },
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     // 重置查询框内容
     reset() {
       this.req = {

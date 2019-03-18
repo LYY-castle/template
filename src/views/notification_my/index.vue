@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-    <div>
-      <el-row>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
         <el-form :inline="true" size="small">
           <el-form-item label="消息状态：">
               <el-select v-model.trim="req.is_read" placeholder="请选择" clearable size="small" >
@@ -38,71 +38,74 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary"  @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
-            <el-button type="danger"  @click="resetQueryCondition()" >重置</el-button>
+            <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
+            <el-button @click="resetQueryCondition()" >重置</el-button>
           </el-form-item>
         </el-form>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">消息通知表</div>
       </el-row>
-
       <el-row>
-        <el-col>
-          <el-table :data="tableData" border>
+        <el-table :data="tableData">
 
-            <el-table-column align="center" label="消息通知标题">
+          <el-table-column align="center" label="消息通知标题">
+            <template slot-scope="scope">
+              <span>{{scope.row.title}}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column align="center" label="级别">
               <template slot-scope="scope">
-                <span>{{scope.row.title}}</span>
+                <div v-html="showEmergencyDegree(scope.row.emergency_degree)"></div>
               </template>
-            </el-table-column>
+          </el-table-column>
 
-            <el-table-column align="center" label="级别">
-                <template slot-scope="scope">
-                  <div v-html="showEmergencyDegree(scope.row.emergency_degree)"></div>
-                </template>
-            </el-table-column>
-
-            <el-table-column align="center" label="消息状态">
-                <template slot-scope="scope">
-                  <div v-html="showStatus(scope.row.is_read)"></div>
-                </template>
-            </el-table-column>
-
-            <el-table-column align="center" label="发布人">
-                <template slot-scope="scope">
-                  <div v-html="showReleaser(scope.row.updated_by_realname)"></div>
-                </template>
-            </el-table-column>
-
-            <el-table-column align="center" label="发布时间">
-                <template slot-scope="scope">
-                  <div v-html="showReleaseTime(scope.row.release_time)"></div>
-                </template>
-            </el-table-column>
-
-            <el-table-column align="center" label="操作">
+          <el-table-column align="center" label="消息状态">
               <template slot-scope="scope">
-                <el-button type="text" icon="el-icon-document" size="medium" @click="queryOne(scope.row.notification_id,scope.row.is_read);showDetailVisiable=true">查看</el-button>
-                <el-button type="text" icon="el-icon-edit" size="medium" @click="markAsRead(scope.row.notification_id)" v-show="scope.row.is_read===0">标为已读</el-button>
+                <div v-html="showStatus(scope.row.is_read)"></div>
               </template>
-            </el-table-column>
-          </el-table>
-        </el-col>
+          </el-table-column>
+
+          <el-table-column align="center" label="发布人">
+              <template slot-scope="scope">
+                <div v-html="showReleaser(scope.row.updated_by_realname)"></div>
+              </template>
+          </el-table-column>
+
+          <el-table-column align="center" label="发布时间">
+              <template slot-scope="scope">
+                <div v-html="showReleaseTime(scope.row.release_time)"></div>
+              </template>
+          </el-table-column>
+
+          <el-table-column align="center" label="操作">
+            <template slot-scope="scope">
+              <el-button type="text" size="small" @click="queryOne(scope.row.notification_id,scope.row.is_read);showDetailVisiable=true">查看</el-button>
+              <el-button type="text" size="small" @click="markAsRead(scope.row.notification_id)" v-show="scope.row.is_read===0">标为已读</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
       </el-row>
-
-      <el-row style="margin-top:5px;">
-        <el-pagination
+      <el-row>
+        <el-row style="margin-top:20px;">
+          <el-pagination
             v-if="pageShow"
-            background
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :current-page=currentPage
+            :current-page="currentPage"
             :page-sizes="[10, 20, 30, 40, 50]"
-            :page-size=pageSize
+            :page-size="pageSize"
             layout="total, sizes, prev, pager, next, jumper"
-            :total=totalCount style="text-align: right;float:right;">
-        </el-pagination>
+            :total="totalCount" style="text-align: right;float:right;">
+          </el-pagination>
+        </el-row>
       </el-row>
+    </el-row>
 
-      <!-- 消息详情dialog -->
+    <!-- 消息详情dialog -->
     <el-dialog
       align:left
       width="40%"
@@ -139,11 +142,10 @@
           </el-form-item>
         </el-form>
         <br/>
-        <div slot="footer" style="text-align: center;">
-          <el-button @click="showDetailVisiable=false;">返回</el-button>
+        <div slot="footer" style="text-align: right;">
+          <el-button type="primary" plain @click="showDetailVisiable=false;">返回</el-button>
         </div>
     </el-dialog>
-    </div>
 
   </div>
 </template>
@@ -170,6 +172,8 @@ export default {
 
   data() {
     return {
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       showDetailVisiable: false, // 查看详情dialog
       timeValue: '',
       req: {
@@ -240,6 +244,13 @@ export default {
   },
 
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     formatDateTime: formatDateTime, // 格式化时间
     // 页面显示条数
     handleSizeChange(val) {
@@ -411,6 +422,8 @@ export default {
   },
 
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     // 默认综合查询
     this.searchByKeyWords(this.req)
     this.$root.eventHub.$on('CHANGE_MYMESSAGELIST', () => {

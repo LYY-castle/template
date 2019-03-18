@@ -1,160 +1,169 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-row>
-        <el-form :inline="true" class="demo-form-inline" size="small">
-          <el-form-item label="组织编号：">
-            <el-input placeholder="组织编号（限长11字符）" v-model="formInline.organ_id" maxlength="11"></el-input>
-          </el-form-item>
-          <el-form-item label="组织名：">
-            <el-input placeholder="组织名（限长45字符）" v-model="formInline.organ_name" maxlength="45"></el-input>
-          </el-form-item>
-          <el-form-item label="上级组织：" v-if="$route.params.id === ':id'">
-            <el-cascader
-              v-model="selected_dept_id"
-              placeholder="请选择组织"
-              :options="allDepts"
-              :props="org_props"
-              show-all-levels
-              filterable
-              size="small"
-              change-on-select
-              clearable
-            ></el-cascader>
-            <!-- <el-select v-model="formInline.parent_organ_id" placeholder="上级组织">
-              <el-option label="所有上级组织" value=""></el-option>
-              <el-option label="一级组织" value="0"></el-option>
-              <el-option v-for="item in allDepts" :key="item.departName" :label="item.departName" :value="item.id"></el-option>
-            </el-select> -->
-          </el-form-item>
-          <el-form-item label="操作人：">
-            <el-input placeholder="操作人（限长45字符）" v-model="formInline.creator" maxlength="45"></el-input>
-          </el-form-item>
-          <el-form-item label="操作时间：">
-            <el-date-picker
-              v-model="timeValue"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss">
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="formInline.pageNo = 1;searchOrgan(formInline)">查询</el-button>
-            <el-button type="danger" @click="reset">重置</el-button>
-          </el-form-item>
-        </el-form>
-        <el-table
-          :header-row-style="headerRow"
-          :data="tableData"
-          ref="multipleTable"
-          tooltip-effect="dark"
-          border
-          @selection-change="handleSelectionChange">
-          <el-table-column
-            align="center"
-            type="selection"
-            width="55">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="number"
-            label="组织编号"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="departName"
-            label="组织名"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ scope.row.departName }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="upDepartName"
-            label="上级组织"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ scope.row.upDepartName }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="组织状态"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              <div v-html="showOrgStatus(scope.row.visible)"></div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="comment"
-            label="备注"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ scope.row.comment }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="modifier"
-            label="操作人"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ scope.row.modifier }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="updateTime"
-            label="操作时间"
-            width="155">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="操作"
-            width="300">
-            <template slot-scope="scope">
-              <el-button @click="handleClickOrgan(scope.row)" type="text" size="small">下属组织</el-button>
-              <el-button @click="handleClickStaff(scope.row)" type="text" size="small">下属人员</el-button>
-              <el-button @click="handleClickUser(scope.row)" type="text" size="small">下属账号</el-button>
-              <el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
-              <el-button
-                @click.native.prevent="deleteRow(scope.row)"
-                type="text"
-                size="small">
-                删除
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-row>
-      <el-row style="margin-top:1%;">
-        <el-col :span="4">
+      <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+        <el-collapse-item title="筛选条件" name="1">
+          <el-form :inline="true" class="demo-form-inline" size="small">
+            <el-form-item label="组织编号：">
+              <el-input placeholder="组织编号（限长11字符）" v-model="formInline.organ_id" maxlength="11"></el-input>
+            </el-form-item>
+            <el-form-item label="组织名：">
+              <el-input placeholder="组织名（限长45字符）" v-model="formInline.organ_name" maxlength="45"></el-input>
+            </el-form-item>
+            <el-form-item label="上级组织：" v-if="$route.params.id === ':id'">
+              <el-cascader
+                v-model="selected_dept_id"
+                placeholder="请选择组织"
+                :options="allDepts"
+                :props="org_props"
+                show-all-levels
+                filterable
+                size="small"
+                change-on-select
+                clearable
+              ></el-cascader>
+              <!-- <el-select v-model="formInline.parent_organ_id" placeholder="上级组织">
+                <el-option label="所有上级组织" value=""></el-option>
+                <el-option label="一级组织" value="0"></el-option>
+                <el-option v-for="item in allDepts" :key="item.departName" :label="item.departName" :value="item.id"></el-option>
+              </el-select> -->
+            </el-form-item>
+            <el-form-item label="操作人：">
+              <el-input placeholder="操作人（限长45字符）" v-model="formInline.creator" maxlength="45"></el-input>
+            </el-form-item>
+            <el-form-item label="操作时间：">
+              <el-date-picker
+                v-model="timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="formInline.pageNo = 1;searchOrgan(formInline)">查询</el-button>
+              <el-button @click="reset">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-collapse-item>
+      </el-collapse>
+      <el-row class="table-container">
+        <el-row class="margin-bottom-20">
+          <div class="font14 bold">组织管理表</div>
+        </el-row>
+        <el-row class="margin-bottom-20">
           <el-button type="success" size="small"  @click="dialogFormVisible = true;ruleForm.id = '';ruleForm.comment = '';new_dept_ids=[]">新建</el-button>
           <el-button type="danger" size="small" @click="deleteAll">批量删除</el-button>
-        </el-col>
-        <el-col :span="20">
-          <el-pagination
-            background
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page.sync="pagination.pageNo"
-            :page-sizes="[10, 20, 30, 40, 50]"
-            :page-size="pagination.pageSize"
-            layout="total, sizes, prev, pager, next, jumper "
-            :total="pagination.totalCount" style="text-align: right">
-          </el-pagination>
-        </el-col>
+        </el-row>
+        <el-row>
+          <el-table
+            :header-row-style="headerRow"
+            :data="tableData"
+            ref="multipleTable"
+            tooltip-effect="dark"
+            @selection-change="handleSelectionChange">
+            <el-table-column
+              align="center"
+              type="selection"
+              width="55">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="number"
+              label="组织编号"
+              :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="departName"
+              label="组织名"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{ scope.row.departName }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="upDepartName"
+              label="上级组织"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{ scope.row.upDepartName }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              label="组织状态"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                <div :class="scope.row.visible===0?'invisible':'visible'">
+                  <span>{{scope.row.visible===0?'不可见':'可见'}}</span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="comment"
+              label="备注"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{ scope.row.comment }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="modifier"
+              label="操作人"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{ scope.row.modifier }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="updateTime"
+              label="操作时间"
+              width="155">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              label="操作"
+              width="300">
+              <template slot-scope="scope">
+                <el-button @click="handleClickOrgan(scope.row)" type="text" size="small">下属组织</el-button>
+                <el-button @click="handleClickStaff(scope.row)" type="text" size="small">下属人员</el-button>
+                <el-button @click="handleClickUser(scope.row)" type="text" size="small">下属账号</el-button>
+                <el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
+                <el-button
+                  @click.native.prevent="deleteRow(scope.row)"
+                  type="text"
+                  size="small">
+                  删除
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-row>
+        <el-row style="margin-top:20px;">
+          <el-col :span="20" :offset="4">
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page.sync="pagination.pageNo"
+              :page-sizes="[10, 20, 30, 40, 50]"
+              :page-size="pagination.pageSize"
+              layout="total, sizes, prev, pager, next, jumper "
+              :total="pagination.totalCount" style="text-align: right">
+            </el-pagination>
+          </el-col>
+        </el-row>
       </el-row>
     </div>
     <el-dialog title="新建组织" :visible.sync="dialogFormVisible" width="30%" @close="resetForm('ruleForm')" append-to-body>
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+      <el-form size="small" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="组织名" prop="departName">
-          <el-input v-model="ruleForm.departName" placeholder="上限45字符" maxlength="45"></el-input>
+          <el-input size="small" v-model="ruleForm.departName" placeholder="上限45字符" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="上级组织">
           <el-cascader
@@ -188,13 +197,13 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="resetForm('ruleForm')">重置</el-button>
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+        <el-button @click="resetForm('ruleForm')">重置</el-button>
+        <el-button plain type="primary" @click="dialogFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="修改组织" :visible.sync="dialogFormVisibleReverse" width="30%" @close="resetForm('ruleFormReverse')" append-to-body>
-      <el-form :model="ruleFormReverse" :rules="rules" ref="ruleFormReverse" label-width="100px" class="demo-ruleForm">
+      <el-form size="small" :model="ruleFormReverse" :rules="rules" ref="ruleFormReverse" label-width="100px" class="demo-ruleForm">
         <el-form-item label="组织编号">
           <span>{{ruleFormReverse.number}}</span>
         </el-form-item>
@@ -240,9 +249,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="resetReverse">重置</el-button>
-        <el-button @click="dialogFormVisibleReverse = false">取 消</el-button>
-        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确 定</el-button>
+        <el-button @click="resetReverse">重置</el-button>
+        <el-button plain type="primary" @click="dialogFormVisibleReverse = false">取消</el-button>
+        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确定</el-button>
       </div>
     </el-dialog>
 
@@ -256,8 +265,8 @@
       append-to-body>
       <span style="font-size:20px;">该部门下存在可见的下属组织，是否设置为不可见。</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="op_hints = false;ruleFormReverse.visible=1">取 消</el-button>
-        <el-button type="primary" @click="op_hints = false;updateOrganStatus(visibleData)">确 定</el-button>
+        <el-button type="primary" plain @click="op_hints = false;ruleFormReverse.visible=1">取消</el-button>
+        <el-button type="primary" @click="op_hints = false;updateOrganStatus(visibleData)">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -273,6 +282,8 @@
     name: 'organization_list',
     data() {
       return {
+        formContainerOpen: '1',
+        formContainer: this.$store.state.app.formContainer,
         selected_dept_id: [], // 查询条件
         new_dept_ids: [], // 新建组织
         edit_dept_ids: [], // 修改组织
@@ -348,6 +359,13 @@
       }
     },
     methods: {
+      handleChangeAcitve(active = ['1']) {
+        if (active.length) {
+          $('.form-more').text('收起')
+        } else {
+          $('.form-more').text('更多')
+        }
+      },
       // 修改组织可见/不可见状态
       updateOrganStatus(obj) {
         modifyOrganStatus(obj)
@@ -358,15 +376,6 @@
               this.searchOrgan(this.formInline)
             }
           })
-      },
-      showOrgStatus(visible) {
-        if (visible === 0) {
-          // 不可见
-          return "<span style='color:red'>不可见</span>"
-        } else {
-          // 可见
-          return "<span style='color:green'>可见</span>"
-        }
       },
       deleteAll() {
         const organIds = this.multipleSelection.map(function(item, index) {
@@ -402,11 +411,11 @@
             }
           })
         }).catch(() => {
-          Message({
-            message: '已经取消删除',
-            type: 'error',
-            duration: 3 * 1000
-          })
+          // Message({
+          //   message: '已经取消删除',
+          //   type: 'error',
+          //   duration: 3 * 1000
+          // })
         })
       },
       submitForm(formName) {
@@ -571,11 +580,11 @@
             }
           })
         }).catch(() => {
-          Message({
-            message: '已经取消删除',
-            type: 'error',
-            duration: 3 * 1000
-          })
+          // Message({
+          //   message: '已经取消删除',
+          //   type: 'error',
+          //   duration: 3 * 1000
+          // })
         })
       },
       handleClickOrgan(row) {
@@ -761,6 +770,8 @@
       }
     },
     mounted() {
+      this.formContainer()
+      this.handleChangeAcitve()
       this.tempRoute = Object.assign({}, this.$route)
       this.setTagsViewTitle()
       // this.formInline.parent_organ = this.$route.params.id === ':id' ? '' : this.$route.params.id

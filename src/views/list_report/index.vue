@@ -1,23 +1,27 @@
 <template>
   <div class="container">
-    <el-row>
-      <el-form :inline="true" size="small" :model="req" ref="activeNameList" :rules="rule">
-        <el-form-item label="活动名称:" v-show="activeNameList && activeNameList.length > 0" prop="campaignId">
-          <el-select v-model="req.campaignId" placeholder="请选择活动">
-            <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submitForm('activeNameList');searchList(req);req2=clone(req);">查询</el-button>
-          <el-button type="danger" @click="clearForm('activeNameList');req2=clone(req)">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
-    <el-row>
-      <el-col>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small" :model="req" ref="activeNameList" :rules="rule">
+          <el-form-item label="活动名称:" v-show="activeNameList && activeNameList.length > 0" prop="campaignId">
+            <el-select v-model="req.campaignId" placeholder="请选择活动">
+              <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="submitForm('activeNameList');searchList(req);req2=clone(req);">查询</el-button>
+            <el-button @click="clearForm('activeNameList');req2=clone(req)">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">名单报表</div>
+      </el-row>
+      <el-row>
         <el-table
-          :data="tableData"
-          border>
+          :data="tableData">
           <el-table-column
             align="center"
             prop="campaignId"
@@ -71,7 +75,7 @@
             label="拨打次数">
           </el-table-column>
         </el-table>
-      </el-col>
+      </el-row>
     </el-row>
   </div>
 </template>
@@ -86,6 +90,8 @@ export default {
   name: 'list_report',
   data() {
     return {
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       validate: false,
       rule: rule,
       activeNameList: [],
@@ -100,6 +106,8 @@ export default {
     }
   },
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     queryAllCamps().then(response => {
       if (response.data.code === 0) {
         this.activeNameList = response.data.data
@@ -111,6 +119,13 @@ export default {
     })
   },
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     clone: clone,
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {

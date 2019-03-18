@@ -1,148 +1,156 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-row>
-        <el-form :inline="true" class="demo-form-inline" size="small">
-          <el-form-item label="员工姓名：">
-            <el-input placeholder="员工姓名（上限45字符）" v-model="formInline.name" maxlength="45"></el-input>
-          </el-form-item>
-          <el-form-item label="员工工号：">
-            <el-input placeholder="员工工号（上限45字符）" v-model="formInline.angentId" maxlength="45"></el-input>
-          </el-form-item>
-          <el-form-item label="所属组织：" v-if="$route.params.id === ':id'">
-            <el-cascader
-              v-model="selected_dept_id"
-              placeholder="请选择组织"
-              :options="regionOptions"
-              :props="org_props"
-              show-all-levels
-              filterable
-              size="small"
-              change-on-select
-              clearable
-            ></el-cascader>
-            <!-- <el-select v-model="formInline.departName" placeholder="所属组织">
-              <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
-            </el-select> -->
-          </el-form-item>
-          <el-form-item label="操作人：">
-            <el-input placeholder="操作人（上限45字符）" v-model="formInline.modifierName" maxlength="45"></el-input>
-          </el-form-item>
-          <el-form-item label="操作时间：">
-            <el-date-picker
-              v-model="timeValue"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss">
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="formInline.pageNo = 1;searchStaff(formInline)">查询</el-button>
-            <el-button type="danger" @click="reset">重置</el-button>
-          </el-form-item>
-        </el-form>
-        <el-table
-        :header-row-style="headerRow"
-        :data="tableData"
-        ref="multipleTable"
-        tooltip-effect="dark"
-        border
-        @selection-change="handleSelectionChange">
-        <el-table-column
-          align="center"
-          type="selection"
-          width="55">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="angentId"
-          label="员工工号"
-          :show-overflow-tooltip="true">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="staffName"
-          label="员工姓名"
-          :show-overflow-tooltip="true">
-          <template slot-scope="scope">
-            <a @click="handleClickDetail(scope.row)">{{scope.row.staffName}}</a>
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="staffSex"
-          label="性别"
-          width="55">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="departName"
-          label="所属组织"
-          :show-overflow-tooltip="true">
-          <template slot-scope="scope">
-            {{ scope.row.departName }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="userPhone"
-          label="联系方式"
-          :show-overflow-tooltip="true">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="creator"
-          label="操作人"
-          :show-overflow-tooltip="true">
-          <template slot-scope="scope">
-            {{ scope.row.creator }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="updateTime"
-          label="操作时间"
-          width="155">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          label="操作"
-          width="180">
-          <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
-            <el-button
-              @click.native.prevent="deleteRow(scope.$index, tableData)"
-              type="text"
-              size="small">
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      </el-row>
-      <el-row style="margin-top:1%;">
-        <el-col :span="4">
+      <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+        <el-collapse-item title="筛选条件" name="1">
+           <el-form :inline="true" class="demo-form-inline" size="small">
+            <el-form-item label="员工姓名：">
+              <el-input placeholder="员工姓名（上限45字符）" v-model="formInline.name" maxlength="45"></el-input>
+            </el-form-item>
+            <el-form-item label="员工工号：">
+              <el-input placeholder="员工工号（上限45字符）" v-model="formInline.angentId" maxlength="45"></el-input>
+            </el-form-item>
+            <el-form-item label="所属组织：" v-if="$route.params.id === ':id'">
+              <el-cascader
+                v-model="selected_dept_id"
+                placeholder="请选择组织"
+                :options="regionOptions"
+                :props="org_props"
+                show-all-levels
+                filterable
+                size="small"
+                change-on-select
+                clearable
+              ></el-cascader>
+              <!-- <el-select v-model="formInline.departName" placeholder="所属组织">
+                <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
+              </el-select> -->
+            </el-form-item>
+            <el-form-item label="操作人：">
+              <el-input placeholder="操作人（上限45字符）" v-model="formInline.modifierName" maxlength="45"></el-input>
+            </el-form-item>
+            <el-form-item label="操作时间：">
+              <el-date-picker
+                v-model="timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="formInline.pageNo = 1;searchStaff(formInline)">查询</el-button>
+              <el-button @click="reset">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-collapse-item>
+      </el-collapse>
+      <el-row class="table-container">
+        <el-row class="margin-bottom-20">
+          <div class="font14 bold">员工管理表</div>
+        </el-row>
+        <el-row class="margin-bottom-20">
           <el-button type="success" size="small"  @click="addStaff">新建</el-button>
           <el-button type="danger" size="small" @click="deleteAll">批量删除</el-button>
-        </el-col>
-        <el-col :span="18">
-          <el-pagination
-            background
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page.sync="pagination.pageNo"
-            :page-sizes="[10, 20, 30, 40, 50]"
-            :page-size="pagination.pageSize"
-            layout="total, sizes, prev, pager, next, jumper "
-            :total="pagination.totalCount" style="text-align: right">
-          </el-pagination>
-        </el-col>
+        </el-row>
+        <el-row>
+          <el-table
+            :header-row-style="headerRow"
+            :data="tableData"
+            ref="multipleTable"
+            tooltip-effect="dark"
+            @selection-change="handleSelectionChange">
+            <el-table-column
+              align="center"
+              type="selection"
+              width="55">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="angentId"
+              label="员工工号"
+              :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="staffName"
+              label="员工姓名"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                <a @click="handleClickDetail(scope.row)">{{scope.row.staffName}}</a>
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="staffSex"
+              label="性别"
+              width="55">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="departName"
+              label="所属组织"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{ scope.row.departName }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="userPhone"
+              label="联系方式"
+              :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="creator"
+              label="操作人"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{ scope.row.creator }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="updateTime"
+              label="操作时间"
+              width="155">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              label="操作"
+              width="180">
+              <template slot-scope="scope">
+                <el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
+                <el-button
+                  @click.native.prevent="deleteRow(scope.$index, tableData)"
+                  type="text"
+                  size="small">
+                  删除
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-row>
+        <el-row style="margin-top:20px;">
+          <el-col :span="20" :offset="4">
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page.sync="pagination.pageNo"
+              :page-sizes="[10, 20, 30, 40, 50]"
+              :page-size="pagination.pageSize"
+              layout="total, sizes, prev, pager, next, jumper "
+              :total="pagination.totalCount" style="text-align: right">
+            </el-pagination>
+          </el-col>
+        </el-row>
       </el-row>
+      
     </div>
     <el-dialog title="新建员工" :visible.sync="dialogFormVisible" width="30%" @close="resetForm('ruleForm')" append-to-body>
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+      <el-form size="small" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="姓名:" prop="staffName">
           <el-input v-model="ruleForm.staffName" maxlength="45" placeholder="上限45字符"></el-input>
         </el-form-item>
@@ -157,7 +165,7 @@
         </el-form-item>
         <el-form-item label="籍贯:" prop="origin">
           <el-cascader
-            size="large"
+            size="small"
             :options="options"
             v-model="ruleForm.origin"
             @change="handleChange()" style="width: 100%;">
@@ -200,13 +208,13 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="resetForm('ruleForm')">重置</el-button>
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+        <el-button @click="resetForm('ruleForm')">重置</el-button>
+        <el-button plain type="primary" @click="dialogFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="修改员工" :visible.sync="dialogFormVisibleReverse" width="30%" @close="resetForm('ruleFormReverse')" append-to-body>
-      <el-form :model="ruleFormReverse" :rules="rules" ref="ruleFormReverse" label-width="100px" class="demo-ruleForm">
+      <el-form size="small" :model="ruleFormReverse" :rules="rules" ref="ruleFormReverse" label-width="100px" class="demo-ruleForm">
         <el-form-item label="工号" prop="angentId">
           <span>{{ruleFormReverse.angentId}}</span>
         </el-form-item>
@@ -224,7 +232,6 @@
         </el-form-item>
         <el-form-item label="籍贯" prop="origin">
           <el-cascader
-            size="large"
             :options="options"
             v-model="ruleFormReverse.origin"
             @change="handleChange" style="width: 100%;">
@@ -273,13 +280,13 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="resetReverse">重置</el-button>
-        <el-button @click="dialogFormVisibleReverse = false">取 消</el-button>
-        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确 定</el-button>
+        <el-button @click="resetReverse">重置</el-button>
+        <el-button plain type="primary" @click="dialogFormVisibleReverse = false">取消</el-button>
+        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="员工详情" :visible.sync="dialogFormVisibleDetail" width="30%" append-to-body>
-      <el-form :model="ruleFormReverseDetail" :rules="rules" ref="ruleFormReverseDetail" label-width="100px" class="demo-ruleForm">
+      <el-form size="small" :model="ruleFormReverseDetail" :rules="rules" ref="ruleFormReverseDetail" label-width="100px" class="demo-ruleForm">
         <el-form-item label="工号">
           <span>{{ruleFormReverseDetail.angentId}}</span>
         </el-form-item>
@@ -316,7 +323,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogFormVisibleDetail = false">返回</el-button>
+        <el-button plain type="primary" @click="dialogFormVisibleDetail = false">返回</el-button>
       </div>
     </el-dialog>
   </div>
@@ -392,6 +399,8 @@
         }
       }
       return {
+        formContainerOpen: '1',
+        formContainer: this.$store.state.app.formContainer,
         selected_dept_id: [], // 查询条件
         new_dept_ids: [], // 新建员工显示组织
         edit_dept_ids: [], // 修改员工显示组织
@@ -505,6 +514,13 @@
       }
     },
     methods: {
+      handleChangeAcitve(active = ['1']) {
+        if (active.length) {
+          $('.form-more').text('收起')
+        } else {
+          $('.form-more').text('更多')
+        }
+      },
       autoFill() {
         var reg = /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/
         const idNo = this.ruleForm.idNumber
@@ -580,11 +596,11 @@
             }
           })
         }).catch(() => {
-          Message({
-            message: '已经取消删除',
-            type: 'error',
-            duration: 3 * 1000
-          })
+          // Message({
+          //   message: '已经取消删除',
+          //   type: 'error',
+          //   duration: 3 * 1000
+          // })
         })
       },
       handleChange(value) {
@@ -697,11 +713,11 @@
             }
           })
         }).catch(() => {
-          Message({
-            message: '已经取消删除',
-            type: 'error',
-            duration: 3 * 1000
-          })
+          // Message({
+          //   message: '已经取消删除',
+          //   type: 'error',
+          //   duration: 3 * 1000
+          // })
         })
       },
       handleClickDetail(row) {
@@ -869,6 +885,8 @@
       })
     },
     mounted() {
+      this.formContainer()
+      this.handleChangeAcitve()
       this.tempRoute = Object.assign({}, this.$route)
       this.setTagsViewTitle()
     },

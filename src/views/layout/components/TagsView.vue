@@ -253,6 +253,7 @@ export default {
       position:absolute;
       top: 1px;
       right: -11px;
+      display:none;
       &:before {
         display:none;
         font-weight:bold;

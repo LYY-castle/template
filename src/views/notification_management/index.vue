@@ -2,50 +2,53 @@
   <div class="container">
     <!-- 消息通知管理 -->
     <div>
-      <el-row>
-        <el-form :inline="true" size="small">
-          <el-form-item label="级别：">
-              <el-select v-model.trim="req.emergency_degree" placeholder="请选择" clearable size="small" >
-                  <el-option
-                    v-for="item in options1"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-              </el-select>
-          </el-form-item>
-          <el-form-item label="发布时间：">
-            <el-date-picker
-                v-model.trim="timeValue"
-                type="datetimerange"
-                range-separator="-"
-                start-placeholder="发布开始时间"
-                end-placeholder="发布结束时间"
-                value-format="yyyy-MM-dd HH:mm:ss">
-            </el-date-picker>
-          </el-form-item><br/>
-          <el-form-item label="关键字：">
-            <el-input type="text" v-model.trim="req.key_text" size="small" placeholder="关键字(上限20字符)" maxlength="20"></el-input>
-          </el-form-item>
-          <el-form-item label="标题：">
-            <el-input type="text" v-model.trim="req.title" size="small" placeholder="消息通知标题(上限20字符)" maxlength="20" style="width:250px"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
-            <el-button type="danger"  @click="resetQueryCondition()">重置</el-button>
-          </el-form-item>
-        </el-form>
-      </el-row>
-
-      <el-row>
-        <el-tabs @tab-click="handleTabClick" v-model="activeNames" type="card">
-          <el-tab-pane name="releaseNotifications" label="发布箱"></el-tab-pane>
-          <el-tab-pane name="draftbox" label="草稿箱"></el-tab-pane>
-        </el-tabs>
-      </el-row>
-
-      <el-row v-if="activeNames==='releaseNotifications'">
-        <el-col>
-          <el-table :data="tableData" border>
+      <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+        <el-collapse-item title="筛选条件" name="1">
+          <el-form :inline="true" size="small">
+            <el-form-item label="级别：">
+                <el-select v-model.trim="req.emergency_degree" placeholder="请选择" clearable size="small" >
+                    <el-option
+                      v-for="item in options1"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="发布时间：">
+              <el-date-picker
+                  v-model.trim="timeValue"
+                  type="datetimerange"
+                  range-separator="-"
+                  start-placeholder="发布开始时间"
+                  end-placeholder="发布结束时间"
+                  value-format="yyyy-MM-dd HH:mm:ss">
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item label="关键字：">
+              <el-input type="text" v-model.trim="req.key_text" size="small" placeholder="关键字(上限20字符)" maxlength="20"></el-input>
+            </el-form-item>
+            <el-form-item label="标题：">
+              <el-input type="text" v-model.trim="req.title" size="small" placeholder="消息通知标题(上限20字符)" maxlength="20" style="width:250px"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
+              <el-button @click="resetQueryCondition()">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-collapse-item>
+      </el-collapse>
+      <el-row class="table-container">
+        <el-row>
+          <el-tabs @tab-click="handleTabClick" v-model="activeNames">
+            <el-tab-pane name="releaseNotifications" label="发布箱"></el-tab-pane>
+            <el-tab-pane name="draftbox" label="草稿箱"></el-tab-pane>
+          </el-tabs>
+        </el-row>
+        <el-row class="margin-bottom-20">
+          <el-button type="success" size="small" @click="flagCheck=true;addNotificationVisiable=true;getAllDepts();selectedDepts.length=0;newnotification.title='';newnotification.emergency_degree=1;newnotification.body='';releaseNow=true;autoSelectSubdept=false">新建</el-button>
+        </el-row>
+        <el-row v-if="activeNames==='releaseNotifications'">
+          <el-table :data="tableData">
 
             <el-table-column align="center" label="消息通知标题">
               <template slot-scope="scope">
@@ -85,9 +88,9 @@
             </el-table-column>
 
             <el-table-column align="center" label="发布时间" width="200px" >
-             <template slot-scope="scope">
-               <div v-html="showReleaseTime(scope.row.status,scope.row.release_time)"></div>
-             </template>
+              <template slot-scope="scope">
+                <div v-html="showReleaseTime(scope.row.status,scope.row.release_time)"></div>
+              </template>
             </el-table-column>
 
             <el-table-column align="center" label="操作">
@@ -97,12 +100,9 @@
               </template>
             </el-table-column>
           </el-table>
-        </el-col>
-      </el-row>
-
-      <el-row v-if="activeNames==='draftbox'">
-        <el-col>
-          <el-table :data="tableData" border>
+        </el-row>
+        <el-row v-if="activeNames==='draftbox'">
+          <el-table :data="tableData">
             <el-table-column align="center" label="消息通知标题">
               <template slot-scope="scope">
                 <el-button @click="notificationDetail={};detailVisiable=true;queryOne(scope.row.notification_id,1)" type="text" size="medium">{{scope.row.title}}</el-button>
@@ -135,14 +135,10 @@
               </template>
             </el-table-column>
           </el-table>
-        </el-col>
-      </el-row>
-
-      <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="flagCheck=true;addNotificationVisiable=true;getAllDepts();selectedDepts.length=0;newnotification.title='';newnotification.emergency_degree=1;newnotification.body='';releaseNow=true;autoSelectSubdept=false">新建</el-button>
-        <el-pagination
+        </el-row>
+        <el-row style="margin-top:20px;">
+          <el-pagination
             v-if="pageShow"
-            background
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page=currentPage
@@ -150,7 +146,8 @@
             :page-size=pageSize
             layout="total,sizes, prev, pager, next, jumper"
             :total=totalCount style="text-align: right;float:right;">
-        </el-pagination>
+          </el-pagination>
+        </el-row>
       </el-row>
 
     <!-- 新建消息dialog -->
@@ -161,7 +158,7 @@
       title="新建消息通知"
       :visible.sync="addNotificationVisiable"
       append-to-body>
-        <el-form label-width="100px">
+        <el-form label-width="100px" size="small">
           <el-form-item label="标题：">
             <el-input placeholder="请输入消息通知标题(上限30字符)" maxlength="30" type="text" v-model="newnotification.title"></el-input>
           </el-form-item>
@@ -193,8 +190,8 @@
         <br/>
         <div slot="footer" style="text-align: center;">
           <el-checkbox v-model="releaseNow" checked>立即发布</el-checkbox>
-          <el-button @click="goAddNewNotification()" type="success" v-show="flagCheck===true">保存</el-button>
-          <el-button @click="addNotificationVisiable=false;">取消</el-button>
+          <el-button @click="goAddNewNotification()" type="primary" v-show="flagCheck===true">确定</el-button>
+          <el-button type="primary" plain @click="addNotificationVisiable=false;">取消</el-button>
         </div>
     </el-dialog>
 
@@ -206,7 +203,7 @@
       title="消息通知详情"
       :visible.sync="detailVisiable"
       append-to-body>
-        <el-form label-width="100px">
+        <el-form label-width="100px" size="small">
           <el-form-item label="标题：">
             <span>{{notificationDetail.title}}</span>
           </el-form-item>
@@ -239,7 +236,7 @@
         </el-form>
         <br/>
         <div slot="footer" style="text-align: center;">
-          <el-button @click="detailVisiable=false;">返回</el-button>
+          <el-button type="primary" plain @click="detailVisiable=false;">返回</el-button>
         </div>
     </el-dialog>
 
@@ -251,7 +248,7 @@
       title="修改消息通知"
       :visible.sync="editNotificationVisiable"
       append-to-body>
-        <el-form label-width="100px">
+        <el-form label-width="100px" size="small">
           <el-form-item label="标题：">
             <el-input placeholder="请输入消息通知标题(上限30字符)" maxlength="30" type="text" v-model="editnotificationDetail.title"></el-input>
           </el-form-item>
@@ -284,8 +281,8 @@
         <br/>
         <div slot="footer" style="text-align: center;">
           <el-checkbox v-model="releaseNow" checked>立即发布</el-checkbox>
-          <el-button @click="goEditNewNotification()" type="success">保存</el-button>
-          <el-button @click="editNotificationVisiable=false;">取消</el-button>
+          <el-button @click="goEditNewNotification()" type="primary">保存</el-button>
+          <el-button @click="editNotificationVisiable=false;" type="primary" plain>取消</el-button>
         </div>
     </el-dialog>
 
@@ -299,7 +296,7 @@
         <span style="font-size:15px;">确定删除该消息通知？</span>
         <div slot="footer" style="text-align: center;">
           <el-button @click="deleteOne(deleteId)" type="primary">确认</el-button>
-          <el-button @click="delVisiable=false;">取消</el-button>
+          <el-button @click="delVisiable=false;" type="primary" plain>取消</el-button>
         </div>
     </el-dialog>
 
@@ -313,7 +310,7 @@
         <span style="font-size:15px;">确认撤回该条消息通知？</span>
         <div slot="footer" style="text-align: center;">
           <el-button @click="recallOneNotification(recallId)" type="primary">确认</el-button>
-          <el-button @click="recallVisiable=false;">取消</el-button>
+          <el-button @click="recallVisiable=false;" type="primary" plain>取消</el-button>
         </div>
     </el-dialog>
     </div>
@@ -347,6 +344,8 @@ export default {
 
   data() {
     return {
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       activeNames: 'releaseNotifications', // tabs的显示页
       autoSelectSubdept: false, // 自动关联子部门
       deptsProps: {
@@ -434,6 +433,13 @@ export default {
   },
 
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     // tab点击时触发的事件
     handleTabClick(tab, event) {
       if (tab.name === 'releaseNotifications') {
@@ -822,6 +828,8 @@ export default {
   },
 
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     this.searchByKeyWords(this.req)
     // 获取所有部门信息
     // this.getAllDepts()

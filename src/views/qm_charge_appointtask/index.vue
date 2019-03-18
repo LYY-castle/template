@@ -1,78 +1,106 @@
 <template>
   <div class="container">
-    <el-row>
-      <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item label="活动名称:">
-          <el-select v-model="req.campaignId" :placeholder="campData.length==0?'无活动':'请选择活动'" @change="submitAssign.data = ''.split('');resetForm('assignForm');req.pageNo=1;req.pageSize=10;queryMainQualityList(req);countTaskAssignInfo(req)">
-            <el-option
-                v-for="item in campData"
-                :key="item.activityId"
-                :label="item.activityName"
-                :value="item.activityId">
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-row>
+          <el-col style="margin-top:4px;" :span="5">
+            <el-form :inline="true" size="small" :model="req" ref="searchForm">
+              <el-form-item label="活动名称:">
+                <el-select v-model="req.campaignId" :placeholder="campData.length==0?'无活动':'请选择活动'" @change="submitAssign.data = ''.split('');resetForm('assignForm');req.pageNo=1;req.pageSize=10;queryMainQualityList(req);countTaskAssignInfo(req)">
+                  <el-option
+                      v-for="item in campData"
+                      :key="item.activityId"
+                      :label="item.activityName"
+                      :value="item.activityId">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-form>
+          </el-col>
+          <el-col :span="19">
+            <el-form :inline="true" :rules="rule" :model="submitAssign" ref="assignForm">
+              <el-form-item label="分配数量" prop="assignNum">
+                <el-input-number v-model="submitAssign.assignNum" size="small" placeholder="分配数量" style="width:50%"></el-input-number>
+                <b>条</b>
+              </el-form-item>
+              <el-form-item label="未分配量" style="margin-left:-4.5%">
+                <span>{{remainSum}}</span>
+              </el-form-item>
+              <el-form-item label="数量总计">
+                <span>{{totalSum}}</span>
+              </el-form-item>
+              <el-form-item label="分配方式" style="margin-left:1%" prop="assignType">
+                <el-radio-group v-model="submitAssign.assignType" size="small">
+                  <el-radio label='0'>顺序分配</el-radio>
+                  <el-radio label='1'>平均分配</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item>
+                 <el-button type="primary" @click="submitForm('assignForm');">确定</el-button>
+              </el-form-item>
+            </el-form>
+          </el-col>
+        </el-row>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">任务分配表</div>
+      </el-row>
+      <el-table
+        ref="table1"
+        :data="tableData"
+        @selection-change="handleSelectionChange">
+        <el-table-column
+          align="center"
+          type="selection"
+          width="55">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="qualityId"
+          label="质检任务编号"
+          :show-overflow-tooltip="true">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="qualityName"
+          label="质检任务名称"
+          :show-overflow-tooltip="true">
+          <template slot-scope="scope">
+            {{ scope.row.qualityName }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="noAssignNum"
+          label="未分配总数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="totalNum"
+          label="质检总数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="modifierName"
+          label="操作人"
+          :show-overflow-tooltip="true">
+          <template slot-scope="scope">
+            {{ scope.row.modifierName }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="modifyTime"
+          label="操作时间"
+          width="155">
+        </el-table-column>
+      </el-table>
     </el-row>
-    <el-row>
-      <el-col>
-        <el-table
-          ref="table1"
-          :data="tableData"
-          border
-          @selection-change="handleSelectionChange">
-          <el-table-column
-            align="center"
-            type="selection"
-            width="55">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="qualityId"
-            label="质检任务编号"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="qualityName"
-            label="质检任务名称"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ scope.row.qualityName }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="noAssignNum"
-            label="未分配总数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="totalNum"
-            label="质检总数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="modifierName"
-            label="操作人"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ scope.row.modifierName }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="modifyTime"
-            label="操作时间"
-            width="155">
-          </el-table-column>
-        </el-table>
-      </el-col>
-    </el-row>
-    <el-row style="margin-top:1%">
+    <el-row style="margin-top:20px">
       <el-pagination
         v-if="pageShow"
-        background
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page='pageInfo.pageNo'
@@ -81,7 +109,7 @@
         layout="total, sizes, prev, pager, next, jumper "
         :total='pageInfo.totalCount' style="text-align: right;float:right;">
       </el-pagination>
-      <el-form :inline="true" :rules="rule" :model="submitAssign" ref="assignForm">
+      <!-- <el-form :inline="true" :rules="rule" :model="submitAssign" ref="assignForm">
         <el-form-item label="分配数量" prop="assignNum">
           <el-input-number v-model="submitAssign.assignNum" size="small" placeholder="分配数量" style="width:50%"></el-input-number>
           <b>条</b>
@@ -98,105 +126,98 @@
             <el-radio label='1'>平均分配</el-radio>
           </el-radio-group>
         </el-form-item>
-      </el-form>
+      </el-form> -->
     </el-row>
-    <el-row>
-      <el-col>
-        <el-table
-          ref="table2"
-          v-if="disTableType==='0'"
-          :data="disTable"
-          border
-          @selection-change="handleSelectionChange2">
-          <el-table-column
-            align="center"
-            type="selection"
-            width="55">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="departName"
-            label="分配对象"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ scope.row.departName }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="noUseNum"
-            label="未分配数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="useNum"
-            label="已分配数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="totalNum"
-            label="质检总数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="本次分配数量">
-            <template slot-scope="scope">
-              <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="分配数量" style="width:130px;"></el-input-number>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-table
-          ref="table3"
-          v-if="disTableType==='1'"
-          :data="disTable"
-          border
-          @selection-change="handleSelectionChange2">
-          <el-table-column
-            align="center"
-            type="selection"
-            width="55">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="staffName"
-            label="分配对象"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ scope.row.staffName }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="noUseNum"
-            label="未质检数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="temporaryNum"
-            label="质检中数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="useNum"
-            label="已质检数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="totalNum"
-            label="质检总数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="本次分配数量">
-            <template slot-scope="scope">
-              <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="分配数量" style="width:130px;"></el-input-number>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-col>
+    <el-row class="table-container" v-if="disTableType==='0'">
+      <el-table
+        ref="table2"
+        :data="disTable"
+        @selection-change="handleSelectionChange2">
+        <el-table-column
+          align="center"
+          type="selection"
+          width="55">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="departName"
+          label="分配对象"
+          :show-overflow-tooltip="true">
+          <template slot-scope="scope">
+            {{ scope.row.departName }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="noUseNum"
+          label="未分配数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="useNum"
+          label="已分配数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="totalNum"
+          label="质检总数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          label="本次分配数量">
+          <template slot-scope="scope">
+            <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="分配数量" style="width:130px;"></el-input-number>
+          </template>
+        </el-table-column>
+      </el-table>
     </el-row>
-    <el-row>
-      <el-button type="success" @click="submitForm('assignForm');">确 定</el-button>
+    <el-row class="table-container" v-if="disTableType==='1'">
+      <el-table
+        ref="table3"
+        :data="disTable"
+        @selection-change="handleSelectionChange2">
+        <el-table-column
+          align="center"
+          type="selection"
+          width="55">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="staffName"
+          label="分配对象"
+          :show-overflow-tooltip="true">
+          <template slot-scope="scope">
+            {{ scope.row.staffName }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="noUseNum"
+          label="未质检数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="temporaryNum"
+          label="质检中数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="useNum"
+          label="已质检数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="totalNum"
+          label="质检总数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          label="本次分配数量">
+          <template slot-scope="scope">
+            <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="分配数量" style="width:130px;"></el-input-number>
+          </template>
+        </el-table-column>
+      </el-table>
     </el-row>
     <el-dialog
       width="30%"
@@ -204,7 +225,7 @@
       append-to-body>
     <span style="font-size:20px;">确定分配吗？</span>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button @click="submitVisible = false">取 消</el-button>
+      <el-button type="primary" plain @click="submitVisible = false">取消</el-button>
       <el-button type="primary" @click="getAssignData();assignQualityTaskInfo(submitAssign);">确 定</el-button>
     </div>
   </el-dialog>
@@ -239,6 +260,8 @@ export default {
       }
     }
     return {
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       rule: {
         assignNum: [
           { validator: checkAssignSum, trigger: 'change' }
@@ -277,10 +300,19 @@ export default {
     }
   },
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     // this.getDownInfoByCurrentUser()
     this.findQmCampaignByUser()
   },
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     // 重置表单
     resetForm(formName) {
       if (this.$refs[formName] !== undefined) {
@@ -455,19 +487,3 @@ export default {
   }
 }
 </script>
-<style rel="stylesheet/scss" lang="scss">
-  .el-table thead {
-    color: #000 !important;
-  }
-</style>
-<style rel="stylesheet/scss" lang="scss" scoped>
-  .el-table {
-    border: 1px solid #ecebe9;
-    thead th .cell {
-      color: #000;
-    }
-  }
-  .el-form-item {
-    margin-bottom: 20px;
-  }
-</style>

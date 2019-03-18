@@ -1,25 +1,32 @@
 <template>
   <div class="container">
-    <el-row margin-top:>
-      <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item label="活动名称:">
-          <el-select v-model="req.campaignId" :placeholder="campData.length==0?'无活动':'请选择活动'" @change="req.pageNo=1;req.pageSize=10;req2=clone(req);resetForm('assignForm');queryMainQualityList(req)">
-            <el-option
-                v-for="item in campData"
-                :key="item.activityId"
-                :label="item.activityName"
-                :value="item.activityId">
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-    </el-row>
-    <el-row>
-      <el-col>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small" :model="req" ref="searchForm">
+          <el-form-item label="活动名称:">
+            <el-select v-model="req.campaignId" :placeholder="campData.length==0?'无活动':'请选择活动'" @change="req.pageNo=1;req.pageSize=10;req2=clone(req);resetForm('assignForm');queryMainQualityList(req)">
+              <el-option
+                  v-for="item in campData"
+                  :key="item.activityId"
+                  :label="item.activityName"
+                  :value="item.activityId">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="submitForm('assignForm');">确认回收</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">任务回收表</div>
+      </el-row>
+      <el-row>
         <el-table
           ref="table1"
           :data="tableData"
-          border
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
@@ -79,126 +86,118 @@
             :show-overflow-tooltip="true">
           </el-table-column>
         </el-table>
-      </el-col>
+      </el-row>
+      <el-row style="margin-top:20px;">
+        <el-pagination
+          v-if="pageShow"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page='pageInfo.pageNo'
+          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-size='pageInfo.pageSize'
+          layout="total, sizes, prev, pager, next, jumper "
+          :total='pageInfo.totalCount' style="text-align: right;float:right;">
+        </el-pagination>
+      </el-row>
     </el-row>
-    <el-row style="margin-top:1%">
-      <el-pagination
-        v-if="pageShow"
-        background
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page='pageInfo.pageNo'
-        :page-sizes="[10, 20, 30, 40, 50]"
-        :page-size='pageInfo.pageSize'
-        layout="total, sizes, prev, pager, next, jumper "
-        :total='pageInfo.totalCount' style="text-align: right;float:right;">
-      </el-pagination>
+    <el-row class="table-container" v-if="disTableType==='0'">
+      <el-table
+        ref="table2"
+        :data="disTable"
+        @selection-change="handleSelectionChange2">
+        <el-table-column
+          align="center"
+          type="selection"
+          width="55">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="departName"
+          :show-overflow-tooltip="true"
+          label="回收对象">
+          <template slot-scope="scope">
+            {{ scope.row.departName }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="noUseNum"
+          :show-overflow-tooltip="true"
+          label="可回收数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="useNum"
+          :show-overflow-tooltip="true"
+          label="已使用数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="totalNum"
+          :show-overflow-tooltip="true"
+          label="总数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          :show-overflow-tooltip="true"
+          label="回收数量">
+          <template slot-scope="scope">
+            <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="回收数量" style="width:130px;"></el-input-number>
+          </template>
+        </el-table-column>
+      </el-table>
     </el-row>
-    <el-row>
-      <el-col>
-        <el-table
-          ref="table2"
-          v-if="disTableType==='0'"
-          :data="disTable"
-          border
-          @selection-change="handleSelectionChange2">
-          <el-table-column
-            align="center"
-            type="selection"
-            width="55">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="departName"
-            :show-overflow-tooltip="true"
-            label="回收对象">
-            <template slot-scope="scope">
-              {{ scope.row.departName }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="noUseNum"
-            :show-overflow-tooltip="true"
-            label="可回收数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="useNum"
-            :show-overflow-tooltip="true"
-            label="已使用数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="totalNum"
-            :show-overflow-tooltip="true"
-            label="总数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            :show-overflow-tooltip="true"
-            label="回收数量">
-            <template slot-scope="scope">
-              <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="回收数量" style="width:130px;"></el-input-number>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-table
-          ref="table3"
-          v-if="disTableType==='1'"
-          :data="disTable"
-          border
-          @selection-change="handleSelectionChange2">
-          <el-table-column
-            align="center"
-            type="selection"
-            width="55">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="staffName"
-            :show-overflow-tooltip="true"
-            label="回收对象">
-            <template slot-scope="scope">
-              {{ scope.row.staffName }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="noCompleteNum"
-            :show-overflow-tooltip="true"
-            label="可回收数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="temporaryNum"
-            :show-overflow-tooltip="true"
-            label="暂存数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="completeNum"
-            :show-overflow-tooltip="true"
-            label="已使用数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="totalNum"
-            :show-overflow-tooltip="true"
-            label="总数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="回收数量">
-            <template slot-scope="scope">
-              <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="回收数量" style="width:130px;"></el-input-number>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-button type="success" @click="submitForm('assignForm');">确认回收</el-button>
+    <el-row class="table-container" v-if="disTableType==='1'">
+      <el-table
+        ref="table3"
+        :data="disTable"
+        @selection-change="handleSelectionChange2">
+        <el-table-column
+          align="center"
+          type="selection"
+          width="55">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="staffName"
+          :show-overflow-tooltip="true"
+          label="回收对象">
+          <template slot-scope="scope">
+            {{ scope.row.staffName }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="noCompleteNum"
+          :show-overflow-tooltip="true"
+          label="可回收数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="temporaryNum"
+          :show-overflow-tooltip="true"
+          label="暂存数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="completeNum"
+          :show-overflow-tooltip="true"
+          label="已使用数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="totalNum"
+          :show-overflow-tooltip="true"
+          label="总数量">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          label="回收数量">
+          <template slot-scope="scope">
+            <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="回收数量" style="width:130px;"></el-input-number>
+          </template>
+        </el-table-column>
+      </el-table>
     </el-row>
     <el-dialog
       width="30%"
@@ -206,8 +205,8 @@
       append-to-body>
     <span style="font-size:20px;">确定回收吗？</span>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button @click="submitVisible = false">取 消</el-button>
-      <el-button type="primary" @click="getAssignData();recycleQualityTaskInfo(submitAssign);">确 定</el-button>
+      <el-button type="primary" plain @click="submitVisible = false">取消</el-button>
+      <el-button type="primary" @click="getAssignData();recycleQualityTaskInfo(submitAssign);">确定</el-button>
     </div>
   </el-dialog>
   </div>
@@ -225,6 +224,8 @@ export default {
   name: 'qm_charge_newrecycle',
   data() {
     return {
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       submitVisible: false,
       tableData: [], // 表格数据
       disTable: [], // 回收表
@@ -257,10 +258,19 @@ export default {
     }
   },
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     // this.getDownInfoByCurrentUser()
     this.findQmCampaignByUser()
   },
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     // 深度克隆
     clone: clone,
     // 重置表单
@@ -425,19 +435,3 @@ export default {
   }
 }
 </script>
-<style rel="stylesheet/scss" lang="scss">
-  .el-table thead {
-    color: #000 !important;
-  }
-</style>
-<style rel="stylesheet/scss" lang="scss" scoped>
-  .el-table {
-    border: 1px solid #ecebe9;
-    thead th .cell {
-      color: #000;
-    }
-  }
-  .el-form-item {
-    margin-bottom: 20px;
-  }
-</style>

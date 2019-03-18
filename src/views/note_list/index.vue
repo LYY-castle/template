@@ -2,31 +2,39 @@
   <div class="container">
     <!-- 列表管理 -->
     <div v-show="isListPage==='1'">
-      <el-row><br/>
-        <el-form :inline="true" size="small">
-          <el-form-item label="笔记标题">
-            <el-input type="text" v-model="req.keyword" placeholder="笔记标题（上限45字符）" maxlength="45"></el-input>
-          </el-form-item>
-          <el-form-item label="最近操作时间">
-            <el-date-picker
-                v-model="timeValue"
-                type="datetimerange"
-                range-separator="-"
-                start-placeholder="开始时间"
-                end-placeholder="结束时间"
-                value-format="yyyy-MM-dd HH:mm:ss">
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
-            <el-button type="danger"  @click="resetQueryCondition()">重置</el-button>
-          </el-form-item>
-        </el-form>
-      </el-row>
-
-      <el-row>
-        <el-col>
-          <el-table :data="tableData" border>
+      <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+        <el-collapse-item title="筛选条件" name="1">
+          <el-form :inline="true" size="small">
+            <el-form-item label="笔记标题">
+              <el-input type="text" v-model="req.keyword" placeholder="笔记标题（上限45字符）" maxlength="45"></el-input>
+            </el-form-item>
+            <el-form-item label="最近操作时间">
+              <el-date-picker
+                  v-model="timeValue"
+                  type="datetimerange"
+                  range-separator="-"
+                  start-placeholder="开始时间"
+                  end-placeholder="结束时间"
+                  value-format="yyyy-MM-dd HH:mm:ss">
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
+              <el-button @click="resetQueryCondition()">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-collapse-item>
+      </el-collapse>
+      <el-row class="table-container">
+        <el-row class="margin-bottom-20">
+          <div class="font14 bold">笔记表</div>
+        </el-row>
+        <el-row class="margin-bottom-20">
+          <el-button type="success" size="small" @click="noteTitle='';noteTitleVisiable=true">新建</el-button>
+          <!-- <el-button type="danger" size="small" @click="" icon="el-icon-minus">批量删除</el-button> -->
+        </el-row>
+        <el-row>
+          <el-table :data="tableData">
             <el-table-column align="center" label="笔记标题" :show-overflow-tooltip="true">
               <template slot-scope="scope">
                 <a @click="queryOne(scope.row.noteid,scope.row.userid)">{{scope.row.title}}</a>
@@ -49,32 +57,29 @@
               </template>
             </el-table-column>
           </el-table>
-        </el-col>
+        </el-row>
+        <el-row style="margin-top:20px;">
+          <el-pagination
+              v-if="pageShow"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page=pageInfo.pageNo
+              :page-sizes="[10, 20, 30, 40, 50]"
+              :page-size=pageInfo.pageSize
+              layout="total, sizes, prev, pager, next, jumper "
+              :total=pageInfo.totalCount style="text-align: right;float:right;">
+          </el-pagination>
+        </el-row>
       </el-row>
 
-      <el-row style="margin-top:1%;">
-        <el-button type="success" size="small" @click="noteTitle='';noteTitleVisiable=true">新建</el-button>
-        <!-- <el-button type="danger" size="small" @click="" icon="el-icon-minus">批量删除</el-button> -->
-        <el-pagination
-            v-if="pageShow"
-            background
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page=pageInfo.pageNo
-            :page-sizes="[10, 20, 30, 40, 50]"
-            :page-size=pageInfo.pageSize
-            layout="total, sizes, prev, pager, next, jumper "
-            :total=pageInfo.totalCount style="text-align: right;float:right;">
-        </el-pagination>
-      </el-row>
 
       <!-- 新建笔记dialog -->
       <el-dialog width="30%" title="新建笔记" :visible.sync="noteTitleVisiable" append-to-body>
         <span style="color:red">*</span><span style="font-size:15px;">笔记标题：</span>
-        <el-input type="text" placeholder="请输入笔记标题（上限45字符）" size="medium" v-model="noteTitle" maxlength="45"></el-input>
+        <el-input type="text" placeholder="请输入笔记标题（上限45字符）" size="small" v-model="noteTitle" maxlength="45"></el-input>
         <div slot="footer" class="dialog-footer" style="text-align: center;">
           <el-button type="primary" @click="checkTitleIsNullOrNot(noteTitle);noteTitleVisiable = false">确定</el-button>
-          <el-button @click="noteTitleVisiable = false">取消</el-button>
+          <el-button type="primary" plain @click="noteTitleVisiable = false">取消</el-button>
         </div>
       </el-dialog>
 
@@ -83,7 +88,7 @@
         <span style="font-size:15px;">确定删除该笔记？</span>
         <div slot="footer" class="dialog-footer" style="text-align: right;">
           <el-button type="primary" @click="deleteVisiable = false;deleteNote(del_noteid,del_uid);">确定</el-button>
-          <el-button @click="deleteVisiable = false">取消</el-button>
+          <el-button type="primary" plain @click="deleteVisiable = false">取消</el-button>
         </div>
       </el-dialog>
     </div>
@@ -101,16 +106,16 @@
         @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
         @change="onEditorChange($event)"
         ></quill-editor>
-        <el-row style="margin-top:1%">
-          <el-button type="success" @click="generateNote();" size="small">确定</el-button>
-          <el-button type="primary" @click="noteTitle='';isListPage='1';content=null" size="small">取消</el-button>
+        <el-row style="margin-top:20px;">
+          <el-button type="primary" @click="generateNote();" size="small">确定</el-button>
+          <el-button type="primary" plain @click="noteTitle='';isListPage='1';content=null" size="small">取消</el-button>
         </el-row>
       </div>
     </div>
     <!-- 新建笔记end -->
 
     <!-- 笔记详情 -->
-    <div  v-show="isListPage==='3'">
+    <div v-show="isListPage==='3'">
       <div>
         <h3 style="text-align:center">{{noteDetail.title}}&nbsp;&nbsp;</h3>
         <!-- <quill-editor
@@ -120,8 +125,8 @@
         <div v-html="noteDetail.content" class="note-content">
 
         </div>
-        <el-row style="margin-top:1%;text-align:center;">
-          <el-button type="primary" @click="noteDetail.title='';isListPage='1';noteDetail.content=null">返回列表</el-button>
+        <el-row style="margin-top:20px;text-align:center;">
+          <el-button type="primary" plain @click="noteDetail.title='';isListPage='1';noteDetail.content=null">返回列表</el-button>
         </el-row>
       </div>
     </div>
@@ -144,8 +149,8 @@
         @change="onEditorChange($event)"
         ></quill-editor>
         <el-row style="margin-top:1%;">
-          <el-button type="success" @click="modifyNote();" size="small">确定</el-button>
-          <el-button type="primary" @click="editDetail.title='';noteTitle1='';isListPage='1';editDetail.content=null" size="small">取消</el-button>
+          <el-button type="primary" @click="modifyNote();" size="small">确定</el-button>
+          <el-button type="primary" plain @click="editDetail.title='';noteTitle1='';isListPage='1';editDetail.content=null" size="small">取消</el-button>
         </el-row>
       </div>
     </div>
@@ -155,11 +160,11 @@
     <!-- 修改笔记标题 dialog -->
       <el-dialog width="30%" title="修改笔记标题" :visible.sync="editNoteTitleVisiable" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
         <span style="color:red">*</span><span style="font-size:15px;">笔记标题：</span>
-          <el-input maxlength="45" type="text" placeholder="请输入笔记标题（上限45字符）" size="medium" v-model="noteTitle1" clearable @change="checkEditTitle(noteTitle1);"></el-input>
+          <el-input maxlength="45" type="text" placeholder="请输入笔记标题（上限45字符）" size="small" v-model="noteTitle1" clearable @change="checkEditTitle(noteTitle1);"></el-input>
         <div slot="footer" class="dialog-footer" style="text-align: center;">
         <span style="color:red" v-if="hasNoteTitle===false">笔记标题不能为空</span>
           <el-button type="primary" @click="editNoteTitleVisiable=false;editDetail.title=noteTitle1" v-if="hasNoteTitle===true">确定</el-button>
-          <el-button @click="editNoteTitleVisiable = false" v-if="hasNoteTitle===true">取消</el-button>
+          <el-button type="primary" plain @click="editNoteTitleVisiable = false" v-if="hasNoteTitle===true">取消</el-button>
         </div>
       </el-dialog>
   </div>
@@ -204,6 +209,8 @@ export default {
 
   data() {
     return {
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       isListPage: '1', // 是否是主页
       uid: '', // 每次查询默认带上的参数
       req: {
@@ -256,6 +263,13 @@ export default {
   },
 
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     // 默认查询
     firstInQuery(uid) {
       firstIn(uid)
@@ -470,6 +484,8 @@ export default {
   },
 
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     getRequestUser()
       .then(res => {
         this.uid = res.data.agentid

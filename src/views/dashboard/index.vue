@@ -75,6 +75,7 @@ export default {
     ])
   },
   mounted() {
+    console.log(this.$router)
     // const promise = new Promise(resolve => {
     getMenu(localStorage.getItem('agentId')).then(response => {
       var data = response.data

@@ -1,36 +1,40 @@
 <template>
   <div class='container'>
-    <el-row>
-      <el-form :inline="true" size="small">
-        <el-form-item prop="campaignId" label="活动编号：">
-          <el-input v-model="req.campaignId" placeholder="活动编号（限长20字符）" maxlength="20"></el-input>
-        </el-form-item>
-        <el-form-item label="活动名称:">
-          <el-input v-model="req.campaignName" placeholder="活动名称（限长128字符）" maxlength="128"></el-input>
-        </el-form-item>
-        <el-form-item prop="modifierName" label="操作人：">
-          <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="操作时间：">
-          <el-date-picker
-              v-model="timeValue"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;searchByCampaign(req)">查询</el-button>
-          <el-button  type="danger" @click="timeValue=[],resetReq()">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
-
-    <el-row>
-      <el-col>
-        <el-table :data="tableData" border>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small">
+          <el-form-item prop="campaignId" label="活动编号：">
+            <el-input v-model="req.campaignId" placeholder="活动编号（限长20字符）" maxlength="20"></el-input>
+          </el-form-item>
+          <el-form-item label="活动名称:">
+            <el-input v-model="req.campaignName" placeholder="活动名称（限长128字符）" maxlength="128"></el-input>
+          </el-form-item>
+          <el-form-item prop="modifierName" label="操作人：">
+            <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="操作时间：">
+            <el-date-picker
+                v-model="timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="req.pageNo=1;searchByCampaign(req)">查询</el-button>
+            <el-button @click="timeValue=[],resetReq()">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">活动与质检表</div>
+      </el-row>
+      <el-row>
+        <el-table :data="tableData">
           <el-table-column align="center" label="活动编号" prop="campaignId" :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column align="center" label="活动名称" prop="activityName" :show-overflow-tooltip="true">
@@ -75,14 +79,11 @@
             </template>
           </el-table-column>
         </el-table>
-      </el-col>
-    </el-row>
-
-    <!-- 分页信息 -->
-    <el-row style="margin-top:5px;">
+      </el-row>
+       <!-- 分页信息 -->
+      <el-row style="margin-top:20px;">
         <el-pagination
           v-if="pageShow"
-          background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page='pageInfo.pageNo'
@@ -91,16 +92,16 @@
           layout="total, sizes, prev, pager, next, jumper "
           :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
+      </el-row>
     </el-row>
-
     <!-- 指定质检组织、评分表的dialog  -->
     <el-dialog
-    align:left
-    width="30%"
-    title="指定质检组织/评分表"
-    :visible.sync="appointVisiable"
-    append-to-body>
-      <el-form label-width="100px">
+      align:left
+      width="30%"
+      title="指定质检组织/评分表"
+      :visible.sync="appointVisiable"
+      append-to-body>
+      <el-form label-width="100px" size="small">
         <el-form-item label="活动名称：">
           <div>{{campaignDetail.campaignName}}</div>
         </el-form-item>
@@ -118,6 +119,7 @@
         </el-form-item>
         <el-form-item label="质检组织：">
           <el-cascader
+            style="width:100%;"
             v-model="appoint_qcdept"
             placeholder="请选择组织"
             :options="qcdepts"
@@ -137,7 +139,7 @@
           </el-select> -->
         </el-form-item>
         <el-form-item label="评分表：">
-          <el-select v-model="grade" multiple placeholder="请选择评分表" clearable @change="selectMarks">
+          <el-select style="width:100%;" v-model="grade" multiple placeholder="请选择评分表" clearable @change="selectMarks">
             <el-option
             v-for="item in grades"
             :key="item.gradeId"
@@ -151,8 +153,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: center;">
-        <el-button @click="completeAssign();" type="success">确定</el-button>
-        <el-button @click="appointVisiable = false">返回</el-button>
+        <el-button @click="completeAssign();" type="primary">确定</el-button>
+        <el-button @click="appointVisiable = false" type="primary" plain>取消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -179,6 +181,8 @@ export default {
 
   data() {
     return {
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       appoint_qcdept: [], // 级联选中的
       org_props: {
         label: 'departName',
@@ -224,6 +228,13 @@ export default {
   },
 
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     // 质检组织显示
     showQmDepart(departName) {
       if (departName) {
@@ -448,6 +459,8 @@ export default {
   },
 
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     this.searchByCampaign(this.req)
   }
 

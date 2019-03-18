@@ -1,129 +1,146 @@
 <template>
   <div class="container">
-    <el-row margin-top:>
-      <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item prop="customerPhone" label="客户电话:">
-          <el-input v-model="req.customerPhone" placeholder="客户电话（限长50字符）" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item  prop="modifierName" label="操作人:">
-          <el-input v-model="req.modifierName" placeholder="操作人（限长45字符）" maxlength="45"></el-input>
-        </el-form-item>
-        <el-form-item label="操作时间：">
-          <el-date-picker
-                v-model="req.modifyTimeStart"
-                type="datetime"
-                placeholder="开始时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
-          </el-date-picker>
-          到
-          <el-date-picker
-                v-model="req.modifyTimeEnd"
-                type="datetime"
-                placeholder="结束时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="活动名称:">
-          <el-select v-model="req.campaignId" placeholder="选择活动">
-            <el-option label="全部" value=""></el-option>
-            <el-option v-for="item in campaignOptions" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;paginationReq=cloneData(req);findNoVisitCustomers(req);">查询</el-button>
-          <el-button type="danger" @click="resetReq();">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small" :model="req" ref="searchForm">
+          <el-form-item prop="customerPhone" label="客户电话:">
+            <el-input v-model="req.customerPhone" placeholder="客户电话（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item  prop="modifierName" label="操作人:">
+            <el-input v-model="req.modifierName" placeholder="操作人（限长45字符）" maxlength="45"></el-input>
+          </el-form-item>
+          <el-form-item label="操作时间：">
+            <el-date-picker
+              v-model="req.modifyTimeStart"
+              type="datetime"
+              placeholder="开始时间"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              default-time="00:00:00">
+            </el-date-picker>
+            到
+            <el-date-picker
+              v-model="req.modifyTimeEnd"
+              type="datetime"
+              placeholder="结束时间"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              default-time="00:00:00">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="活动名称:">
+            <el-select v-model="req.campaignId" placeholder="选择活动">
+              <el-option label="全部" value=""></el-option>
+              <el-option v-for="item in campaignOptions" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="req.pageNo=1;paginationReq=cloneData(req);findNoVisitCustomers(req);">查询</el-button>
+            <el-button @click="resetReq();">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
     <!-- 表格 -->
-    <el-row>
-      <el-col>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">免访客户表</div>
+      </el-row>
+      <el-row class="margin-bottom-20">
+        <el-button type="success" size="small" @click="addVisible=true;clearForm(noVisitCustomerDetail,'addCustomerForm');">新建</el-button>
+        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
+        <!-- <el-button type="primary" size="small" @click="op_hints1=true">批量可见</el-button>
+        <el-button type="primary" size="small" @click="op_hints2=true" style="width:100px">批量不可见</el-button> -->
+        <el-dropdown size="small" trigger="click" @command="moreOperating" style="margin-left:10px">
+          <el-button type="info" style="width:auto">
+            更多操作<i class="el-icon-arrow-down el-icon--right"></i>
+          </el-button>
+          <el-dropdown-menu slot="dropdown" class="info">
+            <el-dropdown-item command='1'>批量可见</el-dropdown-item>
+            <el-dropdown-item command='2'>批量不可见</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </el-row>
+      <el-row>
         <el-table
-              :data="tableData"
-              border
-              @selection-change="handleSelectionChange">
+          :data="tableData"
+          @selection-change="handleSelectionChange">
           <el-table-column
-                align="center"
-                type="selection"
-                width="55">
+            align="center"
+            type="selection"
+            width="55">
           </el-table-column>
           <el-table-column
-                align="center"
-                label="客户电话"
-                :show-overflow-tooltip="true">
+            align="center"
+            label="客户电话"
+            :show-overflow-tooltip="true">
             <template slot-scope="scope">
               <a @click="detailVisible=true;delReq.id=scope.row.id;getBlackListInfoById(scope.row.id);">{{hideMobile(scope.row.customerPhone)}}</a>
             </template>
           </el-table-column>
           <el-table-column
-                align="center"
-                prop="effectiveDate"
-                label="生效时间" :show-overflow-tooltip="true">
+            align="center"
+            prop="effectiveDate"
+            label="生效时间" :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
-                align="center"
-                prop="expiryDate"
-                label="失效时间" :show-overflow-tooltip="true">
+            align="center"
+            prop="expiryDate"
+            label="失效时间" :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
-                align="center"
-                label="操作人" :show-overflow-tooltip="true">
+            align="center"
+            label="操作人" :show-overflow-tooltip="true">
             <template slot-scope="scope">
               {{(scope.row.modifierName == 0) ? '无':scope.row.modifierName}}
             </template>
           </el-table-column>
           <el-table-column
-                align="center"
-                prop="modifyTime"
-                label="操作时间"
-                width="155">
+            align="center"
+            prop="modifyTime"
+            label="操作时间"
+            width="155">
           </el-table-column>
           <el-table-column align="center" label="状态" >
             <template slot-scope="scope">
-              <div v-html="showVisibleStatus(scope.row.visible)"></div>
+              <div :class="scope.row.visible===1?'visible':'invisible'">
+                <span>{{scope.row.visible===1?'可见':'不可见'}}</span>
+              </div>
             </template>
           </el-table-column>
           <el-table-column
-                align="center"
-                label="操作"
-                width="200">
+            align="center"
+            label="操作"
+            width="200">
             <template slot-scope="scope">
               <el-button @click="editVisible=true;delReq.id=scope.row.id;getBlackListInfoById(scope.row.id);" type="text" size="small">修改</el-button>
               <el-button @click="delVisible=true;delReq.id=scope.row.id" type="text" size="small">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
-      </el-col>
+      </el-row>
+      <el-row style="margin-top:20px;">
+        <el-pagination
+          v-if="pageShow"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page='pageInfo.pageNo'
+          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-size='pageInfo.pageSize'
+          layout="total, sizes, prev, pager, next, jumper "
+          :total='pageInfo.totalCount' style="text-align: right;float:right;">
+        </el-pagination>
+      </el-row>
     </el-row>
-    <el-row style="margin-top:5px;">
-      <el-button type="success" size="small" @click="addVisible=true;clearForm(noVisitCustomerDetail,'addCustomerForm');">新建</el-button>
-      <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
-      <el-button type="primary" size="small" @click="op_hints1=true">批量可见</el-button>
-      <el-button type="primary" size="small" @click="op_hints2=true" style="width:100px">批量不可见</el-button>
-      <el-pagination
-            v-if="pageShow"
-            background
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page='pageInfo.pageNo'
-            :page-sizes="[10, 20, 30, 40, 50]"
-            :page-size='pageInfo.pageSize'
-            layout="total, sizes, prev, pager, next, jumper "
-            :total='pageInfo.totalCount' style="text-align: right;float:right;">
-      </el-pagination>
-    </el-row>
+    
     <!-- 新建免访客户 -->
     <el-dialog
-          align:left
-          width="30%"
-          title="新建免访客户"
-          :visible.sync="addVisible"
-          append-to-body>
-      <el-form :rules="rule" :model="noVisitCustomerDetail" ref="addCustomerForm" label-width="100px">
+      align:left
+      width="30%"
+      title="新建免访客户"
+      :visible.sync="addVisible"
+      append-to-body>
+      <el-form size="small" :rules="rule" :model="noVisitCustomerDetail" ref="addCustomerForm" label-width="100px">
         <el-form-item label="选择活动" prop="campaignIds">
-          <el-select v-model="noVisitCustomerDetail.campaignIds" multiple placeholder="选择活动" style="width: 100%;">
+          <el-select size="small" v-model="noVisitCustomerDetail.campaignIds" multiple placeholder="选择活动" style="width: 100%;">
             <el-option v-for="item in campaignOptions" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
           </el-select>
         </el-form-item>
@@ -142,83 +159,85 @@
         </el-form-item>
         <el-form-item label="生效时间:" prop="effectiveDate">
           <el-date-picker
-                v-model="noVisitCustomerDetail.effectiveDate"
-                type="date"
-                placeholder="生效时间"
-                value-format="yyyy-MM-dd">
+            style="width:100%;"
+            v-model="noVisitCustomerDetail.effectiveDate"
+            type="date"
+            placeholder="生效时间"
+            value-format="yyyy-MM-dd">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="失效时间:" prop="expiryDate">
           <el-date-picker
-                v-model="noVisitCustomerDetail.expiryDate"
-                type="date"
-                placeholder="失效时间"
-                value-format="yyyy-MM-dd">
+            style="width:100%;"
+            v-model="noVisitCustomerDetail.expiryDate"
+            type="date"
+            placeholder="失效时间"
+            value-format="yyyy-MM-dd">
           </el-date-picker>
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button type="danger" @click="resetForm('addCustomerForm')">重 置</el-button>
-        <el-button @click="addVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('addCustomerForm',noVisitCustomerDetail);addNoVisitCustomers(noVisitCustomerDetail);">确 定</el-button>
+        <el-button @click="resetForm('addCustomerForm')">重置</el-button>
+        <el-button type="primary" plain @click="addVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitForm('addCustomerForm',noVisitCustomerDetail);addNoVisitCustomers(noVisitCustomerDetail);">确定</el-button>
       </div>
     </el-dialog>
     <!-- 批量删除 -->
     <el-dialog
-          width="30%"
-          title="批量删除"
-          :visible.sync="batchDelVisible"
-          append-to-body>
+      width="30%"
+      title="批量删除"
+      :visible.sync="batchDelVisible"
+      append-to-body>
       <span style="font-size:20px;">确定删除选定内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="batchDelVisible = false">取 消</el-button>
-        <el-button type="primary" @click="batchDelVisible = false;batchDelete(batchDelReq);">确 定</el-button>
+        <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
+        <el-button type="primary" @click="batchDelVisible = false;batchDelete(batchDelReq);">确定</el-button>
       </div>
     </el-dialog>
     <!-- 批量可见 -->
-      <el-dialog
+    <el-dialog
       width="30%"
       title="操作提示"
       :visible.sync="op_hints1"
       append-to-body>
       <span style="font-size:20px;">是否确认批量设置客户为可见？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="op_hints1 = false">取 消</el-button>
+        <el-button type="primary" plain @click="op_hints1 = false">取消</el-button>
         <el-button type="primary" @click="op_hints1 = false;batchSetVisibleStatus(batchDelReq,1)">确 定</el-button>
       </div>
     </el-dialog>
     <!-- 批量不可见 -->
-      <el-dialog
+    <el-dialog
       width="30%"
       title="操作提示"
       :visible.sync="op_hints2"
       append-to-body>
       <span style="font-size:20px;">是否确认批量设置客户为不可见？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="op_hints2 = false">取 消</el-button>
-        <el-button type="primary" @click="op_hints2 = false;batchSetVisibleStatus(batchDelReq,0)">确 定</el-button>
+        <el-button type="primary" plain @click="op_hints2 = false">取消</el-button>
+        <el-button type="primary" @click="op_hints2 = false;batchSetVisibleStatus(batchDelReq,0)">确定</el-button>
       </div>
     </el-dialog>
     <!-- 删除 -->
     <el-dialog
-          width="30%"
-          title="删除"
-          :visible.sync="delVisible"
-          append-to-body>
+      width="30%"
+      title="删除"
+      :visible.sync="delVisible"
+      append-to-body>
       <span style="font-size:20px;">确定删除此内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="delVisible = false">取 消</el-button>
-        <el-button type="primary" @click="delVisible = false;delBlackListInfo(delReq.id);">确 定</el-button>
+        <el-button type="primary" plain @click="delVisible = false">取消</el-button>
+        <el-button type="primary" @click="delVisible = false;delBlackListInfo(delReq.id);">确定</el-button>
       </div>
     </el-dialog>
     <!-- 修改免访客户 -->
     <el-dialog
-          align:left
-          width="30%"
-          title="修改免访客户"
-          :visible.sync="editVisible"
-          append-to-body>
-      <el-form :rules="rule" :model="editNoVisitCustomerDetail" ref="editCustomerForm" label-width="100px">
+      align:left
+      width="30%"
+      title="修改免访客户"
+      :visible.sync="editVisible"
+      append-to-body>
+      <el-form size="small" :rules="rule" :model="editNoVisitCustomerDetail" ref="editCustomerForm" label-width="100px">
         <el-form-item label="选择活动" prop="campaignIds">
           <el-select v-model="editNoVisitCustomerDetail.campaignIds" multiple placeholder="选择活动" style="width: 100%;">
             <el-option v-for="item in campaignOptions" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
@@ -239,18 +258,20 @@
         </el-form-item>
         <el-form-item label="生效时间:" prop="effectiveDate">
           <el-date-picker
-                v-model="editNoVisitCustomerDetail.effectiveDate"
-                type="date"
-                placeholder="生效时间"
-                value-format="yyyy-MM-dd">
+            style="width:100%;"
+            v-model="editNoVisitCustomerDetail.effectiveDate"
+            type="date"
+            placeholder="生效时间"
+            value-format="yyyy-MM-dd">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="失效时间:" prop="expiryDate">
           <el-date-picker
-                v-model="editNoVisitCustomerDetail.expiryDate"
-                type="date"
-                placeholder="失效时间"
-                value-format="yyyy-MM-dd">
+            style="width:100%;"
+            v-model="editNoVisitCustomerDetail.expiryDate"
+            type="date"
+            placeholder="失效时间"
+            value-format="yyyy-MM-dd">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="操作人:" prop="modifierName">
@@ -261,19 +282,19 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button type="danger" @click="getBlackListInfoById(delReq.id)">重 置</el-button>
-        <el-button @click="editVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('editCustomerForm',editNoVisitCustomerDetail);editBlackListInfo(editNoVisitCustomerDetail);">确 定</el-button>
+        <el-button @click="getBlackListInfoById(delReq.id)">重置</el-button>
+        <el-button type="primary" plain @click="editVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitForm('editCustomerForm',editNoVisitCustomerDetail);editBlackListInfo(editNoVisitCustomerDetail);">确定</el-button>
       </div>
     </el-dialog>
     <!-- 免访客户详情 -->
     <el-dialog
-          align:left
-          width="30%"
-          title="免访客户详情"
-          :visible.sync="detailVisible"
-          append-to-body>
-      <el-form  :model="editNoVisitCustomerDetail" ref="noVisitCustomerDetailForm" label-width="100px">
+      align:left
+      width="30%"
+      title="免访客户详情"
+      :visible.sync="detailVisible"
+      append-to-body>
+      <el-form size="small" :model="editNoVisitCustomerDetail" ref="noVisitCustomerDetailForm" label-width="100px">
         <el-form-item label="活动编号" prop="campaignIds">
           <div style="with:95%;overflow:auto;">{{formateData(editNoVisitCustomerDetail.campaignIds)}}</div>
         </el-form-item>
@@ -294,7 +315,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button @click="detailVisible = false">返回</el-button>
+        <el-button type="primary" plain @click="detailVisible = false">返回</el-button>
       </div>
     </el-dialog>
   </div>
@@ -306,6 +327,8 @@
     name: 'customer_novisit',
     data() {
       return {
+        formContainerOpen: '1',
+        formContainer: this.$store.state.app.formContainer,
         detailVisible: false, // 免访客户详情
         delVisible: false, // 删除对话框显示隐藏
         editVisible: false, // 修改对话框显示隐藏
@@ -366,10 +389,23 @@
       }
     },
     mounted() {
+      this.formContainer()
+      this.handleChangeAcitve()
       this.findCampaigns()
       this.findNoVisitCustomers(this.req)
     },
     methods: {
+      moreOperating(val) {
+        if (val === '1') this.op_hints1 = true
+        else this.op_hints2 = true
+      },
+      handleChangeAcitve(active = ['1']) {
+        if (active.length) {
+          $('.form-more').text('收起')
+        } else {
+          $('.form-more').text('更多')
+        }
+      },
       batchSetVisibleStatus(batchDelReq, visible) {
         if (batchDelReq.ids.length === 0) {
           this.$message.error('请先选择需要设置的免访客户！')
@@ -390,15 +426,6 @@
             })
         }
       },
-      showVisibleStatus(visible) {
-        if (visible === 1) {
-        // 可见
-          return "<span style='color:#67C23A'>可见</span>"
-        } else {
-        // 不可见
-          return "<span style='color:#F56C6C'>不可见</span>"
-        }
-      },
       resetReq() {
         this.req = {
           customerPhone: '',
@@ -416,8 +443,8 @@
         })
       },
       findNoVisitCustomers(req) {
-        req.modifyTimeStart = req.modifyTimeStart?req.modifyTimeStart:''
-        req.modifyTimeEnd = req.modifyTimeEnd?req.modifyTimeEnd:''
+        req.modifyTimeStart = req.modifyTimeStart ? req.modifyTimeStart : ''
+        req.modifyTimeEnd = req.modifyTimeEnd ? req.modifyTimeEnd : ''
         queryNoVisitCustomers(req).then(response => {
           if (response.data.code === 0) {
             this.tableData = response.data.data

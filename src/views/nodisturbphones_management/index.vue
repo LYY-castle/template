@@ -1,45 +1,64 @@
 <template>
   <div class="container">
-      <el-row margin-top:>
-      <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item prop="startNumber" label="开始号段:">
-          <el-input v-model="req.startNumber" placeholder="开始号段（限长45字符）" maxlength="45"></el-input>
-        </el-form-item>
-        <el-form-item  prop="endNumber" label="结束号段:">
-          <el-input v-model="req.endNumber" placeholder="结束号段（限长45字符）" maxlength="45"></el-input>
-        </el-form-item>
-        <el-form-item  prop="modifier" label="操作人:">
-          <el-input v-model="req.modifier" placeholder="操作人（限长45字符）" maxlength="45"></el-input>
-        </el-form-item>
-        <el-form-item label="操作时间：">
-            <el-date-picker
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small" :model="req" ref="searchForm">
+          <el-form-item prop="startNumber" label="开始号段:">
+            <el-input v-model="req.startNumber" placeholder="开始号段（限长45字符）" maxlength="45"></el-input>
+          </el-form-item>
+          <el-form-item  prop="endNumber" label="结束号段:">
+            <el-input v-model="req.endNumber" placeholder="结束号段（限长45字符）" maxlength="45"></el-input>
+          </el-form-item>
+          <el-form-item  prop="modifier" label="操作人:">
+            <el-input v-model="req.modifier" placeholder="操作人（限长45字符）" maxlength="45"></el-input>
+          </el-form-item>
+          <el-form-item label="操作时间：">
+              <el-date-picker
                 v-model="req.queryStart"
                 type="datetime"
                 placeholder="开始时间"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 default-time="00:00:00">
-            </el-date-picker>
-            到
-            <el-date-picker
+              </el-date-picker>
+              到
+              <el-date-picker
                 v-model="req.queryStop"
                 type="datetime"
                 placeholder="结束时间"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 default-time="00:00:00">
-            </el-date-picker>
+              </el-date-picker>
+            </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="req.pageNo=1;paginationReq=cloneData(req);querynodisturbphones(req);">查询</el-button>
+            <el-button @click="reset();">重置</el-button>
           </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;paginationReq=cloneData(req);querynodisturbphones(req);">查询</el-button>
-          <el-button type="danger" @click="reset();">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
     <!-- 表格 -->
-    <el-row>
-      <el-col>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">免访号段表</div>
+      </el-row>
+      <el-row class="margin-bottom-20">
+        <el-button type="success" size="small" @click="addVisible=true;clearForm(addNoDisturbPhonesDetail,'addPhonesForm');">新建</el-button>
+        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
+        <!-- <el-button type="primary" size="small" @click="op_hints1=true">批量可见</el-button>
+        <el-button type="primary" size="small" @click="op_hints2=true" style="width:100px">批量不可见</el-button> -->
+        <el-dropdown size="small" trigger="click" @command="moreOperating" style="margin-left:10px">
+          <el-button type="info" style="width:auto">
+            更多操作<i class="el-icon-arrow-down el-icon--right"></i>
+          </el-button>
+          <el-dropdown-menu slot="dropdown" class="info">
+            <el-dropdown-item command='1'>批量可见</el-dropdown-item>
+            <el-dropdown-item command='2'>批量不可见</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </el-row>
+      <el-row>
         <el-table
           :data="tableData"
-          border
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
@@ -73,7 +92,9 @@
           </el-table-column>
           <el-table-column align="center" label="号段状态" >
             <template slot-scope="scope">
-              <div v-html="showVisibleStatus(scope.row.visible)"></div>
+              <div :class="scope.row.visible===1?'visible':'invisible'">
+                <span>{{scope.row.visible===1?'可见':'不可见'}}</span>
+              </div>
             </template>
           </el-table-column>
           <el-table-column
@@ -86,16 +107,10 @@
           </template>
           </el-table-column>
         </el-table>
-      </el-col>
-    </el-row>
-    <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;clearForm(addNoDisturbPhonesDetail,'addPhonesForm');">新建</el-button>
-        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
-        <el-button type="primary" size="small" @click="op_hints1=true">批量可见</el-button>
-        <el-button type="primary" size="small" @click="op_hints2=true" style="width:100px">批量不可见</el-button>
+      </el-row>
+      <el-row style="margin-top:20px;">
         <el-pagination
           v-if="pageShow"
-          background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page='pageInfo.pageNo'
@@ -104,7 +119,9 @@
           layout="total, sizes, prev, pager, next, jumper "
           :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
+      </el-row>
     </el-row>
+    
     <!-- 新建免访号段 -->
      <el-dialog
       align:left
@@ -112,7 +129,7 @@
       title="新建免访号段"
       :visible.sync="addVisible"
       append-to-body>
-      <el-form :rules="rule" :model="addNoDisturbPhonesDetail" ref="addPhonesForm" label-width="100px">
+      <el-form size="small" :rules="rule" :model="addNoDisturbPhonesDetail" ref="addPhonesForm" label-width="100px">
         <el-form-item label="开始号段：" prop="startNumber">
            <el-input v-model="addNoDisturbPhonesDetail.startNumber" size="small" @blur.native="console.log(111);formatNum(addNoDisturbPhonesDetail.startNumber,'startNumber')" placeholder="开始号段（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
@@ -131,9 +148,9 @@
         </el-form-item>
       </el-form>
         <div slot="footer" style="text-align: right;">
-          <el-button type="danger" @click="resetForm('addPhonesForm')">重 置</el-button>
-          <el-button @click="addVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitForm('addPhonesForm',addNoDisturbPhonesDetail);addNoDisturbZones(addNoDisturbPhonesDetail);">确 定</el-button>
+          <el-button @click="resetForm('addPhonesForm')">重置</el-button>
+          <el-button type="primary" plain="" @click="addVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitForm('addPhonesForm',addNoDisturbPhonesDetail);addNoDisturbZones(addNoDisturbPhonesDetail);">确定</el-button>
         </div>
       </el-dialog>
       <!-- 批量删除 -->
@@ -144,59 +161,59 @@
         append-to-body>
         <span style="font-size:20px;">确定删除选定内容？</span>
         <div slot="footer" class="dialog-footer" style="text-align: right;">
-          <el-button @click="batchDelVisible = false">取 消</el-button>
-          <el-button type="primary" @click="batchDelVisible = false;batchdel(batchDelReq);">确 定</el-button>
+          <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
+          <el-button type="primary" @click="batchDelVisible = false;batchdel(batchDelReq);">确定</el-button>
         </div>
       </el-dialog>
       <!-- 删除 -->
       <el-dialog
-      width="30%"
-      title="删除"
-      :visible.sync="delVisible"
-      append-to-body>
-      <span style="font-size:20px;">确定删除此内容？</span>
-      <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="delVisible = false">取 消</el-button>
-        <el-button type="primary" @click="delVisible = false;deleteone(delReq.id);">确 定</el-button>
-      </div>
-    </el-dialog>
+        width="30%"
+        title="删除"
+        :visible.sync="delVisible"
+        append-to-body>
+        <span style="font-size:20px;">确定删除此内容？</span>
+        <div slot="footer" class="dialog-footer" style="text-align: right;">
+          <el-button type="primary" plain @click="delVisible = false">取消</el-button>
+          <el-button type="primary" @click="delVisible = false;deleteone(delReq.id);">确定</el-button>
+        </div>
+      </el-dialog>
     <!-- 批量可见 -->
-      <el-dialog
+    <el-dialog
       width="30%"
       title="操作提示"
       :visible.sync="op_hints1"
       append-to-body>
       <span style="font-size:20px;">是否确认批量设置号段为可见？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="op_hints1 = false">取 消</el-button>
+        <el-button type="primary" plain @click="op_hints1 = false">取消</el-button>
         <el-button type="primary" @click="op_hints1 = false;batchSetVisibleStatus(batchDelReq,1)">确 定</el-button>
       </div>
     </el-dialog>
     <!-- 批量不可见 -->
-      <el-dialog
+    <el-dialog
       width="30%"
       title="操作提示"
       :visible.sync="op_hints2"
       append-to-body>
       <span style="font-size:20px;">是否确认批量设置号段为不可见？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="op_hints2 = false">取 消</el-button>
-        <el-button type="primary" @click="op_hints2 = false;batchSetVisibleStatus(batchDelReq,0)">确 定</el-button>
+        <el-button type="primary" plain @click="op_hints2 = false">取消</el-button>
+        <el-button type="primary" @click="op_hints2 = false;batchSetVisibleStatus(batchDelReq,0)">确定</el-button>
       </div>
     </el-dialog>
-      <!-- 修改免访客户 -->
-      <el-dialog
+    <!-- 修改免访客户 -->
+    <el-dialog
       align:left
       width="30%"
       title="修改免访号段"
       :visible.sync="editVisible"
       append-to-body>
-      <el-form :rules="rule" :model="editNoDisturbPhonesDetail" ref="editPhoneForm" label-width="100px">
+      <el-form size="small" :rules="rule" :model="editNoDisturbPhonesDetail" ref="editPhoneForm" label-width="100px">
         <el-form-item label="开始号段:" prop="startNumber">
-           <el-input v-model="editNoDisturbPhonesDetail.startNumber" size="small" @blur.native="formatNum(editNoDisturbPhonesDetail.startNumber,'startNumber')" placeholder="开始号段（限长45字符）" maxlength="45"></el-input>
+          <el-input v-model="editNoDisturbPhonesDetail.startNumber" size="small" @blur.native="formatNum(editNoDisturbPhonesDetail.startNumber,'startNumber')" placeholder="开始号段（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="结束号段:" prop="endNumber">
-             <el-input v-model="editNoDisturbPhonesDetail.endNumber" size="small" @blur.native="formatNum(editNoDisturbPhonesDetail.endNumber,'endNumber')" placeholder="结束号段（限长45字符）" maxlength="45"></el-input>
+            <el-input v-model="editNoDisturbPhonesDetail.endNumber" size="small" @blur.native="formatNum(editNoDisturbPhonesDetail.endNumber,'endNumber')" placeholder="结束号段（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item label="号段状态：" prop="visible">
           <el-switch
@@ -215,12 +232,12 @@
           <span>{{formatDateTime(editNoDisturbPhonesDetail.modifyTime)}}</span>
         </el-form-item>
       </el-form>
-        <div slot="footer" style="text-align: right;">
-          <el-button type="danger" @click="queryone(delReq.id)">重 置</el-button>
-          <el-button @click="editVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitForm('editPhoneForm',editNoDisturbPhonesDetail);eidtNoDisturbZones(editNoDisturbPhonesDetail);">确 定</el-button>
-        </div>
-      </el-dialog>
+      <div slot="footer" style="text-align: right;">
+        <el-button @click="queryone(delReq.id)">重置</el-button>
+        <el-button type="primary" plain @click="editVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitForm('editPhoneForm',editNoDisturbPhonesDetail);eidtNoDisturbZones(editNoDisturbPhonesDetail);">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -248,6 +265,9 @@ export default {
       }
     }
     return {
+      visibleClass: '',
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       delVisible: false, // 删除对话框显示隐藏
       editVisible: false, // 修改对话框显示隐藏
       batchDelVisible: false, // 批量删除对话框显示隐藏
@@ -319,9 +339,22 @@ export default {
     }
   },
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     this.querynodisturbphones(this.req)
   },
   methods: {
+    moreOperating(val) {
+      if (val === '1') this.op_hints1 = true
+      else this.op_hints2 = true
+    },
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     batchSetVisibleStatus(batchDelReq, visible) {
       if (batchDelReq.ids.length === 0) {
         this.$message.error('请先选择需要设置的免访号段！')
@@ -330,7 +363,6 @@ export default {
           ids: batchDelReq.ids,
           visible: visible
         }
-
         batchSetVisible(NovisitPhoneList)
           .then(response => {
             if (response.data.code === 0) {
@@ -340,16 +372,6 @@ export default {
               this.$message.error(response.data.message)
             }
           })
-      }
-    },
-    // 展示当前可见状态
-    showVisibleStatus(visible) {
-      if (visible === 1) {
-        // 可见
-        return "<span style='color:#67C23A'>可见</span>"
-      } else {
-        // 不可见
-        return "<span style='color:#F56C6C'>不可见</span>"
       }
     },
     // 重置查询框内容

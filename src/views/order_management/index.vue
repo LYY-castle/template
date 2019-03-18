@@ -1,73 +1,76 @@
 <template>
   <div class='container'>
-    <el-row>
-      <el-form :inline="true" size="small">
-        <el-form-item label="订单状态：">
-          <el-select v-model="req.status" placeholder="请选择" clearable>
-            <el-option
-              v-for="item in options"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>&nbsp;&nbsp;
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small">
+          <el-form-item label="订单状态：">
+            <el-select v-model="req.status" placeholder="请选择" clearable>
+              <el-option
+                v-for="item in options"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>&nbsp;&nbsp;
 
-        <el-form-item label="订单编号：">
-          <el-input v-model="req.orderId" placeholder="订单编号（上限50字符）" maxlength="50"></el-input>
-        </el-form-item>&nbsp;&nbsp;&nbsp;&nbsp;
+          <el-form-item label="订单编号：">
+            <el-input v-model="req.orderId" placeholder="订单编号（上限50字符）" maxlength="50"></el-input>
+          </el-form-item>&nbsp;&nbsp;&nbsp;&nbsp;
 
-        <el-form-item label="产品名称：">
-          <el-input v-model="req.productName" placeholder="产品名称（上限255字符）" maxlength="255"></el-input>
-        </el-form-item>
+          <el-form-item label="产品名称：">
+            <el-input v-model="req.productName" placeholder="产品名称（上限255字符）" maxlength="255"></el-input>
+          </el-form-item>
 
-        <el-form-item label="销售员工：" v-if="this.isManager">
-          <el-input v-model="req.staffName" placeholder="员工姓名（上限50字符）" maxlength="50"></el-input>
-        </el-form-item>
-        <br/>
+          <el-form-item label="销售员工：" v-if="this.isManager">
+            <el-input v-model="req.staffName" placeholder="员工姓名（上限50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <br/>
 
-        <el-form-item label="活动名称：">
-          <el-select v-model="req.campaignId" placeholder="请选择" clearable filterable>
-            <el-option label="所有活动" value=""></el-option>
-            <el-option
-              v-for="campaign in campaigns"
-              :label="campaign.campaignName"
-              :value="campaign.campaignId">
-            </el-option>
-          </el-select>
-        </el-form-item>
+          <el-form-item label="活动名称：">
+            <el-select v-model="req.campaignId" placeholder="请选择" clearable filterable>
+              <el-option label="所有活动" value=""></el-option>
+              <el-option
+                v-for="campaign in campaigns"
+                :label="campaign.campaignName"
+                :value="campaign.campaignId">
+              </el-option>
+            </el-select>
+          </el-form-item>
 
-        <el-form-item label="客户姓名：">
-          <el-input v-model="req.customerName" placeholder="客户姓名（上限50字符）" maxlength="50"></el-input>
-        </el-form-item>&nbsp;&nbsp;&nbsp;&nbsp;
+          <el-form-item label="客户姓名：">
+            <el-input v-model="req.customerName" placeholder="客户姓名（上限50字符）" maxlength="50"></el-input>
+          </el-form-item>&nbsp;&nbsp;&nbsp;&nbsp;
 
-        <el-form-item label="操作时间：">
-          <el-date-picker
-            v-model="req.modifyTimeStart"
-            type="datetime"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            default-time="00:00:00">
-          </el-date-picker>
-          到
-          <el-date-picker
-            v-model="req.modifyTimeEnd"
-            type="datetime"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            default-time="00:00:00">
-          </el-date-picker>
-        </el-form-item>
+          <el-form-item label="操作时间：">
+            <el-date-picker
+              v-model="req.modifyTimeStart"
+              type="datetime"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              default-time="00:00:00">
+            </el-date-picker>
+            到
+            <el-date-picker
+              v-model="req.modifyTimeEnd"
+              type="datetime"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              default-time="00:00:00">
+            </el-date-picker>
+          </el-form-item>
 
-        <el-form-item>
-                <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
-          <el-button type="danger" @click="clearForm(req)">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
-
-    <el-row>
-      <el-col>
+          <el-form-item>
+            <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
+            <el-button @click="clearForm(req)">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">订单管理表</div>
+      </el-row>
+      <el-row>
         <el-table
-          :data="tableData"
-          border>
+          :data="tableData">
           <el-table-column
             align="center"
             label="订单编号"
@@ -143,7 +146,9 @@
             align="center"
             label="订单状态">
             <template slot-scope="scope">
-              <div v-html="showStatus(scope.row.status)"></div>
+              <div :class="scope.row.status==='0'?'invisible':scope.row.status==='1'?'visible':scope.row.status==='2'?'visible':''">
+                <span>{{scope.row.status==='0'?'待支付':scope.row.status==='1'?'支付完成':scope.row.status==='2'?'订单完成':''}}</span>
+              </div>
             </template>
           </el-table-column>
           <el-table-column
@@ -170,21 +175,21 @@
             </template>
           </el-table-column>
         </el-table>
-      </el-col>
+      </el-row>
+      <el-row style="margin-top:20px;">
+        <el-pagination
+          v-if="pageShow"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page=pageInfo.pageNo
+          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-size=pageInfo.pageSize
+          layout="total, sizes, prev, pager, next, jumper"
+          :total=pageInfo.totalCount style="text-align: right;float:right;">
+        </el-pagination>
+      </el-row>
     </el-row>
-    <el-row style="margin-top:5px;">
-      <el-pagination
-        v-if="pageShow"
-        background
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page=pageInfo.pageNo
-        :page-sizes="[10, 20, 30, 40, 50]"
-        :page-size=pageInfo.pageSize
-        layout="total, sizes, prev, pager, next, jumper"
-        :total=pageInfo.totalCount style="text-align: right;float:right;">
-      </el-pagination>
-    </el-row>
+    
 
     <!-- 订单详情的dialog -->
     <el-dialog
@@ -193,7 +198,7 @@
       title="订单详情"
       :visible.sync="detailVisiable"
       append-to-body>
-      <el-form label-width="100px">
+      <el-form size="small" label-width="100px">
         <el-form-item label="订单编号">
           <span>{{orderDetail.orderId}}</span>
         </el-form-item>
@@ -223,7 +228,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button @click="detailVisiable=false">返回</el-button>
+        <el-button type="primary" plain @click="detailVisiable=false">返回</el-button>
       </div>
     </el-dialog>
     <!-- 订单详情的dialog  end-->
@@ -235,7 +240,7 @@
       title="修改订单"
       :visible.sync="editVisiable"
       append-to-body>
-      <el-form label-width="100px" :model="orderDetail" ref="editorder" :rules="rule">
+      <el-form size="small" label-width="100px" :model="orderDetail" ref="editorder" :rules="rule">
         <el-form-item label="订单编号">
           <span>{{orderDetail.orderId}}</span>
         </el-form-item>
@@ -265,8 +270,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button type="danger" @click="searchByOrderId(orderDetail.orderId)">重置</el-button>
-        <el-button @click="editVisiable=false">返回</el-button>
+        <el-button @click="searchByOrderId(orderDetail.orderId)">重置</el-button>
+        <el-button type="primary" plain @click="editVisiable=false">返回</el-button>
         <el-button type="primary" @click="submitForm('editorder');editOrder(orderDetail)">确定</el-button>
       </div>
     </el-dialog>
@@ -280,7 +285,7 @@
       <span style="font-size:15px;">确定删除此订单？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
         <el-button type="primary" @click="delVisiable = false;delOrder(deleteReq);">确定</el-button>
-        <el-button @click="delVisiable = false">取消</el-button>
+        <el-button type="primary" plain @click="delVisiable = false">取消</el-button>
       </div>
     </el-dialog>
 
@@ -292,14 +297,11 @@
       <span style="font-size:15px;">是否向客户发送支付短信?</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
         <el-button type="primary" @click="messageVisiable = false;sendMessage(messageParams);">确定</el-button>
-        <el-button @click="messageVisiable = false">取消</el-button>
+        <el-button type="primary" plain @click="messageVisiable = false">取消</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
-
-<style lang='scss' scoped>
-</style>
 
 <script>
   import { rule } from '@/utils/validate' // 校验工具
@@ -319,6 +321,8 @@
 
     data() {
       return {
+        formContainerOpen: '1',
+        formContainer: this.$store.state.app.formContainer,
         tableData: [], // 表格数据
         pageShow: true, // 是否显示分页
         pageInfo: {
@@ -398,6 +402,8 @@
 
     // 组件挂载时
     mounted() {
+      this.formContainer()
+      this.handleChangeAcitve()
       this.req.modifyTimeStart = this.$route.query.startTime ? this.$route.query.startTime : ''
       this.req.modifyTimeEnd = this.$route.query.endTime ? this.$route.query.endTime : ''
       this.checkPermission().then(() => {
@@ -406,6 +412,13 @@
       this.getAllCampsByStaff()
     },
     methods: {
+      handleChangeAcitve(active = ['1']) {
+        if (active.length) {
+          $('.form-more').text('收起')
+        } else {
+          $('.form-more').text('更多')
+        }
+      },
       // 展示订单产品信息
       showProducts(item) {
         let productStr = ''

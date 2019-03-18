@@ -1,100 +1,108 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-row>
-        <el-form :inline="true" class="demo-form-inline" size="small">
-          <el-form-item label="流程状态：">
-            <el-select v-model="formInline.processType">
-              <!-- <el-option label="所有情况" value=""></el-option> -->
-              <!-- <el-option label="未开始" value="0"></el-option> -->
-              <el-option label="进行中" value="0"></el-option>
-              <el-option label="已结束" value="1"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="流程类型：">
-            <el-select v-model="formInline.processStyle">
-               <el-option
-                v-for="item in processNames"
-                :key="item.processName"
-                :label="item.processName"
-                :value="item.processName">
-               </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="formInline.pageNo = 1;findList(formInline)">查询</el-button>
-            <el-button type="danger" @click="reset">重置</el-button>
-          </el-form-item>
-        </el-form>
-        <el-table
-          :header-row-style="headerRow"
-          :data="tableData"
-          ref="multipleTable"
-          tooltip-effect="dark"
-          border
-          @selection-change="handleSelectionChange">
-          <el-table-column
-            align="center"
-            type="selection"
-            width="55">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="processName"
-            label="流程名称"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              <a :href="('/api/v1/workflow/queryOne?processId='+scope.row.processInstanceId)" target="_blank">{{ scope.row.startUserId + "的" + scope.row.processDefinitionName + "流程" }}</a>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="processDefinitionName"
-            label="流程类别"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="startTime"
-            label="流程发起时间"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ formatDateTime(scope.row.startTime) }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="startUserId"
-            label="流程发起人"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ scope.row.startUserId }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="laterTaskName"
-            label="流程状态"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ scope.row.laterTaskName }}
-            </template>
-          </el-table-column>
-          
-        </el-table>
+      <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+        <el-collapse-item title="筛选条件" name="1">
+          <el-form :inline="true" class="demo-form-inline" size="small">
+            <el-form-item label="流程状态：">
+              <el-select v-model="formInline.processType">
+                <!-- <el-option label="所有情况" value=""></el-option> -->
+                <!-- <el-option label="未开始" value="0"></el-option> -->
+                <el-option label="进行中" value="0"></el-option>
+                <el-option label="已结束" value="1"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="流程类型：">
+              <el-select v-model="formInline.processStyle">
+                <el-option
+                  v-for="item in processNames"
+                  :key="item.processName"
+                  :label="item.processName"
+                  :value="item.processName">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="formInline.pageNo = 1;findList(formInline)">查询</el-button>
+              <el-button @click="reset">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-collapse-item>
+      </el-collapse>
+      <el-row class="table-container">
+        <el-row class="margin-bottom-20">
+          <div class="font14 bold">工作流程表</div>
+        </el-row>
+        <el-row>
+          <el-table
+            :header-row-style="headerRow"
+            :data="tableData"
+            ref="multipleTable"
+            tooltip-effect="dark"
+            @selection-change="handleSelectionChange">
+            <el-table-column
+              align="center"
+              type="selection"
+              width="55">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="processName"
+              label="流程名称"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                <a :href="('/api/v1/workflow/queryOne?processId='+scope.row.processInstanceId)" target="_blank">{{ scope.row.startUserId + "的" + scope.row.processDefinitionName + "流程" }}</a>
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="processDefinitionName"
+              label="流程类别"
+              :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="startTime"
+              label="流程发起时间"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{ formatDateTime(scope.row.startTime) }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="startUserId"
+              label="流程发起人"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{ scope.row.startUserId }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="laterTaskName"
+              label="流程状态"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{ scope.row.laterTaskName }}
+              </template>
+            </el-table-column>
+            
+          </el-table>
+        </el-row>
+        <el-row style="margin-top:20px;">
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page='pagination.pageNo'
+            :page-sizes="[10, 20, 30, 40, 50]"
+            :page-size='pagination.pageSize'
+            layout="total, sizes, prev, pager, next, jumper "
+            :total='pagination.totalCount' style="text-align: right;float:right;">
+          </el-pagination>
+        </el-row>
       </el-row>
-       <el-row style="margin-top:5px;">
-        <el-pagination
-          background
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page='pagination.pageNo'
-          :page-sizes="[10, 20, 30, 40, 50]"
-          :page-size='pagination.pageSize'
-          layout="total, sizes, prev, pager, next, jumper "
-          :total='pagination.totalCount' style="text-align: right;float:right;">
-        </el-pagination>
-    </el-row>
+     
      </div>
    </div>
 </template>
@@ -115,6 +123,8 @@ export default {
   name: 'account_list',
   data() {
     return {
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       pagination: {
         pageSize: null,
         pageNo: null,
@@ -135,6 +145,8 @@ export default {
     }
   },
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     this.findList(this.formInline)
     queryStyle().then(res => {
       if (res.data) {
@@ -150,6 +162,13 @@ export default {
     })
   },
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     // showName(id) {
     //   getStaffNameByAgentId({ 'agentId': id }).then(res => {
     //     console.log(res)

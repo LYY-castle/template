@@ -1,35 +1,39 @@
 <template>
   <div class="container">
-    <el-row>
-      <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item prop="campaignId" label="质检活动:">
-          <el-select v-model="req.campaignId" placeholder="质检活动">
-            <el-option label="所有活动" value="">所有活动</el-option>
-            <el-option
-              v-for="item in campData"
-              :key="item.campaignId"
-              :label="item.campaignName"
-              :value="item.campaignId">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item prop="gradeRate" label="评分等级">
-          <el-radio-group v-model="req.gradeRate">
-            <el-radio-button label="4">最优</el-radio-button>
-            <el-radio-button label="1">最差</el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;getGradeRecordList(req);req2=clone(req);">查询</el-button>
-          <el-button type="danger" @click="resetForm">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
-    <el-row>
-      <el-col>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small" :model="req" ref="searchForm">
+          <el-form-item prop="campaignId" label="质检活动:">
+            <el-select v-model="req.campaignId" placeholder="质检活动">
+              <el-option label="所有活动" value="">所有活动</el-option>
+              <el-option
+                v-for="item in campData"
+                :key="item.campaignId"
+                :label="item.campaignName"
+                :value="item.campaignId">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item prop="gradeRate" label="评分等级">
+            <el-radio-group v-model="req.gradeRate">
+              <el-radio-button label="4">最优</el-radio-button>
+              <el-radio-button label="1">最差</el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="req.pageNo=1;getGradeRecordList(req);req2=clone(req);">查询</el-button>
+            <el-button @click="resetForm">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">案例表</div>
+      </el-row>
+      <el-row>
         <el-table
-          :data="tableData"
-          border>
+          :data="tableData">
           <el-table-column
             align="center"
             label="质检活动"
@@ -56,20 +60,19 @@
             </template>
           </el-table-column>
         </el-table>
-      </el-col>
-    </el-row>
-    <el-row style="margin-top:5px;">
-      <el-pagination
-        v-if="pageShow"
-        background
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page=pageInfo.pageNo
-        :page-sizes="[10, 20, 30, 40, 50]"
-        :page-size=pageInfo.pageSize
-        layout="total, sizes, prev, pager, next, jumper "
-        :total=pageInfo.totalCount style="text-align: right;float:right;">
-      </el-pagination>
+      </el-row>
+      <el-row style="margin-top:20px;">
+        <el-pagination
+          v-if="pageShow"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pageInfo.pageNo"
+          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-size="pageInfo.pageSize"
+          layout="total, sizes, prev, pager, next, jumper "
+          :total="pageInfo.totalCount" style="text-align: right;float:right;">
+        </el-pagination>
+      </el-row>
     </el-row>
     <el-dialog
         width="30%"
@@ -83,7 +86,7 @@
         </audio>
       </div>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" @click="recodeVisible = false;">返 回</el-button>
+        <el-button type="primary" plain @click="recodeVisible = false;">返回</el-button>
       </div>
     </el-dialog>
   </div>
@@ -100,6 +103,8 @@ export default {
   name: 'quality_case',
   data() {
     return {
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       recodingContent: '',
       recodeVisible: false,
       campData: [], // 质检活动
@@ -124,10 +129,19 @@ export default {
     }
   },
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     this.findAllCampaign()
     this.getGradeRecordList(this.req)
   },
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     // 深度克隆
     clone: clone,
     resetForm() {
@@ -198,27 +212,3 @@ export default {
   }
 }
 </script>
-<style rel="stylesheet/scss" lang="scss">
-.el-table thead {
-  color: #000 !important;
-}
-.min .el-form-item__content{
-  width:70px;
-}
-.max .el-form-item__content{
-  width:70px;
-}
-</style>
-
-<style rel="stylesheet/scss" lang="scss" scoped>
-
-.el-table {
-  border: 1px solid #ecebe9;
-  thead th .cell {
-    color: #000;
-  }
-}
-.el-form-item {
-  margin-bottom: 20px;
-}
-</style>

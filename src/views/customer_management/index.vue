@@ -1,47 +1,48 @@
 <template>
   <div class="container">
-    <el-row margin-top:>
-      <el-form :inline="true" size="small">
-        <el-form-item label="客户编号:">
-          <el-input v-model="req.customerId" placeholder="客户编号（限长50字符）" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="客户姓名:">
-          <el-input v-model="req.customerName" placeholder="客户姓名（限长50字符）" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="客户电话:">
-          <el-input v-model="req.mobile" placeholder="客户电话(限长50字符)" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="操作人:">
-          <el-input v-model="req.modifierName" placeholder="操作人（限长50）字符" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="操作时间：">
-          <el-date-picker
-              v-model="timeValue"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;searchCustomer(req);req2=clone(req);">查询</el-button>
-          <el-button type="danger" @click="reset();req2=clone(req)">重置</el-button>
-        </el-form-item>
-        <!-- <el-form-item>
-
-      </el-form-item> -->
-      </el-form>
-    </el-row>
-    <!-- <el-row>
-      <div style="font-size:16px;">客户列表</div>
-      <div style="border-bottom:2px solid #439AE6;margin:10px 0;"></div>
-    </el-row> -->
-    <el-row>
-      <el-col>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small">
+          <el-form-item label="客户编号:">
+            <el-input v-model="req.customerId" placeholder="客户编号（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="客户姓名:">
+            <el-input v-model="req.customerName" placeholder="客户姓名（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="客户电话:">
+            <el-input v-model="req.mobile" placeholder="客户电话(限长50字符)" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="操作人:">
+            <el-input v-model="req.modifierName" placeholder="操作人（限长50）字符" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="操作时间：">
+            <el-date-picker
+                v-model="timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="req.pageNo=1;searchCustomer(req);req2=clone(req);">查询</el-button>
+            <el-button type="danger" @click="reset();req2=clone(req)">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">客户管理表</div>
+      </el-row>
+      <el-row class="margin-bottom-20">
+        <el-button type="success" size="small" @click="addVisible=true;clearForm(customerDetail,'customerDetail');">新建</el-button>
+        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
+      </el-row>
+      <el-row>
         <el-table
           :data="tableData"
-          border
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
@@ -118,14 +119,10 @@
           </template>
           </el-table-column>
         </el-table>
-      </el-col>
-    </el-row>
-    <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;clearForm(customerDetail,'customerDetail');">新建</el-button>
-        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
+      </el-row>
+      <el-row style="margin-top:20px;">
         <el-pagination
           v-if="pageShow"
-          background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page='pageInfo.pageNo'
@@ -134,6 +131,7 @@
           layout="total, sizes, prev, pager, next, jumper "
           :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
+      </el-row>
     </el-row>
     <el-dialog
       align:left
@@ -141,7 +139,7 @@
       title="客户信息修改"
       :visible.sync="editVisible"
       append-to-body>
-      <el-form label-width="100px" :model="customerReverseDetail" ref="editCustomer" :rules="rule">
+      <el-form size="small" label-width="100px" :model="customerReverseDetail" ref="editCustomer" :rules="rule">
         <el-form-item label="客户编号">
           <span>{{customerReverseDetail.customerId}}</span>
         </el-form-item>
@@ -175,9 +173,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button type="danger" @click="searchByCustomerId(delReq)">重 置</el-button>
-        <el-button @click="editVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('editCustomer');editCustomer(customerReverseDetail)">确 定</el-button>
+        <el-button @click="searchByCustomerId(delReq)">重置</el-button>
+        <el-button type="primary" plain @click="editVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitForm('editCustomer');editCustomer(customerReverseDetail)">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -186,7 +184,7 @@
       title="客户信息详情"
       :visible.sync="detailVisible"
       append-to-body>
-      <el-form label-width="100px">
+      <el-form size="small" label-width="100px">
         <el-form-item label="客户编号">
           <span>{{customerReverseDetail.customerId}}</span>
         </el-form-item>
@@ -213,7 +211,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button @click="detailVisible = false">返 回</el-button>
+        <el-button type="primary" plain @click="detailVisible = false">返回</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -243,9 +241,9 @@
         </el-form-item>
       </el-form>
         <div slot="footer" style="text-align: right;">
-          <el-button type="danger" @click="resetForm('customerDetail')">重 置</el-button>
-          <el-button @click="addVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitForm('customerDetail');addCustomer(customerDetail);">确 定</el-button>
+          <el-button @click="resetForm('customerDetail')">重置</el-button>
+          <el-button type="primary" plain @click="addVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitForm('customerDetail');addCustomer(customerDetail);">确定</el-button>
         </div>
       </el-dialog>
     <el-dialog
@@ -253,23 +251,23 @@
       title="删除"
       :visible.sync="delVisible"
       append-to-body>
-    <span style="font-size:20px;">确定删除此内容？</span>
-    <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button @click="delVisible = false">取 消</el-button>
-      <el-button type="primary" @click="delVisible = false;delCustomer(delReq);">确 定</el-button>
-    </div>
-  </el-dialog>
-  <el-dialog
-    width="30%"
-    title="批量删除"
-    :visible.sync="batchDelVisible"
-    append-to-body>
-  <span style="font-size:20px;">确定删除选定内容？</span>
-  <div slot="footer" class="dialog-footer" style="text-align: right;">
-    <el-button @click="batchDelVisible = false">取 消</el-button>
-    <el-button type="primary" @click="batchDelVisible = false;batchDelCustomer(batchDelReq);">确 定</el-button>
-  </div>
-  </el-dialog>
+      <span style="font-size:20px;">确定删除此内容？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button type="primary" plain @click="delVisible = false">取消</el-button>
+        <el-button type="primary" @click="delVisible = false;delCustomer(delReq);">确定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
+      width="30%"
+      title="批量删除"
+      :visible.sync="batchDelVisible"
+      append-to-body>
+      <span style="font-size:20px;">确定删除选定内容？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
+        <el-button type="primary" @click="batchDelVisible = false;batchDelCustomer(batchDelReq);">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -315,6 +313,9 @@ export default {
       }
     }
     return {
+      visibleClass: '',
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       detailVisible: false,
       delVisible: false, // 删除对话框显示隐藏
       editVisible: false, // 修改对话框显示隐藏
@@ -392,9 +393,18 @@ export default {
     }
   },
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     this.searchCustomer(this.req)
   },
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     // 深度克隆
     clone: clone,
     // 重置查询框内容

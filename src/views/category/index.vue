@@ -1,96 +1,101 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-row>
-        <el-form :inline="true" class="demo-form-inline" size="small">
-          <el-form-item label="选项名：">
-            <el-input placeholder="选项名（限长45字符）" v-model="formInline.name" maxlength="45"></el-input>
-          </el-form-item>
-          <el-form-item label="编号：">
-            <el-input placeholder="编号" v-model="formInline.code"></el-input>
-          </el-form-item>
-          <el-form-item label="操作人员：">
-            <el-input placeholder="操作人员（限长45字符）" v-model="formInline.updator_realname" maxlength="45"></el-input>
-          </el-form-item>
-          <el-form-item label="操作时间：">
-            <el-date-picker
-              v-model="formInline.timeValue"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="timestamp">
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item label="备注：">
-            <el-input placeholder="备注" v-model="formInline.remark"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="formInline.pageNo = 1;searchOrgan(formInline)">查询</el-button>
-            <el-button type="danger" @click="reset">重置</el-button>
-          </el-form-item>
-        </el-form>
-        <el-table
-          :header-row-style="headerRow"
-          :data="tableData"
-          ref="multipleTable"
-          tooltip-effect="dark"
-          border>
-          <el-table-column
+      <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+        <el-collapse-item title="筛选条件" name="1">
+          <el-form :inline="true" class="demo-form-inline" size="small">
+            <el-form-item label="选项名：">
+              <el-input placeholder="选项名（限长45字符）" v-model="formInline.name" maxlength="45"></el-input>
+            </el-form-item>
+            <el-form-item label="编号：">
+              <el-input placeholder="编号" v-model="formInline.code"></el-input>
+            </el-form-item>
+            <el-form-item label="操作人员：">
+              <el-input placeholder="操作人员（限长45字符）" v-model="formInline.updator_realname" maxlength="45"></el-input>
+            </el-form-item>
+            <el-form-item label="操作时间：">
+              <el-date-picker
+                v-model="formInline.timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="timestamp">
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item label="备注：">
+              <el-input placeholder="备注" v-model="formInline.remark"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="formInline.pageNo = 1;searchOrgan(formInline)">查询</el-button>
+              <el-button @click="reset">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-collapse-item>
+      </el-collapse>
+      <el-row class="table-container">
+        <el-row class="margin-bottom-20">
+          <div class="font14 bold">选项管理表</div>
+        </el-row>
+        <el-row>
+          <el-table
+            :header-row-style="headerRow"
+            :data="tableData"
+            ref="multipleTable"
+            tooltip-effect="dark">
+            <el-table-column
+              align="center"
+              prop="name"
+              label="名称"
+              :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="code"
+              label="编号"
+              :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="updator_realname"
+              label="操作人员"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{ scope.row.updator_realname }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="updator_at"
+              label="操作时间"
+              width="155">
+              <template slot-scope="scope">
+                {{ formatTime(scope.row.updator_at) }}
+              </template>
+            </el-table-column>
+            <el-table-column
             align="center"
-            prop="name"
-            label="名称"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="code"
-            label="编号"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="updator_realname"
-            label="操作人员"
+            prop="remark"
+            label="备注"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              {{ scope.row.updator_realname }}
+            {{ scope.row.remark }}
             </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="updator_at"
-            label="操作时间"
-            width="155">
-            <template slot-scope="scope">
-              {{ formatTime(scope.row.updator_at) }}
-            </template>
-          </el-table-column>
-          <el-table-column
-          align="center"
-          prop="remark"
-          label="备注"
-          :show-overflow-tooltip="true">
-          <template slot-scope="scope">
-          {{ scope.row.remark }}
-          </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="操作"
-            width="185">
-            <template slot-scope="scope">
-              <el-button @click="handleClickStaff(scope.row)" type="text" size="small">查看</el-button>
-              <el-button @click="handleClickSearch(scope.row)" type="text" size="small">查看子集</el-button>
-              <el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-row>
-      <el-row style="margin-top:1%;">
-        <el-col :span="24">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              label="操作"
+              width="185">
+              <template slot-scope="scope">
+                <el-button @click="handleClickStaff(scope.row)" type="text" size="small">查看</el-button>
+                <el-button @click="handleClickSearch(scope.row)" type="text" size="small">查看子集</el-button>
+                <el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-row>
+        <el-row style="margin-top:20px;">
           <el-pagination
-            background
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page.sync="pagination.pageNo"
@@ -99,24 +104,24 @@
             layout="total, sizes, prev, pager, next, jumper "
             :total="pagination.totalCount" style="text-align: right">
           </el-pagination>
-        </el-col>
+        </el-row>
       </el-row>
     </div>
     <el-dialog title="修改选项" :visible.sync="dialogFormVisibleReverse" width="38%" @close="resetForm('ruleFormReverse')" append-to-body>
-      <el-form :model="ruleFormReverse" :rules="rules" ref="ruleFormReverse" label-width="100px" class="demo-ruleForm">
+      <el-form size="small" :model="ruleFormReverse" :rules="rules" ref="ruleFormReverse" label-width="100px" class="demo-ruleForm">
         <el-form-item label="名称" prop="name">
           <el-input v-model="ruleFormReverse.name" placeholder="上限45字符" maxlength="45"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="resetReverse">重置</el-button>
-        <el-button @click="dialogFormVisibleReverse = false">取 消</el-button>
-        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确 定</el-button>
+        <el-button @click="resetReverse">重置</el-button>
+        <el-button type="primary" plain @click="dialogFormVisibleReverse = false">取消</el-button>
+        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确定</el-button>
       </div>
     </el-dialog>
     
     <el-dialog title="选项详情" :visible.sync="dialogFormVisibleDetail" width="38%" append-to-body>
-      <el-form :model="ruleFormReverseDetail" label-width="100px" class="demo-ruleForm">
+      <el-form size="small" :model="ruleFormReverseDetail" label-width="100px" class="demo-ruleForm">
         <el-form-item label="名称" class="marginBottom">
           <span>{{ruleFormReverseDetail.name}}</span>
         </el-form-item>
@@ -149,7 +154,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogFormVisibleDetail = false">返回</el-button>
+        <el-button type="primary" plain @click="dialogFormVisibleDetail = false">返回</el-button>
       </div>
     </el-dialog>
   </div>
@@ -165,6 +170,8 @@
     name: 'category',
     data() {
       return {
+        formContainerOpen: '1',
+        formContainer: this.$store.state.app.formContainer,
         timeValueClone: [],
         organData: {},
         visibleData: {},
@@ -249,7 +256,19 @@
         }
       }
     },
+    mounted() {
+      console.log(this.$router)
+      this.formContainer()
+      this.handleChangeAcitve()
+    },
     methods: {
+      handleChangeAcitve(active = ['1']) {
+        if (active.length) {
+          $('.form-more').text('收起')
+        } else {
+          $('.form-more').text('更多')
+        }
+      },
       handleClickSearch(row) {
         this.$router.push({
           path: '/category/categoryChild/' + row.category_id

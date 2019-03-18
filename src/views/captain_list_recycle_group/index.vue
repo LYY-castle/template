@@ -1,24 +1,30 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-row>
-        <el-form :inline="true" class="demo-form-inline" size="small">
-          <el-form-item label="活动名称:">
-            <el-select v-model="formInline.campaignId" @change="selectActive">
-              <el-option value="" label="请选择活动"></el-option>
-              <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" :loading="loading" @click="confirm(formInline)">确认回收</el-button>
-          </el-form-item>
-        </el-form>
+      <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+        <el-collapse-item title="筛选条件" name="1">
+          <el-form :inline="true" class="demo-form-inline" size="small">
+            <el-form-item label="活动名称:">
+              <el-select v-model="formInline.campaignId" @change="selectActive">
+                <el-option value="" label="请选择活动"></el-option>
+                <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" :loading="loading" @click="confirm(formInline)">确认回收</el-button>
+            </el-form-item>
+          </el-form>
+        </el-collapse-item>
+      </el-collapse>
+      <el-row class="table-container">
+        <el-row class="margin-bottom-20">
+          <div class="font14 bold">名单表</div>
+        </el-row>
         <el-table
           :header-row-style="headerRow"
           :data="tableData"
           ref="multipleTable"
           tooltip-effect="dark"
-          border
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
@@ -66,29 +72,30 @@
             width="155">
           </el-table-column>
         </el-table>
-        <el-row style="margin-top:1%;">
-          <el-col :span="22">
-            <el-pagination
-              background
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page.sync="pagination.pageNo"
-              :page-size="pagination.pageSize"
-              :page-sizes="[10, 20, 30, 40, 50]"
-              layout="total, sizes, prev, pager, next, jumper "
-              :total="pagination.totalCount" style="text-align: right">
-            </el-pagination>
-          </el-col>
+        <el-row style="margin-top:20px;">
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="pagination.pageNo"
+            :page-size="pagination.pageSize"
+            :page-sizes="[10, 20, 30, 40, 50]"
+            layout="total, sizes, prev, pager, next, jumper "
+            :total="pagination.totalCount" style="text-align: right">
+          </el-pagination>
+        </el-row>      
+      </el-row>
+      <el-row 
+        class="table-container" 
+        v-show="type===0">
+        <el-row class="margin-bottom-20">
+          <div class="font14 bold">下属表</div>
         </el-row>
         <el-table
           :header-row-style="headerRow"
           :data="tableData2"
           ref="multipleTable"
           tooltip-effect="dark"
-          border
-          style="margin-top:2%;"
-          @selection-change="handleSelectionChange2"
-          v-show="type===0">
+          @selection-change="handleSelectionChange2">
           <el-table-column
             align="center"
             type="selection"
@@ -122,19 +129,23 @@
             align="center"
             label="本次回收数量">
             <template slot-scope="scope">
-              <el-input v-model="tableData2[scope.$index].num" @change="handleChange1(scope.row)"></el-input>
+              <el-input size="small" v-model="tableData2[scope.$index].num" @change="handleChange1(scope.row)"></el-input>
             </template>
           </el-table-column>
         </el-table>
+      </el-row>
+      <el-row 
+        class="table-container"
+        v-show="type===1">
+        <el-row class="margin-bottom-20">
+          <div class="font14 bold">下属表</div>
+        </el-row>
         <el-table
           :header-row-style="headerRow"
           :data="tableData2"
           ref="multipleTable"
           tooltip-effect="dark"
-          border
-          style="margin-top:2%;"
-          @selection-change="handleSelectionChange2"
-          v-show="type===1">
+          @selection-change="handleSelectionChange2">
           <el-table-column
             align="center"
             type="selection"
@@ -173,7 +184,7 @@
             align="center"
             label="本次回收数量">
             <template slot-scope="scope">
-              <el-input v-model="tableData2[scope.$index].num" @change="handleChange1(scope.row)"></el-input>
+              <el-input size="small" v-model="tableData2[scope.$index].num" @change="handleChange1(scope.row)"></el-input>
             </template>
           </el-table-column>
         </el-table>
@@ -193,6 +204,8 @@
     name: 'captain_list_recycle_group',
     data() {
       return {
+        formContainerOpen: '1',
+        formContainer: this.$store.state.app.formContainer,
         loading: false,
         type: '',
         totalNum: 0,
@@ -219,7 +232,18 @@
         }
       }
     },
+    mounted() {
+      this.formContainer()
+      this.handleChangeAcitve()
+    },
     methods: {
+      handleChangeAcitve(active = ['1']) {
+        if (active.length) {
+          $('.form-more').text('收起')
+        } else {
+          $('.form-more').text('更多')
+        }
+      },
       selectActive(val) {
         this.tableData = []
         this.tableData2 = []

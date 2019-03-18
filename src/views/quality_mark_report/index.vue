@@ -16,11 +16,11 @@
 </script>
 
 <style scoped>
-  .chart-container{
+  /* .chart-container{
     position: relative;
     padding: 20px;
     width: 100%;
     height:85vh;
-  }
+  } */
 </style>
 

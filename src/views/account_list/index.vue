@@ -1,145 +1,157 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-row>
-        <el-form :inline="true" class="demo-form-inline" size="small">
-          <el-form-item label="员工姓名：">
-            <el-input placeholder="员工姓名（限长45字符）" v-model="formInline.staffName" maxlength="45"></el-input>
-          </el-form-item>
-          <el-form-item label="系统账号：">
-            <el-input placeholder="系统账号（限长45字符）" v-model="formInline.angentId" maxlength="45"></el-input>
-          </el-form-item>
-          <el-form-item label="账号状态：">
-            <el-select v-model="formInline.status">
-              <el-option label="所有情况" value=""></el-option>
-              <el-option label="已停用" value="0"></el-option>
-              <el-option label="启用中" value="1"></el-option>
-              <el-option label="未启用" value="2"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="所属组织：" v-if="$route.params.id === ':id'">
-            <el-cascader
-              v-model="selected_dept_id"
-              placeholder="请选择组织"
-              :options="regionOptions"
-              :props="org_props"
-              show-all-levels
-              filterable
-              size="small"
-              change-on-select
-              clearable
-            ></el-cascader>
-            <!-- <el-select v-model="formInline.departName" placeholder="所属组织">
-              <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
-            </el-select> -->
-          </el-form-item>
-          <el-form-item label="操作人：">
-            <el-input placeholder="操作人（限长45字符）" v-model="formInline.creator" maxlength="45"></el-input>
-          </el-form-item>
-          <el-form-item label="操作时间：">
-            <el-date-picker
-              v-model="timeValue"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss">
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="formInline.pageNo = 1;searchStaff(formInline)">查询</el-button>
-            <el-button type="danger" @click="reset">重置</el-button>
-          </el-form-item>
-        </el-form>
-        <el-table
-          :header-row-style="headerRow"
-          :data="tableData"
-          ref="multipleTable"
-          tooltip-effect="dark"
-          border
-          @selection-change="handleSelectionChange">
-          <el-table-column
-            align="center"
-            type="selection"
-            width="55">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="agentId"
-            label="系统账号"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="staffName"
-            label="姓名"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ scope.row.staffName }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="departName"
-            label="所属组织"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ scope.row.departName }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="statusZH"
-            label="账号状态"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="modifier"
-            label="操作人"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ scope.row.modifier }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="updateTime"
-            label="操作时间"
-            width="155">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="操作"
-            width="250">
-            <template slot-scope="scope">
-              <el-button @click="handleClickDetail(scope.row)" type="text" size="small" v-show="scope.row.status !== 2">详情</el-button>
-              <el-button @click="handleClickAdd(scope.row)" type="text" size="small" v-show="scope.row.status === 2">增加</el-button>
-              <el-button @click="handleClick(scope.row)" type="text" size="small" v-show="scope.row.status !== 2">修改</el-button>
-              <el-button @click="handleClickPass(scope.row)" type="text" size="small" v-show="scope.row.status !== 2">重置密码</el-button>
-              <el-button @click="handleClickStop(scope.row)" type="text" size="small" v-show="scope.row.status === 1">停用</el-button>
-              <el-button @click="handleClickStart(scope.row)" type="text" size="small" v-show="scope.row.status === 0">启用</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-row>
-      <el-row style="margin-top:1%;">
-        <el-col :span="4">
+      <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+        <el-collapse-item title="筛选条件" name="1">
+          <el-form :inline="true" class="demo-form-inline" size="small">
+            <el-form-item label="员工姓名：">
+              <el-input placeholder="员工姓名（限长45字符）" v-model="formInline.staffName" maxlength="45"></el-input>
+            </el-form-item>
+            <el-form-item label="系统账号：">
+              <el-input placeholder="系统账号（限长45字符）" v-model="formInline.angentId" maxlength="45"></el-input>
+            </el-form-item>
+            <el-form-item label="账号状态：">
+              <el-select v-model="formInline.status">
+                <el-option label="所有情况" value=""></el-option>
+                <el-option label="已停用" value="0"></el-option>
+                <el-option label="启用中" value="1"></el-option>
+                <el-option label="未启用" value="2"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="所属组织：" v-if="$route.params.id === ':id'">
+              <el-cascader
+                v-model="selected_dept_id"
+                placeholder="请选择组织"
+                :options="regionOptions"
+                :props="org_props"
+                show-all-levels
+                filterable
+                size="small"
+                change-on-select
+                clearable
+              ></el-cascader>
+              <!-- <el-select v-model="formInline.departName" placeholder="所属组织">
+                <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
+              </el-select> -->
+            </el-form-item>
+            <el-form-item label="操作人：">
+              <el-input placeholder="操作人（限长45字符）" v-model="formInline.creator" maxlength="45"></el-input>
+            </el-form-item>
+            <el-form-item label="操作时间：">
+              <el-date-picker
+                v-model="timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="formInline.pageNo = 1;searchStaff(formInline)">查询</el-button>
+              <el-button @click="reset">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-collapse-item>
+      </el-collapse>
+      <el-row class="table-container">
+        <el-row class="margin-bottom-20">
+          <div class="font14 bold">账号管理表</div>
+        </el-row>
+        <el-row class="margin-bottom-20">
           <el-button type="success" size="small"  @click="all(1)">批量启用</el-button>
           <el-button type="danger" size="small" @click="all(0)">批量停用</el-button>
-        </el-col>
-        <el-col :span="18">
-          <el-pagination
-            background
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page.sync="pagination.pageNo"
-            :page-sizes="[10, 20, 30, 40, 50]"
-            :page-size="pagination.pageSize"
-            layout="total, sizes, prev, pager, next, jumper "
-            :total="pagination.totalCount" style="text-align: right">
-          </el-pagination>
-        </el-col>
+        </el-row>
+        <el-row>
+          <el-table
+            :header-row-style="headerRow"
+            :data="tableData"
+            ref="multipleTable"
+            tooltip-effect="dark"
+            @selection-change="handleSelectionChange">
+            <el-table-column
+              align="center"
+              type="selection"
+              width="55">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="agentId"
+              label="系统账号"
+              :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="staffName"
+              label="姓名"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{ scope.row.staffName }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="departName"
+              label="所属组织"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{ scope.row.departName }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="statusZH"
+              label="账号状态"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                <div :class="scope.row.status===0?'invisible':scope.row.status=== 1?'visible':'not-enabled'">
+                  <span>{{scope.row.statusZH}}</span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="modifier"
+              label="操作人"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{ scope.row.modifier }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="updateTime"
+              label="操作时间"
+              width="155">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              label="操作"
+              width="250">
+              <template slot-scope="scope">
+                <el-button @click="handleClickDetail(scope.row)" type="text" size="small" v-show="scope.row.status !== 2">详情</el-button>
+                <el-button @click="handleClickAdd(scope.row)" type="text" size="small" v-show="scope.row.status === 2">增加</el-button>
+                <el-button @click="handleClick(scope.row)" type="text" size="small" v-show="scope.row.status !== 2">修改</el-button>
+                <el-button @click="handleClickPass(scope.row)" type="text" size="small" v-show="scope.row.status !== 2">重置密码</el-button>
+                <el-button @click="handleClickStop(scope.row)" type="text" size="small" v-show="scope.row.status === 1">停用</el-button>
+                <el-button @click="handleClickStart(scope.row)" type="text" size="small" v-show="scope.row.status === 0">启用</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-row>
+        <el-row style="margin-top:20px;">
+          <el-col :span="20" :offset="4">
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page.sync="pagination.pageNo"
+              :page-sizes="[10, 20, 30, 40, 50]"
+              :page-size="pagination.pageSize"
+              layout="total, sizes, prev, pager, next, jumper "
+              :total="pagination.totalCount" style="text-align: right">
+            </el-pagination>
+          </el-col>
+        </el-row>
       </el-row>
     </div>
     <el-dialog title="赋予系统账号角色" :visible.sync="dialogFormVisible" width="70%" append-to-body>
@@ -173,9 +185,9 @@
         </el-card>
       </el-row>
       <div slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="checkRoleData2=[];roleMenu=[]">重置</el-button>
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addRole(roleIds)">确 定</el-button>
+        <el-button @click="checkRoleData2=[];roleMenu=[]">重置</el-button>
+        <el-button plain type="primary" @click="dialogFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="addRole(roleIds)">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="修改系统账号角色" :visible.sync="dialogFormVisibleReverse" width="70%" append-to-body>
@@ -209,9 +221,9 @@
         </el-card>
       </el-row>
       <div slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="getUserRole(ruleFormReverse.agentId)">重置</el-button>
-        <el-button @click="dialogFormVisibleReverse = false">取 消</el-button>
-        <el-button type="primary" @click="editRole(roleIds)">确 定</el-button>
+        <el-button @click="getUserRole(ruleFormReverse.agentId)">重置</el-button>
+        <el-button type="primary" plain @click="dialogFormVisibleReverse = false">取消</el-button>
+        <el-button type="primary" @click="editRole(roleIds)">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="系统账号详情" :visible.sync="dialogFormVisibleDetail" width="70%" append-to-body>
@@ -245,7 +257,7 @@
         </el-card>
       </el-row>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogFormVisibleDetail = false">返回</el-button>
+        <el-button plain type="primary" @click="dialogFormVisibleDetail = false">返回</el-button>
       </div>
     </el-dialog>
   </div>
@@ -275,6 +287,8 @@ export default {
   name: 'account_list',
   data() {
     return {
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       selected_dept_id: [], // 查询条件
       org_props: {
         label: 'departName',
@@ -387,11 +401,20 @@ export default {
     }
   },
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     this.tempRoute = Object.assign({}, this.$route)
     this.setTagsViewTitle()
     this.getRoles()
   },
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     // 查询所有角色列表
     getRoles() {
       getRoles().then(response => {

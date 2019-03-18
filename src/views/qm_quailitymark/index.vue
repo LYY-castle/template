@@ -1,177 +1,181 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-row>
-        <el-form :inline="true" class="demo-form-inline" size="small">
-          <el-form-item label="接触历史编号:">
-            <el-input placeholder="接触历史编号（限30字）" v-model="formInline.contactRecord" maxlength="30"></el-input>
-          </el-form-item>
-          <el-form-item label="任务名称:">
-            <el-input placeholder="任务名称（限50字）" v-model="formInline.taskName" maxlength="50"></el-input>
-          </el-form-item>
-          <el-form-item label="操作人:">
-            <el-input placeholder="操作人（限45字）" maxlength="45" v-model="formInline.modifierName"></el-input>
-          </el-form-item>
-          <el-form-item label="完成状态:" prop="status">
-            <el-radio-group v-model="formInline.status">
-              <el-radio-button label="">所有情况</el-radio-button>
-              <el-radio-button label="0">未开始</el-radio-button>
-              <el-radio-button label="1">已完成</el-radio-button>
-              <el-radio-button label="2">未完成</el-radio-button>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="分配时间：">
-            <el-date-picker
-              v-model="timeValue1"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss">
-            </el-date-picker>
-          </el-form-item>
-             <el-form-item label="操作时间：">
-            <el-date-picker
-              v-model="timeValue2"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss">
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item label="质检员：" prop="staffId" v-if="isManager">
-            <el-select placeholder=""  v-model="formInline.staffId">
-              <el-option label="本部门人员" value=""></el-option>
-              <el-option
-              v-for="item in staffs"
-              :label="item.staffName"
-              :value="item.staffId">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="searchTask(formInline)">查询</el-button>
-            <el-button type="danger" @click="reset">重置</el-button>
-          </el-form-item>
-        </el-form>
-        <el-table
-        :header-row-style="headerRow"
-        :data="tableData"
-        ref="multipleTable"
-        tooltip-effect="dark"
-        border
-        style="width: 100%;"
-        @selection-change="handleSelectionChange">
-        <el-table-column
-          align="center"
-          prop="recordId"
-          :show-overflow-tooltip="true"
-          label="接触历史编号">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="contactTaskId"
-          :show-overflow-tooltip="true"
-          label="接触任务编号">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="taskName"
-          :show-overflow-tooltip="true"
-          label="任务名称">
-          <template slot-scope="scope">
-            {{ scope.row.taskName }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="modifierName"
-          :show-overflow-tooltip="true"
-          label="操作人">
-          <template slot-scope="scope">
-            {{ scope.row.modifierName }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="modifierName"
-          :show-overflow-tooltip="true"
-          v-if="isManager"
-          label="质检员">
-          <template slot-scope="scope">
-            {{ showStaffName(scope.row.staffId )}}
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="activityName"
-          :show-overflow-tooltip="true"
-          label="活动名称">
-          <template slot-scope="scope">
-            {{ scope.row.activityName }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="contactStaffId"
-          :show-overflow-tooltip="true"
-          label="坐席工号">
-          <template slot-scope="scope">
-            {{ scope.row.contactStaffId }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="customerName"
-          label="客户姓名"
-          :show-overflow-tooltip="true">
-          <template slot-scope="scope">
-            {{ scope.row.customerName }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="touchTime"
-          label="最近联系时间"
-          width="155">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="status"
-          :show-overflow-tooltip="true"
-          label="完成情况">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="staffDistributeTime"
-          label="任务分配时间"
-          width="155">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="modifierTime"
-          label="操作时间"
-          width="155">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          label="操作"
-          width="80">
-          <template slot-scope="scope" >
-            <el-button @click="handleClick(scope.row)" type="text" size="small" v-if="scope.row.status==='未开始'&&scope.row.staffId===staffId">开始评分</el-button>
-            <el-button type="text" size="small" v-if="scope.row.status==='未开始'&&scope.row.staffId!==staffId">没有权限</el-button>
-            <el-button @click="handleClickDetail(scope.row)" type="text" size="small" v-if="scope.row.status!=='未开始'&&scope.row.staffId===staffId">修改评分</el-button>
-            <el-button type="text" size="small" v-if="scope.row.status!=='未开始'&&scope.row.staffId!==staffId">没有权限</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      </el-row>
-      <el-row style="margin-top:1%;">
-
-        <el-col :span="22">
+      <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+        <el-collapse-item title="筛选条件" name="1">
+          <el-form :inline="true" class="demo-form-inline" size="small">
+            <el-form-item label="接触历史编号:">
+              <el-input placeholder="接触历史编号（限30字）" v-model="formInline.contactRecord" maxlength="30"></el-input>
+            </el-form-item>
+            <el-form-item label="任务名称:">
+              <el-input placeholder="任务名称（限50字）" v-model="formInline.taskName" maxlength="50"></el-input>
+            </el-form-item>
+            <el-form-item label="操作人:">
+              <el-input placeholder="操作人（限45字）" maxlength="45" v-model="formInline.modifierName"></el-input>
+            </el-form-item>
+            <el-form-item label="完成状态:" prop="status">
+              <el-radio-group v-model="formInline.status">
+                <el-radio-button label="">所有情况</el-radio-button>
+                <el-radio-button label="0">未开始</el-radio-button>
+                <el-radio-button label="1">已完成</el-radio-button>
+                <el-radio-button label="2">未完成</el-radio-button>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="分配时间：">
+              <el-date-picker
+                v-model="timeValue1"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
+              </el-date-picker>
+            </el-form-item>
+              <el-form-item label="操作时间：">
+              <el-date-picker
+                v-model="timeValue2"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item label="质检员：" prop="staffId" v-if="isManager">
+              <el-select placeholder=""  v-model="formInline.staffId">
+                <el-option label="本部门人员" value=""></el-option>
+                <el-option
+                v-for="item in staffs"
+                :label="item.staffName"
+                :value="item.staffId">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="searchTask(formInline)">查询</el-button>
+              <el-button @click="reset">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-collapse-item>
+      </el-collapse>
+      <el-row class="table-container">
+        <el-row class="margin-bottom-20">
+          <div class="font14 bold">质检评分表</div>
+        </el-row>
+        <el-row>
+          <el-table
+            :header-row-style="headerRow"
+            :data="tableData"
+            ref="multipleTable"
+            tooltip-effect="dark"
+            style="width: 100%;"
+            @selection-change="handleSelectionChange">
+            <el-table-column
+              align="center"
+              prop="recordId"
+              :show-overflow-tooltip="true"
+              label="接触历史编号">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="contactTaskId"
+              :show-overflow-tooltip="true"
+              label="接触任务编号">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="taskName"
+              :show-overflow-tooltip="true"
+              label="任务名称">
+              <template slot-scope="scope">
+                {{ scope.row.taskName }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="modifierName"
+              :show-overflow-tooltip="true"
+              label="操作人">
+              <template slot-scope="scope">
+                {{ scope.row.modifierName }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="modifierName"
+              :show-overflow-tooltip="true"
+              v-if="isManager"
+              label="质检员">
+              <template slot-scope="scope">
+                {{ showStaffName(scope.row.staffId )}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="activityName"
+              :show-overflow-tooltip="true"
+              label="活动名称">
+              <template slot-scope="scope">
+                {{ scope.row.activityName }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="contactStaffId"
+              :show-overflow-tooltip="true"
+              label="坐席工号">
+              <template slot-scope="scope">
+                {{ scope.row.contactStaffId }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="customerName"
+              label="客户姓名"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{ scope.row.customerName }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="touchTime"
+              label="最近联系时间"
+              width="155">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="status"
+              :show-overflow-tooltip="true"
+              label="完成情况">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="staffDistributeTime"
+              label="任务分配时间"
+              width="155">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="modifierTime"
+              label="操作时间"
+              width="155">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              label="操作"
+              width="80">
+              <template slot-scope="scope" >
+                <el-button @click="handleClick(scope.row)" type="text" size="small" v-if="scope.row.status==='未开始'&&scope.row.staffId===staffId">开始评分</el-button>
+                <el-button type="text" size="small" v-if="scope.row.status==='未开始'&&scope.row.staffId!==staffId">没有权限</el-button>
+                <el-button @click="handleClickDetail(scope.row)" type="text" size="small" v-if="scope.row.status!=='未开始'&&scope.row.staffId===staffId">修改评分</el-button>
+                <el-button type="text" size="small" v-if="scope.row.status!=='未开始'&&scope.row.staffId!==staffId">没有权限</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-row>
+        <el-row style="margin-top:20px;">
           <el-pagination
-            background
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page.sync="pagination.pageNo"
@@ -180,7 +184,7 @@
             layout="total, sizes, prev, pager, next, jumper "
             :total="pagination.totalCount" style="text-align: right">
           </el-pagination>
-        </el-col>
+        </el-row>
       </el-row>
     </div>
     <el-dialog title="开始质检评分" :visible.sync="dialogFormVisible" width="80%" @close="cleanInfo()" append-to-body>
@@ -405,7 +409,7 @@
       <div slot="footer" class="dialog-footer" style="text-align:center">
        <el-button type="primary" @click="toAddQCGradeRecord(1)">完成质检</el-button>
         <el-button @click="toAddQCGradeRecord(0)">暂存</el-button>
-        <el-button type="danger" @click="reLoad('dialogFormVisible')">重置</el-button>
+        <el-button @click="reLoad('dialogFormVisible')">重置</el-button>
       </div>
     </el-dialog>
 
@@ -426,7 +430,6 @@
               :data="contactRecordData"
               ref="multipleTable"
               tooltip-effect="dark"
-              border
               style="width:100%;"
               @selection-change="handleSelectionChange">
               <el-table-column
@@ -632,7 +635,7 @@
       <div slot="footer" class="dialog-footer" style="text-align:center">
        <el-button type="primary" @click="toEditQCGradeRecord(1)">完成质检</el-button>
         <el-button @click="toEditQCGradeRecord(0)">暂存</el-button>
-        <el-button type="danger" @click="reLoad('dialogFormVisibleReverse')">重置</el-button>
+        <el-button @click="reLoad('dialogFormVisibleReverse')">重置</el-button>
       </div>
     </el-dialog>
   </div>
@@ -647,6 +650,8 @@
     name: 'qm_quailitymark',
     data() {
       return {
+        formContainerOpen: '1',
+        formContainer: this.$store.state.app.formContainer,
         staffId: '', // 当前质检员
         departId: '', // 部门id
         isManager: false, // 是否主管
@@ -735,6 +740,13 @@
       }
     },
     methods: {
+      handleChangeAcitve(active = ['1']) {
+        if (active.length) {
+          $('.form-more').text('收起')
+        } else {
+          $('.form-more').text('更多')
+        }
+      },
       async checkPermission(staffId) {
         // 判断主管
         await permsqualityMonitorWorkingSet(staffId).then(response => {
@@ -1299,6 +1311,8 @@
       }
     },
     mounted() {
+      this.formContainer()
+      this.handleChangeAcitve()
       this.staffId = localStorage.getItem('agentId')
       if (this.$route.query.status) { // 说明是由工作台跳转(质检员和质检主管共用一个状态)
         if (this.$route.query.status === '3') { // 说明是查总任务状态，不需要状态和时间条件

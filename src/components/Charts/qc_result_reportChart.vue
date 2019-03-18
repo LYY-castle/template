@@ -1,100 +1,274 @@
 <template>
   <div style="width: 100%;height: 90%" v-if="departPermission">
-    <el-row>
-      <el-form :inline="true" class="demo-form-inline" size="small">
-        <el-form-item label="活动名称:" v-show="showActive">
-          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange"> <!--@change="campaignChange" -->
-            <el-option value="" label="所有活动"></el-option>
-            <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="质检评分表:" v-show="showActive">
-          <el-select v-model="formInline.productClone" placeholder="质检评分表">
-            <el-option value="" label="所有评分表"></el-option>
-            <el-option v-for="item in productList" :key="item.id" :label="item.gradeName" :value="item.gradeId"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="时间维度:">
-          <el-select v-model="formInline.time" @change="time_dimensionChange">
-            <el-option label="天" value="day"></el-option>
-            <el-option label="小时" value="hour"></el-option>
-            <el-option label="周" value="week"></el-option>
-            <el-option label="月" value="month"></el-option>
-            <el-option label="年" value="year"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item v-show="formInline.time === 'hour'" label="操作时间：">
-          <el-date-picker
-            v-model="timeValue"
-            type="datetimerange"
-            range-separator="-"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            format="yyyy-MM-dd HH">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item v-show="formInline.time === 'day'" label="操作时间：">
-          <el-date-picker
-            v-model="timeValue"
-            type="daterange"
-            range-separator="-"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            format="yyyy-MM-dd">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item v-show="formInline.time === 'week'" label="操作时间：">
-          <el-date-picker
-            v-model="timeValue1[0]"
-            type="week"
-            format="yyyy 第 WW 周"
-            placeholder="开始周"
-            :picker-options="week">
-          </el-date-picker>
-          <span>-</span>
-          <el-date-picker
-            v-model="timeValue1[1]"
-            type="week"
-            format="yyyy 第 WW 周"
-            placeholder="结束周"
-            :picker-options="week">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item v-show="formInline.time === 'month'" label="操作时间：">
-          <el-date-picker
-            v-model="timeValue1[0]"
-            type="month"
-            placeholder="开始月"
-            format="yyyy-MM">
-          </el-date-picker>
-          <span>-</span>
-          <el-date-picker
-            v-model="timeValue1[1]"
-            type="month"
-            placeholder="结束月"
-            format="yyyy-MM">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item v-show="formInline.time === 'year'" label="操作时间：">
-          <el-date-picker
-            v-model="timeValue1[0]"
-            type="year"
-            placeholder="开始年"
-            format="yyyy">
-          </el-date-picker>
-          <span>-</span>
-          <el-date-picker
-            v-model="timeValue1[1]"
-            type="year"
-            placeholder="结束年"
-            format="yyyy">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="search('search')">查询</el-button>
-          <el-button type="danger" @click="reset">重置</el-button>
-        </el-form-item>
-      </el-form>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" class="demo-form-inline" size="small">
+          <el-form-item label="活动名称:" v-show="showActive">
+            <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange"> <!--@change="campaignChange" -->
+              <el-option value="" label="所有活动"></el-option>
+              <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="质检评分表:" v-show="showActive">
+            <el-select v-model="formInline.productClone" placeholder="质检评分表">
+              <el-option value="" label="所有评分表"></el-option>
+              <el-option v-for="item in productList" :key="item.id" :label="item.gradeName" :value="item.gradeId"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="时间维度:">
+            <el-select v-model="formInline.time" @change="time_dimensionChange">
+              <el-option label="天" value="day"></el-option>
+              <el-option label="小时" value="hour"></el-option>
+              <el-option label="周" value="week"></el-option>
+              <el-option label="月" value="month"></el-option>
+              <el-option label="年" value="year"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-show="formInline.time === 'hour'" label="操作时间：">
+            <el-date-picker
+              v-model="timeValue"
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
+              format="yyyy-MM-dd HH">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item v-show="formInline.time === 'day'" label="操作时间：">
+            <el-date-picker
+              v-model="timeValue"
+              type="daterange"
+              range-separator="-"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
+              format="yyyy-MM-dd">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item v-show="formInline.time === 'week'" label="操作时间：">
+            <el-date-picker
+              v-model="timeValue1[0]"
+              type="week"
+              format="yyyy 第 WW 周"
+              placeholder="开始周"
+              :picker-options="week">
+            </el-date-picker>
+            <span>-</span>
+            <el-date-picker
+              v-model="timeValue1[1]"
+              type="week"
+              format="yyyy 第 WW 周"
+              placeholder="结束周"
+              :picker-options="week">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item v-show="formInline.time === 'month'" label="操作时间：">
+            <el-date-picker
+              v-model="timeValue1[0]"
+              type="month"
+              placeholder="开始月"
+              format="yyyy-MM">
+            </el-date-picker>
+            <span>-</span>
+            <el-date-picker
+              v-model="timeValue1[1]"
+              type="month"
+              placeholder="结束月"
+              format="yyyy-MM">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item v-show="formInline.time === 'year'" label="操作时间：">
+            <el-date-picker
+              v-model="timeValue1[0]"
+              type="year"
+              placeholder="开始年"
+              format="yyyy">
+            </el-date-picker>
+            <span>-</span>
+            <el-date-picker
+              v-model="timeValue1[1]"
+              type="year"
+              placeholder="结束年"
+              format="yyyy">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="search('search')">查询</el-button>
+            <el-button @click="reset">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">合计表</div>
+      </el-row>
+      <el-row>
+        <el-table
+          :header-row-style="headerRow"
+          :data="tableDataAgent2"
+          ref="multipleTable"
+          tooltip-effect="dark"
+          style="width: 100%;">
+          <el-table-column
+            align="center"
+            prop="agent_id"
+            :label="statistics_type === 'depart'?'部门合计':'员工合计'">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="count"
+            label="质检表单数量">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="median"
+            label="计分中位数">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="avg_score"
+            label="计分平均数">
+          </el-table-column>
+        </el-table>
+      </el-row>
+    </el-row>
+
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">时间合计表</div>
+      </el-row>
+      <el-row class="margin-bottom-20">
+        <el-table
+          :header-row-style="headerRow"
+          :data="tableDataTime1"
+          ref="multipleTable"
+          tooltip-effect="dark"
+          style="width: 100%;margin-top: 1%;">
+          <el-table-column
+            align="center"
+            prop="time_dimension"
+            label="时间段">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="count"
+            label="质检表单数量">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="median"
+            label="计分中位数">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="avg_score"
+            label="计分平均数">
+          </el-table-column>
+        </el-table>
+      </el-row>
+      <el-row class="">
+        <el-pagination
+          @current-change="handleCurrentChangeStatics"
+          :current-page.sync="paginationStatics.pageNo"
+          :page-size="paginationStatics.pageSize"
+          layout="total, prev, pager, next, jumper"
+          :total="paginationStatics.totalCount" style="text-align: right">
+        </el-pagination>
+      </el-row>
+    </el-row>
+
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">{{statistics_type === 'depart'?'部门':'员工'}}合计表</div>
+      </el-row>
+      <el-row>
+        <el-table
+          :header-row-style="headerRow"
+          :data="tableDataAgent1"
+          ref="multipleTable"
+          tooltip-effect="dark"
+          style="width: 100%;margin-top: 1%;">
+          <el-table-column
+            align="center"
+            :label="statistics_type === 'depart'?'下属部门':'下属员工'">
+            <template slot-scope="scope">
+              {{statistics_type === 'depart' ? scope.row.depart_name :  `${formInline.agentMap[scope.row.agent_id]} (${scope.row.agent_id})`}}
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="count"
+            label="质检表单数量">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="median"
+            label="计分中位数">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="avg_score"
+            label="计分平均数">
+          </el-table-column>
+        </el-table>
+      </el-row>
+    </el-row>
+
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">{{statistics_type === 'depart'?'下属部门详情':'下属员工详情'}}</div>
+      </el-row>
+      <el-row v-for="(item, index) in staffOptions">
+        <el-row>
+          <el-table
+            :header-row-style="headerRow"
+            :data="tableData[index]"
+            ref="multipleTable"
+            tooltip-effect="dark"
+            :span-method="objectSpanMethod"
+            style="width: 100%;">
+            <el-table-column
+              align="center"
+              :label="statistics_type === 'depart'?'下属部门':'下属员工'">
+              <template slot-scope="scope">
+                {{statistics_type === 'depart' ? scope.row.depart_name :  `${formInline.agentMap[scope.row.agent_id]} (${scope.row.agent_id})`}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="time_dimension"
+              label="时间段">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="count"
+              label="质检表单数量">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="median"
+              label="计分中位数">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="avg_score"
+              label="计分平均数">
+            </el-table-column>
+          </el-table>
+        </el-row>
+        <el-row style="margin-top:15px;margin-bottom:20px;">
+          <div @click="page(item,index)">
+            <el-pagination
+              @current-change="handleCurrentChange1"
+              :current-page.sync="pageNo[index]"
+              :page-size="pageSize[index]"
+              layout="total, prev, pager, next, jumper"
+              :total="totalCount[index]" style="text-align: right">
+            </el-pagination>
+          </div>
+        </el-row>
+      </el-row>
     </el-row>
 
     <div :class="className" :id="id" style="height: 100%;width: 100%;display:none;"></div>
@@ -111,15 +285,15 @@
       </el-row>
     </div> -->
 
-    <el-form :inline="true" class="demo-form-inline" size="small" style="margin-top: 10px;margin-bottom: 5px;">
+    <!-- <el-form :inline="true" class="demo-form-inline" size="small" style="margin-top: 10px;margin-bottom: 5px;">
       <el-form-item label="时间选项:" style="margin-bottom: 0">
         <el-select v-model="formInline.time_dimension" @change="timeChange">
           <el-option v-for="item in timeOptions" :key="item" :label="item" :value="item"></el-option>
         </el-select>
       </el-form-item>
-    </el-form>
+    </el-form> -->
     <div :class="className" id="staff" style="height: 100%;width: 100%;"></div>
-    <el-form :inline="true" class="demo-form-inline" size="small" style="margin-top: 10px;margin-bottom: 5px;">
+    <!-- <el-form :inline="true" class="demo-form-inline" size="small" style="margin-top: 10px;margin-bottom: 5px;">
       <el-form-item label="部门选项:" style="margin-bottom: 0" v-if="statistics_type === 'depart'">
         <el-select v-model="formInline.staff" @change="agentChange">
           <el-option v-for="item in staffOptions" :key="item.depart_id" :label="item.depart_name" :value="item.depart_id"></el-option>
@@ -130,7 +304,7 @@
           <el-option v-for="item in staffOptions" :key="item.agent_id" :label="item.real_name ? item.real_name + ' (' + item.agent_id + ')' : item.agent_id" :value="item.agent_id"></el-option>
         </el-select>
       </el-form-item>
-    </el-form>
+    </el-form> -->
 
     <div :class="className" :id="time" style="height: 100%;width: 100%;display:none;"></div>
     <!-- <div style="margin-top: 1%">
@@ -146,109 +320,9 @@
       </el-row>
     </div> -->
     
-    <div style="margin-top: 1%">
-      <h3>合计表</h3>
-      <el-table
-        :header-row-style="headerRow"
-        :data="tableDataAgent2"
-        ref="multipleTable"
-        tooltip-effect="dark"
-        border
-        style="width: 100%;">
-        <el-table-column
-          align="center"
-          prop="agent_id"
-          :label="statistics_type === 'depart'?'部门合计':'员工合计'">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="count"
-          label="质检表单数量">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="median"
-          label="计分中位数">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="avg_score"
-          label="计分平均数">
-        </el-table-column>
-      </el-table>
-      <h3>时间合计表</h3>
-      <el-table
-        :header-row-style="headerRow"
-        :data="tableDataTime1"
-        ref="multipleTable"
-        tooltip-effect="dark"
-        border
-        style="width: 100%;margin-top: 1%;">
-        <el-table-column
-          align="center"
-          prop="time_dimension"
-          label="时间段">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="count"
-          label="质检表单数量">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="median"
-          label="计分中位数">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="avg_score"
-          label="计分平均数">
-        </el-table-column>
-      </el-table>
-      <div style="margin-top: 1%">
-        <el-row>
-          <el-pagination
-            background
-            @current-change="handleCurrentChangeStatics"
-            :current-page.sync="paginationStatics.pageNo"
-            :page-size="paginationStatics.pageSize"
-            layout="total, prev, pager, next, jumper"
-            :total="paginationStatics.totalCount" style="text-align: right">
-          </el-pagination>
-        </el-row>
-      </div>
-      <h3>{{statistics_type === 'depart'?'部门':'员工'}}合计表</h3>
-      <el-table
-        :header-row-style="headerRow"
-        :data="tableDataAgent1"
-        ref="multipleTable"
-        tooltip-effect="dark"
-        border
-        style="width: 100%;margin-top: 1%;">
-        <el-table-column
-          align="center"
-          :label="statistics_type === 'depart'?'下属部门':'下属员工'">
-          <template slot-scope="scope">
-            {{statistics_type === 'depart' ? scope.row.depart_name :  `${formInline.agentMap[scope.row.agent_id]} (${scope.row.agent_id})`}}
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="count"
-          label="质检表单数量">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="median"
-          label="计分中位数">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="avg_score"
-          label="计分平均数">
-        </el-table-column>
-      </el-table>
-      <h3>{{statistics_type === 'depart'?'下属部门详情':'下属员工详情'}}</h3>
+    <!-- <div style="margin-top: 1%"> -->
+      
+      <!-- <h3>{{statistics_type === 'depart'?'下属部门详情':'下属员工详情'}}</h3>
       <div style="margin-top:1%;" v-for="(item, index) in staffOptions">
         <el-table
           :header-row-style="headerRow"
@@ -256,7 +330,6 @@
           ref="multipleTable"
           tooltip-effect="dark"
           :span-method="objectSpanMethod"
-          border
           style="width: 100%;">
           <el-table-column
             align="center"
@@ -298,105 +371,153 @@
             </el-pagination>
           </div>
         </el-row>
-      </div>
-    </div>
+      </div> -->
+    <!-- </div> -->
   </div>
   <div style="width: 100%;height: 90%" v-else-if="staffPermission">
-    <el-row>
-      <el-form :inline="true" class="demo-form-inline" size="small">
-        <el-form-item label="活动名称:" v-show="showActive">
-          <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange">
-            <el-option value="" label="所有活动"></el-option>
-            <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="质检评分表:" v-show="showActive">
-          <el-select v-model="formInline.productClone" placeholder="质检评分表">
-            <el-option value="" label="所有评分表"></el-option>
-            <el-option v-for="item in productList" :key="item.id" :label="item.gradeName" :value="item.gradeId"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="时间维度:">
-          <el-select v-model="formInline.time" @change="time_dimensionChange">
-            <el-option label="天" value="day"></el-option>
-            <el-option label="小时" value="hour"></el-option>
-            <el-option label="周" value="week"></el-option>
-            <el-option label="月" value="month"></el-option>
-            <el-option label="年" value="year"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item v-show="formInline.time === 'hour'" label="操作时间：">
-          <el-date-picker
-            v-model="timeValue"
-            type="datetimerange"
-            range-separator="-"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            format="yyyy-MM-dd HH">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item v-show="formInline.time === 'day'" label="操作时间：">
-          <el-date-picker
-            v-model="timeValue"
-            type="daterange"
-            range-separator="-"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            format="yyyy-MM-dd">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item v-show="formInline.time === 'week'" label="操作时间：">
-          <el-date-picker
-            v-model="timeValue1[0]"
-            type="week"
-            format="yyyy 第 WW 周"
-            placeholder="开始周"
-            :picker-options="week">
-          </el-date-picker>
-          <span>-</span>
-          <el-date-picker
-            v-model="timeValue1[1]"
-            type="week"
-            format="yyyy 第 WW 周"
-            placeholder="结束周"
-            :picker-options="week">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item v-show="formInline.time === 'month'" label="操作时间：">
-          <el-date-picker
-            v-model="timeValue1[0]"
-            type="month"
-            placeholder="开始月"
-            format="yyyy-MM">
-          </el-date-picker>
-          <span>-</span>
-          <el-date-picker
-            v-model="timeValue1[1]"
-            type="month"
-            placeholder="结束月"
-            format="yyyy-MM">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item v-show="formInline.time === 'year'" label="操作时间：">
-          <el-date-picker
-            v-model="timeValue1[0]"
-            type="year"
-            placeholder="开始年"
-            format="yyyy">
-          </el-date-picker>
-          <span>-</span>
-          <el-date-picker
-            v-model="timeValue1[1]"
-            type="year"
-            placeholder="结束年"
-            format="yyyy">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="search1(staffAgentid)">查询</el-button>
-          <el-button type="danger" @click="reset">重置</el-button>
-        </el-form-item>
-      </el-form>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+         <el-form :inline="true" class="demo-form-inline" size="small">
+          <el-form-item label="活动名称:" v-show="showActive">
+            <el-select v-model="formInline.campaignIdClone" placeholder="活动名称" @change="campaignChange">
+              <el-option value="" label="所有活动"></el-option>
+              <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="质检评分表:" v-show="showActive">
+            <el-select v-model="formInline.productClone" placeholder="质检评分表">
+              <el-option value="" label="所有评分表"></el-option>
+              <el-option v-for="item in productList" :key="item.id" :label="item.gradeName" :value="item.gradeId"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="时间维度:">
+            <el-select v-model="formInline.time" @change="time_dimensionChange">
+              <el-option label="天" value="day"></el-option>
+              <el-option label="小时" value="hour"></el-option>
+              <el-option label="周" value="week"></el-option>
+              <el-option label="月" value="month"></el-option>
+              <el-option label="年" value="year"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-show="formInline.time === 'hour'" label="操作时间：">
+            <el-date-picker
+              v-model="timeValue"
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
+              format="yyyy-MM-dd HH">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item v-show="formInline.time === 'day'" label="操作时间：">
+            <el-date-picker
+              v-model="timeValue"
+              type="daterange"
+              range-separator="-"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
+              format="yyyy-MM-dd">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item v-show="formInline.time === 'week'" label="操作时间：">
+            <el-date-picker
+              v-model="timeValue1[0]"
+              type="week"
+              format="yyyy 第 WW 周"
+              placeholder="开始周"
+              :picker-options="week">
+            </el-date-picker>
+            <span>-</span>
+            <el-date-picker
+              v-model="timeValue1[1]"
+              type="week"
+              format="yyyy 第 WW 周"
+              placeholder="结束周"
+              :picker-options="week">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item v-show="formInline.time === 'month'" label="操作时间：">
+            <el-date-picker
+              v-model="timeValue1[0]"
+              type="month"
+              placeholder="开始月"
+              format="yyyy-MM">
+            </el-date-picker>
+            <span>-</span>
+            <el-date-picker
+              v-model="timeValue1[1]"
+              type="month"
+              placeholder="结束月"
+              format="yyyy-MM">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item v-show="formInline.time === 'year'" label="操作时间：">
+            <el-date-picker
+              v-model="timeValue1[0]"
+              type="year"
+              placeholder="开始年"
+              format="yyyy">
+            </el-date-picker>
+            <span>-</span>
+            <el-date-picker
+              v-model="timeValue1[1]"
+              type="year"
+              placeholder="结束年"
+              format="yyyy">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="search1(staffAgentid)">查询</el-button>
+            <el-button @click="reset">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">详情表</div>
+      </el-row>
+      <el-row>
+        <el-table
+          :header-row-style="headerRow"
+          :data="tableDataAgent"
+          ref="multipleTable"
+          tooltip-effect="dark"
+          style="width: 100%;">
+          <el-table-column
+            align="center"
+            prop="time_dimension"
+            label="时间段">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="count"
+            label="质检表单数量">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="median"
+            label="计分中位数">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="avg_score"
+            label="计分平均数">
+          </el-table-column>
+        </el-table>
+      </el-row>
+      <el-row style="margin-top:20px;">
+        <div @click="page(item,index)">
+          <el-pagination
+            background
+            @current-change="handleCurrentChangeAgent"
+            :current-page.sync="paginationAgent.pageNo"
+            :page-size="paginationAgent.pageSize"
+            layout="total, prev, pager, next, jumper"
+            :total="paginationAgent.totalCount" style="text-align: right">
+          </el-pagination>
+        </div>
+      </el-row>
     </el-row>
 
     <div :class="className" :id="time" style="height: 100%;width: 100%;display:none;"></div>
@@ -413,49 +534,6 @@
       </el-row>
     </div> -->
 
-    <div style="margin-top: 1%">
-      <h3>详情表</h3>
-      <el-table
-        :header-row-style="headerRow"
-        :data="tableDataAgent"
-        ref="multipleTable"
-        tooltip-effect="dark"
-        border
-        style="width: 100%;">
-        <el-table-column
-          align="center"
-          prop="time_dimension"
-          label="时间段">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="count"
-          label="质检表单数量">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="median"
-          label="计分中位数">
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="avg_score"
-          label="计分平均数">
-        </el-table-column>
-      </el-table>
-      <el-row style="margin-top:1%;">
-        <div @click="page(item,index)">
-          <el-pagination
-            background
-            @current-change="handleCurrentChangeAgent"
-            :current-page.sync="paginationAgent.pageNo"
-            :page-size="paginationAgent.pageSize"
-            layout="total, prev, pager, next, jumper"
-            :total="paginationAgent.totalCount" style="text-align: right">
-          </el-pagination>
-        </div>
-      </el-row>
-    </div>
   </div>
 </template>
 
@@ -502,6 +580,8 @@
     // },
     data() {
       return {
+        formContainerOpen: '1',
+        formContainer: this.$store.state.app.formContainer,
         statistics_type: '',
         departId: '',
         week: {
@@ -589,6 +669,10 @@
       }
     },
     mounted() {
+      setTimeout(() => {
+        this.formContainer()
+      }, 1000)
+      this.handleChangeAcitve()
       findCampaignAllByUser().then(response => {
         if (response.data.data.length === 0) {
           this.showActive = false
@@ -693,6 +777,13 @@
       this.chartTime = null
     },
     methods: {
+      handleChangeAcitve(active = ['1']) {
+        if (active.length) {
+          $('.form-more').text('收起')
+        } else {
+          $('.form-more').text('更多')
+        }
+      },
       initWebSocket() { // 初始化weosocket
         const wsuri = process.env.TUI_WS_SERVERURL + '/realtime_report_quality_result'// ws地址
         this.websock = new WebSocket(wsuri)
@@ -1023,628 +1114,628 @@
           this.paginationAgent.totalCount = response.data.total_count
         })
       },
-      initChart() {
-        const self = this
-        this.chart = echarts.init(document.getElementById(this.id))
-        const xData = (function() {
-          const data = []
-          for (let i = 0; i < self.obj.result.length; i++) {
-            data.push(self.obj.result[i].time_dimension)
-          }
-          return data
-        }())
-        this.chart.clear()
-        this.chart.setOption({
-          backgroundColor: '#344b58',
-          title: {
-            text: '质检结果报表',
-            x: '20',
-            top: '20',
-            textStyle: {
-              color: '#fff',
-              fontSize: '14'
-            },
-            subtextStyle: {
-              color: '#90979c',
-              fontSize: '16'
-            }
-          },
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              textStyle: {
-                color: '#fff'
-              }
-            }
-          },
-          grid: {
-            borderWidth: 0,
-            top: 110,
-            bottom: 95,
-            textStyle: {
-              color: '#fff'
-            }
-          },
-          legend: {
-            x: '30%',
-            top: '10%',
-            textStyle: {
-              color: '#90979c'
-            },
-            data: ['质检表单数量', '计分中位数', '计分平均数']
-          },
-          calculable: true,
-          xAxis: [{
-            type: 'category',
-            axisLine: {
-              lineStyle: {
-                color: '#90979c'
-              }
-            },
-            splitLine: {
-              show: false
-            },
-            axisTick: {
-              show: false
-            },
-            splitArea: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
+      // initChart() {
+      //   const self = this
+      //   this.chart = echarts.init(document.getElementById(this.id))
+      //   const xData = (function() {
+      //     const data = []
+      //     for (let i = 0; i < self.obj.result.length; i++) {
+      //       data.push(self.obj.result[i].time_dimension)
+      //     }
+      //     return data
+      //   }())
+      //   this.chart.clear()
+      //   this.chart.setOption({
+      //     backgroundColor: '#344b58',
+      //     title: {
+      //       text: '质检结果报表',
+      //       x: '20',
+      //       top: '20',
+      //       textStyle: {
+      //         color: '#fff',
+      //         fontSize: '14'
+      //       },
+      //       subtextStyle: {
+      //         color: '#90979c',
+      //         fontSize: '16'
+      //       }
+      //     },
+      //     tooltip: {
+      //       trigger: 'axis',
+      //       axisPointer: {
+      //         textStyle: {
+      //           color: '#fff'
+      //         }
+      //       }
+      //     },
+      //     grid: {
+      //       borderWidth: 0,
+      //       top: 110,
+      //       bottom: 95,
+      //       textStyle: {
+      //         color: '#fff'
+      //       }
+      //     },
+      //     legend: {
+      //       x: '30%',
+      //       top: '10%',
+      //       textStyle: {
+      //         color: '#90979c'
+      //       },
+      //       data: ['质检表单数量', '计分中位数', '计分平均数']
+      //     },
+      //     calculable: true,
+      //     xAxis: [{
+      //       type: 'category',
+      //       axisLine: {
+      //         lineStyle: {
+      //           color: '#90979c'
+      //         }
+      //       },
+      //       splitLine: {
+      //         show: false
+      //       },
+      //       axisTick: {
+      //         show: false
+      //       },
+      //       splitArea: {
+      //         show: false
+      //       },
+      //       axisLabel: {
+      //         interval: 0
 
-            },
-            data: xData
-          }],
-          yAxis: [{
-            type: 'value',
-            name: '数量/个',
-            splitLine: {
-              show: false
-            },
-            axisLine: {
-              lineStyle: {
-                color: '#90979c'
-              }
-            },
-            axisTick: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
-            },
-            splitArea: {
-              show: false
-            }
-          }, {
-            type: 'value',
-            name: '分',
-            splitLine: {
-              show: false
-            },
-            axisLine: {
-              lineStyle: {
-                color: '#90979c'
-              }
-            },
-            axisTick: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
-            },
-            splitArea: {
-              show: false
-            }
-          }],
-          dataZoom: [{
-            show: true,
-            height: 30,
-            xAxisIndex: [
-              0
-            ],
-            bottom: 30,
-            start: 0,
-            end: 100,
-            handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
-            handleSize: '110%',
-            handleStyle: {
-              color: '#d3dee5'
+      //       },
+      //       data: xData
+      //     }],
+      //     yAxis: [{
+      //       type: 'value',
+      //       name: '数量/个',
+      //       splitLine: {
+      //         show: false
+      //       },
+      //       axisLine: {
+      //         lineStyle: {
+      //           color: '#90979c'
+      //         }
+      //       },
+      //       axisTick: {
+      //         show: false
+      //       },
+      //       axisLabel: {
+      //         interval: 0
+      //       },
+      //       splitArea: {
+      //         show: false
+      //       }
+      //     }, {
+      //       type: 'value',
+      //       name: '分',
+      //       splitLine: {
+      //         show: false
+      //       },
+      //       axisLine: {
+      //         lineStyle: {
+      //           color: '#90979c'
+      //         }
+      //       },
+      //       axisTick: {
+      //         show: false
+      //       },
+      //       axisLabel: {
+      //         interval: 0
+      //       },
+      //       splitArea: {
+      //         show: false
+      //       }
+      //     }],
+      //     dataZoom: [{
+      //       show: true,
+      //       height: 30,
+      //       xAxisIndex: [
+      //         0
+      //       ],
+      //       bottom: 30,
+      //       start: 0,
+      //       end: 100,
+      //       handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
+      //       handleSize: '110%',
+      //       handleStyle: {
+      //         color: '#d3dee5'
 
-            },
-            textStyle: {
-              color: '#fff' },
-            borderColor: '#90979c'
+      //       },
+      //       textStyle: {
+      //         color: '#fff' },
+      //       borderColor: '#90979c'
 
-          }, {
-            type: 'inside',
-            show: true,
-            height: 15,
-            start: 1,
-            end: 35
-          }],
-          series: [{
-            name: '质检表单数量',
-            type: 'bar',
-            stack: 'total',
-            barMaxWidth: 35,
-            barGap: '10%',
-            itemStyle: {
-              normal: {
-                color: 'rgba(255,165,0,1)',
-                label: {
-                  show: true,
-                  textStyle: {
-                    color: '#fff'
-                  },
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.count
-          }, {
-            name: '计分中位数',
-            // type: 'bar',
-            // stack: 'total',
-            // barMaxWidth: 35,
-            type: 'line',
-            // stack: 'total',
-            yAxisIndex: 1,
-            symbolSize: 10,
-            symbol: 'circle',
-            itemStyle: {
-              normal: {
-                color: 'rgba(255,144,128,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.median_score
-          }, {
-            name: '计分平均数',
-            // type: 'bar',
-            // stack: 'total',
-            // barMaxWidth: 35,
-            type: 'line',
-            // stack: 'total',
-            yAxisIndex: 1,
-            symbolSize: 10,
-            symbol: 'circle',
-            itemStyle: {
-              normal: {
-                color: 'rgba(148,204,209,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.avg_score
-          }
-          ]
-        })
-      },
-      initChart1() {
-        this.chartStaff = echarts.init(document.getElementById('staff'))
-        this.chartStaff.clear()
-        this.chartStaff.setOption({
-          backgroundColor: '#344b58',
-          title: {
-            text: this.statistics_type === 'depart' ? '单个时间各部门质检结果报表' : '单个时间各员工质检结果报表',
-            x: '20',
-            top: '20',
-            textStyle: {
-              color: '#fff',
-              fontSize: '14'
-            },
-            subtextStyle: {
-              color: '#90979c',
-              fontSize: '14'
-            }
-          },
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              textStyle: {
-                color: '#fff'
-              }
-            }
-          },
-          grid: {
-            borderWidth: 0,
-            top: 110,
-            bottom: 95,
-            textStyle: {
-              color: '#fff'
-            }
-          },
-          legend: {
-            x: '30%',
-            top: '10%',
-            textStyle: {
-              color: '#90979c'
-            },
-            data: ['质检表单数量', '计分中位数', '计分平均数']
-          },
-          calculable: true,
-          xAxis: [{
-            type: 'category',
-            axisLine: {
-              lineStyle: {
-                color: '#90979c'
-              }
-            },
-            splitLine: {
-              show: false
-            },
-            axisTick: {
-              show: false
-            },
-            splitArea: {
-              show: false
-            },
-            axisLabel: {
-              interval: 'auto'
-            },
-            data: this.statistics_type === 'depart' ? this.formInline.sub_depart_name : this.formInline.agent_id
-          }],
-          yAxis: [{
-            type: 'value',
-            name: '数量/个',
-            splitLine: {
-              show: false
-            },
-            axisLine: {
-              lineStyle: {
-                color: '#90979c'
-              }
-            },
-            axisTick: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
-            },
-            splitArea: {
-              show: false
-            }
-          }, {
-            type: 'value',
-            name: '分',
-            splitLine: {
-              show: false
-            },
-            axisLine: {
-              lineStyle: {
-                color: '#90979c'
-              }
-            },
-            axisTick: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
-            },
-            splitArea: {
-              show: false
-            }
-          }],
-          dataZoom: [{
-            show: true,
-            height: 30,
-            xAxisIndex: [
-              0
-            ],
-            bottom: 30,
-            start: 0,
-            end: 100,
-            handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
-            handleSize: '110%',
-            handleStyle: {
-              color: '#d3dee5'
+      //     }, {
+      //       type: 'inside',
+      //       show: true,
+      //       height: 15,
+      //       start: 1,
+      //       end: 35
+      //     }],
+      //     series: [{
+      //       name: '质检表单数量',
+      //       type: 'bar',
+      //       stack: 'total',
+      //       barMaxWidth: 35,
+      //       barGap: '10%',
+      //       itemStyle: {
+      //         normal: {
+      //           color: 'rgba(255,165,0,1)',
+      //           label: {
+      //             show: true,
+      //             textStyle: {
+      //               color: '#fff'
+      //             },
+      //             position: 'insideTop',
+      //             formatter(p) {
+      //               return p.value > 0 ? p.value : ''
+      //             }
+      //           }
+      //         }
+      //       },
+      //       data: this.count
+      //     }, {
+      //       name: '计分中位数',
+      //       // type: 'bar',
+      //       // stack: 'total',
+      //       // barMaxWidth: 35,
+      //       type: 'line',
+      //       // stack: 'total',
+      //       yAxisIndex: 1,
+      //       symbolSize: 10,
+      //       symbol: 'circle',
+      //       itemStyle: {
+      //         normal: {
+      //           color: 'rgba(255,144,128,1)',
+      //           barBorderRadius: 0,
+      //           label: {
+      //             show: true,
+      //             position: 'insideTop',
+      //             formatter(p) {
+      //               return p.value > 0 ? p.value : ''
+      //             }
+      //           }
+      //         }
+      //       },
+      //       data: this.median_score
+      //     }, {
+      //       name: '计分平均数',
+      //       // type: 'bar',
+      //       // stack: 'total',
+      //       // barMaxWidth: 35,
+      //       type: 'line',
+      //       // stack: 'total',
+      //       yAxisIndex: 1,
+      //       symbolSize: 10,
+      //       symbol: 'circle',
+      //       itemStyle: {
+      //         normal: {
+      //           color: 'rgba(148,204,209,1)',
+      //           barBorderRadius: 0,
+      //           label: {
+      //             show: true,
+      //             position: 'insideTop',
+      //             formatter(p) {
+      //               return p.value > 0 ? p.value : ''
+      //             }
+      //           }
+      //         }
+      //       },
+      //       data: this.avg_score
+      //     }
+      //     ]
+      //   })
+      // },
+      // initChart1() {
+      //   this.chartStaff = echarts.init(document.getElementById('staff'))
+      //   this.chartStaff.clear()
+      //   this.chartStaff.setOption({
+      //     backgroundColor: '#344b58',
+      //     title: {
+      //       text: this.statistics_type === 'depart' ? '单个时间各部门质检结果报表' : '单个时间各员工质检结果报表',
+      //       x: '20',
+      //       top: '20',
+      //       textStyle: {
+      //         color: '#fff',
+      //         fontSize: '14'
+      //       },
+      //       subtextStyle: {
+      //         color: '#90979c',
+      //         fontSize: '14'
+      //       }
+      //     },
+      //     tooltip: {
+      //       trigger: 'axis',
+      //       axisPointer: {
+      //         textStyle: {
+      //           color: '#fff'
+      //         }
+      //       }
+      //     },
+      //     grid: {
+      //       borderWidth: 0,
+      //       top: 110,
+      //       bottom: 95,
+      //       textStyle: {
+      //         color: '#fff'
+      //       }
+      //     },
+      //     legend: {
+      //       x: '30%',
+      //       top: '10%',
+      //       textStyle: {
+      //         color: '#90979c'
+      //       },
+      //       data: ['质检表单数量', '计分中位数', '计分平均数']
+      //     },
+      //     calculable: true,
+      //     xAxis: [{
+      //       type: 'category',
+      //       axisLine: {
+      //         lineStyle: {
+      //           color: '#90979c'
+      //         }
+      //       },
+      //       splitLine: {
+      //         show: false
+      //       },
+      //       axisTick: {
+      //         show: false
+      //       },
+      //       splitArea: {
+      //         show: false
+      //       },
+      //       axisLabel: {
+      //         interval: 'auto'
+      //       },
+      //       data: this.statistics_type === 'depart' ? this.formInline.sub_depart_name : this.formInline.agent_id
+      //     }],
+      //     yAxis: [{
+      //       type: 'value',
+      //       name: '数量/个',
+      //       splitLine: {
+      //         show: false
+      //       },
+      //       axisLine: {
+      //         lineStyle: {
+      //           color: '#90979c'
+      //         }
+      //       },
+      //       axisTick: {
+      //         show: false
+      //       },
+      //       axisLabel: {
+      //         interval: 0
+      //       },
+      //       splitArea: {
+      //         show: false
+      //       }
+      //     }, {
+      //       type: 'value',
+      //       name: '分',
+      //       splitLine: {
+      //         show: false
+      //       },
+      //       axisLine: {
+      //         lineStyle: {
+      //           color: '#90979c'
+      //         }
+      //       },
+      //       axisTick: {
+      //         show: false
+      //       },
+      //       axisLabel: {
+      //         interval: 0
+      //       },
+      //       splitArea: {
+      //         show: false
+      //       }
+      //     }],
+      //     dataZoom: [{
+      //       show: true,
+      //       height: 30,
+      //       xAxisIndex: [
+      //         0
+      //       ],
+      //       bottom: 30,
+      //       start: 0,
+      //       end: 100,
+      //       handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
+      //       handleSize: '110%',
+      //       handleStyle: {
+      //         color: '#d3dee5'
 
-            },
-            textStyle: {
-              color: '#fff' },
-            borderColor: '#90979c'
+      //       },
+      //       textStyle: {
+      //         color: '#fff' },
+      //       borderColor: '#90979c'
 
-          }, {
-            type: 'inside',
-            show: true,
-            height: 15,
-            start: 1,
-            end: 35
-          }],
-          series: [{
-            name: '质检表单数量',
-            type: 'bar',
-            stack: 'total',
-            barMaxWidth: 35,
-            barGap: '10%',
-            itemStyle: {
-              normal: {
-                color: 'rgba(255,165,0,1)',
-                label: {
-                  show: true,
-                  textStyle: {
-                    color: '#fff'
-                  },
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.countTime
-          }, {
-            name: '计分中位数',
-            // type: 'bar',
-            // stack: 'total',
-            // barMaxWidth: 35,
-            type: 'line',
-            symbol: 'circle',
-            // stack: 'total',
-            yAxisIndex: 1,
-            itemStyle: {
-              normal: {
-                color: 'rgba(255,144,128,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.median_scoreTime
-          }, {
-            name: '计分平均数',
-            // type: 'bar',
-            // stack: 'total',
-            // barMaxWidth: 35,
-            type: 'line',
-            symbol: 'circle',
-            // stack: 'total',
-            yAxisIndex: 1,
-            itemStyle: {
-              normal: {
-                color: 'rgba(148,204,209,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.avg_scoreTime
-          }
-          ]
-        })
-      },
-      initChart2() {
-        this.chartTime = echarts.init(document.getElementById('time'))
-        this.chartTime.clear()
-        this.chartTime.setOption({
-          backgroundColor: '#344b58',
-          title: {
-            text: this.statistics_type === 'depart' ? '单个部门各时间段质检结果报表' : '单个员工各时间段质检结果报表',
-            x: '20',
-            top: '20',
-            textStyle: {
-              color: '#fff',
-              fontSize: '14'
-            },
-            subtextStyle: {
-              color: '#90979c',
-              fontSize: '14'
-            }
-          },
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              textStyle: {
-                color: '#fff'
-              }
-            }
-          },
-          grid: {
-            borderWidth: 0,
-            top: 110,
-            bottom: 95,
-            textStyle: {
-              color: '#fff'
-            }
-          },
-          legend: {
-            x: '30%',
-            top: '10%',
-            textStyle: {
-              color: '#90979c'
-            },
-            data: ['质检表单数量', '计分中位数', '计分平均数']
-          },
-          calculable: true,
-          xAxis: [{
-            type: 'category',
-            axisLine: {
-              lineStyle: {
-                color: '#90979c'
-              }
-            },
-            splitLine: {
-              show: false
-            },
-            axisTick: {
-              show: false
-            },
-            splitArea: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
-            },
-            data: this.agentTime
-          }],
-          yAxis: [{
-            type: 'value',
-            name: '数量/个',
-            splitLine: {
-              show: false
-            },
-            axisLine: {
-              lineStyle: {
-                color: '#90979c'
-              }
-            },
-            axisTick: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
-            },
-            splitArea: {
-              show: false
-            }
-          }, {
-            type: 'value',
-            name: '分',
-            splitLine: {
-              show: false
-            },
-            axisLine: {
-              lineStyle: {
-                color: '#90979c'
-              }
-            },
-            axisTick: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
-            },
-            splitArea: {
-              show: false
-            }
-          }],
-          dataZoom: [{
-            show: true,
-            height: 30,
-            xAxisIndex: [
-              0
-            ],
-            bottom: 30,
-            start: 0,
-            end: 100,
-            handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
-            handleSize: '110%',
-            handleStyle: {
-              color: '#d3dee5'
+      //     }, {
+      //       type: 'inside',
+      //       show: true,
+      //       height: 15,
+      //       start: 1,
+      //       end: 35
+      //     }],
+      //     series: [{
+      //       name: '质检表单数量',
+      //       type: 'bar',
+      //       stack: 'total',
+      //       barMaxWidth: 35,
+      //       barGap: '10%',
+      //       itemStyle: {
+      //         normal: {
+      //           color: 'rgba(255,165,0,1)',
+      //           label: {
+      //             show: true,
+      //             textStyle: {
+      //               color: '#fff'
+      //             },
+      //             position: 'insideTop',
+      //             formatter(p) {
+      //               return p.value > 0 ? p.value : ''
+      //             }
+      //           }
+      //         }
+      //       },
+      //       data: this.countTime
+      //     }, {
+      //       name: '计分中位数',
+      //       // type: 'bar',
+      //       // stack: 'total',
+      //       // barMaxWidth: 35,
+      //       type: 'line',
+      //       symbol: 'circle',
+      //       // stack: 'total',
+      //       yAxisIndex: 1,
+      //       itemStyle: {
+      //         normal: {
+      //           color: 'rgba(255,144,128,1)',
+      //           barBorderRadius: 0,
+      //           label: {
+      //             show: true,
+      //             position: 'insideTop',
+      //             formatter(p) {
+      //               return p.value > 0 ? p.value : ''
+      //             }
+      //           }
+      //         }
+      //       },
+      //       data: this.median_scoreTime
+      //     }, {
+      //       name: '计分平均数',
+      //       // type: 'bar',
+      //       // stack: 'total',
+      //       // barMaxWidth: 35,
+      //       type: 'line',
+      //       symbol: 'circle',
+      //       // stack: 'total',
+      //       yAxisIndex: 1,
+      //       itemStyle: {
+      //         normal: {
+      //           color: 'rgba(148,204,209,1)',
+      //           barBorderRadius: 0,
+      //           label: {
+      //             show: true,
+      //             position: 'insideTop',
+      //             formatter(p) {
+      //               return p.value > 0 ? p.value : ''
+      //             }
+      //           }
+      //         }
+      //       },
+      //       data: this.avg_scoreTime
+      //     }
+      //     ]
+      //   })
+      // },
+      // initChart2() {
+      //   this.chartTime = echarts.init(document.getElementById('time'))
+      //   this.chartTime.clear()
+      //   this.chartTime.setOption({
+      //     backgroundColor: '#344b58',
+      //     title: {
+      //       text: this.statistics_type === 'depart' ? '单个部门各时间段质检结果报表' : '单个员工各时间段质检结果报表',
+      //       x: '20',
+      //       top: '20',
+      //       textStyle: {
+      //         color: '#fff',
+      //         fontSize: '14'
+      //       },
+      //       subtextStyle: {
+      //         color: '#90979c',
+      //         fontSize: '14'
+      //       }
+      //     },
+      //     tooltip: {
+      //       trigger: 'axis',
+      //       axisPointer: {
+      //         textStyle: {
+      //           color: '#fff'
+      //         }
+      //       }
+      //     },
+      //     grid: {
+      //       borderWidth: 0,
+      //       top: 110,
+      //       bottom: 95,
+      //       textStyle: {
+      //         color: '#fff'
+      //       }
+      //     },
+      //     legend: {
+      //       x: '30%',
+      //       top: '10%',
+      //       textStyle: {
+      //         color: '#90979c'
+      //       },
+      //       data: ['质检表单数量', '计分中位数', '计分平均数']
+      //     },
+      //     calculable: true,
+      //     xAxis: [{
+      //       type: 'category',
+      //       axisLine: {
+      //         lineStyle: {
+      //           color: '#90979c'
+      //         }
+      //       },
+      //       splitLine: {
+      //         show: false
+      //       },
+      //       axisTick: {
+      //         show: false
+      //       },
+      //       splitArea: {
+      //         show: false
+      //       },
+      //       axisLabel: {
+      //         interval: 0
+      //       },
+      //       data: this.agentTime
+      //     }],
+      //     yAxis: [{
+      //       type: 'value',
+      //       name: '数量/个',
+      //       splitLine: {
+      //         show: false
+      //       },
+      //       axisLine: {
+      //         lineStyle: {
+      //           color: '#90979c'
+      //         }
+      //       },
+      //       axisTick: {
+      //         show: false
+      //       },
+      //       axisLabel: {
+      //         interval: 0
+      //       },
+      //       splitArea: {
+      //         show: false
+      //       }
+      //     }, {
+      //       type: 'value',
+      //       name: '分',
+      //       splitLine: {
+      //         show: false
+      //       },
+      //       axisLine: {
+      //         lineStyle: {
+      //           color: '#90979c'
+      //         }
+      //       },
+      //       axisTick: {
+      //         show: false
+      //       },
+      //       axisLabel: {
+      //         interval: 0
+      //       },
+      //       splitArea: {
+      //         show: false
+      //       }
+      //     }],
+      //     dataZoom: [{
+      //       show: true,
+      //       height: 30,
+      //       xAxisIndex: [
+      //         0
+      //       ],
+      //       bottom: 30,
+      //       start: 0,
+      //       end: 100,
+      //       handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
+      //       handleSize: '110%',
+      //       handleStyle: {
+      //         color: '#d3dee5'
 
-            },
-            textStyle: {
-              color: '#fff' },
-            borderColor: '#90979c'
+      //       },
+      //       textStyle: {
+      //         color: '#fff' },
+      //       borderColor: '#90979c'
 
-          }, {
-            type: 'inside',
-            show: true,
-            height: 15,
-            start: 1,
-            end: 35
-          }],
-          series: [{
-            name: '质检表单数量',
-            type: 'bar',
-            stack: 'total',
-            barMaxWidth: 35,
-            barGap: '10%',
-            itemStyle: {
-              normal: {
-                color: 'rgba(255,165,0,1)',
-                label: {
-                  show: true,
-                  textStyle: {
-                    color: '#fff'
-                  },
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.countAgent
-          }, {
-            name: '计分中位数',
-            // type: 'bar',
-            // stack: 'total',
-            // barMaxWidth: 35,
-            type: 'line',
-            symbol: 'circle',
-            // stack: 'total',
-            yAxisIndex: 1,
-            symbolSize: 10,
-            itemStyle: {
-              normal: {
-                color: 'rgba(255,144,128,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.median_scoreAgent
-          }, {
-            name: '计分平均数',
-            // type: 'bar',
-            // stack: 'total',
-            // barMaxWidth: 35,
-            type: 'line',
-            symbol: 'circle',
-            // stack: 'total',
-            yAxisIndex: 1,
-            symbolSize: 10,
-            itemStyle: {
-              normal: {
-                color: 'rgba(148,204,209,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'insideTop',
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: this.avg_scoreAgent
-          }
-          ]
-        })
-      },
+      //     }, {
+      //       type: 'inside',
+      //       show: true,
+      //       height: 15,
+      //       start: 1,
+      //       end: 35
+      //     }],
+      //     series: [{
+      //       name: '质检表单数量',
+      //       type: 'bar',
+      //       stack: 'total',
+      //       barMaxWidth: 35,
+      //       barGap: '10%',
+      //       itemStyle: {
+      //         normal: {
+      //           color: 'rgba(255,165,0,1)',
+      //           label: {
+      //             show: true,
+      //             textStyle: {
+      //               color: '#fff'
+      //             },
+      //             position: 'insideTop',
+      //             formatter(p) {
+      //               return p.value > 0 ? p.value : ''
+      //             }
+      //           }
+      //         }
+      //       },
+      //       data: this.countAgent
+      //     }, {
+      //       name: '计分中位数',
+      //       // type: 'bar',
+      //       // stack: 'total',
+      //       // barMaxWidth: 35,
+      //       type: 'line',
+      //       symbol: 'circle',
+      //       // stack: 'total',
+      //       yAxisIndex: 1,
+      //       symbolSize: 10,
+      //       itemStyle: {
+      //         normal: {
+      //           color: 'rgba(255,144,128,1)',
+      //           barBorderRadius: 0,
+      //           label: {
+      //             show: true,
+      //             position: 'insideTop',
+      //             formatter(p) {
+      //               return p.value > 0 ? p.value : ''
+      //             }
+      //           }
+      //         }
+      //       },
+      //       data: this.median_scoreAgent
+      //     }, {
+      //       name: '计分平均数',
+      //       // type: 'bar',
+      //       // stack: 'total',
+      //       // barMaxWidth: 35,
+      //       type: 'line',
+      //       symbol: 'circle',
+      //       // stack: 'total',
+      //       yAxisIndex: 1,
+      //       symbolSize: 10,
+      //       itemStyle: {
+      //         normal: {
+      //           color: 'rgba(148,204,209,1)',
+      //           barBorderRadius: 0,
+      //           label: {
+      //             show: true,
+      //             position: 'insideTop',
+      //             formatter(p) {
+      //               return p.value > 0 ? p.value : ''
+      //             }
+      //           }
+      //         }
+      //       },
+      //       data: this.avg_scoreAgent
+      //     }
+      //     ]
+      //   })
+      // },
       campaignChange(val) {
         this.productList = []
         getGradesByCampaignId(val).then(res => {

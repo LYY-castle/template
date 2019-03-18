@@ -1,109 +1,115 @@
 <template>
   <div class="container">
-    <el-row margin-top:>
-      <el-form :inline="true" size="small">
-        <el-form-item label="组织">
-          <el-cascader
-            v-model="selected_dept_id"
-            placeholder="请选择组织"
-            :options="org_options"
-            :props="org_props"
-            show-all-levels
-            filterable
-            size="small"
-            @change="showStaffs"
-            change-on-select
-          ></el-cascader>
-        </el-form-item>
-        <el-form-item label="坐席">
-          <el-select v-model="req.staffId" clearable>
-            <el-option label="所有坐席" :value="s_staffIds" v-if="hasAgent"></el-option>
-            <el-option label="无" value="" v-if="!hasAgent"></el-option>
-            <el-option
-              v-for="item in s_staffs"
-              :key="item[1]"
-              :label="item[2]+' ('+item[1]+')'"
-              :value="item[1]"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="客户姓名">
-          <el-input v-model="req.customerName" placeholder="客户姓名（限长50字符）" maxlength="50" clearable></el-input>
-        </el-form-item>
-        <el-form-item label="客户电话：">
-            <el-input v-model="req.customerPhone" placeholder="客户电话（限长50字符）" maxlength="50" clearable></el-input>
-        </el-form-item>
-        <el-form-item label="任务状态：">
-          <el-select v-model="req.status" placeholder="请选择">
-            <el-option
-              v-for="item in taskStatusOptions"
-              :key="item.value"
-              :value="item.value"
-              :label="item.label">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <!-- <el-form-item label="话后小结：">
-          <el-select v-model="req.summaryId">
-            <el-option
-              v-for="item in summariesInfo"
-              :key="item.id"
-              :value="item.id"
-              :label="item.name">
-            </el-option>
-          </el-select>
-        </el-form-item> -->
-        <br/>
-        <el-form-item label="拨打次数">
-          <el-input v-model="req.contactedNum" maxlength="4" min="0" type="number"></el-input>
-        </el-form-item>
-        <el-form-item label="分配时间：">
-          <el-date-picker
-              v-model="req.distributeTimeStart"
-              type="datetime"
-              placeholder="开始时间"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
-          </el-date-picker>
-          到
-          <el-date-picker
-              v-model="req.distributeTimeEnd"
-              type="datetime"
-              placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
-          </el-date-picker>
-        </el-form-item>&nbsp;&nbsp;
-        <el-form-item label="上次拨打时间：">
-          <el-date-picker
-              v-model="req.lastContactTimeStart"
-              type="datetime"
-              placeholder="开始时间"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
-          </el-date-picker>
-          到
-          <el-date-picker
-              v-model="req.lastContactTimeEnd"
-              type="datetime"
-              placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item>
-            <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
-            <el-button type="danger" @click="clearForm(req)">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
-
-    <el-row>
-      <el-col>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small">
+          <el-form-item label="组织">
+            <el-cascader
+              v-model="selected_dept_id"
+              placeholder="请选择组织"
+              :options="org_options"
+              :props="org_props"
+              show-all-levels
+              filterable
+              size="small"
+              @change="showStaffs"
+              change-on-select
+            ></el-cascader>
+          </el-form-item>
+          <el-form-item label="坐席">
+            <el-select v-model="req.staffId" clearable>
+              <el-option label="所有坐席" :value="s_staffIds" v-if="hasAgent"></el-option>
+              <el-option label="无" value="" v-if="!hasAgent"></el-option>
+              <el-option
+                v-for="item in s_staffs"
+                :key="item[1]"
+                :label="item[2]+' ('+item[1]+')'"
+                :value="item[1]"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="客户姓名">
+            <el-input v-model="req.customerName" placeholder="客户姓名（限长50字符）" maxlength="50" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="客户电话：">
+              <el-input v-model="req.customerPhone" placeholder="客户电话（限长50字符）" maxlength="50" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="任务状态：">
+            <el-select v-model="req.status" placeholder="请选择">
+              <el-option
+                v-for="item in taskStatusOptions"
+                :key="item.value"
+                :value="item.value"
+                :label="item.label">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <!-- <el-form-item label="话后小结：">
+            <el-select v-model="req.summaryId">
+              <el-option
+                v-for="item in summariesInfo"
+                :key="item.id"
+                :value="item.id"
+                :label="item.name">
+              </el-option>
+            </el-select>
+          </el-form-item> -->
+          <br/>
+          <el-form-item label="拨打次数">
+            <el-input v-model="req.contactedNum" maxlength="4" min="0" type="number"></el-input>
+          </el-form-item>
+          <el-form-item label="分配时间：">
+            <el-date-picker
+                v-model="req.distributeTimeStart"
+                type="datetime"
+                placeholder="开始时间"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                default-time="00:00:00">
+            </el-date-picker>
+            到
+            <el-date-picker
+                v-model="req.distributeTimeEnd"
+                type="datetime"
+                placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                default-time="00:00:00">
+            </el-date-picker>
+          </el-form-item>&nbsp;&nbsp;
+          <el-form-item label="上次拨打时间：">
+            <el-date-picker
+                v-model="req.lastContactTimeStart"
+                type="datetime"
+                placeholder="开始时间"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                default-time="00:00:00">
+            </el-date-picker>
+            到
+            <el-date-picker
+                v-model="req.lastContactTimeEnd"
+                type="datetime"
+                placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                default-time="00:00:00">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+              <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
+              <el-button type="danger" @click="clearForm(req)">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">名单转移表</div>
+      </el-row>
+      <el-row class="margin-bottom-20">
+        <el-button type="primary" @click="checkTransferNum(contactTaskIds);">转移</el-button>
+      </el-row>
+      <el-row>
         <el-table
           :data="tableData"
-          border
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
@@ -199,17 +205,10 @@
             label="描述">
           </el-table-column>
         </el-table>
-      </el-col>
-    </el-row>
-    <el-row style="margin-top:5px;">
-      <el-form :inline="true" size="small">
-        <el-form-item>
-          <el-button type="primary" @click="checkTransferNum(contactTaskIds);">转移</el-button>
-        </el-form-item>
-      </el-form>
+      </el-row>
+      <el-row style="margin-top:20px;">
         <el-pagination
           v-if="pageShow"
-          background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page='pageInfo.pageNo'
@@ -218,32 +217,36 @@
           layout="total, sizes, prev, pager, next, jumper "
           :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
+      </el-row>
     </el-row>
+
 
     <!-- 选择转移的坐席dialog -->
     <el-dialog width="30%" title="操作提示" :visible.sync="transferVisible" append-to-body>
-      <el-form>
+      <el-form size="small">
         <el-form-item label="转移的组织：">
           <el-cascader
+            style="width:100%;"
             v-model="transfer_dept_id"
             placeholder="请选择组织"
             :options="org_options"
             :props="org_props"
             show-all-levels
             filterable
-            size="medium"
             @change="showStaffs1"
             change-on-select
           ></el-cascader>
         </el-form-item>
         <el-form-item label="转移的坐席：">
-          <el-select v-model="transferToAgentId" clearable>
+          <el-select 
+            style="width:100%;" 
+            v-model="transferToAgentId" 
+            clearable>
             <el-option
               v-for="item in s_staffs1"
               :key="item[1]"
               :label="item[2]+' ('+item[1]+')'"
-              :value="item[1]"
-            >
+              :value="item[1]">
             </el-option>
           </el-select>
         </el-form-item>
@@ -280,6 +283,8 @@ export default {
 
   data() {
     return {
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       hasAgent: false,
       org_options: [], // 用以展示级联的组织
       selected_dept_id: [], // 级联选中的组织id
@@ -333,6 +338,13 @@ export default {
   },
 
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     // 判断是否选中
     checkTransferNum(contactTaskIds) {
       if (contactTaskIds.length === 0) {
@@ -601,6 +613,8 @@ export default {
 
   mounted() {
     vm = this
+    this.formContainer()
+    this.handleChangeAcitve()
     // 查询当前主管下的坐席人员(包括自己)
     // this.getAllStaffs()
     // 获取所有部门及子部门下的坐席id用以默认查询

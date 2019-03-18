@@ -2,37 +2,45 @@
   <div class="container">
     <!-- 列表 主页-->
     <div v-show="pagePosition==='1'">
-      <el-row>
-        <el-form :inline="true" size="small">
-          <el-form-item label="问卷名称">
-            <el-input type="text" v-model="req2.templateName" size="medium" placeholder="问卷名称（限长45字符）" maxlength="45"></el-input>
-          </el-form-item>
-          <el-form-item label="答卷工号">
-            <el-input type="text" v-model="req2.angentId" size="medium" placeholder="答卷工号（限长10字符）" maxlength="10"></el-input>
-          </el-form-item>
-          <el-form-item label="答卷人">
-            <el-input type="text" v-model="req2.staffName" size="medium" placeholder="答卷人（限长45字符）" maxlength="45"></el-input>
-          </el-form-item>
-          <el-form-item label="答卷时间">
-            <el-date-picker
-                v-model="timeValue"
-                type="datetimerange"
-                range-separator="-"
-                start-placeholder="开始时间"
-                end-placeholder="结束时间"
-                value-format="yyyy-MM-dd HH:mm:ss">
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary"  @click="req2.pageNo=1;getQuestionnaireRecords(req2)">查询</el-button>
-            <el-button type="danger"  @click="resetQueryCondition()">重置</el-button>
-          </el-form-item>
-        </el-form>
-      </el-row>
-
-      <el-row>
-        <el-col>
-          <el-table :data="listRecords" border @selection-change="handleSelectionChange">
+      <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+        <el-collapse-item title="筛选条件" name="1">
+          <el-form :inline="true" size="small">
+            <el-form-item label="问卷名称">
+              <el-input type="text" v-model="req2.templateName" size="medium" placeholder="问卷名称（限长45字符）" maxlength="45"></el-input>
+            </el-form-item>
+            <el-form-item label="答卷工号">
+              <el-input type="text" v-model="req2.angentId" placeholder="答卷工号（限长10字符）" maxlength="10"></el-input>
+            </el-form-item>
+            <el-form-item label="答卷人">
+              <el-input type="text" v-model="req2.staffName" placeholder="答卷人（限长45字符）" maxlength="45"></el-input>
+            </el-form-item>
+            <el-form-item label="答卷时间">
+              <el-date-picker
+                  v-model="timeValue"
+                  type="datetimerange"
+                  range-separator="-"
+                  start-placeholder="开始时间"
+                  end-placeholder="结束时间"
+                  value-format="yyyy-MM-dd HH:mm:ss">
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="req2.pageNo=1;getQuestionnaireRecords(req2)">查询</el-button>
+              <el-button @click="resetQueryCondition()">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-collapse-item>
+      </el-collapse>
+      <el-row class="table-container">
+        <el-row class="margin-bottom-20">
+          <div class="font14 bold">问卷管理表</div>
+        </el-row>
+        <el-row class="margin-bottom-20">
+          <el-button type="info" size="small" @click="showQuestionnaires=true;templateId=''">填写问卷</el-button>
+          <el-button type="danger" size="small" @click="isSelectCkb(batchDeleteIds)">批量删除</el-button>
+        </el-row>
+        <el-row>
+          <el-table :data="listRecords" @selection-change="handleSelectionChange">
             <el-table-column align="center" type="selection" width="55"></el-table-column>
             <el-table-column align="center" label="问卷名称">
               <template slot-scope="scope">
@@ -63,15 +71,10 @@
               </template>
             </el-table-column>
           </el-table>
-        </el-col>
-      </el-row>
-
-      <el-row style="margin-top:5px;">
-        <el-button type="success"  size="small" @click="showQuestionnaires=true;templateId=''">填写问卷</el-button>
-        <el-button type="danger" size="small" @click="isSelectCkb(batchDeleteIds)">批量删除</el-button>
-        <el-pagination
+        </el-row>
+        <el-row style="margin-top:20px;">    
+          <el-pagination
             v-if="pageShow2"
-            background
             @size-change="handleSizeChange2"
             @current-change="handleCurrentChange2"
             :current-page='pageInfo2.pageNo'
@@ -79,13 +82,13 @@
             :page-size='req2.pageSize'
             layout="total, sizes, prev, pager, next, jumper "
             :total='pageInfo2.totalCount' style="text-align: right;float:right;">
-        </el-pagination>
+          </el-pagination>
+        </el-row>
       </el-row>
-
       <!-- 查看模板列表 -->
       <el-dialog width="30%" title="问卷模板" :visible.sync="showQuestionnaires" append-to-body>
         <span style="color:red">*</span><span style="font-size:15px;">请选择问卷模板：</span>
-        <el-select v-model="templateId" placeholder="请选择问卷模板" clearable size="medium" filterable>
+        <el-select size="small" style="width:100%;" v-model="templateId" placeholder="请选择问卷模板" clearable filterable>
           <el-option
             v-for="item in templates"
             :key="item.id"
@@ -105,7 +108,7 @@
         <span style="font-size:15px;">确定删除此问卷记录？</span>
         <div slot="footer" class="dialog-footer" style="text-align: right;">
           <el-button type="primary" @click="deleteVisiable = false;deleteQuestionnaireRecord(deleteRecordId);">确定</el-button>
-          <el-button @click="deleteVisiable = false">取消</el-button>
+          <el-button type="primary" plain @click="deleteVisiable = false">取消</el-button>
         </div>
       </el-dialog>
 
@@ -114,13 +117,13 @@
         <span style="font-size:15px;">确定删除这些问卷记录？</span>
         <div slot="footer" class="dialog-footer" style="text-align: right;">
           <el-button type="primary" @click="batchdeletVisiable = false;batchDeleteQuestionnaireRecord(batchDeleteIds);">确定</el-button>
-          <el-button @click="batchdeletVisiable = false">取消</el-button>
+          <el-button type="primary" plain @click="batchdeletVisiable = false">取消</el-button>
         </div>
       </el-dialog>
     </div>
 
     <!-- 填写问卷 -->
-    <div  v-show="pagePosition==='2'" class="question">
+    <div v-show="pagePosition==='2'" class="question">
       <el-row type="flex">
         <el-col :span="2"></el-col>
         <el-col :span="20" >
@@ -138,9 +141,9 @@
 
                 <div class="quest-box">
                   <!--  单选  -->
-                    <el-form>
+                    <el-form size="small">
                       <h5 v-if="show_singleItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;单选:</h5><br/>
-                        <div style="margin-top:-25px">
+                        <div style="margin-top:-8px">
                           <el-form-item v-for="(item,index) in show_singleItems" :key="index">
                             <div class="topic-type-content">
                                 <span>{{index+1}}.</span>
@@ -157,9 +160,9 @@
                   
 
                   <!--  多选  -->
-                  <el-form>
+                  <el-form size="small">
                     <h5 v-if="show_multiItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多选:</h5><br/>
-                    <div style="margin-top:-25px">
+                    <div style="margin-top:-8px">
                       <el-form-item v-for="(item,index) in show_multiItems" :key="index">
                         <div class="topic-type-content">
                           <span>{{index+1}}.</span>
@@ -176,9 +179,9 @@
                   </el-form>
 
                   <!--  单行填空  -->
-                   <el-form>
+                   <el-form size="small">
                     <h5 v-if="show_fillBlanks.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;单行填空:</h5><br/>
-                      <div style="margin-top:-25px">
+                      <div style="margin-top:-8px">
                         <el-form-item v-for="(item,index) in show_fillBlanks" :key="index">
                           <div class="topic-type-content">
                             <span>{{index+1}}.</span>
@@ -192,9 +195,9 @@
                   </el-form>
 
                   <!--  多行填空  -->
-                   <el-form>
+                   <el-form size="small">
                     <h5 v-if="show_multiBlanks.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多行填空:</h5><br/>
-                      <div style="margin-top:-25px">
+                      <div style="margin-top:-8px">
                         <el-form-item v-for="(item,index) in show_multiBlanks" :key="index">
                           <div class="topic-type-content">
                             <span>{{index+1}}.</span>
@@ -211,7 +214,7 @@
                 <div class="lastbuttons" >
                   <div style="margin-top:8px">
                     <el-button type="primary" size="small" @click="completeFillQuestionnaire(templateId,oneDetails.name);" v-if="showComplete===true">完成</el-button>
-                    <el-button type="default" size="small" @click="pagePosition='1'">返回</el-button><br/><br/>
+                    <el-button type="primary" plain size="small" @click="pagePosition='1'">返回</el-button><br/><br/>
                   </div>
                 </div>
 
@@ -242,9 +245,9 @@
 
                 <div class="quest-box">
                   <!--  单选  -->
-                    <el-form>
+                    <el-form size="small">
                       <h5 v-if="show_singleItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;单选:</h5><br/>
-                        <div style="margin-top:-25px">
+                        <div style="margin-top:-8px">
                           <el-form-item v-for="(item,index) in show_singleItems" :key="index">
                             <div class="topic-type-content">
                                 <span>{{index+1}}.</span>
@@ -261,9 +264,9 @@
                   
 
                   <!--  多选  -->
-                  <el-form>
+                  <el-form size="small">
                     <h5 v-if="show_multiItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多选:</h5><br/>
-                    <div style="margin-top:-25px">
+                    <div style="margin-top:-8px">
                       <el-form-item v-for="(item,index) in show_multiItems" :key="index">
                         <div class="topic-type-content">
                           <span>{{index+1}}.</span>
@@ -280,9 +283,9 @@
                   </el-form>
 
                   <!--  单行填空  -->
-                   <el-form>
+                   <el-form size="small">
                     <h5 v-if="show_fillBlanks.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;单行填空:</h5><br/>
-                      <div style="margin-top:-25px">
+                      <div style="margin-top:-8px">
                         <el-form-item v-for="(item,index) in show_fillBlanks" :key="index">
                           <div class="topic-type-content">
                             <span>{{index+1}}.</span>
@@ -296,9 +299,9 @@
                   </el-form>
 
                   <!--  多行填空  -->
-                   <el-form>
+                   <el-form size="small">
                     <h5 v-if="show_multiBlanks.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多行填空:</h5><br/>
-                      <div style="margin-top:-25px">
+                      <div style="margin-top:-8px">
                         <el-form-item v-for="(item,index) in show_multiBlanks" :key="index">
                           <div class="topic-type-content">
                             <span>{{index+1}}.</span>
@@ -314,7 +317,7 @@
                 </div>
                 <div class="lastbuttons" >
                   <div style="margin-top:8px">
-                    <el-button type="primary" size="small" @click="pagePosition='1'">返回</el-button><br/><br/>
+                    <el-button type="primary" plain size="small" @click="pagePosition='1'">返回</el-button><br/><br/>
                   </div>
                 </div>
 
@@ -452,6 +455,8 @@ export default {
 
   data() {
     return {
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       showQuestionnaires: false, // 填写问卷选择模板dialog
       listTemplateName: '', // 记录列表模板名称
       pagePosition: '1', // 是否是主页 1：列表主页  2:填写页面
@@ -512,6 +517,13 @@ export default {
   },
 
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     setMultiItems() {
       for (let i = 0; i < this.show_multiItems.length; i++) {
         this.selectOption_multi[i] = []
@@ -887,6 +899,8 @@ export default {
   },
 
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     this.getQuestionnaireRecords(this.req2)
     this.searchByKeyWords(this.req)
   },

@@ -1,135 +1,140 @@
 <template>
-<div class='container dial-task'>
+<div class='container'>
   <!-- 隐藏的getSummariesDetail -->
   <!-- 拨打任务列表div层 -->
-  <div  v-if="isDialTask===true">
-      <el-row>
-          <el-form :inline="true" size="small">
-            <el-form-item label="分配时间：">
-                <el-date-picker
-                    v-model="req.distributeTimeStart"
-                    type="datetime"
-                    placeholder="开始时间"
-                    value-format="yyyy-MM-dd HH:mm:ss"
-                    default-time="00:00:00">
-                </el-date-picker>
-                到
-                <el-date-picker
-                    v-model="req.distributeTimeEnd"
-                    type="datetime"
-                    placeholder="结束时间"
-                    value-format="yyyy-MM-dd HH:mm:ss"
-                    default-time="00:00:00">
-                </el-date-picker>
-            </el-form-item>&nbsp;&nbsp;
-            <el-form-item label="预约时间：">
-                <el-date-picker
-                    v-model="req.appointTimeStart"
-                    type="datetime"
-                    placeholder="开始时间"
-                    value-format="yyyy-MM-dd HH:mm:ss"
-                    default-time="00:00:00">
-                </el-date-picker>
-                到
-                <el-date-picker
-                    v-model="req.appointTimeEnd"
-                    type="datetime"
-                    placeholder="结束时间"
-                    value-format="yyyy-MM-dd HH:mm:ss"
-                    default-time="00:00:00">
-                </el-date-picker>
-            </el-form-item><br/>
-            <el-form-item label="操作时间：">
-                <el-date-picker
-                    v-model="req.modifyTimeStart"
-                    type="datetime"
-                    placeholder="开始时间"
-                    value-format="yyyy-MM-dd HH:mm:ss"
-                    default-time="00:00:00">
-                </el-date-picker>
-                到
-                <el-date-picker
-                    v-model="req.modifyTimeEnd"
-                    type="datetime"
-                    placeholder="结束时间"
-                    value-format="yyyy-MM-dd HH:mm:ss"
-                    default-time="00:00:00">
-                </el-date-picker>
-            </el-form-item>
-             <el-form-item label="任务状态：">
-                <el-select v-model="req.status" placeholder="请选择">
-                  <el-option
-                    v-for="item in taskStatusOptions"
-                    :key="item.value"
-                    :value="item.value"
-                    :label="item.label">
-
-                  </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="拨打次数：">
-                <el-input v-model="req.contactedNum" maxlength="4" min="0" type="number"></el-input>
-            </el-form-item>
-            <br/>
-
-            <el-form-item label="客户姓名：">
-                <el-input v-model="req.customerName" placeholder="客户姓名（限长50字符）" maxlength="50"></el-input>
-            </el-form-item>&nbsp;&nbsp;&nbsp;&nbsp;
-            <el-form-item label="客户电话：">
-                <el-input v-model="req.customerPhone" placeholder="客户电话（限长50字符）" maxlength="50"></el-input>
-            </el-form-item>
-
-            <el-form-item label="话后小结：">
-                <el-select v-model="req.summaryId">
-                  <el-option
-                    v-for="item in summariesInfo"
-                    :key="item.id"
-                    :value="item.id"
-                    :label="item.name">
-                  </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="所属员工：" v-if="departPermission">
-              <el-select v-model="req.staffId">
-                <el-option label="所有员工" :value="agentsId"></el-option>
+  <div v-if="isDialTask===true">
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small">
+          <el-form-item label="分配时间：">
+              <el-date-picker
+                  v-model="req.distributeTimeStart"
+                  type="datetime"
+                  placeholder="开始时间"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  default-time="00:00:00">
+              </el-date-picker>
+              -
+              <el-date-picker
+                  v-model="req.distributeTimeEnd"
+                  type="datetime"
+                  placeholder="结束时间"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  default-time="00:00:00">
+              </el-date-picker>
+          </el-form-item>&nbsp;&nbsp;
+          <el-form-item label="预约时间：">
+              <el-date-picker
+                  v-model="req.appointTimeStart"
+                  type="datetime"
+                  placeholder="开始时间"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  default-time="00:00:00">
+              </el-date-picker>
+              -
+              <el-date-picker
+                  v-model="req.appointTimeEnd"
+                  type="datetime"
+                  placeholder="结束时间"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  default-time="00:00:00">
+              </el-date-picker>
+          </el-form-item><br/>
+          <el-form-item label="操作时间：">
+              <el-date-picker
+                  v-model="req.modifyTimeStart"
+                  type="datetime"
+                  placeholder="开始时间"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  default-time="00:00:00">
+              </el-date-picker>
+              -
+              <el-date-picker
+                  v-model="req.modifyTimeEnd"
+                  type="datetime"
+                  placeholder="结束时间"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  default-time="00:00:00">
+              </el-date-picker>
+          </el-form-item>
+            <el-form-item label="任务状态：">
+              <el-select v-model="req.status" placeholder="请选择">
                 <el-option
-                  v-for="item in agentsOptions"
-                  :key="item.agent_id"
-                  :value="item.agent_id"
-                  :label="item.real_name">
-
+                  v-for="item in taskStatusOptions"
+                  :key="item.value"
+                  :value="item.value"
+                  :label="item.label">
                 </el-option>
               </el-select>
-            </el-form-item>
-            <el-form-item label="活动：">
-                <el-select v-model="req.campaignId">
-                  <el-option
-                    v-for="item in campaignsInfo"
-                    :key="item.campaignId"
-                    :value="item.campaignId"
-                    :label="item.campaignName">
+          </el-form-item>
+          <el-form-item label="拨打次数：">
+              <el-input v-model="req.contactedNum" maxlength="4" min="0" type="number"></el-input>
+          </el-form-item>
+          <br/>
 
-                  </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
-                <el-button type="danger" @click="clearForm(req)">重置</el-button>
-            </el-form-item>
-          </el-form>
+          <el-form-item label="客户姓名：">
+              <el-input v-model="req.customerName" placeholder="客户姓名（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>&nbsp;&nbsp;&nbsp;&nbsp;
+          <el-form-item label="客户电话：">
+              <el-input v-model="req.customerPhone" placeholder="客户电话（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+
+          <el-form-item label="话后小结：">
+              <el-select v-model="req.summaryId">
+                <el-option
+                  v-for="item in summariesInfo"
+                  :key="item.id"
+                  :value="item.id"
+                  :label="item.name">
+                </el-option>
+              </el-select>
+          </el-form-item>
+          <el-form-item label="所属员工：" v-if="departPermission">
+            <el-select v-model="req.staffId">
+              <el-option label="所有员工" :value="agentsId"></el-option>
+              <el-option
+                v-for="item in agentsOptions"
+                :key="item.agent_id"
+                :value="item.agent_id"
+                :label="item.real_name">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="活动：">
+              <el-select v-model="req.campaignId">
+                <el-option
+                  v-for="item in campaignsInfo"
+                  :key="item.campaignId"
+                  :value="item.campaignId"
+                  :label="item.campaignName">
+                </el-option>
+              </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
+            <el-button @click="clearForm(req)">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+
+    <!-- <template>
+    <el-row>
+        <el-tabs @tab-click="handleClick" v-model="activeName" type="card">
+          <el-tab-pane name='firstDial' label='首拨名单'></el-tab-pane>
+          <el-tab-pane name='orderDial' label='预约名单'></el-tab-pane>
+        </el-tabs>
+    </el-row>
+    </template> -->
+
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">拨打任务表</div>
       </el-row>
-
-      <!-- <template>
-      <el-row>
-          <el-tabs @tab-click="handleClick" v-model="activeName" type="card">
-            <el-tab-pane name='firstDial' label='首拨名单'></el-tab-pane>
-            <el-tab-pane name='orderDial' label='预约名单'></el-tab-pane>
-          </el-tabs>
+      <el-row class="margin-bottom-20">
+        <el-button type="info" @click="quickDialto();">快速拨打</el-button>
       </el-row>
-      </template> -->
-
       <el-row>
-      <el-col>
         <el-table
           :data="tableData"
           @selection-change="handleSelectionChange">
@@ -269,17 +274,10 @@
           </template>
           </el-table-column>
         </el-table>
-      </el-col>
-    </el-row>
-    <el-row style="margin-top:5px;">
-      <el-form :inline="true" size="small">
-        <el-form-item>
-          <el-button type="primary" @click="quickDialto();">快速拨打</el-button>
-        </el-form-item>
-      </el-form>
+      </el-row>
+      <el-row style="margin-top:20px;">
         <el-pagination
           v-if="pageShow"
-          background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page='pageInfo.pageNo'
@@ -288,11 +286,13 @@
           layout="total, sizes, prev, pager, next, jumper "
           :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
+      </el-row>
     </el-row>
+    
   </div>
 
   <!-- 客户详情 div层 -->
-  <div v-else>
+  <div class="dial-task" v-else>
     <div class="table-container" style="margin-top:0;">
       <b class="font14">客户信息</b>
       <div style="display:inline-block;position:relative;top:3px;margin-left:10px;">
@@ -729,6 +729,8 @@ export default {
 
   data() {
     return {
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       show_wechat: `${process.env.SHOW_WECHAT}`,
       isInput: false,
       aId: '',
@@ -861,6 +863,13 @@ export default {
     }
   },
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     // 添加或修改客户微信手机号
     editCustomerInfos(editCustomerInfo) {
       var reg = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[0,5-9])|(18[0,5-9]))\d{8}$/
@@ -2087,6 +2096,8 @@ export default {
   },
   // 模板编译/挂载之后
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     // 获取微信客户列表
     getWechatCustomer(localStorage.getItem('agentId')).then(response => {
       this.customerInfos = response.data.data

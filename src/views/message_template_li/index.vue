@@ -1,49 +1,57 @@
 <template>
   <div class="container" >
-    <el-row margin-top:>
-      <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item prop="name" label="模板名称:">
-          <el-input v-model="req.name" placeholder="模板名称（限长45字符）" maxlength="45"></el-input>
-        </el-form-item>
-        <el-form-item label="归属模板组:">
-          <el-select v-model="req.groupId" placeholder="归属模板组">
-            <el-option label="全部" value=""></el-option>
-            <el-option v-for="item in messageOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item  prop="examine" label="审核状态:"> 
-          <el-select v-model="req.examine">
-            <el-option label="全部" value=""></el-option>
-            <el-option label="待审核" value="1"></el-option>
-            <el-option label="审核通过" value="2"></el-option>
-            <el-option label="审核不通过" value="3"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item  prop="modifier" label="操作人:">
-          <el-input v-model="req.modifier" placeholder="操作人（限长45字符）" maxlength="45"></el-input>
-        </el-form-item>
-        <el-form-item label="操作时间：">
-             <el-date-picker
-              v-model="timeValue"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss">
-            </el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;paginationReq=cloneData(req);findTemplateList(req);">查询</el-button>
-          <el-button type="danger" @click="reset();">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small" :model="req" ref="searchForm">
+          <el-form-item prop="name" label="模板名称:">
+            <el-input v-model="req.name" placeholder="模板名称（限长45字符）" maxlength="45"></el-input>
+          </el-form-item>
+          <el-form-item label="归属模板组:">
+            <el-select v-model="req.groupId" placeholder="归属模板组">
+              <el-option label="全部" value=""></el-option>
+              <el-option v-for="item in messageOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item  prop="examine" label="审核状态:"> 
+            <el-select v-model="req.examine">
+              <el-option label="全部" value=""></el-option>
+              <el-option label="待审核" value="1"></el-option>
+              <el-option label="审核通过" value="2"></el-option>
+              <el-option label="审核不通过" value="3"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item  prop="modifier" label="操作人:">
+            <el-input v-model="req.modifier" placeholder="操作人（限长45字符）" maxlength="45"></el-input>
+          </el-form-item>
+          <el-form-item label="操作时间：">
+              <el-date-picker
+                v-model="timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
+              </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="req.pageNo=1;paginationReq=cloneData(req);findTemplateList(req);">查询</el-button>
+            <el-button @click="reset();">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
     <!-- 表格 -->
-    <el-row>
-      <el-col>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">短信模版表</div>
+      </el-row>
+      <el-row class="margin-bottom-20">
+        <el-button type="success" size="small" @click="addVisible=true;resetAdd(addMessageTemplateDetail);">新建</el-button>
+        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
+      </el-row>
+      <el-row>
         <el-table
           :data="tableData"
-          border
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
@@ -80,8 +88,10 @@
           <el-table-column
             align="center"
             label="审核状态">
-             <template slot-scope="scope">
-                {{showStatus(scope.row.examine)}}
+            <template slot-scope="scope">
+              <div style="width:99px;" :class="scope.row.examine==='2'?'visible':scope.row.examine==='3'?'invisible':scope.row.examine==='1'?'visible':''">
+                <span>{{scope.row.examine==='2'?'审核通过':scope.row.examine==='3'?'审核不通过':scope.row.examine==='1'?'待审核':''}}</span>
+              </div>
             </template>
           </el-table-column>
           <el-table-column
@@ -111,14 +121,10 @@
           </template>
           </el-table-column>
         </el-table>
-      </el-col>
-    </el-row>
-    <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;resetAdd(addMessageTemplateDetail);">新建</el-button>
-        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
+      </el-row>
+      <el-row style="margin-top:20px;">
         <el-pagination
           v-if="pageShow"
-          background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page='pageInfo.pageNo'
@@ -127,7 +133,9 @@
           layout="total, sizes, prev, pager, next, jumper "
           :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
+      </el-row>
     </el-row>
+    
     <!-- 新建短信模板 -->
      <el-dialog
       align:left
@@ -135,7 +143,7 @@
       title="新建短信模板"
       :visible.sync="addVisible"
       append-to-body>
-      <el-form :rules="rule" :model="addMessageTemplateDetail" ref="addMessageForm" label-width="120px">
+      <el-form size="small" :rules="rule" :model="addMessageTemplateDetail" ref="addMessageForm" label-width="120px">
         <el-form-item label="模板标题：" prop="name">
            <el-input v-model="addMessageTemplateDetail.name" size="small" placeholder="填标题，上限45字符"></el-input>
         </el-form-item>
@@ -143,22 +151,22 @@
            <el-input v-model="addMessageTemplateDetail.autograph" size="small" placeholder="例如：金点数据   3至10字"></el-input>
         </el-form-item>
         <el-form-item label="归属模板组：" prop="groupId">
-          <el-select v-model="addMessageTemplateDetail.groupId" placeholder="上级模板组">
+          <el-select style="width:100%;" v-model="addMessageTemplateDetail.groupId" placeholder="上级模板组">
             <el-option label="请选择模板组" value=""></el-option>
             <el-option v-for="item in messageOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="短信模板内容：" prop="content">
-          <el-input type="textarea" v-model="addMessageTemplateDetail.content" placeholder="例如：您的验证码是{1},{2}分钟内有效。若非本人操作请忽略此消息...上限500字符"></el-input>
+          <el-input type="textarea" v-model="addMessageTemplateDetail.content" placeholder="例如：您的验证码是{1},{2}分钟内有效。若非本人操作请忽略此消息...上限500字符" :rows="4"></el-input>
         </el-form-item>
          <el-form-item label="Tips：" >
           <span>短信模板内容中至少要有一个动态参数并用{}括起来，否则会直接失败。例如：您的验证码是{1}，{2}...第一个花括号为1代表第一个参数，第二个花括号为2代表第二个参数，以此类推。</span>
         </el-form-item>
       </el-form>
         <div slot="footer" style="text-align: right;">
-          <el-button type="danger" @click="resetForm('addMessageForm')">重 置</el-button>
-          <el-button @click="addVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitForm('addMessageForm',addMessageTemplateDetail);addTemplate(addMessageTemplateDetail);">确 定</el-button>
+          <el-button @click="resetForm('addMessageForm')">重置</el-button>
+          <el-button type="primary" plain @click="addVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitForm('addMessageForm',addMessageTemplateDetail);addTemplate(addMessageTemplateDetail);">确定</el-button>
         </div>
       </el-dialog>
       <!-- 批量删除 -->
@@ -169,22 +177,22 @@
         append-to-body>
         <span style="font-size:20px;">确定删除选定内容？</span>
         <div slot="footer" class="dialog-footer" style="text-align: right;">
-          <el-button @click="batchDelVisible = false">取 消</el-button>
-          <el-button type="primary" @click="batchDelVisible = false;delTemplateList(batchDelReq);">确 定</el-button>
+          <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
+          <el-button type="primary" @click="batchDelVisible = false;delTemplateList(batchDelReq);">确定</el-button>
         </div>
       </el-dialog>
       <!-- 删除 -->
       <el-dialog
-      width="30%"
-      title="删除"
-      :visible.sync="delVisible"
-      append-to-body>
-      <span style="font-size:20px;">确定删吗？</span>
-      <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="delVisible = false">取 消</el-button>
-        <el-button type="primary" @click="delVisible = false;delTemplate(delReq.id);">确 定</el-button>
-      </div>
-    </el-dialog>
+        width="30%"
+        title="删除"
+        :visible.sync="delVisible"
+        append-to-body>
+        <span style="font-size:20px;">确定删除吗？</span>
+        <div slot="footer" class="dialog-footer" style="text-align: right;">
+          <el-button type="primary" plain @click="delVisible = false">取消</el-button>
+          <el-button type="primary" @click="delVisible = false;delTemplate(delReq.id);">确定</el-button>
+        </div>
+      </el-dialog>
     <!-- 修改 -->
     <el-dialog
       align:left
@@ -192,7 +200,7 @@
       title="修改短信模板"
       :visible.sync="editVisible"
       append-to-body>
-      <el-form :rules="rule" :model="editTemplateDetail" ref="editTemplateForm" label-width="120px">
+      <el-form size="small" :rules="rule" :model="editTemplateDetail" ref="editTemplateForm" label-width="120px">
         <el-form-item label="模板标题：" prop="name">
            <el-input v-model="editTemplateDetail.name" size="small" placeholder="填标题，上限45字符"></el-input>
         </el-form-item>
@@ -200,32 +208,32 @@
            <el-input v-model="editTemplateDetail.autograph" size="small" placeholder="例如：金点数据   3至10字"></el-input>
         </el-form-item>
         <el-form-item label="归属模板组：" prop="groupId">
-          <el-select v-model="editTemplateDetail.groupId" placeholder="上级模板组">
+          <el-select style="width:100%;" v-model="editTemplateDetail.groupId" placeholder="上级模板组">
             <el-option label="请选择模板组" value=""></el-option>
             <el-option v-for="item in messageOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="短信模板内容：" prop="content">
-          <el-input type="textarea" v-model="editTemplateDetail.content" placeholder="例如：您的验证码是{1},{2}分钟内有效。若非本人操作请忽略此消息...上限500字符"></el-input>
+          <el-input type="textarea" v-model="editTemplateDetail.content" placeholder="例如：您的验证码是{1},{2}分钟内有效。若非本人操作请忽略此消息...上限500字符" :rows="4"></el-input>
         </el-form-item>
          <el-form-item label="Tips：" >
           <span>短信模板内容中至少要有一个动态参数并用{}括起来，否则会直接失败。例如：您的验证码是{1}，{2}...第一个花括号为1代表第一个参数，第二个花括号为2代表第二个参数，以此类推。</span>
         </el-form-item>
       </el-form>
-        <div slot="footer" style="text-align: right;">
-          <el-button type="danger" @click="getTemplateById(delReq.id)">重 置</el-button>
-          <el-button @click="editVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitForm('editTemplateForm',editTemplateDetail);editTemplate(editTemplateDetail);">确 定</el-button>
-        </div>
-      </el-dialog>
-      <!-- 详情 -->
+      <div slot="footer" style="text-align: right;">
+        <el-button @click="getTemplateById(delReq.id)">重置</el-button>
+        <el-button type="primary" plain @click="editVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitForm('editTemplateForm',editTemplateDetail);editTemplate(editTemplateDetail);">确定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 详情 -->
     <el-dialog
       align:left
       width="30%"
       title="短信模板详情"
       :visible.sync="detailVisible"
       append-to-body>
-      <el-form  :model="editTemplateDetail" ref="templateForm" label-width="120px">
+      <el-form size="small" :model="editTemplateDetail" ref="templateForm" label-width="120px">
         <el-form-item label="模板标题：" prop="name">
           <span>{{editTemplateDetail.name}}</span>
         </el-form-item>
@@ -233,7 +241,7 @@
           <span>{{editTemplateDetail.autograph}}</span>
         </el-form-item>
         <el-form-item label="审核状态：" prop="autograph">
-          <span>{{showStatus(editTemplateDetail.examine)}}</span>
+          <span>{{editTemplateDetail.examine==='2'?'审核通过':editTemplateDetail.examine==='3'?'审核不通过':editTemplateDetail.examine==='1'?'待审核':''}}</span>
         </el-form-item>
         <el-form-item label="归属模板组：" prop="groupId">
           <span>{{formatData(editTemplateDetail.groupId)}}</span>
@@ -246,7 +254,7 @@
         </el-form-item> -->
       </el-form>
         <div slot="footer" style="text-align: right;">
-          <el-button @click="detailVisible = false">取 消</el-button>
+          <el-button type="primary" plain @click="detailVisible = false">取消</el-button>
         </div>
     </el-dialog>
   </div>
@@ -269,6 +277,9 @@ export default {
       }
     }
     return {
+      visibleClass: '',
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       detailVisible: false, // 详情对话框
       delVisible: false, // 删除对话框显示隐藏
       editVisible: false, // 修改对话框显示隐藏
@@ -341,10 +352,18 @@ export default {
   created() {
     this.getAllTemplateGroup(this.req)
   },
-  // mounted() {
-  //   this.getTemplateList(this.req)
-  // },
+  mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
+  },
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     showStatus(status) {
       if (status === '2') {
         return '审核通过'

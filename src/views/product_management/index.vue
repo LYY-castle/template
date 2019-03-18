@@ -1,50 +1,58 @@
 <template>
   <div class="container" >
-    <el-row margin-top:>
-      <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item prop="productId" label="产品编号：">
-          <el-input v-model="req.productId" placeholder="产品编号（限长20字符）" maxlength="20"></el-input>
-        </el-form-item>
-        <el-form-item prop="productName" label="产品名称：">
-          <el-input v-model="req.productName" placeholder="产品名称（限长50字符）" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item prop="priceStart" label="产品价格：">
-          <el-input v-model="req.priceStart" placeholder="产品价格（限长11字符）" maxlength="11"></el-input>
-        </el-form-item>
-        <el-form-item prop="priceEnd" label="至">
-          <el-input v-model="req.priceEnd" placeholder="产品价格（限长11字符）" maxlength="11"></el-input>
-        </el-form-item>
-        <el-form-item prop="modifierName" label="操作人：">
-          <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="操作时间：">
-          <el-date-picker
-              v-model="timeValue"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item prop="modifierName" label="产品状态：">
-          <el-radio-group v-model="req.status" size="small">
-            <el-radio label='0'>上架</el-radio>
-            <el-radio label='1'>下架</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item>
-          <el-button size="small" type="primary" @click="req.pageNo=1;queryTemplateList(req)">查询</el-button>
-          <el-button size="small" type="danger" @click="timeValue=[],resetReq();">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small" :model="req" ref="searchForm">
+          <el-form-item prop="productId" label="产品编号：">
+            <el-input v-model="req.productId" placeholder="产品编号（限长20字符）" maxlength="20"></el-input>
+          </el-form-item>
+          <el-form-item prop="productName" label="产品名称：">
+            <el-input v-model="req.productName" placeholder="产品名称（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item prop="priceStart" label="产品价格：">
+            <el-input v-model="req.priceStart" placeholder="产品价格（限长11字符）" maxlength="11"></el-input>
+          </el-form-item>
+          <el-form-item prop="priceEnd" label="至">
+            <el-input v-model="req.priceEnd" placeholder="产品价格（限长11字符）" maxlength="11"></el-input>
+          </el-form-item>
+          <el-form-item prop="modifierName" label="操作人：">
+            <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="操作时间：">
+            <el-date-picker
+                v-model="timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item prop="modifierName" label="产品状态：">
+            <el-radio-group v-model="req.status" size="small">
+              <el-radio label='0'>上架</el-radio>
+              <el-radio label='1'>下架</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item>
+            <el-button size="small" type="primary" @click="req.pageNo=1;queryTemplateList(req)">查询</el-button>
+            <el-button size="small" @click="timeValue=[],resetReq();">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
      <!-- 表格 -->
-    <el-row>
-      <el-col>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">产品管理表</div>
+      </el-row>
+      <el-row class="margin-bottom-20">
+        <el-button type="success" size="small" @click="addVisible=true;resetAddProduct();">新建</el-button>
+        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
+      </el-row>
+      <el-row>
         <el-table
           :data="tableData"
-          border
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
@@ -134,14 +142,10 @@
           </template>
           </el-table-column>
         </el-table>
-      </el-col>
-    </el-row>
-    <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;resetAddProduct();">新建</el-button>
-        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
+      </el-row>
+      <el-row style="margin-top:20px;">
         <el-pagination
           v-if="pageShow"
-          background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page='pageInfo.pageNo'
@@ -150,15 +154,16 @@
           layout="total, sizes, prev, pager, next, jumper "
           :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
+      </el-row>
     </el-row>
     <!-- 新建产品 -->
-     <el-dialog
+    <el-dialog
       align:left
       width="86%"
       title="新建产品"
       :visible.sync="addVisible"
       append-to-body>
-      <el-form :rules="rules" :model="addProduct" ref="refAddProduct" label-width="100px">
+      <el-form size="small" :rules="rules" :model="addProduct" ref="refAddProduct" label-width="100px">
         <el-form-item label="产品名称" prop="productName">
           <el-input v-model="addProduct.productName" size="small" placeholder="限长50字符" maxlength="50"></el-input>
         </el-form-item>
@@ -196,7 +201,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="产品备注" prop="description">
-          <el-input type="textarea" v-model="addProduct.description" size="small"  placeholder="限长100字符" maxlength="100"></el-input>
+          <el-input type="textarea" v-model="addProduct.description" size="small"  placeholder="限长100字符" maxlength="100" :rows="4"></el-input>
         </el-form-item>
         <!-- 新增属性 -->
         <!-- <el-form-item label="属性">
@@ -263,14 +268,14 @@
           <el-button @click.prevent="removeItem(item)" >删除</el-button>
         </el-form-item> -->
       </el-form>
-        <div slot="footer" style="text-align: right;">
-          <el-button size="small" type="danger" @click="resetForm('refAddProduct');">重 置</el-button>
-          <el-button size="small" @click="addVisible = false">取 消</el-button>
-          <el-button size="small" type="primary" @click="createTemplateInfo('refAddProduct')">确 定</el-button>
-        </div>
+      <div slot="footer" style="text-align: right;">
+        <el-button size="small" @click="resetForm('refAddProduct');">重置</el-button>
+        <el-button size="small" type="primary" plain @click="addVisible = false">取消</el-button>
+        <el-button size="small" type="primary" @click="createTemplateInfo('refAddProduct')">确定</el-button>
+      </div>
     </el-dialog>
       <!-- 修改产品 -->
-     <el-dialog
+    <el-dialog
       align:left
       width="86%"
       title="修改产品"
@@ -361,9 +366,9 @@
         </el-form-item> -->
       </el-form>
         <div slot="footer" style="text-align: right;">
-          <el-button size="small" type="danger" @click="queryTemplateInfo(productId);">重 置</el-button>
-          <el-button size="small" @click="modifyVisible = false">取 消</el-button>
-          <el-button size="small" type="primary" @click="modifyDialog('refUpateProduct')">确 定</el-button>
+          <el-button size="small" @click="queryTemplateInfo(productId);">重置</el-button>
+          <el-button size="small" type="primary" plain @click="modifyVisible = false">取消</el-button>
+          <el-button size="small" type="primary" @click="modifyDialog('refUpateProduct')">确定</el-button>
         </div>
     </el-dialog>
     <!-- 新增属性 -->
@@ -559,40 +564,40 @@
           <el-button size="small" type="primary" @click="modifyProductProperty('refModifyProperty');">确 定</el-button>
         </div>
     </el-dialog> -->
-      <!-- 批量删除 -->
-      <el-dialog
-        width="30%"
-        title="批量删除"
-        :visible.sync="batchDelVisible"
-        append-to-body>
-        <span style="font-size:20px;">确定删除选定内容？</span>
-        <div slot="footer" class="dialog-footer" style="text-align: right;">
-          <el-button @click="batchDelVisible = false">取 消</el-button>
-          <el-button type="primary" @click="batchDelVisible = false;deleteTemplateInfos(batchDelIds);">确 定</el-button>
-        </div>
-      </el-dialog>
-      <!-- 删除 -->
-      <el-dialog
+    <!-- 批量删除 -->
+    <el-dialog
+      width="30%"
+      title="批量删除"
+      :visible.sync="batchDelVisible"
+      append-to-body>
+      <span style="font-size:20px;">确定删除选定内容？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
+        <el-button type="primary" @click="batchDelVisible = false;deleteTemplateInfos(batchDelIds);">确定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 删除 -->
+    <el-dialog
       width="30%"
       title="删除"
       :visible.sync="delVisible"
       append-to-body>
       <span style="font-size:20px;">确定删吗？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="delVisible = false">取 消</el-button>
-        <el-button type="primary" @click="delVisible = false;deleteTemplateInfo(productId);">确 定</el-button>
+        <el-button type="primary" plain @click="delVisible = false">取消</el-button>
+        <el-button type="primary" @click="delVisible = false;deleteTemplateInfo(productId);">确定</el-button>
       </div>
     </el-dialog>
-        <!-- 修改 -->
-      <el-dialog
+      <!-- 修改 -->
+    <el-dialog
       width="30%"
       title="修改"
       :visible.sync="modifyDialogVisible"
       append-to-body>
       <span style="font-size:20px;">确定修改吗？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="modifyDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="modifyDialogVisible = false;updateTemplateInfo();">确 定</el-button>
+        <el-button type="primary" plain @click="modifyDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="modifyDialogVisible = false;updateTemplateInfo();">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -612,6 +617,9 @@ export default {
       }
     }
     return {
+      visibleClass: '',
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       rules: {
         productName: [
           { required: true, message: '不能为空', trigger: 'blur' }
@@ -732,9 +740,18 @@ export default {
     }
   },
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     this.queryTemplateList()
   },
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     // 上下架
     modifyProductsStatus(row) {
       const req = {

@@ -1,57 +1,67 @@
 <template>
   <div class="container">
-    <el-row margin-top:>
-      <el-form :inline="true" size="small" :model="req" ref="searchForm">
-        <el-form-item prop="batchId" label="批次号：">
-          <el-input v-model="req.batchId" placeholder="批次号（限长20字符）" maxlength="20"></el-input>
-        </el-form-item>
-        <el-form-item prop="batchName" label="批次名称：">
-          <el-input v-model="req.batchName" placeholder="批次名称（限长100字符）" maxlength="100"></el-input>
-        </el-form-item>
-        <el-form-item prop="validityStatus" label="状态：">
-          <el-select v-model="req.validityStatus" placeholder="状态" style="width: 100%;">
-          <el-option
-              v-for="item in validity"
-              :key="item.val"
-              :label="item.name"
-              :value="item.val">
-          </el-option>
-        </el-select>
-        </el-form-item>
-       <el-form-item prop="modifierName" label="操作人：">
-          <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="操作时间：" prop="startCreateTime">
-          <el-date-picker
-              v-model="req.startCreateTime"
-              type="datetime"
-              placeholder="开始时间"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item prop="endCreateTime">
-          到
-          <el-date-picker
-              v-model="req.endCreateTime"
-              type="datetime"
-              placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;req2=clone(req);getBatch(req);">查询</el-button>
-          <el-button type="danger" @click="clearForm();req2=clone(req);">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
-    <el-row>
-      <el-col>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small" :model="req" ref="searchForm">
+          <el-form-item prop="batchId" label="批次号：">
+            <el-input v-model="req.batchId" placeholder="批次号（限长20字符）" maxlength="20"></el-input>
+          </el-form-item>
+          <el-form-item prop="batchName" label="批次名称：">
+            <el-input v-model="req.batchName" placeholder="批次名称（限长100字符）" maxlength="100"></el-input>
+          </el-form-item>
+          <el-form-item prop="validityStatus" label="状态：">
+            <el-select v-model="req.validityStatus" placeholder="状态" style="width: 100%;">
+            <el-option
+                v-for="item in validity"
+                :key="item.val"
+                :label="item.name"
+                :value="item.val">
+            </el-option>
+          </el-select>
+          </el-form-item>
+          <el-form-item prop="modifierName" label="操作人：">
+            <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="操作时间：" prop="startCreateTime">
+            <el-date-picker
+                v-model="req.startCreateTime"
+                type="datetime"
+                placeholder="开始时间"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                default-time="00:00:00">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item prop="endCreateTime">
+            到
+            <el-date-picker
+                v-model="req.endCreateTime"
+                type="datetime"
+                placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                default-time="00:00:00">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="req.pageNo=1;req2=clone(req);getBatch(req);">查询</el-button>
+            <el-button @click="clearForm();req2=clone(req);">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">批次管理表</div>
+      </el-row>
+      <el-row class="margin-bottom-20">
+        <el-button type="success" size="small" @click="addVisible=true;batchSnapshot=[];fileList=[];resetForm('addBatch');clearUpload('upload');">新建</el-button>
+        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
+        <!-- <el-button type="primary" size="small" @click="getTemp()">下载模板</el-button> -->
+        <!-- <el-button type="primary" size="small" @click="uploadVisible=true;changeUpload(1);clearUpload('upload');">上传模板</el-button> -->
+      </el-row>
+      <el-row>
         <el-table
           :data="tableData"
           empty-text="无"
-          border
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
@@ -102,7 +112,9 @@
             align="center"
             label="状态">
             <template slot-scope="scope">
-              <div v-html="statusVal(scope.row.validityStatus)"></div>
+              <div :class="scope.row.validityStatus===0?'visible':scope.row.validityStatus===1?'invisible':'visible'">
+                <span>{{scope.row.validityStatus===0?'可用':scope.row.validityStatus===1?'不可用':'正在导入'}}</span>
+              </div>
             </template>
           </el-table-column>
           <el-table-column
@@ -137,16 +149,10 @@
           </template>
           </el-table-column>
         </el-table>
-      </el-col>
-    </el-row>
-    <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;batchSnapshot=[];fileList=[];resetForm('addBatch');clearUpload('upload');">新建</el-button>
-        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
-        <el-button type="primary" size="small" @click="getTemp()">下载模板</el-button>
-        <!-- <el-button type="primary" size="small" @click="uploadVisible=true;changeUpload(1);clearUpload('upload');">上传模板</el-button> -->
+      </el-row>
+      <el-row style="margin-top:20px;">
         <el-pagination
           v-if="pageShow"
-          background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="pageInfo.pageNo"
@@ -155,6 +161,7 @@
           layout="total, sizes, prev, pager, next, jumper "
           :total="pageInfo.totalCount" style="text-align: right;float:right;">
         </el-pagination>
+      </el-row>
     </el-row>
     <el-dialog
       align:left
@@ -162,7 +169,7 @@
       title="批次信息修改"
       :visible.sync="editVisible"
       append-to-body>
-      <el-form label-width="100px" :model="batchDetail" ref="editBatch" :rules="rule">
+      <el-form size="small" label-width="100px" :model="batchDetail" ref="editBatch" :rules="rule">
         <el-form-item label="批次号" prop="batchId">
           <span>{{batchDetail.batchId}}</span>
         </el-form-item>
@@ -205,9 +212,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button size="small" type="danger" @click="getDetailById(delReq.batchId)">重 置</el-button>
-        <el-button size="small" @click="editVisible = false;">取 消</el-button>
-        <el-button size="small" type="primary" @click="submitForm('editBatch');editBatch(batchDetail);">确 定</el-button>
+        <el-button size="small" @click="getDetailById(delReq.batchId)">重置</el-button>
+        <el-button size="small" type="primary" plain @click="editVisible = false;">取消</el-button>
+        <el-button size="small" type="primary" @click="submitForm('editBatch');editBatch(batchDetail);">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -218,7 +225,7 @@
       append-to-body>
       <div class="overfl">{{failDetail}}</div>
       <div slot="footer" style="text-align: right;">
-        <el-button @click="detailVisible = false">返 回</el-button>
+        <el-button type="primary" plain @click="detailVisible = false">返回</el-button>
       </div>
     </el-dialog>
     <!-- 上传文件 -->
@@ -234,8 +241,8 @@
         :before-upload="beforeUpload"
         :http-request="uploadFileInfo"
         :auto-upload="false">
-        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload()">上传</el-button>
+        <el-button slot="trigger" size="small" type="info">选取文件</el-button>
+        <el-button style="margin-left: 10px;" size="small" type="primary" @click="submitUpload()">上传</el-button>
         <div slot="tip" class="el-upload__tip">上传文件只能是 xls、xlsx格式，大小不能超过10MB</div>
       </el-upload>
     </el-dialog>
@@ -246,8 +253,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除此内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button size="small" @click="delVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="delVisible = false;delBatch(delReq);">确 定</el-button>
+        <el-button size="small" type="primary" plain @click="delVisible = false">取消</el-button>
+        <el-button size="small" type="primary" @click="delVisible = false;delBatch(delReq);">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -257,8 +264,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除选定内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button @click="batchDelVisible = false">取 消</el-button>
-        <el-button type="primary" @click="batchDelVisible = false;batchDelBatchs(batchDelReq);">确 定</el-button>
+        <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
+        <el-button type="primary" @click="batchDelVisible = false;batchDelBatchs(batchDelReq);">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -267,7 +274,7 @@
       :visible.sync="addVisible"
       append-to-body>
       <div slot="title" style="text-align: center;">
-        <el-button @click="addVisible = false;" style="float:left;" icon="el-icon-arrow-left">返 回</el-button>
+        <!-- <el-button @click="addVisible = false;" style="float:left;" icon="el-icon-arrow-left">返 回</el-button> -->
         <h3 style="display:inline;">新建批次</h3>
       </div>
       <el-row>
@@ -298,8 +305,8 @@
             <el-input v-model="addReq.description" placeholder="备注（限长200字符）" maxlength="200"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="uploadVisible=true;changeUpload(2);">上传文件</el-button>
-            <el-button type="primary" size="small" @click="getTemp()">下载模板</el-button>
+            <el-button type="success" @click="uploadVisible=true;changeUpload(2);">上传文件</el-button>
+            <el-button type="info" size="small" @click="getTemp()">下载模板</el-button>
           </el-form-item>
         </el-form>
       </el-row>
@@ -346,8 +353,8 @@
         </el-table>
       </el-row>
       <div slot="footer" style="text-align: right;">
-        <el-button size="small" type="success" @click="submitForm('addBatch');addBatchList(addReq);">确认导入</el-button>
-        <el-button size="small" type="danger" @click="addVisible = false;">取 消</el-button>
+        <el-button size="small" type="primary" @click="submitForm('addBatch');addBatchList(addReq);">确认导入</el-button>
+        <el-button size="small" type="primary" plain @click="addVisible = false;">取消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -373,6 +380,8 @@ export default {
   name: 'batch_management',
   data() {
     return {
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       fileList: [],
       file: {},
       detailVisible: false,
@@ -444,26 +453,25 @@ export default {
     }
   },
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     this.getBatch(this.req)
     this.getAscrislist()
   },
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     // 深度克隆
     clone: clone,
     // 获取token
     getToken: getToken,
     // 时间戳转年月日时分秒
     formatDateTime: formatDateTime,
-    // 状态code对应值
-    statusVal(code) {
-      if (code === 0) {
-        return '<span style="color:green">可用</span>'
-      } else if (code === 1) {
-        return '<span style="color:red">不可用</span>'
-      } else {
-        return '正在导入'
-      }
-    },
     // 切换上传对话框 1为上传模板 2为导入名单
     changeUpload(code) {
       if (code === 1) {
@@ -806,23 +814,8 @@ export default {
   }
 }
 </script>
-<style rel="stylesheet/scss" lang="scss">
-.el-table thead {
-  color: #000 !important;
-}
-
-</style>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-.el-table {
-  border: 1px solid #ecebe9;
-  thead th .cell {
-    color: #000;
-  }
-}
-.el-form-item {
-  margin-bottom: 20px;
-}
 .overfl{
   word-wrap: break-word;
   word-break: normal;

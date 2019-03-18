@@ -1,51 +1,59 @@
 <template>
   <div class="container">
-    <el-row margin-top:>
-      <el-form :inline="true" size="small">
-        <el-form-item label="模板属性代码:">
-          <el-input v-model="req.propertyCode" placeholder="模板属性代码（限长50字符）" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="模板属性名:">
-          <el-input v-model="req.propertyName" placeholder="客户模板名（限长50字符）" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="是否必填：" prop="isRequired">
-          <el-radio-group v-model="req.isRequired" size="small">
-            <el-radio label="">所有</el-radio>
-            <el-radio :label=0>否</el-radio>
-            <el-radio :label=1>是</el-radio>
-          </el-radio-group>
-        </el-form-item>
-         <el-form-item label="是否选中：" prop="isSelected">
-          <el-radio-group v-model="req.isSelected" size="small" v-if="req.isRequired===0">
-            <el-radio label="">所有</el-radio>
-            <el-radio :label=0>否</el-radio>
-            <el-radio :label=1>是</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="操作人:">
-          <el-input v-model="req.modifierName" placeholder="操作人（限长50）字符" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="操作时间：">
-          <el-date-picker
-              v-model="timeValue"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;findMessageRecordList(req);req2=clone(req);">查询</el-button>
-          <el-button type="danger" @click="reset();req2=clone(req)">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
-    <el-row>
-      <el-col>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small">
+          <el-form-item label="模板属性代码:">
+            <el-input v-model="req.propertyCode" placeholder="模板属性代码（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="模板属性名:">
+            <el-input v-model="req.propertyName" placeholder="客户模板名（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="是否必填：" prop="isRequired">
+            <el-radio-group v-model="req.isRequired" size="small">
+              <el-radio label="">所有</el-radio>
+              <el-radio :label=0>否</el-radio>
+              <el-radio :label=1>是</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="是否选中：" prop="isSelected">
+            <el-radio-group v-model="req.isSelected" size="small" v-if="req.isRequired===0">
+              <el-radio label="">所有</el-radio>
+              <el-radio :label=0>否</el-radio>
+              <el-radio :label=1>是</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="操作人:">
+            <el-input v-model="req.modifierName" placeholder="操作人（限长50）字符" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="操作时间：">
+            <el-date-picker
+                v-model="timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="req.pageNo=1;findMessageRecordList(req);req2=clone(req);">查询</el-button>
+            <el-button @click="reset();req2=clone(req)">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">客户模板表</div>
+      </el-row>
+      <el-row class="margin-bottom-20">
+        <el-button type="success" size="small" @click="addVisible=true;clearForm(templateDetail,'templateDetail');">新建</el-button>
+        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
+      </el-row>
+      <el-row>
         <el-table
           :data="tableData"
-          border
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
@@ -67,8 +75,7 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="是否必填"
-            width="55">
+            label="是否必填">
             <template
               slot-scope="scope">
               <div>{{showIsRequired(scope.row.isRequired)}}</div>
@@ -76,8 +83,7 @@
           </el-table-column>
            <el-table-column
             align="center"
-            label="是否选中"
-            width="55">
+            label="是否选中">
             <template
               slot-scope="scope">
               <div>{{showIsSelected(scope.row.isRequired,scope.row.isSelected)}}</div>
@@ -85,8 +91,7 @@
           </el-table-column>
            <el-table-column
             align="center"
-            label="校验规则"
-            width="55">
+            label="校验规则">
             <template
               slot-scope="scope">
               <div>{{scope.row.regex ? scope.row.regex : ''}}</div>
@@ -117,14 +122,10 @@
           </template>
           </el-table-column>
         </el-table>
-      </el-col>
-    </el-row>
-    <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;clearForm(templateDetail,'templateDetail');">新建</el-button>
-        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
+      </el-row>
+      <el-row style="margin-top:20px;">
         <el-pagination
           v-if="pageShow"
-          background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page='pageInfo.pageNo'
@@ -133,14 +134,16 @@
           layout="total, sizes, prev, pager, next, jumper "
           :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
+      </el-row>
     </el-row>
+    
     <el-dialog
       align:left
       width="30%"
       title="修改客户模板字段信息"
       :visible.sync="editVisible"
       append-to-body>
-      <el-form label-width="110px" :model="templateDetail" ref="editTemplate" :rules="rule">
+      <el-form size="small" label-width="110px" :model="templateDetail" ref="editTemplate" :rules="rule">
         <el-form-item label="模板属性代码" prop="propertyCode">
            <el-input v-model="templateDetail.propertyCode" size="small" placeholder="上限50字符" maxlength="50"></el-input>
         </el-form-item>
@@ -164,9 +167,9 @@
         </el-form-item>
       </el-form>
         <div slot="footer" style="text-align: right;">
-          <el-button type="danger" @click="findTemplateMetaById(delReq)">重 置</el-button>
-          <el-button @click="editVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitForm('editTemplate');editTemplate(templateDetail)">确 定</el-button>
+          <el-button @click="findTemplateMetaById(delReq)">重置</el-button>
+          <el-button type="primary" plain @click="editVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitForm('editTemplate');editTemplate(templateDetail)">确定</el-button>
         </div>
     </el-dialog>
     <el-dialog
@@ -175,7 +178,7 @@
       title="客户模板字段详情"
       :visible.sync="detailVisible"
       append-to-body>
-      <el-form label-width="110px">
+      <el-form size="small" label-width="110px">
         <el-form-item label="模板属性代码">
           <span>{{templateDetail.propertyCode}}</span>
         </el-form-item>
@@ -199,7 +202,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button @click="detailVisible = false">返 回</el-button>
+        <el-button type="primary" plain @click="detailVisible = false">返回</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -208,7 +211,7 @@
       title="新建客户模板字段信息"
       :visible.sync="addVisible"
       append-to-body>
-      <el-form :rules="rule" :model="templateDetail" ref="templateDetail" label-width="110px">
+      <el-form size="small" :rules="rule" :model="templateDetail" ref="templateDetail" label-width="110px">
          <el-form-item label="模板属性代码" prop="propertyCode">
            <el-input v-model="templateDetail.propertyCode" size="small" placeholder="上限50字符" maxlength="50"></el-input>
         </el-form-item>
@@ -232,9 +235,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button type="danger" @click="resetForm('templateDetail')">重 置</el-button>
-        <el-button @click="addVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('templateDetail');addTemplate(templateDetail);">确 定</el-button>
+        <el-button @click="resetForm('templateDetail')">重置</el-button>
+        <el-button type="primary" plain @click="addVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitForm('templateDetail');addTemplate(templateDetail);">确定</el-button>
       </div>
       
       </el-dialog>
@@ -243,23 +246,23 @@
       title="删除"
       :visible.sync="delVisible"
       append-to-body>
-    <span style="font-size:20px;">确定删除此内容？</span>
-    <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button @click="delVisible = false">取 消</el-button>
-      <el-button type="primary" @click="delVisible = false;delTemplate(delReq);">确 定</el-button>
-    </div>
-  </el-dialog>
-  <el-dialog
-    width="30%"
-    title="批量删除"
-    :visible.sync="batchDelVisible"
-    append-to-body>
-  <span style="font-size:20px;">确定删除选定内容？</span>
-  <div slot="footer" class="dialog-footer" style="text-align: right;">
-    <el-button @click="batchDelVisible = false">取 消</el-button>
-    <el-button type="primary" @click="batchDelVisible = false;batchDelCustomer(batchDelReq);">确 定</el-button>
-  </div>
-  </el-dialog>
+      <span style="font-size:20px;">确定删除此内容？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button type="primary" plain @click="delVisible = false">取消</el-button>
+        <el-button type="primary" @click="delVisible = false;delTemplate(delReq);">确定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
+      width="30%"
+      title="批量删除"
+      :visible.sync="batchDelVisible"
+      append-to-body>
+      <span style="font-size:20px;">确定删除选定内容？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
+        <el-button type="primary" @click="batchDelVisible = false;batchDelCustomer(batchDelReq);">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -278,6 +281,9 @@ export default {
   name: 'customer_management',
   data() {
     return {
+      visibleClass: '',
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       detailVisible: false,
       delVisible: false, // 删除对话框显示隐藏
       editVisible: false, // 修改对话框显示隐藏
@@ -335,9 +341,18 @@ export default {
     }
   },
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     this.findMessageRecordList(this.req)
   },
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     // 深度克隆
     clone: clone,
     // 重置查询框内容
