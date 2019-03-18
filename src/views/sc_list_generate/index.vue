@@ -89,15 +89,7 @@
             label="当前状态"
             width="155">
             <template slot-scope="scope">
-              <div v-html="showVisibleStatus(scope.row.visible)"></div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="modifierTime"
-            label="分配状态">
-            <template slot-scope="scope">
-              <div>{{scope.row.assignStatus===0?'已分配':'未分配'}}</div>
+              <div v-html="showVisibleStatus(scope.row.validityStatus)"></div>
             </template>
           </el-table-column>
           <el-table-column
@@ -113,7 +105,7 @@
       </el-col>
     </el-row>
     <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="addVisible=true;addNameList.listName='';namelistPageInfo.pageSize=10;searchCustomer.pageSize=10;searchCustomer.pageNo=1;getCustomers(searchCustomer);clearForm(searchCustomer);">新建</el-button>
+        <!-- <el-button type="success" size="small" @click="addVisible=true;addNameList.listName='';namelistPageInfo.pageSize=10;searchCustomer.pageSize=10;searchCustomer.pageNo=1;getCustomers(searchCustomer);clearForm(searchCustomer);">新建</el-button> -->
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         <el-pagination
           v-if="pageShow"
@@ -142,11 +134,11 @@
         </el-form-item>
         <el-form-item label="当前状态" prop="visible">
           <el-switch
-          v-model="namelistDetail.visible"
+          v-model="namelistDetail.validityStatus"
           active-text="可见"
           inactive-text="不可见"
-          :active-value=1
-          :inactive-value=0
+          :active-value=0
+          :inactive-value=1
           active-color="#67C23A"
           ></el-switch>
         </el-form-item>
@@ -157,7 +149,7 @@
           <span>{{namelistDetail.modifierName}}</span>
         </el-form-item>
         <el-form-item label="操作时间" prop="modifierTime">
-          <span>{{namelistDetail.modifierTime}}</span>
+          <span>{{formatDateTime(namelistDetail.modifierTime)}}</span>
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
@@ -166,7 +158,7 @@
         <el-button size="small" type="primary" @click="editNamelist()">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog
+    <!-- <el-dialog
       top="5vh"
       width="90%"
       :visible.sync="addVisible"
@@ -305,140 +297,6 @@
           </el-form-item>
         </el-form>
       </div>
-    </el-dialog>
-    <!-- <el-dialog
-      top="5vh"
-      width="90%"
-      :visible.sync="addVisible"
-      append-to-body>
-      <div slot="title" style="text-align: center;">
-        <el-button size="small" @click="addVisible = false;" style="float:left;" icon="el-icon-arrow-left">返 回</el-button>
-        <h3 style="display:inline;text-align:center;">新建名单</h3>
-      </div>
-      <el-row>
-        <el-form :inline="true" size="small">
-          <el-form-item>
-            <el-input v-model="searchBatch.batchId" placeholder="批次号（限长20字符）" maxlength="20"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-input v-model="searchBatch.batchName" placeholder="批次名称（限长100字符）" maxlength="100"></el-input>
-          </el-form-item>
-          <el-form-item label="操作时间：">
-            <el-date-picker
-                v-model="searchBatch.startCreateTime"
-                type="datetime"
-                placeholder="开始时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
-            </el-date-picker>
-            到
-            <el-date-picker
-                v-model="searchBatch.endCreateTime"
-                type="datetime"
-                placeholder="结束时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item>
-            <el-button size="small" type="primary" @click="searchBatch2=clone(searchBatch);searchBatch.pageNo=1;getBatch(searchBatch)">查询</el-button>
-            <el-button size="small" type="danger" @click="clearForm2();searchBatch.validityStatus=0;searchBatch2=clone(searchBatch)">重置</el-button>
-          </el-form-item>
-        </el-form>
-      </el-row>
-      <el-row>
-        <el-table
-          :data="batchTableData"
-          border
-          @selection-change="namelistSelectionChange">
-          <el-table-column
-            align="center"
-            type="selection"
-            width="55">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="batchId"
-            label="批次号"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="batchName"
-            label="批次名称"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="validityTime"
-            label="有效期"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="customerNumber"
-            label="导入数量"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="successNumber"
-            label="可用数量"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="modifierName"
-            label="可用性">
-            <template
-              slot-scope="scope">
-              <div>{{scope.row.validityStatus == 0 ? '可用':'不可用'}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="modifierTime"
-            width="155"
-            label="操作时间">
-            <template
-              slot-scope="scope">
-              <div>{{scope.row.modifierTime}}</div>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-row>
-      <div slot="footer" style="text-align: right;">
-        <el-pagination
-          v-if="pageShow2"
-          background
-          @size-change="namelistSizeChange"
-          @current-change="namelistPageChange"
-          :current-page='namelistPageInfo.pageNo'
-          :page-sizes="[10, 20, 30, 40, 50]"
-          :page-size='namelistPageInfo.pageSize'
-          layout="total, sizes, prev, pager, next, jumper "
-          :total='namelistPageInfo.totalCount' style="text-align:right;float:left;">
-        </el-pagination>
-        <el-form :inline="true" size="small" :model="addNamelist" ref="addNamelist" :rules="rule">
-          <el-form-item prop="listName" label="名单名称：">
-            <el-input v-model="addNamelist.listName" placeholder="名单名称（限长50字符）" maxlength="50"></el-input>
-          </el-form-item>
-          <el-form-item prop="visible" label="名单状态：">
-            <el-switch
-            v-model="addNamelist.visible"
-            active-text="可见"
-            inactive-text="不可见"
-            :active-value=1
-            :inactive-value=0
-            active-color="#67C23A"
-            ></el-switch>
-          </el-form-item>
-          <el-form-item>
-            <el-button size="small" type="success" @click="submitForm('addNamelist');newNamelist(addNamelist)">确 定</el-button>
-            <el-button size="small" @click="addVisible = false;">取 消</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
     </el-dialog> -->
     <el-dialog
       width="30%"
@@ -488,7 +346,7 @@ import {
 import { queryBatch } from '@/api/batch_management'
 import { queryByCustomer } from '@/api/customerManagement'
 import { rule } from '@/utils/validate'
-import { clone } from '@/utils/tools'
+import { clone, formatDateTime } from '@/utils/tools'
 
 export default {
   name: 'sc_list_generate',
@@ -596,10 +454,11 @@ export default {
     this.searchNamelist(this.req)
   },
   methods: {
+    formatDateTime: formatDateTime,
     // 深度克隆
     clone: clone,
     showVisibleStatus(visible) {
-      if (visible === 1) {
+      if (visible === 0) {
         // 可见
         return "<span style='color:#67C23A'>可见</span>"
       } else {
@@ -813,9 +672,9 @@ export default {
       this.editReq.listName = this.namelistDetail.listName
       this.editReq.modifierName = this.namelistDetail.modifierName
       this.editReq.modifierTime = this.namelistDetail.modifierTime
-      this.editReq.visible = this.namelistDetail.visible
+      this.editReq.validityStatus = this.namelistDetail.validityStatus
 
-      if (this.editReq.visible === 0) {
+      if (this.editReq.validityStatus === 1) {
         this.visibleCheck = true
       } else {
         this.editVisible = false
