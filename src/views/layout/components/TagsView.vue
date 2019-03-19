@@ -185,6 +185,9 @@ export default {
         height: 30px;
         margin-left: 20px;
       }
+      &:hover{
+
+      }
       &.active {
         height: 30px;
         background-color: #42b983;
@@ -263,6 +266,17 @@ export default {
         position:absolute;
         top: 0px;
         right: 0px;
+      }
+    }
+  }
+  .tags-view-item:hover{
+    .el-icon-close {
+      display:inline-block;
+      &:hover{
+        background-color: #b4bccc;
+      }
+      &::before {
+        display:inline-block;
       }
     }
   }

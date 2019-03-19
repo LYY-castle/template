@@ -61,12 +61,13 @@ ul,p,h1,h2,h3,h4,h5,h6,dl,dd{
   }
 }
 .table-container{
-  margin-top:28px;
+  margin-top:15px;
   background: #FFFFFF;
   box-shadow: 0 0 10px 0 rgba(39,48,69,0.10);
   border-radius: 2px;
   padding:20px;
   .el-table{
+    width:100%;
     font-weight: normal;
     font-size: 12px !important;
     color: #333333 !important;
@@ -77,7 +78,7 @@ ul,p,h1,h2,h3,h4,h5,h6,dl,dd{
   background: #FFFFFF;
   box-shadow: 0 0 10px 0 rgba(39,48,69,0.10);
   border-radius: 2px;
-  margin-bottom:30px;
+  margin-bottom:15px;
   border-left:solid 4px#57AFFF;
   box-sizing:border-box;
   .el-collapse-item__header{
@@ -97,7 +98,17 @@ ul,p,h1,h2,h3,h4,h5,h6,dl,dd{
     padding-top:3px;
   }
 }
-
+.hidden-collapse{
+  margin-bottom:0;
+  box-shadow:none;
+  border-bottom:1px solid #fff;
+  .el-collapse-item__header{
+    border-bottom:1px solid #fff;
+  }
+  .el-collapse-item__wrap{
+    border-bottom:1px solid #fff;
+  }
+}
 // 报表页面中的下属表格第一列增加有边框
 .el-table.report-table /deep/ tbody{
   tr:nth-child(1){

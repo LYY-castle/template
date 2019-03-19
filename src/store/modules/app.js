@@ -13,7 +13,6 @@ const app = {
     wechat_contents: [],
     wechat_customerInfos: [],
     formContainer: function() {
-      console.log($('.el-collapse-item__header.is-active'))
       $('.el-collapse-item__header.is-active').append(`
         <span class="form-more" style="float:right;margin-right:6px;color:#57AFFF;font-weight:normol;">收起</span>
       `)

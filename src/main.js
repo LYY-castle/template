@@ -24,9 +24,13 @@ Vue.prototype.emoji1 = emoji1
 import '@/icons' // icon
 // import '@/permission' // permission control
 ElementUI.TableColumn.props.resizable.default = false
+ElementUI.TableColumn.props.resizable.default = false
 ElementUI.TableColumn.props.showOverflowTooltip = { type: Boolean, default: true }
+ElementUI.Table.props.maxHeight = { type: String, default: '450' }
 ElementUI.Select.props.filterable = { type: Boolean, default: true }
 ElementUI.Button.props.size = { type: String, default: 'small' }
+ElementUI.Form.props.size = { type: String, default: 'small' }
+
 Vue.use(ElementUI, { locale })
 Vue.use(VueQuillEditor)
 Vue.config.productionTip = false

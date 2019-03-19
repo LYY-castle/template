@@ -1,44 +1,52 @@
 <template>
   <div class="container">
-    <el-row margin-top:>
-      <el-form :inline="true" size="small" >
-        <el-form-item label="名单编号:">
-          <el-input v-model="req.listId" placeholder="名单编号（限长20字符）" maxlength="20"></el-input>
-        </el-form-item>
-        <el-form-item label="名单名称:">
-          <el-input v-model="req.listName" placeholder="名单名称（限长50字符）" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="操作人:">
-          <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="操作时间:">
-          <el-date-picker
-              v-model="req.startCreateTime"
-              type="datetime"
-              placeholder="开始时间"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
-          </el-date-picker>
-          到
-          <el-date-picker
-              v-model="req.endCreateTime"
-              type="datetime"
-              placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="req2=clone(req);req.pageNo=1;searchNamelist(req)">查询</el-button>
-          <el-button size="small" type="danger" @click="clearForm(req);req2=clone(req);">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
-    <el-row>
-      <el-col>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small" >
+          <el-form-item label="名单编号:">
+            <el-input v-model="req.listId" placeholder="名单编号（限长20字符）" maxlength="20"></el-input>
+          </el-form-item>
+          <el-form-item label="名单名称:">
+            <el-input v-model="req.listName" placeholder="名单名称（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="操作人:">
+            <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="操作时间:">
+            <el-date-picker
+                v-model="req.startCreateTime"
+                type="datetime"
+                placeholder="开始时间"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                default-time="00:00:00">
+            </el-date-picker>
+            到
+            <el-date-picker
+                v-model="req.endCreateTime"
+                type="datetime"
+                placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                default-time="00:00:00">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="req2=clone(req);req.pageNo=1;searchNamelist(req)">查询</el-button>
+            <el-button size="small" @click="clearForm(req);req2=clone(req);">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">名单管理表</div>
+      </el-row>
+      <el-row class="margin-bottom-20">
+        <!-- <el-button type="success" size="small" @click="addVisible=true;addNameList.listName='';namelistPageInfo.pageSize=10;searchCustomer.pageSize=10;searchCustomer.pageNo=1;getCustomers(searchCustomer);clearForm(searchCustomer);">新建</el-button> -->
+        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
+      </el-row>
+      <el-row>
         <el-table
           :data="tableData"
-          border
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
@@ -89,7 +97,9 @@
             label="当前状态"
             width="155">
             <template slot-scope="scope">
-              <div v-html="showVisibleStatus(scope.row.validityStatus)"></div>
+              <div :class="scope.row.validityStatus===0?'visible':'invisible'">
+                <span>{{scope.row.validityStatus===0?'可见':'可见'}}</span>
+              </div>
             </template>
           </el-table-column>
           <el-table-column
@@ -102,14 +112,10 @@
           </template>
           </el-table-column>
         </el-table>
-      </el-col>
-    </el-row>
-    <el-row style="margin-top:5px;">
-        <!-- <el-button type="success" size="small" @click="addVisible=true;addNameList.listName='';namelistPageInfo.pageSize=10;searchCustomer.pageSize=10;searchCustomer.pageNo=1;getCustomers(searchCustomer);clearForm(searchCustomer);">新建</el-button> -->
-        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
+      </el-row>
+      <el-row style="margin-top:20px;">
         <el-pagination
           v-if="pageShow"
-          background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page='pageInfo.pageNo'
@@ -118,6 +124,7 @@
           layout="total, sizes, prev, pager, next, jumper "
           :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
+      </el-row>
     </el-row>
     <el-dialog
       align:left
@@ -153,9 +160,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button size="small" type="danger" @click="searchByListId(delReq);">重 置</el-button>
-        <el-button size="small" @click="editVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="editNamelist()">确 定</el-button>
+        <el-button size="small" @click="searchByListId(delReq);">重置</el-button>
+        <el-button size="small" type="primary" plain @click="editVisible = false">取消</el-button>
+        <el-button size="small" type="primary" @click="editNamelist()">确定</el-button>
       </div>
     </el-dialog>
     <!-- <el-dialog
@@ -305,8 +312,8 @@
       append-to-body>
     <span style="font-size:20px;">确定删除选定内容？</span>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button size="small" @click="batchDelVisible = false">取 消</el-button>
-      <el-button size="small" type="primary" @click="batchDelVisible = false;batchDelNamelist(batchDelReq);">确 定</el-button>
+      <el-button type="primary" plain size="small" @click="batchDelVisible = false">取消</el-button>
+      <el-button size="small" type="primary" @click="batchDelVisible = false;batchDelNamelist(batchDelReq);">确定</el-button>
     </div>
     </el-dialog>
     <el-dialog
@@ -316,8 +323,8 @@
       append-to-body>
     <span style="font-size:20px;">确定删除此内容？</span>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button size="small" @click="delVisible = false">取 消</el-button>
-      <el-button size="small" type="primary" @click="delVisible = false;delNamelist(delReq);">确 定</el-button>
+      <el-button type="primary" plain size="small" @click="delVisible = false">取消</el-button>
+      <el-button size="small" type="primary" @click="delVisible = false;delNamelist(delReq);">确定</el-button>
     </div>
     </el-dialog>
     <el-dialog
@@ -327,8 +334,8 @@
       append-to-body>
     <span style="font-size:20px;">即将设置名单为不可见状态，确认？</span>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button size="small" @click="visibleCheck = false;namelistDetail.visible=1">取 消</el-button>
-      <el-button size="small" type="primary" @click="visibleCheck = false;checkEditNamelist(editReq)">确 定</el-button>
+      <el-button type="primary" plain size="small" @click="visibleCheck = false;namelistDetail.visible=1">取消</el-button>
+      <el-button size="small" type="primary" @click="visibleCheck = false;checkEditNamelist(editReq)">确定</el-button>
     </div>
     </el-dialog>
   </div>
@@ -352,6 +359,8 @@ export default {
   name: 'sc_list_generate',
   data() {
     return {
+      formContainerOpen: '1',
+      formContainer: this.$store.state.app.formContainer,
       timeValue: '',
       rule: rule,
       detailVisible: false,
@@ -451,21 +460,21 @@ export default {
     }
   },
   mounted() {
+    this.formContainer()
+    this.handleChangeAcitve()
     this.searchNamelist(this.req)
   },
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
     formatDateTime: formatDateTime,
     // 深度克隆
     clone: clone,
-    showVisibleStatus(visible) {
-      if (visible === 0) {
-        // 可见
-        return "<span style='color:#67C23A'>可见</span>"
-      } else {
-        // 不可见
-        return "<span style='color:#F56C6C'>不可见</span>"
-      }
-    },
     resetForm(formName) {
       if (this.$refs[formName] !== undefined) {
         this.$refs[formName].resetFields()
@@ -808,24 +817,3 @@ export default {
   }
 }
 </script>
-<style rel="stylesheet/scss" lang="scss">
-.el-table thead {
-  color: #000 !important;
-}
-
-</style>
-
-<style rel="stylesheet/scss" lang="scss" scoped>
-.el-table {
-  border: 1px solid #ecebe9;
-  thead th .cell {
-    color: #000;
-  }
-}
-.el-form-item {
-  margin-bottom: 20px;
-}
-// el-dialog .el-form-item{
-//   margin-bottom:50px;
-// }
-</style>

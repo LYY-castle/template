@@ -1,162 +1,146 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-
-      <el-row :gutter="5">
-        <el-row  class="table-container">
-          <el-form :inline="true" size="small" :model="req" style="padding:0px">
-            <el-row>
-            <el-form-item label="活动名称:" >
-              <el-select v-model="req.campaignId" @change="selectActive">
-                <el-option value="" label="请选择活动"></el-option>
-                <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
-              </el-select>
-            </el-form-item>
-            </el-row>
-            <el-row>
-            
-            <div class="work-title-style font14 bold" style="padding-bottom:9px">筛选条件 <a href="javascript:void(0)" @click="optionVisible=true" v-if="optionVisible==false" style="color: #57AFFF !important">展开<i class="el-icon-arrow-down"></i></a><a href="javascript:void(0)" @click="optionVisible=false" v-if="optionVisible==true" style="color: #57AFFF !important">收起<i class="el-icon-arrow-up"></i></a></div>
-            </el-row>
-            <el-row v-if="optionVisible==true" style="padding-left:14px">
-              <el-form-item label="批次名称:">
-                <el-select v-model="req.customerBatchId">
-                  <el-option value="" label="请选择批次"></el-option>
-                  <el-option v-for="item in batchList" :key="item.batchId" :label="item.batchName" :value="item.batchId"></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="性别:">
-                <el-select v-model="req.customerSex">
-                  <el-option value="" label="全部"></el-option>
-                  <el-option value="0" label="男"></el-option>
-                  <el-option value="1" label="女"></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="客户质量评分:">
-                <el-input v-model="req.customerScoreStart" placeholder="客户质量评分" size="mini"></el-input>
-              </el-form-item>
-              <el-form-item label="-">
-                <el-input v-model="req.customerScoreEnd" placeholder="客户质量评分" size="mini"></el-input>
-              </el-form-item>
-              <br>
-            <el-form-item label="地区:">
-                <el-select v-model="req.customerProvince" @change="findRegionByRegionParentId(req.customerProvince,2)">
-                  <el-option value="" label="--省份/地区--"></el-option>
-                  <el-option v-for="item in provinceInfo" :key="item.regionCode" :label="item.regionName" :value="item.regionCode"></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item >
-                <el-select v-model="req.customerCity" @change="findRegionByRegionParentId(req.customerCity,3)">
-                  <el-option value="" label="--城市--"></el-option>
-                  <el-option v-for="item in cityInfo" :key="item.regionCode" :label="item.regionName" :value="item.regionCode"></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item >
-                <el-select v-model="req.customerDistrict">
-                  <el-option value="" label="--区/县--"></el-option>
-                  <el-option v-for="item in countryInfo" :key="item.regionCode" :label="item.regionName" :value="item.regionCode"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-row>
-            
-
-              <el-row v-if="optionVisible==true" style="text-align:right">
-    
-                  <el-form-item style="margin-bottom:0px">
-                  <el-button size="small" type="primary" @click="selectActive">查询</el-button>
-                  <el-button size="small"  @click="resetReq('searchForm');">重置</el-button>
+      <el-row class="form-container" style="padding:20px 0 0 0;margin-bottom:0;">
+        <el-form :inline="true" size="small" :model="req" style="padding:0px;margin-left:20px;">
+          <el-form-item label="活动名称:" >
+            <el-select v-model="req.campaignId" @change="selectActive">
+              <el-option value="" label="请选择活动"></el-option>
+              <el-option v-for="item in activeNameList" :key="item.campaignId" :label="item.campaignName" :value="item.campaignId"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <el-collapse class="hidden-collapse" v-model="formContainerOpen" @change="handleChangeAcitve2">
+          <el-collapse-item title="筛选条件" name="1">
+            <el-form :inline="true" size="small" :model="req" style="padding:0px;margin-left:-15px;">
+              <el-row style="padding-left:14px">
+                <el-form-item label="批次名称:">
+                  <el-select v-model="req.customerBatchId">
+                    <el-option value="" label="请选择批次"></el-option>
+                    <el-option v-for="item in batchList" :key="item.batchId" :label="item.batchName" :value="item.batchId"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="性别:">
+                  <el-select v-model="req.customerSex">
+                    <el-option value="" label="全部"></el-option>
+                    <el-option value="0" label="男"></el-option>
+                    <el-option value="1" label="女"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="客户质量评分:">
+                  <el-input v-model="req.customerScoreStart" placeholder="客户质量评分" size="small" style="width:70px;"></el-input>
+                </el-form-item>
+                <el-form-item label="-">
+                  <el-input v-model="req.customerScoreEnd" placeholder="客户质量评分" size="small" style="width:70px;"></el-input>
+                </el-form-item>
+                <el-row style="display:inline-block;">
+                  <el-form-item label="地区:">
+                    <el-select v-model="req.customerProvince" @change="findRegionByRegionParentId(req.customerProvince,2)">
+                      <el-option value="" label="--省份/地区--"></el-option>
+                      <el-option v-for="item in provinceInfo" :key="item.regionCode" :label="item.regionName" :value="item.regionCode"></el-option>
+                    </el-select>
                   </el-form-item>
+                  <el-form-item >
+                    <el-select v-model="req.customerCity" @change="findRegionByRegionParentId(req.customerCity,3)">
+                      <el-option value="" label="--城市--"></el-option>
+                      <el-option v-for="item in cityInfo" :key="item.regionCode" :label="item.regionName" :value="item.regionCode"></el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item >
+                    <el-select v-model="req.customerDistrict">
+                      <el-option value="" label="--区/县--"></el-option>
+                      <el-option v-for="item in countryInfo" :key="item.regionCode" :label="item.regionName" :value="item.regionCode"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-row>
               </el-row>
-            
-            
-          </el-form>
-       </el-row>
-
-
-
-    <div class="table-container">
-      <el-row>
-        <div class="work-title-style font14 bold">可分配名单</div>
+              <el-row style="text-align:right">
+                <el-form-item style="margin-bottom:0px">
+                <el-button size="small" type="primary" @click="selectActive">查询</el-button>
+                <el-button size="small" @click="resetReq('searchForm');">重置</el-button>
+                </el-form-item>
+              </el-row>
+            </el-form>
+          </el-collapse-item>
+        </el-collapse>
       </el-row>
-      <el-row style="margin-top:20px;">
-        <el-col>
-
-        <el-table
-          :header-row-style="headerRow"
-          :data="tableData"
-          ref="multipleTable"
-          tooltip-effect="dark"
-          border
-          @selection-change="handleSelectionChange">
-          <el-table-column
-            align="center"
-            type="selection"
-            width="55">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="listId"
-            label="名单编号"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="listName"
-            label="名单名称"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ scope.row.listName }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="totalNum"
-            label="总数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="noUseNum"
-            label="可分配数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="modifierName"
-            label="操作人"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ scope.row.modifierName }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="modifierTime"
-            label="操作时间"
-            width="155">
-          </el-table-column>
-        </el-table>
-        <el-row style="margin-top:1%;">
-          <el-col :span="12"><div style="margin-top:1%;">已选中名单统计：总数量<span style="color:red">{{formInline.totalNum}}</span>，可分配数量<span style="color:red">{{formInline.noUseNum}} </span></div></el-col>
-          <el-col :span="12">
-            <el-pagination
-              background
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page.sync="pagination.pageNo"
-              :page-size="pagination.pageSize"
-              :page-sizes="[10, 20, 30, 40, 50]"
-              layout="total, sizes, prev, pager, next, jumper "
-              :total="pagination.totalCount" style="text-align: right">
-            </el-pagination>
-          </el-col>
+     
+      <el-row class="table-container">
+        <el-row>
+          <div class="work-title-style font14 bold">可分配名单</div>
         </el-row>
-
-        </el-col>
+        <el-row style="margin-top:20px;">
+          <el-table
+            :header-row-style="headerRow"
+            :data="tableData"
+            ref="multipleTable"
+            tooltip-effect="dark"
+            @selection-change="handleSelectionChange">
+            <el-table-column
+              align="center"
+              type="selection"
+              width="55">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="listId"
+              label="名单编号"
+              :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="listName"
+              label="名单名称"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{ scope.row.listName }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="totalNum"
+              label="总数量">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="noUseNum"
+              label="可分配数量">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="modifierName"
+              label="操作人"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{ scope.row.modifierName }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="modifierTime"
+              label="操作时间"
+              width="155">
+            </el-table-column>
+          </el-table>
+          <el-row style="margin-top:1%;">
+            <el-col :span="12"><div style="margin-top:1%;" class="font14">已选中名单统计：总数量<span style="color:red">{{formInline.totalNum}}</span>，可分配数量<span style="color:red">{{formInline.noUseNum}} </span></div></el-col>
+            <el-col :span="12">
+              <el-pagination
+                background
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page.sync="pagination.pageNo"
+                :page-size="pagination.pageSize"
+                :page-sizes="[10, 20, 30, 40, 50]"
+                layout="total, sizes, prev, pager, next, jumper "
+                :total="pagination.totalCount" style="text-align: right">
+              </el-pagination>
+            </el-col>
+          </el-row>
+        </el-row>
       </el-row>
-    </div>
 
-
-
-  <div class="table-container" style="margin-bottom:20px">
-      <el-row>
+      <el-row class="table-container" style="margin-bottom:20px">
         <el-form :inline="true" size="small">
           <el-form-item label="本次分配数量:">
             <el-input-number v-model="formInline.num" :step="10" @change="handleChange"></el-input-number>
@@ -169,68 +153,61 @@
             <el-button type="primary" :loading="loading" @click="confirm(formInline)">确认分配</el-button>
           </el-form-item>
         </el-form>
-      </el-row>
-      <el-row>
-        <div>
-          <span  style="color:red;font-size:13px">
-            提示：可在下方表格中最后一列手动填写分配数量或由系统自动完成分配动作。
-          </span>
-          
-        </div>
-      </el-row>
-      <el-row style="margin-top:20px;">
-        <el-col>
-        
-        <el-table
-          :header-row-style="headerRow"
-          :data="tableData2"
-          ref="multipleTable"
-          tooltip-effect="dark"
-          border
-          @selection-change="handleSelectionChange2">
-          <el-table-column
-            align="center"
-            type="selection"
-            width="55">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="departName"
-            label="分配对象"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ scope.row.departName }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="noUseNum"
-            :label="noUseNumLabel">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="useNum"
-            :label="useNumLabel">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="totalNum"
-            label="总数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="本次分配数量">
-            <template slot-scope="scope">
-              <el-input v-model="tableData2[scope.$index].num" @change="handleChange1(scope.row)"></el-input>
-            </template>
-          </el-table-column>
-        </el-table>
-        
-        </el-col>
-      </el-row>
-    </div>
-     
-     
+        <el-row>
+          <div>
+            <span class="font14" style="color:red;">
+              提示：可在下方表格中最后一列手动填写分配数量或由系统自动完成分配动作。
+            </span>
+          </div>
+        </el-row>
+        <el-row>
+          <div class="font14 bold">下属表</div>
+        </el-row>
+        <el-row style="margin-top:20px;"> 
+          <el-table
+            :header-row-style="headerRow"
+            :data="tableData2"
+            ref="multipleTable"
+            tooltip-effect="dark"
+            @selection-change="handleSelectionChange2">
+            <el-table-column
+              align="center"
+              type="selection"
+              width="55">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="departName"
+              label="分配对象"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{ scope.row.departName }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="noUseNum"
+              :label="noUseNumLabel">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="useNum"
+              :label="useNumLabel">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              prop="totalNum"
+              label="总数量">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              label="本次分配数量">
+              <template slot-scope="scope">
+                <el-input v-model="tableData2[scope.$index].num" @change="handleChange1(scope.row)"></el-input>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-row>
       </el-row>
     </div>
   </div>
@@ -246,7 +223,9 @@
     name: 'captain_list_newdistribute_group',
     data() {
       return {
-        optionVisible: false,
+        formContainerOpen: '',
+        formContainerOpen2: '1',
+        formContainer2: this.$store.state.app.formContainer,
         loading: false,
         type: '',
         totalNum: 0,
@@ -292,10 +271,31 @@
       }
     },
     mounted() {
+      this.formContainer()
+      this.formContainer2()
       this.findAllBatch()
       this.findRegionByRegionParentId('0', 1)
     },
     methods: {
+      formContainer() {
+        $('.hidden-collapse .el-collapse-item__header').append(`
+          <span class="form-more2" style="float:right;margin-right:6px;color:#57AFFF;font-weight:normol;">更多</span>
+        `)
+      },
+      handleChangeAcitve(active = ['1']) {
+        if (active.length) {
+          $('.form-more').text('收起')
+        } else {
+          $('.form-more').text('更多')
+        }
+      },
+      handleChangeAcitve2(active = ['1']) {
+        if (active.length) {
+          $('.form-more2').text('收起')
+        } else {
+          $('.form-more2').text('更多')
+        }
+      },
       findAllBatch() {
         findAllBatch().then(response => {
           if (response.data.code === 0) {
