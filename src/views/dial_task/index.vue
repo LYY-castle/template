@@ -521,6 +521,9 @@
           <el-col :span="8" style="height:48px;line-height:34px;" v-if="showAutoDial===true">
             <el-checkbox checked="checked" v-model="autoDialNext">完成后显示下一个客户</el-checkbox>
           </el-col>
+          <el-col :span="8" style="height:48px;line-height:34px;" v-if="autoCallDial">
+            <el-checkbox checked="checked" v-model="autoCalllNext">完成后继续自动外呼</el-checkbox>
+          </el-col>
         </el-form>
       </el-row>
       <el-row>
@@ -729,6 +732,7 @@ export default {
 
   data() {
     return {
+      autoCallDial: false, // 自动外呼
       formContainerOpen: '1',
       formContainer: this.$store.state.app.formContainer,
       show_wechat: `${process.env.SHOW_WECHAT}`,
@@ -816,6 +820,7 @@ export default {
       activeTab: '', // 产品展示项
       showAutoDial: false, // 是否展示自动拨打下一个
       autoDialNext: true, // 完成后自动拨打下一个
+      autoCalllNext: true, // 是否继续自动外呼
       showSendMessage: false, // 是否展示发送支付短信
       sendMessage: true, //  发送支付短信checkbox
       nodulesTree: [], // 需要展示的小结树 数据
@@ -1005,14 +1010,14 @@ export default {
             }
           }).then(() => {
             if (vm.flag === false && isBlacklist === '0') {
-              // 非黑名单  非免访号段内的号码
-              // 判断剩余拨打次数
+            // 非黑名单  非免访号段内的号码
+            // 判断剩余拨打次数
               checkDialTimes(taskId).then(response => {
                 if (response.data.code === 0) {
                   if (response.data.data.canContact === '1') {
-                    // 说明未超过次数限制还能拨打
+                  // 说明未超过次数限制还能拨打
                     if (response.data.data.lastContactTime === '1') {
-                      // 说明是最后一次 将预约栏隐藏
+                    // 说明是最后一次 将预约栏隐藏
                       vm.radio = ''
                       vm.isLastContactTime = true
                       queryOneTask(taskId).then(response1 => {
@@ -1895,8 +1900,14 @@ export default {
                       this.isLastContactTime = false
                       this.showDetailInfos(this.taskIds[0], this.campaignIds[0], this.customerIds[0], this.isBlacklists[0], null)
                     } else {
-                      if (localStorage.getItem('autocall') === 'true') {
-                        this.$root.eventHub.$emit('autocallReady', true)
+                      if (this.autoCalllNext === true) {
+                        if (localStorage.getItem('autocall') === 'true') {
+                          this.$root.eventHub.$emit('autocallReady', 'auto')
+                        }
+                      } else {
+                        if (localStorage.getItem('autocall') === 'true') {
+                          this.$root.eventHub.$emit('autocallReady', 'manual')
+                        }
                       }
                       // 没勾选自动拨打下一个 返回列表
                       this.radio = ''
@@ -2096,6 +2107,9 @@ export default {
   },
   // 模板编译/挂载之后
   mounted() {
+    if (localStorage.getItem('autocall') === 'true') {
+      this.autoCallDial = true
+    }
     this.formContainer()
     this.handleChangeAcitve()
     // 获取微信客户列表
