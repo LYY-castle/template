@@ -7,7 +7,7 @@ export function findAllCampaigns() {
 }
 export function queryNoVisitCustomers(obj) {
   return request({
-    url: '/contact/getBlackList',
+    url: '/blacklist/getBlackList',
     method: 'post',
     data: obj
   })
@@ -15,42 +15,42 @@ export function queryNoVisitCustomers(obj) {
 // 批量修改免访客户可见属性
 export function batchSetVisible(obj) {
   return request({
-    url: '/contact/batchsetvisible',
+    url: '/blacklist/batch/status',
     method: 'post',
-    data: { 'blacklistList': obj }
+    data: obj
   })
 }
 export function addNoVisitCustomers(obj) {
   return request({
-    url: '/contact/addBlackListInfo',
+    url: '/blacklist/addBlackListInfo',
     method: 'post',
     data: obj
   })
 }
 export function batchDelete(obj) {
   return request({
-    url: '/contact/delBlackListByIds',
+    url: '/blacklist/delBlackListByIds',
     method: 'post',
     data: { 'ids': obj }
   })
 }
 export function getBlackListInfoById(obj) {
   return request({
-    url: '/contact/getBlackListInfoById',
+    url: '/blacklist/getBlackListInfoById',
     method: 'get',
     params: { 'id': obj }
   })
 }
 export function editBlackListInfo(obj) {
   return request({
-    url: '/contact/editBlackListInfo',
+    url: '/blacklist/editBlackListInfo',
     method: 'post',
     data: obj
   })
 }
 export function delBlackListInfo(obj) {
   return request({
-    url: '/contact/delBlackListInfo',
+    url: '/blacklist/delBlackListInfo',
     method: 'post',
     data: { 'customerId': obj }
   })
