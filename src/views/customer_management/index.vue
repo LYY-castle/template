@@ -1,44 +1,54 @@
 <template>
   <div class="container">
-    <el-row margin-top:>
-      <el-form :inline="true" size="small">
-        <el-form-item label="批次编号:">
-          <el-input v-model="req.batchId" placeholder="批次编号（限长50字符）" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="客户编号:">
-          <el-input v-model="req.customerId" placeholder="客户编号（限长50字符）" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="客户姓名:">
-          <el-input v-model="req.customerName" placeholder="客户姓名（限长50字符）" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="身份证:">
-          <el-input v-model="req.idNo" placeholder="身份证（限长50字符）" maxlength="50"></el-input>
-        </el-form-item><br/>
-        <el-form-item label="操作人:">
-          <el-input v-model="req.modifierName" placeholder="操作人（限长50）字符" maxlength="50"></el-input>
-        </el-form-item>
-        <el-form-item label="操作时间：">
-          <el-date-picker
-              v-model="timeValue"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="req.pageNo=1;searchCustomer(req);req2=clone(req);">查询</el-button>
-          <el-button type="danger" @click="reset();req2=clone(req)">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
-    <el-row>
-      <el-col>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve" style="position:relative;">
+      <span class="form-more bold" style="line-height: 24px;font-size: 14px;float:right;margin-right:6px;color:#57AFFF;position:absolute;top:11px;right:41px;">收起</span>
+      <el-collapse-item title="筛选条件" name="1">
+        <el-form :inline="true" size="small">
+          <el-form-item label="批次编号:">
+            <el-input v-model="req.batchId" placeholder="批次编号（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="客户编号:">
+            <el-input v-model="req.customerId" placeholder="客户编号（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="客户姓名:">
+            <el-input v-model="req.customerName" placeholder="客户姓名（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="身份证:">
+            <el-input v-model="req.idNo" placeholder="身份证（限长50字符）" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="操作人:">
+            <el-input v-model="req.modifierName" placeholder="操作人（限长50）字符" maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="操作时间：">
+            <el-date-picker
+                v-model="timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="req.pageNo=1;searchCustomer(req);req2=clone(req);">查询</el-button>
+            <el-button @click="reset();req2=clone(req)">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-collapse-item>
+    </el-collapse>
+    <el-row class="table-container">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">小结管理表</div>
+      </el-row>
+      <el-row class="margin-bottom-20">
+        <el-button type="success" size="small" @click="resetArrays();addVisible=true;clearForm(customerDetail,'customerDetail');">新建</el-button>
+        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
+        <el-button type="info" size="small" @click="importVisible=true;importInfo.uploadFileName='';importInfo.batchName=''">导入客户</el-button>
+      </el-row>
+      <el-row>
         <el-table
           :data="tableData"
           highlight-current-row
-          border
           @selection-change="handleSelectionChange">
           <el-table-column
             align="center"
@@ -118,15 +128,10 @@
           </template>
           </el-table-column>
         </el-table>
-      </el-col>
-    </el-row>
-    <el-row style="margin-top:5px;">
-        <el-button type="success" size="small" @click="resetArrays();addVisible=true;clearForm(customerDetail,'customerDetail');">新建</el-button>
-        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
-        <el-button type="success" size="small" @click="importVisible=true;importInfo.uploadFileName='';importInfo.batchName=''">导入客户</el-button>
+      </el-row>
+      <el-row style="margin-top:20px;">
         <el-pagination
           v-if="pageShow"
-          background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page='pageInfo.pageNo'
@@ -135,6 +140,7 @@
           layout="total, sizes, prev, pager, next, jumper "
           :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
+      </el-row>
     </el-row>
     <el-dialog
       align:left
@@ -142,7 +148,7 @@
       title="导入客户"
       :visible.sync="importVisible"
       append-to-body>
-      <el-form label-width="100px">
+      <el-form size="small" label-width="100px">
         <el-form-item label="批次名称：" class="inputWidth">
           <el-input size="small" v-model="importInfo.batchName"></el-input>
         </el-form-item>
@@ -159,11 +165,11 @@
           :on-change="handleUploadOnChange"
           :show-file-list="false"
           :auto-upload="false">
-          <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+          <el-button slot="trigger" size="small" type="success">选取文件</el-button>
         </el-upload>
       </div>
       <div style="margin-left:77%;margin-top:-32px">
-        <el-button type="primary" @click="templateVisible=true;fileType='xls';getTags()">下载模板</el-button>
+        <el-button type="info" @click="templateVisible=true;fileType='xls';getTags()">下载模板</el-button>
       </div>
       <div style="marin-left:30%">
         <span style="font-size:12px;color:red">提示：文件格式支持xls、xlsx，文件大小限制为10M</span>
@@ -189,10 +195,242 @@
           </el-table-column>
         </el-table>
       </div>
+
+
+      <!-- 名单抽取 123 -->
+      <el-dialog
+        width="85%"
+        title="名单抽取"
+        :visible.sync="extractVisible"
+        @close="resetScreening"
+        append-to-body>
+        <el-row class="table-container">
+          
+          <el-row class="form-container" style="padding: 20px 0 0 20px;">
+            <el-row class="screening">
+              <el-row class="margin-bottom-20">
+                <div class="font14 bold">基本筛选条件</div>
+              </el-row>
+              <el-form 
+                :inline="true" 
+                size="small">
+                <el-row>
+                  <el-form-item label="批次名称：">
+                    <el-select v-model="searchReq.batchId" style="width:133px;">
+                      <el-option
+                        v-for="item in allBatch"
+                        :key="item.id"
+                        :value="item.batchId"
+                        :label="item.batchName">
+                        </el-option>
+                    </el-select>
+                  </el-form-item>
+
+                  <el-form-item label="性别：">
+                    <el-select v-model="searchReq.customerSex" style="width:116px;">
+                      <el-option value="0" label="男"></el-option>
+                      <el-option value="1" label="女"></el-option>
+                    </el-select>
+                  </el-form-item>
+        
+                  <el-form-item label="客户质量评分：" prop="min" class="min">
+                    <el-input style="width:81px;" v-model="searchReq.beginScore" v-on:blur="checkPositiveInteger(searchReq)"></el-input>
+                  </el-form-item>
+                  <b style="display:inline-block;font-size:14px;color: #606266;position:relative;top:1px;right:5px;">到</b>
+                  <el-form-item prop="max" class="max">
+                    <el-input style="width:81px;" v-model="searchReq.endScore" v-on:blur="checkPositiveInteger(searchReq)"></el-input>
+                  </el-form-item>
+                  <el-row style="display:inline-block;">
+                    <el-form-item :inline="true" label="地区：" prop="min" class="min region">
+                      <el-col :span="7" :offset="1">
+                        <el-select v-model="searchReq.province" placeholder="省" @change="getRegion3(searchReq.province)">
+                          <el-option
+                            v-for="item in screening.region.province"
+                            :key="item.id"
+                            :label="item.regionName"
+                            :value="item.regionCode">
+                          </el-option>
+                        </el-select>
+                      </el-col>
+                      <el-col :span="7" :offset="1">
+                        <el-select v-model="searchReq.city" placeholder="市" @change="getRegion3(searchReq.city)">
+                          <el-option
+                            v-for="item in screening.region.city"
+                            :key="item.id"
+                            :label="item.regionName"
+                            :value="item.regionCode">
+                          </el-option>
+                        </el-select>
+                      </el-col>
+                      <el-col :span="7" :offset="1">
+                        <el-select v-model="searchReq.district" placeholder="县/区">
+                          <el-option
+                            v-for="item in screening.region.district"
+                            :key="item.regionCode"
+                            :label="item.regionName"
+                            :value="item.regionCode">
+                          </el-option>
+                        </el-select>
+                      </el-col>
+                    </el-form-item>
+                  </el-row>
+                  <el-form-item label="操作时间：">
+                    <el-date-picker
+                        v-model="screeningTimeValue"
+                        type="datetimerange"
+                        range-separator="-"
+                        start-placeholder="开始时间"
+                        end-placeholder="结束时间"
+                        value-format="yyyy-MM-dd HH:mm:ss">
+                    </el-date-picker>
+                  </el-form-item>
+                </el-row>
+              </el-form>
+            </el-row>
+          </el-row>
+
+          <el-collapse v-model="screeningFormOpen" class="screening form-container" @change="handleChangeAcitve2" style="position:relative">
+            <el-button type="success" @click="getAllField();" style="position:absolute;top:8px;left:127px;">添加</el-button>
+            <span class="form-more2 bold" style="float:right;margin-right:6px;color:#57AFFF;position:absolute;top:11px;right:41px;">更多</span>
+            <el-collapse-item class="screening" title="自定义筛选条件" name="1">
+              <el-row style="min-height:30px;">
+                <el-tag
+                  style="margin-right:10px;"
+                  v-for="(item,index) in fieldTags"
+                  @close="closeTag(index)"
+                  :disable-transitions="true"
+                  closable>
+                  <span v-if="item.value||item.value===0">{{`${item.name}  ${item.condition}  ${item.value}`}}</span>
+                  <span v-else>{{`${item.name}  ${item.condition}  ${item.valueFrom} ~ ${item.valueTo}`}}</span>
+                </el-tag>
+              </el-row>
+            </el-collapse-item>
+          </el-collapse>
+
+          <el-row class="form-container" style="padding: 20px 0 0 20px;" v-if="addScreeningVisible">
+            <el-row class="margin-bottom-20">
+              <div class="font14 bold">添加/修改筛选条件</div>
+            </el-row>
+            <el-row>
+              <el-form 
+                :inline="true" 
+                size="small">
+                <el-form-item label="字段名：">
+                  <el-select
+                    v-model="customRequirement.propertyCode"
+                    @change="changeFieldName"
+                    style="width:133px;">
+                    <el-option
+                      v-for="(item,index) in allFieldName"
+                      :key="index"
+                      :label="item.propertyName"
+                      :value="item.propertyCode">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="条件：">
+                  <el-select 
+                    v-model="customRequirement.range"
+                    @change="changeField"
+                    style="width:133px;">
+                    <el-option
+                      v-for="(item,index) in condition"
+                      :key="index"
+                      :label="item.name"
+                      :value="item.value">
+                      </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="条件值：" v-if="fieldType=='int'">
+                  <el-input v-model="customRequirement.value" @blur="checkNumber(customRequirement.value)"></el-input>
+                </el-form-item>
+
+                <el-form-item label="条件值：" v-if="fieldType=='string'">
+                  <el-input v-model="customRequirement.value"></el-input>
+                </el-form-item>
+                <el-form-item label="条件值：" v-if="fieldType=='dateInterval'">
+                  <el-date-picker
+                    v-model="fieldValues"
+                    type="datetimerange"
+                    range-separator="-"
+                    start-placeholder="开始时间"
+                    end-placeholder="结束时间"
+                    value-format="yyyy-MM-dd HH:mm:ss">
+                  </el-date-picker>
+                </el-form-item>
+                <el-form-item label="条件值：" v-if="fieldType=='dateTime'">
+                  <el-date-picker
+                    v-model="customRequirement.value"
+                    type="datetime"
+                    placeholder="选择日期时间"
+                    value-format="yyyy-MM-dd HH:mm:ss">
+                  </el-date-picker>
+                </el-form-item>
+                <el-row style="display:inline-block;" v-if="fieldType=='interval'">
+                  <el-form-item label="条件值：">
+                    <el-input style="width:81px;" v-model="customRequirement.valueFrom" v-on:blur="checkInt(customRequirement)"></el-input>
+                  </el-form-item>
+                  <b style="display:inline-block;font-size:14px;color: #606266;position:relative;top:1px;right:5px;">到</b>
+                  <el-form-item>
+                    <el-input style="width:81px;" v-model="customRequirement.valueTo" v-on:blur="checkInt(customRequirement)"></el-input>
+                  </el-form-item>
+                </el-row>
+                <el-form-item v-if="fieldType">
+                  <el-button type="primary" @click="addFieldTag();screeningFormOpen='1'">确定</el-button>
+                  <el-button type="primary" plain @click="cancelAddFieldTag">取消</el-button>
+                </el-form-item>
+              </el-form>
+            </el-row>
+          </el-row>
+          <el-row style="text-align:left;">
+            <el-button type="primary" @click="getFiltercustomers">查询</el-button>
+            <el-button @click="resetScreeningForm()">重置</el-button>
+          </el-row>
+        </el-row>
+
+        <el-row class="table-container font14" style="font-size:16px;margin-bottom:15px;">
+          <span style="padding-left:4px;">
+            共筛选出
+            <span style="color:#57AFFF;">
+              {{totalCount}}
+            </span>
+            条客户数据
+          </span>
+        </el-row>
+
+        <el-row class="form-container" style="padding: 20px 0 0 20px;">
+          <el-row class="margin-bottom-20">
+            <div class="font14 bold">填写基本信息</div>
+          </el-row>
+          <el-form :inline="true" size="small">
+            <el-form-item label="名单名称：">
+              <el-input v-model="addListReq.listName" style="width:133px;" placeholder="请输入名单名称"></el-input>
+            </el-form-item>
+             <el-form-item label="名单状态：">
+              <el-switch
+                v-model="addListReq.validityStatus"
+                active-color="#13ce66"
+                inactive-color="#999999"
+                active-text="可见"
+                inactive-text="不可见"
+                active-value="0"
+                inactive-value="1">
+              </el-switch>
+            </el-form-item>
+          </el-form>
+        </el-row>
+        <el-row slot="footer" style="text-align:right;">
+          <el-button type="primary" plain @click="extractVisible=false;importVisible=false;">取消</el-button>
+          <el-button type="primary" :disabled="totalCount === 0" @click="addGenerate">确定</el-button>
+          <el-button type="info" @click="extractVisible=false" title="客户导入">上一步</el-button>
+        </el-row>
+      </el-dialog>
+
+
       <div slot="footer" style="text-align: right;">
-        <el-button type="primary" @click="submitUploadandimport()">确认导入</el-button>
-        <el-button @click="importVisible = false">取消</el-button>
-        <el-button type="primary" @click="">下一步</el-button>
+        <el-button type="primary" plain @click="importVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitUploadandimport()">确定导入</el-button>
+        <el-button type="info" @click="extractVisible=true;getRegion3(0);getAllBatch();" title="名单抽取">下一步</el-button>
       </div>
     </el-dialog>
 
@@ -202,7 +440,7 @@
       title="定制导入模板"
       :visible.sync="templateVisible"
       append-to-body>
-      <el-form label-width="100px">
+      <el-form size="small" label-width="100px">
         <el-form-item label="支持字段：">
           <el-tag :key="tag.propertyCode" v-for="tag in alltags" type="primary" @click.native="setToSelectedTags(tag)" size="medium" style="cursor:pointer;">
             {{tag.propertyName}}
@@ -225,7 +463,7 @@
       </el-form>
       <div slot="footer" style="text-align: right;">
         <el-button type="primary" @click="downloadTemplate(selectedtags,fileType)">确认</el-button>
-        <el-button @click="templateVisible = false">取消</el-button>
+        <el-button type="primary" plain @click="templateVisible = false">取消</el-button>
       </div>
     </el-dialog>
     
@@ -236,7 +474,7 @@
       :visible.sync="editVisible"
       append-to-body>
       <div style="height:600px;overflow-y:auto;">
-        <el-form :rules="rule" :model="customerReverseDetail.customer" ref="customerDetail" label-width="100px">
+        <el-form size="small" :rules="rule" :model="customerReverseDetail.customer" ref="customerDetail" label-width="100px">
           <el-form-item label="客户姓名" prop="customerName" style="width:50%">
             <el-input v-model="customerReverseDetail.customer.customerName" size="small" placeholder="上限50字符" maxlength="50"></el-input>
           </el-form-item>
@@ -411,16 +649,16 @@
       </div>
         <div slot="footer" style="text-align: right;">
           <!-- <el-button type="danger" @click="searchByCustomerId(resetParam,2);">重 置</el-button> -->
-          <el-button @click="editVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitForm('customerDetail');editCustomer(customerReverseDetail)">确 定</el-button>
+          <el-button type="primary" plain @click="editVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitForm('customerDetail');editCustomer(customerReverseDetail)">确定</el-button>
         </div>
       </el-dialog>
 
       <el-dialog append-to-body :visible.sync="deleteVisible" title="操作提示" width="30%">
         <span style="font-size:20px;">确认要删除该行吗？</span>
         <div slot="footer" class="dialog-footer" style="text-align: right;">
-          <el-button @click="deleteVisible = false">取 消</el-button>
-          <el-button type="primary" @click="deleteSth(deleteData,deleteType);">确 定</el-button>
+          <el-button type="primary" plain @click="deleteVisible = false">取消</el-button>
+          <el-button type="primary" @click="deleteSth(deleteData,deleteType);">确定</el-button>
         </div>
       </el-dialog>
 
@@ -431,7 +669,7 @@
       :visible.sync="detailVisible"
       append-to-body>
       <div style="height:500px;overflow-y:auto;">
-        <el-form label-width="100px">
+        <el-form size="small" label-width="100px">
         <el-form-item label="批次编号">
           <span>{{customerReverseDetail.customer.batchId}}</span>
         </el-form-item>
@@ -474,7 +712,7 @@
       </el-form>
       </div>
       <div slot="footer" style="text-align: right;">
-        <el-button @click="detailVisible = false">返 回</el-button>
+        <el-button type="primary" plain @click="detailVisible = false">返回</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -484,7 +722,7 @@
       :visible.sync="addVisible"
       append-to-body>
       <div style="height:600px;overflow-y:auto;">
-        <el-form :rules="rule" :model="customerDetail" ref="customerDetail" label-width="100px">
+        <el-form size="small" :rules="rule" :model="customerDetail" ref="customerDetail" label-width="100px">
           <el-form-item label="客户姓名" prop="customerName" style="width:50%">
             <el-input v-model="customerDetail.customerName" size="small" placeholder="上限50字符" maxlength="50"></el-input>
           </el-form-item>
@@ -658,9 +896,9 @@
         </el-form>
       </div>
         <div slot="footer" style="text-align: right;">
-          <el-button type="danger" @click="resetForm('customerDetail');resetArrays()">重 置</el-button>
-          <el-button @click="addVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitForm('customerDetail');addCustomer(customerDetail,addressDatas,linkDatas,carDatas)">确 定</el-button>
+          <el-button @click="resetForm('customerDetail');resetArrays()">重置</el-button>
+          <el-button type="primary" plain @click="addVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitForm('customerDetail');addCustomer(customerDetail,addressDatas,linkDatas,carDatas)">确定</el-button>
         </div>
       </el-dialog>
     <el-dialog
@@ -670,8 +908,8 @@
       append-to-body>
     <span style="font-size:20px;">确定删除此客户？</span>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button @click="delVisible = false">取 消</el-button>
-      <el-button type="primary" @click="delVisible = false;delCustomer(delReq);">确 定</el-button>
+      <el-button type="primary" plain @click="delVisible = false">取消</el-button>
+      <el-button type="primary" @click="delVisible = false;delCustomer(delReq);">确定</el-button>
     </div>
   </el-dialog>
   <el-dialog
@@ -681,8 +919,8 @@
     append-to-body>
   <span style="font-size:20px;">确定删除选定内容？</span>
   <div slot="footer" class="dialog-footer" style="text-align: right;">
-    <el-button @click="batchDelVisible = false">取 消</el-button>
-    <el-button type="primary" @click="batchDelVisible = false;batchDelCustomer(batchDelReq);">确 定</el-button>
+    <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
+    <el-button type="primary" @click="batchDelVisible = false;batchDelCustomer(batchDelReq);">确定</el-button>
   </div>
   </el-dialog>
   </div>
@@ -702,7 +940,11 @@ import {
   getRegion,
   deleteAddress,
   deleteLink,
-  deleteCar
+  deleteCar,
+  getAllBatch,
+  getAllField,
+  getFiltercustomers,
+  addGenerate
 } from '@/api/customerManagement'
 import { formatDateTime, clone } from '@/utils/tools'
 
@@ -710,6 +952,65 @@ export default {
   name: 'customer_management',
   data() {
     return {
+      formContainerOpen: '1',
+      // 名单抽取
+      extractVisible: false,
+      screeningFormOpen: '',
+      addScreeningVisible: false,
+      allBatch: [],
+      allFieldName: [],
+      totalCount: 0,
+      screeningTimeValue: [],
+      searchReq: {
+        batchId: '',
+        beginScore: '',
+        city: '',
+        customRequirements: [
+          {
+            // belongTo: '',
+            // fieldType: '',
+            // propertyCode: '',
+            // range: '',
+            // value: '',
+            // valueFrom: '',
+            // valueTo: ''
+          }
+        ],
+        customerSex: '',
+        district: '',
+        endScore: '',
+        province: '',
+        modifyTimeStart: '',
+        modifyTimeEnd: ''
+      },
+      addListReq: {
+        customerQueryModel: {},
+        listName: '',
+        validityStatus: '0'
+      },
+      fieldType: '',
+      fieldValues: [],
+      fieldTags: [],
+      fieldTagInfo: {},
+      customRequirement: {
+        belongTo: '',
+        fieldType: '',
+        propertyCode: '',
+        range: '',
+        value: '',
+        valueFrom: '',
+        valueTo: ''
+      },
+      customRequirements: [],
+      condition: [],
+      screening: {
+        region: {
+          province: '',
+          city: '',
+          district: ''
+        }
+      },
+      // ---------------------
       deleteData: '', // 用来删除的信息
       deleteType: '', // 删除的类型
       deleteVisible: false,
@@ -834,9 +1135,410 @@ export default {
     }
   },
   mounted() {
+    this.handleChangeAcitve()
     this.searchCustomer(this.req)
   },
   methods: {
+    handleChangeAcitve(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
+    handleChangeAcitve2(active = ['1']) {
+      if (active.length) {
+        $('.form-more2').text('收起')
+      } else {
+        $('.form-more2').text('更多')
+      }
+    },
+    // 名单抽取
+    checkCustomForm() {
+      if (!this.customRequirement.propertyCode) {
+        this.$message.error('请选择字段名')
+        return false
+      } else if (!this.customRequirement.range) {
+        this.$message.error('请选择条件')
+        return false
+      } else if (this.customRequirement.value === 0) {
+        return true
+      } else if (!this.customRequirement.value) {
+        if (this.customRequirement.fieldType === 2 && this.customRequirement.range === 8 && !(this.fieldValues.length)) {
+          this.$message.error('请填写条件值')
+          return false
+        } else if (!this.customRequirement.valueFrom) {
+          this.$message.error('请填写条件值')
+          return false
+        } else if (!this.customRequirement.valueTo) {
+          this.$message.error('请填写条件值')
+          return false
+        } else {
+          return true
+        }
+      } else {
+        return true
+      }
+    },
+    // 查询客户返回数量
+    getFiltercustomers() {
+      if (this.fieldTags.length) {
+        this.searchReq.customRequirements = this.customRequirements
+      } else {
+        this.searchReq.customRequirements = []
+      }
+      if (this.screeningTimeValue.length) {
+        this.searchReq.modifyTimeStart = this.screeningTimeValue[0]
+        this.searchReq.modifyTimeEnd = this.screeningTimeValue[1]
+      } else {
+        this.searchReq.modifyTimeStart = ''
+        this.searchReq.modifyTimeEnd = ''
+      }
+      getFiltercustomers(this.searchReq).then(response => {
+        if (response.data.code === 0) {
+          this.totalCount = response.data.data
+        } else {
+          this.totalCount = 0
+          this.$message.error('查询失败')
+        }
+      }).catch(error => {
+        throw new Error(error)
+      })
+    },
+    // 查询所有字段名
+    getAllField() {
+      getAllField().then(response => {
+        if (response.data.code === 0) {
+          this.allFieldName = this.fieldNameFilter(response.data.data)
+        } else {
+          this.$message.error('获取字段名失败')
+        }
+        this.addScreeningVisible = true
+      }).catch(error => {
+        throw new Error(error)
+      })
+    },
+    // 去掉基础条件重复的字段名
+    fieldNameFilter(arr) {
+      var obj = arr
+      for (var i = 0; i < obj.length; i++) {
+        if (obj[i].id === 33) obj.splice(i, 1)
+        if (obj[i].id === 39) obj.splice(i, 1)
+        if (obj[i].id === 40) obj.splice(i, 1)
+        if (obj[i].id === 41) obj.splice(i, 1)
+        if (obj[i].id === 69) obj.splice(i, 1)
+      }
+      return obj
+    },
+    // 查询所有批次
+    getAllBatch() {
+      console.log(this.searchReq)
+      getAllBatch().then(response => {
+        if (response.data.code === 0) {
+          this.allBatch = response.data.data
+        } else {
+          this.$message.error('获取批次失败')
+        }
+      }).catch(error => {
+        throw new Error(error)
+      })
+    },
+    // 正整数且前者不能大于后者
+    checkPositiveInteger(req) {
+      var beginVal = 0
+      var endVal = 0
+      if (req.beginScore) beginVal = parseInt(req.beginScore)
+      else if (!req.beginScore) beginVal = 0
+      if (req.endScore) endVal = parseInt(req.endScore)
+      else if (!req.endScore) endVal = 0
+      if (beginVal >= 0) {
+        if (beginVal > endVal && req.endScore) {
+          this.$message.error('分数取值前者不能大于后者！')
+        }
+      } else {
+        this.$message.error('分数只能是正整数')
+        this.searchReq.beginScore = '0'
+      }
+      if (endVal >= 0) {
+        if (beginVal > endVal && req.endScore) {
+          this.$message.error('分数取值前者不能大于后者！')
+        }
+      } else {
+        this.$message.error('分数只能是正整数')
+        this.searchReq.endScore = '0'
+      }
+    },
+    // 数字且前者不能大于后者
+    checkInt(req) {
+      if (req.valueFrom === null && req.valueTo === null) return false
+      var beginVal = 0
+      var endVal = 0
+      var reg = /-[0-9]+(.[0-9]+)?|[0-9]+(.[0-9]+)?/
+      if (req.valueFrom) beginVal = Number(req.valueFrom)
+      if (req.valueTo) endVal = Number(req.valueTo)
+      if (reg.test(beginVal) && reg.test(endVal)) {
+        if (beginVal > endVal && req.valueTo) {
+          this.$message.error('数字条件值前者不能大于后者！')
+          this.customRequirement.valueFrom = null
+          this.customRequirement.valueTo = null
+        }
+      } else {
+        this.$message.error('请填写数字')
+        this.customRequirement.valueFrom = null
+        this.customRequirement.valueTo = null
+      }
+    },
+    checkNumber(val) {
+      var num = 0
+      var reg = /-[0-9]+(.[0-9]+)?|[0-9]+(.[0-9]+)?/
+      if (val) num = Number(val)
+      if (!reg.test(num)) {
+        this.$message.error('请填写数字')
+        this.customRequirement.value = 0
+      } else {
+        return true
+      }
+    },
+    // 地区三级连跳
+    getRegion3(req) {
+      getRegion(req).then(response => {
+        if (response.data.code === 0) {
+          if (response.data.data[0].regionLevel === 1) {
+            this.screening.region.province = response.data.data
+          } else if (response.data.data[0].regionLevel === 2) {
+            this.screening.region.city = response.data.data
+            if (this.screening.region.city.length === 1) {
+              this.searchReq.city = response.data.data[0].regionCode
+              this.$set(this.searchReq, 'district', '')
+              getRegion(this.searchReq.city).then(response => {
+                this.screening.region.district = response.data.data
+              }).catch(error => {
+                throw new Error(error)
+              })
+            } else {
+              this.searchReq.city = ''
+              this.$set(this.searchReq, 'district', '')
+            }
+          } else if (response.data.data[0].regionLevel === 3) {
+            this.screening.region.district = response.data.data
+            this.$set(this.screening, 'district', '')
+          }
+        }
+      }).catch(error => {
+        throw new Error(error)
+      })
+    },
+    // 自定义筛选条件
+    // 选择字段名
+    changeFieldName(value) {
+      let obj = {}
+      obj = this.allFieldName.find((item) => {
+        return item.propertyCode === value
+      })
+      this.fieldValues = []
+      this.$set(this.customRequirement, 'value', '')
+      this.$set(this.customRequirement, 'valueFrom', '')
+      this.$set(this.customRequirement, 'valueTo', '')
+      this.$set(this.customRequirement, 'range', '')
+      this.$set(this.customRequirement, 'fieldType', obj.fieldType)
+      this.$set(this.customRequirement, 'belongTo', obj.belongTo)
+      this.$set(this.fieldTagInfo, 'name', obj.propertyName)
+      this.getFieldItem(obj)
+    },
+    // 选择条件
+    changeField(index) {
+      let obj = {}
+      obj = this.condition.find((item) => {
+        return item.value === index
+      })
+      this.fieldValues = []
+      this.$set(this.fieldTagInfo, 'condition', obj.name)
+      this.$set(this.customRequirement, 'value', '')
+      this.$set(this.customRequirement, 'valueFrom', '')
+      this.$set(this.customRequirement, 'valueTo', '')
+      if (this.customRequirement.fieldType === 0) this.fieldType = 'string'
+      else if (index >= '0' && index <= '5' && this.customRequirement.fieldType === 2) this.fieldType = 'dateTime'
+      else if (index === '8' && this.customRequirement.fieldType === 2) {
+        this.fieldType = 'dateInterval'
+        this.customRequirement.value = ''
+      } else if (index === '8' && this.customRequirement.fieldType === 1) {
+        this.fieldType = 'interval'
+      } else this.fieldType = 'int'
+    },
+    // 添加标签
+    addFieldTag() {
+      console.log(this.customRequirement.value)
+      var tagTemp = {}
+      var temp = {}
+      if (this.customRequirement.value || this.customRequirement.value === 0) {
+        this.$set(this.fieldTagInfo, 'value', this.customRequirement.value)
+        this.fieldTagInfo.valueFrom = ''
+        this.fieldTagInfo.valueTo = ''
+        this.customRequirement.valueFrom = ''
+        this.customRequirement.valueTo = ''
+      } else if (this.fieldValues.length) {
+        this.$set(this.customRequirement, 'valueFrom', this.fieldValues[0])
+        this.$set(this.customRequirement, 'valueTo', this.fieldValues[1])
+        this.$set(this.fieldTagInfo, 'valueFrom', this.fieldValues[0])
+        this.$set(this.fieldTagInfo, 'valueTo', this.fieldValues[1])
+        this.fieldTagInfo.value = ''
+        this.customRequirement.value = ''
+      } else {
+        this.$set(this.fieldTagInfo, 'valueFrom', this.customRequirement.valueFrom)
+        this.$set(this.fieldTagInfo, 'valueTo', this.customRequirement.valueTo)
+        this.fieldTagInfo.value = ''
+        this.customRequirement.value = ''
+      }
+      if (!this.checkCustomForm()) {
+        return false
+      }
+      tagTemp = clone(this.fieldTagInfo)
+      if (JSON.stringify(this.fieldTags).indexOf(JSON.stringify(tagTemp)) === -1) {
+        this.fieldTags.push(tagTemp)
+      } else {
+        this.$message.error('请勿添加相同的自定义筛选条件')
+      }
+      temp = clone(this.customRequirement)
+      if (JSON.stringify(this.customRequirements).indexOf(JSON.stringify(temp)) === -1) {
+        this.customRequirements.push(temp)
+      } else {
+        this.$message.error('请勿添加相同的自定义筛选条件')
+      }
+    },
+    // 取消添加
+    cancelAddFieldTag() {
+      this.customRequirement = {
+        belongTo: '',
+        fieldType: '',
+        propertyCode: '',
+        range: '',
+        value: '',
+        valueFrom: '',
+        valueTo: ''
+      }
+      this.fieldValues = []
+      this.fieldTagInfo = {}
+      this.addScreeningVisible = false
+    },
+    closeTag(index) {
+      this.fieldTags.splice(index, 1)
+      this.customRequirements.splice(index, 1)
+    },
+    getFieldItem(obj) { // 0 string , 1 int , 2 date
+      this.condition = []
+      if (obj.fieldType === 0) {
+        this.condition = [
+          { name: '等于', value: '0' },
+          { name: '包含', value: '6' },
+          { name: '不包含', value: '7' }
+        ]
+      } else if (obj.fieldType === 1) {
+        this.condition = [
+          { name: '等于', value: '0' },
+          { name: '不等于', value: '1' },
+          { name: '大于', value: '2' },
+          { name: '大于等于', value: '3' },
+          { name: '小于', value: '4' },
+          { name: '小于等于', value: '5' },
+          { name: '范围', value: '8' }
+        ]
+      } else {
+        this.condition = [
+          { name: '等于', value: '0' },
+          { name: '不等于', value: '1' },
+          { name: '大于', value: '2' },
+          { name: '大于等于', value: '3' },
+          { name: '小于', value: '4' },
+          { name: '小于等于', value: '5' },
+          { name: '范围', value: '8' }
+        ]
+      }
+    },
+    resetScreeningForm() {
+      console.log(this.searchReq)
+      this.fieldType = ''
+      this.fieldTags = []
+      this.screeningTimeValue = []
+      this.fieldValues = []
+      this.customRequirements = []
+      this.searchReq = {
+        batchId: '',
+        beginScore: '',
+        city: '',
+        customRequirements: [
+          // {
+          //   belongTo: '',
+          //   fieldType: '',
+          //   propertyCode: '',
+          //   range: '',
+          //   value: '',
+          //   valueFrom: '',
+          //   valueTo: ''
+          // }
+        ],
+        customerSex: '',
+        district: '',
+        endScore: '',
+        province: '',
+        modifyTimeStart: '',
+        modifyTimeEnd: ''
+      }
+      this.cancelAddFieldTag()
+    },
+    addGenerate() {
+      if (!this.addListReq.listName) {
+        this.$message.error('请输入名单名称')
+        return false
+      } else {
+        if (this.fieldTags.length) {
+          this.searchReq.customRequirements = this.customRequirements
+        } else {
+          this.searchReq.customRequirements = []
+        }
+        if (this.screeningTimeValue.length) {
+          this.searchReq.modifyTimeStart = this.screeningTimeValue[0]
+          this.searchReq.modifyTimeEnd = this.screeningTimeValue[1]
+        } else {
+          this.searchReq.modifyTimeStart = ''
+          this.searchReq.modifyTimeEnd = ''
+        }
+        this.addListReq.customerQueryModel = clone(this.searchReq)
+        getFiltercustomers(this.searchReq).then(response => {
+          if (response.data.code === 0) {
+            this.totalCount = response.data.data
+            if (!this.totalCount) {
+              this.$message.error('该条件下无符合的数据，无法生成名单')
+            } else {
+              addGenerate(this.addListReq).then(response => {
+                if (response.data.code === 0) {
+                  this.$message.success('生成名单成功')
+                  this.extractVisible = false
+                  this.importVisible = false
+                } else {
+                  this.$message.error('生成名单失败')
+                }
+              }).catch(error => {
+                throw new Error(error)
+              })
+            }
+          } else {
+            this.totalCount = 0
+          }
+        }).catch(error => {
+          throw new Error(error)
+        })
+      }
+    },
+    resetScreening() {
+      this.addListReq = {
+        customerQueryModel: {},
+        listName: '',
+        validityStatus: '0'
+      }
+      this.totalCount = 0
+      this.resetScreeningForm()
+    },
+    // ---------------------------------
     addAddress() {
       this.addressDatas.push({
         province: '',
@@ -1471,26 +2173,16 @@ export default {
   }
 }
 </script>
-<style rel="stylesheet/scss" lang="scss">
-.el-table thead {
-  color: #000 !important;
-}
-
-</style>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-.el-table {
-  border: 1px solid #ecebe9;
-  thead th .cell {
-    color: #000;
+.table-container{
+  .form-container{
+    box-shadow:none;
+    border:1px solid #EBEEF5;
+    border-left: solid 4px #57AFFF;
   }
 }
-.el-form-item {
-  margin-bottom: 20px;
-}
-// el-dialog .el-form-item{
-//   margin-bottom:50px;
-// }
+
 .inputWidth {
   width:55%;
 }

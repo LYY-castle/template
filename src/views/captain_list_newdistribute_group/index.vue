@@ -52,13 +52,11 @@
                       <el-option v-for="item in countryInfo" :key="item.regionCode" :label="item.regionName" :value="item.regionCode"></el-option>
                     </el-select>
                   </el-form-item>
+                  <el-form-item>
+                    <el-button size="small" type="primary" @click="selectActive">查询</el-button>
+                    <el-button size="small" @click="resetReq('searchForm');">重置</el-button>
+                  </el-form-item>
                 </el-row>
-              </el-row>
-              <el-row style="text-align:right">
-                <el-form-item style="margin-bottom:0px">
-                <el-button size="small" type="primary" @click="selectActive">查询</el-button>
-                <el-button size="small" @click="resetReq('searchForm');">重置</el-button>
-                </el-form-item>
               </el-row>
             </el-form>
           </el-collapse-item>

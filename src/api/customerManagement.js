@@ -105,3 +105,36 @@ export function deleteCar(carinfoId) {
     method: 'get'
   })
 }
+
+// 名单抽取-------------
+// 查询所有批次
+export function getAllBatch() {
+  return request({
+    url: `/customer/batch/all`
+  })
+}
+
+// 查询所有字段名
+export function getAllField() {
+  return request({
+    url: `/customer/template/all`
+  })
+}
+
+// 查询符合的数量
+export function getFiltercustomers(req) {
+  return request({
+    url: `/customer/filtercustomers`,
+    method: 'post',
+    data: req
+  })
+}
+
+// 确认生成名单
+export function addGenerate(req) {
+  return request({
+    url: `/nameList/generate`,
+    method: 'post',
+    data: req
+  })
+}
