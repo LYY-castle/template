@@ -41,7 +41,7 @@
         <div class="font14 bold">活动管理表</div>
       </el-row>
       <el-row class="margin-bottom-20">
-        <el-button type="success" @click="addVisible=true;clearForm(campaignDetail,'campaignDetail');outcalltimeInfos=[];failTreatmentInfos=[];campaignExpiryDate=[];customerColumnInfos=[]">新建</el-button>
+        <el-button type="success" @click="addVisible=true;clearForm(campaignDetail,'campaignDetail');outcalltimeInfos=[];failTreatmentInfos=[];campaignExpiryDate=[];customerColumnInfos=[];new_dept_ids=[]">新建</el-button>
         <el-button type="danger" @click="batchDelVisible=true">批量删除</el-button>
       </el-row>
       <el-row>

@@ -1046,7 +1046,7 @@ export default {
         headers1.push(selectedtags[i].propertyName)
       }
       var headers = headers1.join(',')
-      window.location.href = `/api/v1/customer/exportexcel?headers=` + headers + `&fileType=` + fileType
+      window.location.href = process.env.BASE_API + `/customer/exportexcel?headers=` + headers + `&fileType=` + fileType
       // window.location.href = `http://localhost:9091/customer/exportexcel?headers=` + headers + `&fileType=` + fileType
       this.templateVisible = false
     },

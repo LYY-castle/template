@@ -38,7 +38,7 @@
     </el-collapse>
     <el-row class="table-container">
       <el-row class="margin-bottom-20">
-        <div class="font14 bold">小结管理表</div>
+        <div class="font14 bold">客户管理表</div>
       </el-row>
       <el-row class="margin-bottom-20">
         <el-button type="success" size="small" @click="resetArrays();addVisible=true;clearForm(customerDetail,'customerDetail');">新建</el-button>
@@ -1864,7 +1864,7 @@ export default {
         headers1.push(selectedtags[i].propertyName)
       }
       var headers = headers1.join(',')
-      window.location.href = `/api/v1/customer/exportexcel?headers=` + headers + `&fileType=` + fileType
+      window.location.href = process.env.BASE_API + `/customer/exportexcel?headers=` + headers + `&fileType=` + fileType
       // window.location.href = `http://localhost:9091/customer/exportexcel?headers=` + headers + `&fileType=` + fileType
       this.templateVisible = false
     },
