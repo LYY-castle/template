@@ -9,16 +9,6 @@
           <el-form-item prop="batchName" label="批次名称：">
             <el-input v-model="req.batchName" placeholder="批次名称（限长100字符）" maxlength="100"></el-input>
           </el-form-item>
-          <el-form-item prop="validityStatus" label="状态：">
-            <el-select v-model="req.validityStatus" placeholder="状态" style="width: 100%;">
-            <el-option
-                v-for="item in validity"
-                :key="item.val"
-                :label="item.name"
-                :value="item.val">
-            </el-option>
-          </el-select>
-          </el-form-item>
           <el-form-item prop="modifierName" label="操作人：">
             <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
           </el-form-item>
@@ -53,7 +43,7 @@
         <div class="font14 bold">批次管理表</div>
       </el-row>
       <el-row class="margin-bottom-20">
-        <el-button type="success" size="small" @click="addVisible=true;batchSnapshot=[];fileList=[];resetForm('addBatch');clearUpload('upload');">新建</el-button>
+        <!-- <el-button type="success" size="small" @click="addVisible=true;batchSnapshot=[];fileList=[];resetForm('addBatch');clearUpload('upload');">新建</el-button> -->
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         <!-- <el-button type="primary" size="small" @click="getTemp()">下载模板</el-button> -->
         <!-- <el-button type="primary" size="small" @click="uploadVisible=true;changeUpload(1);clearUpload('upload');">上传模板</el-button> -->
@@ -83,46 +73,10 @@
               {{ scope.row.batchName }}
             </template>
           </el-table-column>
-          <!-- <el-table-column
-            align="center"
-            prop="ascriptionName"
-            label="客户归属"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ scope.row.ascriptionName }}
-            </template>
-          </el-table-column>
           <el-table-column
             align="center"
-            prop="validityTime"
-            width="100"
-            label="有效期">
-          </el-table-column> -->
-          <el-table-column
-            align="center"
-            prop="customerNumber"
-            label="数量总量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="successNumber"
+            prop="importNum"
             label="可用数量">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="状态">
-            <template slot-scope="scope">
-              <div :class="scope.row.validityStatus===0?'visible':scope.row.validityStatus===1?'invisible':'visible'">
-                <span>{{scope.row.validityStatus===0?'可用':scope.row.validityStatus===1?'不可用':'正在导入'}}</span>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="失败详情">
-            <template slot-scope="scope">
-            <el-button @click="getDetailById(scope.row.batchId);detailVisible=true;" type="text" size="small">查看详情</el-button>
-          </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -136,8 +90,10 @@
           <el-table-column
             width="155"
             align="center"
-            prop="creatorTime"
             label="操作时间">
+            <template slot-scope="scope">
+              {{formatDateTime(scope.row.creatorTime)}}
+            </template>
           </el-table-column>
           <el-table-column
             width="100"
@@ -176,39 +132,14 @@
         <el-form-item label="批次名称" prop="batchName">
           <el-input v-model="batchDetail.batchName" size="small" placeholder="上限100字符" maxlength="100"></el-input>
         </el-form-item>
-        <!-- <el-form-item label="批次来源" prop="ascriptionId">
-          <el-select v-model="batchDetail.ascriptionId" placeholder="请选择" style="width: 100%;">
-            <el-option
-                v-for="item in ascrislistData"
-                :key="item.ascriptionId"
-                :label="item.ascriptionName"
-                :value="item.ascriptionId">
-            </el-option>
-          </el-select>
-        </el-form-item> -->
-        <el-form-item label="可用性" prop="validityStatus">
-          <el-radio-group v-model="batchDetail.validityStatus" size="small">
-            <el-radio label='0' border>可用</el-radio>
-            <el-radio label='1' border>不可用</el-radio>
-          </el-radio-group>
+        <el-form-item label="导入数量">
+          <span>{{batchDetail.importNum}}</span>
         </el-form-item>
         <el-form-item label="操作人" prop="modifierName">
-          <span>{{batchDetail.modifierName}}</span>
+          <span>{{batchDetail.creatorName}}</span>
         </el-form-item>
         <el-form-item label="操作时间" prop="modifierTime">
-          <span>{{batchDetail.modifierTime}}</span>
-        </el-form-item>
-        <!-- <el-form-item label="有效时间" prop="validityTime">
-          <el-date-picker
-              v-model="batchDetail.validityTime"
-              type="datetime"
-              placeholder="开始日期"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
-          </el-date-picker>
-        </el-form-item> -->
-        <el-form-item label="批次描述" prop="description">
-          <el-input v-model="batchDetail.description" size="small" type="textarea" placeholder="上限200字符" maxlength="100"></el-input>
+          <span>{{formatDateTime(batchDetail.creatorTime)}}</span>
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
@@ -362,7 +293,6 @@
 <script>
 import {
   queryBatch,
-  findAscrislist,
   queryDetailById,
   confirmimport,
   modifyBatch,
@@ -419,7 +349,6 @@ export default {
       req: {
         batchId: '',
         batchName: '',
-        validityStatus: '',
         modifierName: '',
         startCreateTime: '',
         endCreateTime: '',
@@ -429,7 +358,6 @@ export default {
       req2: {
         batchId: '',
         batchName: '',
-        validityStatus: '',
         modifierName: '',
         startCreateTime: '',
         endCreateTime: '',
@@ -437,7 +365,6 @@ export default {
         pageSize: 10
       },
       batchDetail: {
-        validityTime: moment().format('YYYY-MM-DD HH:mm:ss')
       },
       addReq: {
         batchName: '',
@@ -456,7 +383,6 @@ export default {
     this.formContainer()
     this.handleChangeAcitve()
     this.getBatch(this.req)
-    this.getAscrislist()
   },
   methods: {
     handleChangeAcitve(active = ['1']) {
@@ -490,20 +416,6 @@ export default {
           obj[key] = ''
         }
       }
-    },
-    // 查询所有归属
-    getAscrislist() {
-      findAscrislist().then(response => {
-        if (response.data.code === 0) {
-          this.ascrislistData = response.data.data
-
-          if (this.ascrislistData && this.ascrislistData.length > 0) {
-            // 默认取第二个 (其它).
-            this.batchDetail.ascriptionId = this.ascrislistData[0].ascriptionId
-            this.addReq.ascriptionId = this.ascrislistData[0].ascriptionId
-          }
-        }
-      })
     },
     // 下载模版
     getTemp() {
@@ -666,7 +578,6 @@ export default {
       this.req = {
         batchId: '',
         batchName: '',
-        validityStatus: '',
         modifierName: '',
         startCreateTime: '',
         endCreateTime: '',
@@ -676,7 +587,6 @@ export default {
       this.req2 = {
         batchId: '',
         batchName: '',
-        validityStatus: '',
         modifierName: '',
         startCreateTime: '',
         endCreateTime: '',
@@ -730,23 +640,7 @@ export default {
       queryDetailById(batchId)
         .then(response => {
           if (response.data.code === 0) {
-            this.failDetail = response.data.data.failureCause
-            if (this.failDetail !== null) {
-              this.failDetail = this.failDetail.replace(/\{/g, '错误原因：')
-              this.failDetail = this.failDetail.replace(/curRow=/g, '错误行数：')
-              this.failDetail = this.failDetail.replace(/\},/g, '<hr/>')
-              this.failDetail = this.failDetail.replace(/\[/g, '')
-              this.failDetail = this.failDetail.replace(/\]/g, '')
-              this.failDetail = this.failDetail.replace(/\}/g, '')
-            }
             this.batchDetail = response.data.data
-            this.batchDetail.validityStatus = this.batchDetail.validityStatus.toString()
-            this.batchDetail.validityTime = formatDateTime(this.batchDetail.validityTime)
-            if (this.batchDetail.description === null) {
-              this.batchDetail.description = '无'
-            } else {
-              this.batchDetail.description = response.data.data.description
-            }
           }
         })
         .catch(error => {
@@ -758,6 +652,12 @@ export default {
       if (!this.validate) {
         return false
       }
+      delete req['creatorId']
+      delete req['batchId']
+      delete req['creatorName']
+      delete req['creatorTime']
+      delete req['importTime']
+      console.log(req)
       this.editVisible = false
       modifyBatch(req).then(response => {
         if (response.data.code === 0) {

@@ -8,13 +8,6 @@ export function queryBatch(req) {
     params: req
   })
 }
-// 查询所有归属
-export function findAscrislist() {
-  return request({
-    url: '/customer/getascrislist',
-    method: 'get'
-  })
-}
 // 查询失败详情
 export function queryDetailById(batchId) {
   return request({
@@ -35,8 +28,8 @@ export function confirmimport(fileUrl, fileName) {
 export function modifyBatch(req) {
   return request({
     url: '/batch/edit',
-    method: 'get',
-    params: req
+    method: 'post',
+    data: req
   })
 }
 // 删除批次

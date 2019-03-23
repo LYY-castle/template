@@ -118,14 +118,6 @@
       </el-collapse-item>
     </el-collapse>
 
-    <!-- <template>
-    <el-row>
-        <el-tabs @tab-click="handleClick" v-model="activeName" type="card">
-          <el-tab-pane name='firstDial' label='首拨名单'></el-tab-pane>
-          <el-tab-pane name='orderDial' label='预约名单'></el-tab-pane>
-        </el-tabs>
-    </el-row>
-    </template> -->
 
     <el-row class="table-container">
       <el-row class="margin-bottom-20">
@@ -244,19 +236,6 @@
             :show-overflow-tooltip="true"
             width="130">
           <template slot-scope="scope">
-            <!-- <a v-if="scope.row.status && scope.row.isBlacklist === '0' && scope.row.isNodisturb === '0' && scope.row.staffId === aId" @click="changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);" size="small" type="text">
-              <img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</a>
-            <div v-if="scope.row.staffId !== aId" size="small" type="text">
-              不可拨打</div>
-            <el-tooltip v-if="scope.row.status === '2' || scope.row.status === '3' || scope.row.status === '4'" class="item" effect="dark"  content="该状态不能拨打" placement="left-start">
-              <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
-            </el-tooltip>
-            <el-tooltip v-if="scope.row.isBlacklist === '1'" class="item" effect="dark"  content="该号码为免访客户" placement="left-start">
-              <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
-            </el-tooltip>
-            <el-tooltip v-if="scope.row.isNodisturb === '1'" class="item" effect="dark"  content="该号码处于免访号段中" placement="left-start">
-              <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
-            </el-tooltip> -->
             <a v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb) && scope.row.staffId === aId" @click="sumTotal=0;products=[];customerNote='';changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);" size="small" type="text">
               <img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</a>
             <div v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb)" v-show="scope.row.staffId !== aId" size="small" type="text">
@@ -307,11 +286,13 @@
         </el-col>
         <el-col :span="6" class="font12">
           <span>手机号码：</span>
-          <b style="color:#020202;">{{customerInfo.mobile}}</b>
+          <b style="color:#020202;">{{this.customerPhone}}</b>
         </el-col>
         <el-col :span="6" class="font12" v-if="!(item === 'customerName' || item === 'mobile')" v-for="(item,index) in customerColumnInfos">
-          <span>{{item === 'email' ? 'email:' : item === 'idNumber' ? '身份证:': item === 'resideAddress' ? '地址:' : item === 'sex' ? '性别:': item === 'source' ? '客户来源:' : item === 'customerId' ? '客户编号:': item === 'wechatPhone' ? '微信手机号:' : item === 'bankCardType' ? '持卡类型:' : ''}}</span>
-          <b style="color:#020202;" :class="item" v-if="!isInput">{{item === 'email' ? customerInfo.email : item === 'idNumber' ? customerInfo.idNumber: item === 'resideAddress' ? customerInfo.resideAddress : item === 'sex' ? showSex(customerInfo.sex): item === 'source' ? customerInfo.source : item === 'customerId' ? customerInfo.customerId: item === 'wechatPhone' ? customerInfo.wechatPhone : item === 'bankCardType' ? customerInfo.bankCardType : ''}}</b>
+          <span>
+            {{item === 'customerId' ? '客户编号' : item === 'sex' ? '性别' : item === 'mobile' ? '联系电话' : item === 'province' ? '所在省' : item === 'city' ? '所在市' : item === 'district' ? '所在县/区' : item === 'detail' ? '详细地址' : item === 'score' ?'客户评分' : item === 'remark' ? '备注' : item === 'idNumber' ? '身份证' :''}}
+          </span>
+          <b style="color:#020202;" :class="item" v-if="!isInput">{{item === 'customerId' ? customerInfo.customerId : item === 'sex' ? showSex(customerInfo.customerSex): item === 'mobile' ? this.customerPhone : item === 'province' ? customerInfo.province: item === 'city' ? customerInfo.city : item === 'district' ? customerInfo.district: item === 'detail' ? customerInfo.detail : item === 'score' ? customerInfo.score : item === 'remark' ? customerInfo.remark : item === 'idNumber'? customerInfo.idNo : ''}}</b>
           <el-input size="mini" style="width:45%;display:none;" :class="item" :id="item+'input'"></el-input>&nbsp;&nbsp;
           <i class="el-icon-circle-check-outline" @click="modifyCustomerInfo(customerInfo.customerId,item)" style="cursor:pointer;display:none;" :id="item+'btn1'"></i>
           <i class="el-icon-circle-close-outline" @click="changeToInput(item)" style="cursor:pointer;display:none;" :id="item+'btn2'"></i>
@@ -362,28 +343,6 @@
     <el-row type="flex">
       <el-col class="table-container" style="width:60.1%;">
         <b class="font14">产品信息</b>
-        <!-- <el-row style="margin-top:20px;"> -->
-          <!-- <el-form :inline="true" size="mini">
-            <el-form-item>
-              <el-input placeholder="请输入搜索内容" maxlength="50">
-                 <i slot="prefix" class="el-input__icon el-icon-search" style="cursor:pointer;"></i>
-              </el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-select placeholder="请选择类型"> -->
-
-                <!-- <el-option
-                  v-for="item in taskStatusOptions"
-                  :key="item.value"
-                  :value="item.value"
-                  :label="item.label">
-
-                </el-option> -->
-
-              <!-- </el-select>
-            </el-form-item>
-          </el-form>
-        </el-row> -->
         <el-row style="margin-top:20px;">
           <el-table
             :data="products">
@@ -437,19 +396,6 @@
             </el-table-column>
           </el-table>
         </el-row>
-        <!-- <el-row style="margin-top:5px;">
-          <el-pagination
-            v-if="pageShow"
-            @size-change="handleSizeChange123"
-            @current-change="handleCurrentChange123"
-            :current-page='pageInfo.pageNo'
-            :page-sizes="[10, 20, 30, 40, 50]"
-            :page-size='pageInfo.pageSize'
-            layout="total, prev, pager, next, jumper "
-            :total='pageInfo.totalCount' 
-            style="text-align: right;float:right;">
-          </el-pagination>
-        </el-row> -->
       </el-col>
       <el-col class="table-container" style="padding:20px 0;width:38.4%;margin-left:1.9%;float:right">
         <b class="font14" style="margin-left:20px;">选购清单</b>
@@ -717,13 +663,12 @@ import {
   getSummariesByAgentId,
   findCampaignByUser,
   getProducts,
-  batchCreatProduct,
   addMoreOrder,
-  modifyProduct
+  modifyProduct,
+  editCustomerBasic
 } from '@/api/dialTask' // 接口
 import { departAgents, getDepartId } from '@/api/ctiReport'
 import { permsDepart, permsStaff } from '@/api/reportPermission'
-import { editCustomer } from '@/api/customerManagement'// 接口
 import { getWechatCustomer } from '@/api/wechat_list'
 var vm = null
 
@@ -783,8 +728,8 @@ export default {
       addWechatPhone: false, // 添加微信手机号dialog
       editWechatPhone: false, // 修改微信手机号dialog
       editCustomerInfo: {
-        customerId: '',
-        wechatPhone: ''
+        customerId: ''
+        // wechatPhone: ''
       },
       interval: null,
       canContact: 1,
@@ -875,32 +820,9 @@ export default {
         $('.form-more').text('更多')
       }
     },
-    // 添加或修改客户微信手机号
-    editCustomerInfos(editCustomerInfo) {
-      var reg = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[0,5-9])|(18[0,5-9]))\d{8}$/
-      if (editCustomerInfo.wechatPhone === '' || editCustomerInfo.wechatPhone === null) {
-        this.$message.error('请输入客户微信手机号！')
-        return
-      }
-      if (!reg.test(editCustomerInfo.wechatPhone)) {
-        this.$message.error('请输入正确的微信手机号！')
-        return
-      }
-      editCustomer(editCustomerInfo)
-        .then(response => {
-          if (response.data.code === 0) {
-            this.$message.success(response.data.message)
-            this.customerInfo.wechatPhone = editCustomerInfo.wechatPhone
-          } else {
-            this.$message.error(response.data.messages)
-          }
-        })
-    },
     // 判断客户是否绑定微信公众号
     checkBindWechat(customerId) {
-      // console.log(customerId)
       const customerInfos = JSON.stringify(this.customerInfos)
-      // console.log(customerInfos.indexOf(customerId))
       if (customerInfos.indexOf(customerId) === -1) {
         return true
       }
@@ -1100,8 +1022,6 @@ export default {
           return
         }
       }
-      // console.log('1,' + localStorage.getItem('DN'))
-      // console.log('2,' + localStorage.getItem('callerDN'))
       const regex = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[01356789]|18[0-9]|19[89])\d{8}$/
       if (regex.test(customerPhone)) {
         getPhoneOwn(customerPhone).then(res => {
@@ -1382,7 +1302,6 @@ export default {
             vm.appointTime = ''
             vm.selectedSummarys = []
             vm.showDetailInfos(taskId, campaignId, customerId, isBlacklist, customerPhone)
-            vm.isDialTask = false
             vm.sendMessageToNavbar(vm.isDialTask)
             sessionStorage.setItem('isDialTask', vm.isDialTask)
           } else {
@@ -1416,11 +1335,6 @@ export default {
         this.$message.error('您还未选中任务，或选中的任务未包含可拨打客户')
       } else {
         sessionStorage.setItem('quickDialto', true)
-        // this.$message('跳转到拨打详情页')
-        // console.log('linn:' + this.taskIds[0])
-        // console.log('linn:' + this.campaignIds[0])
-        // console.log('linn:' + this.isBlacklists[0])
-        // console.log('linn:' + this.customerIds[0])
         this.taskId = this.taskIds[0]
         this.campaignId = this.campaignIds[0]
         this.isBlacklist = this.isBlacklists[0]
@@ -1457,80 +1371,54 @@ export default {
     },
     changeToInput(item) {
       switch (item) {
-        case 'idNumber': $('div.idNumber').toggle(); $('b.idNumber').toggle(); $('#idNumberedit').toggle(); $('#idNumberbtn1').toggle(); $('#idNumberbtn2').toggle(); break
-        case 'wechatPhone': $('div.wechatPhone').toggle(); $('b.wechatPhone').toggle(); $('#wechatPhoneedit').toggle(); $('#wechatPhonebtn1').toggle(); $('#wechatPhonebtn2').toggle(); break
         case 'sex': $('div.sex').toggle(); $('b.sex').toggle(); $('#sexedit').toggle(); $('#sexbtn1').toggle(); $('#sexbtn2').toggle(); break
+        case 'idNumber': $('div.idNumber').toggle(); $('b.idNumber').toggle(); $('#idNumberedit').toggle(); $('#idNumberbtn1').toggle(); $('#idNumberbtn2').toggle(); break
         case 'customerId': $('div.customerId').toggle(); $('b.customerId').toggle(); $('#customerIdedit').toggle(); $('#customerIdbtn1').toggle(); $('#customerIdbtn2').toggle(); break
-        case 'resideAddress': $('div.resideAddress').toggle(); $('b.resideAddress').toggle(); $('#resideAddressedit').toggle(); $('#resideAddressbtn1').toggle(); $('#resideAddressbtn2').toggle(); break
-        case 'email': $('div.email').toggle(); $('b.email').toggle(); $('#emailedit').toggle(); $('#emailbtn1').toggle(); $('#emailbtn2').toggle(); break
-        case 'bankCardType': $('div.bankCardType').toggle(); $('b.bankCardType').toggle(); $('#bankCardTypeedit').toggle(); $('#bankCardTypebtn1').toggle(); $('#bankCardTypebtn2').toggle(); break
-        case 'source': $('div.source').toggle(); $('b.source').toggle(); $('#sourceedit').toggle(); $('#sourcebtn1').toggle(); $('#sourcebtn2').toggle(); break
+        case 'score': $('div.score').toggle(); $('b.score').toggle(); $('#scoreedit').toggle(); $('#scorebtn1').toggle(); $('#scorebtn2').toggle(); break
+        case 'remark': $('div.remark').toggle(); $('b.remark').toggle(); $('#remarkedit').toggle(); $('#remarkbtn1').toggle(); $('#remarkbtn2').toggle(); break
       }
     },
     modifyCustomerInfo(customerId, item) {
       const reg_ID = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/
-      const reg_email = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/
+      const reg_num = /^[0-9]*$/
       this.editCustomerInfo.customerId = customerId
       switch (item) {
-        case 'wechatPhone':
-          this.editCustomerInfo.wechatPhone = $('#wechatPhoneinput').val()
-          var reg = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[0,5-9])|(18[0,5-9]))\d{8}$/
-          if ($('#wechatPhoneinput').val() === '' || $('#wechatPhoneinput').val() === null) {
-            this.$message.error('请输入客户微信手机号！')
-            $('#wechatPhoneinput').val('')
-            this.changeToInput(item)
-            return
-          }
-          if (!reg.test($('#wechatPhoneinput').val())) {
-            this.$message.error('请输入正确的微信手机号！')
-            this.changeToInput(item)
-            return
-          }
-          editCustomer(this.editCustomerInfo)
-            .then(response => {
-              if (response.data.code === 0) {
-                this.$message.success(response.data.message)
-                this.customerInfo.wechatPhone = $('#wechatPhoneinput').val()
-              } else {
-                this.$message.error(response.data.messages)
-              }
-            }).catch(error => {
-              console.log(error)
-            })
-          break
         case 'idNumber':
-          this.editCustomerInfo.idNumber = $('#idNumberinput').val()
+          this.editCustomerInfo.idNo = $('#idNumberinput').val()
           if (!reg_ID.test($('#idNumberinput').val())) {
             this.$message.error('请输入正确的身份证！')
             $('#idNumberinput').val('')
             this.changeToInput(item)
             return
           }
-          editCustomer(this.editCustomerInfo).then(response => {
+          editCustomerBasic(this.editCustomerInfo).then(response => {
             if (response.data.code === 0) {
               this.$message.success('修改成功！')
-              this.customerInfo.idNumber = $('#idNumberinput').val()
+              this.customerInfo.idNo = $('#idNumberinput').val()
               this.changeToInput(item)
             } else {
               this.$message.error('修改失败！')
+              $('#idNumberinput').val('')
               this.changeToInput(item)
-              console.log(response.data.message)
+              this.$message.error(response.data.message)
             }
           }).catch(error => {
             console.log(error)
           })
           break
         case 'sex':
-          this.editCustomerInfo.sex = $('#sexinput').val() === '男' ? 0 : $('#sexinput').val() === '女' ? 1 : null
-          if (this.editCustomerInfo.sex === null) {
+          this.editCustomerInfo.customerSex = $('#sexinput').val() === '男' ? 0 : $('#sexinput').val() === '女' ? 1 : null
+          console.log(this.editCustomerInfo)
+          if (this.editCustomerInfo.customerSex === null) {
             this.$message.error('修改失败！')
             $('#sexinput').val('')
             this.changeToInput(item)
           } else {
-            editCustomer(this.editCustomerInfo).then(response => {
+            editCustomerBasic(this.editCustomerInfo).then(response => {
               if (response.data.code === 0) {
                 this.$message.success('修改成功！')
-                this.customerInfo.sex = $('#sexinput').val()
+                this.customerInfo.customerSex = $('#sexinput').val() === '男' ? 0 : $('#sexinput').val() === '女' ? 1 : null
+                $('#sexinput').val('')
                 this.changeToInput(item)
               } else {
                 this.$message.error('修改失败！')
@@ -1547,18 +1435,18 @@ export default {
           $('#customerIdinput').val('')
           this.changeToInput(item)
           break
-        case 'resideAddress':
-          this.editCustomerInfo.resideAddress = $('#resideAddressinput').val()
-          if ($('#resideAddressinput').val() === '' || !$('#resideAddressinput').val()) {
-            this.$message.error('地址不能为空！')
-            $('#resideAddressinput').val('')
+        case 'score':
+          this.editCustomerInfo.score = $('#scoreinput').val()
+          if (!reg_num.test($('#scoreinput').val())) {
+            this.$message.error('请输入数字！')
+            $('#scoreinput').val('')
             this.changeToInput(item)
             return
           }
-          editCustomer(this.editCustomerInfo).then(response => {
+          editCustomerBasic(this.editCustomerInfo).then(response => {
             if (response.data.code === 0) {
               this.$message.success('修改成功！')
-              this.customerInfo.resideAddress = $('#resideAddressinput').val()
+              this.customerInfo.score = $('#scoreinput').val()
               this.changeToInput(item)
             } else {
               this.$message.error('修改失败！')
@@ -1569,62 +1457,12 @@ export default {
             console.log(error)
           })
           break
-        case 'email':
-          this.editCustomerInfo.email = $('#emailinput').val()
-          if (!reg_email.test($('#emailinput').val())) {
-            this.$message.error('请输入正确的邮箱！')
-            $('#emailinput').val('')
-            this.changeToInput(item)
-            return
-          }
-          editCustomer(this.editCustomerInfo).then(response => {
+        case 'remark':
+          this.editCustomerInfo.remark = $('#remarkinput').val()
+          editCustomerBasic(this.editCustomerInfo).then(response => {
             if (response.data.code === 0) {
               this.$message.success('修改成功！')
-              this.customerInfo.email = $('#emailinput').val()
-              this.changeToInput(item)
-            } else {
-              this.$message.error('修改失败！')
-              this.changeToInput(item)
-              console.log(response.data.message)
-            }
-          }).catch(error => {
-            console.log(error)
-          })
-          break
-        case 'bankCardType':
-          this.editCustomerInfo.bankCardType = $('#bankCardTypeinput').val()
-          if ($('#bankCardTypeinput').val() === '' || !$('#bankCardTypeinput').val()) {
-            this.$message.error('持卡类型不能为空！')
-            $('#bankCardTypeinput').val('')
-            this.changeToInput(item)
-            return
-          }
-          editCustomer(this.editCustomerInfo).then(response => {
-            if (response.data.code === 0) {
-              this.$message.success('修改成功！')
-              this.customerInfo.bankCardType = $('#bankCardTypeinput').val()
-              this.changeToInput(item)
-            } else {
-              this.$message.error('修改失败！')
-              this.changeToInput(item)
-              console.log(response.data.message)
-            }
-          }).catch(error => {
-            console.log(error)
-          })
-          break
-        case 'source':
-          this.editCustomerInfo.source = $('#sourceinput').val()
-          if ($('#sourceinput').val() === '' || !$('#sourceinput').val()) {
-            this.$message.error('客户来源不能为空！')
-            $('#sourceinput').val('')
-            this.changeToInput(item)
-            return
-          }
-          editCustomer(this.editCustomerInfo).then(response => {
-            if (response.data.code === 0) {
-              this.$message.success('修改成功！')
-              this.customerInfo.source = $('#sourceinput').val()
+              this.customerInfo.remark = $('#remarkinput').val()
               this.changeToInput(item)
             } else {
               this.$message.error('修改失败！')
@@ -1669,8 +1507,16 @@ export default {
       queryCustomerInfo(customerId).then(res => {
         if (res.data.code === 0) {
           this.customerInfo = res.data.data
-          this.idNumber = res.data.data.idNumber
-          this.customerPhone = res.data.data.mobile
+          this.idNumber = res.data.data.idNo
+          const customerLinks = res.data.data.customerLinks
+          if (customerLinks.length > 0) {
+            for (var i = 0; i < customerLinks.length; i++) {
+              if (customerLinks[i].linkType === 0 && customerLinks[i].isUsually === 1) {
+                this.customerPhone = customerLinks[i].linkValue
+                return
+              }
+            }
+          }
         }
       })
       // 判断是否有接触记录信息
@@ -1702,12 +1548,15 @@ export default {
           this.nodulesTree = res4.data.data
         }
       })
+      this.isDialTask = false
     },
     showSex(sex) {
       if (sex === 0) {
         return '男'
-      } else {
+      } else if (sex === 1) {
         return '女'
+      } else {
+        return ''
       }
     },
     handleChange(productId, price, number, index) {
@@ -1839,7 +1688,7 @@ export default {
               if (this.sendMessage === true) {
                 sendMessageToCustomer(
                   response.data.data,
-                  this.customerInfo.mobile
+                  this.customerPhone
                 )
               }
               this.$message({

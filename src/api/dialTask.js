@@ -40,7 +40,7 @@ export function showDetailInfosByTaskId(taskId) {
 
 export function queryCustomerInfo(customerId) {
   return request({
-    url: '/customer/querycustomerbyid',
+    url: '/customer/customerinfos',
     method: 'get',
     params: {
       customerId: customerId
@@ -208,5 +208,13 @@ export function modifyProduct(obj) {
     url: '/product/modifyProductNum',
     method: 'post',
     data: obj
+  })
+}
+
+export function editCustomerBasic(data) {
+  return request({
+    url: '/customer/updatebasic',
+    method: 'post',
+    data: data
   })
 }

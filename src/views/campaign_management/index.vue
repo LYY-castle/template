@@ -1107,29 +1107,33 @@ export default {
           value: 'mobile',
           name: '联系电话'
         },
-        {
-          value: 'wechatPhone',
-          name: '微信手机号'
-        },
+        // {
+        //   value: 'province',
+        //   name: '所在省'
+        // },
+        // {
+        //   value: 'city',
+        //   name: '所在市'
+        // },
+        // {
+        //   value: 'district',
+        //   name: '所在县/区'
+        // },
+        // {
+        //   value: 'detail',
+        //   name: '详细地址'
+        // },
         {
           value: 'idNumber',
           name: '身份证'
         },
         {
-          value: 'resideAddress',
-          name: '地址'
+          value: 'score',
+          name: '客户评分'
         },
         {
-          value: 'email',
-          name: '邮箱'
-        },
-        {
-          value: 'bankCardType',
-          name: '持卡类型'
-        },
-        {
-          value: 'source',
-          name: '来源'
+          value: 'remark',
+          name: '备注'
         }
       ],
       customerParams1: [
@@ -1149,25 +1153,37 @@ export default {
           value: 'mobile',
           name: '联系电话'
         },
+        // {
+        //   value: 'province',
+        //   name: '所在省'
+        // },
+        // {
+        //   value: 'city',
+        //   name: '所在市'
+        // },
+        // {
+        //   value: 'district',
+        //   name: '所在县/区'
+        // },
+        // {
+        //   value: 'detail',
+        //   name: '详细地址'
+        // },
         {
           value: 'idNumber',
           name: '身份证'
         },
         {
-          value: 'resideAddress',
-          name: '地址'
+          value: 'idNumber',
+          name: '身份证'
         },
         {
-          value: 'email',
-          name: '邮箱'
+          value: 'score',
+          name: '客户评分'
         },
         {
-          value: 'bankCardType',
-          name: '持卡类型'
-        },
-        {
-          value: 'source',
-          name: '来源'
+          value: 'remark',
+          name: '备注'
         }
       ],
       new_dept_ids: [], // 新建活动
