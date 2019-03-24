@@ -202,7 +202,7 @@
           </el-row>
           <el-row class="font12">
             <span style="color:#666666;">身份证号：</span>
-            <b style="color:#020202;" :title="hideIdNumber(detailInfo.customerInfo.idNumber)">{{hideIdNumber(detailInfo.customerInfo.idNumber)}}</b>
+            <b style="color:#020202;" :title="hideIdNumber(detailInfo.customerInfo.idNo)">{{hideIdNumber(detailInfo.customerInfo.idNo)}}</b>
           </el-row>
           <el-row class="font12">
             <span style="color:#666666;">小结备注：</span>

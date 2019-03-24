@@ -123,7 +123,7 @@ export function queryRecords(sessionId, pageNo) {
 // 查询订单
 export function querycustomerbyid(id) {
   return request({
-    url: '/customer/querycustomerbyid',
+    url: '/customer/customerinfos',
     method: 'get',
     params: { 'customerId': id }
   })

@@ -721,7 +721,6 @@
       title="新建客户"
       :visible.sync="addVisible"
       append-to-body>
-      <div style="height:600px;overflow-y:auto;">
         <el-form size="small" :rules="rule" :model="customerDetail" ref="customerDetail" label-width="100px">
           <el-form-item label="客户姓名" prop="customerName" style="width:50%">
             <el-input v-model="customerDetail.customerName" size="small" placeholder="上限50字符" maxlength="50"></el-input>
@@ -894,7 +893,6 @@
             </div>
           </el-form-item>
         </el-form>
-      </div>
         <div slot="footer" style="text-align: right;">
           <el-button @click="resetForm('customerDetail');resetArrays()">重置</el-button>
           <el-button type="primary" plain @click="addVisible = false">取消</el-button>
