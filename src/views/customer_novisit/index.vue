@@ -35,8 +35,8 @@
            <el-form-item label="状态:">
             <el-select v-model="req.status" placeholder="选择状态">
               <el-option label="全部" value=""></el-option>
-              <el-option label="启用" value="0"></el-option>
-              <el-option label="禁用" value="1"></el-option>
+              <el-option label="生效" value="0"></el-option>
+              <el-option label="不生效" value="1"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -61,8 +61,8 @@
             更多操作<i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown" class="info">
-            <el-dropdown-item command='1'>批量启用</el-dropdown-item>
-            <el-dropdown-item command='2'>批量禁用</el-dropdown-item>
+            <el-dropdown-item command='1'>批量生效</el-dropdown-item>
+            <el-dropdown-item command='2'>批量不生效</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </el-row>
@@ -109,7 +109,7 @@
           <el-table-column align="center" label="状态" >
             <template slot-scope="scope">
               <div :class="scope.row.status===0?'visible':'invisible'">
-                <span>{{scope.row.status===0?'启用':'禁用'}}</span>
+                <span>{{scope.row.status===0?'生效':'不生效'}}</span>
               </div>
             </template>
           </el-table-column>
@@ -171,8 +171,8 @@
         <el-form-item label="状态：" prop="status">
           <el-switch
           v-model="noVisitCustomerDetail.status"
-          active-text="禁用"
-          inactive-text="启用"
+          active-text="不生效"
+          inactive-text="生效"
           active-color="#67C23A"
           :active-value=1
           :inactive-value=0
@@ -221,7 +221,7 @@
       title="操作提示"
       :visible.sync="op_hints1"
       append-to-body>
-      <span style="font-size:20px;">是否确认批量设置客户为启用？</span>
+      <span style="font-size:20px;">是否确认批量设置客户为生效？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
         <el-button type="primary" plain @click="op_hints1 = false">取消</el-button>
         <el-button type="primary" @click="op_hints1 = false;batchSetVisibleStatus(batchDelReq,0)">确 定</el-button>
@@ -233,7 +233,7 @@
       title="操作提示"
       :visible.sync="op_hints2"
       append-to-body>
-      <span style="font-size:20px;">是否确认批量设置客户为禁用？</span>
+      <span style="font-size:20px;">是否确认批量设置客户为不生效？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
         <el-button type="primary" @click="op_hints2 = false;batchSetVisibleStatus(batchDelReq,1)">确定</el-button>
         <el-button type="primary" plain @click="op_hints2 = false">取消</el-button>
@@ -284,8 +284,8 @@
         <el-form-item label="状态：" prop="status">
           <el-switch
           v-model="editNoVisitCustomerDetail.status"
-          active-text="禁用"
-          inactive-text="启用"
+          active-text="不生效"
+          inactive-text="生效"
           active-color="#67C23A"
           :active-value=1
           :inactive-value=0
