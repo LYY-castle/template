@@ -7,10 +7,10 @@
           <el-header>
             <b class="font14">最近联系人</b>
           </el-header>
-          <el-menu 
-          active-text-color="#409EFF" 
+          <el-menu
+          active-text-color="#409EFF"
           :default-active="customerActive"
-          style="borderoverflow:auto;width:100%;text-align:left;" 
+          style="borderoverflow:auto;width:100%;text-align:left;"
           >
             <div v-for="(item,index) in wechatCustomerInfos">
               <el-menu-item class="font12" :index="index+''" slot="reference" @click="showNameAndSearchRecords(item.customerName,item.customerPhone,item.taskId,item.campaignId,item.customerId,item.unreadNum);dailTaskCustomer=item;customerActive=index.toString();changeCustomerTalking(index)">
@@ -157,10 +157,10 @@
           </el-footer>
         </el-container>
 
-      
+
       </el-container>
     </div>
-    
+
     <div class="elaside1"  style="position:relative;height:78vh;overflow-x:hidden;background:#FBFBFB;float:right;width:44%;box-shadow: 0 0 10px 0 rgba(39,48,69,0.10);border-radius: 2px;">
       <el-tabs v-model="activeName" type="card" style="background: #F3F5FA;">
         <el-tab-pane label="用户信息" name="1" class="userinfo-container">
@@ -268,7 +268,7 @@
                 align="center"
                 label="产品类型"
                 :show-overflow-tooltip="true">
-                <template 
+                <template
                   slot-scope="scope">
                   {{scope.row.productType===null?'':scope.row.productType === '0' ? '实体产品' : '虚拟产品'}}
                 </template>
@@ -281,7 +281,7 @@
               </el-table-column>
               <el-table-column
                 align="center"
-                label="产品单价" 
+                label="产品单价"
                 :show-overflow-tooltip="true">
                 <template
                   slot-scope="scope">
@@ -318,7 +318,7 @@
               :page-sizes="[10, 20, 30, 40, 50]"
               :page-size='pageInfo.pageSize'
               layout="total, prev, pager, next, jumper "
-              :total='pageInfo.totalCount' 
+              :total='pageInfo.totalCount'
               style="text-align: right;float:right;">
             </el-pagination>
           </el-row> -->
@@ -402,6 +402,7 @@
                   v-model='selectedSummarys'
                   :options="nodulesTree"
                   filterable
+                  :expand-trigger="hover"
                   :props="summaryTreeProps"
                   :show-all-levels="false">
                 </el-cascader>
@@ -456,7 +457,7 @@
           <span>{{"大小："+fileSize}}</span>
           <a :href="fileSrc" :download="fileName" style="color:#4190E7;">下载</a>
         </div>
-        
+
       </div>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
       <el-button @click="fileVisible = false;sendVisible=true;removeFile()">取 消</el-button>
@@ -647,11 +648,11 @@
         top: 7px;
     }
     /*分别给左右两边的小三角形定位*/
-    .left:before{    
+    .left:before{
         border-right: 8px solid #ccc;
         left: -16px;
     }
-    .right:after{    
+    .right:after{
         border-left: 8px solid #57AFFF;
         right: -16px;
     }
@@ -687,7 +688,7 @@
     .el-footer{
       height:auto !important;
     }
-    .multi i:hover{ 
+    .multi i:hover{
       color:#000;
     }
     .multi{
