@@ -1117,6 +1117,7 @@ export default {
       vm.setbtnStatus('onhold')
     },
     on_hangup_event(event, agentid, DN, UUID, hangupLine, activeLineCount) {
+      localStorage.removeItem('callInfo')
       if (vm.isDialTaskPage) {
         vm.formInline.user = ''
       }
@@ -1212,13 +1213,19 @@ export default {
       }
     },
     on_answer_event(event, agentid, DN, UUID, callerid, calleeid, io, other_leg_uuid) {
+      const callInfo = {}
+      callInfo.calleeid = calleeid
+      callInfo.callerid = callerid
+      localStorage.setItem('callInfo', JSON.stringify(callInfo))
+
       addAnswerContact({
-        'event': 'on_answer_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'io': io, 'other_leg_uuid': other_leg_uuid
+        'event': 'on_answer_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'io': io, 'other_leg_uuid': other_leg_uuid, 'calleeid': calleeid, 'callerid': callerid
       }).then(res => {
         console.log('写入接听电话的记录:' + res)
       }).catch(error => {
         console.log('error:' + error)
       })
+
       vm.$root.eventHub.$emit('addCall', true)
       vm.setbtnStatus('talking')
       const info = {}
@@ -1245,6 +1252,10 @@ export default {
       vm.caller = callerid
       vm.callee = calleeid
       vm.orginCaller = ori_ani
+      const callInfo = {}
+      callInfo.calleeid = calleeid
+      callInfo.callerid = callerid
+      localStorage.setItem('callInfo', JSON.stringify(callInfo))
       if (vm.isDialTaskPage) {
         vm.global_taskId = localStorage.getItem('global_taskId')
       } else {
@@ -1282,6 +1293,10 @@ export default {
       vm.orginCaller = ori_ani
       vm.setbtnStatus('ringing')
       vm.oldtelephonestate = vm.telephoneState
+      const callInfo = {}
+      callInfo.calleeid = calleeid
+      callInfo.callerid = callerid
+      localStorage.setItem('callInfo', JSON.stringify(callInfo))
       if (DialData) { // 判断为自动外呼
         const data = JSON.parse(DialData).data
         const campaignId = data.campaignId

@@ -1616,6 +1616,14 @@ export default {
       if (this.recordId === '') {
         this.$message.error('您还未拨打电话！')
         return false
+      } else if ((JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode === '-100' ||
+      JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode === '-101' ||
+      JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode === '-3' ||
+      JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode === '-4') &&
+      (this.customerPhone === JSON.parse(localStorage.getItem('callInfo')).calleeid ||
+      this.customerPhone === JSON.parse(localStorage.getItem('callInfo')).callerid)) {
+        this.$message.error('还在通话或者响铃中，不能结束任务')
+        return false
       } else if (this.radio === '') {
         this.$message.error('未选择任务状态！')
         return false
