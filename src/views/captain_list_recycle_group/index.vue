@@ -227,6 +227,7 @@
         },
         pageing: {
           campaignId: null,
+          departId: localStorage.getItem('departId'),
           pageNo: 1,
           pageSize: 10
         }
@@ -248,6 +249,14 @@
         this.tableData = []
         this.tableData2 = []
         this.pageing.campaignId = val
+        if (!val) {
+          Message({
+            message: '请选择活动',
+            type: 'error',
+            duration: 3 * 1000
+          })
+          return
+        }
         this.pageing.pageNo = 1
         this.pageing.pageSize = 10
         findCampaignNameListAssignInfo(this.pageing).then(response => {

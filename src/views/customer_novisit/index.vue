@@ -334,7 +334,7 @@
           <div style="with:95%;overflow:auto;">{{formateData(editNoVisitCustomerDetail.campaignIds)}}</div>
         </el-form-item>
         <el-form-item label="电话号码:" prop="phone">
-          <span>{{hideMobile(editNoVisitCustomerDetail.phone)}}</span>
+          <span>{{editNoVisitCustomerDetail.phone}}</span>
         </el-form-item>
         <el-form-item label="生效时间:" prop="effectiveDate">
           <span>{{editNoVisitCustomerDetail.effectiveDate}}</span>
