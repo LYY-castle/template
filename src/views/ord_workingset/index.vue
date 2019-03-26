@@ -158,7 +158,7 @@
 import { formatDateTime, sec_to_time } from '@/utils/tools'
 import { getDepartId, obreportAgent, orderreportAgent, reportAgent } from '@/api/ctiReport'
 import { findContactHistory, findTotalContactByTime } from '@/api/ord_workingset'
-import moment from 'moment'
+import moment, { relativeTimeRounding } from 'moment'
 var baseinfo = null
 export default {
   name: 'ord_workingset',
@@ -278,13 +278,11 @@ export default {
   },
   destroyed() {
     baseinfo.$root.eventHub.$off('reasoncodechange')
+    baseinfo.$root.eventHub.$off('addCall')
     baseinfo.$root.eventHub.$emit('ord_set', false)
   },
   created() {
-    if (localStorage.getItem(localStorage.getItem('agentId'))) {
-      const obj = JSON.parse(localStorage.getItem(localStorage.getItem('agentId')))
-      this.on_reasonchange('refreshPage', localStorage.getItem('agentId'), obj.DN, obj.reasoncode)
-    }
+
   },
   mounted() {
     baseinfo = this
@@ -364,6 +362,12 @@ export default {
       // console.log(obj.event + ',' + obj.agentId + ',' + obj.DN + ',' + obj.reasonCode)
       baseinfo.closeInterval()
     })
+    if (localStorage.getItem(localStorage.getItem('agentId'))) {
+      const obj = JSON.parse(localStorage.getItem(localStorage.getItem('agentId')))
+      if (obj.reasoncode === obj.beforeStatus) {
+        this.on_reasonchange('refreshPage', localStorage.getItem('agentId'), obj.DN, obj.reasoncode)
+      }
+    }
   },
   methods: {
     closeInterval() {
@@ -387,6 +391,12 @@ export default {
       // }
     },
     on_reasonchange(event, agentid, DN, reasoncode) {
+      // if (event === 'refreshPage') { // 刷新页面
+      //   const temp_obj = JSON.parse(localStorage.getItem(agentid))// 电话状态没有改变
+      //   if (temp_obj.reasoncode !== temp_obj.beforeStatus) {
+      //     return
+      //   }
+      // }
       this.closeInterval()
       const tempObj = JSON.parse(localStorage.getItem(agentid))
       let stillTime = 0
@@ -429,6 +439,7 @@ export default {
                 // 请求后台数据，刷新定时器
                 baseinfo.timesInterval('ord_online_time_duration', baseinfo.totalInfo.online_time_duration + stillTime)
                 baseinfo.timesInterval('ord_busy_time_duration', baseinfo.totalInfo.busy_time_duration + stillTime)
+
                 break
               case '14':// 后处理
                 // 请求后台数据，刷新定时器
@@ -493,6 +504,8 @@ export default {
           //     timeValue = timeValue + 1
           //   }
           // }, 1000)
+          clearInterval(window.onlineInterval)
+          window.onlineInterval = null
           window.onlineInterval = agentinterval
           break
         case 'ord_free_time_duration':
@@ -505,6 +518,8 @@ export default {
           //     timeValue = timeValue + 1
           //   }
           // }, 1000)
+          clearInterval(window.freetimeInterval)
+          window.freetimeInterval = null
           window.freetimeInterval = agentinterval
           break
         case 'ord_call_time_duration':
@@ -517,6 +532,8 @@ export default {
           //     timeValue = timeValue + 1
           //   }
           // }, 1000)
+          clearInterval(window.calltimeInterval)
+          window.calltimeInterval = null
           window.calltimeInterval = agentinterval
           break
         case 'ord_busy_time_duration':
@@ -529,6 +546,8 @@ export default {
           //     timeValue = timeValue + 1
           //   }
           // }, 1000)
+          clearInterval(window.busytimeInterval)
+          window.busytimeInterval = null
           window.busytimeInterval = agentinterval
           break
       }
