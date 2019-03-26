@@ -499,6 +499,11 @@ export default {
         this.$message.error('请选择接收部门！')
         return
       } else {
+        if (this.autoSelectSubdept === true) {
+          this.newnotification.is_recursive_dept = 1
+        } else {
+          this.newnotification.is_recursive_dept = 0
+        }
         this.flagCheck = false
         addNewNotification(this.newnotification, this.selectedDepts)
           .then(response => {
@@ -599,6 +604,11 @@ export default {
         this.$message.error('请选择接收部门！')
         return
       } else {
+        if (this.autoSelectSubdept === true) {
+          this.editnotificationDetail.is_recursive_dept = 1
+        } else {
+          this.editnotificationDetail.is_recursive_dept = 0
+        }
         editNotification(this.editNotification_id, this.editnotificationDetail, this.selectedDepts)
           .then(response => {
             if (response.data.error === null) {

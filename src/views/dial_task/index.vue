@@ -288,11 +288,13 @@
           <span>手机号码：</span>
           <b style="color:#020202;">{{this.customerPhone}}</b>
         </el-col>
-        <el-col :span="6" class="font12" v-if="!(item === 'customerName' || item === 'mobile')" v-for="(item,index) in customerColumnInfos">
-          <span>
-            {{item === 'customerId' ? '客户编号' : item === 'sex' ? '性别' : item === 'mobile' ? '联系电话' : item === 'province' ? '所在省' : item === 'city' ? '所在市' : item === 'district' ? '所在县/区' : item === 'detail' ? '详细地址' : item === 'score' ?'客户评分' : item === 'remark' ? '备注' : item === 'idNumber' ? '身份证' :''}}
+        <el-col :span="6" class="font12 description-hide" v-if="!(item === 'customerName' || item === 'mobile')" v-for="(item,index) in customerColumnInfos">
+          <span >
+            {{item === 'customerId' ? '客户编号' : item === 'sex' ? '性别' : item === 'mobile' ? '联系电话' : item === 'province' ? '所在省' : item === 'city' ? '所在市' : item === 'district' ? '所在县/区' : item === 'detail' ? '详细地址' : item === 'score' ?'客户评分' : item === 'remark' ? '备注' : item === 'idNumber' ? '身份证' : item === 'address' ? '客户地址' : ''}}
           </span>
-          <b style="color:#020202;" :class="item" v-if="!isInput">{{item === 'customerId' ? customerInfo.customerId : item === 'sex' ? showSex(customerInfo.customerSex): item === 'mobile' ? this.customerPhone : item === 'province' ? customerInfo.province: item === 'city' ? customerInfo.city : item === 'district' ? customerInfo.district: item === 'detail' ? customerInfo.detail : item === 'score' ? customerInfo.score : item === 'remark' ? customerInfo.remark : item === 'idNumber'? customerInfo.idNo : ''}}</b>
+          <el-popover trigger="hover" placement="bottom" :content="showContent(item)">
+            <b style="color:#020202;" :class="item" v-if="!isInput" slot="reference">{{item === 'customerId' ? customerInfo.customerId : item === 'sex' ? showSex(customerInfo.customerSex): item === 'mobile' ? this.customerPhone : item === 'province' ? customerInfo.province: item === 'city' ? customerInfo.city : item === 'district' ? customerInfo.district: item === 'detail' ? customerInfo.detail : item === 'score' ? customerInfo.score : item === 'remark' ? customerInfo.remark : item === 'idNumber'? customerInfo.idNo : item === 'address' ? customerInfo.address : ''}}</b>
+          </el-popover>
           <el-input size="mini" style="width:45%;display:none;" :class="item" :id="item+'input'"></el-input>&nbsp;&nbsp;
           <i class="el-icon-circle-check-outline" @click="modifyCustomerInfo(customerInfo.customerId,item)" style="cursor:pointer;display:none;" :id="item+'btn1'"></i>
           <i class="el-icon-circle-close-outline" @click="changeToInput(item)" style="cursor:pointer;display:none;" :id="item+'btn2'"></i>
@@ -536,6 +538,11 @@
 
 <style lang='scss' scoped>
 .dial-task{
+  .description-hide{
+    text-overflow: ellipsis;
+    white-space:nowrap;
+    overflow: hidden;
+  }
   .wechat-btn.is-disabled{
     background:none !important;
     color:#ccc !important;
@@ -801,7 +808,7 @@ export default {
         sex: '',
         bankCard: '',
         idNumber: '',
-        resideAddress: '',
+        address: '',
         bankCardType: '',
         comment: '',
         source: ''
@@ -813,6 +820,18 @@ export default {
     }
   },
   methods: {
+    showContent(item) {
+      switch (item) {
+        case 'customerId':return this.customerInfo.customerId
+        case 'sex': return this.showSex(this.customerInfo.customerSex)
+        case 'mobile': return this.customerPhone
+        case 'address': return this.customerInfo.address
+        case 'score': return this.customerInfo.score
+        case 'idNumber': return this.customerInfo.idNo
+        case 'remark': return this.customerInfo.remark
+        default : return ''
+      }
+    },
     handleChangeAcitve(active = ['1']) {
       if (active.length) {
         $('.form-more').text('收起')
@@ -1509,11 +1528,18 @@ export default {
           this.customerInfo = res.data.data
           this.idNumber = res.data.data.idNo
           const customerLinks = res.data.data.customerLinks
+          const customerAddress = res.data.data.customerAddresses
           if (customerLinks.length > 0) {
             for (var i = 0; i < customerLinks.length; i++) {
               if (customerLinks[i].linkType === 0 && customerLinks[i].isUsually === 1) {
                 this.customerPhone = customerLinks[i].linkValue
-                return
+              }
+            }
+          }
+          if (customerAddress.length > 0) {
+            for (var j = 0; j < customerAddress.length; j++) {
+              if (customerAddress[j].isDefault === 1) {
+                this.customerInfo.address = customerAddress[j].province + customerAddress[j].city + customerAddress[j].district + customerAddress[j].detail
               }
             }
           }

@@ -182,7 +182,7 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="resetForm('ruleForm')">重置</el-button>
         <el-button type="primary" plain @click="resetForm('ruleForm');dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')" :loading="loading">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="修改评分表" :visible.sync="dialogFormVisibleReverse" width="60%" @close="resetFormReverse('ruleFormReverse');dialogFormVisibleReverse=false" append-to-body>
@@ -305,6 +305,7 @@
     name: 'qm_charge_scorelist',
     data() {
       return {
+        loading: false,
         visibleClass: '',
         formContainerOpen: '1',
         formContainer: this.$store.state.app.formContainer,
@@ -581,7 +582,9 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            this.loading = true
             addGrade(this.ruleForm).then(response => {
+              this.loading = false
               if (response.data.code === 0) {
                 this.resetForm(formName)
                 this.dialogFormVisible = false
@@ -594,14 +597,17 @@
                 })
               }
             }).catch(error => {
+              this.loading = false
               console.log(error)
             })
           } else {
-            Message({
-              message: '还有内容没有完成',
-              type: 'error',
-              duration: 3 * 1000
-            })
+            if (this.loading === false) {
+              Message({
+                message: '还有内容没有完成',
+                type: 'error',
+                duration: 3 * 1000
+              })
+            }
           }
         })
       },

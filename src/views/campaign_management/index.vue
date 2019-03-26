@@ -1107,6 +1107,10 @@ export default {
           value: 'mobile',
           name: '联系电话'
         },
+        {
+          value: 'address',
+          name: '客户地址'
+        },
         // {
         //   value: 'province',
         //   name: '所在省'
@@ -1152,6 +1156,10 @@ export default {
         {
           value: 'mobile',
           name: '联系电话'
+        },
+        {
+          value: 'address',
+          name: '客户地址'
         },
         // {
         //   value: 'province',

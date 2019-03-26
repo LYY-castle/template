@@ -473,7 +473,7 @@
       title="修改客户"
       :visible.sync="editVisible"
       append-to-body>
-      <div style="height:600px;overflow-y:auto;">
+      <div>
         <el-form size="small" :rules="rule" :model="customerReverseDetail.customer" ref="customerDetail" label-width="100px">
           <el-form-item label="客户姓名" prop="customerName" style="width:50%">
             <el-input v-model="customerReverseDetail.customer.customerName" size="small" placeholder="上限50字符" maxlength="50"></el-input>
@@ -568,7 +568,7 @@
             <el-table border empty-text="请添加数据" :data="customerReverseDetail.customerLinks">
               <el-table-column align="center" label="联系方式">
                 <template slot-scope="scope">
-                  <el-select v-model="scope.row.linkType" placeholder="联系方式" clearable>
+                  <el-select v-model="scope.row.linkType" placeholder="联系方式" clearable :disabled="scope.$index===0">
                     <el-option
                       v-for="type in linkTypes"
                       :key="type.value"
@@ -592,7 +592,8 @@
                     active-text="是"
                     inactive-text="否"
                     :active-value=1
-                    :inactive-value=0>
+                    :inactive-value=0
+                    :disabled="scope.$index===0">
                   </el-switch>
                 </template>
               </el-table-column>
@@ -722,19 +723,19 @@
       :visible.sync="addVisible"
       append-to-body>
         <el-form size="small" :rules="rule" :model="customerDetail" ref="customerDetail" label-width="100px">
-          <el-form-item label="客户姓名" prop="customerName" style="width:50%">
+          <el-form-item label="客户姓名" style="width:50%">
             <el-input v-model="customerDetail.customerName" size="small" placeholder="上限50字符" maxlength="50"></el-input>
           </el-form-item>
-          <el-form-item label="客户性别" prop="customerSex">
+          <el-form-item label="客户性别">
             <el-radio-group v-model="customerDetail.customerSex" size="small">
               <el-radio-button label='0' border>男</el-radio-button>
               <el-radio-button label='1' border>女</el-radio-button>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="身份证" prop="idNo"  style="width:50%">
+          <el-form-item label="身份证" style="width:50%">
             <el-input v-model="customerDetail.idNo" size="small" placeholder="上限50字符" maxlength="50" @change="autoFill()"></el-input>
           </el-form-item>
-          <el-form-item label="出生日期" prop="birthday">
+          <el-form-item label="出生日期">
             <el-date-picker
               v-model="customerDetail.birthday"
               size="small"
@@ -811,11 +812,14 @@
               <i class="el-icon-plus" circle title="点击添加一个客户地址" @click="addAddress()"></i>
             </div>
           </el-form-item>
-          <el-form-item label="联系信息">
+          <el-form-item>
+            <span slot="label">
+              <span style="color:#f56c6c">*</span> 联系信息
+            </span>
             <el-table border empty-text="请添加数据" :data="linkDatas">
               <el-table-column align="center" label="联系方式">
                 <template slot-scope="scope">
-                  <el-select v-model="scope.row.linkType" placeholder="联系方式" clearable>
+                  <el-select v-model="scope.row.linkType" placeholder="联系方式" clearable  :disabled="scope.$index===0">
                     <el-option
                       v-for="type in linkTypes"
                       :key="type.value"
@@ -839,7 +843,8 @@
                     active-text="是"
                     inactive-text="否"
                     :active-value=1
-                    :inactive-value=0>
+                    :inactive-value=0
+                    :disabled="scope.$index===0">
                   </el-switch>
                 </template>
               </el-table-column>
@@ -1596,9 +1601,17 @@ export default {
       })
     },
     removeLinkInfo(data) {
+      if (data.$index === 0) {
+        this.$message.error('该项为必填项！')
+        return
+      }
       this.linkDatas.splice(data.$index, 1)
     },
     removeLinkInfo1(data) {
+      if (data.$index === 0) {
+        this.$message.error('该项为必填项！')
+        return
+      }
       if (data.row.id) {
         this.deleteData = data
         this.deleteType = 2
@@ -1685,6 +1698,11 @@ export default {
     resetArrays() {
       this.addressDatas = []
       this.linkDatas = []
+      this.linkDatas.push({
+        linkType: 0,
+        linkValue: '',
+        isUsually: 1
+      })
       this.carDatas = []
       this.region = []
       this.customerDetail.score = ''
@@ -2087,6 +2105,7 @@ export default {
       if (!this.validate) {
         return false
       }
+
       editCustomer(customerReverseDetail).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
@@ -2105,6 +2124,20 @@ export default {
     addCustomer(customerDetail, addressDatas, linkDatas, carDatas) {
       if (!this.validate) {
         return false
+      }
+      if (linkDatas.length <= 0) {
+        this.$message.error('请输入联系方式对应值！')
+        return
+      } else {
+        if (linkDatas[0].linkValue === '') {
+          this.$message.error('请输入联系方式对应值！')
+          return
+        }
+        for (var i = 1; i < linkDatas.length; i++) {
+          if (linkDatas[i].linkType === 0 && linkDatas[i].isUsually === linkDatas[0].isUsually) {
+            this.$message.error('常用电话只能有一个！')
+          }
+        }
       }
       let map = {}
       map = customerDetail

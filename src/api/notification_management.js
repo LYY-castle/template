@@ -23,6 +23,7 @@ export function addNewNotification(newnotification, depts) {
       title: newnotification.title,
       body: newnotification.body,
       degree: newnotification.emergency_degree,
+      is_recursive_dept: newnotification.is_recursive_dept,
       depts: depts
     }
   })
@@ -57,6 +58,7 @@ export function editNotification(id, editnotification, depts) {
       title: editnotification.title,
       body: editnotification.body,
       degree: editnotification.emergency_degree,
+      is_recursive_dept: editnotification.is_recursive_dept,
       depts: depts
     }
   })
