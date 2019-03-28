@@ -1,6 +1,6 @@
 <template>
 	<span class="tree-expand">
-		<span class="tree-label" v-if="DATA.isEdit">
+		<span class="tree-label is-edit" v-if="DATA.isEdit">
 			<el-input class="edit" size="mini" autofocus
 			placeholder="请输入名称"
 			v-model="DATA.name"
@@ -13,9 +13,12 @@
 			<span>{{DATA.name}}</span>
 		</span>
 		<span class="tree-btn" v-show="!DATA.isEdit" v-if="permission">
-			<i class="el-icon-plus" @click.stop="nodeAdd(STORE,DATA,NODE)"></i>
-			<i class="el-icon-edit" @click.stop="nodeEdit(STORE,DATA,NODE)"></i>
-			<i class="el-icon-delete" @click.stop="nodeDel(STORE,DATA,NODE)"></i>
+			<!-- <i class="el-icon-plus" @click.stop="nodeAdd(STORE,DATA,NODE)"></i> -->
+			<i class="tree-button tree-plus" @click.stop="nodeAdd(STORE,DATA,NODE)"></i>
+			<!-- <i class="el-icon-edit" @click.stop="nodeEdit(STORE,DATA,NODE)"></i> -->
+			<i class="tree-button tree-edit" @click.stop="nodeEdit(STORE,DATA,NODE)"></i>
+			<!-- <i class="el-icon-delete" @click.stop="nodeDel(STORE,DATA,NODE)"></i> -->
+			<i class="tree-button tree-delete" @click.stop="nodeDel(STORE,DATA,NODE)"></i>
 		</span>
 		<span class="tree-btn-edit" v-show="DATA.isEdit">
 			<i class="el-icon-check" v-show="!editCancel" @click.stop="submitAdd(STORE,DATA,NODE)"></i>
@@ -88,34 +91,60 @@ export default{
 }
 </script>
 
-<style>
-	.tree-expand{
-		overflow:hidden;
-	}
+<style lang="scss">
+ .tree-label .el-input__inner{
+    height:22px;
+  }
+</style>
+<style lang="scss" scoped>
+	// .tree-expand{
+	// 	overflow:hidden;
+	// }
+  .tree-button{
+    padding:6px;
+    &.tree-plus{
+      cursor:pointer;
+      background:url('../../../static/images/tree_plus.png') no-repeat 0 8px;
+    }
+    &.tree-edit{
+      cursor:pointer;
+      background:url('../../../static/images/tree_edit.png') no-repeat 2px 9px;
+    }
+    &.tree-delete{
+      cursor:pointer;
+      background:url('../../../static/images/tree_delete.png') no-repeat 0 8px;
+    }
+  }
 	.tree-expand .tree-label.tree-new{
 		font-weight:600;
 	}
-	.tree-expand .tree-label{
-		font-size:0.9em;
-	}
+	// .tree-expand .tree-label{
+		/* font-size:0.9em; */
+	// }
 	.tree-expand .tree-label .edit{
-		width:80%;
+		// width:100%;
+    width:93px;
 	}
 	.tree-expand .tree-btn{
 		/* display:none; */
     opacity:0;
 		margin-left:10px;
+		margin-right:10px;
     width:62px;
+    // position:absolute;
+    // right:0;
+    text-align:right;
+    // float:right;
 	}
 	.tree-expand .tree-btn-edit i:hover{
-		color:white;
+		opacity:0.5;
 	}
 	.tree-expand .tree-btn i{
 		color:#8492a6;
 		font-size:0.9em;
-		margin-right:3px;
+		margin-right:10px;
 	}
 	.tree-expand .tree-btn i:hover{
-		color:white;
+		opacity:0.5;
 	}
 </style>

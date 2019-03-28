@@ -1,17 +1,23 @@
 <template>
-  <div style="width:100%;min-height:99vh;" id="kb">
-      <el-aside style="width:19%;">
-        <div class="expand">
-          <div v-if="permission" style="position:fixed;top:101px;width:18.1%;height:81px;background:#252E34;z-index:500;"></div>
-          <div style="position:relative;top:83px;min-width:100%">
-            <el-button v-if="permission" class="tree-add-top" type="success" size="small" @click="handleAddTop">新建目录</el-button>
-            <el-tree class="expand-tree"
+  <div id="kb" clss="container">
+    <el-container>
+      <el-aside style="width:240px;overflow-y:hidden;background:#fff;border-right:1px solid #ccc;">
+        <div class="asinde-header" v-if="permission">
+          <span class="font14 bold" style="display:inline-block;margin-right:10px;">目录列表</span>
+          <span
+            v-if="permission" 
+            class="tree-button tree-add-top" 
+            @click="handleAddTop">
+          </span>
+        </div>
+        <div class="expand" style="position:relative;height:93.6%;overflow-y:auto;">
+          <div style="display:inline-block;padding-left:20px;box-sizing:border-box;">
+            <el-tree class="expand-tree font12"
             key="tree"
             ref="tree"
             :draggable="draggable"
             v-if="isLoadingTree"
             :data="setTree"
-            highlight-current
             :props="defaultProps"
             :expand-on-click-node="false"
             :render-content="renderContent"
@@ -22,205 +28,71 @@
           </div>
         </div>
       </el-aside>
-      <div class="kb-main" style="margin-left:21%;width:80%">
-      <!-- 主页 -->
-      <el-main v-if="isListPage==='1'" style="padding-top:0;">
-        <el-collapse v-model="formContainerOpen" style="margin-bottom:0;" class="form-container" @change="handleChangeAcitve">
-          <el-collapse-item title="筛选条件" name="1">
-            <el-form>
-              <el-form-item style="margin-bottom:10px;" label="查询方式：" prop="validityStatus">
-                <el-radio-group v-model="searchType" size="small" @change="searchTypeChange">
-                  <el-radio-button label='0' border>普通</el-radio-button>
-                  <el-radio-button label='1' border>高级</el-radio-button>
-                </el-radio-group>
-              </el-form-item>
-            </el-form>
-            <el-form :inline="true" size="small" v-if="searchType==='0'">
-              <el-form-item label="标题:">
-                <el-input v-model="req.title" placeholder="标题"></el-input>
-              </el-form-item>
-              <el-form-item label="发布时间：">
-                <el-date-picker
-                    v-model="timeValue"
-                    type="datetimerange"
-                    range-separator="-"
-                    start-placeholder="开始时间"
-                    end-placeholder="结束时间">
-                </el-date-picker>
-              </el-form-item>
-              <el-form-item v-if="permission" label="发布状态：" prop="validityStatus">
-                <el-radio-group v-model="req.status" size="small">
-                  <el-radio-button label=1 border>发布</el-radio-button>
-                  <el-radio-button label=0 border>未发布</el-radio-button>
-                </el-radio-group>
-              </el-form-item>
-              <el-form-item>
-                <el-button type="primary" @click="getArticles1(req);req2=clone(req);">查询</el-button>
-                <el-button @click="reset();req2=clone(req)">重置</el-button>
-              </el-form-item>
-            </el-form>
-            <el-form :inline="true" size="small" v-if="searchType==='1'">
-              <el-form-item label="关键字:">
-                <el-input v-model="searchReq.query" placeholder="关键字"></el-input>
-              </el-form-item>
-              <el-form-item>
-                <el-button type="primary" @click="searchReq.pageNo=1;getArticles1(searchReq);searchReq2=clone(searchReq);getPath();">查询</el-button>
-                <el-button @click="reset();searchReq2=clone(searchReq)">重置</el-button>
-              </el-form-item>
-            </el-form>
-          </el-collapse-item>
-        </el-collapse>
-        <!-- 普通查询 -->
-        <el-row v-if="tableType===2||tableType===1">
-          <el-row class="table-container">
-            <el-row class="margin-bottom-20">
-              <div class="font14 bold">文章列表</div>
-            </el-row>
-            <el-row class="margin-bottom-20">
-              <el-button v-if="permission" type="success" size="small" @click="checkCatalogid();clearUpload('upload');">新建</el-button>
-            </el-row>
-            <el-row>
-              <el-table
-                :data="tableData">
-                <el-table-column
-                  align="center"
-                  prop="name"
-                  fixed
-                  width="58">
-                  <template
-                    slot-scope="scope">
-                    <div>
-                      <span v-if="scope.row.hits&&scope.row.hot" style="color:red;font-size:10px;">Hot</span>
-                      <span v-if="scope.row.status==1&&setNew(scope.row)" style="color:#E8D343;font-size:10px;">New</span>
-                    </div>
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  align="center"
-                  prop="title"
-                  fixed
-                  label="标题">
-                  <template
-                    slot-scope="scope">
-                    <div style="text-align:left;">
-                      <a @click="queryOne(scope.row.ID);">
-                          {{scope.row.title}}
-                      </a>
-                    </div>
-                  </template>
-                </el-table-column>
-                <!-- <el-table-column
-                  align="center"
-                  prop="title"
-                  label="路径">
-                  <template
-                    slot-scope="scope">
-                    <div>
-                      {{getPath(scope.row)}}
-                    </div>
-                  </template>
-                </el-table-column> -->
-                <el-table-column
-                  width="80"
-                  align="center"
-                  prop="hits"
-                  label="阅读次数">
-                </el-table-column>
-                <el-table-column
-                  width="100"
-                  align="center"
-                  prop="creatorRealname"
-                  label="创建人">
-                </el-table-column>
-                <el-table-column
-                  width="100"
-                  align="center"
-                  prop="updatorRealname"
-                  label="修改人">
-                </el-table-column>
-                <el-table-column
-                  align="center"
-                  prop="CreatedAt"
-                  label="创建时间">
-                  <template slot-scope="scope">
-                    <div>{{formatDateTime(scope.row.CreatedAt)}}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  align="center"
-                  prop="UpdatedAt"
-                  label="修改时间">
-                  <template slot-scope="scope">
-                    <div>{{formatDateTime(scope.row.UpdatedAt)}}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  align="center"
-                  prop="release_time"
-                  label="发布时间">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.status==1">{{formatDateTime(scope.row.release_time)}}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  width="273"
-                  v-if="permission"
-                  align="center"
-                  fixed="right"
-                  label="操作">
-                  <template slot-scope="scope">
-                    <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
-                    <el-button @click="getDelInfo(scope.row);delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
-                    <el-button v-if="scope.row.sticked==0" @click="setTop(scope.row)" type="text" size="small">置顶</el-button>
-                    <el-button v-if="scope.row.sticked==1" @click="setTop(scope.row)" type="text" size="small">取消置顶</el-button>
-                    <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
-                    <el-button v-if="scope.row.status==1" @click="release(scope.row)" type="text" size="small">取消发布</el-button>
-                    <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加目录</el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-row>
-            <el-row style="margin-top:20px;">
-              <el-pagination
-                v-if="nodePageShow"
-                @size-change="nodeSizeChange"
-                @current-change="nodeCurrentChange"
-                :current-page='pageInfo.pageNo'
-                :page-sizes="[10, 20, 30, 40, 50]"
-                :page-size='pageInfo.pageSize'
-                layout="total, sizes, prev, pager, next, jumper "
-                :total='pageInfo.total' style="text-align: right;float:right;">
-              </el-pagination>
-              <el-pagination
-                v-if="queryPageShow1"
-                @size-change="querySizeChange1"
-                @current-change="queryCurrentChange1"
-                :current-page='pageInfo.pageNo'
-                :page-sizes="[10, 20, 30, 40, 50]"
-                :page-size='pageInfo.pageSize'
-                layout="total, sizes, prev, pager, next, jumper "
-                :total='pageInfo.total' style="text-align: right;float:right;">
-              </el-pagination>
-            </el-row>
-          </el-row>
-        </el-row>
-          <!-- 高级查询 -->
-          <el-row v-if="tableType===3">
-            <el-row class="table-container">
-              <el-row class="margin-bottom-20">
-                <el-button v-if="permission" type="success" size="small" @click="checkCatalogid();clearUpload('upload');">新建</el-button>
-              </el-row>
-              <el-row>
-                <el-row class="margin-bottom-20">
-                  <div class="font14 bold">查询标题结果</div>
+      <el-container>
+        <div class="kb-main" style="width:100%;">
+          <!-- 主页 -->
+          <section v-if="isListPage==='1'" style="padding-top:0;height:100%;">
+            <div class="kb-form-container" title="筛选条件">
+              <div class="margin-bottom-15">
+                <div class="font14 bold">筛选条件</div>
+              </div>
+              <el-form>
+                <el-form-item style="margin-bottom:10px;" label="查询方式：" prop="validityStatus">
+                  <el-radio-group v-model="searchType" size="small" @change="searchTypeChange">
+                    <el-radio-button label='0' border>普通</el-radio-button>
+                    <el-radio-button label='1' border>高级</el-radio-button>
+                  </el-radio-group>
+                </el-form-item>
+              </el-form>
+              <el-form :inline="true" size="small" v-if="searchType==='0'">
+                <el-form-item label="标题:">
+                  <el-input v-model="req.title" placeholder="标题"></el-input>
+                </el-form-item>
+                <el-form-item label="发布时间：">
+                  <el-date-picker
+                      v-model="timeValue"
+                      type="datetimerange"
+                      range-separator="-"
+                      start-placeholder="开始时间"
+                      end-placeholder="结束时间">
+                  </el-date-picker>
+                </el-form-item>
+                <el-form-item v-if="permission" label="发布状态：" prop="validityStatus">
+                  <el-radio-group v-model="req.status" size="small">
+                    <el-radio-button label=1 border>发布</el-radio-button>
+                    <el-radio-button label=0 border>未发布</el-radio-button>
+                  </el-radio-group>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" @click="getArticles1(req);req2=clone(req);">查询</el-button>
+                  <el-button @click="reset();req2=clone(req)">重置</el-button>
+                </el-form-item>
+              </el-form>
+              <el-form :inline="true" size="small" v-if="searchType==='1'">
+                <el-form-item label="关键字:">
+                  <el-input v-model="searchReq.query" placeholder="关键字"></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" @click="searchReq.pageNo=1;getArticles1(searchReq);searchReq2=clone(searchReq);getPath();">查询</el-button>
+                  <el-button @click="reset();searchReq2=clone(searchReq)">重置</el-button>
+                </el-form-item>
+              </el-form>
+            </div>
+            <!-- 普通查询 -->
+            <el-row v-if="tableType===2||tableType===1" style="height:81%;overflow-y:auto;">
+              <el-row class="table-container">
+                <el-row class="margin-bottom-15">
+                  <div class="font14 bold">文章列表</div>
+                </el-row>
+                <el-row class="margin-bottom-15">
+                  <el-button v-if="permission" type="success" size="small" @click="checkCatalogid();clearUpload('upload');">新建</el-button>
                 </el-row>
                 <el-row>
                   <el-table
-                    :data="tableDataTitle">
+                    :data="tableData">
                     <el-table-column
                       align="center"
                       prop="name"
-                      fixed
                       width="58">
                       <template
                         slot-scope="scope">
@@ -233,7 +105,6 @@
                     <el-table-column
                       align="center"
                       prop="title"
-                      fixed
                       label="标题">
                       <template
                         slot-scope="scope">
@@ -244,232 +115,18 @@
                         </div>
                       </template>
                     </el-table-column>
-                    <el-table-column
-                      width="80"
-                      align="center"
-                      prop="hits"
-                      label="阅读次数">
-                    </el-table-column>
-                    <el-table-column
-                      width="100"
-                      align="center"
-                      prop="creatorRealname"
-                      label="创建人">
-                    </el-table-column>
-                    <el-table-column
-                      width="100"
-                      align="center"
-                      prop="updatorRealname"
-                      label="修改人">
-                    </el-table-column>
-                    <el-table-column
-                      align="center"
-                      prop="CreatedAt"
-                      label="创建时间">
-                      <template slot-scope="scope">
-                        <div>{{formatDateTime(scope.row.CreatedAt)}}</div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column
-                      align="center"
-                      prop="UpdatedAt"
-                      label="修改时间">
-                      <template slot-scope="scope">
-                        <div>{{formatDateTime(scope.row.UpdatedAt)}}</div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column
-                      align="center"
-                      prop="release_time"
-                      label="发布时间">
-                      <template slot-scope="scope">
-                        <div v-if="scope.row.status==1">{{formatDateTime(scope.row.release_time)}}</div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column
-                      width="273"
-                      v-if="permission"
-                      align="center"
-                      fixed="right"
-                      label="操作">
-                      <template slot-scope="scope">
-                        <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
-                        <el-button @click="getDelInfo(scope.row);delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
-                        <el-button v-if="scope.row.sticked==0" @click="setTop(scope.row)" type="text" size="small">置顶</el-button>
-                        <el-button v-if="scope.row.sticked==1" @click="setTop(scope.row)" type="text" size="small">取消置顶</el-button>
-                        <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
-                        <el-button v-if="scope.row.status==1" @click="release(scope.row)" type="text" size="small">取消发布</el-button>
-                        <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加目录</el-button>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                </el-row>
-                <el-row style="margin-top:15px;margin-bottom:20px;">
-                  <div class="smallPaging">
-                    <el-pagination
-                      v-if="titlePageShow"
-                      @size-change="titleSizeChange"
-                      @current-change="titleCurrentChange"
-                      :current-page='titlePageInfo.pageNo'
-                      :page-sizes="[10, 20, 30, 40, 50]"
-                      :page-size='titlePageInfo.pageSize'
-                      layout="total, sizes, prev, pager, next, jumper "
-                      :total='titlePageInfo.total' style="text-align: right;">
-                    </el-pagination>
-                  </div>
-                </el-row>
-              </el-row>
-
-              <el-row>
-                <el-row class="margin-bottom-20">
-                  <div class="font14 bold">查询内容结果</div>
-                </el-row>
-                <el-row>
-                  <el-table
-                    :data="tableDataBody">
-                    <el-table-column
-                      align="center"
-                      prop="name"
-                      fixed
-                      width="58">
-                      <template
-                        slot-scope="scope">
-                        <div>
-                          <span v-if="scope.row.hits&&scope.row.hot" style="color:red;font-size:10px;">Hot</span>
-                          <span v-if="scope.row.status==1&&setNew(scope.row)" style="color:#E8D343;font-size:10px;">New</span>
-                        </div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column
-                      align="center"
-                      prop="title"
-                      fixed
-                      label="标题">
-                      <template
-                        slot-scope="scope">
-                        <div style="text-align:left;">
-                          <a @click="queryOne(scope.row.ID);">
-                              {{scope.row.title}}
-                          </a>
-                        </div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column
-                      width="80"
-                      align="center"
-                      prop="hits"
-                      label="阅读次数">
-                    </el-table-column>
-                    <el-table-column
-                      width="100"
-                      align="center"
-                      prop="creatorRealname"
-                      label="创建人">
-                    </el-table-column>
-                    <el-table-column
-                      width="100"
-                      align="center"
-                      prop="updatorRealname"
-                      label="修改人">
-                    </el-table-column>
-                    <el-table-column
-                      align="center"
-                      prop="CreatedAt"
-                      label="创建时间">
-                      <template slot-scope="scope">
-                        <div>{{formatDateTime(scope.row.CreatedAt)}}</div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column
-                      align="center"
-                      prop="UpdatedAt"
-                      label="修改时间">
-                      <template slot-scope="scope">
-                        <div>{{formatDateTime(scope.row.UpdatedAt)}}</div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column
-                      align="center"
-                      prop="release_time"
-                      label="发布时间">
-                      <template slot-scope="scope">
-                        <div v-if="scope.row.status==1">{{formatDateTime(scope.row.release_time)}}</div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column
-                      width="273"
-                      v-if="permission"
-                      align="center"
-                      fixed="right"
-                      label="操作">
-                      <template slot-scope="scope">
-                        <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
-                        <el-button @click="getDelInfo(scope.row);delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
-                        <el-button v-if="scope.row.sticked==0" @click="setTop(scope.row)" type="text" size="small">置顶</el-button>
-                        <el-button v-if="scope.row.sticked==1" @click="setTop(scope.row)" type="text" size="small">取消置顶</el-button>
-                        <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
-                        <el-button v-if="scope.row.status==1" @click="release(scope.row)" type="text" size="small">取消发布</el-button>
-                        <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加目录</el-button>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                </el-row>
-                <el-row style="margin-top:15px;margin-bottom:20px;">
-                  <div class="smallPaging">
-                    <el-pagination
-                      v-if="bodyPageShow"
-                      @size-change="bodySizeChange"
-                      @current-change="bodyCurrentChange"
-                      :current-page='bodyPageInfo.pageNo'
-                      :page-sizes="[10, 20, 30, 40, 50]"
-                      :page-size='bodyPageInfo.pageSize'
-                      layout="total, sizes, prev, pager, next, jumper "
-                      :total='bodyPageInfo.total' style="text-align: right;">
-                    </el-pagination>
-                  </div>
-                </el-row>
-              </el-row>
-
-               <el-row>
-                <el-row class="margin-bottom-20">
-                  <div class="font14 bold">查询概要结果</div>
-                </el-row>
-                <el-row>
-                  <el-table
-                    :data="tableDataBrief">
                     <!-- <el-table-column
-                      align="left"
-                      type="selection"
-                      width="30">
+                      align="center"
+                      prop="title"
+                      label="路径">
+                      <template
+                        slot-scope="scope">
+                        <div>
+                          {{getPath(scope.row)}}
+                        </div>
+                      </template>
                     </el-table-column> -->
                     <el-table-column
-                      align="center"
-                      prop="name"
-                      fixed
-                      width="58">
-                      <template
-                        slot-scope="scope">
-                        <div>
-                          <span v-if="scope.row.hits&&scope.row.hot" style="color:red;font-size:10px;">Hot</span>
-                          <span v-if="scope.row.status==1&&setNew(scope.row)" style="color:#E8D343;font-size:10px;">New</span>
-                        </div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column
-                      align="center"
-                      prop="title"
-                      fixed
-                      label="标题">
-                      <template
-                        slot-scope="scope">
-                        <div style="text-align:left;">
-                          <a @click="queryOne(scope.row.ID);">
-                              {{scope.row.title}}
-                          </a>
-                        </div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column
                       width="80"
                       align="center"
                       prop="hits"
@@ -515,7 +172,6 @@
                       width="273"
                       v-if="permission"
                       align="center"
-                      fixed="right"
                       label="操作">
                       <template slot-scope="scope">
                         <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
@@ -529,493 +185,838 @@
                     </el-table-column>
                   </el-table>
                 </el-row>
+                <el-row style="margin-top:10px;">
+                  <el-pagination
+                    v-if="nodePageShow"
+                    @size-change="nodeSizeChange"
+                    @current-change="nodeCurrentChange"
+                    :current-page='pageInfo.pageNo'
+                    :page-sizes="[10, 20, 30, 40, 50]"
+                    :page-size='pageInfo.pageSize'
+                    layout="total, sizes, prev, pager, next, jumper "
+                    :total='pageInfo.total' style="text-align: right;float:right;">
+                  </el-pagination>
+                  <el-pagination
+                    v-if="queryPageShow1"
+                    @size-change="querySizeChange1"
+                    @current-change="queryCurrentChange1"
+                    :current-page='pageInfo.pageNo'
+                    :page-sizes="[10, 20, 30, 40, 50]"
+                    :page-size='pageInfo.pageSize'
+                    layout="total, sizes, prev, pager, next, jumper "
+                    :total='pageInfo.total' style="text-align: right;float:right;">
+                  </el-pagination>
+                </el-row>
+              </el-row>
+            </el-row>
+              <!-- 高级查询 -->
+              <el-row v-if="tableType===3" style="height:81%;overflow-y:auto;">
+                <el-row style="padding:15px 15px 0 15px;">
+                  <el-row class="margin-bottom-15">
+                    <el-button v-if="permission" type="success" size="small" @click="checkCatalogid();clearUpload('upload');">新建</el-button>
+                  </el-row>
+                  <el-row>
+                    <el-row class="margin-bottom-15">
+                      <div class="font14 bold">查询标题结果</div>
+                    </el-row>
+                    <el-row>
+                      <el-table
+                        :data="tableDataTitle">
+                        <el-table-column
+                          align="center"
+                          prop="name"
+                          width="58">
+                          <template
+                            slot-scope="scope">
+                            <div>
+                              <span v-if="scope.row.hits&&scope.row.hot" style="color:red;font-size:10px;">Hot</span>
+                              <span v-if="scope.row.status==1&&setNew(scope.row)" style="color:#E8D343;font-size:10px;">New</span>
+                            </div>
+                          </template>
+                        </el-table-column>
+                        <el-table-column
+                          align="center"
+                          prop="title"
+                          label="标题">
+                          <template
+                            slot-scope="scope">
+                            <div style="text-align:left;">
+                              <a @click="queryOne(scope.row.ID);">
+                                  {{scope.row.title}}
+                              </a>
+                            </div>
+                          </template>
+                        </el-table-column>
+                        <el-table-column
+                          width="80"
+                          align="center"
+                          prop="hits"
+                          label="阅读次数">
+                        </el-table-column>
+                        <el-table-column
+                          width="100"
+                          align="center"
+                          prop="creatorRealname"
+                          label="创建人">
+                        </el-table-column>
+                        <el-table-column
+                          width="100"
+                          align="center"
+                          prop="updatorRealname"
+                          label="修改人">
+                        </el-table-column>
+                        <el-table-column
+                          align="center"
+                          prop="CreatedAt"
+                          label="创建时间">
+                          <template slot-scope="scope">
+                            <div>{{formatDateTime(scope.row.CreatedAt)}}</div>
+                          </template>
+                        </el-table-column>
+                        <el-table-column
+                          align="center"
+                          prop="UpdatedAt"
+                          label="修改时间">
+                          <template slot-scope="scope">
+                            <div>{{formatDateTime(scope.row.UpdatedAt)}}</div>
+                          </template>
+                        </el-table-column>
+                        <el-table-column
+                          align="center"
+                          prop="release_time"
+                          label="发布时间">
+                          <template slot-scope="scope">
+                            <div v-if="scope.row.status==1">{{formatDateTime(scope.row.release_time)}}</div>
+                          </template>
+                        </el-table-column>
+                        <el-table-column
+                          width="273"
+                          v-if="permission"
+                          align="center"
+                          label="操作">
+                          <template slot-scope="scope">
+                            <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
+                            <el-button @click="getDelInfo(scope.row);delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
+                            <el-button v-if="scope.row.sticked==0" @click="setTop(scope.row)" type="text" size="small">置顶</el-button>
+                            <el-button v-if="scope.row.sticked==1" @click="setTop(scope.row)" type="text" size="small">取消置顶</el-button>
+                            <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
+                            <el-button v-if="scope.row.status==1" @click="release(scope.row)" type="text" size="small">取消发布</el-button>
+                            <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加目录</el-button>
+                          </template>
+                        </el-table-column>
+                      </el-table>
+                    </el-row>
+                    <el-row style="margin-top:10px;margin-bottom:15px;">
+                      <div class="smallPaging">
+                        <el-pagination
+                          v-if="titlePageShow"
+                          @size-change="titleSizeChange"
+                          @current-change="titleCurrentChange"
+                          :current-page='titlePageInfo.pageNo'
+                          :page-sizes="[10, 20, 30, 40, 50]"
+                          :page-size='titlePageInfo.pageSize'
+                          layout="total, sizes, prev, pager, next, jumper "
+                          :total='titlePageInfo.total' style="text-align: right;">
+                        </el-pagination>
+                      </div>
+                    </el-row>
+                  </el-row>
+
+                  <el-row>
+                    <el-row class="margin-bottom-15">
+                      <div class="font14 bold">查询内容结果</div>
+                    </el-row>
+                    <el-row>
+                      <el-table
+                        :data="tableDataBody">
+                        <el-table-column
+                          align="center"
+                          prop="name"
+                          width="58">
+                          <template
+                            slot-scope="scope">
+                            <div>
+                              <span v-if="scope.row.hits&&scope.row.hot" style="color:red;font-size:10px;">Hot</span>
+                              <span v-if="scope.row.status==1&&setNew(scope.row)" style="color:#E8D343;font-size:10px;">New</span>
+                            </div>
+                          </template>
+                        </el-table-column>
+                        <el-table-column
+                          align="center"
+                          prop="title"
+                          label="标题">
+                          <template
+                            slot-scope="scope">
+                            <div style="text-align:left;">
+                              <a @click="queryOne(scope.row.ID);">
+                                  {{scope.row.title}}
+                              </a>
+                            </div>
+                          </template>
+                        </el-table-column>
+                        <el-table-column
+                          width="80"
+                          align="center"
+                          prop="hits"
+                          label="阅读次数">
+                        </el-table-column>
+                        <el-table-column
+                          width="100"
+                          align="center"
+                          prop="creatorRealname"
+                          label="创建人">
+                        </el-table-column>
+                        <el-table-column
+                          width="100"
+                          align="center"
+                          prop="updatorRealname"
+                          label="修改人">
+                        </el-table-column>
+                        <el-table-column
+                          align="center"
+                          prop="CreatedAt"
+                          label="创建时间">
+                          <template slot-scope="scope">
+                            <div>{{formatDateTime(scope.row.CreatedAt)}}</div>
+                          </template>
+                        </el-table-column>
+                        <el-table-column
+                          align="center"
+                          prop="UpdatedAt"
+                          label="修改时间">
+                          <template slot-scope="scope">
+                            <div>{{formatDateTime(scope.row.UpdatedAt)}}</div>
+                          </template>
+                        </el-table-column>
+                        <el-table-column
+                          align="center"
+                          prop="release_time"
+                          label="发布时间">
+                          <template slot-scope="scope">
+                            <div v-if="scope.row.status==1">{{formatDateTime(scope.row.release_time)}}</div>
+                          </template>
+                        </el-table-column>
+                        <el-table-column
+                          width="273"
+                          v-if="permission"
+                          align="center"
+                          label="操作">
+                          <template slot-scope="scope">
+                            <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
+                            <el-button @click="getDelInfo(scope.row);delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
+                            <el-button v-if="scope.row.sticked==0" @click="setTop(scope.row)" type="text" size="small">置顶</el-button>
+                            <el-button v-if="scope.row.sticked==1" @click="setTop(scope.row)" type="text" size="small">取消置顶</el-button>
+                            <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
+                            <el-button v-if="scope.row.status==1" @click="release(scope.row)" type="text" size="small">取消发布</el-button>
+                            <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加目录</el-button>
+                          </template>
+                        </el-table-column>
+                      </el-table>
+                    </el-row>
+                    <el-row style="margin-top:10px;margin-bottom:15px;">
+                      <div class="smallPaging">
+                        <el-pagination
+                          v-if="bodyPageShow"
+                          @size-change="bodySizeChange"
+                          @current-change="bodyCurrentChange"
+                          :current-page='bodyPageInfo.pageNo'
+                          :page-sizes="[10, 20, 30, 40, 50]"
+                          :page-size='bodyPageInfo.pageSize'
+                          layout="total, sizes, prev, pager, next, jumper "
+                          :total='bodyPageInfo.total' style="text-align: right;">
+                        </el-pagination>
+                      </div>
+                    </el-row>
+                  </el-row>
+
                 <el-row>
-                <div class="smallPaging">
-                  <el-pagination
-                    v-if="briefPageShow"
-                    @size-change="briefSizeChange"
-                    @current-change="briefCurrentChange"
-                    :current-page='briefPageInfo.pageNo'
-                    :page-sizes="[10, 20, 30, 40, 50]"
-                    :page-size='briefPageInfo.pageSize'
-                    layout="total, sizes, prev, pager, next, jumper "
-                    :total='briefPageInfo.total' style="text-align: right;">
-                  </el-pagination>
-                </div>
-              </el-row>
-            </el-row>
+                  <el-row class="margin-bottom-15">
+                    <div class="font14 bold">查询概要结果</div>
+                  </el-row>
+                  <el-row>
+                    <el-table
+                      :data="tableDataBrief">
+                      <!-- <el-table-column
+                        align="left"
+                        type="selection"
+                        width="30">
+                      </el-table-column> -->
+                      <el-table-column
+                        align="center"
+                        prop="name"
+                        width="58">
+                        <template
+                          slot-scope="scope">
+                          <div>
+                            <span v-if="scope.row.hits&&scope.row.hot" style="color:red;font-size:10px;">Hot</span>
+                            <span v-if="scope.row.status==1&&setNew(scope.row)" style="color:#E8D343;font-size:10px;">New</span>
+                          </div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        align="center"
+                        prop="title"
+                        label="标题">
+                        <template
+                          slot-scope="scope">
+                          <div style="text-align:left;">
+                            <a @click="queryOne(scope.row.ID);">
+                                {{scope.row.title}}
+                            </a>
+                          </div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        width="80"
+                        align="center"
+                        prop="hits"
+                        label="阅读次数">
+                      </el-table-column>
+                      <el-table-column
+                        width="100"
+                        align="center"
+                        prop="creatorRealname"
+                        label="创建人">
+                      </el-table-column>
+                      <el-table-column
+                        width="100"
+                        align="center"
+                        prop="updatorRealname"
+                        label="修改人">
+                      </el-table-column>
+                      <el-table-column
+                        align="center"
+                        prop="CreatedAt"
+                        label="创建时间">
+                        <template slot-scope="scope">
+                          <div>{{formatDateTime(scope.row.CreatedAt)}}</div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        align="center"
+                        prop="UpdatedAt"
+                        label="修改时间">
+                        <template slot-scope="scope">
+                          <div>{{formatDateTime(scope.row.UpdatedAt)}}</div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        align="center"
+                        prop="release_time"
+                        label="发布时间">
+                        <template slot-scope="scope">
+                          <div v-if="scope.row.status==1">{{formatDateTime(scope.row.release_time)}}</div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        width="273"
+                        v-if="permission"
+                        align="center"
+                        label="操作">
+                        <template slot-scope="scope">
+                          <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
+                          <el-button @click="getDelInfo(scope.row);delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
+                          <el-button v-if="scope.row.sticked==0" @click="setTop(scope.row)" type="text" size="small">置顶</el-button>
+                          <el-button v-if="scope.row.sticked==1" @click="setTop(scope.row)" type="text" size="small">取消置顶</el-button>
+                          <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
+                          <el-button v-if="scope.row.status==1" @click="release(scope.row)" type="text" size="small">取消发布</el-button>
+                          <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加目录</el-button>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                  </el-row>
+                  <el-row style="margin-top:10px;margin-bottom:15px;">
+                    <div class="smallPaging">
+                      <el-pagination
+                        v-if="briefPageShow"
+                        @size-change="briefSizeChange"
+                        @current-change="briefCurrentChange"
+                        :current-page='briefPageInfo.pageNo'
+                        :page-sizes="[10, 20, 30, 40, 50]"
+                        :page-size='briefPageInfo.pageSize'
+                        layout="total, sizes, prev, pager, next, jumper "
+                        :total='briefPageInfo.total' style="text-align: right;">
+                      </el-pagination>
+                    </div>
+                  </el-row>
+                </el-row>
 
-            <el-row>
-              <el-row class="margin-bottom-20">
-                <div class="font14 bold">查询备注结果</div>
+                <el-row>
+                  <el-row class="margin-bottom-15">
+                    <div class="font14 bold">查询备注结果</div>
+                  </el-row>
+                  <el-row>
+                    <el-table
+                      :data="tableDataRemark">
+                      <!-- <el-table-column
+                        align="left"
+                        type="selection"
+                        width="30">
+                      </el-table-column> -->
+                      <el-table-column
+                        align="center"
+                        prop="name"
+                        width="58">
+                        <template
+                          slot-scope="scope">
+                          <div>
+                            <span v-if="scope.row.hits&&scope.row.hot" style="color:red;font-size:10px;">Hot</span>
+                            <span v-if="scope.row.status==1&&setNew(scope.row)" style="color:#E8D343;font-size:10px;">New</span>
+                          </div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        align="center"
+                        prop="title"
+                        label="标题">
+                        <template
+                          slot-scope="scope">
+                          <div style="text-align:left;">
+                            <a @click="queryOne(scope.row.ID);">
+                                {{scope.row.title}}
+                            </a>
+                          </div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        width="80"
+                        align="center"
+                        prop="hits"
+                        label="阅读次数">
+                      </el-table-column>
+                      <el-table-column
+                        width="100"
+                        align="center"
+                        prop="creatorRealname"
+                        label="创建人">
+                      </el-table-column>
+                      <el-table-column
+                        width="100"
+                        align="center"
+                        prop="updatorRealname"
+                        label="修改人">
+                      </el-table-column>
+                      <el-table-column
+                        align="center"
+                        prop="CreatedAt"
+                        label="创建时间">
+                        <template slot-scope="scope">
+                          <div>{{formatDateTime(scope.row.CreatedAt)}}</div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        align="center"
+                        prop="UpdatedAt"
+                        label="修改时间">
+                        <template slot-scope="scope">
+                          <div>{{formatDateTime(scope.row.UpdatedAt)}}</div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        align="center"
+                        prop="release_time"
+                        label="发布时间">
+                        <template slot-scope="scope">
+                          <div v-if="scope.row.status==1">{{formatDateTime(scope.row.release_time)}}</div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        width="273"
+                        v-if="permission"
+                        align="center"
+                        label="操作">
+                        <template slot-scope="scope">
+                          <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
+                          <el-button @click="getDelInfo(scope.row);delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
+                          <el-button v-if="scope.row.sticked==0" @click="setTop(scope.row)" type="text" size="small">置顶</el-button>
+                          <el-button v-if="scope.row.sticked==1" @click="setTop(scope.row)" type="text" size="small">取消置顶</el-button>
+                          <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
+                          <el-button v-if="scope.row.status==1" @click="release(scope.row)" type="text" size="small">取消发布</el-button>
+                          <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加目录</el-button>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                  </el-row>
+                  <el-row style="margin-top:15px;">
+                    <div class="smallPaging">
+                      <el-pagination
+                        v-if="remarkPageShow"
+                        @size-change="remarkSizeChange"
+                        @current-change="remarkCurrentChange"
+                        :current-page='remarkPageInfo.pageNo'
+                        :page-sizes="[10, 20, 30, 40, 50]"
+                        :page-size='remarkPageInfo.pageSize'
+                        layout="total, sizes, prev, pager, next, jumper "
+                        :total='remarkPageInfo.total' style="text-align: right;">
+                      </el-pagination>
+                    </div>
+                  </el-row>
+                </el-row>
+
+                </el-row>
+
+              
+            </el-row>
+          </section>
+          <!-- 新建 -->
+          <el-dialog
+            top="5vh"
+            width="90%"
+            :visible.sync="addArticles"
+            append-to-body>
+            <div style="text-align:center">
+              <h3>
+                {{noteTitle}}
+                <el-tooltip class="item" effect="dark" content="修改标题" placement="right-start">
+                  <el-button style="font-size:16px;" type="text" icon="el-icon-edit-outline" @click="editNoteTitleVisiable=true;editDetail.title=noteTitle" size="mini" circle></el-button>
+                </el-tooltip>
+              </h3>
+              <!-- <el-row style="text-align:left">
+                <el-form :inline="true">
+                  <el-form-item label="标签:" style="float:left;min-height:41px;">
+                    <el-tag
+                      style="margin-left:10px;"
+                      :key="tag"
+                      v-for="tag in dynamicTags"
+                      closable
+                      :disable-transitions="false"
+                      @close="handleClose(tag)">
+                      {{tag}}
+                    </el-tag>
+                    <el-input
+                      class="input-new-tag"
+                      v-if="inputVisible"
+                      v-model="inputValue"
+                      ref="saveTagInput"
+                      size="small"
+                      @keyup.enter.native="handleInputConfirm"
+                      @blur="handleInputConfirm">
+                    </el-input>
+                    <el-button type="success" v-else class="button-new-tag" size="small" @click="showInput">新建标签</el-button>
+                  </el-form-item>
+                </el-form>
+              </el-row> -->
+              <el-row>
+                <el-form size="small">
+                  <el-form-item label-width="45px" label="概要:">
+                    <el-input :rows="4" v-model="brief" type="textarea" class="article-textarea" autosize placeholder="请输入内容"/>
+                  </el-form-item>
+                </el-form>
+              </el-row>
+              <div style="position:relative">
+                <quill-editor
+                v-model="body"
+                ref="myQuillEditor"
+                :options="editorOption"
+                style="white-space:pre"
+                ></quill-editor>
+              </div>
+              <el-row style="margin-top:1%">
+                <el-row style="text-align:left">
+                  <el-form size="small">
+                    <el-form-item label-width="45px" label="备注:">
+                      <el-input :rows="1" v-model="remark" type="textarea" class="article-textarea" autosize placeholder="请输入内容"/>
+                    </el-form-item>
+                    <el-form-item label-width="45px" label="附件:">
+                      <el-upload
+                        class="kb-upload"
+                        ref="upload"
+                        :action="updateUrl"
+                        :headers="{'Authorization':'Bearer ' +token}"
+                        :on-remove="uploadRemove"
+                        :before-remove="beforeRemove"
+                        :http-request="uploadFile"
+                        :auto-upload="false">
+                        <el-button slot="trigger" size="small" type="primary">选取附件</el-button>
+                        <el-button style="margin-left:10px;" size="small" type="success" @click="submitUpload();">上传</el-button>
+                        <div style="font-weight:bold;color:red;" slot="tip" class="el-upload__tip">注：上传附件只能是 xls,xlsx,doc,docx,ppt,pptx,txt,pdf 格式，大小不能超过10MB</div>
+                      </el-upload>
+                    </el-form-item>
+                  </el-form>
+                </el-row>
+                <el-row>
+                  <el-button type="primary" @click="generateNote();" size="small" :disabled="uploadDisable">确定</el-button>
+                  <el-button type="primary" plain @click="noteTitle='';addArticles=false;body=null;brief=null;remark=null" size="small">取消</el-button>
+                </el-row>
+              </el-row>
+            </div>
+          </el-dialog>
+            <!-- 修改 -->
+          <el-dialog
+            top="5vh"
+            width="90%"
+            :visible.sync="editArticles"
+            append-to-body>
+            <div style="text-align:center">
+              <h3>{{editDetail.title}}
+                <el-tooltip class="item" effect="dark" content="修改标题" placement="right-start">
+                  <el-button style="font-size:16px;" type="text" icon="el-icon-edit-outline" @click="editNoteTitleVisiable=true" size="mini" circle></el-button>
+                </el-tooltip>
+              </h3>
+              <!-- <el-row style="text-align:left">
+                <el-form :inline="true">
+                  <el-form-item label="标签:" style="float:left;min-height:41px;">
+                    <el-tag
+                      style="margin-left:10px;"
+                      :key="tag"
+                      v-for="tag in dynamicTags"
+                      closable
+                      :disable-transitions="false"
+                      @close="handleClose(tag)">
+                      {{tag}}
+                    </el-tag>
+                    <el-input
+                      class="input-new-tag"
+                      v-if="inputVisible"
+                      v-model="inputValue"
+                      ref="saveTagInput"
+                      size="small"
+                      @keyup.enter.native="handleInputConfirm"
+                      @blur="handleInputConfirm">
+                    </el-input>
+                    <el-button type="success" v-else class="button-new-tag" size="small" @click="showInput">新建标签</el-button>
+                  </el-form-item>
+                </el-form>
+              </el-row> -->
+              <el-row>
+                <el-form size="small">
+                  <el-form-item label-width="45px" label="概要:">
+                    <el-input :rows="1" v-model="editDetail.brief" type="textarea" class="article-textarea" autosize placeholder="请输入内容"/>
+                  </el-form-item>
+                </el-form>
+              </el-row>
+              <div style="position:relative">
+                <quill-editor
+                v-model="editDetail.body"
+                ref="myQuillEditor"
+                style="white-space:pre"
+                :options="editorOption"
+                ></quill-editor>
+              </div>
+              <el-row style="margin-top:1%">
+                <el-row style="text-align:left">
+                  <el-form size="small">
+                    <el-form-item label-width="45px" label="备注:">
+                      <el-input :rows="4" v-model="editDetail.remark" type="textarea" class="article-textarea" autosize placeholder="请输入内容"/>
+                    </el-form-item>
+                    <el-form-item label-width="45px" label="附件:">
+                      <el-upload
+                        class="kb-upload"
+                        ref="upload"
+                        :action="updateUrl"
+                        :headers="{'Authorization':'Bearer ' +token}"
+                        :on-remove="uploadRemove"
+                        :before-remove="beforeRemove"
+                        :http-request="uploadFile"
+                        :file-list="fileList"
+                        :auto-upload="false">
+                        <el-button slot="trigger" size="small" type="primary">选取附件</el-button>
+                        <el-button style="margin-left:10px;" size="small" type="success" @click="submitUpload();">上传</el-button>
+                        <div style="font-weight:bold;color:red;" slot="tip" class="el-upload__tip">注：上传附件只能是 xls,xlsx,doc,docx,ppt,pptx,txt,pdf 格式，大小不能超过10MB</div>
+                      </el-upload>
+                    </el-form-item>
+                  </el-form>
+                </el-row>
+                <el-row>
+                  <el-button type="primary" @click="modifyNote();" size="small" :disabled="uploadDisable">确定</el-button>
+                  <el-button type="primary" plain @click="editDetail.title='';editArticles=false;editDetail.body=null" size="small">取消</el-button>
+                </el-row>
+              </el-row>
+            </div>
+          </el-dialog>
+          <!-- 详情 -->
+          <el-dialog
+            top="5vh"
+            width="90%"
+            :visible.sync="detailArticles"
+            append-to-body>
+            <div>
+              <h3 style="text-align:center">{{noteDetail.title}}&nbsp;&nbsp;</h3>
+              <!-- <el-row style="text-align:left">
+                <el-form :inline="true">
+                  <el-form-item label="标签:" style="float:left;min-height:41px;">
+                    <el-tag
+                      style="margin-left:10px;"
+                      :key="tag"
+                      v-for="tag in dynamicTags">
+                      {{tag}}
+                    </el-tag>
+                  </el-form-item>
+                </el-form>
+              </el-row> -->
+              <el-row>
+                <el-form size="small" :inline="true" style="margin-left:-5px;margin-top:-20px;">
+                  <el-form-item label="创建人:" label-width="65px">
+                    <div>{{noteDetail.creatorRealname}}</div>
+                  </el-form-item>
+                  <el-form-item label="创建时间:" label-width="75px" style="margin-left:100px;">
+                    <div>{{formatDateTime(noteDetail.CreatedAt)}}</div>
+                  </el-form-item>
+                </el-form>
               </el-row>
               <el-row>
-                <el-table
-                  :data="tableDataRemark">
-                  <!-- <el-table-column
-                    align="left"
-                    type="selection"
-                    width="30">
-                  </el-table-column> -->
-                  <el-table-column
-                    align="center"
-                    prop="name"
-                    fixed
-                    width="58">
-                    <template
-                      slot-scope="scope">
-                      <div>
-                        <span v-if="scope.row.hits&&scope.row.hot" style="color:red;font-size:10px;">Hot</span>
-                        <span v-if="scope.row.status==1&&setNew(scope.row)" style="color:#E8D343;font-size:10px;">New</span>
-                      </div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    align="center"
-                    prop="title"
-                    fixed
-                    label="标题">
-                    <template
-                      slot-scope="scope">
-                      <div style="text-align:left;">
-                        <a @click="queryOne(scope.row.ID);">
-                            {{scope.row.title}}
-                        </a>
-                      </div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    width="80"
-                    align="center"
-                    prop="hits"
-                    label="阅读次数">
-                  </el-table-column>
-                  <el-table-column
-                    width="100"
-                    align="center"
-                    prop="creatorRealname"
-                    label="创建人">
-                  </el-table-column>
-                  <el-table-column
-                    width="100"
-                    align="center"
-                    prop="updatorRealname"
-                    label="修改人">
-                  </el-table-column>
-                  <el-table-column
-                    align="center"
-                    prop="CreatedAt"
-                    label="创建时间">
-                    <template slot-scope="scope">
-                      <div>{{formatDateTime(scope.row.CreatedAt)}}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    align="center"
-                    prop="UpdatedAt"
-                    label="修改时间">
-                    <template slot-scope="scope">
-                      <div>{{formatDateTime(scope.row.UpdatedAt)}}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    align="center"
-                    prop="release_time"
-                    label="发布时间">
-                    <template slot-scope="scope">
-                      <div v-if="scope.row.status==1">{{formatDateTime(scope.row.release_time)}}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    width="273"
-                    v-if="permission"
-                    align="center"
-                    fixed="right"
-                    label="操作">
-                    <template slot-scope="scope">
-                      <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
-                      <el-button @click="getDelInfo(scope.row);delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
-                      <el-button v-if="scope.row.sticked==0" @click="setTop(scope.row)" type="text" size="small">置顶</el-button>
-                      <el-button v-if="scope.row.sticked==1" @click="setTop(scope.row)" type="text" size="small">取消置顶</el-button>
-                      <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
-                      <el-button v-if="scope.row.status==1" @click="release(scope.row)" type="text" size="small">取消发布</el-button>
-                      <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加目录</el-button>
-                    </template>
-                  </el-table-column>
-                </el-table>
+                <el-form size="small" :inline="true" style="margin-left:-5px;margin-top:-20px;">
+                  <el-form-item label="修改人:" label-width="65px">
+                    <div>{{noteDetail.updatorRealname}}</div>
+                  </el-form-item>
+                  <el-form-item label="修改时间:" label-width="75px" style="margin-left:100px;">
+                    <div>{{formatDateTime(noteDetail.UpdatedAt)}}</div>
+                  </el-form-item>
+                </el-form>
               </el-row>
               <el-row>
-                <div class="smallPaging">
-                  <el-pagination
-                    v-if="remarkPageShow"
-                    @size-change="remarkSizeChange"
-                    @current-change="remarkCurrentChange"
-                    :current-page='remarkPageInfo.pageNo'
-                    :page-sizes="[10, 20, 30, 40, 50]"
-                    :page-size='remarkPageInfo.pageSize'
-                    layout="total, sizes, prev, pager, next, jumper "
-                    :total='remarkPageInfo.total' style="text-align: right;">
-                  </el-pagination>
-                </div>
+                <el-form size="small">
+                  <el-form-item style="margin-left:-2px;margin-top:-20px;" label-width="75px" label="所在目录:">
+                    <div v-for="item in noteDetail.catalogs" :key="item.path">{{item.path_name}}</div>
+                  </el-form-item>
+                </el-form>
               </el-row>
-            </el-row>
+              <el-row>
+                <el-form size="small">
+                  <el-form-item style="margin-top:-20px;" label-width="45px" label="概要:">
+                    <div>{{noteDetail.brief}}</div>
+                  </el-form-item>
+                </el-form>
+              </el-row>
+              <div v-html="noteDetail.body" class="note-content div-content" style="word-wrap:auto;">
 
-            </el-row>
+              </div>
+              <el-row>
+                <el-form size="small">
+                  <div style="font-weight:bold;color:red;" class="el-upload__tip">注：txt和pdf格式的文件直接点击为预览，预览页面可以右键另存为下载，也可以右键选择另存为直接下载</div>
+                  <el-form-item label-width="45px" label="附件:">
+                    <div v-for="item in DLurl" :key="item.name">
+                      <span>{{item.name}}</span><a :href="item.url" style="font-size:16px;" type="text" size="mini" circle download target="_blank"><i style="color:blue;padding:0 8px;" class="el-icon-download"></i></a>
+                    </div>
+                  </el-form-item>
 
-           
-        </el-row>
-      </el-main>
-      <!-- 新建 -->
-      <el-dialog
-        top="5vh"
-        width="90%"
-        :visible.sync="addArticles"
-        append-to-body>
-        <div style="text-align:center">
-          <h3>
-            {{noteTitle}}
-            <el-tooltip class="item" effect="dark" content="修改标题" placement="right-start">
-              <el-button style="font-size:16px;" type="text" icon="el-icon-edit-outline" @click="editNoteTitleVisiable=true;editDetail.title=noteTitle" size="mini" circle></el-button>
-            </el-tooltip>
-          </h3>
-          <!-- <el-row style="text-align:left">
-            <el-form :inline="true">
-              <el-form-item label="标签:" style="float:left;min-height:41px;">
-                <el-tag
-                  style="margin-left:10px;"
-                  :key="tag"
-                  v-for="tag in dynamicTags"
-                  closable
-                  :disable-transitions="false"
-                  @close="handleClose(tag)">
-                  {{tag}}
-                </el-tag>
-                <el-input
-                  class="input-new-tag"
-                  v-if="inputVisible"
-                  v-model="inputValue"
-                  ref="saveTagInput"
-                  size="small"
-                  @keyup.enter.native="handleInputConfirm"
-                  @blur="handleInputConfirm">
-                </el-input>
-                <el-button type="success" v-else class="button-new-tag" size="small" @click="showInput">新建标签</el-button>
+                  <el-form-item label-width="45px" label="备注:">
+                    <div>{{noteDetail.remark}}</div>
+                  </el-form-item>
+                </el-form>
+              </el-row>
+              <el-row style="margin-top:1%;text-align:center;">
+                <el-button type="primary" plain @click="noteDetail.title='';detailArticles=false;noteDetail.body=null;">关闭</el-button>
+              </el-row>
+            </div>
+          </el-dialog>
+          <!-- 删除 -->
+          <el-dialog
+            width="30%"
+            title="删除"
+            :visible.sync="delVisible"
+            append-to-body>
+            <div style="font-size:18px">
+              <b>此文章存在于以下目录</b>
+            </div>
+            <div v-for="item in delRowInfo.catalogs">{{item.path_name}}</div>
+            <div style="font-size:18px" v-if="delType(delRowInfo)">此操作将会删除
+              <b style="color:red">{{delUrl.path_name}}</b>
+              下的文章，是否确定删除？</div>
+            <div v-if="!delType(delRowInfo)">
+              <el-form>
+                <el-form-item label="选择文章目录" prop="summaryId">
+                <el-select v-model="delCatalogid" placeholder="请选择需要删除文章的目录" style="width: 100%;">
+                  <el-option
+                      v-for="item in delUrls"
+                      :key="item.ID"
+                      :label="item.path_name"
+                      :value="item.ID">
+                  </el-option>
+                </el-select>
               </el-form-item>
-            </el-form>
-          </el-row> -->
-          <el-row>
-            <el-form size="small">
-              <el-form-item label-width="45px" label="概要:">
-                <el-input :rows="4" v-model="brief" type="textarea" class="article-textarea" autosize placeholder="请输入内容"/>
-              </el-form-item>
-            </el-form>
-          </el-row>
-          <div style="position:relative">
-            <quill-editor
-            v-model="body"
-            ref="myQuillEditor"
-            :options="editorOption"
-            style="white-space:pre"
-            ></quill-editor>
-          </div>
-          <el-row style="margin-top:1%">
-            <el-row style="text-align:left">
-              <el-form size="small">
-                <el-form-item label-width="45px" label="备注:">
-                  <el-input :rows="1" v-model="remark" type="textarea" class="article-textarea" autosize placeholder="请输入内容"/>
-                </el-form-item>
-                <el-form-item label-width="45px" label="附件:">
-                  <el-upload
-                    class="kb-upload"
-                    ref="upload"
-                    :action="updateUrl"
-                    :headers="{'Authorization':'Bearer ' +token}"
-                    :on-remove="uploadRemove"
-                    :before-remove="beforeRemove"
-                    :http-request="uploadFile"
-                    :auto-upload="false">
-                    <el-button slot="trigger" size="small" type="primary">选取附件</el-button>
-                    <el-button style="margin-left:10px;" size="small" type="success" @click="submitUpload();">上传</el-button>
-                    <div style="font-weight:bold;color:red;" slot="tip" class="el-upload__tip">注：上传附件只能是 xls,xlsx,doc,docx,ppt,pptx,txt,pdf 格式，大小不能超过10MB</div>
-                  </el-upload>
-                </el-form-item>
               </el-form>
-            </el-row>
-            <el-row>
-              <el-button type="primary" @click="generateNote();" size="small" :disabled="uploadDisable">确定</el-button>
-              <el-button type="primary" plain @click="noteTitle='';addArticles=false;body=null;brief=null;remark=null" size="small">取消</el-button>
-            </el-row>
-          </el-row>
+            </div>
+            <div slot="footer" class="dialog-footer" style="text-align: right;">
+              <el-button type="primary" plain @click="delVisible = false">取消</el-button>
+              <el-button type="primary" @click="delVisible = false;delArticles(delReq);">确定</el-button>
+            </div>
+          </el-dialog>
+          <!-- 批量删除 -->
+          <!-- <el-dialog
+            width="30%"
+            title="批量删除"
+            :visible.sync="batchDelVisible"
+            append-to-body>
+            <span style="font-size:20px;">确定删除选定内容？</span>
+            <div slot="footer" class="dialog-footer" style="text-align: right;">
+              <el-button @click="batchDelVisible = false">取 消</el-button>
+              <el-button type="primary" @click="batchDelVisible = false;">确 定</el-button>
+            </div>
+          </el-dialog> -->
+          <!-- 新建文章输入标题 -->
+          <el-dialog
+            width="30%"
+            title="新建文章"
+            :visible.sync="noteTitleVisiable"
+            append-to-body>
+            <span style="color:red">*</span><span style="font-size:15px;">标题：</span>
+            <el-input type="text" placeholder="请输入标题" size="medium" v-model="noteTitle" maxlength="45"></el-input>
+            <div slot="footer" class="dialog-footer" style="text-align: center;">
+              <el-button type="primary" @click="checkTitleIsNullOrNot(noteTitle);">确定</el-button>
+              <el-button @click="noteTitle=null;noteTitleVisiable = false">取消</el-button>
+            </div>
+          </el-dialog>
+          <!-- 修改标题 dialog -->
+          <el-dialog width="30%" title="修改标题" :visible.sync="editNoteTitleVisiable" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
+            <span style="color:red">*</span><span style="font-size:15px;">标题：</span>
+              <el-input maxlength="45" type="text" placeholder="请输入标题" size="medium" v-model="editDetail.title" clearable @change="checkEditTitle(editDetail.title);"></el-input>
+            <div slot="footer" class="dialog-footer" style="text-align: center;">
+            <span style="color:red" v-if="hasNoteTitle===false">标题不能为空</span>
+              <el-button type="primary" @click="editNoteTitleVisiable=false;noteTitle=editDetail.title" v-if="hasNoteTitle===true">确定</el-button>
+              <el-button @click="editNoteTitleVisiable = false" v-if="hasNoteTitle===true">取消</el-button>
+            </div>
+          </el-dialog>
+          <!-- 发布的newdays -->
+          <el-dialog
+            width="30%"
+            title="填写new标签持续时间"
+            :visible.sync="releaseVisible"
+            append-to-body>
+            <span style="color:red">*</span><span style="font-size:15px;">天数：</span>
+            <el-input type="text" placeholder="请输入天数" size="medium" v-model="newdays"></el-input>
+            <div slot="footer" class="dialog-footer" style="text-align: center;">
+              <el-button type="primary" @click="release(releaseInfo,newdays)">确定</el-button>
+              <el-button @click="newdays=null;noteTitle=null;releaseVisible = false">取消</el-button>
+            </div>
+          </el-dialog>
+          <!-- 文章添加链接节点 -->
+          <el-dialog
+            top="5vh"
+            width="30%"
+            title="添加文章链接目录"
+            :visible.sync="linkVisiable"
+            append-to-body>
+            <div>
+              <el-tree class="expand-tree"
+                key="tree2"
+                ref="tree2"
+                v-if="isLoadingTree"
+                :data="setTree"
+                highlight-current
+                multiple
+                :props="defaultProps"
+                :expand-on-click-node="false"
+                :render-content="renderContent"
+                @node-click="choseLink"
+                node-key="ID"
+                :default-expanded-keys="[]"></el-tree>
+            </div>
+            <div slot="footer" class="dialog-footer" style="text-align: center;">
+              <el-button type="primary" @click="addArticlesLink(addLinkReq);">确定</el-button>
+              <el-button @click="linkVisiable = false">取消</el-button>
+            </div>
+          </el-dialog>
         </div>
-      </el-dialog>
-        <!-- 修改 -->
-      <el-dialog
-        top="5vh"
-        width="90%"
-        :visible.sync="editArticles"
-        append-to-body>
-        <div style="text-align:center">
-          <h3>{{editDetail.title}}
-            <el-tooltip class="item" effect="dark" content="修改标题" placement="right-start">
-              <el-button style="font-size:16px;" type="text" icon="el-icon-edit-outline" @click="editNoteTitleVisiable=true" size="mini" circle></el-button>
-            </el-tooltip>
-          </h3>
-          <!-- <el-row style="text-align:left">
-            <el-form :inline="true">
-              <el-form-item label="标签:" style="float:left;min-height:41px;">
-                <el-tag
-                  style="margin-left:10px;"
-                  :key="tag"
-                  v-for="tag in dynamicTags"
-                  closable
-                  :disable-transitions="false"
-                  @close="handleClose(tag)">
-                  {{tag}}
-                </el-tag>
-                <el-input
-                  class="input-new-tag"
-                  v-if="inputVisible"
-                  v-model="inputValue"
-                  ref="saveTagInput"
-                  size="small"
-                  @keyup.enter.native="handleInputConfirm"
-                  @blur="handleInputConfirm">
-                </el-input>
-                <el-button type="success" v-else class="button-new-tag" size="small" @click="showInput">新建标签</el-button>
-              </el-form-item>
-            </el-form>
-          </el-row> -->
-          <el-row>
-            <el-form size="small">
-              <el-form-item label-width="45px" label="概要:">
-                <el-input :rows="1" v-model="editDetail.brief" type="textarea" class="article-textarea" autosize placeholder="请输入内容"/>
-              </el-form-item>
-            </el-form>
-          </el-row>
-          <div style="position:relative">
-            <quill-editor
-            v-model="editDetail.body"
-            ref="myQuillEditor"
-            style="white-space:pre"
-            :options="editorOption"
-            ></quill-editor>
-          </div>
-          <el-row style="margin-top:1%">
-            <el-row style="text-align:left">
-              <el-form size="small">
-                <el-form-item label-width="45px" label="备注:">
-                  <el-input :rows="4" v-model="editDetail.remark" type="textarea" class="article-textarea" autosize placeholder="请输入内容"/>
-                </el-form-item>
-                <el-form-item label-width="45px" label="附件:">
-                  <el-upload
-                    class="kb-upload"
-                    ref="upload"
-                    :action="updateUrl"
-                    :headers="{'Authorization':'Bearer ' +token}"
-                    :on-remove="uploadRemove"
-                    :before-remove="beforeRemove"
-                    :http-request="uploadFile"
-                    :file-list="fileList"
-                    :auto-upload="false">
-                    <el-button slot="trigger" size="small" type="primary">选取附件</el-button>
-                    <el-button style="margin-left:10px;" size="small" type="success" @click="submitUpload();">上传</el-button>
-                    <div style="font-weight:bold;color:red;" slot="tip" class="el-upload__tip">注：上传附件只能是 xls,xlsx,doc,docx,ppt,pptx,txt,pdf 格式，大小不能超过10MB</div>
-                  </el-upload>
-                </el-form-item>
-              </el-form>
-            </el-row>
-            <el-row>
-              <el-button type="primary" @click="modifyNote();" size="small" :disabled="uploadDisable">确定</el-button>
-              <el-button type="primary" plain @click="editDetail.title='';editArticles=false;editDetail.body=null" size="small">取消</el-button>
-            </el-row>
-          </el-row>
-        </div>
-      </el-dialog>
-      <!-- 详情 -->
-      <el-dialog
-        top="5vh"
-        width="90%"
-        :visible.sync="detailArticles"
-        append-to-body>
-        <div>
-          <h3 style="text-align:center">{{noteDetail.title}}&nbsp;&nbsp;</h3>
-          <!-- <el-row style="text-align:left">
-            <el-form :inline="true">
-              <el-form-item label="标签:" style="float:left;min-height:41px;">
-                <el-tag
-                  style="margin-left:10px;"
-                  :key="tag"
-                  v-for="tag in dynamicTags">
-                  {{tag}}
-                </el-tag>
-              </el-form-item>
-            </el-form>
-          </el-row> -->
-          <el-row>
-            <el-form size="small" :inline="true" style="margin-left:-5px;margin-top:-20px;">
-              <el-form-item label="创建人:" label-width="65px">
-                <div>{{noteDetail.creatorRealname}}</div>
-              </el-form-item>
-              <el-form-item label="创建时间:" label-width="75px" style="margin-left:100px;">
-                <div>{{formatDateTime(noteDetail.CreatedAt)}}</div>
-              </el-form-item>
-            </el-form>
-          </el-row>
-          <el-row>
-            <el-form size="small" :inline="true" style="margin-left:-5px;margin-top:-20px;">
-              <el-form-item label="修改人:" label-width="65px">
-                <div>{{noteDetail.updatorRealname}}</div>
-              </el-form-item>
-              <el-form-item label="修改时间:" label-width="75px" style="margin-left:100px;">
-                <div>{{formatDateTime(noteDetail.UpdatedAt)}}</div>
-              </el-form-item>
-            </el-form>
-          </el-row>
-          <el-row>
-            <el-form size="small">
-              <el-form-item style="margin-left:-2px;margin-top:-20px;" label-width="75px" label="所在目录:">
-                <div v-for="item in noteDetail.catalogs" :key="item.path">{{item.path_name}}</div>
-              </el-form-item>
-            </el-form>
-          </el-row>
-          <el-row>
-            <el-form size="small">
-              <el-form-item style="margin-top:-20px;" label-width="45px" label="概要:">
-                <div>{{noteDetail.brief}}</div>
-              </el-form-item>
-            </el-form>
-          </el-row>
-          <div v-html="noteDetail.body" class="note-content div-content" style="word-wrap:auto;">
-
-          </div>
-          <el-row>
-            <el-form size="small">
-              <div style="font-weight:bold;color:red;" class="el-upload__tip">注：txt和pdf格式的文件直接点击为预览，预览页面可以右键另存为下载，也可以右键选择另存为直接下载</div>
-              <el-form-item label-width="45px" label="附件:">
-                <div v-for="item in DLurl" :key="item.name">
-                  <span>{{item.name}}</span><a :href="item.url" style="font-size:16px;" type="text" size="mini" circle download target="_blank"><i style="color:blue;padding:0 8px;" class="el-icon-download"></i></a>
-                </div>
-              </el-form-item>
-
-              <el-form-item label-width="45px" label="备注:">
-                <div>{{noteDetail.remark}}</div>
-              </el-form-item>
-            </el-form>
-          </el-row>
-          <el-row style="margin-top:1%;text-align:center;">
-            <el-button type="primary" plain @click="noteDetail.title='';detailArticles=false;noteDetail.body=null;">关闭</el-button>
-          </el-row>
-        </div>
-      </el-dialog>
-      <!-- 删除 -->
-      <el-dialog
-          width="30%"
-          title="删除"
-          :visible.sync="delVisible"
-          append-to-body>
-          <div style="font-size:18px">
-            <b>此文章存在于以下目录</b>
-          </div>
-          <div v-for="item in delRowInfo.catalogs">{{item.path_name}}</div>
-          <div style="font-size:18px" v-if="delType(delRowInfo)">此操作将会删除
-            <b style="color:red">{{delUrl.path_name}}</b>
-            下的文章，是否确定删除？</div>
-          <div v-if="!delType(delRowInfo)">
-            <el-form>
-              <el-form-item label="选择文章目录" prop="summaryId">
-              <el-select v-model="delCatalogid" placeholder="请选择需要删除文章的目录" style="width: 100%;">
-                <el-option
-                    v-for="item in delUrls"
-                    :key="item.ID"
-                    :label="item.path_name"
-                    :value="item.ID">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            </el-form>
-          </div>
-          <div slot="footer" class="dialog-footer" style="text-align: right;">
-            <el-button type="primary" plain @click="delVisible = false">取消</el-button>
-            <el-button type="primary" @click="delVisible = false;delArticles(delReq);">确定</el-button>
-          </div>
-        </el-dialog>
-        <!-- 批量删除 -->
-        <!-- <el-dialog
-          width="30%"
-          title="批量删除"
-          :visible.sync="batchDelVisible"
-          append-to-body>
-          <span style="font-size:20px;">确定删除选定内容？</span>
-          <div slot="footer" class="dialog-footer" style="text-align: right;">
-            <el-button @click="batchDelVisible = false">取 消</el-button>
-            <el-button type="primary" @click="batchDelVisible = false;">确 定</el-button>
-          </div>
-        </el-dialog> -->
-        <!-- 新建文章输入标题 -->
-        <el-dialog
-          width="30%"
-          title="新建文章"
-          :visible.sync="noteTitleVisiable"
-          append-to-body>
-          <span style="color:red">*</span><span style="font-size:15px;">标题：</span>
-          <el-input type="text" placeholder="请输入标题" size="medium" v-model="noteTitle" maxlength="45"></el-input>
-          <div slot="footer" class="dialog-footer" style="text-align: center;">
-            <el-button type="primary" @click="checkTitleIsNullOrNot(noteTitle);">确定</el-button>
-            <el-button @click="noteTitle=null;noteTitleVisiable = false">取消</el-button>
-          </div>
-        </el-dialog>
-        <!-- 修改标题 dialog -->
-        <el-dialog width="30%" title="修改标题" :visible.sync="editNoteTitleVisiable" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
-          <span style="color:red">*</span><span style="font-size:15px;">标题：</span>
-            <el-input maxlength="45" type="text" placeholder="请输入标题" size="medium" v-model="editDetail.title" clearable @change="checkEditTitle(editDetail.title);"></el-input>
-          <div slot="footer" class="dialog-footer" style="text-align: center;">
-          <span style="color:red" v-if="hasNoteTitle===false">标题不能为空</span>
-            <el-button type="primary" @click="editNoteTitleVisiable=false;noteTitle=editDetail.title" v-if="hasNoteTitle===true">确定</el-button>
-            <el-button @click="editNoteTitleVisiable = false" v-if="hasNoteTitle===true">取消</el-button>
-          </div>
-        </el-dialog>
-        <!-- 发布的newdays -->
-        <el-dialog
-          width="30%"
-          title="填写new标签持续时间"
-          :visible.sync="releaseVisible"
-          append-to-body>
-          <span style="color:red">*</span><span style="font-size:15px;">天数：</span>
-          <el-input type="text" placeholder="请输入天数" size="medium" v-model="newdays"></el-input>
-          <div slot="footer" class="dialog-footer" style="text-align: center;">
-            <el-button type="primary" @click="release(releaseInfo,newdays)">确定</el-button>
-            <el-button @click="newdays=null;noteTitle=null;releaseVisible = false">取消</el-button>
-          </div>
-        </el-dialog>
-        <!-- 文章添加链接节点 -->
-        <el-dialog
-          top="5vh"
-          width="30%"
-          title="添加文章链接目录"
-          :visible.sync="linkVisiable"
-          append-to-body>
-          <div>
-            <el-tree class="expand-tree"
-              key="tree2"
-              ref="tree2"
-              v-if="isLoadingTree"
-              :data="setTree"
-              highlight-current
-              multiple
-              :props="defaultProps"
-              :expand-on-click-node="false"
-              :render-content="renderContent"
-              @node-click="choseLink"
-              node-key="ID"
-              :default-expanded-keys="[]"></el-tree>
-          </div>
-          <div slot="footer" class="dialog-footer" style="text-align: center;">
-            <el-button type="primary" @click="addArticlesLink(addLinkReq);">确定</el-button>
-            <el-button @click="linkVisiable = false">取消</el-button>
-          </div>
-        </el-dialog>
-    </div>
+      </el-container>
+    </el-container>
   </div>
+  <!-- <div style="width:100%;min-height:99vh;" id="kb">
+    <el-aside style="width:19%;">
+      
+    </el-aside>
+    
+  </div> -->
 </template>
 
 <script>
@@ -1046,8 +1047,6 @@ export default{
   name: 'kb',
   data() {
     return {
-      formContainerOpen: '1',
-      formContainer: this.$store.state.app.formContainer,
       token: localStorage.getItem('Admin-Token'),
       permission: false,
       // tree
@@ -1229,13 +1228,6 @@ export default{
     }
   },
   methods: {
-    handleChangeAcitve(active = ['1']) {
-      if (active.length) {
-        $('.form-more').text('收起')
-      } else {
-        $('.form-more').text('更多')
-      }
-    },
     // tree------------------------
     initExpand() {
       this.isLoadingTree = true
@@ -2501,14 +2493,12 @@ export default{
     // }
   },
   mounted() {
-    this.formContainer()
-    this.handleChangeAcitve()
     this.initExpand()
     this.getCatalogs()
-    $('#kb aside').height($(window).height() - 108.55 + 10)
-    $(window).resize(function() {
-      $('#kb aside').height($(window).height() - 108.55 + 10)
-    })
+    // $('aside').height($(window).height() - 108.55 + 10)
+    // $(window).resize(function() {
+    //   $('aside').height($(window).height() - 108.55 + 10)
+    // })
     // 获取权限
     getPermission(localStorage.getItem('agentId')).then(response => {
       if (response.data) {
@@ -2528,53 +2518,73 @@ export default{
   }
 }
 </script>
-<style lang="scss" scoped>
-#kb {
-  //页面样式
-  aside{
-    background:#252E34;
-    color:#BFCBBA;
-    margin-top: -20px;
-    position:fixed;
-    height:100%;
-  }
-  .note-content{
-    white-space:pre;
-    width:100%;
-    min-height:442px;
-    border: 1px solid #ccc;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  }
-  .note-content.div-content{
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    line-height: 1.42;
-    height: 100%;
-    outline: none;
-    overflow-y: auto;
-    padding: 12px 15px;
-    -o-tab-size: 4;
-    tab-size: 4;
-    -moz-tab-size: 4;
-    text-align: left;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-  }
-  .tree-add-top{
-    // width:330px;
-    // margin-left:-17.9px;
-    position:fixed;
-    top:150px;
-    z-index:999;
-  }
-  // .tree-add-top:hover{
-  //   opacity:1;
-  // }
-}
-
-</style>
 <style lang="scss">
-
+  #kb{
+    //页面样式
+    aside{
+      background:#252E34;
+      color:#BFCBBA;
+      width:14%;
+      // margin-top: -20px;
+      // position:fixed;
+      // height:100%;
+    }
+    .table-container{
+      box-shadow:none;
+      margin-top:0;
+    }
+    .kb-form-container{
+      padding:15px;
+      height:19%;
+      box-sizing:border-box;
+      overflow-y:auto;
+      border-bottom:1px solid rgb(204, 204, 204);
+    }
+    .note-content{
+      white-space:pre;
+      width:100%;
+      min-height:442px;
+      border: 1px solid #ccc;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+    .note-content.div-content{
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      line-height: 1.42;
+      height: 100%;
+      outline: none;
+      overflow-y: auto;
+      padding: 12px 15px;
+      -o-tab-size: 4;
+      tab-size: 4;
+      -moz-tab-size: 4;
+      text-align: left;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .el-tree-node__content{
+      height:22px;
+      line-height:22px;
+      display:inline-block;
+      .tree-expand{
+        display:inline-block;
+        height:100%;
+        .tree-label{
+          padding:0 10px;
+          display:inline-block;
+          height:100%;
+          &:hover{
+            background:#57AFFF;
+            color:#fff;
+          }
+          }
+        }
+      &:hover{
+        background:none;
+      }
+    }
+    
+  }
   #kb{
     .form-container{
       .el-collapse-item__content{
@@ -2583,49 +2593,66 @@ export default{
     }
      /* tree样式 */
     .el-tree{
-      color:#BFCBCF;
+      color:#333;
       background:none;
+      position:static;
+    }
+    .expand::-webkit-scrollbar-track{
+      box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+      border-radius:5px;
+    }
+    .expand::-webkit-scrollbar-thumb{
+      background-color:rgba(50, 65, 87, 0.5);
+      outline:1px solid slategrey;
+      border-radius:5px;
+    }
+    .expand::-webkit-scrollbar{
+      width:10px;
+    }
+    .asinde-header{
+      width:100%;
+      height:52px;
+      padding-left:16px;
+      span{
+        line-height:52px;
+      }
+    }
+    .tree-button{
+      padding:7px;
+      &.tree-add-top{
+        cursor:pointer;
+        background:url('../../../static/images/tree_add_top.png') no-repeat 0 9px;
+      }
     }
     .el-tree__empty-text{
       color:#BFCBCF;
     }
     .expand{
-      // height:89.8%;
-      height:100%;
+      height:93.8%;
       overflow:auto;
     }
-    .expand>div{
+    .div{
       display: inline-block;
       // height:85%;
       // width:90%;
       margin:0 auto;
       overflow:auto;
     }
-    .expand>div::-webkit-scrollbar-track{
-      box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-      border-radius:5px;
-    }
-    .expand>div::-webkit-scrollbar-thumb{
-      background-color:rgba(50, 65, 87, 0.5);
-      outline:1px solid slategrey;
-      border-radius:5px;
-    }
-    .expand>div::-webkit-scrollbar{
-      width:10px;
-    }
     .expand-tree{
       border:none;
+      .is-current>.el-tree-node__content{
+        background:none;
+        .tree-label{
+          white-space:nowrap;
+          background:#57AFFF;
+          color:#fff;
+          font-weight: normal;
+        }
+      }
     }
-    .expand-tree .is-current>.el-tree-node__content .tree-label{
-      font-weight:600;
-      white-space:nowrap;
-    }
-    div.expand .expand-tree .el-tree-node.is-current,
-    div.expand .expand-tree .el-tree-node:hover{
+    .expand-tree .el-tree-node.is-current,
+    .expand-tree .el-tree-node:hover{
       overflow:hidden;
-    }
-    .el-tree-node__content:hover{
-      background:#39484D;
     }
     .el-tree-node__content{
       background:none;
@@ -2633,21 +2660,20 @@ export default{
     .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content{
       background:#39484D;
     }
-    div.expand .expand-tree .is-current>.el-tree-node__content .tree-btn,
-    div.expand .expand-tree .el-tree-node__content:hover .tree-btn{
+    .expand-tree .is-current>.el-tree-node__content .tree-btn,
+    .expand-tree .el-tree-node__content:hover .tree-btn{
       display:inline-block;
       opacity:1;
-      background:#39484D;
     }
-    div.expand2 .expand-tree .el-tree-node.is-current,
-    div.expand2 .expand-tree .el-tree-node:hover{
-      overflow:hidden;
-    }
-    div.expand2 .expand-tree .is-current>.el-tree-node__content .tree-btn,
-    div.expand2 .expand-tree .el-tree-node__content:hover .tree-btn{
-      display:none;
-      background:#39484D;
-    }
+    // div.expand2 .expand-tree .el-tree-node.is-current,
+    // div.expand2 .expand-tree .el-tree-node:hover{
+    //   overflow:hidden;
+    // }
+    // div.expand2 .expand-tree .is-current>.el-tree-node__content .tree-btn,
+    // div.expand2 .expand-tree .el-tree-node__content:hover .tree-btn{
+    //   display:none;
+    //   background:#39484D;
+    // }
     .el-container.kb-main{
       float:right;
     }
@@ -2729,5 +2755,25 @@ export default{
  .ql-container{
     min-height: 400px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+  #kb>.el-container{
+    height:820px;
+    background:#FFF;
+    box-shadow: 0 0 10px 0 rgba(39,48,69,0.10);
+  }
+  @media screen and (min-width: 1281px) and (max-width:1367px){
+    #kb>.el-container{
+      height:80vh;
+    }
+    // #kb{
+    //   .table-container{
+    //     height:
+    //   }
+    // }
+  }
+  @media all and (min-width:1024px) and (max-width:1280px)  {
+  #kb>.el-container{
+      height:80vh;
+    }
   }
 </style>
