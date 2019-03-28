@@ -173,114 +173,118 @@
       </el-row>
 
     </div>
-  <div class="table-container">
-    <el-row>
-      <div class="work-title-style font14 bold">拨打任务情况</div>
-    </el-row>
-    <el-row style="margin-top:20px;">
-        <el-col>
-          <el-table :data="obTaskTable">
-            <el-table-column align="center" label="部门人员" width="135">
-              <template slot-scope="scope">
-                  <div>{{agentMap[scope.row.staffId]+" ("+scope.row.staffId+")"}}</div>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="首拨数量">
-              <template slot-scope="scope">
-                  <div>{{scope.row.noContactNum}}</div>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="预约量" :show-overflow-tooltip="true">
-              <template slot-scope="scope">
-                <div>{{scope.row.appiontNum}}</div>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="今日成功量">
-              <template slot-scope="scope">
-                <div>{{scope.row.successNum}}</div>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="今日失败量" :show-overflow-tooltip="true">
-              <template slot-scope="scope">
-                <div>{{scope.row.failNum}}</div>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-col>
-    </el-row>
-  </div>
-  <div class="table-container">
-    <el-row>
-      <div class="work-title-style font14 bold">业务表单情况</div>
-    </el-row>
-    <el-row style="margin-top:20px;">
-        <el-col>
-          <el-table :data="orderTable">
-            <el-table-column align="center" label="部门人员" width="135">
-              <template slot-scope="scope">
-                  <div>{{agentMap[scope.row.agent_id] +" ("+scope.row.agent_id+")"}}</div>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="订单数量">
-              <template slot-scope="scope">
-                  <div>{{scope.row.count}}</div>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="订单总金额" :show-overflow-tooltip="true">
-              <template slot-scope="scope">
-                <div>{{scope.row.total_amount}}</div>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="订单平均金额">
-              <template slot-scope="scope">
-                <div>{{scope.row.avg_amount}}</div>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-col>
-    </el-row>
-  </div>
-  <div class="table-container">
-    <el-row>
-      <div class="work-title-style font14 bold">话机使用情况</div>
-    </el-row>
-    <el-row style="margin-top:20px;">
-        <el-col>
-          <el-table :data="ctiTable">
-            <el-table-column align="center" label="部门人员" width="135">
-              <template slot-scope="scope">
-                  <div>{{agentMap[scope.row.agent_id] +" ("+scope.row.agent_id+")"}}</div>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="通话时间">
-              <template slot-scope="scope">
-                  <div>{{formatSeconds(scope.row.call_time_duration)}}</div>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="通话次数" :show-overflow-tooltip="true">
-              <template slot-scope="scope">
-                <div>{{scope.row.calls_number}}</div>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="在线时长">
-              <template slot-scope="scope">
-                <div>{{formatSeconds(scope.row.online_time_duration)}}</div>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="空闲时长">
-              <template slot-scope="scope">
-                <div>{{formatSeconds(scope.row.free_time_duration)}}</div>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="示忙时长">
-              <template slot-scope="scope">
-                <div>{{formatSeconds(scope.row.busy_time_duration)}}</div>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-col>
-    </el-row>
-  </div>
+    <div class="table-container">
+      <el-row>
+        <div class="work-title-style font14 bold">拨打任务情况</div>
+      </el-row>
+      <el-row style="margin-top:20px;">
+          <el-col>
+            <el-table :data="obTaskTable">
+              <el-table-column align="center" label="部门人员" width="135">
+                <template slot-scope="scope">
+                    <div>{{agentMap[scope.row.staffId]+" ("+scope.row.staffId+")"}}</div>
+                </template>
+              </el-table-column>
+              <el-table-column 
+                align="center" 
+                label="首拨数量" 
+                prop="noContactNum">
+              </el-table-column>
+              <el-table-column 
+                align="center" 
+                label="预约量"
+                prop="appiontNum" 
+                :show-overflow-tooltip="true">
+              </el-table-column>
+              <el-table-column 
+                align="center" 
+                label="今日成功量"
+                prop="successNum">
+              </el-table-column>
+              <el-table-column 
+                align="center" 
+                label="今日失败量" 
+                prop="failNum"
+                :show-overflow-tooltip="true">
+              </el-table-column>
+            </el-table>
+          </el-col>
+      </el-row>
+    </div>
+    <div class="table-container">
+      <el-row>
+        <div class="work-title-style font14 bold">业务表单情况</div>
+      </el-row>
+      <el-row style="margin-top:20px;">
+          <el-col>
+            <el-table :data="orderTable">
+              <el-table-column align="center" label="部门人员" width="135">
+                <template slot-scope="scope">
+                    <div>{{agentMap[scope.row.agent_id] +" ("+scope.row.agent_id+")"}}</div>
+                </template>
+              </el-table-column>
+              <el-table-column 
+                align="center" 
+                label="订单数量"
+                prop="count">
+              </el-table-column>
+              <el-table-column 
+                align="center" 
+                label="订单总金额" 
+                prop="total_amount"
+                :show-overflow-tooltip="true">
+              </el-table-column>
+              <el-table-column 
+                align="center" 
+                label="订单平均金额"
+                prop="avg_amount">
+              </el-table-column>
+            </el-table>
+          </el-col>
+      </el-row>
+    </div>
+    <div class="table-container">
+      <el-row>
+        <div class="work-title-style font14 bold">话机使用情况</div>
+      </el-row>
+      <el-row style="margin-top:20px;">
+          <el-col>
+            <el-table :data="ctiTable">
+              <el-table-column align="center" label="部门人员" width="135">
+                <template slot-scope="scope">
+                    <div>{{agentMap[scope.row.agent_id] +" ("+scope.row.agent_id+")"}}</div>
+                </template>
+              </el-table-column>
+              <el-table-column align="center" label="通话时间">
+                <template slot-scope="scope">
+                    <div>{{formatSeconds(scope.row.call_time_duration)}}</div>
+                </template>
+              </el-table-column>
+              <el-table-column 
+                align="center" 
+                label="通话次数" 
+                prop="calls_number"
+                :show-overflow-tooltip="true">
+              </el-table-column>
+              <el-table-column align="center" label="在线时长">
+                <template slot-scope="scope">
+                  <div>{{formatSeconds(scope.row.online_time_duration)}}</div>
+                </template>
+              </el-table-column>
+              <el-table-column align="center" label="空闲时长">
+                <template slot-scope="scope">
+                  <div>{{formatSeconds(scope.row.free_time_duration)}}</div>
+                </template>
+              </el-table-column>
+              <el-table-column align="center" label="示忙时长">
+                <template slot-scope="scope">
+                  <div>{{formatSeconds(scope.row.busy_time_duration)}}</div>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 

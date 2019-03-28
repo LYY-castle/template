@@ -1,6 +1,7 @@
 <template>
   <div style="width: 100%;height: 90%" v-if="departPermission">
     <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <span class="form-more bold" style="line-height: 24px;font-size: 14px;float:right;margin-right:6px;color:#57AFFF;position:absolute;top:28px;right:62px;">收起</span>
       <el-collapse-item title="筛选条件" name="1">
         <el-form :inline="true" class="demo-form-inline" size="small">
           <el-form-item label="活动名称:" v-show="activeNameList && activeNameList.length > 0">
@@ -93,7 +94,7 @@
       </el-collapse-item>
     </el-collapse>
     <el-row>
-        <el-row class="table-container">
+        <el-row class="table-container" style="margin-top:0">
           <el-row class="margin-bottom-20">
             <div class="font14 bold">合计表</div>
           </el-row>
@@ -204,7 +205,7 @@
             </el-table-column>
           </el-table>
         </el-row>
-        
+
         <el-row class="table-container">
           <el-row class="margin-bottom-20">
             <div class="font14 bold">{{statistics_type === 'depart'?'下属部门详情':'下属员工详情'}}</div>
@@ -261,7 +262,9 @@
           </el-row>
           
         </el-row>
-          <!-- <h3>{{statistics_type === 'depart'?'下属部门详情':'下属员工详情'}}</h3> -->
+        
+        
+        <!-- <h3>{{statistics_type === 'depart'?'下属部门详情':'下属员工详情'}}</h3> -->
          
         
         <!-- <div style="margin-top:1%;" >
@@ -502,7 +505,6 @@
     data() {
       return {
         formContainerOpen: '1',
-        formContainer: this.$store.state.app.formContainer,
         statistics_type: '',
         departId: '',
         week: {
@@ -585,9 +587,6 @@
       }
     },
     mounted() {
-      setTimeout(() => {
-        this.formContainer()
-      }, 1000)
       this.handleChangeAcitve()
       findCampaignAllByUser().then(response => {
         this.activeNameList = response.data.data

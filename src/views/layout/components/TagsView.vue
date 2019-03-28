@@ -158,10 +158,10 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 .tags-view-container {
-  position: absolute;
+  // position: absolute;
   border-bottom:1px solid #ccc;
-  top:75px;
-  width:90.5%;
+  // top:75px;
+  // width:90.5%;
   height:45px;
   z-index:999;
   transition:width .3s; 
@@ -184,9 +184,6 @@ export default {
       &:first-of-type {
         height: 30px;
         margin-left: 20px;
-      }
-      &:hover{
-
       }
       &.active {
         height: 30px;

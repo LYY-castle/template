@@ -1,17 +1,17 @@
 <template>
   <!-- 现场主管 -->
   <div class="dashboard">
-    <div v-if="!qcdepart||!qcstaff">
+    <div v-show="!qcdepart||!qcstaff">
       <!-- <h1 v-if="depart">现场主管</h1> -->
-      <monitor-workingset v-if="depart"></monitor-workingset>
+      <monitor-workingset v-show="depart"></monitor-workingset>
       <!-- <h1 v-if="!depart&&staff">坐席</h1> -->
-      <ord-workingset v-if="!depart&&staff"></ord-workingset>
+      <ord-workingset v-show="!depart&&staff"></ord-workingset>
     </div>
-    <div v-if="!depart||!staff">
+    <div v-show="!depart||!staff">
       <!-- <h1 v-if="qcdepart">质检主管</h1> -->
-      <ordqc-workingset v-if="qcdepart"></ordqc-workingset>
+      <ordqc-workingset v-show="qcdepart"></ordqc-workingset>
       <!-- <h1 v-if="!qcdepart&&qcstaff">质检员</h1> -->
-      <qcmonitor-workingset v-if="!qcdepart&&qcstaff"></qcmonitor-workingset>
+      <qcmonitor-workingset v-show="!qcdepart&&qcstaff"></qcmonitor-workingset>
     </div>
   </div>
 </template>
@@ -176,7 +176,7 @@ export default {
 .dashboard {
   &.container{
     padding:0 10px;
-    padding-top:130px;
+    // padding-top:130px;
   }
 }
 </style>

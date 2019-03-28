@@ -75,6 +75,7 @@
             align="center"
             label="订单编号"
             width="180"
+            fixed
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
               <a @click="detailVisiable=true;searchByOrderId(scope.row.orderId)">{{scope.row.orderId}}</a>
@@ -163,6 +164,7 @@
           <el-table-column
             align="center"
             label="操作"
+            fixed="right"
             width="200">
             <template slot-scope="scope">
               <el-button v-if="scope.row.productId != 'P20180101000001'" @click="editVisiable=true;searchByOrderId(scope.row.orderId)" type="text" size="medium">修改</el-button>

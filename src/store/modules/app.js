@@ -8,7 +8,6 @@ const app = {
       withoutAnimation: false
     },
     device: 'desktop',
-    logoClass: 'opened',
     msgNum_wechat: null,
     wechat_contents: [],
     wechat_customerInfos: [],
@@ -54,9 +53,6 @@ const app = {
     },
     SET_MENU: (state, menu) => {
       state.menu = menu
-    },
-    SET_LOGOCLASS: (state, logoClass) => {
-      state.logoClass = logoClass
     }
   },
   actions: {

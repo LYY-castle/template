@@ -3,43 +3,51 @@
     <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
       <el-collapse-item title="筛选条件" name="1">
         <el-row>
-          <el-col style="margin-top:4px;" :span="5">
-            <el-form :inline="true" size="small" :model="req" ref="searchForm">
-              <el-form-item label="活动名称:">
-                <el-select v-model="req.campaignId" :placeholder="campData.length==0?'无活动':'请选择活动'" @change="submitAssign.data = ''.split('');resetForm('assignForm');req.pageNo=1;req.pageSize=10;queryMainQualityList(req);countTaskAssignInfo(req)">
-                  <el-option
-                      v-for="item in campData"
-                      :key="item.activityId"
-                      :label="item.activityName"
-                      :value="item.activityId">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-form>
-          </el-col>
-          <el-col :span="19">
-            <el-form :inline="true" :rules="rule" :model="submitAssign" ref="assignForm">
-              <el-form-item label="分配数量" prop="assignNum">
-                <el-input-number v-model="submitAssign.assignNum" size="small" placeholder="分配数量" style="width:50%"></el-input-number>
-                <b>条</b>
-              </el-form-item>
-              <el-form-item label="未分配量" style="margin-left:-4.5%">
-                <span>{{remainSum}}</span>
-              </el-form-item>
-              <el-form-item label="数量总计">
-                <span>{{totalSum}}</span>
-              </el-form-item>
-              <el-form-item label="分配方式" style="margin-left:1%" prop="assignType">
-                <el-radio-group v-model="submitAssign.assignType" size="small">
-                  <el-radio label='0'>顺序分配</el-radio>
-                  <el-radio label='1'>平均分配</el-radio>
-                </el-radio-group>
-              </el-form-item>
-              <el-form-item>
-                 <el-button type="primary" @click="submitForm('assignForm');">确定</el-button>
-              </el-form-item>
-            </el-form>
-          </el-col>
+          <el-form style="display:inline-block;" :inline="true" size="small" :model="req" ref="searchForm">
+            <el-form-item label="活动名称:" class="activity-form-short">
+              <el-select v-model="req.campaignId" :placeholder="campData.length==0?'无活动':'请选择活动'" @change="submitAssign.data = ''.split('');resetForm('assignForm');req.pageNo=1;req.pageSize=10;queryMainQualityList(req);countTaskAssignInfo(req)">
+                <el-option
+                    v-for="item in campData"
+                    :key="item.activityId"
+                    :label="item.activityName"
+                    :value="item.activityId">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
+          <el-form 
+            style="display:inline-block;" 
+            :inline="true" 
+            :rules="rule" 
+            :model="submitAssign" 
+            ref="assignForm">
+            <el-form-item 
+              label="分配数量" 
+              prop="assignNum" 
+              class="activity-form-short">
+              <el-input-number 
+                v-model="submitAssign.assignNum" 
+                size="small" 
+                placeholder="分配数量">
+              </el-input-number>
+              <b>条</b>
+            </el-form-item>
+            <el-form-item label="未分配量">
+              <span>{{remainSum}}</span>
+            </el-form-item>
+            <el-form-item label="数量总计">
+              <span>{{totalSum}}</span>
+            </el-form-item>
+            <el-form-item label="分配方式" prop="assignType">
+              <el-radio-group v-model="submitAssign.assignType" size="small">
+                <el-radio label='0'>顺序分配</el-radio>
+                <el-radio label='1'>平均分配</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="submitForm('assignForm');">确定</el-button>
+            </el-form-item>
+          </el-form>
         </el-row>
       </el-collapse-item>
     </el-collapse>
@@ -54,6 +62,7 @@
         <el-table-column
           align="center"
           type="selection"
+          fixed
           width="55">
         </el-table-column>
         <el-table-column
@@ -421,7 +430,7 @@ export default {
           this.$message(response.data.messages)
         }
       }).catch(error => {
-        console.log(error)
+        throw new Error(error)
       })
     },
     // 查询活动下名单的分配情况
@@ -487,3 +496,10 @@ export default {
   }
 }
 </script>
+<style rel="stylesheet/scss" lang="scss">
+  .activity-form-short{
+    .el-form-item__content{
+      width:150px;
+    }
+  }
+</style>

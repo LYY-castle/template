@@ -36,11 +36,11 @@ export default {
 .hamburger {
 	display: inline-block;
 	cursor: pointer;
-	width: 100%;
-	height: 100%;
+	/* width: 100%;
+	height: 100%; */
 	/* transform:translate(-50%,0) rotate(90deg); */
-	transition: .38s;
-  transform-origin: 50% 50%;
+	/* transition: .38s; */
+  /* transform-origin: 50% 50%; */
 }
 /* .hamburger.is-active {
 	transform:translate(-50%,0) rotate(0deg);

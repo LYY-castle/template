@@ -114,6 +114,7 @@
           <el-table-column
             align="center"
             type="selection"
+            fixed
             width="55">
           </el-table-column>
           <el-table-column

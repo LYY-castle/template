@@ -103,6 +103,7 @@
           :data="tableData"
           @selection-change="handleSelectionChange">
           <el-table-column
+            fixed
             align="center"
             type="selection"
             width="55">

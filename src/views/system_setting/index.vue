@@ -54,8 +54,8 @@ export default {
         logo: ''
       },
       logo: [
-        '../../../static/images/theme1.png',
-        '../../../static/images/theme2.png'
+        '../../../static/images/theme1.png'
+        // '../../../static/images/theme2.png'
       ],
       uploadData: {
         url: '',

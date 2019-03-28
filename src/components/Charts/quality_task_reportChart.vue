@@ -1,6 +1,7 @@
 <template>
   <div style="width: 100%;height: 90%" v-if="departPermission">
     <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+      <span class="form-more bold" style="line-height: 24px;font-size: 14px;float:right;margin-right:6px;color:#57AFFF;position:absolute;top:28px;right:62px;">收起</span>
       <el-collapse-item title="筛选条件" name="1">
         <el-form :inline="true" class="demo-form-inline" size="small">
           <el-form-item label="活动名称:" v-show="showActive">
@@ -513,7 +514,6 @@
     data() {
       return {
         formContainerOpen: '1',
-        formContainer: this.$store.state.app.formContainer,
         statistics_type: '',
         departId: '',
         week: {
@@ -604,9 +604,6 @@
       }
     },
     mounted() {
-      setTimeout(() => {
-        this.formContainer()
-      }, 1000)
       this.handleChangeAcitve()
       findCampaignByUserQuality().then(response => {
         if (response.data.data.length === 0) {

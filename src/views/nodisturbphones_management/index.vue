@@ -63,7 +63,8 @@
           <el-table-column
             align="center"
             type="selection"
-            width="55">
+            width="55"
+            fixed>
           </el-table-column>
           <el-table-column
             align="center"
@@ -100,7 +101,7 @@
           <el-table-column
             align="center"
             label="操作"
-            >
+            fixed="right">
           <template slot-scope="scope">
             <el-button @click="editVisible=true;delReq.id=scope.row.id;resetEdit();queryone(scope.row.id);" type="text" size="small">修改</el-button>
             <el-button @click="delVisible=true;delReq.id=scope.row.id" type="text" size="small">删除</el-button>

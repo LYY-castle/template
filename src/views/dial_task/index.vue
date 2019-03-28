@@ -133,6 +133,7 @@
           <el-table-column
             align="center"
             type="selection"
+            fixed
             width="50">
           </el-table-column>
           <el-table-column
@@ -234,12 +235,16 @@
             align="center"
             label="操作"
             :show-overflow-tooltip="true"
-            width="130">
+            fixed="right"
+            width="180">
           <template slot-scope="scope">
             <a v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb) && scope.row.staffId === aId" @click="sumTotal=0;products=[];customerNote='';changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);" size="small" type="text">
-              <img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>拨打</a>
-            <div v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb)" v-show="scope.row.staffId !== aId" size="small" type="text">
-              不可拨打</div>
+              <img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>
+              拨打
+            </a>
+            <span style="padding:0 5px;" v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb)" v-show="scope.row.staffId !== aId" size="small" type="text">
+              不可拨打
+            </span>
             <el-tooltip v-else-if="!showStatus(scope.row.status)" class="item" effect="dark"  content="该状态不能拨打" placement="left-start">
               <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
             </el-tooltip>

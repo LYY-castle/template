@@ -71,6 +71,8 @@
           <el-table-column
             align="center"
             label="质检评分编号"
+            width="120"
+            fixed
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
               <a @click="handleClickDetail(scope.row);">{{scope.row.gradeId}}</a>
@@ -94,6 +96,7 @@
           <el-table-column
             align="center"
             prop="gradeName"
+            width="120"
             :show-overflow-tooltip="true"
             label="质检评分表">
           </el-table-column>
@@ -136,6 +139,7 @@
             align="center"
             prop="qualityStaffName"
             :show-overflow-tooltip="true"
+            width="120"
             label="质检员姓名">
             <template slot-scope="scope">
               {{ scope.row.qualityStaffName }}
@@ -187,6 +191,7 @@
           <el-table-column
             align="center"
             label="质检评分编号"
+            fixed
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
               <a @click="handleClickDetail(scope.row)">{{scope.row.gradeId}}</a>

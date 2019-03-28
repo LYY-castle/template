@@ -85,12 +85,12 @@
       </el-row>
       <el-row>
         <el-table :data="tableData">
-            <el-table-column align="center" label="客户编号" width="135">
+            <el-table-column align="center" label="客户编号" width="160">
             <template slot-scope="scope">
                 <div>{{scope.row.customerId}}</div>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="客户姓名" :show-overflow-tooltip="true">
+          <el-table-column fixed align="center" label="客户姓名" :show-overflow-tooltip="true">
             <template slot-scope="scope">
               <a @click="transferParameters(scope.row.taskId, scope.row.campaignId,scope.row.customerId,scope.row.customerPhone)" size="medium">{{scope.row.customerName}}</a>
             </template>
@@ -115,7 +115,7 @@
                 {{scope.row.staffName}}
             </template>
           </el-table-column>
-          <el-table-column align="center" label="最近联系时间" :show-overflow-tooltip="true">
+          <el-table-column width="150" align="center" label="最近联系时间" :show-overflow-tooltip="true">
             <template slot-scope="scope">
                 {{scope.row.hangUpTime}}
             </template>
@@ -152,7 +152,7 @@
                 <div>{{showSummarys(scope.row.summaryDetailInfos)}}</div>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="操作">
+          <el-table-column fixed="right" align="center" label="操作">
             <template slot-scope="scope">
               <el-button v-if="scope.row.contactType =='1'" type="text" @click="contactType='1';isMainPage=false;detailInfo.recordInfo=[],detailInfo.orderInfo=[];ids.campaignId=scope.row.campaignId;ids.recordId=scope.row.recordId;ids.taskId=scope.row.taskId;ids.agentId=scope.row.staffId;ids.customerId=scope.row.customerId;contactDetail()" size="medium">详情</el-button>
               <el-button v-if="scope.row.contactType =='2'" type="text" @click="contactType='2';isMainPage=false;detailInfo.recordInfo=[],detailInfo.orderInfo=[];ids.campaignId=scope.row.campaignId;ids.recordId=scope.row.recordId;ids.taskId=scope.row.taskId;ids.agentId=scope.row.staffId;ids.customerId=scope.row.customerId;getChatRecords(scope.row.recordId);contactDetail();" size="medium">详情</el-button>

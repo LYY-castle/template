@@ -1,16 +1,24 @@
 <template>
-  <div class="app-wrapper" :class="classObj">
-    <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside"></div>
-    <navbar></navbar>
-    <sidebar class="sidebar-container"></sidebar>
-    <div class="main-container">
-      <!-- <tags-view></tags-view> -->
-      <app-main></app-main>
-      <!-- <div class="hamberger-bar"> -->
-      <hamburger :class="hamburger" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
-      <!-- </div> -->
-    </div>
-  </div>
+  <el-container class="app-wrapper" :class="classObj">
+    <el-aside
+      style="width:auto;position:relative;background:#242a2e" 
+      class="sidebar-container">
+      <sidebar class="sidebar-container"></sidebar>
+    </el-aside>
+    <el-container style="position:relative;">
+      <div class="hamberger-bar">
+        <hamburger class="hamburger" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
+      </div>
+      <el-header style="height:auto;overflow:hidden;padding:0;">
+        <navbar></navbar>
+      </el-header>
+      <el-main style="padding:0;">
+          <div class="main-container">
+            <app-main></app-main>
+          </div>
+      </el-main>
+    </el-container>
+  </el-container>
 </template>
 
 <script>
@@ -33,6 +41,9 @@ export default {
     ...mapGetters([
       'hamburger'
     ]),
+    logoUrl() {
+      return this.$store.state.theme.logo
+    },
     sidebar() {
       return this.$store.state.app.sidebar
     },
@@ -45,9 +56,6 @@ export default {
         withoutAnimation: this.sidebar.withoutAnimation,
         mobile: this.device === 'mobile'
       }
-    },
-    hamburger() {
-      return this.$store.state.app.logoClass + ' hamberger-bar'
     }
   },
   methods: {
@@ -58,16 +66,19 @@ export default {
       this.$store.dispatch('ToggleSideBar')
       // logo缩放
       if (this.$store.state.app.sidebar.opened) {
-        this.$store.commit('SET_LOGOCLASS', 'opened')
         $('.hamburger i').addClass('el-icon-arrow-left').removeClass('el-icon-arrow-right')
-        $('.tags-view-container').width('91.5%')
       } else {
-        this.$store.commit('SET_LOGOCLASS', 'closed')
         $('.hamburger i').addClass('el-icon-arrow-right').removeClass('el-icon-arrow-left')
-        $('.tags-view-container').width('98%')
       }
     }
   }
+  // mounded() {
+  //   // 强制打开menu
+  //   window.onresize = () => {
+  //     this.$store.commit('OPEN_SIDEBAR')
+  //     this.toggleSideBar()
+  //   }
+  // }
 }
 </script>
 
@@ -90,6 +101,34 @@ export default {
   }
 </style>
 <style>
+  div.hamberger-bar{
+    position: absolute;
+    left:0;
+    top:47%;
+    z-index:99;
+    width:12px;
+    height:78px;
+  }
+  /* div.hamberger-bar.opened{
+    left:163px;
+    transition: left .3s;
+  }
+  div.hamberger-bar.closed{
+    left:36px;
+    transition: left .2s;
+  } */
+  div.hamberger-bar{
+    cursor:pointer;
+  }
+  div.hamberger-bar:hover svg path{
+    fill:#fff;
+  } 
+  div.hamberger-bar div.hamberger{
+    position:absolute;
+    top: 4px;
+    left: 50%;
+    transform: translate(0,-50%);
+  }
   #app .sidebar-container {
     width: 164px !important;
     z-index:100;
@@ -102,7 +141,7 @@ export default {
   #app .main-container {
     min-height:100%;
     /* max-height:100%; */
-    margin-left: 164px;
+    /* margin-left: 164px; */
     position: relative;
     overflow-y: auto;
   }
@@ -120,7 +159,7 @@ export default {
   }
   @media screen and (min-width: 1281px) and (max-width:1367px){
     #app .main-container {
-      margin-left: 164px;
+      /* margin-left: 164px; */
     }
     #app .sidebar-container {
       /* width: 154px !important; */
@@ -136,7 +175,7 @@ export default {
   @media all and (min-width:1024px) and (max-width:1280px)  {
     #app .main-container {
       min-height:100%;
-      margin-left: 164px;
+      /* margin-left: 164px; */
       position: relative;
     }
     #app .sidebar-container {

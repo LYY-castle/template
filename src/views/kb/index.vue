@@ -85,6 +85,7 @@
                 <el-table-column
                   align="center"
                   prop="name"
+                  fixed
                   width="58">
                   <template
                     slot-scope="scope">
@@ -97,6 +98,7 @@
                 <el-table-column
                   align="center"
                   prop="title"
+                  fixed
                   label="标题">
                   <template
                     slot-scope="scope">
@@ -164,6 +166,7 @@
                   width="273"
                   v-if="permission"
                   align="center"
+                  fixed="right"
                   label="操作">
                   <template slot-scope="scope">
                     <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
@@ -217,6 +220,7 @@
                     <el-table-column
                       align="center"
                       prop="name"
+                      fixed
                       width="58">
                       <template
                         slot-scope="scope">
@@ -229,6 +233,7 @@
                     <el-table-column
                       align="center"
                       prop="title"
+                      fixed
                       label="标题">
                       <template
                         slot-scope="scope">
@@ -285,6 +290,7 @@
                       width="273"
                       v-if="permission"
                       align="center"
+                      fixed="right"
                       label="操作">
                       <template slot-scope="scope">
                         <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
@@ -324,6 +330,7 @@
                     <el-table-column
                       align="center"
                       prop="name"
+                      fixed
                       width="58">
                       <template
                         slot-scope="scope">
@@ -336,6 +343,7 @@
                     <el-table-column
                       align="center"
                       prop="title"
+                      fixed
                       label="标题">
                       <template
                         slot-scope="scope">
@@ -392,6 +400,7 @@
                       width="273"
                       v-if="permission"
                       align="center"
+                      fixed="right"
                       label="操作">
                       <template slot-scope="scope">
                         <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
@@ -422,102 +431,105 @@
               </el-row>
 
                <el-row>
-              <el-row class="margin-bottom-20">
-                <div class="font14 bold">查询概要结果</div>
-              </el-row>
-              <el-row>
-                <el-table
-                  :data="tableDataBrief">
-                  <!-- <el-table-column
-                    align="left"
-                    type="selection"
-                    width="30">
-                  </el-table-column> -->
-                  <el-table-column
-                    align="center"
-                    prop="name"
-                    width="58">
-                    <template
-                      slot-scope="scope">
-                      <div>
-                        <span v-if="scope.row.hits&&scope.row.hot" style="color:red;font-size:10px;">Hot</span>
-                        <span v-if="scope.row.status==1&&setNew(scope.row)" style="color:#E8D343;font-size:10px;">New</span>
-                      </div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    align="center"
-                    prop="title"
-                    label="标题">
-                    <template
-                      slot-scope="scope">
-                      <div style="text-align:left;">
-                        <a @click="queryOne(scope.row.ID);">
-                            {{scope.row.title}}
-                        </a>
-                      </div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    width="80"
-                    align="center"
-                    prop="hits"
-                    label="阅读次数">
-                  </el-table-column>
-                  <el-table-column
-                    width="100"
-                    align="center"
-                    prop="creatorRealname"
-                    label="创建人">
-                  </el-table-column>
-                  <el-table-column
-                    width="100"
-                    align="center"
-                    prop="updatorRealname"
-                    label="修改人">
-                  </el-table-column>
-                  <el-table-column
-                    align="center"
-                    prop="CreatedAt"
-                    label="创建时间">
-                    <template slot-scope="scope">
-                      <div>{{formatDateTime(scope.row.CreatedAt)}}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    align="center"
-                    prop="UpdatedAt"
-                    label="修改时间">
-                    <template slot-scope="scope">
-                      <div>{{formatDateTime(scope.row.UpdatedAt)}}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    align="center"
-                    prop="release_time"
-                    label="发布时间">
-                    <template slot-scope="scope">
-                      <div v-if="scope.row.status==1">{{formatDateTime(scope.row.release_time)}}</div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    width="273"
-                    v-if="permission"
-                    align="center"
-                    label="操作">
-                    <template slot-scope="scope">
-                      <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
-                      <el-button @click="getDelInfo(scope.row);delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
-                      <el-button v-if="scope.row.sticked==0" @click="setTop(scope.row)" type="text" size="small">置顶</el-button>
-                      <el-button v-if="scope.row.sticked==1" @click="setTop(scope.row)" type="text" size="small">取消置顶</el-button>
-                      <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
-                      <el-button v-if="scope.row.status==1" @click="release(scope.row)" type="text" size="small">取消发布</el-button>
-                      <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加目录</el-button>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </el-row>
-              <el-row>
+                <el-row class="margin-bottom-20">
+                  <div class="font14 bold">查询概要结果</div>
+                </el-row>
+                <el-row>
+                  <el-table
+                    :data="tableDataBrief">
+                    <!-- <el-table-column
+                      align="left"
+                      type="selection"
+                      width="30">
+                    </el-table-column> -->
+                    <el-table-column
+                      align="center"
+                      prop="name"
+                      fixed
+                      width="58">
+                      <template
+                        slot-scope="scope">
+                        <div>
+                          <span v-if="scope.row.hits&&scope.row.hot" style="color:red;font-size:10px;">Hot</span>
+                          <span v-if="scope.row.status==1&&setNew(scope.row)" style="color:#E8D343;font-size:10px;">New</span>
+                        </div>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      align="center"
+                      prop="title"
+                      fixed
+                      label="标题">
+                      <template
+                        slot-scope="scope">
+                        <div style="text-align:left;">
+                          <a @click="queryOne(scope.row.ID);">
+                              {{scope.row.title}}
+                          </a>
+                        </div>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      width="80"
+                      align="center"
+                      prop="hits"
+                      label="阅读次数">
+                    </el-table-column>
+                    <el-table-column
+                      width="100"
+                      align="center"
+                      prop="creatorRealname"
+                      label="创建人">
+                    </el-table-column>
+                    <el-table-column
+                      width="100"
+                      align="center"
+                      prop="updatorRealname"
+                      label="修改人">
+                    </el-table-column>
+                    <el-table-column
+                      align="center"
+                      prop="CreatedAt"
+                      label="创建时间">
+                      <template slot-scope="scope">
+                        <div>{{formatDateTime(scope.row.CreatedAt)}}</div>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      align="center"
+                      prop="UpdatedAt"
+                      label="修改时间">
+                      <template slot-scope="scope">
+                        <div>{{formatDateTime(scope.row.UpdatedAt)}}</div>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      align="center"
+                      prop="release_time"
+                      label="发布时间">
+                      <template slot-scope="scope">
+                        <div v-if="scope.row.status==1">{{formatDateTime(scope.row.release_time)}}</div>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      width="273"
+                      v-if="permission"
+                      align="center"
+                      fixed="right"
+                      label="操作">
+                      <template slot-scope="scope">
+                        <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
+                        <el-button @click="getDelInfo(scope.row);delReq.articleid=scope.row.ID" type="text" size="small">删除</el-button>
+                        <el-button v-if="scope.row.sticked==0" @click="setTop(scope.row)" type="text" size="small">置顶</el-button>
+                        <el-button v-if="scope.row.sticked==1" @click="setTop(scope.row)" type="text" size="small">取消置顶</el-button>
+                        <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
+                        <el-button v-if="scope.row.status==1" @click="release(scope.row)" type="text" size="small">取消发布</el-button>
+                        <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加目录</el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </el-row>
+                <el-row>
                 <div class="smallPaging">
                   <el-pagination
                     v-if="briefPageShow"
@@ -548,6 +560,7 @@
                   <el-table-column
                     align="center"
                     prop="name"
+                    fixed
                     width="58">
                     <template
                       slot-scope="scope">
@@ -560,6 +573,7 @@
                   <el-table-column
                     align="center"
                     prop="title"
+                    fixed
                     label="标题">
                     <template
                       slot-scope="scope">
@@ -616,6 +630,7 @@
                     width="273"
                     v-if="permission"
                     align="center"
+                    fixed="right"
                     label="操作">
                     <template slot-scope="scope">
                       <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
@@ -2490,9 +2505,9 @@ export default{
     this.handleChangeAcitve()
     this.initExpand()
     this.getCatalogs()
-    $('aside').height($(window).height() - 108.55 + 10)
+    $('#kb aside').height($(window).height() - 108.55 + 10)
     $(window).resize(function() {
-      $('aside').height($(window).height() - 108.55 + 10)
+      $('#kb aside').height($(window).height() - 108.55 + 10)
     })
     // 获取权限
     getPermission(localStorage.getItem('agentId')).then(response => {
@@ -2514,7 +2529,7 @@ export default{
 }
 </script>
 <style lang="scss" scoped>
-
+#kb {
   //页面样式
   aside{
     background:#252E34;
@@ -2555,6 +2570,8 @@ export default{
   // .tree-add-top:hover{
   //   opacity:1;
   // }
+}
+
 </style>
 <style lang="scss">
 

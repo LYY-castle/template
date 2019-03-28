@@ -51,11 +51,13 @@
           <el-table-column
             align="center"
             type="selection"
-            width="50">
+            width="50"
+            fixed>
           </el-table-column>
           <el-table-column
             align="center"
             label="活动编号"
+            fixed
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
               <a @click="detailVisible=true;getDeptByCampaignId(scope.row.campaignId);getMarksByCampaignId(scope.row.campaignId);getCampaignById(scope.row.campaignId);">{{scope.row.campaignId}}</a>
@@ -140,7 +142,8 @@
           <el-table-column
             align="center"
             label="操作"
-            width="300">
+            width="300"
+            fixed="right">
           <template slot-scope="scope">
             <el-button @click="editVisible=true;delReq.campaignId=scope.row.campaignId;getDeptByCampaignId(scope.row.campaignId);getMarksByCampaignId(scope.row.campaignId);getCampaignById(scope.row.campaignId);outcalltimeInfos=[];failTreatmentInfos=[]" type="text" size="small">修改</el-button>
             <el-button @click="delVisible=true;delReq.campaignId=scope.row.campaignId" type="text" size="small">删除</el-button>

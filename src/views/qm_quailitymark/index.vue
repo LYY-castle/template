@@ -73,12 +73,14 @@
             <el-table-column
               align="center"
               prop="recordId"
+              width="150"
               :show-overflow-tooltip="true"
               label="接触历史编号">
             </el-table-column>
             <el-table-column
               align="center"
               prop="contactTaskId"
+              width="150"
               :show-overflow-tooltip="true"
               label="接触任务编号">
             </el-table-column>
@@ -164,6 +166,7 @@
             <el-table-column
               align="center"
               label="操作"
+              fixed="right"
               width="80">
               <template slot-scope="scope" >
                 <el-button @click="handleClick(scope.row)" type="text" size="small" v-if="scope.row.status==='未开始'&&scope.row.staffId===staffId">开始评分</el-button>

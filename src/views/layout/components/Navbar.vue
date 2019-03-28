@@ -3,14 +3,6 @@
   <el-row>
     <!-- logo及按钮 -->
     <div class="navbar-form-container">
-      <div id="logo" :class="logoClass" style="float:left">
-        <router-link to="/dashboard">
-          <img :src="logoUrl">
-        </router-link>
-      </div>
-      <!-- <el-col :span="1" class="hamburger">
-        <hamburger style="margin-top:35px;" class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
-      </el-col> -->
         <!-- 表单 -->
         <div style="float:left;height:72px;margin-left:22px;" v-if="havesoftphone">
           <!-- 分机号和状态选项 -->
@@ -41,7 +33,7 @@
                   <el-dropdown-item command="0" :disabled="lockChange">就绪</el-dropdown-item>
                   <el-dropdown-item command="13" :disabled="lockChange">示忙</el-dropdown-item>
                   <el-dropdown-item command="14" :disabled="lockChange">后处理</el-dropdown-item>
-                  <el-dropdown-item command="-5" :disabled="lockChange||autoCallChange">外呼就绪</el-dropdown-item>
+                  <el-dropdown-item command="-5" :disabled="lockChange">外呼就绪</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
               <!-- 号码输入框 -->
@@ -255,7 +247,7 @@
 
         <!-- tab -->
         <div>
-          <el-col :span="20">
+          <el-col :span="24">
             <tags-view style="border-top:1px solid #ccc;"></tags-view>
           </el-col>
         </div>
@@ -326,7 +318,6 @@ export default {
       wechatImgUrl: '../../../../static/images/wechat_online.png',
       agentArray: [], // 部门下属成员
       lockChange: false, // 默认不禁用切换状态框
-      autoCallChange: false, // 默认可以选择自动外呼
       isOrdSet: false, // 是否为普通坐席界面
       isDialTaskPage: false, // 是否为拨打详情页面
       socket_nofitication: null, // 消息通知的socket
@@ -411,18 +402,11 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar',
-      'logoClass'
+      'avatar'
     ]),
     sidebar() {
       this.sidebarStatus = this.$store.state.app.sidebar
       return this.$store.state.app.sidebar
-    },
-    logoClass() {
-      return this.$store.state.app.logoClass
-    },
-    logoUrl() {
-      return this.$store.state.theme.logo
     },
     msgNum_wechat() {
       return this.$store.state.app.msgNum_wechat
@@ -617,7 +601,6 @@ export default {
       if (this.telephoneState === '外呼就绪') {
         return
       } else {
-        this.autoCallChange = true
         cti.setAgentDialInFree()
       }
     },
@@ -818,6 +801,7 @@ export default {
     getPromise(num) {
       return new Promise(function(resolve, reject) {
         getPhoneOwn(num).then(res => {
+          console.log(res)
           vm.dialNum = res.data
           resolve()
         })
@@ -1117,7 +1101,6 @@ export default {
       vm.setbtnStatus('onhold')
     },
     on_hangup_event(event, agentid, DN, UUID, hangupLine, activeLineCount) {
-      localStorage.removeItem('callInfo')
       if (vm.isDialTaskPage) {
         vm.formInline.user = ''
       }
@@ -1213,19 +1196,13 @@ export default {
       }
     },
     on_answer_event(event, agentid, DN, UUID, callerid, calleeid, io, other_leg_uuid) {
-      const callInfo = {}
-      callInfo.calleeid = calleeid
-      callInfo.callerid = callerid
-      localStorage.setItem('callInfo', JSON.stringify(callInfo))
-
       addAnswerContact({
-        'event': 'on_answer_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'io': io, 'other_leg_uuid': other_leg_uuid, 'calleeid': calleeid, 'callerid': callerid
+        'event': 'on_answer_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': callerid, 'calleeid': calleeid, 'io': io, 'other_leg_uuid': other_leg_uuid
       }).then(res => {
         console.log('写入接听电话的记录:' + res)
       }).catch(error => {
         console.log('error:' + error)
       })
-
       vm.$root.eventHub.$emit('addCall', true)
       vm.setbtnStatus('talking')
       const info = {}
@@ -1252,10 +1229,6 @@ export default {
       vm.caller = callerid
       vm.callee = calleeid
       vm.orginCaller = ori_ani
-      const callInfo = {}
-      callInfo.calleeid = calleeid
-      callInfo.callerid = callerid
-      localStorage.setItem('callInfo', JSON.stringify(callInfo))
       if (vm.isDialTaskPage) {
         vm.global_taskId = localStorage.getItem('global_taskId')
       } else {
@@ -1291,49 +1264,33 @@ export default {
       vm.caller = callerid
       vm.callee = calleeid
       vm.orginCaller = ori_ani
+      addComeContact({
+        'event': 'on_ringing_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': callerid, 'calleeid': calleeid, 'ori_ani': ori_ani, 'other_leg_uuid': other_leg_uuid, 'ringing_time': new Date(), 'callDirection': 1, 'taskId': DialData ? JSON.parse(DialData).data.taskId : null
+      }).then(res => {
+        console.log('写来电通话记录：' + res)
+      }).catch(error => {
+        console.log('error:' + error)
+      })
       vm.setbtnStatus('ringing')
       vm.oldtelephonestate = vm.telephoneState
-      const callInfo = {}
-      callInfo.calleeid = calleeid
-      callInfo.callerid = callerid
-      localStorage.setItem('callInfo', JSON.stringify(callInfo))
+      vm.telephoneState = '来电振铃'
+      if (vm.oldtelephonestate !== vm.telephoneState) {
+        clearInterval(interval)
+        vm.times()
+      }
       if (DialData) { // 判断为自动外呼
+        console.log(JSON.parse(DialData).data, 'data')
         const data = JSON.parse(DialData).data
         const campaignId = data.campaignId
         const taskId = data.taskId
         const customerId = data.customerId
         // const isBlacklist = data.isBlacklist
         const customerPhone = data.customerPhone
-        addComeContact({
-          'event': 'on_ringing_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': calleeid, 'calleeid': callerid, 'ori_ani': ori_ani, 'other_leg_uuid': other_leg_uuid, 'ringing_time': new Date(), 'callDirection': 0, 'taskId': DialData ? JSON.parse(DialData).data.taskId : null
-        }).then(res => {
-          console.log('写去电通话记录：' + res)
-        }).catch(error => {
-          console.log('error:' + error)
-        })
-        vm.telephoneState = '去电回铃'
-        if (vm.oldtelephonestate !== vm.telephoneState) {
-          clearInterval(interval)
-          vm.times()
-        }
         vm.$router.push({//
           name: 'dial_task',
           query: { 'agent': 'agent', 'dialstatus': '0', 'dialType': 'autocall', 'isDialTask': false, 'campaignId': campaignId, 'taskId': taskId, 'customerId': customerId, 'isBlacklist': '0', 'customerPhone': customerPhone }
         })
         // cti.setAgentStatus(agentid, '-5')
-      } else {
-        addComeContact({
-          'event': 'on_ringing_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': callerid, 'calleeid': calleeid, 'ori_ani': ori_ani, 'other_leg_uuid': other_leg_uuid, 'ringing_time': new Date(), 'callDirection': 1, 'taskId': DialData ? JSON.parse(DialData).data.taskId : null
-        }).then(res => {
-          console.log('写来电通话记录：' + res)
-        }).catch(error => {
-          console.log('error:' + error)
-        })
-        vm.telephoneState = '来电振铃'
-        if (vm.oldtelephonestate !== vm.telephoneState) {
-          clearInterval(interval)
-          vm.times()
-        }
       }
     },
     on_reasonchange(event, agentId, DN, reasonCode) {
@@ -1520,11 +1477,7 @@ export default {
           vm.lockChange = true
           vm.islogin = true
           vm.oldtelephonestate = vm.telephoneState
-          if (localStorage.getItem('autocall') === 'true') {
-            vm.telephoneState = '去电通话中'
-          } else {
-            vm.telephoneState = '来电通话中'
-          }
+          vm.telephoneState = '来电通话中'
           if (vm.oldtelephonestate !== vm.telephoneState) {
             clearInterval(interval)
             vm.times()
@@ -1643,21 +1596,6 @@ export default {
       vm.formInline.DN = DN
       if (agentId !== null && DN !== null && DN !== '') {
         cti.login(agentId, DN, '518', '1', '0')
-      }
-    },
-    toggleSideBar() {
-      this.$store.dispatch('ToggleSideBar')
-      // logo缩放
-      if (this.$store.state.app.sidebar.opened) {
-        this.$store.commit('SET_LOGOCLASS', 'opened')
-        $('.hamburger i').addClass('el-icon-arrow-left').removeClass('el-icon-arrow-right')
-        $('.tags-view-container').width('91.5%')
-        $('div.hamberger-bar').addClass('opened')
-      } else {
-        this.$store.commit('SET_LOGOCLASS', 'closed')
-        $('.hamburger i').addClass('el-icon-arrow-right').removeClass('el-icon-arrow-left')
-        $('.tags-view-container').width('98%')
-        $('div.hamberger-bar').addClass('closed')
       }
     },
     logout() {
@@ -1781,26 +1719,19 @@ export default {
         }
       })
     }
-    // 强制打开menu
-    window.onresize = () => {
-      this.$store.commit('OPEN_SIDEBAR')
-      this.toggleSideBar()
-    }
+
     if (sessionStorage.getItem('sidebarStatus') === '0') {
-      this.$store.commit('SET_LOGOCLASS', 'opened')
       $('.hamburger i').addClass('el-icon-arrow-left').removeClass('el-icon-arrow-right')
-      $('.tags-view-container').width('91.5%')
+      // $('.tags-view-container').width('91.5%')
       $('div.hamberger-bar').addClass('opened')
     } else if (sessionStorage.getItem('sidebarStatus') === null) {
       this.$store.commit('OPEN_SIDEBAR')
-      this.$store.commit('SET_LOGOCLASS', 'opened')
       $('.hamburger i').addClass('el-icon-arrow-left').removeClass('el-icon-arrow-right')
-      $('.tags-view-container').width('91.5%')
+      // $('.tags-view-container').width('91.5%')
       $('div.hamberger-bar').addClass('opened')
     } else {
-      this.$store.commit('SET_LOGOCLASS', 'closed')
       $('.hamburger i').addClass('el-icon-arrow-right').removeClass('el-icon-arrow-left')
-      $('.tags-view-container').width('98%')
+      // $('.tags-view-container').width('98%')
       $('div.hamberger-bar').addClass('closed')
     }
     checkSoftphonePerm(agentId).then(res => {
@@ -1920,15 +1851,8 @@ export default {
     this.$root.eventHub.$on('CHANGE_STATUS', () => {
       this.firstgetUnreadMessages(agentId)
     })
-    this.$root.eventHub.$on('autocallReady', (obj) => {
-      this.autoCallChange = !obj
-      if (obj === 'auto') {
-        this.agentSetDialInFree()
-      } else if (obj === 'manual') {
-        this.autoCallChange = false
-      } else {
-        this.autoCallChange = true
-      }
+    this.$root.eventHub.$on('autocallReady', () => {
+      this.agentSetDialInFree()
     })
     this.$root.eventHub.$on('DISABLED_DIAL', (str) => {
       if (str === '1') {
@@ -2011,34 +1935,28 @@ export default {
     }
   }
 }
-// .message .el-badge__content.is-fixed{
-//   top: 3px;
-//   right: 20px;
-// }
 .el-menu--horizontal {
   border:none;
 }
 #logo{
-  width:9.5%;
-  background:#263445;
+  // width:9.5%;
+  // width:164px;
+  width:100%;
+  background:#242a2e;
   // height:108.7px;
+  height:11%;
   box-sizing: border-box;
   transition: width .3s;
   padding:11px 30px 30px 23px;
 }
-#logo.closed{
-  width:36px;
-  padding:0;
-  height:108.7px;
-}
-#logo.opened{
-  width:164px;
-  padding:11px 30px 30px 23px;
-}
-#logo.closed img{
-  display:none;
+.hideSidebar{
+  #logo img{
+    transition:width .3s;
+    width:0;
+  }
 }
 #logo img{
+  transition: width .3s;
   width:100%;
   margin:4.4px 0;
   height:59px;
@@ -2160,6 +2078,17 @@ export default {
     opacity:1;
   }
 }
+@media screen and (min-width: 1367px) and (max-width:1550px){
+  .status-container{
+    font-size:14px;
+    width:107px;
+    margin-right:7px;
+    margin-left:20px;
+  }
+  .status-container.call{
+    width:150px;
+  }
+}
  @media screen and (min-width: 1281px) and (max-width:1367px){
   .message{
     float:right;
@@ -2227,23 +2156,11 @@ export default {
   }
   #logo{
     width:164px;
-    background:#263445;
+    background:#242a2e;
     // height:108.7px;
     box-sizing: border-box;
     transition: width .3s;
     padding:11px 30px 30px 23px;
-  }
-  #logo.closed{
-    width:36px;
-    padding:0;
-    height:108.7px;
-  }
-  #logo.opened{
-    width:164px;
-    padding:11px 30px 30px 23px;
-  }
-  #logo.closed img{
-    display:none;
   }
   #logo img{
     width:100%;
@@ -2271,23 +2188,11 @@ export default {
   }
   #logo{
     width:164px;
-    background:#263445;
+    background:#242a2e;
     // height:108.7px;
     box-sizing: border-box;
     transition: width .3s;
     padding:11px 30px 30px 23px;
-  }
-  #logo.closed{
-    width:36px;
-    height:108.7px;
-    padding:0;
-  }
-  #logo.opened{
-    width:164px;
-    padding:11px 30px 30px 23px;
-  }
-  #logo.closed img{
-    display:none;
   }
   #logo img{
     width:100%;
@@ -2450,7 +2355,7 @@ p{
 .navbar.open{
   transition: width 0.3s;
   width:90%;
-  position:fixed;
+  // position:fixed;
   z-index:999;
 }
 .navbar.close{
@@ -2461,7 +2366,7 @@ p{
   line-height: 50px;
   border-radius: 0px !important;
   margin-bottom:0px;
-  position:fixed;
+  // position:fixed;
   z-index:999;
   width:100%;
   background:#F8F8F8;
