@@ -1,137 +1,237 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-row class="table-container">
-        <div class="margin-bottom-20">
-          <label class="font14 bold" v-if="showStaff">小组成员在线情况</label>
-          <label class="font14 bold" v-if="showTeam">各小组在线综合情况</label>
-        </div>
-        <br/>
-        <div  v-if="showStaff">
-          <el-col :span="3" style="margin-right:2%">
-            <el-card>
-              <div style="display:inline-block;text-align:center">
-                <div><img src="../../../static/images/monitoring_index/line-up.png" alt="本组总数"></img></div>
-                <span style="float:right">本组总数</span>
-              </div>
-              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{formInline.totalCount}}</span>
-            </el-card>
-          </el-col>
-          <el-col :span="3" style="margin-right:2%">
-            <el-card>
-              <div style="display:inline-block;text-align:center">
-                <div><img src="../../../static/images/monitoring_index/online.png" alt="在线人数"></img></div>
-                <span style="float:right">在线人数</span>
-              </div>
-              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{formInline.onlineCount}}</span>
-            </el-card>
-          </el-col>
-          <el-col :span="3" style="margin-right:2%">
-            <el-card>
-              <div style="display:inline-block;text-align:center">
-                <div><img src="../../../static/images/monitoring_index/working.png" alt="通话人数"></img></div>
-                <span style="float:right">通话人数</span>
-              </div>
-              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{formInline.workingCount}}</span>
-            </el-card>
-          </el-col>
-          <el-col :span="3" style="margin-right:2%">
-            <el-card>
-              <div style="display:inline-block;text-align:center">
-                <div><img src="../../../static/images/monitoring_index/busy.png" alt="示忙人数"></img></div>
-                <span style="float:right">示忙人数</span>
-              </div>
-              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{formInline.busyCount}}</span>
-            </el-card>
-          </el-col>
-          <el-col :span="3" style="margin-right:2%">
-            <el-card>
-              <div style="display:inline-block;text-align:center">
-                <div><img src="../../../static/images/monitoring_index/voice.png" alt="响铃人数"></img></div>
-                <span style="float:right">响铃人数</span>
-              </div>
-              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{formInline.ringingCount}}</span>
-            </el-card>
-          </el-col>
-          <el-col :span="3" style="margin-right:2%">
-            <el-card>
-              <div style="display:inline-block;text-align:center">
-                <div><img src="../../../static/images/monitoring_index/free.png" alt="空闲人数"></img></div>
-                <span style="float:right">空闲人数</span>
-              </div>
-              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{formInline.freeCount}}</span>
-            </el-card>
-          </el-col>
-        </div>
-        <div  v-if="showTeam">
-          <el-col :span="3" style="margin-right:2%">
-            <el-card>
-              <div style="display:inline-block;text-align:center">
-                <div><img src="../../../static/images/monitoring_index/online.png" alt="在线人数"></img></div>
-                <span style="float:right">在线人数</span>
-              </div>
-              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{team.onlineCount}}</span>
-            </el-card>
-          </el-col>
-          <el-col :span="3" style="margin-right:2%">
-            <el-card>
-              <div style="display:inline-block;text-align:center">
-                <div><img src="../../../static/images/monitoring_index/working.png" alt="通话人数"></img></div>
-                <span style="float:right">通话人数</span>
-              </div>
-              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{team.workingCount}}</span>
-            </el-card>
-          </el-col>
-          <el-col :span="3" style="margin-right:2%">
-            <el-card>
-              <div style="display:inline-block;text-align:center">
-                <div><img src="../../../static/images/monitoring_index/busy.png" alt="示忙人数"></img></div>
-                <span style="float:right">示忙人数</span>
-              </div>
-              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{team.busyCount}}</span>
-            </el-card>
-          </el-col>
-          <el-col :span="3" style="margin-right:2%">
-            <el-card>
-              <div style="display:inline-block;text-align:center">
-                <div><img src="../../../static/images/monitoring_index/voice.png" alt="响铃人数"></img></div>
-                <span style="float:right">响铃人数</span>
-              </div>
-              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{team.ringingCount}}</span>
-            </el-card>
-          </el-col>
-          <el-col :span="3" style="margin-right:2%">
-            <el-card>
-              <div style="display:inline-block;text-align:center">
-                <div><img src="../../../static/images/monitoring_index/free.png" alt="空闲人数"></img></div>
-                <span style="float:right">空闲人数</span>
-              </div>
-              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{team.freeCount}}</span>
-            </el-card>
-          </el-col>
-          <!-- <el-col :span="3" style="margin-right:2%">
-            <el-card>
-              <div style="display:inline-block;text-align:center">
-                <div><img src="../../../static/images/monitoring_index/line-up.png" alt="排队人数"></img></div>
-                <span style="float:right">排队人数</span>
-              </div>
-              <span style="display:inline-block;margin-right:5%;font-size:45px;font-family:Arial;">{{team.queueCount}}</span>
-            </el-card>
-          </el-col> -->
-        </div>
-        <el-col :span="1" style="float:right">
-          <div style="display:inline-block;text-align:center">
-             <div><a><img src="../../../static/images/monitoring_index/refresh.png" alt="刷新" @click="refresh()"></img></a></div>
-              <span style="float:right;cursor:pointer" @click="refresh()">刷新</span>
+      <el-row class="table-container" style="margin-top:0;padding-top:10px;">
+        <div style="margin-bottom:30px;">
+          <span class="font14 bold" v-if="showStaff">小组成员在线情况</span>
+          <span class="font14 bold" v-if="showTeam">各小组在线综合情况</span>
+          <div style="display:inline-block;margin-left:10px;">
+            <div><a><img src="../../../static/images/monitoring_index/refresh.png" alt="刷新" @click="refresh()" title="刷新"></img></a></div>
           </div>
-        </el-col>
+        </div>
+        <div v-if="showStaff" class="staff-synthetical">
+          <div class="synthetical-item">
+            <div style="display:inline-block;text-align:center">
+              <div class="img-container">
+                <img src="../../../static/images/monitoring_index/line-up.png" alt="本组总数"></img>
+              </div>
+            </div>
+            <div 
+              class="count-name">
+              <div class="font12" 
+                style="color:#020202;">
+                本组总数
+              </div>
+              <div 
+                class="font12 bold count-content" :title="formInline.totalCount">
+                {{formInline.totalCount}}
+              </div>
+            </div>
+          </div>
+          <div class="synthetical-item">
+            <div style="display:inline-block;text-align:center">
+              <div class="img-container">
+                <img src="../../../static/images/monitoring_index/online.png" alt="在线人数"></img>
+              </div>
+            </div>
+            <div class="count-name">
+              <div 
+                class="font12" 
+                style="color:#020202;">
+                在线人数
+              </div>
+              <div class="font12 bold count-content" :title="formInline.onlineCount">
+                {{formInline.onlineCount}}
+              </div>
+            </div>
+          </div>
+          <div class="synthetical-item">
+            <div style="display:inline-block;text-align:center">
+              <div class="img-container">
+                <img src="../../../static/images/monitoring_index/working.png" alt="通话人数"></img>
+              </div>
+            </div>
+            <div class="count-name">
+              <div 
+                class="font12" 
+                style="color:#020202;">
+                通话人数
+              </div>
+              <div class="font12 bold count-content" :title="formInline.workingCount">
+                {{formInline.workingCount}}
+              </div>
+            </div>
+          </div>
+          <div class="synthetical-item">
+            <div style="display:inline-block;text-align:center">
+              <div class="img-container">
+                <img src="../../../static/images/monitoring_index/busy.png" alt="示忙人数"></img>
+              </div>
+            </div>
+            <div class="count-name">
+              <div 
+                class="font12" 
+                style="color:#020202;">
+                示忙人数
+              </div>
+              <div class="font12 bold count-content" :title="formInline.busyCount">
+                {{formInline.busyCount}}
+              </div>
+            </div>
+          </div>
+          <div class="synthetical-item">
+            <div style="display:inline-block;text-align:center">
+              <div class="img-container">
+                <img src="../../../static/images/monitoring_index/voice.png" alt="响铃人数"></img>
+              </div>
+            </div>
+            <div class="count-name">
+              <div 
+                class="font12" 
+                style="color:#020202;">
+                响铃人数
+              </div>
+              <div 
+                class="font12 bold count-content" :title="formInline.ringingCount">
+                {{formInline.ringingCount}}
+              </div>
+            </div>
+          </div>
+          <div class="synthetical-item">
+            <div style="display:inline-block;text-align:center">
+              <div class="img-container">
+                <img src="../../../static/images/monitoring_index/free.png" alt="空闲人数"></img>
+              </div>
+            </div>
+            <div class="count-name">
+              <div 
+                class="font12" 
+                style="color:#020202;">
+                空闲人数
+              </div>
+              <div class="font12 bold count-content" :title="formInline.freeCount">
+                {{formInline.freeCount}}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div  v-if="showTeam" class="team-synthetical">
+          <div class="synthetical-item">
+            <div style="display:inline-block;text-align:center">
+              <div class="img-container">
+                <img src="../../../static/images/monitoring_index/online.png" alt="在线人数"></img>
+              </div>
+            </div>
+            <div class="count-name">
+              <div 
+                class="font12" 
+                style="color:#020202;">
+                在线人数
+              </div>
+              <div class="font12 bold count-content" :title="team.onlineCount">
+                {{team.onlineCount}}
+              </div>
+            </div>
+          </div>
+          <div class="synthetical-item">
+            <div style="display:inline-block;text-align:center">
+              <div class="img-container">
+                <img src="../../../static/images/monitoring_index/working.png" alt="通话人数"></img>
+              </div>
+            </div>
+            <div class="count-name">
+              <div 
+                class="font12" 
+                style="color:#020202;">
+                通话人数
+              </div>
+              <div 
+                class="font12 bold count-content" :title="team.workingCount">
+                {{team.workingCount}}
+              </div>
+            </div>
+          </div>
+          <div class="synthetical-item">
+            <div style="display:inline-block;text-align:center">
+              <div class="img-container">
+                <img src="../../../static/images/monitoring_index/busy.png" alt="示忙人数"></img>
+              </div>
+            </div>
+            <div class="count-name">
+              <div 
+                class="font12" 
+                style="color:#020202;">
+                示忙人数
+              </div>
+              <div 
+                class="font12 bold count-content" :title="team.busyCount">
+                {{team.busyCount}}
+              </div>
+            </div>
+          </div>
+          <div class="synthetical-item">
+            <div style="display:inline-block;text-align:center">
+              <div class="img-container">
+                <img src="../../../static/images/monitoring_index/voice.png" alt="响铃人数"></img>
+              </div>
+            </div>
+            <div class="count-name">
+              <div 
+                class="font12" 
+                style="color:#020202;">
+                响铃人数
+              </div>
+              <div 
+                class="font12 bold count-content" :title="team.ringingCount">
+                {{team.ringingCount}}
+              </div>
+            </div>
+          </div>
+          <div class="synthetical-item">
+            <div style="display:inline-block;text-align:center">
+              <div class="img-container">
+                <img src="../../../static/images/monitoring_index/free.png" alt="空闲人数"></img>
+              </div>
+            </div>
+            <div class="count-name">
+              <div 
+                class="font12" 
+                style="color:#020202;">
+                空闲人数
+              </div>
+              <div 
+                class="font12 bold count-content" :title="team.freeCount">
+                {{team.freeCount}}
+              </div>
+            </div>
+          </div>
+          <!-- <div class="synthetical-item">
+            <div style="display:inline-block;text-align:center">
+              <div class="img-container">
+                <img src="../../../static/images/monitoring_index/line-up.png" alt="排队人数"></img>
+              </div>
+            </div>
+            <div style="display:inline-block;margin-left:21px;">
+              <div 
+                class="font12" 
+                style="color:#020202;">
+                排队人数
+              </div>
+               <div 
+                class="font12 bold" 
+                style="font-size:30px;color:#020202;position:relative;bottom:-11px;">
+                {{team.queueCount}}
+              </div>
+            </div>
+          </div> -->
+        </div>
       </el-row>
       <el-row style="margin-top:20px" class="table-container">
-        <div class="margin-bottom-20">
-          <label class="font14 bold" v-if="showStaff">监控小组成员</label>
-          <label class="font14 bold" v-if="showTeam">监控各个小组</label>
+        <div>
+          <span class="font14 bold" v-if="showStaff">监控小组成员</span>
+          <span class="font14 bold" v-if="showTeam">监控各个小组</span>
         </div>
-        <div style="margin-top:1%"  v-if="showStaff">
+        <div style="margin-top:15px"  v-if="showStaff">
           <el-button :disabled="btnunIntrudeIn" @click="monitorIntrudeCall()">强插</el-button>
           <el-button :disabled="btnunListen" @click="monitorListenCall()">监听</el-button>
           <el-button :disabled="btnunWhisper" @click="monitorWisperCall()">耳语</el-button>
@@ -139,59 +239,246 @@
           <el-button :disabled="btnunForceFree" @click="monitorAvaiable()">强制示闲</el-button>
           <el-button :disabled="btnunForceBusy" @click="monitorBusy()">强制示忙</el-button>
           <el-button :disabled="btnunForceLogoff" @click="monitorforceLogoff()">强制登出</el-button>
-          <hr/>
         </div>
-         <div style="margin-top:1%">
-              <el-col :span="5"  v-for="(item,index) in agentData" style="margin:1% 1%" v-if="showStaff">
-                <el-card >
+        <div style="margin-top:20px">
+          <!-- <el-col :span="5"  v-for="(item,index) in agentData" style="margin:1% 1%" v-if="showStaff">
+            <el-card >
+              <div>
+                <div style="display:inline-block">
                   <div>
-                    <div style="display:inline-block">
-                      <div>
-                        <img src="../../../static/images/ringback.jpg" alt="去电回铃" style="width:48px;height:48px" v-show="item.ringbackshow"></img>
-                        <img src="../../../static/images/callout_talking.jpg" alt="去电通话" style="width:48px;height:48px" v-show="item.callout_talkingshow"></img>
-                        <img src="../../../static/images/after_working.jpg" alt="后处理" style="width:48px;height:48px" v-show="item.after_workingshow"></img>
-                        <img src="../../../static/images/relax.jpg" alt="小休" style="width:48px;height:48px" v-show="item.relaxshow"></img>
-                        <img src="../../../static/images/ready.jpg" alt="就绪" style="width:48px;height:48px" v-show="item.readyshow"></img>
-                        <img src="../../../static/images/lunch.jpg" alt="就餐" style="width:48px;height:48px" v-show="item.lunchshow"></img>
-                        <img src="../../../static/images/ringing.jpg" alt="来电振铃" style="width:48px;height:48px" v-show="item.ringingshow"></img>
-                        <img src="../../../static/images/comein_talking.jpg" alt="来电通话" style="width:48px;height:48px" v-show="item.comein_talkingshow"></img>
-                        <img src="../../../static/images/loginoff.jpg" alt="登出" style="width:48px;height:48px" v-show="item.loginoffshow"></img>
-                        <img src="../../../static/images/busy.jpg" alt="示忙" style="width:48px;height:48px" v-show="item.busyshow"></img>
-                      </div>
-                      <div>
-                        <el-checkbox @change="change(item.agentId,item.checked)" v-model="item.checked"></el-checkbox>
-                      </div>
-                    </div>
-                    <div style="display:inline-block">
-                      <span><font>工号：</font>{{item.agentId}}</span><br/><br/>
-                      <span><font>分机号：</font>{{item.DN}}</span><br/>
-                    </div>
+                    <img src="../../../static/images/ringback.jpg" alt="去电回铃" style="width:48px;height:48px" v-show="item.ringbackshow"></img>
+                    <img src="../../../static/images/callout_talking.jpg" alt="去电通话" style="width:48px;height:48px" v-show="item.callout_talkingshow"></img>
+                    <img src="../../../static/images/after_working.jpg" alt="后处理" style="width:48px;height:48px" v-show="item.after_workingshow"></img>
+                    <img src="../../../static/images/relax.jpg" alt="小休" style="width:48px;height:48px" v-show="item.relaxshow"></img>
+                    <img src="../../../static/images/ready.jpg" alt="就绪" style="width:48px;height:48px" v-show="item.readyshow"></img>
+                    <img src="../../../static/images/lunch.jpg" alt="就餐" style="width:48px;height:48px" v-show="item.lunchshow"></img>
+                    <img src="../../../static/images/ringing.jpg" alt="来电振铃" style="width:48px;height:48px" v-show="item.ringingshow"></img>
+                    <img src="../../../static/images/comein_talking.jpg" alt="来电通话" style="width:48px;height:48px" v-show="item.comein_talkingshow"></img>
+                    <img src="../../../static/images/loginoff.jpg" alt="登出" style="width:48px;height:48px" v-show="item.loginoffshow"></img>
+                    <img src="../../../static/images/busy.jpg" alt="示忙" style="width:48px;height:48px" v-show="item.busyshow"></img>
                   </div>
-                  <span><font>姓名：</font>{{item.staffName}}</span><br/>
-                  <span><font>状态：</font>{{item.status}}</span><br/>
-                  <span><font>队列：</font>{{item.queue}}</span><br/>
-                  <!-- <span><font>排队数：</font>{{item.queueCount}}</span><br/> -->
-                  <span><font>状态更新时间：</font></span><br/>
-                  <span style="margin-left:8%;margin-right:8%">{{item.updateTime}}</span><br/>
-                  <span><font>状态持续时长：</font>{{item.statusCount}}</span><br/>
-                  <span><font>今日呼出通话时长：</font>{{item.talkOutCount}}</span><br/>
-                  <span><font>今日呼出通话次数：</font>{{item.talkOutTimes}}次</span><br/>
-                  <span><font>今日呼入通话时长：</font>{{item.comeinCount}}</span><br/>
-                  <span><font>今日呼入通话次数：</font>{{item.comeinTimes}}次</span><br/>
-                </el-card>
-            </el-col>
-            <el-col :span="4"  v-for="(item,index) in organData" style="margin:1% 1%" v-if="showTeam">
-                <el-card >
-                  <span><font>组织名称：</font></span><br/>
-                  <div style="text-align:center">{{item.organName}}</div>
-                  <span><font>在线人数：</font>{{item.onlineCount}}人</span><br/>
-                  <span><font>通话人数：</font>{{item.talkingCount}}人</span><br/>
-                  <span><font>示忙人数：</font>{{item.busyCount}}人</span><br/>
-                  <span><font>响铃人数：</font>{{item.ringingCount}}人</span><br/>
-                  <span><font>空闲人数：</font>{{item.freeCount}}人</span><br/>
-                  <!-- <span><font>排队人数：</font>{{item.queueCount}}人</span><br/> -->
-                </el-card>
-            </el-col>
+                  <div>
+                    <el-checkbox @change="change(item.agentId,item.checked)" v-model="item.checked"></el-checkbox>
+                  </div>
+                </div>
+                <div style="display:inline-block">
+                  <span><font>工号：</font>{{item.agentId}}</span><br/><br/>
+                  <span><font>分机号：</font>{{item.DN}}</span><br/>
+                </div>
+              </div>
+              <span><font>姓名：</font>{{item.staffName}}</span><br/>
+              <span><font>状态：</font>{{item.status}}</span><br/>
+              <span><font>队列：</font>{{item.queue}}</span><br/> -->
+              
+              <!-- <span><font>排队数：</font>{{item.queueCount}}</span><br/> -->
+              
+              <!-- <span><font>状态更新时间：</font></span><br/>
+              <span style="margin-left:8%;margin-right:8%">{{item.updateTime}}</span><br/>
+              <span><font>状态持续时长：</font>{{item.statusCount}}</span><br/>
+              <span><font>今日呼出通话时长：</font>{{item.talkOutCount}}</span><br/>
+              <span><font>今日呼出通话次数：</font>{{item.talkOutTimes}}次</span><br/>
+              <span><font>今日呼入通话时长：</font>{{item.comeinCount}}</span><br/>
+              <span><font>今日呼入通话次数：</font>{{item.comeinTimes}}次</span><br/>
+            </el-card>
+          </el-col> -->
+
+          <el-row v-if="showStaff" style="margin:0 -15px;">
+            <el-card 
+              v-for="(item,index) in agentData"
+              class="staff-card"
+              shadow="never"
+              :key="index">
+              <div slot="header">
+                <span class="font12 bold" style="color:#000">{{item.staffName}}</span>
+                <el-checkbox 
+                  @change="change(item.agentId,item.checked)" 
+                  v-model="item.checked"
+                  style="float:right;">
+                </el-checkbox>
+              </div>
+              <div>
+                <el-row class="staff-item-container">
+                  <span class="font12 label">
+                    <span>工</span>
+                    <span style="float:right;">号：</span>
+                  </span>
+                  <span class="font12 content">{{item.agentId}}</span>
+                </el-row>
+                <el-row class="staff-item-container">
+                  <span class="font12 label">
+                    <span>分</span>
+                    <span style="float:right;">号：</span>
+                    <span style="float:right;margin-right:18px;">机</span>
+                  </span>
+                  <span class="font12 content">{{item.DN}}</span>
+                </el-row>
+                <el-row class="staff-item-container">
+                  <span class="font12 label">
+                    <span>队</span>
+                    <span style="float:right;">列：</span>
+                  </span>
+                  <span class="font12 content">{{item.queue}}</span>
+                </el-row>
+                <el-row class="staff-item-container status">
+                  <span class="font12 label">
+                    <span>状</span> 
+                    <span style="float:right;">态：</span> 
+                  </span>
+                  <!-- 登出 -->
+                  <div 
+                    style="display:inline-block;background:#999;height:18px;padding:0 6px;position:relative;bottom:-3px;" 
+                    v-if="item.loginoffshow">
+                    <span>
+                      <img src="../../../static/images/login_status.png" alt="登出"></img>
+                    </span>
+                    <span class="font12 content" style="color:#fff;position:relative;top:-3px;">{{item.status}}</span>
+                  </div>
+                  <!-- 就绪 -->
+                  <div 
+                    style="display:inline-block;background:#57AFFF;height:18px;padding:0 6px;position:relative;bottom:-3px;" 
+                    v-if="item.readyshow">
+                    <span>
+                      <img src="../../../static/images/login_status.png" alt="就绪"></img>
+                    </span>
+                    <span class="font12 content" style="color:#fff;position:relative;top:-3px;">{{item.status}}</span>
+                  </div>
+                  <!-- 去电回铃 & 来电振铃 -->
+                  <div 
+                    style="display:inline-block;background:#28CC6C;height:18px;padding:0 6px;position:relative;bottom:-3px;" 
+                    v-if="item.ringbackshow||item.ringingshow">
+                    <span>
+                      <img src="../../../static/images/ringback.png" alt="去电回铃" v-if="item.ringbackshow"></img>
+                      <img src="../../../static/images/ringing.png" alt="去电振铃" v-if="item.ringingshow"></img>
+                    </span>
+                    <span class="font12 content" style="color:#fff;position:relative;top:-3px;">{{item.status}}</span>
+                  </div>
+                  <!-- 去电通话 & 来电通话 -->
+                  <div 
+                    style="display:inline-block;background:#F8A300;height:18px;padding:0 6px;position:relative;bottom:-3px;" 
+                    v-show="item.callout_talkingshow||item.comein_talkingshow">
+                    <span>
+                      <img src="../../../static/images/callout_talking.png" alt="去电通话" v-show="item.callout_talkingshow"></img>
+                      <img src="../../../static/images/comein_talking.png" alt="来电通话" v-show="item.comein_talkingshow"></img>
+                    </span>
+                    <span class="font12 content" style="color:#fff;position:relative;top:-3px;">{{item.status}}</span>
+                  </div>
+                  <!-- 小休 & 就餐 -->
+                  <div 
+                    style="display:inline-block;background:#2CC8F1;height:18px;padding:0 6px;position:relative;bottom:-3px;" 
+                    v-show="item.ringbackshow">
+                    <span>
+                      <img src="../../../static/images/relax.png" alt="小休" v-show="item.relaxshow"></img>
+                      <img src="../../../static/images/lunch.png" alt="就餐" v-show="item.lunchshow"></img>
+                    </span>
+                    <span class="font12 content" style="color:#fff;position:relative;top:-3px;">{{item.status}}</span>
+                  </div>
+                  <!-- 后处理 & 示忙 -->
+                  <div 
+                    style="display:inline-block;background:#F8A300;height:18px;padding:0 6px;position:relative;bottom:-3px;" 
+                    v-show="item.ringbackshow">
+                    <span>
+                      <img src="../../../static/images/after_working.png" alt="后处理" v-show="item.after_workingshow"></img>
+                      <img src="../../../static/images/busy.png" alt="示忙" v-show="item.busyshow"></img>
+                    </span>
+                    <span class="font12 content" style="color:#fff;position:relative;top:-3px;">{{item.status}}</span>
+                  </div>
+                </el-row>
+                <el-row class="staff-item-container">
+                  <span class="font12 label">状态更新时间：</span>
+                  <span class="font12 content">{{item.updateTime}}</span>
+                </el-row>
+                <el-row class="staff-item-container">
+                  <span class="font12 label">状态持续时长：</span>
+                  <span class="font12 content">{{item.statusCount}}</span>
+                </el-row>
+                <el-row class="staff-item-container">
+                  <span class="font12 label">今日呼出时长：</span>
+                  <span class="font12 content">{{item.talkOutCount}}</span>
+                </el-row>
+                <el-row class="staff-item-container">
+                  <span class="font12 label">今日呼出次数：</span>
+                  <span class="font12 content">{{item.talkOutTimes}}</span>
+                </el-row>
+                <el-row class="staff-item-container">
+                  <span class="font12 label">今日呼入时长：</span>
+                  <span class="font12 content">{{item.comeinCount}}</span>
+                </el-row>
+                <el-row class="staff-item-container">
+                  <span class="font12 label">今日呼入次数：</span>
+                  <span class="font12 content">{{item.comeinTimes}}</span>
+                </el-row>
+                <!-- <div style="display:inline-block">
+                  <div>
+                    <img src="../../../static/images/ringback.jpg" alt="去电回铃" style="width:48px;height:48px" v-show="item.ringbackshow"></img>
+                    <img src="../../../static/images/callout_talking.jpg" alt="去电通话" style="width:48px;height:48px" v-show="item.callout_talkingshow"></img>
+                    <img src="../../../static/images/after_working.jpg" alt="后处理" style="width:48px;height:48px" v-show="item.after_workingshow"></img>
+                    <img src="../../../static/images/relax.jpg" alt="小休" style="width:48px;height:48px" v-show="item.relaxshow"></img>
+                    <img src="../../../static/images/ready.jpg" alt="就绪" style="width:48px;height:48px" v-show="item.readyshow"></img>
+                    <img src="../../../static/images/lunch.jpg" alt="就餐" style="width:48px;height:48px" v-show="item.lunchshow"></img>
+                    <img src="../../../static/images/ringing.jpg" alt="来电振铃" style="width:48px;height:48px" v-show="item.ringingshow"></img>
+                    <img src="../../../static/images/comein_talking.jpg" alt="来电通话" style="width:48px;height:48px" v-show="item.comein_talkingshow"></img>
+                    <img src="../../../static/images/loginoff.jpg" alt="登出" style="width:48px;height:48px" v-show="item.loginoffshow"></img>
+                    <img src="../../../static/images/busy.jpg" alt="示忙" style="width:48px;height:48px" v-show="item.busyshow"></img>
+                  </div>
+                  <div>
+                    <el-checkbox @change="change(item.agentId,item.checked)" v-model="item.checked"></el-checkbox>
+                  </div>
+                </div>
+                <div style="display:inline-block">
+                  <span><font>工号：</font>{{item.agentId}}</span><br/><br/>
+                  <span><font>分机号：</font>{{item.DN}}</span><br/>
+                </div> -->
+              </div>
+              <!-- <span><font>姓名：</font>{{item.staffName}}</span><br/>
+              <span><font>状态：</font>{{item.status}}</span><br/>
+              <span><font>队列：</font>{{item.queue}}</span><br/> -->
+
+              <!-- <span><font>排队数：</font>{{item.queueCount}}</span><br/> -->
+              
+              <!-- <span><font>状态更新时间：</font></span><br/>
+              <span style="margin-left:8%;margin-right:8%">{{item.updateTime}}</span><br/>
+              <span><font>状态持续时长：</font>{{item.statusCount}}</span><br/>
+              <span><font>今日呼出通话时长：</font>{{item.talkOutCount}}</span><br/>
+              <span><font>今日呼出通话次数：</font>{{item.talkOutTimes}}次</span><br/>
+              <span><font>今日呼入通话时长：</font>{{item.comeinCount}}</span><br/>
+              <span><font>今日呼入通话次数：</font>{{item.comeinTimes}}次</span><br/> -->
+            </el-card>
+          </el-row>
+          <el-row v-if="showTeam">
+            <el-table
+              :data="organData">
+              <el-table-column
+                align="center"
+                label="组织名称"
+                prop="organName">
+              </el-table-column>
+                <el-table-column
+                align="center"
+                prop="onlineCount"
+                label="在线人数">
+              </el-table-column>
+              <el-table-column
+                align="center"
+                label="通话人数"
+                prop="talkingCount">
+              </el-table-column>
+              <el-table-column
+                align="center"
+                label="示忙人数"
+                prop="busyCount">
+              </el-table-column>
+              <el-table-column
+                align="center"
+                label="响铃人数"
+                prop="ringingCount">
+              </el-table-column>
+              <el-table-column
+                align="center"
+                label="空闲人数"
+                prop="freeCount">
+              </el-table-column>
+            </el-table>
+          </el-row>
         </div>
       </el-row>
     </div>
@@ -1070,3 +1357,162 @@ var baseinfo = null
     }
   }
 </script>
+<style rel="stylesheet/scss" lang="scss" scoped>
+  .staff-synthetical{
+    border:1px solid #ccc;
+    width:100%;
+    overflow:hidden;
+    height:108px;
+    .synthetical-item{
+      margin-top:13px;
+      padding:12.5px 2.6%;
+      padding-right:0;
+      width:16.6%;
+      float:left;
+      box-sizing:border-box;
+      border-left:1px solid #ccc;
+      &:nth-child(1){
+        border-left:none;
+      }
+      .count-name{
+        display:inline-block;
+        margin-left:6.6%;
+        max-width:65%;
+        position:relative;
+        top:7px;
+      }
+      .count-content{
+        font-size:30px;
+        color:#020202;
+        position:relative;
+        bottom:-7px;
+        width:100%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow:hidden
+      }
+      .img-container{
+        width:53px;
+        height:53px;
+        background: #57AFFF;
+        border-radius: 4px;
+        padding-top:9px;
+      }
+    }
+  }
+  .staff-card{
+    display:inline-block;
+    width:250px;
+    height:284px;
+    border-color:#ccc;
+    // margin-left:30px;
+    margin:0 15px;
+    /deep/ .el-card__header{
+      height:34px;
+      line-height:34px;
+      padding:0 17px 0 9px;
+      background:#F0F3F9;
+      border-color:#ccc;
+    }
+    /deep/ .el-card__body{
+      overflow-y:auto;
+      height:249px;
+      padding-top:15px;
+      padding-left:14px;
+      .staff-item-container{
+        margin-top:5px;
+        &.status img{
+          margin-top:3px;
+        }
+        &:nth-child(1){
+          margin-top:0;
+        }
+        .label{
+          display:inline-block;
+          color:#666;
+          min-width:86px;
+          .padding{
+            padding:0 2px;
+          }
+        }
+        .content{
+          color:#333;
+        }
+      }
+    }
+  }
+  .team-synthetical{
+    border:1px solid #ccc;
+    width:100%;
+    overflow:hidden;
+    height:108px;
+    .synthetical-item{
+      margin-top:13px;
+      padding:12.5px 2.6%;
+      padding-right:0;
+      width:20%;
+      float:left;
+      box-sizing:border-box;
+      border-left:1px solid #ccc;
+      &:nth-child(1){
+        border-left:none;
+      }
+      .count-name{
+        display:inline-block;
+        margin-left:6.6%;
+        max-width:72%;
+        position:relative;
+        top:7px;
+      }
+      .count-content{
+        font-size:30px;
+        color:#020202;
+        position:relative;
+        bottom:-7px;
+        width:100%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow:hidden
+      }
+      .img-container{
+        width:53px;
+        height:53px;
+        background: #57AFFF;
+        border-radius: 4px;
+        padding-top:9px;
+      }
+    }
+  }
+  @media screen and (min-width: 1281px) and (max-width:1367px){
+    .staff-synthetical{
+      .synthetical-item{
+        .count-name{
+          max-width:55%;
+        }
+      }
+    }
+    .team-synthetical{
+      .synthetical-item{
+        .count-name{
+          max-width:63%;
+        }
+      }
+    }
+  }
+  @media all and (min-width:1024px) and (max-width:1280px)  {
+    .staff-synthetical{
+      .synthetical-item{
+        .count-name{
+          max-width:53%;
+        }
+      }
+    }
+    .team-synthetical{
+      .synthetical-item{
+        .count-name{
+          max-width:61%;
+        }
+      }
+    }
+  }
+</style>

@@ -217,6 +217,7 @@
                 <el-row>
                   <el-form-item label="批次名称：">
                     <el-select v-model="searchReq.batchId" style="width:133px;">
+                      <el-option value="">请选择</el-option>
                       <el-option
                         v-for="item in allBatch"
                         :key="item.id"
@@ -228,6 +229,7 @@
 
                   <el-form-item label="性别：">
                     <el-select v-model="searchReq.customerSex" style="width:116px;">
+                      <el-option value="">请选择</el-option>
                       <el-option value="0" label="男"></el-option>
                       <el-option value="1" label="女"></el-option>
                     </el-select>
@@ -244,6 +246,7 @@
                     <el-form-item :inline="true" label="地区：" prop="min" class="min region">
                       <el-col :span="7" :offset="1">
                         <el-select v-model="searchReq.province" placeholder="省" @change="getRegion3(searchReq.province)">
+                          <el-option value="">请选择</el-option>
                           <el-option
                             v-for="item in screening.region.province"
                             :key="item.id"
@@ -254,6 +257,7 @@
                       </el-col>
                       <el-col :span="7" :offset="1">
                         <el-select v-model="searchReq.city" placeholder="市" @change="getRegion3(searchReq.city)">
+                          <el-option value="">请选择</el-option>
                           <el-option
                             v-for="item in screening.region.city"
                             :key="item.id"
@@ -264,6 +268,7 @@
                       </el-col>
                       <el-col :span="7" :offset="1">
                         <el-select v-model="searchReq.district" placeholder="县/区">
+                          <el-option value="">请选择</el-option>
                           <el-option
                             v-for="item in screening.region.district"
                             :key="item.regionCode"
