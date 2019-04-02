@@ -398,9 +398,9 @@
       </template>
       </el-form>
       <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
         <el-button @click="resetForm('ruleForm')">重置</el-button>
         <el-button type="primary" plain @click="resetForm('ruleForm');dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
       </div>
     </el-dialog>
      <el-dialog title="修改配置" :visible.sync="dialogFormVisibleReverse" width="60%" @close="resetForm('ruleFormReverse')" append-to-body>
@@ -617,9 +617,9 @@
       </template>
       </el-form>
       <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm('ruleFormReverse')">确定</el-button>
         <el-button type="danger" @click="resetForm('ruleFormReverse')">重置</el-button>
         <el-button type="primary" plain @click="resetForm('ruleFormReverse');dialogFormVisibleReverse = false">取消</el-button>
-        <el-button type="primary" @click="submitForm('ruleFormReverse')">确定</el-button>
       </div>
     </el-dialog>
      <el-dialog title="查询配置" :visible.sync="dialogFormVisibleDetail" width="60%" @close="resetForm('ruleFormDetail')" append-to-body>

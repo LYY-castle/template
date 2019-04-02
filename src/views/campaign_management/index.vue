@@ -329,9 +329,9 @@
       </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
+        <el-button size="small" type="primary" @click="submitForm('editCampaign');editCampaign(campaignDetail)">确定</el-button>
         <el-button size="small" @click="getCampaignById(delReq.campaignId)">重置</el-button>
         <el-button size="small" type="primary" plain @click="editVisible = false;">取消</el-button>
-        <el-button size="small" type="primary" @click="submitForm('editCampaign');editCampaign(campaignDetail)">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -601,9 +601,9 @@
       </el-form-item>
       </el-form>
         <div slot="footer" style="text-align: right;">
+          <el-button size="small" type="primary" @click="submitForm('campaignDetail');addCampaign(campaignDetail);">确定</el-button>
           <el-button size="small" @click="resetForm('campaignDetail');">重置</el-button>
           <el-button size="small" plain type="primary" @click="addVisible = false">取消</el-button>
-          <el-button size="small" type="primary" @click="submitForm('campaignDetail');addCampaign(campaignDetail);">确定</el-button>
         </div>
     </el-dialog>
     <el-dialog
@@ -613,8 +613,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除此内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button size="small" type="primary" plain @click="delVisible = false">取消</el-button>
         <el-button size="small" type="primary" @click="delVisible = false;delCampaign(delReq);">确定</el-button>
+        <el-button size="small" type="primary" plain @click="delVisible = false">取消</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -624,8 +624,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除选定内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button size="small" type="primary" plain @click="batchDelVisible = false">取消</el-button>
         <el-button size="small" type="primary" @click="batchDelVisible = false;batchDelCampaigns(batchDelReq);">确定</el-button>
+        <el-button size="small" type="primary" plain @click="batchDelVisible = false">取消</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -782,8 +782,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除此内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button size="small" type="primary" plain @click="delVisible = false">取消</el-button>
         <el-button size="small" type="primary" @click="delVisible = false;delCampaign(delReq);">确定</el-button>
+        <el-button size="small" type="primary" plain @click="delVisible = false">取消</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -793,8 +793,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除选定内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button size="small" type="primary" plain @click="batchDelVisible = false">取消</el-button>
         <el-button size="small" type="primary" @click="batchDelVisible = false;batchDelCampaigns(batchDelReq);">确定</el-button>
+        <el-button size="small" type="primary" plain @click="batchDelVisible = false">取消</el-button>
       </div>
     </el-dialog>
 
@@ -878,8 +878,8 @@
       append-to-body>
       <span style="font-size:20px;">确定移除选定内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" plain @click="batchListVisible = false">取消</el-button>
         <el-button type="primary" @click="batchListVisible = false;removeList();">确定</el-button>
+        <el-button type="primary" plain @click="batchListVisible = false">取消</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -889,8 +889,8 @@
       append-to-body>
       <span style="font-size:20px;">确定移除吗？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" plain @click="removeListVisible = false">取消</el-button>
         <el-button type="primary" @click="removeListVisible = false;removeList();">确定</el-button>
+        <el-button type="primary" plain @click="removeListVisible = false">取消</el-button>
       </div>
     </el-dialog>
   </div>

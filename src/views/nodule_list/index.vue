@@ -136,8 +136,8 @@
       </el-form>
       <div slot="footer" style="text-align: right;">
         <!-- <el-button size="small" type="danger" @click="findNoduleByNoduleId(delReq)">重 置</el-button> -->
-        <el-button size="small" type="primary" plain @click="editTitleVisible = false">取消</el-button>
         <el-button size="small" type="primary" @click="submitForm('editNoduleTitle');editNoduleTitle(summaryTitleDetail)">确定</el-button>
+        <el-button size="small" type="primary" plain @click="editTitleVisible = false">取消</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -232,9 +232,9 @@
         </div>
       </el-form>
       <div slot="footer" style="text-align: right;">
+        <el-button size="small" type="primary" @click="submitForm('addSummary');addNodule(addSummary);">确 定</el-button>
         <el-button size="small" type="danger" @click="resetForm('addSummary');setTree=[]">重 置</el-button>
         <el-button size="small" @click="addVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="submitForm('addSummary');addNodule(addSummary);">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -245,8 +245,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除此内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button size="small" type="primary" plain @click="delVisible = false">取消</el-button>
         <el-button size="small" type="primary" @click="delVisible = false;delNoduleByNoduleId(delReq);">确定</el-button>
+        <el-button size="small" type="primary" plain @click="delVisible = false">取消</el-button>
       </div>
     </el-dialog>
 
@@ -257,8 +257,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除选定内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button size="small" type="primary" plain  @click="batchDelVisible = false">取 消</el-button>
         <el-button size="small" type="primary" @click="batchDelVisible = false;delNodulesByNoduleIds(batchDelReq);">确 定</el-button>
+        <el-button size="small" type="primary" plain  @click="batchDelVisible = false">取 消</el-button>
       </div>
     </el-dialog>
 
@@ -269,8 +269,8 @@
     append-to-body>
     <span style="font-size:20px;">确认设置该小结为可见？</span>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button size="small" type="primary" plain  @click="setNoduleVisible = false">取消</el-button>
       <el-button size="small" type="primary" @click="setNoduleVisible = false;setVisibleStatus(noduleObj);">确定</el-button>
+      <el-button size="small" type="primary" plain  @click="setNoduleVisible = false">取消</el-button>
     </div>
   </el-dialog>
   <el-dialog
@@ -280,8 +280,8 @@
     append-to-body>
     <span style="font-size:20px;">确认设置该小结为不可见？</span>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button size="small" type="primary" plain  @click="setNoduleInvisible = false">取消</el-button>
       <el-button size="small" type="primary" @click="setNoduleInvisible = false;setVisibleStatus(noduleObj);">确定</el-button>
+      <el-button size="small" type="primary" plain  @click="setNoduleInvisible = false">取消</el-button>
     </div>
   </el-dialog>
   </div>

@@ -272,9 +272,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
+        <el-button type="primary" @click="submitForm('editorder');editOrder(orderDetail)">确定</el-button>
         <el-button @click="searchByOrderId(orderDetail.orderId)">重置</el-button>
         <el-button type="primary" plain @click="editVisiable=false">返回</el-button>
-        <el-button type="primary" @click="submitForm('editorder');editOrder(orderDetail)">确定</el-button>
       </div>
     </el-dialog>
     <!-- 订单修改的dialog  end-->

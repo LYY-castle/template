@@ -439,8 +439,8 @@
         <img style="width:100%" :src="imgsrc">
       </div>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button @click="imageVisible = false;sendVisible=true;removeFile()">取 消</el-button>
       <el-button type="primary" @click="imageVisible = false;sendVisible=true;sendMessage('image')">确 定</el-button>
+      <el-button @click="imageVisible = false;sendVisible=true;removeFile()">取 消</el-button>
     </div>
   </el-dialog>
   <el-dialog
@@ -460,8 +460,8 @@
 
       </div>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button @click="fileVisible = false;sendVisible=true;removeFile()">取 消</el-button>
       <el-button type="primary" @click="fileVisible = false;sendVisible=true;sendMessage('file')">确 定</el-button>
+      <el-button @click="fileVisible = false;sendVisible=true;removeFile()">取 消</el-button>
     </div>
   </el-dialog>
   <el-dialog

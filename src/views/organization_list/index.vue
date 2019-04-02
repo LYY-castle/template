@@ -54,7 +54,7 @@
         </el-row>
         <el-row class="margin-bottom-20">
           <el-button type="success" size="small"  @click="dialogFormVisible = true;ruleForm.id = '';ruleForm.comment = '';new_dept_ids=[]">新建</el-button>
-          <el-button type="danger" size="small" @click="deleteAll">批量删除</el-button>
+          <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         </el-row>
         <el-row>
           <el-table
@@ -136,7 +136,7 @@
                 <el-button @click="handleClickUser(scope.row)" type="text" size="small">下属账号</el-button>
                 <el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
                 <el-button
-                  @click.native.prevent="deleteRow(scope.row)"
+                  @click.native.prevent="delReq=scope.row.id,delVisible=true"
                   type="text"
                   size="small">
                   删除
@@ -197,9 +197,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
         <el-button @click="resetForm('ruleForm')">重置</el-button>
         <el-button plain type="primary" @click="dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="修改组织" :visible.sync="dialogFormVisibleReverse" width="30%" @close="resetForm('ruleFormReverse')" append-to-body>
@@ -249,9 +249,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确定</el-button>
         <el-button @click="resetReverse">重置</el-button>
         <el-button plain type="primary" @click="dialogFormVisibleReverse = false">取消</el-button>
-        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确定</el-button>
       </div>
     </el-dialog>
 
@@ -265,8 +265,30 @@
       append-to-body>
       <span style="font-size:20px;">该部门下存在可见的下属组织，是否设置为不可见。</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" plain @click="op_hints = false;ruleFormReverse.visible=1">取消</el-button>
         <el-button type="primary" @click="op_hints = false;updateOrganStatus(visibleData)">确定</el-button>
+        <el-button type="primary" plain @click="op_hints = false;ruleFormReverse.visible=1">取消</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
+      width="30%"
+      title="删除"
+      :visible.sync="delVisible"
+      append-to-body>
+      <span style="font-size:20px;">确定删除此内容？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button size="small" type="primary" @click="delVisible = false;deleteRow();">确定</el-button>
+        <el-button size="small" type="primary" plain @click="delVisible = false">取消</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
+      width="30%"
+      title="批量删除"
+      :visible.sync="batchDelVisible"
+      append-to-body>
+      <span style="font-size:20px;">确定删除选定内容？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button size="small" type="primary" @click="batchDelVisible = false;deleteAll();">确定</el-button>
+        <el-button size="small" type="primary" plain @click="batchDelVisible = false">取消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -274,7 +296,7 @@
 
 <script>
   import { queryDepts, verifyDept, modifyOrganStatus, modifyOrgan, delOrgan, addOrganization, delOrgansByOrganIds, findAllOrganPost, findAllOrganTo } from '@/api/organization_list'
-  import { Message, MessageBox } from 'element-ui'
+  import { Message } from 'element-ui'
   import { formatDateTime, list2Tree } from '@/utils/tools'
   import { validSpace } from '@/utils/validate'
 
@@ -282,6 +304,9 @@
     name: 'organization_list',
     data() {
       return {
+        batchDelVisible: false,
+        delVisible: false,
+        delReq: '',
         formContainerOpen: '1',
         formContainer: this.$store.state.app.formContainer,
         selected_dept_id: [], // 查询条件
@@ -381,35 +406,29 @@
         const organIds = this.multipleSelection.map(function(item, index) {
           return item.id
         })
-        MessageBox.confirm('确定执行批量删除操作吗？', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          delOrgansByOrganIds({
-            listId: organIds,
-            operatorId: localStorage.getItem('agentId')
-          }).then(response => {
-            if (response.data.code === 1) {
-              Message({
-                message: response.data.message,
-                type: 'success',
-                duration: 3 * 1000
-              })
-              this.formInline.pageNo = 1
-              this.pagination.pageNo = 1
-              findAllOrganPost(this.formInline).then(response => {
-                this.queryOrgan(response)
-              })
-              this.refreshOrganTo()
-            } else {
-              Message({
-                message: response.data.message,
-                type: 'error',
-                duration: 3 * 1000
-              })
-            }
-          })
+        delOrgansByOrganIds({
+          listId: organIds,
+          operatorId: localStorage.getItem('agentId')
+        }).then(response => {
+          if (response.data.code === 1) {
+            Message({
+              message: response.data.message,
+              type: 'success',
+              duration: 3 * 1000
+            })
+            this.formInline.pageNo = 1
+            this.pagination.pageNo = 1
+            findAllOrganPost(this.formInline).then(response => {
+              this.queryOrgan(response)
+            })
+            this.refreshOrganTo()
+          } else {
+            Message({
+              message: response.data.message,
+              type: 'error',
+              duration: 3 * 1000
+            })
+          }
         }).catch(() => {
           // Message({
           //   message: '已经取消删除',
@@ -552,33 +571,27 @@
       handleSelectionChange(val) {
         this.multipleSelection = val
       },
-      deleteRow(row) {
-        MessageBox.confirm('确定执行删除操作吗？', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          delOrgan({ organ_id: row.id }).then(response => {
-            if (response.data.exchange.body.code === 1) {
-              Message({
-                message: response.data.exchange.body.message,
-                type: 'success',
-                duration: 3 * 1000
-              })
-              this.formInline.pageNo = 1
-              this.pagination.pageNo = 1
-              findAllOrganPost(this.formInline).then(response => {
-                this.queryOrgan(response)
-              })
-              this.refreshOrganTo()
-            } else {
-              Message({
-                message: '删除失败',
-                type: 'error',
-                duration: 3 * 1000
-              })
-            }
-          })
+      deleteRow() {
+        delOrgan({ organ_id: this.delReq }).then(response => {
+          if (response.data.exchange.body.code === 1) {
+            Message({
+              message: response.data.exchange.body.message,
+              type: 'success',
+              duration: 3 * 1000
+            })
+            this.formInline.pageNo = 1
+            this.pagination.pageNo = 1
+            findAllOrganPost(this.formInline).then(response => {
+              this.queryOrgan(response)
+            })
+            this.refreshOrganTo()
+          } else {
+            Message({
+              message: '删除失败',
+              type: 'error',
+              duration: 3 * 1000
+            })
+          }
         }).catch(() => {
           // Message({
           //   message: '已经取消删除',

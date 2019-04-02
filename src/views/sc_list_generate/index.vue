@@ -162,9 +162,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
+        <el-button size="small" type="primary" @click="editNamelist()">确定</el-button>
         <el-button size="small" @click="searchByListId(delReq);">重置</el-button>
         <el-button size="small" type="primary" plain @click="editVisible = false">取消</el-button>
-        <el-button size="small" type="primary" @click="editNamelist()">确定</el-button>
       </div>
     </el-dialog>
     <!-- <el-dialog
@@ -314,8 +314,8 @@
       append-to-body>
     <span style="font-size:20px;">确定删除选定内容？</span>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button type="primary" plain size="small" @click="batchDelVisible = false">取消</el-button>
       <el-button size="small" type="primary" @click="batchDelVisible = false;batchDelNamelist(batchDelReq);">确定</el-button>
+      <el-button type="primary" plain size="small" @click="batchDelVisible = false">取消</el-button>
     </div>
     </el-dialog>
     <el-dialog
@@ -325,8 +325,8 @@
       append-to-body>
     <span style="font-size:20px;">确定删除此内容？</span>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button type="primary" plain size="small" @click="delVisible = false">取消</el-button>
       <el-button size="small" type="primary" @click="delVisible = false;delNamelist(delReq);">确定</el-button>
+      <el-button type="primary" plain size="small" @click="delVisible = false">取消</el-button>
     </div>
     </el-dialog>
     <el-dialog
@@ -336,8 +336,8 @@
       append-to-body>
     <span style="font-size:20px;">即将设置名单为不可见状态，确认？</span>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button type="primary" plain size="small" @click="visibleCheck = false;namelistDetail.visible=1">取消</el-button>
       <el-button size="small" type="primary" @click="visibleCheck = false;checkEditNamelist(editReq)">确定</el-button>
+      <el-button type="primary" plain size="small" @click="visibleCheck = false;namelistDetail.visible=1">取消</el-button>
     </div>
     </el-dialog>
     <!-- 名单抽取 -->
@@ -568,8 +568,8 @@
         </el-form>
       </el-row>
       <el-row slot="footer" style="text-align:right;">
-        <el-button type="primary" plain @click="extractVisible=false;">取消</el-button>
         <el-button type="primary" :disabled="totalCount === 0" @click="addGenerate">确定</el-button>
+        <el-button type="primary" plain @click="extractVisible=false;">取消</el-button>
       </el-row>
     </el-dialog>
   </div>

@@ -260,8 +260,8 @@
       <el-row style="width:100%;border-top:1px solid #ccc;margin:20px 0;"></el-row>
       <el-row>
         <div style="text-align:center">
-          <el-button plain type="primary" @click="isMainPage = true" style="margin-right:40px;">返回</el-button>
           <el-button type="primary" @click="edit();editVisible=true">编辑</el-button>
+          <el-button plain type="primary" @click="isMainPage = true" style="margin-right:40px;">返回</el-button>
         </div>
       </el-row>
     </div>
@@ -490,9 +490,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
+        <el-button type="primary" @click="checkEdit()">确 定</el-button>
         <el-button type="danger" @click="resetDetai();contactDetail()">重 置</el-button>
         <el-button @click="editVisible = false;resetDetai();contactDetail()">取 消</el-button>
-        <el-button type="primary" @click="checkEdit()">确 定</el-button>
       </div>
     </el-dialog>
   </div>

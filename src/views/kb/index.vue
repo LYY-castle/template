@@ -1558,6 +1558,7 @@ export default{
       return MessageBox.confirm(`确定移除 ${file.name}？`, '确定注销', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        cancelButtonClass: 'btn-custom-cancel',
         type: 'warning'
       }).then(() => {
         // 删除附件
@@ -2739,6 +2740,12 @@ export default{
     .el-icon-document{
       display:none;
     }
+  }
+  .btn-custom-cancel {
+    float: right;
+    margin-left: 10px;
+    background: rgba(87, 175, 255, 0.1);
+    border: 1px solid #57AFFF;
   }
   // 富文本样式
   .ql-toolbar{

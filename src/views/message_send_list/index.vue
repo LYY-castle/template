@@ -252,8 +252,8 @@
         </el-pagination>
     </el-row>
     <el-row style="text-align: right; margin-top:10px">
-      <el-button type="primary" plain @click="radio='';messageVisible=false">取消</el-button>
       <el-button type="primary" @click="selectedMessage()">确定</el-button>
+      <el-button type="primary" plain @click="radio='';messageVisible=false">取消</el-button>
     </el-row>
     </el-dialog>
      <!-- 发送 -->
@@ -264,8 +264,8 @@
       append-to-body>
       <span style="font-size:20px;">确定发送短信吗？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" plain @click="send = false">取消</el-button>
         <el-button type="primary" @click="sendMessage();">确定</el-button>
+        <el-button type="primary" plain @click="send = false">取消</el-button>
       </div>
     </el-dialog>
   </div>

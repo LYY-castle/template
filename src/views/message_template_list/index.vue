@@ -128,9 +128,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
+        <el-button type="primary" @click="submitForm('addMessageForm',addMessageTemplateDetail);addTemplateGroup(addMessageTemplateDetail);">确定</el-button>
         <el-button @click="resetForm('addMessageForm')">重置</el-button>
         <el-button type="primary" plain @click="addVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitForm('addMessageForm',addMessageTemplateDetail);addTemplateGroup(addMessageTemplateDetail);">确定</el-button>
       </div>
     </el-dialog>
     <!-- 批量删除 -->
@@ -151,10 +151,10 @@
       title="删除"
       :visible.sync="delVisible"
       append-to-body>
-      <span style="font-size:20px;">确定删吗？</span>
+      <span style="font-size:20px;">确定删除吗？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" plain @click="delVisible = false">取消</el-button>
         <el-button type="primary" @click="delVisible = false;delTemplateGroup(delReq.id);">确定</el-button>
+        <el-button type="primary" plain @click="delVisible = false">取消</el-button>
       </div>
     </el-dialog>
     <!-- 修改模板组 -->
@@ -176,9 +176,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
+        <el-button type="primary" @click="submitForm('editTemplateGroupDeForm',editTemplateGroupDetail);editTemplateGroup(editTemplateGroupDetail);">确定</el-button>
         <el-button @click="getTemplateListById(delReq.id)">重置</el-button>
         <el-button type="primary" plain @click="editVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitForm('editTemplateGroupDeForm',editTemplateGroupDetail);editTemplateGroup(editTemplateGroupDetail);">确定</el-button>
       </div>
     </el-dialog>
   </div>

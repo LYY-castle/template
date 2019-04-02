@@ -149,9 +149,9 @@
         </el-form-item>
       </el-form>
         <div slot="footer" style="text-align: right;">
+          <el-button type="primary" @click="submitForm('addPhonesForm',addNoDisturbPhonesDetail);addNoDisturbZones(addNoDisturbPhonesDetail);">确定</el-button>
           <el-button @click="resetForm('addPhonesForm')">重置</el-button>
           <el-button type="primary" plain="" @click="addVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitForm('addPhonesForm',addNoDisturbPhonesDetail);addNoDisturbZones(addNoDisturbPhonesDetail);">确定</el-button>
         </div>
       </el-dialog>
       <!-- 批量删除 -->
@@ -162,8 +162,8 @@
         append-to-body>
         <span style="font-size:20px;">确定删除选定内容？</span>
         <div slot="footer" class="dialog-footer" style="text-align: right;">
-          <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
           <el-button type="primary" @click="batchDelVisible = false;batchdel(batchDelReq);">确定</el-button>
+          <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
         </div>
       </el-dialog>
       <!-- 删除 -->
@@ -174,8 +174,8 @@
         append-to-body>
         <span style="font-size:20px;">确定删除此内容？</span>
         <div slot="footer" class="dialog-footer" style="text-align: right;">
-          <el-button type="primary" plain @click="delVisible = false">取消</el-button>
           <el-button type="primary" @click="delVisible = false;deleteone(delReq.id);">确定</el-button>
+          <el-button type="primary" plain @click="delVisible = false">取消</el-button>
         </div>
       </el-dialog>
     <!-- 批量可见 -->
@@ -186,8 +186,8 @@
       append-to-body>
       <span style="font-size:20px;">是否确认批量设置号段为可见？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" plain @click="op_hints1 = false">取消</el-button>
         <el-button type="primary" @click="op_hints1 = false;batchSetVisibleStatus(batchDelReq,1)">确 定</el-button>
+        <el-button type="primary" plain @click="op_hints1 = false">取消</el-button>
       </div>
     </el-dialog>
     <!-- 批量不可见 -->
@@ -198,8 +198,8 @@
       append-to-body>
       <span style="font-size:20px;">是否确认批量设置号段为不可见？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" plain @click="op_hints2 = false">取消</el-button>
         <el-button type="primary" @click="op_hints2 = false;batchSetVisibleStatus(batchDelReq,0)">确定</el-button>
+        <el-button type="primary" plain @click="op_hints2 = false">取消</el-button>
       </div>
     </el-dialog>
     <!-- 修改免访客户 -->
@@ -234,9 +234,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
+        <el-button type="primary" @click="submitForm('editPhoneForm',editNoDisturbPhonesDetail);eidtNoDisturbZones(editNoDisturbPhonesDetail);">确定</el-button>
         <el-button @click="queryone(delReq.id)">重置</el-button>
         <el-button type="primary" plain @click="editVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitForm('editPhoneForm',editNoDisturbPhonesDetail);eidtNoDisturbZones(editNoDisturbPhonesDetail);">确定</el-button>
       </div>
     </el-dialog>
   </div>

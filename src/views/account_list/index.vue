@@ -59,8 +59,8 @@
           <div class="font14 bold">账号管理表</div>
         </el-row>
         <el-row class="margin-bottom-20">
-          <el-button type="success" size="small"  @click="all(1)">批量启用</el-button>
-          <el-button type="danger" size="small" @click="all(0)">批量停用</el-button>
+          <el-button type="success" size="small"  @click="batchStatus=1,batchDelVisible=true">批量启用</el-button>
+          <el-button type="danger" size="small" @click="batchStatus=0,batchDelVisible=true">批量停用</el-button>
         </el-row>
         <el-row>
           <el-table
@@ -185,9 +185,9 @@
         </el-card>
       </el-row>
       <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="addRole(roleIds)">确定</el-button>
         <el-button @click="checkRoleData2=[];roleMenu=[]">重置</el-button>
         <el-button plain type="primary" @click="dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="addRole(roleIds)">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="修改系统账号角色" :visible.sync="dialogFormVisibleReverse" width="70%" append-to-body>
@@ -221,9 +221,9 @@
         </el-card>
       </el-row>
       <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="editRole(roleIds)">确定</el-button>
         <el-button @click="getUserRole(ruleFormReverse.agentId)">重置</el-button>
         <el-button type="primary" plain @click="dialogFormVisibleReverse = false">取消</el-button>
-        <el-button type="primary" @click="editRole(roleIds)">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="系统账号详情" :visible.sync="dialogFormVisibleDetail" width="70%" append-to-body>
@@ -260,6 +260,17 @@
         <el-button plain type="primary" @click="dialogFormVisibleDetail = false">返回</el-button>
       </div>
     </el-dialog>
+    <el-dialog
+      width="30%"
+      title="批量操作"
+      :visible.sync="batchDelVisible"
+      append-to-body>
+      <span style="font-size:20px;">确定<span v-if="batchStatus===1">启用</span><span v-if="batchStatus===0">停用</span>选定内容？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button size="small" type="primary" @click="batchDelVisible = false;all();">确定</el-button>
+        <el-button size="small" type="primary" plain @click="batchDelVisible = false">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -280,13 +291,15 @@ import {
   getUserRole,
   editRole
 } from '@/api/account_list'
-import { Message, MessageBox } from 'element-ui'
+import { Message } from 'element-ui'
 import { formatDateTime, list2Tree } from '@/utils/tools'
 
 export default {
   name: 'account_list',
   data() {
     return {
+      batchDelVisible: false,
+      batchStatus: '',
       formContainerOpen: '1',
       formContainer: this.$store.state.app.formContainer,
       selected_dept_id: [], // 查询条件
@@ -577,37 +590,32 @@ export default {
     removeDomain(index) {
       this.ruleFormReverse.other_accounts.splice(index, 1)
     },
-    all(status) {
+    all() {
+      const status = this.batchStatus
       const chk_box = this.multipleSelection.map(function(item, index) {
         return item.agentId
       })
-      MessageBox.confirm('确定执行批量操作吗？', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        alterAccountList({
-          angentIdList: chk_box,
-          status: status
-        }).then(response => {
-          if (response.data.code === 1) {
-            Message({
-              message: response.data.message,
-              type: 'success',
-              duration: 3 * 1000
-            })
-            this.formInline.departName = ''
-            findAllAccount(this.formInline).then(responsedata => {
-              this.queryStaff(responsedata)
-            })
-          } else {
-            Message({
-              message: response.data.message,
-              type: 'error',
-              duration: 3 * 1000
-            })
-          }
-        })
+      alterAccountList({
+        angentIdList: chk_box,
+        status: status
+      }).then(response => {
+        if (response.data.code === 1) {
+          Message({
+            message: response.data.message,
+            type: 'success',
+            duration: 3 * 1000
+          })
+          this.formInline.departName = ''
+          findAllAccount(this.formInline).then(responsedata => {
+            this.queryStaff(responsedata)
+          })
+        } else {
+          Message({
+            message: response.data.message,
+            type: 'error',
+            duration: 3 * 1000
+          })
+        }
       })
     },
     submitForm(formName) {
@@ -971,5 +979,9 @@ export default {
 }
 .reverse {
   width: 70%;
+}
+.btn-custom-cancel {
+  float: right;
+  margin-left: 10px;
 }
 </style>

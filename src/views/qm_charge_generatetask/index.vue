@@ -161,9 +161,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
+        <el-button type="primary" @click="submitForm('editTask');editTask(editReq)">确 定</el-button>
         <el-button @click="getoneByTaskId(delReq)">重 置</el-button>
         <el-button type="primary" plain @click="editVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('editTask');editTask(editReq)">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -304,8 +304,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除此内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" plain @click="delVisible = false">取消</el-button>
         <el-button type="primary" @click="delVisible = false;delTask(delReq);">确定</el-button>
+        <el-button type="primary" plain @click="delVisible = false">取消</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -315,8 +315,8 @@
       append-to-body>
       <span style="font-size:20px;">确定移除此任务对应活动？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" plain @click="removeVisible = false">取消</el-button>
         <el-button type="primary" @click="removeVisible = false;removeCamp(editReq);">确定</el-button>
+        <el-button type="primary" plain @click="removeVisible = false">取消</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -326,8 +326,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除选定内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
         <el-button type="primary" @click="batchDelVisible = false;batchDelTask(batchDelReq);">确定</el-button>
+        <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
       </div>
     </el-dialog>
   </div>

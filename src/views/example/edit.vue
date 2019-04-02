@@ -190,9 +190,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
         <el-button @click="resetForm('ruleForm')">重置</el-button>
         <el-button type="primary" plain @click="dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="修改选项" :visible.sync="dialogFormVisibleReverse" width="38%" @close="resetForm('ruleFormReverse')" append-to-body>
@@ -218,9 +218,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确定</el-button>
         <el-button @click="resetReverse">重置</el-button>
         <el-button type="primary" plain @click="dialogFormVisibleReverse = false">取消</el-button>
-        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -233,8 +233,8 @@
       append-to-body>
       <span style="font-size:20px;">该部门下存在可见的下属组织，是否设置为不可见。</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" plain @click="op_hints = false;ruleFormReverse.visible=1">取消</el-button>
         <el-button type="primary" @click="op_hints = false;updateOrganStatus(visibleData)">确定</el-button>
+        <el-button type="primary" plain @click="op_hints = false;ruleFormReverse.visible=1">取消</el-button>
       </div>
     </el-dialog>
     <el-dialog title="选项值详情" :visible.sync="dialogFormVisibleDetail" width="38%" append-to-body>

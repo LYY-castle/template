@@ -114,9 +114,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确定</el-button>
         <el-button @click="resetReverse">重置</el-button>
         <el-button type="primary" plain @click="dialogFormVisibleReverse = false">取消</el-button>
-        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确定</el-button>
       </div>
     </el-dialog>
     

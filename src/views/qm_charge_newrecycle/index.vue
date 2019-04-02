@@ -205,8 +205,8 @@
       append-to-body>
     <span style="font-size:20px;">确定回收吗？</span>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button type="primary" plain @click="submitVisible = false">取消</el-button>
       <el-button type="primary" @click="getAssignData();recycleQualityTaskInfo(submitAssign);">确定</el-button>
+      <el-button type="primary" plain @click="submitVisible = false">取消</el-button>
     </div>
   </el-dialog>
   </div>

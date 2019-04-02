@@ -269,9 +269,9 @@
         </el-form-item> -->
       </el-form>
       <div slot="footer" style="text-align: right;">
+        <el-button size="small" type="primary" @click="createTemplateInfo('refAddProduct')">确定</el-button>
         <el-button size="small" @click="resetForm('refAddProduct');">重置</el-button>
         <el-button size="small" type="primary" plain @click="addVisible = false">取消</el-button>
-        <el-button size="small" type="primary" @click="createTemplateInfo('refAddProduct')">确定</el-button>
       </div>
     </el-dialog>
       <!-- 修改产品 -->
@@ -366,9 +366,9 @@
         </el-form-item> -->
       </el-form>
         <div slot="footer" style="text-align: right;">
+          <el-button size="small" type="primary" @click="modifyDialog('refUpateProduct')">确定</el-button>
           <el-button size="small" @click="queryTemplateInfo(productId);">重置</el-button>
           <el-button size="small" type="primary" plain @click="modifyVisible = false">取消</el-button>
-          <el-button size="small" type="primary" @click="modifyDialog('refUpateProduct')">确定</el-button>
         </div>
     </el-dialog>
     <!-- 新增属性 -->
@@ -572,8 +572,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除选定内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
         <el-button type="primary" @click="batchDelVisible = false;deleteTemplateInfos(batchDelIds);">确定</el-button>
+        <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
       </div>
     </el-dialog>
     <!-- 删除 -->
@@ -582,10 +582,10 @@
       title="删除"
       :visible.sync="delVisible"
       append-to-body>
-      <span style="font-size:20px;">确定删吗？</span>
+      <span style="font-size:20px;">确定删选定内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" plain @click="delVisible = false">取消</el-button>
         <el-button type="primary" @click="delVisible = false;deleteTemplateInfo(productId);">确定</el-button>
+        <el-button type="primary" plain @click="delVisible = false">取消</el-button>
       </div>
     </el-dialog>
       <!-- 修改 -->
@@ -596,8 +596,8 @@
       append-to-body>
       <span style="font-size:20px;">确定修改吗？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" plain @click="modifyDialogVisible = false">取消</el-button>
         <el-button type="primary" @click="modifyDialogVisible = false;updateTemplateInfo();">确定</el-button>
+        <el-button type="primary" plain @click="modifyDialogVisible = false">取消</el-button>
       </div>
     </el-dialog>
   </div>

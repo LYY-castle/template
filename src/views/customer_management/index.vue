@@ -425,16 +425,16 @@
           </el-form>
         </el-row>
         <el-row slot="footer" style="text-align:right;">
-          <el-button type="primary" plain @click="extractVisible=false;importVisible=false;">取消</el-button>
           <el-button type="primary" :disabled="totalCount === 0" @click="addGenerate">确定</el-button>
+          <el-button type="primary" plain @click="extractVisible=false;importVisible=false;">取消</el-button>
           <el-button type="info" @click="extractVisible=false" title="客户导入">上一步</el-button>
         </el-row>
       </el-dialog>
 
 
       <div slot="footer" style="text-align: right;">
-        <el-button type="primary" plain @click="importVisible = false">取消</el-button>
         <el-button type="primary" @click="submitUploadandimport()">确定导入</el-button>
+        <el-button type="primary" plain @click="importVisible = false">取消</el-button>
         <el-button type="info" @click="extractVisible=true;getRegion3(0);getAllBatch();" title="名单抽取">名单抽取</el-button>
       </div>
     </el-dialog>
@@ -655,16 +655,16 @@
       </div>
         <div slot="footer" style="text-align: right;">
           <!-- <el-button type="danger" @click="searchByCustomerId(resetParam,2);">重 置</el-button> -->
-          <el-button type="primary" plain @click="editVisible = false">取消</el-button>
           <el-button type="primary" @click="submitForm('customerDetail');editCustomer(customerReverseDetail)">确定</el-button>
+          <el-button type="primary" plain @click="editVisible = false">取消</el-button>
         </div>
       </el-dialog>
 
       <el-dialog append-to-body :visible.sync="deleteVisible" title="操作提示" width="30%">
         <span style="font-size:20px;">确认要删除该行吗？</span>
         <div slot="footer" class="dialog-footer" style="text-align: right;">
-          <el-button type="primary" plain @click="deleteVisible = false">取消</el-button>
           <el-button type="primary" @click="deleteSth(deleteData,deleteType);">确定</el-button>
+          <el-button type="primary" plain @click="deleteVisible = false">取消</el-button>
         </div>
       </el-dialog>
 
@@ -904,9 +904,9 @@
           </el-form-item>
         </el-form>
         <div slot="footer" style="text-align: right;">
+          <el-button type="primary" @click="submitForm('customerDetail');addCustomer(customerDetail,addressDatas,linkDatas,carDatas)">确定</el-button>
           <el-button @click="resetForm('customerDetail');resetArrays()">重置</el-button>
           <el-button type="primary" plain @click="addVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitForm('customerDetail');addCustomer(customerDetail,addressDatas,linkDatas,carDatas)">确定</el-button>
         </div>
       </el-dialog>
     <el-dialog
@@ -916,8 +916,8 @@
       append-to-body>
     <span style="font-size:20px;">确定删除此客户？</span>
     <div slot="footer" class="dialog-footer" style="text-align: right;">
-      <el-button type="primary" plain @click="delVisible = false">取消</el-button>
       <el-button type="primary" @click="delVisible = false;delCustomer(delReq);">确定</el-button>
+      <el-button type="primary" plain @click="delVisible = false">取消</el-button>
     </div>
   </el-dialog>
   <el-dialog
@@ -927,8 +927,8 @@
     append-to-body>
   <span style="font-size:20px;">确定删除选定内容？</span>
   <div slot="footer" class="dialog-footer" style="text-align: right;">
-    <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
     <el-button type="primary" @click="batchDelVisible = false;batchDelCustomer(batchDelReq);">确定</el-button>
+    <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
   </div>
   </el-dialog>
   </div>

@@ -223,8 +223,8 @@
       append-to-body>
       <span style="font-size:20px;">是否确认批量设置客户为生效？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" plain @click="op_hints1 = false">取消</el-button>
         <el-button type="primary" @click="op_hints1 = false;batchSetVisibleStatus(batchDelReq,0)">确 定</el-button>
+        <el-button type="primary" plain @click="op_hints1 = false">取消</el-button>
       </div>
     </el-dialog>
     <!-- 批量不可见 -->

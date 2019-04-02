@@ -60,8 +60,8 @@
       </div>
 
       <div slot="footer" style="text-align: right;">
-        <el-button type="primary" plain @click="importVisible = false">取消</el-button>
         <el-button type="primary" @click="submitUploadandimport()">确定导入</el-button>
+        <el-button type="primary" plain @click="importVisible = false">取消</el-button>
       </div>
     </el-dialog>
 
@@ -101,8 +101,8 @@
       <el-dialog append-to-body :visible.sync="deleteVisible" title="操作提示" width="30%">
         <span style="font-size:20px;">确认要删除该行吗？</span>
         <div slot="footer" class="dialog-footer" style="text-align: right;">
-          <el-button type="primary" plain @click="deleteVisible = false">取消</el-button>
           <el-button type="primary" @click="deleteSth(deleteData,deleteType);">确定</el-button>
+          <el-button type="primary" plain @click="deleteVisible = false">取消</el-button>
         </div>
       </el-dialog>
   </div>

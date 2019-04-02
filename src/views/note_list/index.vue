@@ -291,7 +291,7 @@ export default {
       req.startat = this.timeValue ? this.timeValue[0] : null
       req.endat = this.timeValue ? this.timeValue[1] : null
 
-      this.req.uid = this.uid
+      this.req.uid = this.uiduid
       queryByKeyWords(req)
         .then(response => {
           if (response.data.paging.note_total !== 0) {

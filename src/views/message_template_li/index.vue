@@ -164,9 +164,9 @@
         </el-form-item>
       </el-form>
         <div slot="footer" style="text-align: right;">
+          <el-button type="primary" @click="submitForm('addMessageForm',addMessageTemplateDetail);addTemplate(addMessageTemplateDetail);">确定</el-button>
           <el-button @click="resetForm('addMessageForm')">重置</el-button>
           <el-button type="primary" plain @click="addVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitForm('addMessageForm',addMessageTemplateDetail);addTemplate(addMessageTemplateDetail);">确定</el-button>
         </div>
       </el-dialog>
       <!-- 批量删除 -->
@@ -177,8 +177,8 @@
         append-to-body>
         <span style="font-size:20px;">确定删除选定内容？</span>
         <div slot="footer" class="dialog-footer" style="text-align: right;">
-          <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
           <el-button type="primary" @click="batchDelVisible = false;delTemplateList(batchDelReq);">确定</el-button>
+          <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
         </div>
       </el-dialog>
       <!-- 删除 -->
@@ -189,8 +189,8 @@
         append-to-body>
         <span style="font-size:20px;">确定删除吗？</span>
         <div slot="footer" class="dialog-footer" style="text-align: right;">
-          <el-button type="primary" plain @click="delVisible = false">取消</el-button>
           <el-button type="primary" @click="delVisible = false;delTemplate(delReq.id);">确定</el-button>
+          <el-button type="primary" plain @click="delVisible = false">取消</el-button>
         </div>
       </el-dialog>
     <!-- 修改 -->
@@ -221,9 +221,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
+        <el-button type="primary" @click="submitForm('editTemplateForm',editTemplateDetail);editTemplate(editTemplateDetail);">确定</el-button>
         <el-button @click="getTemplateById(delReq.id)">重置</el-button>
         <el-button type="primary" plain @click="editVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitForm('editTemplateForm',editTemplateDetail);editTemplate(editTemplateDetail);">确定</el-button>
       </div>
     </el-dialog>
     <!-- 详情 -->

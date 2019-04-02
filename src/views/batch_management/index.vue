@@ -143,9 +143,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
+        <el-button size="small" type="primary" @click="submitForm('editBatch');editBatch(batchDetail);">确定</el-button>
         <el-button size="small" @click="getDetailById(delReq.batchId)">重置</el-button>
         <el-button size="small" type="primary" plain @click="editVisible = false;">取消</el-button>
-        <el-button size="small" type="primary" @click="submitForm('editBatch');editBatch(batchDetail);">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -184,8 +184,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除此内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button size="small" type="primary" plain @click="delVisible = false">取消</el-button>
         <el-button size="small" type="primary" @click="delVisible = false;delBatch(delReq);">确定</el-button>
+        <el-button size="small" type="primary" plain @click="delVisible = false">取消</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -195,8 +195,8 @@
       append-to-body>
       <span style="font-size:20px;">确定删除选定内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
         <el-button type="primary" @click="batchDelVisible = false;batchDelBatchs(batchDelReq);">确定</el-button>
+        <el-button type="primary" plain @click="batchDelVisible = false">取消</el-button>
       </div>
     </el-dialog>
     <el-dialog

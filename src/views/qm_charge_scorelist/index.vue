@@ -36,7 +36,7 @@
         </el-row>
         <el-row class="margin-bottom-20">
           <el-button type="success" size="small" @click="addGrade()">新建</el-button>
-          <el-button type="danger" size="small" @click="deleteAll()">批量删除</el-button>
+          <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         </el-row>
         <el-row>
           <el-table
@@ -100,7 +100,7 @@
                 <el-button @click="changeStatus(scope.row)" type="text" size="small" v-if="scope.row.isDelete==='0'"> 禁用</el-button>
                 <el-button @click="changeStatus(scope.row)" type="text" size="small" v-if="scope.row.isDelete==='2'"> 启用</el-button>
                 <el-button @click="handleClick(scope.row)" type="text" size="small"> 修改</el-button>
-                <el-button @click="handleDelete(scope.row)" type="text" size="small">删除</el-button>
+                <el-button @click="delVisible=true,delReq=scope.row.gradeId" type="text" size="small">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -180,9 +180,9 @@
         </el-card>
         </el-form>
       <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm('ruleForm')" :loading="loading">确定</el-button>
         <el-button @click="resetForm('ruleForm')">重置</el-button>
         <el-button type="primary" plain @click="resetForm('ruleForm');dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')" :loading="loading">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="修改评分表" :visible.sync="dialogFormVisibleReverse" width="60%" @close="resetFormReverse('ruleFormReverse');dialogFormVisibleReverse=false" append-to-body>
@@ -242,9 +242,9 @@
         </el-card>
         </el-form>
       <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确 定</el-button>
         <el-button @click="resetFormReverse('ruleFormReverse')">重置</el-button>
         <el-button type="primary" plain @click="resetFormReverse('ruleFormReverse');dialogFormVisibleReverse = false">取消</el-button>
-        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="查看评分表" :visible.sync="dialogFormVisibleDetail" width="60%" @close="resetFormDetail('dialogFormVisibleDetail')" append-to-body>
@@ -293,18 +293,43 @@
          <el-button @click="resetFormDetail('dialogFormVisibleDetail');dialogFormVisibleDetail = false" type="primary" plain>返 回</el-button>
       </div>
     </el-dialog>
+    <el-dialog
+      width="30%"
+      title="删除"
+      :visible.sync="delVisible"
+      append-to-body>
+      <span style="font-size:20px;">确定删除此内容？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button size="small" type="primary" @click="delVisible = false;handleDelete();">确定</el-button>
+        <el-button size="small" type="primary" plain @click="delVisible = false">取消</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
+      width="30%"
+      title="批量删除"
+      :visible.sync="batchDelVisible"
+      append-to-body>
+      <span style="font-size:20px;">确定删除选定内容？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button size="small" type="primary" @click="batchDelVisible = false;deleteAll();">确定</el-button>
+        <el-button size="small" type="primary" plain @click="batchDelVisible = false">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
   import { findAllGradeForm, deleteGradeFormByGradeId, deleteGradeFormByTeam, getGradeByGradeId, addGrade, editGrade } from '@/api/qm_charge_scorelist'
-  import { Message, MessageBox } from 'element-ui'
+  import { Message } from 'element-ui'
   import { formatDateTime } from '@/utils/tools'
 
   export default {
     name: 'qm_charge_scorelist',
     data() {
       return {
+        batchDelVisible: false,
+        delVisible: false,
+        delReq: '',
         loading: false,
         visibleClass: '',
         formContainerOpen: '1',
@@ -484,27 +509,21 @@
       addGrade() {
         this.dialogFormVisible = true
       },
-      handleDelete(row) {
-        MessageBox.confirm('确定执行删除操作吗？', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          deleteGradeFormByGradeId({ 'gradeId': row.gradeId }).then(response => {
-            if (response.data.code === 0) {
-              this.formInline.pageNo = 1
-              this.pagination.pageNo = 1
-              this.searchGrade(this.formInline)
-            } else {
-              Message({
-                message: response.data.message,
-                type: 'error',
-                duration: 3 * 1000
-              })
-            }
-          }).catch(error => {
-            console.log(error)
-          })
+      handleDelete() {
+        deleteGradeFormByGradeId({ 'gradeId': this.delReq }).then(response => {
+          if (response.data.code === 0) {
+            this.formInline.pageNo = 1
+            this.pagination.pageNo = 1
+            this.searchGrade(this.formInline)
+          } else {
+            Message({
+              message: response.data.message,
+              type: 'error',
+              duration: 3 * 1000
+            })
+          }
+        }).catch(error => {
+          console.log(error)
         })
       },
       removeReverse(index) {
@@ -557,26 +576,25 @@
         const chk_box = this.multipleSelection.map(function(item, index) {
           return item.gradeId
         })
-        MessageBox.confirm('确定执行批量操作吗？', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          deleteGradeFormByTeam({ 'chk_box': chk_box }).then(res => {
-            if (res.data.code === 0) {
-              this.formInline.pageNo = 1
-              this.pagination.pageNo = 1
-              this.searchGrade(this.formInline)
-            } else {
-              Message({
-                message: res.data.message,
-                type: 'error',
-                duration: 3 * 1000
-              })
-            }
-          }).catch(err => {
-            console.log(err)
-          })
+        console.log('chk_box', chk_box)
+        if (chk_box.length === 0) {
+          this.$message.error('请选择要删除的内容！')
+          return
+        }
+        deleteGradeFormByTeam({ 'chk_box': chk_box }).then(res => {
+          if (res.data.code === 0) {
+            this.formInline.pageNo = 1
+            this.pagination.pageNo = 1
+            this.searchGrade(this.formInline)
+          } else {
+            Message({
+              message: res.data.message,
+              type: 'error',
+              duration: 3 * 1000
+            })
+          }
+        }).catch(err => {
+          console.log(err)
         })
       },
       submitForm(formName) {

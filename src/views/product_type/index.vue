@@ -36,7 +36,7 @@
         </el-row>
         <el-row class="margin-bottom-20">
           <el-button type="success" size="small"  @click="addProductType()">新建</el-button>
-          <el-button type="danger" size="small" @click="deleteAll">批量删除</el-button>
+          <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
         </el-row>
         <el-row>
           <el-table
@@ -90,7 +90,7 @@
               <template slot-scope="scope">
                 <el-button @click="handleClick(scope.row)" type="text" size="small">修改</el-button>
                 <el-button
-                  @click.native.prevent="deleteRow(scope.$index, tableData)"
+                  @click.native.prevent="delVisible=true,delReq=scope.row.productTypeId"
                   type="text"
                   size="small">
                   删除
@@ -122,9 +122,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm('ruleForm')" :disabled="clickTwice">确定</el-button>
         <el-button @click="resetForm('ruleForm')">重置</el-button>
         <el-button type="primary" plain @click="dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')" :disabled="clickTwice">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="修改产品类型" :visible.sync="dialogFormVisibleReverse" width="30%" @close="resetForm('ruleFormReverse')" append-to-body>
@@ -140,9 +140,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')" :disabled="clickTwiceReverse">确 定</el-button>
         <el-button @click="resetReverse">重置</el-button>
         <el-button type="primary" plain @click="dialogFormVisibleReverse = false">取消</el-button>
-        <el-button type="primary" @click="submitFormReverse('ruleFormReverse')" :disabled="clickTwiceReverse">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="产品类型详情" :visible.sync="dialogFormVisibleDetail" width="30%" append-to-body>
@@ -167,18 +167,43 @@
         <el-button type="primary" plain @click="dialogFormVisibleDetail = false">返回</el-button>
       </div>
     </el-dialog>
+    <el-dialog
+      width="30%"
+      title="删除"
+      :visible.sync="delVisible"
+      append-to-body>
+      <span style="font-size:20px;">确定删除此内容？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button size="small" type="primary" @click="delVisible = false;deleteRow();">确定</el-button>
+        <el-button size="small" type="primary" plain @click="delVisible = false">取消</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
+      width="30%"
+      title="批量删除"
+      :visible.sync="batchDelVisible"
+      append-to-body>
+      <span style="font-size:20px;">确定删除选定内容？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button size="small" type="primary" @click="batchDelVisible = false;deleteAll();">确定</el-button>
+        <el-button size="small" type="primary" plain @click="batchDelVisible = false">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
   import { queryProductType, addProductType, deleteProductType, editProductType, queryProductTypeList, deleteProductTypes } from '@/api/product_type'
-  import { Message, MessageBox } from 'element-ui'
+  import { Message } from 'element-ui'
   import { formatDateTime } from '@/utils/tools'
 
   export default {
     name: 'product_type',
     data() {
       return {
+        batchDelVisible: false,
+        delVisible: false,
+        delReq: '',
         visibleClass: '',
         formContainerOpen: '1',
         formContainer: this.$store.state.app.formContainer,
@@ -257,23 +282,11 @@
           })
           return
         }
-        MessageBox.confirm('确定执行批量删除操作吗？', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          deleteProductTypes(listId).then(res => {
-            if (res.data.code === 0) {
-              this.formInline.pageNo = 1
-              this.queryList()
-            }
-          })
-        }).catch(() => {
-          // Message({
-          //   message: '已经取消删除',
-          //   type: 'error',
-          //   duration: 1500
-          // })
+        deleteProductTypes(listId).then(res => {
+          if (res.data.code === 0) {
+            this.formInline.pageNo = 1
+            this.queryList()
+          }
         })
       },
       submitForm(formName) {
@@ -341,24 +354,12 @@
       handleSelectionChange(val) {
         this.multipleSelection = val
       },
-      deleteRow(index, rows) {
-        MessageBox.confirm('确定执行删除操作吗？', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          deleteProductType({ 'productTypeId': rows[index].productTypeId }).then(res => {
-            if (res.data.code === 0) {
-              this.formInline.pageNo = 1
-              this.queryList()
-            }
-          })
-        }).catch(() => {
-          // Message({
-          //   message: '已经取消删除',
-          //   type: 'error',
-          //   duration: 3 * 1000
-          // })
+      deleteRow() {
+        deleteProductType({ 'productTypeId': this.delReq }).then(res => {
+          if (res.data.code === 0) {
+            this.formInline.pageNo = 1
+            this.queryList()
+          }
         })
       },
       handleClickDetail(row) {
