@@ -79,7 +79,7 @@
               </el-form>
             </div>
             <!-- 普通查询 -->
-            <el-row v-if="tableType===2||tableType===1" style="height:81%;overflow-y:auto;">
+            <el-row v-if="tableType===2||tableType===1">
               <el-row class="table-container">
                 <el-row class="margin-bottom-15">
                   <div class="font14 bold">文章列表</div>
@@ -105,6 +105,7 @@
                     <el-table-column
                       align="center"
                       prop="title"
+                      fixed
                       label="标题">
                       <template
                         slot-scope="scope">
@@ -172,6 +173,7 @@
                       width="273"
                       v-if="permission"
                       align="center"
+                      fixed="right"
                       label="操作">
                       <template slot-scope="scope">
                         <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
@@ -210,7 +212,7 @@
               </el-row>
             </el-row>
               <!-- 高级查询 -->
-              <el-row v-if="tableType===3" style="height:81%;overflow-y:auto;">
+              <el-row v-if="tableType===3">
                 <el-row style="padding:15px 15px 0 15px;">
                   <el-row class="margin-bottom-15">
                     <el-button v-if="permission" type="success" size="small" @click="checkCatalogid();clearUpload('upload');">新建</el-button>
@@ -237,6 +239,7 @@
                         <el-table-column
                           align="center"
                           prop="title"
+                          fixed
                           label="标题">
                           <template
                             slot-scope="scope">
@@ -293,6 +296,7 @@
                           width="273"
                           v-if="permission"
                           align="center"
+                          fixed="right"
                           label="操作">
                           <template slot-scope="scope">
                             <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
@@ -344,6 +348,7 @@
                         <el-table-column
                           align="center"
                           prop="title"
+                          fixed
                           label="标题">
                           <template
                             slot-scope="scope">
@@ -400,6 +405,7 @@
                           width="273"
                           v-if="permission"
                           align="center"
+                          fixed="right"
                           label="操作">
                           <template slot-scope="scope">
                             <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
@@ -456,6 +462,7 @@
                       <el-table-column
                         align="center"
                         prop="title"
+                        fixed
                         label="标题">
                         <template
                           slot-scope="scope">
@@ -512,6 +519,7 @@
                         width="273"
                         v-if="permission"
                         align="center"
+                        fixed="right"
                         label="操作">
                         <template slot-scope="scope">
                           <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
@@ -568,6 +576,7 @@
                       <el-table-column
                         align="center"
                         prop="title"
+                        fixed
                         label="标题">
                         <template
                           slot-scope="scope">
@@ -624,6 +633,7 @@
                         width="273"
                         v-if="permission"
                         align="center"
+                        fixed="right"
                         label="操作">
                         <template slot-scope="scope">
                           <el-button type="text" size="small" @click="articleid=scope.row.ID;showEditNote(scope.row.ID)">修改</el-button>
@@ -2535,9 +2545,7 @@ export default{
     }
     .kb-form-container{
       padding:15px;
-      height:19%;
       box-sizing:border-box;
-      overflow-y:auto;
       border-bottom:1px solid rgb(204, 204, 204);
     }
     .note-content{
@@ -2757,23 +2765,18 @@ export default{
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   }
   #kb>.el-container{
-    height:820px;
+    // height:820px;
     background:#FFF;
     box-shadow: 0 0 10px 0 rgba(39,48,69,0.10);
   }
-  @media screen and (min-width: 1281px) and (max-width:1367px){
-    #kb>.el-container{
-      height:80vh;
-    }
-    // #kb{
-    //   .table-container{
-    //     height:
-    //   }
-    // }
-  }
-  @media all and (min-width:1024px) and (max-width:1280px)  {
-  #kb>.el-container{
-      height:80vh;
-    }
-  }
+  // @media screen and (min-width: 1281px) and (max-width:1367px){
+  //   #kb>.el-container{
+  //     height:80vh;
+  //   }
+  // }
+  // @media all and (min-width:1024px) and (max-width:1280px)  {
+  // #kb>.el-container{
+  //     height:80vh;
+  //   }
+  // }
 </style>
