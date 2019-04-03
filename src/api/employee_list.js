@@ -23,6 +23,22 @@ export function query(page) {
   })
 }
 
+export function queryUserSkillSet(page) {
+  return request({
+    url: '/employee/querySkillSet',
+    method: 'get',
+    params: page
+  })
+}
+
+export function queryUserSkillSetByDepart(page) {
+  return request({
+    url: '/employee/querySkillSetByDepartId',
+    method: 'get',
+    params: page
+  })
+}
+
 export function deleteStaff(id) {
   return request({
     url: '/employee/delete',
