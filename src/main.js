@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import VueQuillEditor from 'vue-quill-editor'
+import VuePlyr from 'vue-plyr'
+import 'vue-plyr/dist/vue-plyr.css'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
@@ -33,6 +35,7 @@ ElementUI.Form.props.size = { type: String, default: 'small' }
 
 Vue.use(ElementUI, { locale })
 Vue.use(VueQuillEditor)
+Vue.use(VuePlyr)
 Vue.config.productionTip = false
 
 new Vue({

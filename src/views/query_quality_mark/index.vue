@@ -298,10 +298,11 @@
         <h3 style="display:inline;">质检评分详情</h3>
       </div>
       <div>
-            <audio 
-                  controls="controls"
-                  v-bind:src="addScopeUrl">
+        <vue-plyr class="audio-style" :options="option">
+          <audio>
+            <source :src="addScopeUrl"/>
           </audio>
+        </vue-plyr>
       </div>
       <el-row>
         <el-table
@@ -544,6 +545,7 @@ export default {
   name: 'query_quality_mark',
   data() {
     return {
+      option: { i18n: { normal: '1×', speed: '播放速度' }},
       formContainerOpen: '1',
       formContainer: this.$store.state.app.formContainer,
       orderActiveName: '',
@@ -1176,5 +1178,20 @@ export default {
 }
 .max .el-form-item__content{
   width:70px;
+}
+.audio-style{
+  /deep/ .plyr--audio .plyr__controls{
+    width:406px;
+    background: #F3F5FA;
+    border-radius: 1px;
+    height:32px;
+  }
+  /deep/ .plyr__menu__container{
+    top:41px;
+    bottom:auto;
+  }
+  /deep/ .plyr__menu__container::after{
+    display:none;
+  }
 }
 </style>

@@ -193,14 +193,16 @@
     <el-dialog title="开始质检评分" :visible.sync="dialogFormVisible" width="80%" @close="cleanInfo()" append-to-body>
       <div >正在对：{{taskId}} 进行操作</div>
       <div >
-          <audio 
-                  controls="controls"
-                  v-bind:src="addScopeUrl">
+        <vue-plyr class="audio-style" :options="option">
+          <audio>
+            <source :src="addScopeUrl"/>
+            <!-- <source src="http://119.27.184.157:8999/2019/04/03/004e0d8e-55b2-11e9-975e-19793ee7a9e2_8118.wav" type="audio/wav"/> -->
           </audio>
+        </vue-plyr>
+        
       </div>
       <div class="demo-ruleForm">接触记录</div>
       <el-row>
-
       <el-table
               :header-row-style="headerRow"
               :data="contactRecordData"
@@ -420,10 +422,11 @@
     <el-dialog title="修改质检评分" :visible.sync="dialogFormVisibleReverse" width="80%"  @close="cleanInfo()" append-to-body>
       <div>正在对：{{taskId}} 进行操作</div>
       <div >
-          <audio 
-                  controls="controls"
-                  v-bind:src="addScopeUrl">
+        <vue-plyr class="audio-style" :options="option">
+          <audio>
+            <source :src="addScopeUrl"/>
           </audio>
+        </vue-plyr>
       </div>
       <div >接触记录</div>
       <el-row>
@@ -653,6 +656,7 @@
     name: 'qm_quailitymark',
     data() {
       return {
+        option: { i18n: { normal: '1×', speed: '播放速度' }},
         formContainerOpen: '1',
         formContainer: this.$store.state.app.formContainer,
         staffId: '', // 当前质检员
@@ -943,13 +947,12 @@
       },
       handleClickDetail(row) {
         this.row = row
-        this.dialogFormVisibleReverse = true
         this.editUrlData = {
           id: row.id
         }
         this.totalAmountMap = new Map()
         this.totalAmount = new Map()
-        this.getContactRecord(row)
+        this.getContactRecord(row, 2)
         this.getCustomerInfo(row)
         this.getOrderInfo(row)
         this.getMarks(row, 1)
@@ -965,10 +968,16 @@
         this.totalCheck = new Map()
       },
       /** 获取通话记录 */
-      getContactRecord(row) {
+      getContactRecord(row, type) { // 1开始评分 2 修改评分
         queryrecordbytaskid({ 'taskId': row.contactTaskId, 'campaignId': row.activityId }).then(response => {
           if (response.data.code === 0) {
             this.contactRecordData = response.data.data
+            if (type === 1) {
+              this.dialogFormVisible = true
+            }
+            if (type === 2) {
+              this.dialogFormVisibleReverse = true
+            }
             for (var i in this.contactRecordData) {
               if (row.recordId === this.contactRecordData[i].recordId) { // 截取当前通话记录
                 this.addScopeUrl = this.contactRecordData[i].soundRecordUrl === null ? '' : this.contactRecordData[i].soundRecordUrl
@@ -1148,13 +1157,12 @@
       },
       handleClick(row) {
         this.row = row
-        this.dialogFormVisible = true
         this.addUrlData = {
           id: row.id
         }
         this.totalAmountMap = new Map()
         this.totalAmount = new Map()
-        this.getContactRecord(row)
+        this.getContactRecord(row, 1)
         this.getCustomerInfo(row)
         this.getOrderInfo(row)
         this.getMarks(row, 0)
@@ -1361,4 +1369,21 @@
   
   }
 </script>
+<style lang='scss' scoped>
+.audio-style{
+  /deep/ .plyr--audio .plyr__controls{
+    width:406px;
+    background: #F3F5FA;
+    border-radius: 1px;
+    height:32px;
+  }
+  /deep/ .plyr__menu__container{
+    top:41px;
+    bottom:auto;
+  }
+  /deep/ .plyr__menu__container::after{
+    display:none;
+  }
+}
+</style>
 

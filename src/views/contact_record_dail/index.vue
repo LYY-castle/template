@@ -253,7 +253,11 @@
             <b style="color:#020202;">电话录音</b>
           </el-row>
           <el-row class="font12">
-            <audio class="audio-style" v-bind:src="detailInfo.contactInfo.soundRecordUrl" controls="controls"></audio>
+            <vue-plyr ref="plyr" class="audio-style" :options="option">
+              <audio>
+                <source :src="detailInfo.contactInfo.soundRecordUrl"/>
+              </audio>
+            </vue-plyr>
           </el-row>
         </div> 
       </el-row>
@@ -509,10 +513,19 @@
       height:30px;
     }
     .audio-style{
-      width:406px;
-      background: #F3F5FA;
-      border-radius: 1px;
-      height:32px;
+      /deep/ .plyr--audio .plyr__controls{
+        width:406px;
+        background: #F3F5FA;
+        border-radius: 1px;
+        height:32px;
+      }
+      /deep/ .plyr__menu__container{
+        top:41px;
+        bottom:auto;
+      }
+      /deep/ .plyr__menu__container::after{
+        display:none;
+      }
     }
     .left,.right{
         min-height: 40px;
@@ -632,9 +645,9 @@ audio {
 
   export default {
     name: 'contact_record_dail',
-
     data() {
       return {
+        option: { i18n: { normal: '1×', speed: '播放速度' }},
         visibleClass: '',
         formContainerOpen: '1',
         formContainer: this.$store.state.app.formContainer,
@@ -717,6 +730,12 @@ audio {
       vueEmoji
     },
     mounted() {
+      // this.player.options = {'i18n':}
+      // console.log(this.player)
+      // this.$nextTick(() => {
+      // this.player.options = { autoplay: true }
+      // })
+      // this.player.options = { 'speed': { selected: 1, options: [0.5, 0.75, 1] }}
       this.formContainer()
       this.handleChangeAcitve()
       new Promise((resolve, reject) => {
@@ -741,6 +760,9 @@ audio {
         .catch(error => {
           console.log(error)
         })
+    },
+    computed: {
+      player() { return this.$refs.plyr.player }
     },
     created() {
       if (typeof (this.$route.query.sTime) !== 'undefined') {
@@ -942,6 +964,9 @@ audio {
       // 详情页面加载
       contactDetail() {
         getSummariesByTaskId(this.ids.taskId).then(response => {
+          // console.log(this.player)
+          // this.player.options = { i18n: { normal: '1' }}
+          // this.player.options = { autoplay: true }
           if (response.data.code === 0) {
             this.detailInfo.summariesInfo = response.data.data
             console.log(response.data.data)
