@@ -43,7 +43,7 @@
       <el-row class="margin-bottom-20">
         <el-button type="success" size="small" @click="resetArrays();addVisible=true;clearForm(customerDetail,'customerDetail');">新建</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
-        <el-button type="info" size="small" @click="importVisible=true;importInfo.uploadFileName='';importInfo.batchName=''">导入客户</el-button>
+        <el-button type="info" size="small" @click="importVisible=true;importInfo.uploadFileName='';importInfo.batchName='';importInfo.source=''">导入客户</el-button>
       </el-row>
       <el-row>
         <el-table
@@ -148,11 +148,17 @@
       title="导入客户"
       :visible.sync="importVisible"
       append-to-body>
-      <el-form size="small" label-width="100px">
-        <el-form-item label="批次名称：" class="inputWidth">
+      <el-form size="small" label-width="100px" :model="importInfo" :rules="rule" ref="importInfo">
+        <el-form-item label="批次名称：" class="inputWidth" prop="batchName">
           <el-input size="small" v-model="importInfo.batchName"></el-input>
         </el-form-item>
-        <el-form-item label="上传文件：" class="inputWidth">
+        <el-form-item label="数据来源：" class="inputWidth" prop="source">
+          <el-input size="small" v-model="importInfo.source"></el-input>
+        </el-form-item>
+        <el-form-item class="inputWidth">
+          <span slot="label">
+            <span style="color:#f56c6c">*</span> 上传文件：
+          </span>
           <el-input size="small" v-model="importInfo.uploadFileName" disabled></el-input>
         </el-form-item>
       </el-form>
@@ -751,6 +757,9 @@
           <el-form-item label="客户评分"  style="width:50%">
             <el-input v-model="customerDetail.score" max="100" size="small"></el-input>
           </el-form-item>
+          <el-form-item label="数据来源"  style="width:50%">
+            <el-input v-model="customerDetail.source" max="100" size="small"></el-input>
+          </el-form-item>
           <el-form-item label="客户地址">
             <el-table border empty-text="请添加数据" :data="addressDatas">
               <el-table-column align="center" label="省" width="150px">
@@ -1056,6 +1065,7 @@ export default {
       uploadUrl: '/api/v1/customer/upload', // 上传文件url
       importInfo: { // 导入需要的信息
         batchName: '',
+        source: '',
         uploadFileName: ''
       },
       templateVisible: false, // 下载模板对话框显示隐藏
@@ -1092,6 +1102,12 @@ export default {
         mobile: [
           { required: true, message: '请输入手机号码', trigger: 'blur' },
           { pattern: /^([1][3,4,5,7,8][0-9]{9}|0\d{2,3}-\d{7,8}|\d{1,20})$/, message: '请输入正确的电话号码' }
+        ],
+        batchName: [
+          { required: true, message: '请输入批次名称', trigger: 'blur' }
+        ],
+        source: [
+          { required: true, message: '请输入数据来源', trigger: 'blur' }
         ]
       },
       delReq: {
@@ -1891,6 +1907,16 @@ export default {
     },
     //
     submitUploadandimport() {
+      if (this.importInfo.batchName === '') {
+        this.$message.error('请输入批次名称！')
+        return
+      } else if (this.importInfo.source === '') {
+        this.$message.error('请输入数据来源！')
+        return
+      } else if (this.importInfo.uploadFileName === '') {
+        this.$message.error('请选择上传文件！')
+        return
+      }
       this.$refs.upload.submit()
     },
     // 上传的动作
@@ -1898,6 +1924,7 @@ export default {
       var formdata = new FormData()
       formdata.append('multipartFile', fileList.file)
       formdata.append('batchName', this.importInfo.batchName)
+      formdata.append('source', this.importInfo.source)
       uploadFileandImport(formdata).then(response => {
         if (response.data.code === 0) {
           this.hasFalseinfo = false

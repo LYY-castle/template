@@ -52,6 +52,9 @@ export const rule = {
   batchName: [
     { required: true, message: '请输入批次名称', trigger: 'change' }
   ],
+  source: [
+    { required: true, message: '请输入数据来源', trigger: 'change' }
+  ],
   ascriptionId: [
     { required: true, message: '请选择客户归属', trigger: 'change' }
   ],

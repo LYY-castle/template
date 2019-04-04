@@ -75,6 +75,14 @@
           </el-table-column>
           <el-table-column
             align="center"
+            label="数据来源"
+            :show-overflow-tooltip="true">
+            <template slot-scope="scope">
+              {{ showSource(scope.row.source) }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
             prop="importNum"
             label="可用数量">
           </el-table-column>
@@ -131,6 +139,9 @@
         </el-form-item>
         <el-form-item label="批次名称" prop="batchName">
           <el-input v-model="batchDetail.batchName" size="small" placeholder="上限100字符" maxlength="100"></el-input>
+        </el-form-item>
+        <el-form-item label="数据来源" prop="source">
+          <el-input v-model="batchDetail.source" size="small" placeholder="上限100字符" maxlength="100"></el-input>
         </el-form-item>
         <el-form-item label="导入数量">
           <span>{{batchDetail.importNum}}</span>
@@ -385,6 +396,13 @@ export default {
     this.getBatch(this.req)
   },
   methods: {
+    showSource(source) {
+      if (source) {
+        return source
+      } else {
+        return '无'
+      }
+    },
     handleChangeAcitve(active = ['1']) {
       if (active.length) {
         $('.form-more').text('收起')
@@ -657,7 +675,6 @@ export default {
       delete req['creatorName']
       delete req['creatorTime']
       delete req['importTime']
-      console.log(req)
       this.editVisible = false
       modifyBatch(req).then(response => {
         if (response.data.code === 0) {
