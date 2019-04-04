@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" id="nodule">
     <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
       <el-collapse-item title="筛选条件" name="1">
         <el-form :inline="true" size="small">
@@ -10,14 +10,14 @@
             <el-input v-model="req.summaryName" placeholder="小结标题（限长50字符）" maxlength="50"></el-input>
           </el-form-item>
           <el-form-item label="操作人:">
-            <el-input v-model="req.modify_name" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
+            <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>
           </el-form-item>
           <el-form-item label="操作时间：">
             <el-date-picker
                 v-model="req.modifyTimeStart"
                 type="datetime"
                 placeholder="开始时间"
-                value-format="yyyy-MM-dd hh:mm:ss"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 default-time="00:00:00">
             </el-date-picker>
             到
@@ -25,7 +25,7 @@
                 v-model="req.modifyTimeEnd"
                 type="datetime"
                 placeholder="结束时间"
-                value-format="yyyy-MM-dd hh:mm:ss"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 default-time="00:00:00">
             </el-date-picker>
           </el-form-item>
@@ -39,6 +39,10 @@
     <el-row class="table-container">
       <el-row class="margin-bottom-20">
         <div class="font14 bold">小结管理表</div>
+      </el-row>
+      <el-row class="margin-bottom-20">
+        <el-button type="success" size="small" @click="clearForm(addSummary,'addSummary');getBasicSummaries();addVisible=true;">新建</el-button>
+        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
       </el-row>
       <el-row>
         <el-table
@@ -96,18 +100,14 @@
             label="操作"
             width="200">
           <template slot-scope="scope">
-            <!-- <el-button @click="setNoduleVisible=true;noduleObj=scope.row" size="small" type="text" v-show="scope.row.isDelete==='2'">可见</el-button>
-            <el-button @click="setNoduleInvisible=true;noduleObj=scope.row" size="small" type="text" v-show="scope.row.isDelete==='0'">不可见</el-button> -->
+            <el-button @click="delVisible=true;delReq.noduleId=scope.row.summaryId;" type="text" size="small">删除</el-button>
             <el-button @click="editTitleVisible=true;delReq.noduleId=scope.row.summaryId;summaryDetail.summaryId=scope.row.summaryId;findNoduleByNoduleId(delReq,'title');" type="text" size="small">修改标题</el-button>
-            <!-- <el-button @click="delVisible=true;delReq.noduleId=scope.row.summaryId" type="text" size="small">删除</el-button> -->
-            <el-button @click="editItemVisible=true;delReq.noduleId=scope.row.summaryId;summaryDetail.summaryId=scope.row.summaryId;findNoduleByNoduleId(delReq,'item');" type="text" size="small">修改内容</el-button>
+            <el-button @click="editItemVisible=true;delReq.noduleId=scope.row.summaryId;editSummary.summaryId=scope.row.summaryId;findNoduleByNoduleId(delReq,'item');" type="text" size="small">修改内容</el-button>
           </template>
           </el-table-column>
         </el-table>
       </el-row>
       <el-row style="margin-top:20px;">
-        <!-- <el-button type="success" size="small" @click="addVisible=true;clearForm(addSummary,'addSummary');setTree=[];">新建</el-button>
-        <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button> -->
         <el-pagination
           v-if="pageShow"
           @size-change="handleSizeChange"
@@ -146,7 +146,7 @@
       title="小结内容修改"
       :visible.sync="editItemVisible"
       append-to-body>
-      <el-form label-width="100px" :model="summaryItemDetail" ref="editNoduleItem" :rules="rule">
+      <el-form label-width="100px" >
         <div class="expand">
           <div>
             <!-- <el-button size="small" @click="handleAddTop">新建小结</el-button> -->
@@ -157,7 +157,7 @@
             :data="setTree2"
             highlight-current
             :props="defaultProps"
-            :expand-on-click-node="false"
+            :expand-on-click-node="true"
             :render-content="renderContent"
             :default-expanded-keys="defaultExpandKeys"
             @node-click="handleNodeClick"></el-tree>
@@ -165,7 +165,8 @@
         </div>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button size="small" type="primary" plain @click="editItemVisible=false">关闭</el-button>
+        <el-button size="small" type="primary"  @click="editNoduleDetail(setTree2)">确定</el-button>
+        <el-button size="small"  @click="editItemVisible=false">关闭</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -190,7 +191,7 @@
             :data="setTree1"
             highlight-current
             :props="defaultProps"
-            :expand-on-click-node="false"
+            :expand-on-click-node="true"
             :render-content="renderContent"
             :default-expanded-keys="defaultExpandKeys"
             @node-click="handleNodeClick"></el-tree>
@@ -221,10 +222,10 @@
             key="tree-three"
             ref="treeThree"
             v-if="isLoadingTree"
-            :data="setTree"
+            :data="basicNodule"
             highlight-current
             :props="defaultProps"
-            :expand-on-click-node="false"
+            :expand-on-click-node="true"
             :render-content="renderContent"
             :default-expanded-keys="defaultExpandKeys"
             @node-click="handleNodeClick"></el-tree>
@@ -294,11 +295,12 @@ import {
   editNodule,
   editNoduleItem,
   editNoduleTitle,
-  addNoduleOneItem,
-  editNoduleOneItem,
+  // addNoduleOneItem,
+  // editNoduleOneItem,
   delOneNoduleById,
   delNoduleByNoduleId,
-  delNodulesByNoduleIds
+  delNodulesByNoduleIds,
+  getBasicSummaries
 } from '@/api/nodule_list'
 import { formatDateTime, clone } from '@/utils/tools'
 
@@ -307,6 +309,7 @@ export default {
   name: 'nodule_list',
   data() {
     return {
+      basicNodule: [],
       visibleClass: '',
       formContainerOpen: '1',
       formContainer: this.$store.state.app.formContainer,
@@ -359,6 +362,10 @@ export default {
         summaryDetailInfos: [],
         description: ''
       },
+      editSummary: {
+        summaryId: '',
+        summaryDetailInfos: []
+      },
       summaryTitleDetail: {// 小结标题，备注，用于修改
         summaryName: '',
         description: '',
@@ -389,12 +396,23 @@ export default {
     }
   },
   mounted() {
+    this.getBasicSummaries()
     this.formContainer()
     this.handleChangeAcitve()
     this.getNoduleByInfo(this.req)
     this.initExpand()
   },
   methods: {
+    getBasicSummaries() {
+      getBasicSummaries().then(response => {
+        if (response.data && response.data.code === 0) {
+          this.basicNodule = response.data.data
+        }
+      })
+        .catch(error => {
+          console.error(error)
+        })
+    },
     handleChangeAcitve(active = ['1']) {
       if (active.length) {
         $('.form-more').text('收起')
@@ -617,14 +635,24 @@ export default {
     },
     // 新建小结
     addNodule(addSummary) {
+      var arr = []
+      for (let i = 0; i < this.basicNodule.length; i++) {
+        if (this.basicNodule[i].summaryDetailInfos && this.basicNodule[i].summaryDetailInfos.length > 0) {
+          for (let j = 0; j < this.basicNodule[i].summaryDetailInfos.length; j++) {
+            if (this.basicNodule[i].summaryDetailInfos[j].summaryDetailInfos && this.basicNodule[i].summaryDetailInfos[j].summaryDetailInfos.length > 0) {
+              arr.push(this.basicNodule[i].summaryDetailInfos[j].summaryDetailInfos)
+            }
+          }
+        }
+      }
+      let finalArr = []
+      for (let k = 0; k < arr.length; k++) {
+        finalArr = finalArr.concat(arr[k])
+      }
       if (!this.validate) {
         return false
       }
-      if (this.setTree.length === 0) {
-        this.$message.error('请新建小结')
-        return false
-      }
-      addSummary.summaryDetailInfos = this.setTree
+      addSummary.summaryDetailInfos = finalArr
       this.addVisible = false
       addNodule(addSummary)
         .then(response => {
@@ -638,6 +666,39 @@ export default {
         .catch(error => {
           this.$message('新建失败')
           console.log(error)
+        })
+    },
+    // 修改小结内容
+    editNoduleDetail(summaryDetail) {
+      var arr = []
+      for (let i = 0; i < summaryDetail.length; i++) {
+        if (summaryDetail[i].summaryDetailInfos && summaryDetail[i].summaryDetailInfos.length > 0) {
+          for (let j = 0; j < summaryDetail[i].summaryDetailInfos.length; j++) {
+            if (summaryDetail[i].summaryDetailInfos[j].summaryDetailInfos && summaryDetail[i].summaryDetailInfos[j].summaryDetailInfos.length > 0) {
+              arr.push(summaryDetail[i].summaryDetailInfos[j].summaryDetailInfos)
+            }
+          }
+        }
+      }
+      let finalArr = []
+      for (let k = 0; k < arr.length; k++) {
+        finalArr = finalArr.concat(arr[k])
+      }
+      this.editSummary.summaryDetailInfos = finalArr
+      console.log(this.editSummary)
+      editNodule(this.editSummary)
+        .then(response => {
+          if (response.data) {
+            if (response.data.code === 0) {
+              this.$message.success(response.data.message)
+              this.editItemVisible = false
+            } else {
+              this.$message.error(response.data.message)
+            }
+          }
+        })
+        .catch(error => {
+          console.error(error)
         })
     },
     // 批量删除
@@ -720,77 +781,53 @@ export default {
       })
     },
     handleCancel(s, d, n) {
-      // 删除节点
-      const list = n.parent.data.summaryDetailInfos || n.parent.data // 节点同级数据
-      let _index = 99999 // 要删除的index
-      list.map((c, i) => {
-        if (d.id === c.id) {
-          _index = i
-        }
-      })
-      list.splice(_index, 1)
+      this.$set(d, 'isEdit', false)
+      if (d.name === '' || d.name === null) {
+        // 删除节点
+        const list = n.parent.data.summaryDetailInfos || n.parent.data // 节点同级数据
+        let _index = 99999 // 要删除的index
+        list.map((c, i) => {
+          if (d.id === c.id) {
+            _index = i
+          }
+        })
+        list.splice(_index, 1)
+      }
     },
     handleNoduleOneItem(s, d, n) {
       if (!d.name) {
         this.$message.error('还未填小结内容！')
         return
       }
-      if (d.id) {
-        editNoduleOneItem({ 'id': d.id, 'name': d.name }).then(res => {
-          if (res.data.code !== 0) {
-            this.$message.error('修改失败！')
-          }
-        })
-      } else {
-        addNoduleOneItem({ 'parentId': d.parentid + '', 'name': d.name, 'summaryId': this.summaryItemDetail.summaryId }).then(res => {
-          if (res.data.code !== 0) {
-            this.$message.error('新增失败！')
-          }
-        })
-      }
+      this.$set(d, 'isEdit', false)
+      // if (d.id) {
+      //   this.$set(d, 'isEdit', false)
+      //   editNoduleOneItem({ 'id': d.id, 'name': d.name }).then(res => {
+      //     if (res.data.code !== 0) {
+      //       this.$message.error('修改失败！')
+      //     } else {
+      //       this.$set(d, 'isEdit', false)
+      //       this.$message.success(res.data.message)
+      //     }
+      //   })
+      // } else {
+      //   this.$set(d, 'isEdit', false)
+      //   addNoduleOneItem({ 'parentId': d.parentId + '', 'name': d.name, 'summaryId': this.summaryItemDetail.summaryId }).then(res => {
+      //     if (res.data.code !== 0) {
+      //       this.$message.error('新增失败！')
+      //     } else {
+      //       this.$set(d, 'isEdit', false)
+      //       this.$message.success(res.data.message)
+      //     }
+      //   })
+      // }
     },
-    // 新建节点
-    handleAddTop() {
-      this.setTree.push({
-        pid: ++this.maxexpandId,
-        name: '新增父节点',
-        // pid: '',
-        isEdit: false,
-        summaryDetailInfos: []
-      })
-      this.setTree2.push({
-        pid: ++this.maxexpandId,
-        name: '新增父节点',
-        // pid: '',
-        isEdit: false,
-        summaryDetailInfos: []
-      })
+    handleEdit() {
+      console.log('修改节点信息')
     },
-    // handleAdd(s, d, n) {
-    //   // 增加节点
-    //   // if (n.level >= 6) {
-    //   //   this.$message.error('最多只支持五级！')
-    //   //   return false
-    //   // }
-    //   if (d.summaryDetailInfos === null) {
-    //     d.summaryDetailInfos = []
-    //   }
-    //   // 新建数据
-    //   d.summaryDetailInfos.push({
-    //     pid: ++this.maxexpandId,
-    //     name: '新增子节点',
-    //     // pid: d.id,
-    //     isEdit: false,
-    //     summaryDetailInfos: []
-    //   })
-    //   // 展开节点
-    //   if (!n.expanded) {
-    //     n.expanded = true
-    //   }
-    // },
     handleAdd(s, d, n) {
       let a = 0
-      const parentid = n.data.id
+      const parentId = n.data.id
       this.editCancel = false
 
       if (d.summaryDetailInfos) {
@@ -808,21 +845,17 @@ export default {
           d.summaryDetailInfos.push({
             pid: ++this.maxexpandId,
             name: '',
-            parentid: parentid,
+            parentId: typeof (parentId) === 'undefined' ? '' : parentId,
             isEdit: true,
             summaryDetailInfos: []
           })
-          // 展开节点
-          // if (!n.expanded) {
-          //   n.expanded = true
-          // }
         }
       } else {
         d.summaryDetailInfos = []
         d.summaryDetailInfos.push({
           pid: ++this.maxexpandId,
           name: '',
-          parentid: parentid,
+          parentId: typeof (parentId) === 'undefined' ? '' : parentId,
           isEdit: true,
           summaryDetailInfos: []
         })
@@ -890,62 +923,66 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
-// tree样式
-.expand{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-}
-.expand>div{
-  height:85%;
-  padding-top:20px;
-  width:90%;
-  margin:0 auto;
-  // max-width:400px;
-  overflow-y:auto;
-}
-.expand>div::-webkit-scrollbar-track{
-  box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-  border-radius:5px;
-}
-.expand>div::-webkit-scrollbar-thumb{
-  background-color:rgba(50, 65, 87, 0.5);
-  outline:1px solid slategrey;
-  border-radius:5px;
-}
-.expand>div::-webkit-scrollbar{
-  width:10px;
-}
-.expand-tree{
-  border:none;
-  margin-top:10px;
-}
-.expand-tree .is-current>.el-tree-node__content .tree-label{
-  font-weight:600;
-  white-space:normal;
-}
-div.expand .expand-tree .el-tree-node.is-current,
-div.expand .expand-tree .el-tree-node:hover{
-  overflow:hidden;
-}
-div.expand .expand-tree .is-current>.el-tree-node__content .tree-btn,
-div.expand .expand-tree .el-tree-node__content:hover .tree-btn{
-  display:inline-block;
-}
-div.expand2 .expand-tree .el-tree-node.is-current,
-div.expand2 .expand-tree .el-tree-node:hover{
-  overflow:hidden;
-}
-div.expand2 .expand-tree .is-current>.el-tree-node__content .tree-btn,
-div.expand2 .expand-tree .el-tree-node__content:hover .tree-btn{
-  display:none;
-}
-div.expand .expand-tree .el-tree-node__content:hover .tree-btn{
-  display:inline-block;
-  opacity:1;
-  background:rgb(190, 214, 221);
-}
-
+    // tree样式
+  .expand{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+  }
+  .expand>div{
+    height:85%;
+    padding-top:20px;
+    width:90%;
+    margin:0 auto;
+    // max-width:400px;
+    overflow-y:auto;
+  }
+  .expand>div::-webkit-scrollbar-track{
+    box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    border-radius:5px;
+  }
+  .expand>div::-webkit-scrollbar-thumb{
+    background-color:rgba(50, 65, 87, 0.5);
+    outline:1px solid slategrey;
+    border-radius:5px;
+  }
+  .expand>div::-webkit-scrollbar{
+    width:10px;
+  }
+  .expand-tree{
+    border:none;
+    margin-top:10px;
+  }
+  .expand-tree .is-current>.el-tree-node__content .tree-label{
+    font-weight:600;
+    white-space:normal;
+    .el-input{
+      width:90%;
+    }
+  }
+  div.expand .expand-tree .el-tree-node.is-current,
+  div.expand .expand-tree .el-tree-node:hover{
+    overflow:hidden;
+  }
+  div.expand .expand-tree .el-tree-node__content .tree-btn{
+    display:none;
+  }
+  div.expand .expand-tree .is-current>.el-tree-node__content .tree-btn,
+  div.expand .expand-tree .el-tree-node__content:hover .tree-btn{
+    display:inline-block;
+  }
+  div.expand2 .expand-tree .el-tree-node.is-current,
+  div.expand2 .expand-tree .el-tree-node:hover{
+    overflow:hidden;
+  }
+  div.expand2 .expand-tree .el-tree-node__content .tree-btn,
+  div.expand2 .expand-tree .el-tree-node__content:hover .tree-btn{
+    display:none;
+  }
+  div.expand .expand-tree .el-tree-node__content:hover .tree-btn{
+    display:inline-block;
+    opacity:1;
+  }
 </style>
 
 <style rel="stylesheet/scss" lang="scss" scoped>

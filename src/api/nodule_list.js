@@ -88,3 +88,10 @@ export function delNodulesByNoduleIds(noduleIds) {
     data: noduleIds
   })
 }
+// 查询通用小结前两级
+export function getBasicSummaries() {
+  return request({
+    url: `/nodule/basicsummaries`,
+    method: 'get'
+  })
+}

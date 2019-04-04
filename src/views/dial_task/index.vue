@@ -347,7 +347,7 @@
           </el-table>
       </el-row>
     </div>
-    <el-row type="flex">
+    <el-row type="flex" v-if="hasProductInfo">
       <el-col class="table-container" style="width:60.1%;">
         <b class="font14">产品信息</b>
         <el-row style="margin-top:20px;">
@@ -446,17 +446,24 @@
       <el-row>
         <el-form :inline="true" size="mini">
           <el-col :span="8" style="height:48px;">
-            <el-form-item label="任务状态：">
-              <el-radio v-model="radio" label="2" name="2" @change="setSendMessage(radio)" class="radio-success"><span>成功</span></el-radio>
-              <el-radio v-model="radio" label="3" name="3" @change="setSendMessage(radio)" class="radio-fail"><span>失败</span></el-radio>
-              <el-radio v-model="radio" label="1" name="1" @change="setSendMessage(radio)" v-show="isLastContactTime===false" class="radio-order"><span>预约</span></el-radio>
+            <el-form-item label="话后小结：" style="margin-bottom:12px;">
+              <el-cascader
+                size="mini"
+                placeholder="请选择小结"
+                v-model='selectedSummarys'
+                :options="nodulesTree"
+                filterable
+                :props="summaryTreeProps"
+                :show-all-levels="false"
+                @change="handleNoduleChange">
+              </el-cascader>
             </el-form-item>
           </el-col>
-          <el-col :span="16" v-show="this.radio === '1'">
+          <el-col :span="16" v-show="this.selectedSummarys[0] === '3'">
             <span style="color:red;line-height:34px;">*</span>
             <el-form-item label="预约日期：" class="working-date-form">
               <b style="font-size: 16px;color: #333333;letter-spacing: 0;text-align: left;">T + </b>
-              <el-input style="width:70px" type="text" v-model="addDays" onkeyup="if(! /^d+$/.test(this.addDays)){this.addDays='';}"></el-input>
+              <el-input style="width:70px" type="text" v-model="addDays" onkeyup="if(! /^d+$/.test(this.addDays)){this.addDays='0';}"></el-input>
             </el-form-item>
             <el-form-item class="time-picker-form">
               <el-date-picker
@@ -468,7 +475,7 @@
               </el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="8" style="height:48px;line-height:34px;" v-if="showSendMessage === true && campaignType !== 'RECRUIT'">
+          <el-col :span="8" style="height:48px;line-height:34px;" v-if="showSendMessage === true && campaignType !== 'RECRUIT' && hasProductInfo === true">
             <el-checkbox v-model="sendMessage" checked="checked">发送支付短信</el-checkbox>
           </el-col>
           <el-col :span="8" style="height:48px;line-height:34px;" v-if="showAutoDial===true">
@@ -481,17 +488,6 @@
       </el-row>
       <el-row>
         <el-form>
-          <el-form-item label="话后小结：" style="margin-bottom:12px;">
-            <el-cascader
-              size="mini"
-              placeholder="请选择小结"
-              v-model='selectedSummarys'
-              :options="nodulesTree"
-              filterable
-              :props="summaryTreeProps"
-              :show-all-levels="false">
-            </el-cascader>
-          </el-form-item>
           <el-form-item>
             <el-col :span="16">
               <b class="font12" style="color:#020202;">小结备注：</b>
@@ -707,7 +703,7 @@ export default {
       products: [], // 活动下的产品,
       productNums: [], // 活动下的产品库存
       isRecruit: false,
-      addDays: '',
+      addDays: '0',
       summariesInfo: [], // 小结下拉选择
       campaignsInfo: [], // 活动下拉选择
       taskStatusOptions: [
@@ -767,7 +763,6 @@ export default {
       activeNames: ['1', '2', '3', '4'], // 折叠板默认打开项
       contactRecord: [], // 接触记录信息
       recordId: '', // 判断是否拨打电话的接触记录id
-      radio: '', // 任务状态
       appointTime: '', // 预约时间
       hasProductInfo: false, // 是否有产品的标志
       productInfo: [], // 需要展示的产品的id
@@ -964,7 +959,6 @@ export default {
                   // 说明未超过次数限制还能拨打
                     if (response.data.data.lastContactTime === '1') {
                     // 说明是最后一次 将预约栏隐藏
-                      vm.radio = ''
                       vm.isLastContactTime = true
                       queryOneTask(taskId).then(response1 => {
                         if (response1.data.code === 0) {
@@ -1092,10 +1086,13 @@ export default {
         }
       })
     },
-    // 判断是否需要显示发送支付短信的checkbox
-    setSendMessage(radio) {
-      if (radio === '2') {
+    // 小结级联选择事件
+    handleNoduleChange(arr) {
+      if (arr[0] === '1') {
         this.showSendMessage = true
+      } else if (arr[0] === '3') {
+        this.showSendMessage = false
+        this.addDays = '1'
       } else {
         this.showSendMessage = false
         this.sendMessage = false
@@ -1317,11 +1314,10 @@ export default {
             vm.showSendMessage = false
             vm.hideDialTo = false
             vm.isLastContactTime = false
-            vm.radio = ''
             // this.recordId = ''
             vm.activeTab = ''
             vm.canContact = 1
-            vm.addDays = ''
+            vm.addDays = '0'
             vm.summary_description = ''
             vm.appointTime = ''
             vm.selectedSummarys = []
@@ -1366,7 +1362,7 @@ export default {
         sessionStorage.setItem('setDetails', JSON.stringify({ 'taskIds': this.taskIds, 'campaignIds': this.campaignIds, 'isBlacklists': this.isBlacklists, 'customerIds': this.customerIds }))
         // this.$store.dispatch('setDetails', [this.taskIds, this.campaignIds, this.isBlacklists, this.customerIds])
         this.canContact = 1
-        this.addDays = ''
+        this.addDays = '0'
         this.showDetailInfos(
           this.taskIds[0],
           this.campaignIds[0],
@@ -1382,7 +1378,6 @@ export default {
         this.autoDialNext = false
         this.showSendMessage = false
         this.isLastContactTime = false
-        this.radio = ''
         this.recordId = ''
         this.summary_description = ''
         this.appointTime = ''
@@ -1642,7 +1637,7 @@ export default {
     },
     // 生成订单/接触记录/修改任务状态
     generateRecord() {
-      var selectedSummarys2 = []
+      const taskStatus = this.selectedSummarys[0] === '1' ? '2' : this.selectedSummarys[0] === '2' ? '3' : this.selectedSummarys[0] === '3' ? '1' : ''
       // 判断 1、是否打电话 2、是否选择任务状态  3、是否勾选小结
       if (this.recordId === '') {
         this.$message.error('您还未拨打电话！')
@@ -1655,27 +1650,22 @@ export default {
       this.customerPhone === JSON.parse(localStorage.getItem('callInfo')).callerid)) {
         this.$message.error('还在通话或者响铃中，不能结束任务')
         return false
-      } else if (this.radio === '') {
-        this.$message.error('未选择任务状态！')
+      } else if (this.selectedSummarys.length === 0 || taskStatus === '') {
+        this.$message.error('未选择小结！')
         return false
-      } else if (this.radio === '1' && this.appointTime === '') {
+      } else if (this.selectedSummarys[0] === '3' && this.appointTime === '') {
         this.$message.error('未选择预约时间！')
         return false
       } else if (
-        this.radio === '1' &&
+        this.selectedSummarys[0] === '3' &&
         this.appointTime < formatDateTime(new Date())
       ) {
         this.$message.error('预约时间不能小于当前时间！')
         return false
-      } else if (this.selectedSummarys.length === 0) {
-        this.$message.error('未选择小结！')
-        return false
       } else {
-        selectedSummarys2.push(this.selectedSummarys[this.selectedSummarys.length - 1])
-        this.selectedSummarys = selectedSummarys2
         // 生成完整接触记录及小结
-        // 判断任务状态radio  2：成功 3：失败  1：预约
-        if (this.radio === '2' && this.campaignType !== 'RECRUIT') {
+        // 判断任务状态 2：成功 3：失败  3：预约
+        if (this.selectedSummarys[0] === '1' && this.campaignType !== 'RECRUIT' && this.hasProductInfo === true) {
           if (this.sumTotal <= 0) {
             this.$message.error('未选择产品或产品库存不足！')
             return false
@@ -1747,13 +1737,15 @@ export default {
             }
           })
         }
+        var selectedSummarys2 = []
+        selectedSummarys2.push(this.selectedSummarys[this.selectedSummarys.length - 1])
         // 选择失败、预约 或 成功但没有产品(如招聘)的情况
         // 修改任务状态
-        updateTaskStatus(this.taskId, this.radio, this.appointTime).then(
+        updateTaskStatus(this.taskId, taskStatus, this.appointTime).then(
           res => {
             if (res.data.code === 0) {
               // 修改小结备注
-              updateRecordInfo(this.recordId, this.radio, this.selectedSummarys, this.summary_description)
+              updateRecordInfo(this.recordId, taskStatus, selectedSummarys2, this.summary_description)
                 .then(res1 => {
                   if (res1.data.code === 0) {
                   // 后处理
@@ -1777,11 +1769,10 @@ export default {
                         this.autoDialNext = false
                       }
                       this.activeNames = ['1', '2', '3', '4']
-                      this.radio = ''
                       this.recordId = ''
                       this.summary_description = ''
                       this.canContact = 1
-                      this.addDays = ''
+                      this.addDays = '0'
                       this.appointTime = ''
                       this.selectedSummarys = []
                       this.hideDialTo = false
@@ -1798,13 +1789,12 @@ export default {
                         }
                       }
                       // 没勾选自动拨打下一个 返回列表
-                      this.radio = ''
                       this.recordId = ''
                       this.summary_description = ''
                       this.appointTime = ''
                       this.selectedSummarys = []
                       this.canContact = 1
-                      this.addDays = ''
+                      this.addDays = '0'
                       this.hideDialTo = false
                       this.isLastContactTime = false
                       this.taskIds = []
@@ -1995,6 +1985,7 @@ export default {
   },
   // 模板编译/挂载之后
   mounted() {
+    this.addDays = '1'
     if (localStorage.getItem('autocall') === 'true') {
       this.autoCallDial = true
     }

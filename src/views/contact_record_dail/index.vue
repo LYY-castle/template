@@ -243,7 +243,6 @@
             <b style="color:#ED2135;" v-if="detailInfo.dialTaskInfo.status=='3'">● 失败</b>
             <b style="color:#28CC6C;" v-if="detailInfo.dialTaskInfo.status=='1'">● 预约</b>
             <b style="color:#28CC6C;" v-if="detailInfo.dialTaskInfo.status=='1'&&detailInfo.dialTaskInfo.appointTime">({{detailInfo.dialTaskInfo.appointTime?detailInfo.dialTaskInfo.appointTime:'无'}})</b>
-
           </el-row>
         </div>
       </el-row>
@@ -265,7 +264,7 @@
       <el-row>
         <div style="text-align:center">
           <el-button type="primary" @click="edit();editVisible=true">编辑</el-button>
-          <el-button plain type="primary" @click="isMainPage = true" style="margin-right:40px;">返回</el-button>
+          <el-button plain type="primary" @click="searchByKeyWords(req);isMainPage = true" style="margin-right:40px;">返回</el-button>
         </div>
       </el-row>
     </div>
@@ -452,13 +451,6 @@
       :visible.sync="editVisible"
       append-to-body>
       <el-form  :model="detailInfo" ref="contactDetailForm" label-width="100px">
-        <el-form-item label="任务状态：" prop="dialTaskInfo.status">
-          <el-radio-group v-model="detailInfo.dialTaskInfo.status">
-              <el-radio  label="2">成功</el-radio>
-              <el-radio  label="3">失败</el-radio>
-              <el-radio  label="1">预约</el-radio>
-          </el-radio-group>
-        </el-form-item>
         <el-form-item label="预约时间：" prop="dialTaskInfo.appointTime" v-if="detailInfo.dialTaskInfo.status=='1'"  size="small">
           <el-date-picker
             v-model="detailInfo.dialTaskInfo.appointTime"
@@ -969,7 +961,6 @@ audio {
           // this.player.options = { autoplay: true }
           if (response.data.code === 0) {
             this.detailInfo.summariesInfo = response.data.data
-            console.log(response.data.data)
           }
         })
         getContactByGradeId(this.ids.recordId).then(response => {
@@ -985,7 +976,6 @@ audio {
             })
             this.keys = []
             this.keys = a
-            console.log(this.keys)
           }
         })
         queryrecordbytaskid(this.ids.taskId, this.ids.campaignId).then(response => {

@@ -52,7 +52,7 @@ export default{
     },
     submitAdd(s, d, n) {
       this.$emit('submitAdd', s, d, n)
-      this.nodeEditPass(s, d, n)
+      // this.nodeEditPass(s, d, n)
     },
     nodeEdit(s, d, n) { // 编辑
       // // console.log(d.isEdit)
@@ -89,8 +89,9 @@ export default{
 }
 </script>
 
-<style>
-	.tree-expand{
+<style rel="stylesheet/scss" lang="scss">
+	#summary{
+    .tree-expand{
 		overflow:hidden;
 	}
 	.tree-expand .tree-label.tree-new{
@@ -119,4 +120,5 @@ export default{
 	.tree-expand .tree-btn i:hover{
 		color:white;
 	}
+  }
 </style>

@@ -94,7 +94,7 @@
             label="产品"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
-             {{(getProductName(scope.row.products)).join(",")}}
+             {{(getProductName(scope.row.products))}}
             </template>
           </el-table-column>
           <el-table-column
@@ -208,7 +208,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="产品" prop="products" v-if="!(campaignDetail.campaignTypeCode=='RECRUIT')">
+        <el-form-item label="产品" v-if="!(campaignDetail.campaignTypeCode=='RECRUIT')">
           <el-select v-model="campaignDetail.products" multiple placeholder="请选择产品" style="width: 100%;">
             <el-option
                 v-for="item in productData"
@@ -474,7 +474,7 @@
               ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="产品" prop="products" v-if="!(campaignDetail.campaignTypeCode=='RECRUIT')">
+        <el-form-item label="产品" v-if="!(campaignDetail.campaignTypeCode=='RECRUIT')">
           <el-select v-model="campaignDetail.products" multiple placeholder="请选择产品" style="width: 100%;">
             <el-option
                 v-for="item in productData"
@@ -1522,8 +1522,10 @@ export default {
             }
           }
         }
+        return productNames.join(',')
+      } else {
+        return '暂无产品'
       }
-      return productNames
     },
     // 得到部门名称
     getDepartName(departId) {
