@@ -163,7 +163,7 @@
 
     <div class="elaside1"  style="position:relative;height:78vh;overflow-x:hidden;background:#FBFBFB;float:right;width:44%;box-shadow: 0 0 10px 0 rgba(39,48,69,0.10);border-radius: 2px;">
       <el-tabs v-model="activeName" type="card" style="background: #F3F5FA;">
-        <el-tab-pane label="用户信息" name="1" class="userinfo-container">
+        <el-tab-pane label="基本信息" name="1" class="userinfo-container">
           <el-row :gutter="20" style="height:120px;padding:24px 20px;" v-if="!isRecruit">
             <el-col :span="5" class="font12 nowrap">
               <span>性别：</span>
@@ -2026,4 +2026,3 @@ export default {
 }
 
 </script>
-
