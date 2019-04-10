@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie'
+import cti from '@/utils/monitorcti_m'
 
 const app = {
   state: {
@@ -53,6 +54,16 @@ const app = {
     },
     SET_MENU: (state, menu) => {
       state.menu = menu
+    },
+    LOGIN_MGR_PHONE: (state, { monitorID, monitorDN }) => {
+      if (state.needLoginMgrPhone) {
+        // 1. 引入登录班长坐席号码的方法.
+        // 2. 在此处调用登录班长坐席号码方法.
+        cti.login('100' + monitorID, monitorDN)
+      }
+    },
+    SWITCH_NEED_LOGIN_MGR_PHONE: state => {
+      state.needLoginMgrPhone = !state.needLoginMgrPhone
     }
   },
   actions: {
@@ -67,6 +78,16 @@ const app = {
     },
     SetMenu({ commit }, menu) {
       commit('SET_MENU', menu)
+    },
+    LoginMgrPhone({
+      commit
+    }, { monitorID, monitorDN }) {
+      commit('LOGIN_MGR_PHONE', { monitorID, monitorDN })
+    },
+    SwitchNeedLoginMgrPhone({
+      commit
+    }) {
+      commit('SWITCH_NEED_LOGIN_MGR_PHONE')
     }
   }
 }

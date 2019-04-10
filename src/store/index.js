@@ -15,7 +15,8 @@ const store = new Vuex.Store({
     tagsView,
     user,
     dialTask,
-    theme
+    theme,
+    needLoginMgrPhone: false
   },
   getters
 })

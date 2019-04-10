@@ -866,6 +866,7 @@ export default {
       const DN = this.formInline.DN
       if (agentId !== null && DN !== null && DN !== '') {
         cti.login(agentId, this.formInline.DN, '518', '1', '0')
+        this.$store.dispatch('LoginMgrPhone', { monitorId: localStorage.getItem('agentId'), monitorDN: '12345' })
         // ToDo 待修改
         setTimeout(() => {
           if (this.reasonCode === '-1' || this.reasonCode === '-2') {
@@ -887,6 +888,7 @@ export default {
         localStorage.removeItem('DN')
         localStorage.removeItem(agentId)
       }
+      this.$store.dispatch('LoginMgrPhone', { monitorId: localStorage.getItem('agentId'), monitorDN: '12345' })
     },
     sleep(seconds) {
       const starttime = new Date().getTime()
@@ -1648,8 +1650,10 @@ export default {
     }
     // 查询微信未读消息 ，写死
     navbarQueryRecords(localStorage.getItem('agentId')).then(response => {
-      this.msgNum_wechat1 = response.data.pageInfo.totalCount
-      this.$store.commit('CHANGE_WECHATMSG', this.msgNum_wechat1)
+      if (response.data) {
+        this.msgNum_wechat1 = response.data.pageInfo ? response.data.pageInfo.totalCount : null
+        this.$store.commit('CHANGE_WECHATMSG', this.msgNum_wechat1)
+      }
     })
     // 查询用户手机号并存储
     getStaffNameByAgentId({ 'agentId': localStorage.getItem('agentId') }).then(res => {

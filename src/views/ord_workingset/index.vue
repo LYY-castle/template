@@ -364,9 +364,10 @@ export default {
     })
     if (localStorage.getItem(localStorage.getItem('agentId'))) {
       const obj = JSON.parse(localStorage.getItem(localStorage.getItem('agentId')))
-      if (obj.reasoncode === obj.beforeStatus) {
-        this.on_reasonchange('refreshPage', localStorage.getItem('agentId'), obj.DN, obj.reasoncode)
-      }
+      this.on_reasonchange('refreshPage', localStorage.getItem('agentId'), obj.DN, obj.reasoncode)
+      // if (obj.reasoncode === obj.beforeStatus || typeof obj.beforeStatus === 'undefined') {
+      //   this.on_reasonchange('refreshPage', localStorage.getItem('agentId'), obj.DN, obj.reasoncode)
+      // }
     }
   },
   methods: {
@@ -461,18 +462,7 @@ export default {
       })
     },
     timesInterval(item, timeValue) {
-      // timeValue = 9000
-      // const agentinterval = setInterval(function() {
-      //   if (timeValue) {
-      //     const hours = ('' + Math.floor(timeValue / 3600)).length === 1 ? '0' + Math.floor(timeValue / 3600) : Math.floor(timeValue / 3600)
-      //     const minutes = ('' + Math.floor((timeValue - hours * 3600) / 60)).length === 2 ? Math.floor((timeValue - hours * 3600) / 60) : '0' + Math.floor((timeValue - hours * 3600) / 60)
-      //     const seconds = ('' + Math.floor(timeValue - hours * 3600 - minutes * 60)).length === 2 ? Math.floor(timeValue - hours * 3600 - minutes * 60) : '0' + Math.floor(timeValue - hours * 3600 - minutes * 60)
-      //     baseinfo[item] = hours + ':' + minutes + ':' + seconds
-      //     timeValue = timeValue + 1
-      //   }
-      // }, 1000)
       const time = new Date().getTime() - timeValue * 1000
-      // console.log('timeValue', timeValue)
       const agentinterval = setInterval(function() {
         if (time) {
           const endtime = new Date()
@@ -492,60 +482,23 @@ export default {
           baseinfo[item] = hours + ':' + minutes + ':' + seconds
         }
       }, 1000)
-      // baseinfo.interval[item] = agentinterval
       switch (item) {
         case 'ord_online_time_duration':
-          // window.onlineInterval = setInterval(function() {
-          //   if (timeValue) {
-          //     const hours = ('' + Math.floor(timeValue / 3600)).length === 1 ? '0' + Math.floor(timeValue / 3600) : Math.floor(timeValue / 3600)
-          //     const minutes = ('' + Math.floor((timeValue - hours * 3600) / 60)).length === 2 ? Math.floor((timeValue - hours * 3600) / 60) : '0' + Math.floor((timeValue - hours * 3600) / 60)
-          //     const seconds = ('' + Math.floor(timeValue - hours * 3600 - minutes * 60)).length === 2 ? Math.floor(timeValue - hours * 3600 - minutes * 60) : '0' + Math.floor(timeValue - hours * 3600 - minutes * 60)
-          //     baseinfo[item] = hours + ':' + minutes + ':' + seconds
-          //     timeValue = timeValue + 1
-          //   }
-          // }, 1000)
           clearInterval(window.onlineInterval)
           window.onlineInterval = null
           window.onlineInterval = agentinterval
           break
         case 'ord_free_time_duration':
-          // window.freetimeInterval = setInterval(function() {
-          //   if (timeValue) {
-          //     const hours = ('' + Math.floor(timeValue / 3600)).length === 1 ? '0' + Math.floor(timeValue / 3600) : Math.floor(timeValue / 3600)
-          //     const minutes = ('' + Math.floor((timeValue - hours * 3600) / 60)).length === 2 ? Math.floor((timeValue - hours * 3600) / 60) : '0' + Math.floor((timeValue - hours * 3600) / 60)
-          //     const seconds = ('' + Math.floor(timeValue - hours * 3600 - minutes * 60)).length === 2 ? Math.floor(timeValue - hours * 3600 - minutes * 60) : '0' + Math.floor(timeValue - hours * 3600 - minutes * 60)
-          //     baseinfo[item] = hours + ':' + minutes + ':' + seconds
-          //     timeValue = timeValue + 1
-          //   }
-          // }, 1000)
           clearInterval(window.freetimeInterval)
           window.freetimeInterval = null
           window.freetimeInterval = agentinterval
           break
         case 'ord_call_time_duration':
-          // window.calltimeInterval = setInterval(function() {
-          //   if (timeValue) {
-          //     const hours = ('' + Math.floor(timeValue / 3600)).length === 1 ? '0' + Math.floor(timeValue / 3600) : Math.floor(timeValue / 3600)
-          //     const minutes = ('' + Math.floor((timeValue - hours * 3600) / 60)).length === 2 ? Math.floor((timeValue - hours * 3600) / 60) : '0' + Math.floor((timeValue - hours * 3600) / 60)
-          //     const seconds = ('' + Math.floor(timeValue - hours * 3600 - minutes * 60)).length === 2 ? Math.floor(timeValue - hours * 3600 - minutes * 60) : '0' + Math.floor(timeValue - hours * 3600 - minutes * 60)
-          //     baseinfo[item] = hours + ':' + minutes + ':' + seconds
-          //     timeValue = timeValue + 1
-          //   }
-          // }, 1000)
           clearInterval(window.calltimeInterval)
           window.calltimeInterval = null
           window.calltimeInterval = agentinterval
           break
         case 'ord_busy_time_duration':
-          // window.busytimeInterval = setInterval(function() {
-          //   if (timeValue) {
-          //     const hours = ('' + Math.floor(timeValue / 3600)).length === 1 ? '0' + Math.floor(timeValue / 3600) : Math.floor(timeValue / 3600)
-          //     const minutes = ('' + Math.floor((timeValue - hours * 3600) / 60)).length === 2 ? Math.floor((timeValue - hours * 3600) / 60) : '0' + Math.floor((timeValue - hours * 3600) / 60)
-          //     const seconds = ('' + Math.floor(timeValue - hours * 3600 - minutes * 60)).length === 2 ? Math.floor(timeValue - hours * 3600 - minutes * 60) : '0' + Math.floor(timeValue - hours * 3600 - minutes * 60)
-          //     baseinfo[item] = hours + ':' + minutes + ':' + seconds
-          //     timeValue = timeValue + 1
-          //   }
-          // }, 1000)
           clearInterval(window.busytimeInterval)
           window.busytimeInterval = null
           window.busytimeInterval = agentinterval

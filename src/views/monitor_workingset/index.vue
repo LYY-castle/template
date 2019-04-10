@@ -338,6 +338,7 @@ export default {
       totalNum: 0,
       onlineNum: 0,
       agentArray: [],
+      downAgents: [],
       campaignIdArray: [],
       timerOnline: null,
       timerOrder: null,
@@ -360,6 +361,7 @@ export default {
     }
     baseinfo.closeInterval()
     baseinfo.monitorlogoff()
+    this.$store.dispatch('SwitchNeedLoginMgrPhone', { monitorId: localStorage.getItem('agentId'), monitorDN: '12345' })
     // cti.onClose()
   },
   destroyed() {
@@ -368,6 +370,7 @@ export default {
     // })
     baseinfo.monitorlogoff()
     baseinfo.closeInterval()
+    this.$store.dispatch('SwitchNeedLoginMgrPhone', { monitorId: localStorage.getItem('agentId'), monitorDN: '12345' })
     // cti.onClose()
   },
   mounted() {
@@ -385,6 +388,7 @@ export default {
       if ((!res.data.error) && (typeof res.data.result.agents !== 'undefined')) {
         this.totalNum = res.data.result.agents.length
         this.agentArray = []
+        this.downAgents = []
         res.data.result.agents.forEach(element => {
           const agent_id = (element.agent_id).toString()
           const real_name = element.real_name
@@ -398,6 +402,9 @@ export default {
           obj.updateTime = 0
           this.agentStatusMap[agent_id] = obj
           this.agentArray.push(element.agent_id)
+          if (element.agent_id !== localStorage.getItem('agentId')) {
+            this.downAgents.push(element.agent_id)
+          }
         })
         this.$root.eventHub.$emit('monitor_workingset', this.agentArray)
         agentStatus({ agent_id: this.agentArray.join(',') }).then(res => {
@@ -412,7 +419,11 @@ export default {
                 obj.updateTime = res.data.result[i].last_update_time
                 baseinfo[res.data.result[i].agent_id] = obj
               }
-              this.sumTotal(baseinfo.agentStatusMap)
+              this.closeInterval()// 关闭所有定时器
+              if (this.online_interval == null && this.call_interval == null &&
+              this.free_interval == null && this.busy_interval == null) {
+                this.sumTotal(baseinfo.agentStatusMap)
+              }
             }
           }
         })
@@ -429,6 +440,7 @@ export default {
     this.timerOrder = setInterval(this.order, 600000)
     this.timerObTask = setInterval(this.obTask, 600000)
     // this.timerOnlineStatus = setTimeout(this.onlinneStatus, 5000)
+    this.$store.dispatch('SwitchNeedLoginMgrPhone', { monitorId: localStorage.getItem('agentId'), monitorDN: '12345' })
   },
   methods: {
     on_SessionClose(evt) {
@@ -462,7 +474,7 @@ export default {
         // obj[element].stillTime = baseinfo.updateTime - (obj[element].updateTime ? obj[element].updateTime : 0)
         // obj[element].updateTime = baseinfo.updateTime
         // console.log(new Date().setHours(0, 0, 0, 0))
-        obj[element].updateTime = (obj[element].updateTime < new Date().setHours(0, 0, 0, 0)) ? new Date().setHours(0, 0, 0, 0) : obj[element].updateTime
+        obj[element].updateTime = obj[element] ? ((obj[element].updateTime < new Date().setHours(0, 0, 0, 0)) ? new Date().setHours(0, 0, 0, 0) : obj[element].updateTime) : new Date().getTime()
         stillTime = new Date().getTime() - obj[element].updateTime
         if (obj[element].isTrans) { // 转接过程中，时间翻倍，通话加1
           stillTime = stillTime + (new Date().getTime() - obj[element].transTalking)
@@ -505,6 +517,11 @@ export default {
             busySum = busySum + 1
             onlineSum = onlineSum + 1
             break
+          case '-5':// 外呼就绪，累计在线时间
+          case '-6':// 外呼占用，累计在线时间
+            online_time_duration = online_time_duration + stillTime / 1000
+            onlineSum = onlineSum + 1
+            break
           case '-1':// 登出，不做计算时间处理
           case '-2':// 登出，不做计算时间处理
             break
@@ -512,8 +529,6 @@ export default {
       })
       baseinfo.onlineNum = onlineSum
       baseinfo.ctiData.calls_number = baseinfo.ctiData.calls_number + callSum
-      // 先清除所有定时器
-      baseinfo.closeInterval()
       if (busySum > 0) {
         baseinfo.timesInterval('busy_time_duration', busy_time_duration, busySum)
       }
@@ -605,9 +620,13 @@ export default {
       //   baseinfo.sumTotal(baseinfo.agentStatusMap)
       // })
       // 查出这个组总体情况
-      const param = { statistics_type: 'agent', depart_id: localStorage.getItem('departId'), time_dimension: 'day', start_time: getStartTimestamp(moment().format(formatDateTime(new Date()).split(' ')[0]), 'day'), end_time: getEndTimestamp(moment().format(formatDateTime(new Date()).split(' ')[0]), 'day') }
+      let agentids = ''
+      if (this.downAgents.length > 0) {
+        agentids = this.downAgents.join(',')
+      }
+      const param = { statistics_type: 'agent', depart_id: localStorage.getItem('departId'), agent_id: agentids, time_dimension: 'day', start_time: getStartTimestamp(moment().format(formatDateTime(new Date()).split(' ')[0]), 'day'), end_time: getEndTimestamp(moment().format(formatDateTime(new Date()).split(' ')[0]), 'day') }
       ctiRecordStatistics(param).then(res => {
-        if (!res.data.error) {
+        if (!res.data.error && res.data.result) {
           baseinfo.ctiData.online_time_duration = baseinfo.fomart(res.data.result[0].online_time_duration)
           baseinfo.online_time_duration = res.data.result[0].online_time_duration
           baseinfo.ctiData.free_time_duration = baseinfo.fomart(res.data.result[0].free_time_duration)
@@ -617,7 +636,11 @@ export default {
           baseinfo.ctiData.call_time_duration = baseinfo.fomart(res.data.result[0].call_time_duration)
           baseinfo.call_time_duration = res.data.result[0].call_time_duration
           baseinfo.ctiData.calls_number = res.data.result[0].calls_number
-          baseinfo.sumTotal(baseinfo.agentStatusMap)
+          this.closeInterval()
+          if (this.online_interval == null && this.call_interval == null &&
+              this.free_interval == null && this.busy_interval == null) {
+            baseinfo.sumTotal(baseinfo.agentStatusMap)
+          }
         }
       })
     },
