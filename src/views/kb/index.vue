@@ -855,7 +855,7 @@
                 </el-form>
               </el-row> -->
               <el-row>
-                <el-form size="small" :inline="true" style="margin-left:-5px;margin-top:-20px;">
+                <el-form size="small" :inline="true" style="margin-left:-5px;">
                   <el-form-item label="创建人:" label-width="65px">
                     <div>{{noteDetail.creatorRealname}}</div>
                   </el-form-item>
@@ -2506,10 +2506,6 @@ export default{
   mounted() {
     this.initExpand()
     this.getCatalogs()
-    // $('aside').height($(window).height() - 108.55 + 10)
-    // $(window).resize(function() {
-    //   $('aside').height($(window).height() - 108.55 + 10)
-    // })
     // 获取权限
     getPermission(localStorage.getItem('agentId')).then(response => {
       if (response.data) {
@@ -2772,18 +2768,18 @@ export default{
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   }
   #kb>.el-container{
-    // height:820px;
+    min-height:820px;
     background:#FFF;
     box-shadow: 0 0 10px 0 rgba(39,48,69,0.10);
   }
-  // @media screen and (min-width: 1281px) and (max-width:1367px){
-  //   #kb>.el-container{
-  //     height:80vh;
-  //   }
-  // }
-  // @media all and (min-width:1024px) and (max-width:1280px)  {
-  // #kb>.el-container{
-  //     height:80vh;
-  //   }
-  // }
+  @media screen and (min-width: 1281px) and (max-width:1367px){
+    #kb>.el-container{
+      min-height:80vh;
+    }
+  }
+  @media all and (min-width:1024px) and (max-width:1280px)  {
+  #kb>.el-container{
+      min-height:80vh;
+    }
+  }
 </style>

@@ -37,6 +37,12 @@ ul,p,h1,h2,h3,h4,h5,h6,dl,dd{
 .margin-top-15{
   margin-top:15px;
 }
+// 将超长的文本显示为省略号，类名写在父元素，需要定宽度
+.text-hidden{
+  text-overflow: ellipsis;
+  white-space:nowrap;
+  overflow: hidden;
+}
  //to reset element-ui default css
 .el-upload {
   input[type="file"] {

@@ -196,7 +196,6 @@
         <vue-plyr class="audio-style" :options="option">
           <audio>
             <source :src="addScopeUrl"/>
-            <!-- <source src="http://119.27.184.157:8999/2019/04/03/004e0d8e-55b2-11e9-975e-19793ee7a9e2_8118.wav" type="audio/wav"/> -->
           </audio>
         </vue-plyr>
         

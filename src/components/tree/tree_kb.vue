@@ -8,16 +8,14 @@
 			@click.stop.native="nodeEditFocus"
 			@keyup.enter.stop.native="nodeEditPass(STORE,DATA,NODE)"></el-input>
 		</span>
-		<span v-if="!(DATA.isEdit)" 
-		:class="[DATA.ID > maxexpandId ? 'tree-new tree-label' : 'tree-label']">
+		<span 
+      v-if="!(DATA.isEdit)"
+      class="tree-label">
 			<span>{{DATA.name}}</span>
 		</span>
 		<span class="tree-btn" v-show="!DATA.isEdit" v-if="permission">
-			<!-- <i class="el-icon-plus" @click.stop="nodeAdd(STORE,DATA,NODE)"></i> -->
 			<i class="tree-button tree-plus" @click.stop="nodeAdd(STORE,DATA,NODE)"></i>
-			<!-- <i class="el-icon-edit" @click.stop="nodeEdit(STORE,DATA,NODE)"></i> -->
 			<i class="tree-button tree-edit" @click.stop="nodeEdit(STORE,DATA,NODE)"></i>
-			<!-- <i class="el-icon-delete" @click.stop="nodeDel(STORE,DATA,NODE)"></i> -->
 			<i class="tree-button tree-delete" @click.stop="nodeDel(STORE,DATA,NODE)"></i>
 		</span>
 		<span class="tree-btn-edit" v-show="DATA.isEdit">
@@ -35,18 +33,13 @@ export default{
   props: ['NODE', 'DATA', 'STORE', 'maxexpandId', 'editCancel', 'permission'],
   data() {
     return {
-      nodeName: ''
+      nodeName: '',
+      labelClassName: 'tree-label'
     }
   },
   methods: {
     nodeAdd(s, d, n) { // 新增
       this.$emit('nodeAdd', s, d, n)
-      // this.$nextTick(() => {
-      //   // this.$refs['treeInput' + d.id].$refs.input.focus()
-      //   console.log(d)
-      // 	 this.$refs['treeInput' + d.ID].$refs.input.focus()
-      //   console.log('treeInput' + d.children[d.children.length - 1].ID)
-      // })
     },
     editCannel(s, d, n) {
       this.$set(d, 'isEdit', false)
@@ -58,11 +51,8 @@ export default{
       this.nodeEditPass(s, d, n)
     },
     nodeEdit(s, d, n) { // 编辑
-      // // console.log(d.isEdit)
-      console.log(d.name)
       this.nodeName = d.name
       this.$set(d, 'isEdit', true)
-      // // console.log(d.isEdit)
       this.$nextTick(() => {
         this.$refs['treeInput' + d.ID].$refs.input.focus()
       })
@@ -87,6 +77,11 @@ export default{
     nodeEditFocus() {
       // 阻止点击节点的事件冒泡
     }
+  },
+  mounted() {
+    $('.tree-label').click(function() {
+      $(this).addClass('checked')
+    })
   }
 }
 </script>
@@ -97,9 +92,6 @@ export default{
   }
 </style>
 <style lang="scss" scoped>
-	// .tree-expand{
-	// 	overflow:hidden;
-	// }
   .tree-button{
     padding:6px;
     &.tree-plus{
@@ -118,23 +110,15 @@ export default{
 	.tree-expand .tree-label.tree-new{
 		font-weight:600;
 	}
-	// .tree-expand .tree-label{
-		/* font-size:0.9em; */
-	// }
 	.tree-expand .tree-label .edit{
-		// width:100%;
     width:93px;
 	}
 	.tree-expand .tree-btn{
-		/* display:none; */
     opacity:0;
 		margin-left:10px;
 		margin-right:10px;
     width:62px;
-    // position:absolute;
-    // right:0;
     text-align:right;
-    // float:right;
 	}
 	.tree-expand .tree-btn-edit i:hover{
 		opacity:0.5;
