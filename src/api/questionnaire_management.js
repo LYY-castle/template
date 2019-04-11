@@ -26,17 +26,14 @@ export function checkByQuestionnaireName(questionnaireName, accurate) {
     }
   })
 }
-
-export function generateQuestionnaire(questionnaireName, singleItems, multiItems, fillBlanks, multiBlanks) {
+// 创建模板
+export function generateQuestionnaire(data) {
   return request({
     url: '/questionnaire/generate',
     method: 'post',
     data: {
-      questionnaireName: questionnaireName,
-      singleItems: singleItems,
-      multiItems: multiItems,
-      fillBlanks: fillBlanks,
-      multiBlanks: multiBlanks
+      name: data.name,
+      titles: data.titles
     }
   })
 }
@@ -70,18 +67,15 @@ export function queryOneQuestionnaire(id) {
     }
   })
 }
-
-export function modifyQuestionnaire(editQuestionnaireId, questionnaireName, singleItems, multiItems, fillBlanks, multiBlanks) {
+// 修改模板
+export function modifyQuestionnaire(data) {
   return request({
     url: '/questionnaire/modifyQuestionnaire',
     method: 'post',
     data: {
-      editQuestionnaireId: editQuestionnaireId,
-      questionnaireName: questionnaireName,
-      singleItems: singleItems,
-      multiItems: multiItems,
-      fillBlanks: fillBlanks,
-      multiBlanks: multiBlanks
+      id: data.id,
+      name: data.name,
+      titles: data.titles
     }
   })
 }
