@@ -6,7 +6,7 @@
         <el-collapse-item title="筛选条件" name="1">
           <el-form :inline="true" size="small">
             <el-form-item label="问卷模板名称"> 
-              <el-input type="text" v-model="req.name" placeholder="问卷模板名称（限长45字符）" maxlength="45"></el-input>
+              <el-input type="text" v-model="req.name" placeholder="问卷模板名称（限长45字符）" maxlength="45" class="hideBorder"></el-input>
             </el-form-item>
             <el-form-item label="操作人">
               <el-input type="text" v-model="req.modifier" placeholder="操作人（限长45字符）" maxlength="45"></el-input>
@@ -28,12 +28,13 @@
           </el-form>
         </el-collapse-item>
       </el-collapse>
+      <!-- 问卷表 -->
       <el-row class="table-container">
         <el-row class="margin-bottom-20">
           <div class="font14 bold">问卷表</div>
         </el-row>
         <el-row class="margin-bottom-20">
-          <el-button type="success" size="small" @click="questionnaireName='';questionnaireTitleVisiable=true">新建</el-button>
+          <el-button type="success" size="small" @click="isMainPage = false;isDetail=true;allItems=[],questionnaireName='',asideHideOrShow=true,newHideOrShow=1;newModifyLook=1;">新建</el-button>
           <el-button type="danger" size="small" @click="isSelectIds(batchdel.ids)" >批量删除</el-button>
         </el-row>
         <el-row>
@@ -41,7 +42,7 @@
             <el-table-column align="center" type="selection" width="55"></el-table-column>
             <el-table-column align="center" label="问卷模板名称">
               <template slot-scope="scope">
-                <a type="text" size="medium" @click="checkDetail(scope.row.id);selectOption_single.length=0;selectOption_blanks.length=0;selectOption_multiblanks.length=0">{{scope.row.name}}</a>
+                <a type="text" size="medium" @click="checkDetail(scope.row.id);newModifyLook=2">{{scope.row.name}}</a>
               </template>
             </el-table-column>
             <el-table-column align="center" label="操作人" width="" prop="modifier">
@@ -56,7 +57,7 @@
             </el-table-column>
             <el-table-column align="center" label="操作">
               <template slot-scope="scope">
-                <el-button type="text" size="medium" @click="showeditDetails(scope.row.id);singelItems=[];multiItems=[];fillBlanks=[];multiBlanks=[]">修改</el-button>
+                <el-button type="text" size="medium" @click="showeditDetails(scope.row.id);isMainPage=false;newModifyLook=3;isDetail=true;hideOrShowPage=true;newHideOrShow = 3;asideHideOrShow = true;">修改</el-button>
                 <el-button type="text" size="medium" @click="deleteReq.id=scope.row.id;deleteVisiable=true">删除</el-button>
               </template>
             </el-table-column>
@@ -77,7 +78,7 @@
       </el-row>
 
       <!-- 新建问卷dialog -->
-      <el-dialog width="30%" title="新建问卷模板" :visible.sync="questionnaireTitleVisiable" append-to-body>
+      <el-dialog width="30%" :visible.sync="questionnaireTitleVisiable" append-to-body>
         <span style="color:red">*</span><span style="font-size:15px;">问卷模板标题：</span>
         <el-input type="text" placeholder="请输入问卷模板标题（限长45字符）" size="medium" v-model="questionnaireName" maxlength="45"></el-input>
         <div slot="footer" class="dialog-footer" style="text-align: center;">
@@ -103,147 +104,133 @@
           <el-button type="primary" plain @click="batchdeleteVisiable = false">取消</el-button>
         </div>
       </el-dialog>
-
+      <!-- 修改问卷 -->
+      <el-dialog width="30%" title="修改问卷模板名称" :visible.sync="editQuestionnaireName" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
+        <span style="color:red">*</span><span style="font-size:15px;">问卷模板标题：</span>
+        <el-input maxlength="45" type="text" placeholder="请输入问卷模板标题（限长45字符）" size="medium" v-model="questionnaireName1" clearable @change="checkEditName(questionnaireName1);"></el-input>
+        <div slot="footer" class="dialog-footer" style="text-align: center;">
+          <span style="color:red" v-if="hasQuestionnaireName===false">模板名称不能为空</span>
+          <el-button type="primary" @click="editQuestionnaireName=false;questionnaireName=questionnaireName1" v-if="hasQuestionnaireName===true">确定</el-button>
+          <el-button type="primary" plain @click="editQuestionnaireName = false" v-if="hasQuestionnaireName===true">取消</el-button>
+        </div>
+      </el-dialog>
     </div>
 
-    <!-- 新建问卷div -->
-    <div  v-show="isMainPage===false && isDetail === false" class="question">
+    <!-- 新建问卷或者修改问卷以及问卷详情 -->
+    <div  v-show="isMainPage===false && isDetail === true" class="question">
       <el-row type="flex">
         <el-col :span="2"></el-col>
         <el-col :span="20" >
           <el-container style="height: 750px;">
-            <el-aside width="210px" style="background-color: rgb(238, 241, 246);border: 1px solid #eee;position:fixed;top:109px;">
+            <el-aside width="210px" style="background-color: rgb(238, 241, 246);border: 1px solid #eee;position:fixed;top:109px;" v-show="asideHideOrShow">
               <el-menu :default-openeds="['1']" active-text-color="#121212">
                 <el-submenu index="1">
                   <template slot="title"><i class="el-icon-menu"></i>题型选择</template>
                   <el-menu-item-group>
                     <div style="text-align:left">
-                      <el-menu-item index="1-1" @click="addSingleCheck();" class="module" style="background-position:35px -4px">单选题</el-menu-item>
-                      <el-menu-item index="1-2" @click="addMultiCheck();"  class="module" style="background-position:35px -76px">多选题</el-menu-item>
-                      <el-menu-item index="1-3" @click="addFillBlank();"  class="module" style="background-position:35px -112px">&nbsp;&nbsp;&nbsp;&nbsp;单行填空</el-menu-item>
-                      <el-menu-item index="1-4" @click="addMultiBlanks();" class="module" style="background-position:35px -148px">&nbsp;&nbsp;&nbsp;&nbsp;多行填空</el-menu-item>
+                      <!-- 创建模板 -->
+                      <el-menu-item index="1-1" @click="createNewModel(1);" class="module" style="background-position:35px -4px">单选题</el-menu-item>
+                      <el-menu-item index="1-2" @click="createNewModel(2);"  class="module" style="background-position:35px -76px">多选题</el-menu-item>
+                      <el-menu-item index="1-3" @click="createNewModel(3);"  class="module" style="background-position:35px -112px">&nbsp;&nbsp;&nbsp;&nbsp;单行填空</el-menu-item>
+                      <el-menu-item index="1-4" @click="createNewModel(4);" class="module" style="background-position:35px -148px">&nbsp;&nbsp;&nbsp;&nbsp;多行填空</el-menu-item>
                     </div>
                   </el-menu-item-group>
                 </el-submenu>
               </el-menu>
             </el-aside>
-            
+            <!-- 模板详情 -->
             <el-container style="margin-left:200px">
               <el-header>
+                <!-- titleHead -->
                 <div class="title-content">
-                  {{questionnaireName}}
+                  <input type="text" placeholder="请输入问卷模板标题（限长45字符）" v-model="questionnaireName" maxlength="45" class="title_resize" ref="inputDisplay" style="text-align:center">
                 </div>
                 <div class="survey-desc">
                   <div class="desc-content">欢迎参加调查！答卷数据仅用于统计分析，请放心填写。题目选项无对错之分，按照实际情况选择即可。感谢您的帮助！</div>
                 </div>
-
-                <div class="quest-box">
-                  <!--  单选  -->
-                    <el-form size="small">
-                      <h5 v-if="this.singelItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;单选:</h5><br/>
-                        <div style="margin-top:-8px">
-                          <el-form-item v-for="(item,index) in singelItems">
-                            <div class="topic-type-content">
-                                <span>{{index+1}}.</span>
-                                <el-input size="small" v-model="item.name" placeholder="标题(45个字符内)" style="width:493px;margin:3px" clearable maxlength="45"></el-input>
-                                <div v-for="(a,radioIndex) in item.options" class="options">
-                                  <span class="showEditOption">
-                                    <el-radio label="1" name="1"  disabled>
-                                      <el-input size="small" type="text" placeholder='选项(45个字符内)' style="width:456px;margin:2px" v-model="a.content" clearable maxlength="45"></el-input>&nbsp;&nbsp;
+                <div>
+                    <el-form size="small" class="quest-box">
+                        <div style="margin-top:-8px" ref="questBox">
+                          <el-form-item v-for="(item,index) in allItems" :key="index" class="newStyle" v-show="hideOrShowPage" v-dragging="{item: item,list:allItems,group:'item'}">
+                            <div v-show="item.type===0">
+                                  <span>{{index+1}}.</span>
+                                  <el-input size="small" v-model="item.name" :placeholder="setplaceHolder(item.type)" style="width:493px;margin:3px;" clearable maxlength="45" class="hideBorder"                                ></el-input>
+                                  <div v-for="(a,radioIndex) in item.options" :key="radioIndex" class="options">
+                                    <span class="showEditOption">
+                                      <el-radio label="1" name="1"  disabled>
+                                        <el-input size="small" type="text" placeholder='选项(45个字符内)' style="width:456px;margin:2px" v-model="a.content" clearable maxlength="45"></el-input>&nbsp;&nbsp;
+                                          <span class="editoptions">
+                                            <el-button icon="el-icon-arrow-up" type="text" size="mini" title="上移" @click="upOption(item.options,radioIndex,item.options.length)"></el-button>
+                                            <el-button icon="el-icon-arrow-down" type="text" size="mini" title="下移" @click="downOption(item.options,radioIndex,item.options.length)"></el-button>
+                                            <el-button icon="el-icon-delete" type="text" size="mini" title="删除" @click="removeRadio(item.options,radioIndex)"></el-button>
+                                          </span>
+                                      </el-radio>
+                                    </span>
+                                  </div>
+                            </div>
+                            <div v-show="item.type===1">
+                                   <span>{{index+1}}.</span>
+                                   <el-input size="small" v-model="item.name" :placeholder="setplaceHolder(item.type)" style="width:493px;margin:3px" clearable maxlength="45"></el-input> 
+                                   <div v-for="(a,checkboxIndex) in item.options" :key="checkboxIndex" class="options">
+                                    <el-checkbox disabled checked>
+                                      <span class="showEditOption">
+                                        <el-input size="small" type="text" placeholder='选项(45个字符内)' style="width:456px;margin:2px" v-model="a.content" clearable maxlength="45"></el-input>
                                         <span class="editoptions">
-                                          <el-button icon="el-icon-arrow-up" type="text" size="mini" title="上移" @click="upOption(item.options,radioIndex,item.options.length)"></el-button>
-                                          <el-button icon="el-icon-arrow-down" type="text" size="mini" title="下移" @click="downOption(item.options,radioIndex,item.options.length)"></el-button>
-                                          <el-button icon="el-icon-delete" type="text" size="mini" title="删除" @click="removeRadio(item.options,radioIndex)"></el-button>
+                                          <el-button icon="el-icon-arrow-up" type="text" size="mini" title="上移" @click="upOption(item.options,checkboxIndex,item.options.length)"></el-button>
+                                          <el-button icon="el-icon-arrow-down" type="text" size="mini" title="下移" @click="downOption(item.options,checkboxIndex,item.options.length)"></el-button>
+                                          <el-button icon="el-icon-delete" type="text" size="mini" title="删除" @click="removeRadio(item.options,checkboxIndex)"></el-button>
                                         </span>
-                                    </el-radio>
-                                  </span>
-                                </div>
-                                <div class="showaddTool">
-                                  <i class="el-icon-plus" style="cursor:pointer" @click="addRadio(item.options)" title="新建一个单选项"></i>
-                                </div>
-                                <div class="showdeleteTool">
-                                  <i class="el-icon-delete" style="cursor:pointer" @click="removeSingle(index)" title="点击删除该单选题"></i>
-                                </div>
+                                      </span>
+                                    </el-checkbox>
+                                  </div>
+                            </div>
+                            <div v-show="item.type===2">
+                                   <span>{{index+1}}.</span>
+                                   <el-input size="small" v-model="item.name" :placeholder="setplaceHolder(item.type)" style="width:493px;margin:3px" clearable maxlength="45"></el-input> 
+                                   <div v-for="(a,blankIndex) in item.options" :key="blankIndex" class="options">
+                                    <el-input type="text" placeholder='回答' style="width:478px;margin:2px" v-model="a.content"  maxlength="45"  disabled></el-input>
+                                  </div>
+                            </div>
+                            <div v-show="item.type===3">
+                                   <span>{{index+1}}.</span>
+                                   <el-input size="small" v-model="item.name" :placeholder="setplaceHolder(item.type)" style="width:493px;margin:3px" clearable maxlength="45"></el-input> 
+                                   <div v-for="(a,blankIndex) in item.options" :key="blankIndex" class="options">
+                                    <el-input type="textarea" resize="none" rows="4" placeholder='回答' style="width:478px;margin:2px" v-model="a.content" disabled maxlength="150"></el-input>
+                                  </div>
+                            </div>
+                            <div class="tools" v-show="newModifyLook===1||newModifyLook===3">
+                              <div class="showaddTool" v-show="item.type===0||item.type===1">
+                                <i class="el-icon-plus" style="cursor:pointer" @click="addRadio(item.options)" title="新建选项"></i>
+                              </div>
+                              <div class="showdeleteTool">
+                                <i class="el-icon-delete" style="cursor:pointer" @click="removeSingle(index)" title="点击删除这道题目"></i>
+                              </div>
+                              <div class="showDragTool my-handle" style="cursor:pointer" >
+                               <i class="el-icon-rank" style="cursor:pointer" title="可拖拽"></i>
+                              </div>
                             </div>
                           </el-form-item>
                         </div>
                     </el-form>
-                  
-
-                  <!--  多选  -->
-                  <el-form size="small">
-                    <h5 v-if="this.multiItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多选:</h5><br/>
-                    <div style="margin-top:-8px">
-                      <el-form-item v-for="(item,index) in multiItems">
-                        <div class="topic-type-content">
-                          <span>{{index+1}}.</span>
-                          <el-input size="small" v-model="item.name" placeholder="标题(45个字符内)" style="width:493px;margin:3px" clearable maxlength="45"></el-input>
-                          <div v-for="(a,checkboxIndex) in item.options" class="options">
-                            <el-checkbox disabled checked>
-                            <span class="showEditOption">
-                            <el-input size="small" type="text" placeholder='选项(45个字符内)' style="width:456px;margin:2px" v-model="a.content" clearable maxlength="45"></el-input>
-                              <span class="editoptions">
-                                <el-button icon="el-icon-arrow-up" type="text" size="mini" title="上移" @click="upOption(item.options,checkboxIndex,item.options.length)"></el-button>
-                                <el-button icon="el-icon-arrow-down" type="text" size="mini" title="下移" @click="downOption(item.options,checkboxIndex,item.options.length)"></el-button>
-                                <el-button icon="el-icon-delete" type="text" size="mini" title="删除" @click="removeRadio(item.options,checkboxIndex)"></el-button>
-                              </span>
-                            </span>
-                          </el-checkbox>
-                          </div>
-                          <div class="showaddTool">
-                            <i class="el-icon-plus" style="cursor:pointer" @click="addCheckbox(item.options)" title="新建一个多选项"></i>
-                          </div>
-                          <div class="showdeleteTool">
-                            <i class="el-icon-delete" style="cursor:pointer" @click="removeMulti(index)" title="点击删除该多选题"></i>
-                          </div>
-                        </div>
-                      </el-form-item>
-                    </div>
-                  </el-form>
-
-                  <!--  单行填空  -->
-                   <el-form size="small">
-                    <h5 v-if="this.fillBlanks.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;单行填空:</h5><br/>
-                      <div style="margin-top:-8px">
-                        <el-form-item v-for="(item,index) in fillBlanks">
-                          <div class="topic-type-content">
-                            <span>{{index+1}}.</span>
-                            <el-input v-model="item.name" placeholder="标题(45个字符内)" style="width:493px;margin:3px" clearable maxlength="45"></el-input>
-                            <div v-for="(a,blankIndex) in item.options" class="options">
-                              <el-input type="text" placeholder='回答' style="width:478px;margin:2px" v-model="a.content"  maxlength="45"  disabled></el-input>
-                            </div>
-                            <div class="showdeleteTool">
-                              <i class="el-icon-delete" style="cursor:pointer" @click="removeBlanks(index)" title="点击删除该题"></i>
-                            </div>
-                          </div>
-                        </el-form-item>
-                      </div>
-                  </el-form>
-
-                  <!--  多行填空  -->
-                   <el-form size="small">
-                    <h5 v-if="this.multiBlanks.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多行填空:</h5><br/>
-                      <div style="margin-top:-8px">
-                        <el-form-item v-for="(item,index) in multiBlanks">
-                          <div class="topic-type-content">
-                            <span>{{index+1}}.</span>
-                            <el-input v-model="item.name" placeholder="标题(45个字符内)" style="width:493px;margin:3px" clearable maxlength="45"></el-input>
-                            <div v-for="(a,blankIndex) in item.options" class="options">
-                              <el-input type="textarea" resize="none" rows="4" placeholder='回答' style="width:478px;margin:2px" v-model="a.content" disabled maxlength="150"></el-input>
-                            </div>
-                            <div class="showdeleteTool">
-                              <i class="el-icon-delete" style="cursor:pointer" @click="removeMultiBlanks(index)" title="点击删除该题"></i>
-                            </div>
-                          </div>
-                        </el-form-item>
-                      </div>
-                  </el-form>
-
                 </div>
-                <div class="lastbuttons" >
+                <!-- 新建 -->
+                <div class="lastbuttons" v-show="newHideOrShow===1?true:false">
                   <div style="margin-top:8px">
-                    <el-button size="small" type="primary" @click="makeQuestionnaire(questionnaireName,singelItems,multiItems,fillBlanks,multiBlanks)">生成</el-button>
-                    <el-button size="small" type="primary" plain @click="isMainPage=true;isDetail=false;questionnaireName='';singelItems=[];multiItems=[];fillBlanks=[];multiBlanks=[]">取消</el-button>
+                    <el-button size="small" type="primary" @click="makeQuestionnaire(questionnaireName,allItems)" class="create">生成</el-button>
+                    <el-button size="small" type="primary" plain @click="isMainPage=true;isDetail=false;questionnaireName='';allItems=[]">取消</el-button>
+                  </div>
+                </div>
+                <!-- 查看 -->
+                <div class="lastbuttons" v-show="newHideOrShow===2?true:false">
+                  <div style="margin-top:8px">
+                    <el-button type="primary" plain size="small" @click="isMainPage=true;isDetail=false;">返回</el-button><br/><br/>
+                  </div>
+                </div>
+                <!-- 修改 -->
+                <div class="lastbuttons" v-show="newHideOrShow===3?true:false">
+                  <div style="margin-top:8px">
+                    <el-button size="small" type="primary" @click="editQuestionnaire(editQuestionnaireId,questionnaireName,allItems)" class="modify">确定</el-button>
+                    <el-button size="small" type="primary" plain @click="isMainPage=true;isDetail=false;questionnaireName='';allItems=[]">返回</el-button>
                   </div>
                 </div>
               </el-header>
@@ -254,8 +241,8 @@
       </el-row>
     </div>
 
-    <!-- 问卷详情div -->
-    <div  v-show="isMainPage===true && isDetail===true" class="question">
+    <!-- 问卷详情页面展示 -->
+    <!-- <div  v-show="isMainPage===true && isDetail===true" class="question">
       <el-row type="flex">
         <el-col :span="2"></el-col>
         <el-col :span="20" >
@@ -272,14 +259,11 @@
                 </div>
 
                 <div class="quest-box">
-                  <!--  单选  -->
                   <el-form size="small">
-                    <h5 v-if="hasSingle===true">&nbsp;&nbsp;&nbsp;&nbsp;单选:</h5><br/>
                       <div style="margin-top:-8px">
                         <el-form-item v-for="(item,index) in oneDetails.titles" v-if="item.type===0">
                           <div class="topic-type-content">
                               <span>{{index+1}}.</span>
-                              <!-- <el-input size="small" v-model="item.name" placeholder="标题" style="width:493px;margin:3px" clearable maxlength="45"></el-input> -->
                               <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
                               <div v-for="(a,radioIndex) in item.options" class="options">
                                 <el-radio :label="radioIndex" v-model="selectOption_single[index]">
@@ -292,15 +276,13 @@
                   </el-form>
                   
 
-                  <!--  多选  -->
                   <el-form size="small">
-                    <h5 v-if="hasMulti===true">&nbsp;&nbsp;&nbsp;&nbsp;多选:</h5><br/>
                     <div style="margin-top:-8px">
-                      <el-form-item v-for="(item,index) in oneDetails.titles" v-if="item.type===1">
+                      <el-form-item v-for="(item,index) in oneDetails.titles" :key="index" v-if="item.type===1">
                         <div class="topic-type-content">
                           <span>{{index+1}}.</span>
                           <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
-                          <div v-for="(a,checkboxIndex) in item.options" class="options">
+                          <div v-for="(a,checkboxIndex) in item.options" :key="checkboxIndex" class="options">
                             <el-checkbox :label="a.content"></el-checkbox>
                           </div>
                         </div>
@@ -308,15 +290,13 @@
                     </div>
                   </el-form>
 
-                  <!--  单行填空  -->
                    <el-form size="small">
-                    <h5 v-if="hasBlanks===true">&nbsp;&nbsp;&nbsp;&nbsp;单行填空:</h5><br/>
                       <div style="margin-top:-8px">
-                        <el-form-item v-for="(item,index) in oneDetails.titles" v-if="item.type===2">
-                          <div class="topic-type-content">
+                        <el-form-item v-for="(item,index) in oneDetails.titles" :key="index" v-if="item.type===2">
+                          <div class="topic-type-content" style="padding-botttom:10px">
                             <span>{{index+1}}.</span>
                             <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
-                            <div v-for="(a,blankIndex) in item.options" class="options">
+                            <div v-for="(a,blankIndex) in item.options" :key="blankIndex" class="options">
                               <el-input type="text" style="width:478px;margin:2px" v-model="selectOption_blanks[index]"  maxlength="45" ></el-input>
                             </div>
                           </div>
@@ -324,15 +304,13 @@
                       </div>
                   </el-form>
 
-                  <!--  多行填空  -->
                    <el-form size="small">
-                    <h5 v-if="hasMultiBlanks===true">&nbsp;&nbsp;&nbsp;&nbsp;多行填空:</h5><br/>
                       <div style="margin-top:-8px">
-                        <el-form-item v-for="(item,index) in oneDetails.titles" v-if="item.type===3">
-                          <div class="topic-type-content">
+                        <el-form-item v-for="(item,index) in oneDetails.titles" :key="index" v-if="item.type===3">
+                          <div class="topic-type-content" style="padding-bottom:10px;">
                             <span>{{index+1}}.</span>
                             <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
-                            <div v-for="(a,blankIndex) in item.options" class="options">
+                            <div v-for="(a,blankIndex) in item.options" :key="blankIndex" class="options">
                               <el-input type="textarea" rows="4"  resize="none" style="width:478px;margin:2px" v-model="selectOption_multiblanks[index]"  maxlength="45"></el-input>
                             </div>
                           </div>
@@ -353,10 +331,10 @@
         </el-col>
         <el-col :span="2"></el-col>
       </el-row>
-    </div>
+    </div> -->
 
-    <!-- 修改问卷div -->
-    <div v-show="isMainPage===false && isDetail===true" class="question">
+    <!-- 修改问卷div详情页面 -->
+    <!-- <div v-show="isMainPage===false && isDetail===true" class="question">
       <el-row type="flex">
         <el-col :span="2"></el-col>
         <el-col :span="20" >
@@ -389,15 +367,14 @@
                 </div>
 
                 <div class="quest-box">
-                  <!--  单选  -->
                   <el-form size="small">
                     <h5 v-if="this.singelItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;单选:</h5><br/>
                       <div style="margin-top:-8px">
-                        <el-form-item v-for="(item,index) in singelItems">
+                        <el-form-item v-for="(item,index) in singelItems" :key="index">
                           <div class="topic-type-content">
                               <span>{{index+1}}.</span>
                               <el-input size="small" v-model="item.name" placeholder="标题" style="width:493px;margin:3px" clearable maxlength="45"></el-input>
-                              <div v-for="(a,radioIndex) in item.options" class="options">
+                              <div v-for="(a,radioIndex) in item.options" :key="radioIndex" class="options">
                                 <el-radio label="1" name="1"  disabled>
                                   <span class="showEditOption">
                                     <el-input size="small" type="text" placeholder='选项' style="width:456px;margin:2px" v-model="a.content" clearable maxlength="45"></el-input>&nbsp;&nbsp;
@@ -409,11 +386,16 @@
                                   </span>
                                 </el-radio>
                               </div>
-                              <div class="showaddTool">
-                                <i class="el-icon-plus" style="cursor:pointer" @click="addRadio(item.options)" title="新建一个单选项"></i>
-                              </div>
-                              <div class="showdeleteTool">
-                                <i class="el-icon-delete" style="cursor:pointer" @click="removeSingle(index)" title="点击删除该单选题"></i>
+                              <div class="tools">
+                                 <div class="showaddTool">
+                                  <i class="el-icon-plus" style="cursor:pointer" @click="addRadio(item.options)" title="新建一个单选项"></i>
+                                </div>
+                                <div class="showdeleteTool">
+                                  <i class="el-icon-delete" style="cursor:pointer" @click="removeSingle(index)" title="点击删除该单选题"></i>
+                                </div>
+                                <div class="showDragTool" style="cursor:pointer" title="拖拽">
+                                可拖拽
+                                </div>
                               </div>
                           </div>
                         </el-form-item>
@@ -421,15 +403,14 @@
                   </el-form>
                   
 
-                  <!--  多选  -->
                   <el-form size="small">
                     <h5 v-if="this.multiItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多选:</h5><br/>
                     <div style="margin-top:-8px">
-                      <el-form-item v-for="(item,index) in multiItems">
+                      <el-form-item v-for="(item,index) in multiItems" :key="index">
                         <div class="topic-type-content">
                           <span>{{index+1}}.</span>
                           <el-input size="small" v-model="item.name" placeholder="标题" style="width:493px;margin:3px" clearable maxlength="45"></el-input>
-                          <div v-for="(a,checkboxIndex) in item.options" class="options">
+                          <div v-for="(a,checkboxIndex) in item.options" :key="checkboxIndex" class="options">
                             <el-checkbox disabled checked>
                             <span class="showEditOption">
                             <el-input size="small" type="text" placeholder='选项' style="width:456px;margin:2px" v-model="a.content" clearable maxlength="45"></el-input>&nbsp;&nbsp;
@@ -441,37 +422,45 @@
                             </span>
                           </el-checkbox>
                           </div>
-                          <div class="showaddTool">
+                          <div class="tools">
+                            <div class="showaddTool">
                             <i class="el-icon-plus" style="cursor:pointer" @click="addCheckbox(item.options)" title="新建一个多选项"></i>
-                          </div>
-                          <div class="showdeleteTool">
-                            <i class="el-icon-delete" style="cursor:pointer" @click="removeMulti(index)" title="点击删除该多选题"></i>
+                            </div>
+                            <div class="showdeleteTool">
+                              <i class="el-icon-delete" style="cursor:pointer" @click="removeMulti(index)" title="点击删除该多选题"></i>
+                            </div>
+                            <div class="showDragTool" style="cursor:pointer" title="拖拽">
+                                  可拖拽
+                            </div>
                           </div>
                         </div>
                       </el-form-item>
                     </div>
                   </el-form>
 
-                  <!--  单行填空  -->
                    <el-form size="small">
                     <h5 v-if="this.fillBlanks.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;单行填空:</h5><br/>
                       <div style="margin-top:-8px">
-                        <el-form-item v-for="(item,index) in fillBlanks">
+                        <el-form-item v-for="(item,index) in fillBlanks" :key="index">
                           <div class="topic-type-content">
                             <span>{{index+1}}.</span>
                             <el-input v-model="item.name" placeholder="标题" style="width:493px;margin:3px" clearable maxlength="45"></el-input>
                             <div v-for="(a,blankIndex) in item.options" class="options">
                               <el-input type="text" placeholder='回答' style="width:478px;margin:2px" v-model="a.content"  maxlength="45"  disabled></el-input>
                             </div>
-                            <div class="showdeleteTool">
-                              <i class="el-icon-delete" style="cursor:pointer" @click="removeBlanks(index)" title="点击删除该题"></i>
+                            <div class="tools">
+                              <div class="showdeleteTool">
+                                <i class="el-icon-delete" style="cursor:pointer" @click="removeBlanks(index)" title="点击删除该题"></i>
+                              </div>
+                              <div class="showDragTool" style="cursor:pointer" title="拖拽">
+                                  可拖拽
+                            </div>
                             </div>
                           </div>
                         </el-form-item>
                       </div>
                   </el-form>
 
-                  <!--  多行填空  -->
                    <el-form size="small">
                     <h5 v-if="this.multiBlanks.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多行填空:</h5><br/>
                       <div style="margin-top:-8px">
@@ -482,8 +471,13 @@
                             <div v-for="(a,blankIndex) in item.options" class="options">
                               <el-input type="textarea" rows="4" placeholder='回答' style="width:478px;margin:2px" v-model="a.content" disabled maxlength="150"></el-input>
                             </div>
-                            <div class="showdeleteTool">
+                            <div class="tools">
+                              <div class="showdeleteTool">
                               <i class="el-icon-delete" style="cursor:pointer" @click="removeMultiBlanks(index)" title="点击删除该题"></i>
+                            </div>
+                            <div class="showDragTool" style="cursor:pointer" title="拖拽">
+                                可拖拽
+                          </div>
                             </div>
                           </div>
                         </el-form-item>
@@ -498,49 +492,42 @@
                   </div>
                 </div>
 
-                <!-- 修改问卷模板名称dialog -->
-                <el-dialog width="30%" title="修改问卷模板名称" :visible.sync="editQuestionnaireName" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
-                  <span style="color:red">*</span><span style="font-size:15px;">问卷模板标题：</span>
-                  <el-input maxlength="45" type="text" placeholder="请输入问卷模板标题（限长45字符）" size="medium" v-model="questionnaireName1" clearable @change="checkEditName(questionnaireName1);"></el-input>
-                  <div slot="footer" class="dialog-footer" style="text-align: center;">
-                    <span style="color:red" v-if="hasQuestionnaireName===false">模板名称不能为空</span>
-                    <el-button type="primary" @click="editQuestionnaireName=false;questionnaireName=questionnaireName1" v-if="hasQuestionnaireName===true">确定</el-button>
-                    <el-button type="primary" plain @click="editQuestionnaireName = false" v-if="hasQuestionnaireName===true">取消</el-button>
-                  </div>
-                </el-dialog>
+               
               </el-header>
             </el-container>
           </el-container>
         </el-col>
         <el-col :span="2"></el-col>
       </el-row>
-    </div>
+    </div> -->
   </div>
 </template>
-<style>
+<style rel='stylesheet/scss' lang="scss">
+.question .el-input__inner{
+  border:1px solid #fff;
+}
 .question .el-input__inner:focus{
-  border: 1px solid #000;
-  background:rgb(253, 249, 205);
+  border:1px solid #dcdfe6;
+  background: #fff;
 }
-.question .el-input__inner:hover{
-  background:rgb(253, 249, 205);
+.newStyle{
+  padding-left: 30px;
+  background-color: #fff;
+  padding-bottom: 10px;
 }
-.question .el-textarea__inner:focus{
-  background:rgb(253, 249, 205);
+.title_resize{
+  width:100%;
+  outline: none;
+  padding:0 30px;
+  background:none;
+  border:none;
+  font-size: 16px;
 }
-.question .el-textarea__inner:hover{
-  background:rgb(253, 249, 205);
-}
+
 </style>
 
 <style rel='stylesheet/scss' lang="scss" scoped>
-// .quest{
-//   border:1px solid #ddd;
-//   -webkit-box-shadow:5px 0 0 #888;
-//   box-shadow:5px 5px 5px 0px #888;
-//   min-height:75vh;
-//   margin-bottom: 3vh;
-// }
+
 .myButton{
   padding: 0px;
   border:none;
@@ -548,7 +535,6 @@
 .title-content {
   height: 48px;
   font-size: 20px;
-  text-align: center;
   line-height: 48px;
   border: 1px solid #dbdbdb;
   position: relative;
@@ -557,7 +543,6 @@
 .title-content-detail {
   height: 88px;
   font-size: 22px;
-  text-align: center;
   line-height: 48px;
   border: 1px solid #dbdbdb;
   position: relative;
@@ -602,19 +587,12 @@
   text-align: center;
   height: 50px;
 }
-.showaddTool {
-  float: right;
-  margin-right: 92%;
-  height: 0px;
-  cursor: pointer;
+.tools{
+  display:flex;
+  justify-content: space-between;
+  padding: 0 30px;
   opacity: 0;
-}
-.showdeleteTool {
-    float: right;
-    margin-right: 55%;
-    height: 36px;
-    cursor: pointer;
-    opacity: 0;
+  user-select: none;
 }
 .editoptions {
   float: right;
@@ -623,7 +601,10 @@
 .showEditOption:hover .editoptions{
   opacity: 1;
 }
-.topic-type-content:hover .showdeleteTool,.topic-type-content:hover .showaddTool{
+.newStyle:hover .tools,.newStyle:hover .tools{
+  opacity: 1;
+}
+.topic-type-content:hover .tools,.topic-type-content:hover .tools{
   opacity: 1;
 }
 .module {
@@ -645,14 +626,51 @@ import {
   deleteQuestionnaires,
   queryOneQuestionnaire,
   modifyQuestionnaire,
-  checkByQuestionnaireName
+  checkByQuestionnaireName,
+  checkModifyByQuestionnaireName
 } from '@/api/questionnaire_management'
+// import Sortable from 'sortablejs'
 
 export default {
   name: 'questionnaire_management',
-
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        published: 'success',
+        draft: 'info',
+        deleted: 'danger'
+      }
+      return statusMap[status]
+    }
+  },
   data() {
     return {
+      // 拖拽实现所要使用
+      list: null,
+      total: null,
+      listLoading: true,
+      listQuery: {
+        page: 1,
+        limit: 10
+      },
+      sortable: null,
+      oldList: [],
+      newList: [],
+      // 定义大数组
+      allItems:[],
+      allItemsCheck:false,
+      // 有无数据  是否显示
+      hideOrShowPage:false,
+      // 题型显示隐藏
+      asideHideOrShow:true,
+      // 查看详情时禁用input
+      look: 1,//1新建2查看3修改
+      // 按钮显示隐藏
+      newHideOrShow:1,//1新建2查看3修改
+      // 小工具按钮的显示隐藏
+      newModifyLook:1, //1新建2查看3修改
+      // 判断标题
+      checkTitle:false,
       formContainerOpen: '1',
       formContainer: this.$store.state.app.formContainer,
       selectOption_single: [],
@@ -691,15 +709,18 @@ export default {
       hasQuestionnaireName: true, // 判断有无名称
       editQuestionnaireId: '', // 需要修改的问卷模板id
       questionnaireName: '', // 新建问卷名称
+
       questionnaireName1: '', // 修改问卷名称
       singelItems: [], // 单选 所有选项
       multiItems: [], // 多选 所有选项
       fillBlanks: [], // 单行填空 所有选项
       multiBlanks: [], // 多行填空
+      // 校验
       singleCheck: false,
       multiCheck: false,
       blanksCheck: false,
       multiblanksCheck: false,
+
       oneDetails: {
         // 单个问卷详情数据
         modifier: '',
@@ -711,6 +732,53 @@ export default {
   },
 
   methods: {
+    //新建或者修改时创建新模板  
+    createNewModel(num){
+      if(num === 1){
+        this.allItems.push({
+          type: 0,
+          name: '',
+          options: [
+            {
+              content: ''
+            }
+          ]
+        })
+      }else if(num === 2){
+        this.allItems.push({
+          type: 1,
+          name: '',
+          options: [
+            {
+              content: ''
+            }
+          ]
+        })
+      }else if(num === 3){
+        this.allItems.push({
+          type: 2,
+          name: '',
+          options: [
+            {
+              content: ''
+            }
+          ]
+        })
+      }else if(num === 4){
+        this.allItems.push({
+          type: 3,
+          name: '',
+          options: [
+            {
+              content: ''
+            }
+          ]
+        })
+      }
+      this.hideOrShowPage=true
+      console.log(this.allItems)
+    },
+
     handleChangeAcitve(active = ['1']) {
       if (active.length) {
         $('.form-more').text('收起')
@@ -748,123 +816,84 @@ export default {
         pageSize: this.pageInfo.pageSize
       }
     },
-    // 新建单选
-    addSingleCheck() {
-      this.singelItems.push({
-        type: '0',
-        name: '',
-        options: [
-          {
-            content: ''
-          }
-        ]
-      })
+    // 动态设置placeholder
+    setplaceHolder(num) {
+      if(num == 0){
+        return "单选题"
+      }else if(num == 1){
+        return "多选题"
+      }else if(num == 2){
+        return "单行填空"
+      }else if(num == 3){
+        return "多行填空"
+      }
     },
-    // 新建多选
-    addMultiCheck() {
-      this.multiItems.push({
-        type: '1',
-        name: '',
-        options: [
-          {
-            content: ''
-          }
-        ]
-      })
-    },
-    // 新建单行填空
-    addFillBlank() {
-      this.fillBlanks.push({
-        type: '2',
-        name: '',
-        options: [
-          {
-            content: ''
-          }
-        ]
-      })
-    },
-    // 新建多行填空
-    addMultiBlanks() {
-      this.multiBlanks.push({
-        type: '3',
-        name: '',
-        options: [
-          {
-            content: ''
-          }
-        ]
-      })
-    },
+    // 删除数组元素
     removeSingle(index) {
-      this.singelItems.splice(index, 1)
+      this.allItems.splice(index, 1)
     },
+    // 删除单选
     removeRadio(a, index) {
       a.splice(index, 1)
     },
+    // 新建单选项
     addRadio(options) {
       options.push({
-        content: ''
+        content: '',
       })
     },
-    removeMulti(index) {
-      this.multiItems.splice(index, 1)
-    },
+
     removeCheckbox(a, index) {
       a.splice(index, 1)
     },
+    // 新建多选项
     addCheckbox(options) {
       options.push({
         content: ''
       })
     },
-    removeBlanks(index) {
-      this.fillBlanks.splice(index, 1)
+    
+    removeBlank(a, index) {
+      a.splice(index, 1)
     },
-    removeMultiBlanks(index) {
-      this.multiBlanks.splice(index, 1)
+    addBlank(options) {
+      options.push({
+        content: '回答'
+      })
     },
-    // removeBlank(a, index) {
-    //   a.splice(index, 1)
-    // },
-    // addBlank(options) {
-    //   options.push({
-    //     content: '回答'
-    //   })
-    // },
     // 生成问卷
-    makeQuestionnaire(questionnaireName, singelItems, multiItems, fillBlanks, multiBlanks) {
-      if (
-        singelItems.length === 0 &&
-        multiItems.length === 0 &&
-        fillBlanks.length === 0 &&
-        multiBlanks.length === 0
-      ) {
+    makeQuestionnaire(questionnaireName, allItems) {
+     if (this.questionnaireName === '' || this.questionnaireName.split(' ').join('').length === 0) {
+        this.$message.error('请先输入问卷标题！')
+        return
+      } else {
+        checkByQuestionnaireName(this.questionnaireName, '1')
+          .then(res => {
+            if (res.data && res.data.code === 0 && res.data.data.length > 0) {
+              this.$message.error('已存在同名的问卷模板！')
+              return
+            }else{
+              if (allItems.length === 0) {
         this.$message.error('未选择任何类型！')
         return
       } else {
         // 判断是否还有未填项
-        this.hasBlanksOrNot(singelItems, multiItems, fillBlanks, multiBlanks)
+        this.hasBlanksOrNotCreate(allItems)
         if (
-          this.singleCheck === true &&
-          this.multiCheck === true &&
-          this.blanksCheck === true &&
-          this.multiblanksCheck === true
+          this.allItemsCheck===true
         ) {
+          var data = {
+              name:questionnaireName,
+              titles:allItems
+          }
           generateQuestionnaire(
-            questionnaireName,
-            singelItems,
-            multiItems,
-            fillBlanks,
-            multiBlanks
+            data
           ).then(response => {
+            console.log(response)
             if (response.data && response.data.code === 0) {
               this.$message.success(response.data.message)
               this.questionnaireName = ''
-              this.singelItems = []
-              this.multiItems = []
-              this.fillBlanks = []
-              this.multiBlanks = []
+              this.allItems = []
               this.req.modifier = ''
               this.req.name = ''
               this.req.beginTime = ''
@@ -882,6 +911,10 @@ export default {
           return
         }
       }
+            }
+          })
+      }
+      
     },
     // 判断名称是否为空
     checkEditName(questionnaireName) {
@@ -895,62 +928,50 @@ export default {
       }
     },
     // 修改问卷模板
-    editQuestionnaire(
-      editQuestionnaireId,
-      questionnaireName,
-      singelItems,
-      multiItems,
-      fillBlanks,
-      multiBlanks
-    ) {
-      if (
-        singelItems.length === 0 &&
-        multiItems.length === 0 &&
-        fillBlanks.length === 0 &&
-        multiBlanks.length === 0
-      ) {
-        this.$message.error('未选择任何类型！')
+    editQuestionnaire(editQuestionnaireId,questionnaireName,allItems) {
+      if (this.questionnaireName === '' || this.questionnaireName.split(' ').join('').length === 0) {
+        this.$message.error('请先输入问卷标题！')
         return
       } else {
-        // 判断是否还有未填项
-        this.hasBlanksOrNot(singelItems, multiItems, fillBlanks, multiBlanks)
-        if (
-          this.singleCheck === true &&
-          this.multiCheck === true &&
-          this.blanksCheck === true &&
-          this.multiblanksCheck === true
-        ) {
-          modifyQuestionnaire(
-            editQuestionnaireId,
-            questionnaireName,
-            singelItems,
-            multiItems,
-            fillBlanks,
-            multiBlanks
-          ).then(response => {
-            if (response.data && response.data.code === 0) {
-              this.$message.success(response.data.message)
-              this.questionnaireName = ''
-              this.singelItems = []
-              this.multiItems = []
-              this.fillBlanks = []
-              this.multiBlanks = []
-              this.req.modifier = ''
-              this.req.name = ''
-              this.req.beginTime = ''
-              this.req.afterTime = ''
-              this.req.pageNo = 1
-              this.searchByKeyWords(this.req)
-              this.isMainPage = true
-              this.isDetail = false
-            } else {
-              this.$message.error(response.data.message)
+        checkModifyByQuestionnaireName(editQuestionnaireId,questionnaireName)
+          .then(res => {
+            if (res.data.code === 1) {
+              this.$message.error(res.data.message)
+              return
+            }else{
+               if(allItems.length === 0){
+                  this.$message.error('未选择任何类型！')
+                  return
+              }else{
+                this.hasBlanksOrNotCreate(allItems)
+                if(this.allItemsCheck===true){
+                  var data = {
+                      id:editQuestionnaireId,
+                      name:questionnaireName,
+                      titles:allItems
+                  }
+                   modifyQuestionnaire(data)
+                    .then(response => {
+                    if (response.data && response.data.code === 0) {
+                      this.$message.success(response.data.message)
+                      this.questionnaireName = ''
+                      this.allItems = []
+                      this.req.modifier = ''
+                      this.req.name = ''
+                      this.req.beginTime = ''
+                      this.req.afterTime = ''
+                      this.req.pageNo = 1
+                      this.searchByKeyWords(this.req)
+                      this.isMainPage = true
+                      this.isDetail = false
+                    } else {
+                      this.$message.error(response.data.message)
+                    }
+                  })
+                }
+              }
             }
           })
-        } else {
-          this.$message.error('当前页面还有信息未完善！')
-          return
-        }
       }
     },
     // 综合查询
@@ -992,10 +1013,7 @@ export default {
 
     // 查询详情
     checkDetail(id) {
-      this.hasSingle = false
-      this.hasMulti = false
-      this.hasBlanks = false
-      this.hasMultiBlanks = false
+      this.allItems=[]
       this.oneDetails.titles = {
         // 单个问卷详情数据
         modifier: '',
@@ -1010,21 +1028,13 @@ export default {
             this.oneDetails.modifier = response.data.data.modifier
             this.oneDetails.modifyTime = formatDateTime(response.data.data.modifyTime)
             this.oneDetails.titles = response.data.data.titles
-            for (var i = 0; i < response.data.data.titles.length; i++) {
-              if (response.data.data.titles[i].type === 0) {
-                this.hasSingle = true
-              }
-              if (response.data.data.titles[i].type === 1) {
-                this.hasMulti = true
-              }
-              if (response.data.data.titles[i].type === 2) {
-                this.hasBlanks = true
-              }
-              if (response.data.data.titles[i].type === 3) {
-                this.hasMultiBlanks = true
-              }
-            }
-            this.isMainPage = true
+            this.questionnaireName = response.data.data.name
+
+            this.newHideOrShow = 2
+            this.allItems = response.data.data.titles
+            this.asideHideOrShow = false
+            this.hideOrShowPage = true
+            this.isMainPage = false
             this.isDetail = true
           }
         })
@@ -1033,37 +1043,19 @@ export default {
         })
     },
     // 展示修改问卷div
-    showeditDetails(id) {
-      this.singelItems.length = 0
-      this.multiItems.length = 0
-      this.fillBlanks.length = 0
-      this.multiBlanks.length = 0
-      this.singelItems = []
-      this.multiItems = []
-      this.fillBlanks = []
-      this.multiBlanks = []
+    showeditDetails(id){
+      this.allItems=[]
       queryOneQuestionnaire(id).then(response => {
-        if (response.data.code === 0) {
+        if (response.data.code === 0) {//请求成功
           this.questionnaireName = response.data.data.name
-          this.questionnaireName1 = response.data.data.name
           this.editQuestionnaireId = response.data.data.id
-          for (var i = 0; i < response.data.data.titles.length; i++) {
-            if (response.data.data.titles[i].type === 0) {
-              this.singelItems.push(response.data.data.titles[i])
-            } else if (response.data.data.titles[i].type === 1) {
-              this.multiItems.push(response.data.data.titles[i])
-            } else if (response.data.data.titles[i].type === 2) {
-              this.fillBlanks.push(response.data.data.titles[i])
-            } else if (response.data.data.titles[i].type === 3) {
-              this.multiBlanks.push(response.data.data.titles[i])
-            }
-          }
-          this.isMainPage = false
-          this.isDetail = true
+          this.allItems = response.data.data.titles
+          console.log(this.allItems)
         }
       })
     },
-    // 判断页面是否还有未填的项
+    
+    // 修改时判断页面是否还有未填的项
     hasBlanksOrNot(singelItems, multiItems, fillBlanks, multiBlanks) {
       this.singleCheck = false
       this.multiCheck = false
@@ -1088,7 +1080,6 @@ export default {
       } else {
         this.singleCheck = true
       }
-
       if (multiItems.length > 0) {
         for (var k = 0; k < multiItems.length; k++) {
           if (multiItems[k].name !== '' && multiItems[k].options.length !== 0) {
@@ -1133,6 +1124,40 @@ export default {
         }
       } else {
         this.multiblanksCheck = true
+      }
+    },
+    // 新建或者修改时判断页面是否还有未填的项
+    hasBlanksOrNotCreate(allItems){
+      this.allItemsCheck = false
+      if (allItems.length > 0) {
+        for (var i = 0; i < allItems.length; i++) {
+          if(allItems[i].name !==''){
+            if(allItems[i].type===0||allItems[i].type===1){
+              if (allItems[i].options.length !== 0) {
+                for (var j = 0; j < allItems[i].options.length; j++) {
+                  if (allItems[i].options[j].content === '') {
+                    this.allItemsCheck = false
+                    this.$message.error('当前页面还有信息未完善！')
+                    return
+                  } else {
+                    this.allItemsCheck = true
+                  }
+                }
+              } else {
+                this.allItemsCheck = false
+                this.$message.error('当前页面还有信息未完善！')
+                return
+              }
+            }
+          }else{
+            this.allItemsCheck = false
+            this.$message.error('当前页面还有信息未完善！')
+            return
+          }
+        }
+      } else {
+        this.allItemsCheck = false
+        return
       }
     },
     // 删除
@@ -1183,35 +1208,45 @@ export default {
     checkTitleIsNullOrNot() {
       if (this.questionnaireName === '' || this.questionnaireName.split(' ').join('').length === 0) {
         this.$message.error('请先输入问卷标题！')
+        return
       } else {
         checkByQuestionnaireName(this.questionnaireName, '1')
           .then(res => {
             if (res.data && res.data.code === 0 && res.data.data.length > 0) {
               this.$message.error('已存在同名的问卷模板！')
               return
-            } else {
-              this.isMainPage = false
-              this.isDetail = false
             }
           })
       }
-    }
+    },
   },
 
   mounted() {
     this.formContainer()
     this.handleChangeAcitve()
-    this.searchByKeyWords(this.req)
+    this.searchByKeyWords(this.req);
+    this.$dragging.$on('dragged', ({ value }) => {
+      console.log(value.item)
+      console.log(value.list)
+      console.log(value.otherData)
+      this.allItems = value.list
+      console.log(this.allItems)
+    })
+    this.$dragging.$on('dragend', () => {
+        
+    })
   },
 
-  watch: {},
-
-  components: {},
+  watch: {
+  },
+  components: {
+  },
 
   mixins: [],
 
   vuex: {},
 
-  created() {}
+  created() {
+  },
 }
 </script>
