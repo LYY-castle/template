@@ -79,3 +79,14 @@ export function modifyQuestionnaire(data) {
     }
   })
 }
+// 修改模板时检验标题名是否重复
+export function checkModifyByQuestionnaireName(editQuestionnaireId,questionnaireName){
+  return request({
+    url: '/questionnaire/templatename',
+    method: 'get',
+    params: {
+      id: editQuestionnaireId,
+      name: questionnaireName,
+    }
+  })
+}

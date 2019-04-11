@@ -668,12 +668,13 @@ export default {
     },
     // 修改问卷模板
     editQuestionnaire(editQuestionnaireId,questionnaireName,allItems) {
+      console.log(editQuestionnaireId,questionnaireName)
       if (this.questionnaireName === '' || this.questionnaireName.split(' ').join('').length === 0) {
         this.$message.error('请先输入问卷标题！')
         return
       } else {
         checkModifyByQuestionnaireName(editQuestionnaireId,questionnaireName)
-          .then(res => {
+        .then(res => {
             if (res.data.code === 1) {
               this.$message.error(res.data.message)
               return
