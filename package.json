@@ -18,6 +18,7 @@
     "test": "npm run lint"
   },
   "dependencies": {
+    "awe-dnd": "^0.3.4",
     "axios": "0.17.1",
     "echarts": "^4.1.0",
     "element-china-area-data": "^4.1.0",
