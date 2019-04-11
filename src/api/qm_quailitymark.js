@@ -34,7 +34,7 @@ export function getContactByGradeId(req) {
 /** 通过客户id获取客户详情 */
 export function querycustomerbyid(req) {
   return request({
-    url: '/customer/querycustomerbyid',
+    url: '/customer/customerinfos',
     method: 'get',
     params: req
   })
