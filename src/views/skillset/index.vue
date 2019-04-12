@@ -674,7 +674,6 @@ export default {
     this.handleChangeActive1()
     this.handleChangeActive2()
     this.searchInfo(this.formInline)
-    console.log(window.screen.width, 'width')
     if (window.screen.width >= 1600) { this.autosize = '50%' }
     queryDepts().then(response => {
       const map = {
@@ -866,9 +865,9 @@ export default {
       this.resetStaffInfo()
       const req = {}
       req.departName = data.departName
-      req.departId = data.departId
+      req.departId = data.id
       this.selectStaffItem.departName = data.departName
-      this.selectStaffItem.departId = data.departId
+      this.selectStaffItem.departId = data.id
       this.searchStaffInfo(req, 1)
       // if (req.departId === null) {
       //   this.$message('部门id为空默认查询所有')
