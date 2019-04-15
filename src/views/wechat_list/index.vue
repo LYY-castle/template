@@ -163,49 +163,23 @@
 
     <div class="elaside1"  style="position:relative;height:78vh;overflow-x:hidden;background:#FBFBFB;float:right;width:44%;box-shadow: 0 0 10px 0 rgba(39,48,69,0.10);border-radius: 2px;">
       <el-tabs v-model="activeName" type="card" style="background: #F3F5FA;">
-        <el-tab-pane label="基本信息" name="1" class="userinfo-container">
-          <el-row :gutter="20" style="height:120px;padding:24px 20px;" v-if="!isRecruit">
-            <el-col :span="5" class="font12 nowrap">
-              <span>性别：</span>
-              <b style="color:#020202;" v-text="showSex(customerInfo.sex)" :title="showSex(customerInfo.sex)"></b>
+        <el-tab-pane label="客户信息" name="1" class="userinfo-container">
+          <el-row :gutter="20" style="height:120px;padding:24px 20px;">
+            <el-col :span="6" class="font12">
+              <span>客户姓名：</span>
+              <b style="color:#020202;">{{customerInfo.customerName}}</b>
             </el-col>
-            <el-col :span="7" class="font12 nowrap">
-              <span>身份证：</span>
-              <b style="color:#020202;" v-text="customerInfo.idNumber" :title="customerInfo.idNumber"></b>
+            <el-col :span="6" class="font12">
+              <span>手机号码：</span>
+              <b style="color:#020202;">{{this.customerPhone}}</b>
             </el-col>
-            <el-col :span="6" class="font12 nowrap">
-              <span>持卡类型：</span>
-              <b style="color:#020202;" v-text="customerInfo.bankCardType" :title="customerInfo.bankCardType"></b>
-            </el-col>
-            <el-col :span="6" class="font12 nowrap">
-              <span>卡号：</span>
-              <b style="color:#020202;" v-text="customerInfo.bankCard" :title="customerInfo.bankCard"></b>
-            </el-col>
-            <el-col :span="12" class="font12 nowrap">
-              <span>地址：</span>
-              <b style="color:#020202;" v-text="customerInfo.resideAddress" :title="customerInfo.resideAddress"></b>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20" style="height:120px;padding:24px 20px;" v-if="isRecruit">
-            <el-col :span="6" class="font12 nowrap">
-              <span>性别：</span>
-              <b style="color:#020202;" v-text="showSex(customerInfo.sex)" :title="showSex(customerInfo.sex)"></b>
-            </el-col>
-            <el-col :span="6" class="font12 nowrap">
-              <span>身份证：</span>
-              <b style="color:#020202;" v-text="customerInfo.idNumber" :title="customerInfo.idNumber"></b>
-            </el-col>
-            <el-col :span="6" class="font12 nowrap">
-              <span>来源：</span>
-              <b style="color:#020202;" v-text="customerInfo.source" :title="customerInfo.source"></b>
-            </el-col>
-            <el-col :span="6" class="font12 nowrap">
-              <span>备注：</span>
-              <b style="color:#020202;" v-text="customerInfo.comment" :title="customerInfo.comment"></b>
-            </el-col>
-            <el-col :span="12" class="font12 nowrap">
-              <span>地址：</span>
-              <b style="color:#020202;" v-text="customerInfo.resideAddress" :title="customerInfo.resideAddress"></b>
+            <el-col :span="6" class="font12 description-hide" v-if="!(item === 'customerName' || item === 'mobile')" v-for="(item,index) in customerColumnInfos">
+              <span >
+                {{item === 'customerId' ? '客户编号' : item === 'sex' ? '性别' : item === 'mobile' ? '联系电话' : item === 'province' ? '所在省' : item === 'city' ? '所在市' : item === 'district' ? '所在县/区' : item === 'detail' ? '详细地址' : item === 'score' ?'客户评分' : item === 'remark' ? '备注' : item === 'idNumber' ? '身份证' : item === 'address' ? '客户地址' : ''}}
+              </span>
+              <el-popover trigger="hover" placement="bottom" :content="showContent(item)">
+                <b style="color:#020202;" :class="item" slot="reference">{{item === 'customerId' ? customerInfo.customerId : item === 'sex' ? showSex(customerInfo.customerSex): item === 'mobile' ? this.customerPhone : item === 'province' ? customerInfo.province: item === 'city' ? customerInfo.city : item === 'district' ? customerInfo.district: item === 'detail' ? customerInfo.detail : item === 'score' ? customerInfo.score : item === 'remark' ? customerInfo.remark : item === 'idNumber'? customerInfo.idNo : item === 'address' ? customerInfo.address : ''}}</b>
+              </el-popover>
             </el-col>
           </el-row>
           <el-row>
@@ -361,39 +335,6 @@
         </el-tab-pane>
         <el-tab-pane label="任务详情" name="4" style="padding:20px 20px 0 20px;">
           <el-row>
-            <el-form :inline="true" size="mini">
-              <div style="height:48px;" class="fl">
-                <el-form-item label="任务状态：">
-                  <el-radio v-model="taskRadio" label="2" name="2" @change="setSendMessage(taskRadio)" class="radio-success"><span>成功</span></el-radio>
-                  <el-radio v-model="taskRadio" label="3" name="3" @change="setSendMessage(taskRadio)" class="radio-fail"><span>失败</span></el-radio>
-                  <el-radio v-model="taskRadio" label="1" name="1" @change="setSendMessage(taskRadio)" v-show="isLastContactTime===false" class="radio-order"><span>预约</span></el-radio>
-                </el-form-item>
-              </div>
-              <div v-show="this.taskRadio === '1'" class="fl">
-                <span style="color:red;line-height:34px;">*</span>
-                <el-form-item label="预约日期：" class="working-date-form">
-                  <b style="font-size: 16px;color: #333333;letter-spacing: 0;text-align: left;">T + </b>
-                  <el-input style="width:60px" type="text" v-model="addDays" onkeyup="if(! /^d+$/.test(this.addDays)){this.addDays='';}"></el-input>
-                </el-form-item>
-                <el-form-item class="time-picker-form">
-                  <el-date-picker
-                    v-model="appointTime"
-                    placeholder="请选择日期"
-                    value-format="yyyy-MM-dd HH:mm:ss"
-                    default-time="00:00:00"
-                    type="datetime" style="width:180px">
-                  </el-date-picker>
-                </el-form-item>
-              </div>
-              <el-col :span="8" style="height:48px;line-height:34px;" v-if="showSendMessage === true && campaignType !== 'RECRUIT'">
-                <el-checkbox v-model="sendMessageOrNot" checked="checked">发送支付短信</el-checkbox>
-              </el-col>
-              <!-- <el-col :span="8" style="height:48px;line-height:34px;" v-if="showAutoDial===true">
-                <el-checkbox checked="checked" v-model="autoDialNext">完成后显示下一个客户</el-checkbox>
-              </el-col> -->
-            </el-form>
-          </el-row>
-          <el-row>
             <el-form>
               <el-form-item label="话后小结：" style="margin-bottom:12px;text-align:left;">
                 <el-cascader
@@ -402,11 +343,32 @@
                   v-model='selectedSummarys'
                   :options="nodulesTree"
                   filterable
-                  :expand-trigger="hover"
                   :props="summaryTreeProps"
+                  @change="handleNoduleChange"
                   :show-all-levels="false">
                 </el-cascader>
               </el-form-item>
+              <el-col style="height:48px;line-height:34px;margin-top:-45px;" v-if="showSendMessage === true && campaignType !== 'RECRUIT' && hasProductInfo === true">
+                <el-checkbox v-model="sendMessageOrNot" checked="checked">发送支付短信</el-checkbox>
+              </el-col>
+            </el-form>
+            <el-form style="text-align:left;" :inline="true" v-show="this.selectedSummarys[0] === '3'">
+              <el-form-item label="预约日期：" class="working-date-form">
+                <span style="color:red;line-height:34px;">*</span>
+                <b style="font-size: 16px;color: #333333;letter-spacing: 0;text-align: left;">T + </b>
+                <el-input style="width:60px" type="text" v-model="addDays" onkeyup="if(! /^d+$/.test(this.addDays)){this.addDays='';}"></el-input>
+              </el-form-item>
+              <el-form-item class="time-picker-form">
+                <el-date-picker
+                  v-model="appointTime"
+                  placeholder="请选择日期"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  default-time="00:00:00"
+                  type="datetime" style="width:200px">
+                </el-date-picker>
+              </el-form-item>           
+            </el-form>
+            <el-form>
               <el-form-item>
                 <el-col style="text-align:left;">
                   <b class="font12" style="color:#020202;">小结备注：</b>
@@ -603,6 +565,12 @@
           line-height:30px;
           text-align:left;
         }
+        .description-hide{
+          text-overflow: ellipsis;
+          white-space:nowrap;
+          overflow: hidden;
+        }
+
       }
     }
     .el-menu-item{
@@ -741,7 +709,6 @@ import {
   sendMsgTo,
   queryRecords,
   generateRecordId,
-  batchCreatProduct,
   addMoreOrder,
   sendMessageToCustomer,
   updateTaskStatus,
@@ -814,7 +781,6 @@ export default {
       isLastContactTime: false, // 判断是否是最后一次拨打次数
       appointTime: '', // 预约时间
       taskRadio: '', // 任务状态
-      customerName: '', // 对话框中客户姓名
       myMessages: '', // 发送的消息
       activeTab: '', // 产品展示项
       products: [], // 活动下的产品
@@ -826,8 +792,11 @@ export default {
       campaignId: '',
       customerId: '',
       customerPhone: '',
-      isRecruit: false, // 活动类型的判断
+      customerName: '', // 对话框中客户姓名
+      idNumber: '',
       customerInfo: {}, // 客户基本信息
+      customerColumnInfos: [], // 用来展示的客户字段
+      isRecruit: false, // 活动类型的判断
       contactRecord: [], // 接触记录信息
       activeName: '1', // 折叠板默认打开项
       msgIds: [],
@@ -850,6 +819,31 @@ export default {
     }
   },
   methods: {
+    // 小结级联选择事件
+    handleNoduleChange(arr) {
+      console.log(arr)
+      if (arr[0] === '1') {
+        this.showSendMessage = true
+      } else if (arr[0] === '3') {
+        this.showSendMessage = false
+        this.addDays = '1'
+      } else {
+        this.showSendMessage = false
+        this.sendMessage = false
+      }
+    },
+    showContent(item) {
+      switch (item) {
+        case 'customerId':return this.customerInfo.customerId
+        case 'sex': return this.showSex(this.customerInfo.customerSex)
+        case 'mobile': return this.customerPhone
+        case 'address': return this.customerInfo.address
+        case 'score': return this.customerInfo.score
+        case 'idNumber': return this.customerInfo.idNo
+        case 'remark': return this.customerInfo.remark
+        default : return ''
+      }
+    },
     hideEmoji(e) {
       var emoji_div = document.getElementById('emoji_div')
       if (emoji_div) {
@@ -915,29 +909,28 @@ export default {
     },
     // 完成任务
     completeTask() {
-      if (this.taskRadio === '') {
-        this.$message.error('未选择任务状态！')
-        return false
-      } else if (this.taskRadio === '1' && this.appointTime === '') {
+      const taskStatus = this.selectedSummarys[0] === '1' ? '2' : this.selectedSummarys[0] === '2' ? '3' : this.selectedSummarys[0] === '3' ? '1' : ''
+      if (this.selectedSummarys[0] === '3' && this.appointTime === '') {
         this.$message.error('未选择预约时间！')
         return false
       } else if (
-        this.taskRadio === '1' &&
+        this.selectedSummarys[0] === '3' &&
         this.appointTime < formatDateTime(new Date())
       ) {
         this.$message.error('预约时间不能小于当前时间！')
         return false
-      } else if (this.selectedSummarys.length === 0) {
+      } else if (this.selectedSummarys.length === 0 || taskStatus === '') {
         this.$message.error('未选择任务小结！')
         return false
       } else {
         // 生成完整接触记录及小结
-        // 判断任务状态taskRadio  2：成功 3：失败  1：预约
-        if (this.taskRadio === '2' && this.campaignType !== 'RECRUIT') {
-          if (this.sumTotal < 0) {
-            this.$message.error('未选择预购产品！')
+        // 判断任务状态 2：成功 3：失败  1：预约
+        if (this.selectedSummarys[0] === '1' && this.campaignType !== 'RECRUIT' && this.hasProductInfo === true) {
+          if (this.sumTotal <= 0) {
+            this.$message.error('未选择产品或产品库存不足！')
             return false
           }
+          // 生成订单逻辑
           const createInfo = {}
           createInfo.campaignId = this.campaignId // 活动id
           createInfo.taskId = this.taskId // 任务id
@@ -946,142 +939,74 @@ export default {
           createInfo.customerName = this.customerInfo.customerName // 客户姓名
           createInfo.customerPhone = this.customerPhone // 客户手机
           createInfo.totalAmount = this.sumTotal
-          // 创建产品逻辑
-          const productTempInfo = []
+
+          const productInfos = []
           for (let i = 0; i < this.products.length; i++) {
-            if (this.products[i].number > 0) {
-              const productInfo = this.products[i]
+            const productInfo = this.products[i]
+            if (productInfo.number > 0) {
               const result = {}
-              result.description = productInfo.description
-              result.price = productInfo.price
-              result.number = productInfo.number
-              result.productName = productInfo.productName
               result.productId = productInfo.productId
-              result.productTypeName = productInfo.productTypeName
-              result.status = productInfo.status
-              // 回复选择情况
-              const propertyInfos = []
-              // if (productInfo.propertyInfos !== null && productInfo.propertyInfos.length > 0) {
-              if (productInfo) {
-                for (let j = 0; j < productInfo.length; j++) {
-                  const obj = productInfo[j]
-                  const propertyInfo = {}
-                  propertyInfo.isRequired = obj.isRequired
-                  propertyInfo.mark = obj.mark
-                  propertyInfo.propertyKey = obj.propertyKey
-                  propertyInfo.propertyLength = obj.propertyLength
-                  propertyInfo.propertyName = obj.propertyName
-                  propertyInfo.propertyType = obj.propertyType
-                  switch (obj.templateType) {
-                    case 'radio':
-                      propertyInfo.propertyValue = obj.propertyValueRadio
-                      break
-                    case 'checkbox':
-                      if (typeof obj.propertyValueCheckbox !== 'undefined' && obj.propertyValueCheckbox !== '') {
-                        propertyInfo.propertyValue = '[' + obj.propertyValueCheckbox.join(',') + ']'
-                      } else {
-                        propertyInfo.propertyValue = '[]'
-                      }
-                      break
-                    case 'select':
-                      propertyInfo.propertyValue = obj.propertyValueSelect
-                      break
-                    default:
-                      propertyInfo.propertyValue = obj.propertyValue
-                      break
-                  }
-                  propertyInfo.showOrInput = obj.showOrInput
-                  propertyInfo.sort = obj.sort
-                  propertyInfo.templateType = obj.templateType
-                  propertyInfos.push(propertyInfo)
-                }
-              }
-              result.propertyInfos = propertyInfos
-              productTempInfo.push(result)
+              result.productName = productInfo.productName
+              result.productNum = typeof (productInfo.number) === 'undefined' ? 0 : productInfo.number
+              productInfos.push(result)
             }
           }
-          // 请求后台处理创建订单
-          batchCreatProduct(productTempInfo).then(res => {
-            if (res.data.code === 0) {
-              for (let a = 0; a < productTempInfo.length; a++) {
-                productTempInfo[a].productId = res.data.data[a]
-              }
-              // 拼接订单信息
-              const productInfos = []
-              for (let b = 0; b < productTempInfo.length; b++) {
-                const productInfo = {}
-                productInfo.productId = productTempInfo[b].productId
-                productInfo.productName = productTempInfo[b].productName
-                productInfo.productNum = productTempInfo[b].number
-                productInfo.productId = productTempInfo[b].productId
-                productInfo.productTypeName = productTempInfo[b].productTypeName
-                productInfos.push(productInfo)
-              }
-              createInfo.productInfos = productInfos
-              // 生成订单逻辑
-              addMoreOrder(createInfo).then(response => {
-                const vm = this
-                if (response.data.code === 0) {
-                  vm.customerNote = ''
-                  vm.products = []
-                  vm.sumTotal = 0
-                  vm.sumInfo = new Map()
+          createInfo.productInfos = productInfos
+          addMoreOrder(createInfo).then(response => {
+            if (response.data.code === 0) {
+              vm.customerNote = ''
+              vm.products = []
+              vm.sumTotal = 0
+              vm.sumInfo = new Map()
 
-                  // 成功生成订单
-                  // 将产品库存减掉  调用修改产品接口
-                  var map = {}
-                  var arr = []
-                  for (var n = 0; n < createInfo.productInfos.length; n++) {
-                    var params = {}
-                    params.productId = createInfo.productInfos[n].productId
-                    params.productNum = createInfo.productInfos[n].productNum
-                    arr.push(params)
-                  }
-                  map.productUpdateNumInfoList = arr
-                  // 修改产品库存
-                  modifyProduct(map)
+              // 成功生成订单
+              // 将产品库存减掉  调用修改产品接口
+              var map = {}
+              var arr = []
+              for (var n = 0; n < createInfo.productInfos.length; n++) {
+                var params = {}
+                params.productId = createInfo.productInfos[n].productId
+                params.productNum = createInfo.productInfos[n].productNum
+                arr.push(params)
+              }
+              map.productUpdateNumInfoList = arr
+              // 修改产品库存
+              modifyProduct(map)
 
-                  // 判断是否发送短信
-                  if (this.sendMessage === true) {
-                    sendMessageToCustomer(
-                      response.data.data,
-                      this.customerInfo.mobile
-                    )
-                  }
-                  vm.$message({
-                    message: response.data.message,
-                    type: 'success',
-                    duration: 1000
-                  })
-                  sessionStorage.removeItem('isDialTask')
-                  sessionStorage.removeItem('recordId')
-                  this.$root.eventHub.$emit('DISABLED_DIAL', '')// 发给电话条，看是否需要更改图标
-                } else {
-                  vm.$message({
-                    message: response.data.message,
-                    type: 'error'
-                  })
-                  return
-                }
+              // 判断是否发送短信
+              if (this.sendMessage === true) {
+                sendMessageToCustomer(
+                  response.data.data,
+                  this.customerPhone
+                )
+              }
+              this.$message({
+                message: response.data.message,
+                type: 'success',
+                duration: 1000
               })
+              sessionStorage.removeItem('isDialTask')
+              sessionStorage.removeItem('recordId')
+              this.$root.eventHub.$emit('DISABLED_DIAL', '')// 发给电话条，看是否需要更改图标
             } else {
-              this.$message.error(res.data.message)
+              this.$message({
+                message: response.data.message,
+                type: 'error'
+              })
               return
             }
           })
-          // } else {
-          //   this.$message.error('订单还有未填的必填项')
-          //   return
-          // }
         }
+        var selectedSummarys2 = []
+        selectedSummarys2.push(this.selectedSummarys[this.selectedSummarys.length - 1])
         // 选择失败、预约 或 成功但没有产品(如招聘)的情况
         // 修改任务状态
-        updateTaskStatus(this.taskId, this.taskRadio, this.appointTime).then(response => {
+        updateTaskStatus(this.taskId, taskStatus, this.appointTime).then(response => {
           if (response.data.code === 0) {
             this.getCustomerDetail()
             // console.log('成功修改任务状态')
             // 修改小结备注
-            updateRecordInfo(this.sessionId, this.taskRadio, this.selectedSummarys, this.summary_description)
+            updateRecordInfo(this.sessionId, taskStatus, selectedSummarys2, this.summary_description)
               .then(response1 => {
                 if (response1.data.code === 0) {
                   // console.log('成功修改小结')
@@ -1642,7 +1567,6 @@ export default {
     },
     // 展示客户信息（基本信息、接触记录、相关产品、任务状态、话后小结)
     showCustomerInfos(taskId, campaignId, customerId, customerPhone) {
-      console.log(taskId)
       // 根据任务id status判断是否需要创建一个sessionId（recordId）
       queryContactRecordByTaskIdandStatus(taskId).then(res5 => {
         if (res5.data.data && res5.data.data.length !== 0) {
@@ -1658,7 +1582,14 @@ export default {
       })
       // 判断活动类型
       getCampaignType(campaignId).then(res1 => {
-        if (res1.data.code === 0) {
+        this.customerColumnInfos = []
+        if (res1.data.code === 0 && res1.data.data.customerColumnInfos) {
+          for (let i = 0; i < res1.data.data.customerColumnInfos.length; i++) {
+            this.customerColumnInfos.push(res1.data.data.customerColumnInfos[i].customerColumn)
+          }
+          this.customerColumnInfos.push({
+            customerColumn: 'customerName'
+          }, { customerColumn: 'customerPhone' })
           this.campaignType = res1.data.data.campaignTypeInfo.code
           if (this.campaignType === 'RECRUIT') {
             this.isRecruit = true
@@ -1672,6 +1603,23 @@ export default {
           if (response1.data.code === 0) {
             this.customerInfo = response1.data.data
             this.customerName = response1.data.data.customerName
+            this.idNumber = response1.data.data.idNo
+            const customerLinks = response1.data.data.customerLinks
+            const customerAddress = response1.data.data.customerAddresses
+            if (customerLinks.length > 0) {
+              for (var i = 0; i < customerLinks.length; i++) {
+                if (customerLinks[i].linkType === 0 && customerLinks[i].isUsually === 1) {
+                  this.customerPhone = customerLinks[i].linkValue
+                }
+              }
+            }
+            if (customerAddress.length > 0) {
+              for (var j = 0; j < customerAddress.length; j++) {
+                if (customerAddress[j].isDefault === 1) {
+                  this.customerInfo.address = customerAddress[j].province + customerAddress[j].city + customerAddress[j].district + customerAddress[j].detail
+                }
+              }
+            }
           }
         })
       // 判断是否有接触记录信息

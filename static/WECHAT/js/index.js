@@ -1,5 +1,6 @@
 var portalUrl = "/api/v1";//远程测试
 
+
 $.ajaxSetup({
   headers:{
     'Authorization':'Bearer eyJhbGciOiJIUzUxMiJ9.eyJhZ2VudGlkIjoiMTAwMjkiLCJjcmVhdGVUaW1lIjoxNTQ2NDk4NzEzOTc4LCJleHBpcmF0aW9uVGltZSI6NzIwMDAwMCwicm9sZXMiOltdLCJpcCI6IlRodSBKYW4gMDMgMTQ6NTg6MzMgQ1NUIDIwMTkiLCJzdGFmZk5hbWUiOiJJdmVyc29uTGlubiIsImxhYmVsIjoid2lzZTJjIiwiZXhwIjoxNTQ2NTA1OTEzfQ.AR54TQt7jX50M1qvw-Br8W4KKu9DtWuBNvqvlJlEyMuBvPgPy3wF0jWZITMGtRDL8oIADyEClMFKCTZULncvjg'
@@ -64,7 +65,7 @@ function submitBindMobile(){
     // 发送请求绑定手机号与openid
     $.ajax({
       url: portalUrl + '/customer/bindMobileWithOpenid',
-      data:JSON.stringify({"openid":openid,"mobile":$('#customerPhone').val()+''}),
+      data:JSON.stringify({"openId":openid,"customerPhone":$('#customerPhone').val()+''}),
       dataType:'json',
       type:'post',
       beforeSend: function(request) {

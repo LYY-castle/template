@@ -62,17 +62,17 @@ export default {
 @import './emoji-sprite.scss';
 
 .emoji {
-  width: 95%;
+  width: 100%;
   height: 230px;
   bottom: 30px;
   background: #fff;
   z-index: 10;
-  padding: 10px;
+  padding: 10px 0;
   margin-right: 10px;
   .emoji-controller {
     height: 36px;
     overflow: hidden;
-    margin: -15px -35px;
+    margin: -15px 0;
     li {
       list-style: none;
       float: left;
@@ -98,7 +98,7 @@ export default {
     overflow-y: auto;
     overflow-x: hidden;
     position: relative;
-    margin: 20px -30px;
+    margin: 20px 0;
     li {
       font-size: 0;
       padding: 5px;

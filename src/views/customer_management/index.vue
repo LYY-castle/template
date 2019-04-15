@@ -486,19 +486,19 @@
       append-to-body>
       <div>
         <el-form size="small" :rules="rule" :model="customerReverseDetail.customer" ref="customerDetail" label-width="100px">
-          <el-form-item label="客户姓名" prop="customerName" style="width:50%">
+          <el-form-item label="客户姓名" style="width:50%">
             <el-input v-model="customerReverseDetail.customer.customerName" size="small" placeholder="上限50字符" maxlength="50"></el-input>
           </el-form-item>
-          <el-form-item label="客户性别" prop="customerSex">
+          <el-form-item label="客户性别">
             <el-radio-group v-model="customerReverseDetail.customer.customerSex" size="small">
               <el-radio-button label='0' border>男</el-radio-button>
               <el-radio-button label='1' border>女</el-radio-button>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="身份证" prop="idNo"  style="width:50%">
+          <el-form-item label="身份证"  style="width:50%">
             <el-input v-model="customerReverseDetail.customer.idNo" size="small" placeholder="上限50字符" maxlength="50" @change="autoFill()"></el-input>
           </el-form-item>
-          <el-form-item label="出生日期" prop="birthday">
+          <el-form-item label="出生日期">
             <el-date-picker
               v-model="customerReverseDetail.customer.birthday"
               size="small"
@@ -575,7 +575,10 @@
               <i class="el-icon-plus" circle title="点击添加一个客户地址" @click="addAddress1()"></i>
             </div>
           </el-form-item>
-          <el-form-item label="联系信息">
+          <el-form-item>
+            <span slot="label">
+              <span style="color:#f56c6c">*</span> 联系信息
+            </span>
             <el-table border empty-text="请添加数据" :data="customerReverseDetail.customerLinks">
               <el-table-column align="center" label="联系方式">
                 <template slot-scope="scope">

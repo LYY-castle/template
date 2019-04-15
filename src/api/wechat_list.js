@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function queryCustomerInfo(customerId) {
   return request({
-    url: '/customer/querycustomerbyid',
+    url: '/customer/customerinfos',
     method: 'get',
     params: {
       customerId: customerId
