@@ -387,7 +387,7 @@
                   </el-form-item>
                 </el-row>
                 <el-form-item v-if="fieldType">
-                  <el-button type="primary" @click="addFieldTag();screeningFormOpen='1'">确定</el-button>
+                  <el-button type="primary" @click="addFieldTag();screeningFormOpen=['1']">确定</el-button>
                   <el-button type="primary" plain @click="cancelAddFieldTag">取消</el-button>
                 </el-form-item>
               </el-form>
@@ -975,7 +975,7 @@ export default {
       formContainerOpen: '1',
       // 名单抽取
       extractVisible: false,
-      screeningFormOpen: '',
+      screeningFormOpen: [],
       addScreeningVisible: false,
       allBatch: [],
       allFieldName: [],

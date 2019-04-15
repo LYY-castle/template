@@ -134,7 +134,6 @@ export default {
   name: 'customer_management',
   data() {
     return {
-      formContainerOpen: '1',
       // 名单抽取
       extractVisible: false,
       screeningFormOpen: '',
@@ -317,24 +316,9 @@ export default {
     }
   },
   mounted() {
-    this.handleChangeAcitve()
     this.searchCustomer(this.req)
   },
   methods: {
-    handleChangeAcitve(active = ['1']) {
-      if (active.length) {
-        $('.form-more').text('收起')
-      } else {
-        $('.form-more').text('更多')
-      }
-    },
-    handleChangeAcitve2(active = ['1']) {
-      if (active.length) {
-        $('.form-more2').text('收起')
-      } else {
-        $('.form-more2').text('更多')
-      }
-    },
     // 名单抽取
     checkCustomForm() {
       if (!this.customRequirement.propertyCode) {

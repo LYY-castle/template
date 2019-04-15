@@ -27,7 +27,7 @@
                     </el-form-item>
                     <el-form-item style="float:right;margin-right:0;" >
                       <el-button type="primary" size="mini" style="display:inline;float:right;width:70px;" v-if="!islogin" @click="agentLogin()">登入</el-button>
-                      <el-button type="primary" size="mini" style="display:inline;float:right;width:70px;" v-if="islogin" @click="agentLogoff()">登出</el-button>
+                      <el-button type="primary" size="mini" :disabled="!isBusy" style="display:inline;float:right;width:70px;" v-if="islogin" @click="agentLogoff()">登出</el-button>
                     </el-form-item>
                   </div>
                 </el-form>
@@ -38,13 +38,13 @@
                 <img src="../../../../static/images/nologin_state.png" title="未登录" class="img-all icon-container" v-if="agentState1">
                 <img src="../../../../static/images/busy_normal.png" title="示忙"  class="img-all icon-container" v-else-if="agentState2">
                 <img src="../../../../static/images/agent_stat38_all_ready.png" title="就绪"  class="img-all icon-container" v-else-if="agentState3">
-                <img src="../../../../static/images/back_state.png" title="后处理"  class="img-all icon-container" v-else-if="agentState4">
+                <img src="../../../../static/images/back_state.png" title="话后"  class="img-all icon-container" v-else-if="agentState4">
                 <img src="../../../../static/images/auto_dial_all_ready.png" title="外呼就绪"  class="img-all icon-container" v-else-if="agentState5">
                 <img src="../../../../static/images/auto_dial_busy.png" title="外呼占用"  class="img-all icon-container" v-else-if="agentState6">
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="0" :disabled="lockChange">就绪</el-dropdown-item>
                   <el-dropdown-item command="13" :disabled="lockChange">示忙</el-dropdown-item>
-                  <el-dropdown-item command="14" :disabled="lockChange">后处理</el-dropdown-item>
+                  <el-dropdown-item command="14" :disabled="lockChange">话后</el-dropdown-item>
                   <el-dropdown-item command="-5" :disabled="lockChange">外呼就绪</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -129,7 +129,6 @@
             <br> -->
           </div>
           <!-- <span style="float:left" class="line"></span> -->
-
         </div>
         <span style="float:left" class="line"></span>
         <div style="margin-right:2px;position: absolute;right:0" v-if="havesoftphone">
@@ -356,7 +355,7 @@ export default {
       agentState1: true, // 未登录
       agentState2: false, // 就绪
       agentState3: false, // 示忙
-      agentState4: false, // 后处理
+      agentState4: false, // 话后
       agentState5: false, // 外呼就绪
       agentState6: false, // 外呼占用
       answerCall: false,
@@ -409,7 +408,8 @@ export default {
       wechatState: null,
       msgNum_wechat1: null, // 微信消息条数
       customerInfo: {},
-      show_wechat: `${process.env.SHOW_WECHAT}`
+      show_wechat: `${process.env.SHOW_WECHAT}`,
+      isBusy: true
     }
   },
   components: {
@@ -428,6 +428,9 @@ export default {
     },
     msgNum_wechat() {
       return this.$store.state.app.msgNum_wechat
+    },
+    keepReady() {
+      return this.$store.state.ctiData.keepReady
     }
   },
   methods: {
@@ -627,7 +630,7 @@ export default {
     },
     agentsetACW() {
       localStorage.setItem('autocall', false)
-      if (this.telephoneState === '后处理') {
+      if (this.telephoneState === '话后') {
         return
       } else {
         cti.setAgentACW()
@@ -641,23 +644,32 @@ export default {
         cti.setAgentDialInFree()
       }
     },
+    changeKeepReady(val) {
+      this.$store.commit('SET_KEEPREADY', val)
+    },
     changeState(val) {
+      this.changeKeepReady('')
       if (this.islogin) {
         this.formInline.region = val
         switch (this.formInline.region) {
           case '0':
+            this.isBusy = false
             this.agentReady()
             break
           case '13':
+            this.isBusy = true
             this.agentnotReady()
             break
           case '14':
+            this.isBusy = false
             this.agentsetACW()
             break
           case '-5':
+            this.isBusy = false
             this.agentSetDialInFree()
             break
           default:
+            this.isBusy = false
             console.log(this.formInline.region)
             break
         }
@@ -1461,7 +1473,7 @@ export default {
           vm.lockChange = false
           vm.islogin = true
           vm.oldtelephonestate = vm.telephoneState
-          vm.telephoneState = '后处理'
+          vm.telephoneState = '话后'
           if (vm.oldtelephonestate !== vm.telephoneState) {
             clearInterval(interval)
             vm.times()
@@ -1471,7 +1483,7 @@ export default {
           vm.agentState3 = false
           vm.agentState4 = true
           vm.agentState5 = false
-          vm.formInline.region = '后处理'
+          vm.formInline.region = '话后'
           vm.setbtnStatus('login')
           if (vm.formInline.DN === DN) {
             vm.disabledDN = true
@@ -2019,6 +2031,14 @@ export default {
     this.$root.eventHub.$off('DIAL_TASK')
     this.$root.eventHub.$off('DIAL_TASK_DIALNM')
     this.$root.eventHub.$off('ord_set')
+  },
+  watch: {
+    keepReady(val) {
+      // console.log('watch' + val)
+      if (val) {
+        this.changeState('13')
+      }
+    }
   }
 }
 </script>

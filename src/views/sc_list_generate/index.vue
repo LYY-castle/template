@@ -603,7 +603,7 @@ export default {
     return {
       // 名单抽取
       extractVisible: false,
-      screeningFormOpen: '',
+      screeningFormOpen: [],
       addScreeningVisible: false,
       allBatch: [],
       allFieldName: [],

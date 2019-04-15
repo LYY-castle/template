@@ -10,7 +10,8 @@
             </el-select>
           </el-form-item>
         </el-form>
-        <el-collapse class="hidden-collapse" v-model="formContainerOpen" @change="handleChangeAcitve2">
+        <el-collapse class="hidden-collapse" v-model="formContainerOpen" @change="handleChangeAcitve" style="position:relative;">
+          <span class="form-more bold font14" style="position:absolute;top:15px;right:45px;color:#57AFFF;">更多</span>
           <el-collapse-item title="筛选条件" name="1">
             <el-form :inline="true" size="small" :model="req" style="padding:0px;margin-left:-15px;">
               <el-row style="padding-left:14px">
@@ -221,9 +222,7 @@
     name: 'captain_list_newdistribute_group',
     data() {
       return {
-        formContainerOpen: '',
-        formContainerOpen2: '1',
-        formContainer2: this.$store.state.app.formContainer,
+        formContainerOpen: [],
         loading: false,
         type: '',
         totalNum: 0,
@@ -269,29 +268,15 @@
       }
     },
     mounted() {
-      this.formContainer()
-      this.formContainer2()
       this.findAllBatch()
       this.findRegionByRegionParentId('0', 1)
     },
     methods: {
-      formContainer() {
-        $('.hidden-collapse .el-collapse-item__header').append(`
-          <span class="form-more2" style="float:right;margin-right:6px;color:#57AFFF;font-weight:normol;">更多</span>
-        `)
-      },
       handleChangeAcitve(active = ['1']) {
         if (active.length) {
           $('.form-more').text('收起')
         } else {
           $('.form-more').text('更多')
-        }
-      },
-      handleChangeAcitve2(active = ['1']) {
-        if (active.length) {
-          $('.form-more2').text('收起')
-        } else {
-          $('.form-more2').text('更多')
         }
       },
       findAllBatch() {

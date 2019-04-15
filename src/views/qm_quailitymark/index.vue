@@ -325,8 +325,8 @@
                   <span>
                     性别：
                   </span>
-                  <span :title="customerData.customerSex">
-                    {{customerData.customerSex}}
+                  <span :title="customerData.customerSex===0?'男':'女'">
+                    {{customerData.customerSex===0?'男':'女'}}
                   </span>
                 </div>
                 <div v-if="customerData.customerLinks.length">
@@ -653,8 +653,8 @@
                   <span>
                     性别：
                   </span>
-                  <span :title="customerData.customerSex">
-                    {{customerData.customerSex}}
+                  <span :title="customerData.customerSex===0?'男':'女'">
+                    {{customerData.customerSex===0?'男':'女'}}
                   </span>
                 </div>
                 <div v-if="customerData.customerLinks.length">
