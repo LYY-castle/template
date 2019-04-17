@@ -238,7 +238,7 @@
             fixed="right"
             width="180">
           <template slot-scope="scope">
-            <a v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb) && scope.row.staffId === aId" @click="sumTotal=0;products=[];customerNote='';changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);" size="small" type="text">
+            <a v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb) && scope.row.staffId === aId" @click="sumTotal=0;products=[];customerNote='';changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);keepReady=true;" size="small" type="text">
               <img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>
               拨打
             </a>
@@ -445,7 +445,7 @@
     <el-row class="table-container task-status" style="margin-bottom:20px;">
       <el-row>
         <el-form :inline="true" size="mini">
-          <el-col :span="8" style="height:48px;">
+          <el-col :span="7" style="height:48px;">
             <el-form-item label="话后小结：" style="margin-bottom:12px;">
               <el-cascader
                 size="mini"
@@ -459,7 +459,7 @@
               </el-cascader>
             </el-form-item>
           </el-col>
-          <el-col :span="16" v-show="this.selectedSummarys[0] === '3'">
+          <el-col :span="7" v-show="this.selectedSummarys[0] === '3'">
             <span style="color:red;line-height:34px;">*</span>
             <el-form-item label="预约日期：" class="working-date-form">
               <b style="font-size: 16px;color: #333333;letter-spacing: 0;text-align: left;">T + </b>
@@ -475,15 +475,26 @@
               </el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="8" style="height:48px;line-height:34px;" v-if="showSendMessage === true && campaignType !== 'RECRUIT' && hasProductInfo === true">
+          <el-col :span="4" style="height:48px;line-height:30px;" v-if="showSendMessage === true && campaignType !== 'RECRUIT' && hasProductInfo === true">
             <el-checkbox v-model="sendMessage" checked="checked">发送支付短信</el-checkbox>
           </el-col>
-          <el-col :span="8" style="height:48px;line-height:34px;" v-if="showAutoDial===true">
+          <el-col :span="5" style="height:48px;line-height:34px;" v-if="showAutoDial===true">
             <el-checkbox checked="checked" v-model="autoDialNext">完成后显示下一个客户</el-checkbox>
           </el-col>
-          <el-col :span="8" style="height:48px;line-height:34px;" v-if="autoCallDial">
+          <el-col :span="5" style="height:48px;line-height:34px;" v-if="autoCallDial">
             <el-checkbox checked="checked" v-model="autoCalllNext">完成后继续自动外呼</el-checkbox>
           </el-col>
+          <!-- <el-col :span="5" style="height:48px;line-height:30px;"> -->
+            <!-- <el-checkbox checked="checked" v-model="keepReady">完成后为就绪状态</el-checkbox> -->
+            <!-- <div style="display:inline-block;">
+              <el-switch
+                v-model="keepReady"
+                active-text="完成后为就绪状态"
+                active-color="#13ce66"
+                inactive-color="#ff4949">
+              </el-switch>
+            </div> -->
+          <!-- </el-col> -->
         </el-form>
       </el-row>
       <el-row>
@@ -685,6 +696,7 @@ export default {
 
   data() {
     return {
+      // keepReady: true,
       autoCallDial: false, // 自动外呼
       formContainerOpen: '1',
       formContainer: this.$store.state.app.formContainer,
@@ -819,14 +831,22 @@ export default {
       customerColumnInfos: [] // 用来展示的客户字段
     }
   },
+  // computed: {
+  //   keepReady() {
+  //     return this.$store.state.ctiData.keepReady
+  //   }
+  // },
   methods: {
+    changeKeepReady(val) {
+      this.$store.commit('SET_KEEPREADY', val)
+    },
     showContent(item) {
       switch (item) {
         case 'customerId':return this.customerInfo.customerId
         case 'sex': return this.showSex(this.customerInfo.customerSex)
         case 'mobile': return this.customerPhone
         case 'address': return this.customerInfo.address
-        case 'score': return this.customerInfo.score
+        case 'score': return this.customerInfo.score + ''
         case 'idNumber': return this.customerInfo.idNo
         case 'remark': return this.customerInfo.remark
         default : return ''
@@ -1744,6 +1764,7 @@ export default {
         updateTaskStatus(this.taskId, taskStatus, this.appointTime).then(
           res => {
             if (res.data.code === 0) {
+              this.changeKeepReady(true)
               // 修改小结备注
               updateRecordInfo(this.recordId, taskStatus, selectedSummarys2, this.summary_description)
                 .then(res1 => {
@@ -1985,6 +2006,7 @@ export default {
   },
   // 模板编译/挂载之后
   mounted() {
+    this.keepReady = true
     this.addDays = '1'
     if (localStorage.getItem('autocall') === 'true') {
       this.autoCallDial = true
@@ -2038,7 +2060,6 @@ export default {
             }
           })
         }).catch((error) => {
-          console.error(error)
           permsStaff(res.data.agentid).then(re => {
             this.departPermission = false
             this.req.staffId = res.data.agentid
@@ -2059,6 +2080,7 @@ export default {
               this.getParametersFromContactRecordDail()
             }
           })
+          throw new Error(error)
         })
       })
       history.pushState(null, null, document.URL)

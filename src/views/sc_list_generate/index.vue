@@ -603,7 +603,7 @@ export default {
     return {
       // 名单抽取
       extractVisible: false,
-      screeningFormOpen: '',
+      screeningFormOpen: [],
       addScreeningVisible: false,
       allBatch: [],
       allFieldName: [],
@@ -1136,6 +1136,8 @@ export default {
               addGenerate(this.addListReq).then(response => {
                 if (response.data.code === 0) {
                   this.$message.success('生成名单成功')
+                  this.req.pageNo = 1
+                  this.searchNamelist(this.req)
                   this.extractVisible = false
                   this.importVisible = false
                 } else {

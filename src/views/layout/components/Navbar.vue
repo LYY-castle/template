@@ -9,30 +9,42 @@
           <div class="navbar-forms">
             <el-form :inline="true" size="mini" style="width:417px;">
               <el-popover trigger="click" placement="bottom">
-                <el-form :inline="true" size="mini" style="padding-top:20px;">
-                  <!-- 分机号登入 -->
-                  <el-form-item class="txtDN" size="mini" style="width:70px;">
-                    <el-input v-model="formInline.DN" placeholder="分机号" :disabled="disabledDN">{{formInline.DN}}</el-input>
-                  </el-form-item>
-                  <el-form-item>
-                    <el-button type="primary" size="mini" style="display:inline;" v-if="!islogin" @click="agentLogin()">登入</el-button>
-                    <el-button type="primary" size="mini" style="display:inline;" v-if="islogin" @click="agentLogoff()">登出</el-button>
-                  </el-form-item>
+                <el-form :inline="true" size="mini" style="padding-top:20px;max-width:220px;">
+                  <div v-if="queues.length>0">
+                    <label>技能组：</label>
+                     <el-checkbox :indeterminate="isIndeterminate" :disabled="islogin" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+                     <div style="max-height:70px;border:solid #DCDFE6 1px;margin:5px 0 5px 0;overflow:auto;">
+                        <el-checkbox-group v-model="checkedQueues" @change="handleCheckedQueueChange">
+                          <el-checkbox v-for="item in queues" :title="item.label" :disabled="islogin" :label="item.label" :key="item.value" style="width:45%;max-width:100px;margin:3px 3px 0 3px; overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{item.label}}</el-checkbox>
+                        </el-checkbox-group>
+                     </div>
+                  </div>
+                  <div>
+                    <!-- 分机号登入 -->
+                    <el-form-item class="txtDN" size="mini" >
+                      <label v-if="queues.length>0">分机号：</label>
+                      <el-input v-model="formInline.DN" placeholder="分机号" :disabled="disabledDN" style="width:80px;">{{formInline.DN}}</el-input>
+                    </el-form-item>
+                    <el-form-item style="float:right;margin-right:0;" >
+                      <el-button type="primary" size="mini" style="display:inline;float:right;width:70px;" v-if="!islogin" @click="agentLogin()">登入</el-button>
+                      <el-button type="primary" size="mini" :disabled="!isBusy" style="display:inline;float:right;width:70px;" v-if="islogin" @click="agentLogoff()">登出</el-button>
+                    </el-form-item>
+                  </div>
                 </el-form>
-                <img slot="reference" src="../../../../static/images/enter_disable.png" title="登入" class="img-all icon-container">
+                <img slot="reference" src="../../../../static/images/enter_disable.png" title="登入" @click="countNum()" ref="login_img" class="img-all icon-container">
               </el-popover>
               <!-- 状态 -->
               <el-dropdown trigger="click" placement="bottom" @command="changeState" >
                 <img src="../../../../static/images/nologin_state.png" title="未登录" class="img-all icon-container" v-if="agentState1">
                 <img src="../../../../static/images/busy_normal.png" title="示忙"  class="img-all icon-container" v-else-if="agentState2">
                 <img src="../../../../static/images/agent_stat38_all_ready.png" title="就绪"  class="img-all icon-container" v-else-if="agentState3">
-                <img src="../../../../static/images/back_state.png" title="后处理"  class="img-all icon-container" v-else-if="agentState4">
+                <img src="../../../../static/images/back_state.png" title="话后"  class="img-all icon-container" v-else-if="agentState4">
                 <img src="../../../../static/images/auto_dial_all_ready.png" title="外呼就绪"  class="img-all icon-container" v-else-if="agentState5">
                 <img src="../../../../static/images/auto_dial_busy.png" title="外呼占用"  class="img-all icon-container" v-else-if="agentState6">
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="0" :disabled="lockChange">就绪</el-dropdown-item>
                   <el-dropdown-item command="13" :disabled="lockChange">示忙</el-dropdown-item>
-                  <el-dropdown-item command="14" :disabled="lockChange">后处理</el-dropdown-item>
+                  <el-dropdown-item command="14" :disabled="lockChange">话后</el-dropdown-item>
                   <el-dropdown-item command="-5" :disabled="lockChange">外呼就绪</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -117,7 +129,6 @@
             <br> -->
           </div>
           <!-- <span style="float:left" class="line"></span> -->
-
         </div>
         <span style="float:left" class="line"></span>
         <div style="margin-right:2px;position: absolute;right:0" v-if="havesoftphone">
@@ -292,7 +303,8 @@ import {
   checkSoftphonePerm,
   changeWechatState,
   getWechatState,
-  navbarQueryRecords
+  navbarQueryRecords,
+  queryListByAgentId
 } from '@/api/navbar'
 import {
   getUnreadNum,
@@ -315,6 +327,11 @@ export default {
   name: 'layout',
   data() {
     return {
+      login_img_click_num: 0, // 登入按钮点击次数
+      queues: [], // 员工拥有的技能组
+      isIndeterminate: true, // 支持全选
+      checkedQueues: [],
+      checkAll: true,
       wechatImgUrl: '../../../../static/images/wechat_online.png',
       agentArray: [], // 部门下属成员
       lockChange: false, // 默认不禁用切换状态框
@@ -338,7 +355,7 @@ export default {
       agentState1: true, // 未登录
       agentState2: false, // 就绪
       agentState3: false, // 示忙
-      agentState4: false, // 后处理
+      agentState4: false, // 话后
       agentState5: false, // 外呼就绪
       agentState6: false, // 外呼占用
       answerCall: false,
@@ -391,7 +408,8 @@ export default {
       wechatState: null,
       msgNum_wechat1: null, // 微信消息条数
       customerInfo: {},
-      show_wechat: `${process.env.SHOW_WECHAT}`
+      show_wechat: `${process.env.SHOW_WECHAT}`,
+      isBusy: true
     }
   },
   components: {
@@ -410,9 +428,31 @@ export default {
     },
     msgNum_wechat() {
       return this.$store.state.app.msgNum_wechat
+    },
+    keepReady() {
+      return this.$store.state.ctiData.keepReady
     }
   },
   methods: {
+    countNum() {
+      this.login_img_click_num++
+    },
+    handleCheckedQueueChange(value) {
+      const checkedCount = value.length
+      this.checkAll = checkedCount === this.queues.length
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.queues.length
+    },
+    handleCheckAllChange(val) {
+      vm = this
+      if (val) {
+        for (let i = 0; i < vm.queues.length; i++) {
+          vm.checkedQueues.push(vm.queues[i].label)
+        }
+      } else {
+        vm.checkedQueues = []
+      }
+      this.isIndeterminate = false
+    },
     // 获取微信状态
     getWechatState() {
       const angentId = localStorage.getItem('agentId')
@@ -590,7 +630,7 @@ export default {
     },
     agentsetACW() {
       localStorage.setItem('autocall', false)
-      if (this.telephoneState === '后处理') {
+      if (this.telephoneState === '话后') {
         return
       } else {
         cti.setAgentACW()
@@ -604,23 +644,32 @@ export default {
         cti.setAgentDialInFree()
       }
     },
+    changeKeepReady(val) {
+      this.$store.commit('SET_KEEPREADY', val)
+    },
     changeState(val) {
+      this.changeKeepReady('')
       if (this.islogin) {
         this.formInline.region = val
         switch (this.formInline.region) {
           case '0':
+            this.isBusy = false
             this.agentReady()
             break
           case '13':
+            this.isBusy = true
             this.agentnotReady()
             break
           case '14':
+            this.isBusy = false
             this.agentsetACW()
             break
           case '-5':
+            this.isBusy = false
             this.agentSetDialInFree()
             break
           default:
+            this.isBusy = false
             console.log(this.formInline.region)
             break
         }
@@ -864,16 +913,32 @@ export default {
     agentLogin() {
       const agentId = localStorage.getItem('agentId')
       const DN = this.formInline.DN
+      vm = this
       if (agentId !== null && DN !== null && DN !== '') {
-        cti.login(agentId, this.formInline.DN, '518', '1', '0')
-        this.$store.dispatch('LoginMgrPhone', { monitorId: localStorage.getItem('agentId'), monitorDN: '12345' })
+        if (vm.checkedQueues.length < 1) { // 用户没有选择技能组登录，则默认登录一个队列，如518
+          cti.login(agentId, DN, 518, '1', '1')
+        } else { // 用户选了技能组，多队列登录
+          const queues = []
+          const prioritys = []
+          for (let i = 0; i < vm.checkedQueues.length; i++) {
+            for (let j = 0; j < vm.queues.length; j++) {
+              if (vm.checkedQueues[i] === vm.queues[j].label) {
+                queues.push(vm.queues[j].value)
+                prioritys.push(vm.queues[j].priority)
+                break
+              }
+            }
+          }
+          cti.login(agentId, DN, queues.join(','), prioritys.join(','), '1')
+        }
+        vm.$store.dispatch('LoginMgrPhone', { monitorId: localStorage.getItem('agentId'), monitorDN: '12345' })
         // ToDo 待修改
         setTimeout(() => {
-          if (this.reasonCode === '-1' || this.reasonCode === '-2') {
-          // localStorage.setItem('callerDN', null)
+          if (vm.reasonCode === '-1' || vm.reasonCode === '-2') {
+            // localStorage.setItem('callerDN', null)
             localStorage.removeItem('DN')
           } else {
-          // localStorage.setItem('callerDN', DN)
+            // localStorage.setItem('callerDN', DN)
             localStorage.setItem('DN', DN)
           }
         }, 1000)
@@ -884,6 +949,9 @@ export default {
       const DN = this.formInline.DN
       if (agentId !== null && DN !== null && DN !== '') {
         cti.logoff(agentId, DN, 9)
+        if (vm.login_img_click_num % 2 === 1) {
+          vm.$refs.login_img.click()
+        }
         vm.$root.eventHub.$emit('monitorphone', null)// 发送到班长监控话机界面，退出班长号码
         localStorage.removeItem('DN')
         localStorage.removeItem(agentId)
@@ -1405,7 +1473,7 @@ export default {
           vm.lockChange = false
           vm.islogin = true
           vm.oldtelephonestate = vm.telephoneState
-          vm.telephoneState = '后处理'
+          vm.telephoneState = '话后'
           if (vm.oldtelephonestate !== vm.telephoneState) {
             clearInterval(interval)
             vm.times()
@@ -1415,7 +1483,7 @@ export default {
           vm.agentState3 = false
           vm.agentState4 = true
           vm.agentState5 = false
-          vm.formInline.region = '后处理'
+          vm.formInline.region = '话后'
           vm.setbtnStatus('login')
           if (vm.formInline.DN === DN) {
             vm.disabledDN = true
@@ -1571,6 +1639,12 @@ export default {
       console.log('响应事件：登录成功' + event + ',员工工号：' + agentId + '，分机：' + DN)
       vm.$root.eventHub.$emit('monitorphone', { 'agentId': agentId, 'DN': DN })// 发送到班长监控电话页面，提示更新班长号码
       vm.islogin = true
+      // 关闭弹窗
+      if (vm.$refs.login_img) {
+        if (vm.login_img_click_num % 2 === 1) {
+          vm.$refs.login_img.click()
+        }
+      }
       cti.setAgentStatus(agentId, '13')
     },
     on_error(event, errortype, errordescription) {
@@ -1596,8 +1670,21 @@ export default {
       const agentId = localStorage.getItem('agentId')
       const DN = localStorage.getItem('DN')
       vm.formInline.DN = DN
-      if (agentId !== null && DN !== null && DN !== '') {
-        cti.login(agentId, DN, '518', '1', '0')
+      if (agentId !== null && DN !== null && DN !== '') { // 如果有技能组则直接登录所有队列
+        if (vm.queues.length > 0) {
+          const queues = []
+          const prioritys = []
+          for (let i = 0; i < vm.queues.length; i++) {
+            if (vm.checkedQueues.indexOf(vm.queues[i].label) === -1) {
+              vm.checkedQueues.push(vm.queues[i].label)
+            }
+            queues.push(vm.queues[i].value)
+            prioritys.push(vm.queues[i].priority)
+          }
+          cti.login(agentId, DN, queues.join(','), prioritys.join(','), '1')
+        } else { // 如果没有技能组，则登录518队列
+          cti.login(agentId, DN, '518', '1', '1')
+        }
       }
     },
     logout() {
@@ -1644,6 +1731,26 @@ export default {
   },
   mounted() {
     vm = this
+    // 查找队列
+    queryListByAgentId(localStorage.getItem('agentId')).then(res => {
+      if (res.data.code === 1 && res.data.data.length > 0) {
+        const data = res.data.data
+        for (let i = 0; i < data.length; i++) {
+          const option = {}
+          option.label = data[i].skillSet.name
+          option.value = data[i].skillSet.code
+          option.priority = data[i].priority
+          vm.queues.push(option)
+        }
+      }
+    }).then(() => {
+      checkSoftphonePerm(agentId).then(res => {
+        vm.havesoftphone = true
+        cti.connectCTI(process.env.CTI_WS_SERVERURL)
+      }).catch(error => {
+        console.log(error)
+      })
+    })
     if (this.show_wechat === 'true') {
       // 获取微信状态
       this.getWechatState()
@@ -1738,12 +1845,7 @@ export default {
       // $('.tags-view-container').width('98%')
       $('div.hamberger-bar').addClass('closed')
     }
-    checkSoftphonePerm(agentId).then(res => {
-      this.havesoftphone = true
-      cti.connectCTI(process.env.CTI_WS_SERVERURL)
-    }).catch(error => {
-      console.log(error)
-    })
+
     getUserInfo().then(res => {
       localStorage.setItem('departId', res.data.departId)
       localStorage.setItem('agentName', res.data.agentName)
@@ -1912,6 +2014,7 @@ export default {
     })
   },
   destroyed() {
+    vm.login_img_click_num = 0
     localStorage.setItem('autocall', false)
     this.$root.eventHub.$off('RECEIVE_MESSAGES')
     this.socket_nofitication.close()
@@ -1928,6 +2031,14 @@ export default {
     this.$root.eventHub.$off('DIAL_TASK')
     this.$root.eventHub.$off('DIAL_TASK_DIALNM')
     this.$root.eventHub.$off('ord_set')
+  },
+  watch: {
+    keepReady(val) {
+      // console.log('watch' + val)
+      if (val) {
+        this.changeState('13')
+      }
+    }
   }
 }
 </script>

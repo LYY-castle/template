@@ -198,7 +198,6 @@
             <source :src="addScopeUrl"/>
           </audio>
         </vue-plyr>
-        
       </div>
       <div class="demo-ruleForm">接触记录</div>
       <el-row>
@@ -297,25 +296,103 @@
                 <div slot="header" class="clearfix">
                   <span>客户信息</span>
                 </div>
-                <div class="text item">
-                  {{'客户姓名： ' + customerData.customerName }}
+                <div 
+                  class="text item text-hidden" 
+                  v-if="customerData.customerId" 
+                  style="max-width=100%;">
+                  <span>
+                    编号：
+                  </span>
+                  <span :title="customerData.customerId">
+                    {{customerData.customerId }}
+                  </span>
                 </div>
-                <div class="text item">
-                  {{'电话号码： ' + customerData.mobile }}
+                <div 
+                  class="text item text-hidden"  
+                  v-if="customerData.customerName"
+                  style="max-width=100%;">
+                  <span>
+                    姓名：
+                  </span>
+                  <span :title="customerData.customerName">
+                    {{customerData.customerName }}
+                  </span>
                 </div>
-                <div class="text item">
-                  {{'客户来源： ' + customerData.source }}
+                <div 
+                  class="text item text-hidden"  
+                  v-if="customerData.customerSex"
+                  style="max-width=100%;">
+                  <span>
+                    性别：
+                  </span>
+                  <span :title="customerData.customerSex===0?'男':'女'">
+                    {{customerData.customerSex===0?'男':'女'}}
+                  </span>
                 </div>
-                <div class="text item">
-                  {{'银行卡号： ' + customerData.bankCard }}
+                <div v-if="customerData.customerLinks.length">
+                  <div 
+                    v-for="(item,index) in customerData.customerLinks"
+                    class="text item text-hidden"  
+                    style="max-width=100%;">
+                    <span :key="index">
+                      {{item.linkType===0?'电话：':item.linkType===1?'微信：':item.linkType===2?'QQ：':item.linkType===3?'邮箱：':item.linkType===4?'微信电话：':''}}
+                    </span>
+                    <span>
+                      {{item.linkValue}}
+                    </span>
+                  </div>
                 </div>
-                <div class="text item">
-                  {{'身份证号： ' + customerData.idNumber }}
+                <div v-if="customerData.customerAddresses.length">
+                  <div 
+                    class="text item text-hidden"  
+                    v-for="(item,index) in customerData.customerAddresses"
+                    style="max-width=100%;">
+                    <span>
+                      {{'地址' + index + ':'}}
+                    </span>
+                    <span :title="customerData.customerAddresses" :key="index">
+                      {{ + customerData.customerAddresses }}
+                    </span>
+                  </div>
+                </div>
+                <div 
+                  class="text item text-hidden"  
+                  v-if="customerData.idNo"
+                  style="max-width=100%;">
+                  <span>
+                    身份证：
+                  </span>
+                  <span :title="customerData.idNo">
+                    {{customerData.idNo}}
+                  </span>
+                </div>
+                <div 
+                  class="text item text-hidden"  
+                  v-if="customerData.idNo"
+                  style="max-width=100%;">
+                  <span>
+                    评分：
+                  </span>
+                  <span :title="customerData.score">
+                    {{customerData.score }}
+                  </span>
+                </div>
+                <div 
+                  class="text item"  
+                  v-if="customerData.remark">
+                  <span>
+                    备注：
+                  </span>
+                  <span 
+                    :title="customerData.remark"
+                    style="word-wrap:break-word">
+                    {{customerData.remark}}
+                  </span>
                 </div>
               </el-card>
         </el-col>
         <el-col  style="margin-left:2%;width:73%;">
-                <el-tabs :data="orderData"
+                <!-- <el-tabs :data="orderData"
                         type="border-card"
                         v-if="orderHide" style="min-height:223px"
                         v-model="orderActiveName">
@@ -330,15 +407,38 @@
                   <span><font>产品类型id：</font>{{item.productTypeId}}</span><br/>
                   <span><font>产品类型名称：</font>{{item.productTypeName}}</span><br/>
                 </el-tab-pane>
-              </el-tabs>
-          <el-card class="box-card"  v-if="!orderHide" style="min-height:223px">
+              </el-tabs> -->
+          <div class="table-container" style="margin:0">
+            <el-row class="margin-bottom-20">
+              <div class="font14 bold">订单信息表</div>
+            </el-row>
+            <el-table
+              :data="orderData">
+              <el-table-column
+                align="center"
+                label="产品id"
+                prop="productId">
+              </el-table-column>
+              <el-table-column
+                align="center"
+                prop="productName"
+                label="产品名称">
+              </el-table-column>
+              <el-table-column
+                align="center"
+                prop="productNum"
+                label="购买数量">
+              </el-table-column>
+            </el-table>
+          </div>
+          <!-- <el-card class="box-card"  v-if="!orderHide" style="min-height:223px">
                 <div slot="header" class="clearfix">
                   <span>订单信息</span>
                 </div>
                 <div class="text item" style="text-align:center">
                     无订单
                 </div>
-          </el-card>
+          </el-card> -->
 
             </el-col>
 
@@ -524,26 +624,104 @@
                 <div slot="header" class="clearfix">
                   <span>客户信息</span>
                 </div>
-                <div class="text item">
-                  {{'客户姓名： ' + customerData.customerName }}
+                 <div 
+                  class="text item text-hidden" 
+                  v-if="customerData.customerId" 
+                  style="max-width=100%;">
+                  <span>
+                    编号：
+                  </span>
+                  <span :title="customerData.customerId">
+                    {{customerData.customerId }}
+                  </span>
                 </div>
-                <div class="text item">
-                  {{'电话号码： ' + customerData.mobile }}
+                <div 
+                  class="text item text-hidden"  
+                  v-if="customerData.customerName"
+                  style="max-width=100%;">
+                  <span>
+                    姓名：
+                  </span>
+                  <span :title="customerData.customerName">
+                    {{customerData.customerName }}
+                  </span>
                 </div>
-                <div class="text item">
-                  {{'客户来源： ' + customerData.source }}
+                <div 
+                  class="text item text-hidden"  
+                  v-if="customerData.customerSex"
+                  style="max-width=100%;">
+                  <span>
+                    性别：
+                  </span>
+                  <span :title="customerData.customerSex===0?'男':'女'">
+                    {{customerData.customerSex===0?'男':'女'}}
+                  </span>
                 </div>
-                <div class="text item">
-                  {{'银行卡号： ' + customerData.bankCard }}
+                <div v-if="customerData.customerLinks.length">
+                  <div 
+                    v-for="(item,index) in customerData.customerLinks"
+                    class="text item text-hidden"  
+                    style="max-width=100%;">
+                    <span :key="index">
+                      {{item.linkType===0?'电话：':item.linkType===1?'微信：':item.linkType===2?'QQ：':item.linkType===3?'邮箱：':item.linkType===4?'微信电话：':''}}
+                    </span>
+                    <span>
+                      {{item.linkValue}}
+                    </span>
+                  </div>
                 </div>
-                <div class="text item">
-                  {{'身份证号： ' + customerData.idNumber }}
+                <div v-if="customerData.customerAddresses.length">
+                  <div 
+                    class="text item text-hidden"  
+                    v-for="(item,index) in customerData.customerAddresses"
+                    style="max-width=100%;">
+                    <span>
+                      {{'地址' + index + ':'}}
+                    </span>
+                    <span :title="customerData.customerAddresses" :key="index">
+                      {{ + customerData.customerAddresses }}
+                    </span>
+                  </div>
+                </div>
+                <div 
+                  class="text item text-hidden"  
+                  v-if="customerData.idNo"
+                  style="max-width=100%;">
+                  <span>
+                    身份证：
+                  </span>
+                  <span :title="customerData.idNo">
+                    {{customerData.idNo}}
+                  </span>
+                </div>
+                <div 
+                  class="text item text-hidden"  
+                  v-if="customerData.idNo"
+                  style="max-width=100%;">
+                  <span>
+                    评分：
+                  </span>
+                  <span :title="customerData.score">
+                    {{customerData.score }}
+                  </span>
+                </div>
+                <div 
+                  class="text item"  
+                  v-if="customerData.remark">
+                  <span>
+                    备注：
+                  </span>
+                  <span 
+                    :title="customerData.remark"
+                    style="word-wrap:break-word">
+                    {{customerData.remark}}
+                  </span>
                 </div>
               </el-card>
         </el-col>
 
         <el-col  style="margin-left:2%;width:73%;">
-                <el-tabs :data="orderData"
+                <!-- <el-tabs :data="orderData"
                         type="border-card"
                         v-if="orderHide" style="min-height:223px"
                         v-model="orderActiveName">
@@ -558,15 +736,38 @@
                   <span><font>产品类型id：</font>{{item.productTypeId}}</span><br/>
                   <span><font>产品类型名称：</font>{{item.productTypeName}}</span><br/>
                 </el-tab-pane>
-              </el-tabs>
-          <el-card class="box-card"  v-if="!orderHide" style="min-height:223px">
-                <div slot="header" class="clearfix">
-                  <span>订单信息</span>
-                </div>
-                <div class="text item" style="text-align:center">
-                    无订单
-                </div>
-          </el-card>
+              </el-tabs> -->
+              <div class="table-container" style="margin:0">
+                <el-row class="margin-bottom-20">
+                  <div class="font14 bold">订单信息表</div>
+                </el-row>
+                <el-table
+                  :data="orderData">
+                  <el-table-column
+                    align="center"
+                    label="产品id"
+                    prop="productId">
+                  </el-table-column>
+                  <el-table-column
+                    align="center"
+                    prop="productName"
+                    label="产品名称">
+                  </el-table-column>
+                  <el-table-column
+                    align="center"
+                    prop="productNum"
+                    label="购买数量">
+                  </el-table-column>
+                </el-table>
+              </div>
+              <!-- <el-card class="box-card"  v-if="!orderHide" style="min-height:223px">
+                    <div slot="header" class="clearfix">
+                      <span>订单信息</span>
+                    </div>
+                    <div class="text item" style="text-align:center">
+                        无订单
+                    </div>
+              </el-card> -->
 
             </el-col>
       </el-row>
@@ -695,7 +896,10 @@
         },
         tableData: [],
         contactRecordData: [],
-        customerData: {},
+        customerData: {
+          customerLinks: [],
+          customerAddresses: []
+        },
         orderData: [],
         gradeInfo: [],
         gradeRecordId: '',
@@ -1026,23 +1230,21 @@
       getCustomerInfo(row) {
         querycustomerbyid({ 'customerId': row.customerId }).then(response => {
           if (response.data.code === 0) {
-            var data = response.data.data
-            this.customerData.bankCard = data.bankCard === null ? '' : data.bankCard
-            this.customerData.customerName = data.customerName === null ? '' : data.customerName
-            this.customerData.source = data.source === null ? '' : data.source
-            this.customerData.idNumber = data.idNumber === null ? '' : repalceString(data.idNumber, 11, 4, '*')
-            this.customerData.mobile = data.mobile === null ? '' : repalceString(data.mobile, 4, 4, '*')
+            this.customerData = {
+              customerLinks: [],
+              customerAddresses: []
+            }
+            this.customerData = response.data.data
           } else {
-            this.customerData.bankCard = ''
-            this.customerData.customerName = ''
-            this.customerData.source = ''
-            this.customerData.idNumber = ''
-            this.customerData.mobile = ''
-            this.$message(response.data.message)
+            this.customerData = {
+              customerLinks: [],
+              customerAddresses: []
+            }
+            this.$message.error(response.data.message)
           }
           this.$forceUpdate()
         }).catch(error => {
-          console.log(error)
+          throw new Error(error)
         })
       },
       /** 获取订单信息 */

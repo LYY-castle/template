@@ -365,20 +365,36 @@
                   <!-- 小休 & 就餐 -->
                   <div 
                     style="display:inline-block;background:#2CC8F1;height:18px;padding:0 6px;position:relative;bottom:-3px;" 
-                    v-show="item.ringbackshow">
+                    v-show="item.relaxshow || item.lunchshow">
                     <span>
                       <img src="../../../static/images/relax.png" alt="小休" v-show="item.relaxshow"></img>
                       <img src="../../../static/images/lunch.png" alt="就餐" v-show="item.lunchshow"></img>
                     </span>
                     <span class="font12 content" style="color:#fff;position:relative;top:-3px;">{{item.status}}</span>
                   </div>
+                  <!-- 其他状态 -->
+                  <div 
+                    style="display:inline-block;background:#2CC8F1;height:18px;padding:0 6px;position:relative;bottom:-3px;" 
+                    v-show="item.otherstatus">
+                    <span>
+                      <img src="../../../static/images/otherstatus.png" alt="其他状态" v-show="item.otherstatus"></img>
+                    </span>
+                    <span class="font12 content" style="color:#fff;position:relative;top:-3px;">{{item.status}}</span>
+                  </div>
                   <!-- 后处理 & 示忙 -->
                   <div 
-                    style="display:inline-block;background:#F8A300;height:18px;padding:0 6px;position:relative;bottom:-3px;" 
-                    v-show="item.ringbackshow">
+                    style="display:inline-block;background:#FF4747;height:18px;padding:0 6px;position:relative;bottom:-3px;" 
+                    v-show="item.busyshow">
                     <span>
-                      <img src="../../../static/images/after_working.png" alt="后处理" v-show="item.after_workingshow"></img>
-                      <img src="../../../static/images/busy.png" alt="示忙" v-show="item.busyshow"></img>
+                      <img src="../../../static/images/busy.png" alt="示忙"></img>
+                    </span>
+                    <span class="font12 content" style="color:#fff;position:relative;top:-3px;">{{item.status}}</span>
+                  </div>
+                  <div 
+                    style="display:inline-block;background:#E86BB1;height:18px;padding:0 6px;position:relative;bottom:-3px;" 
+                    v-show="item.after_workingshow">
+                    <span>
+                      <img src="../../../static/images/after_working.png" alt="后处理"></img>
                     </span>
                     <span class="font12 content" style="color:#fff;position:relative;top:-3px;">{{item.status}}</span>
                   </div>
@@ -963,6 +979,7 @@ var baseinfo = null
         }
       },
       on_reasonchange(event, agentid, DN, reasoncode) {
+        console.log(event, agentid, DN, reasoncode, 'reasoncodechange')
         if ((DN === baseinfo.monitorDN || DN === '12345') && agentid === baseinfo.monitorID) {
           return
         }
@@ -975,7 +992,11 @@ var baseinfo = null
       Changequeue(queue, AgentID) {
         for (let i = 0; i < baseinfo.agentData.length; i++) {
           if (baseinfo.agentData[i].agentId === AgentID) {
-            baseinfo.agentData[i].queue = queue
+            if (baseinfo.agentData[i].queue && baseinfo.agentData[i].queue.indexOf(queue) === -1) {
+              baseinfo.agentData[i].queue = baseinfo.agentData[i].queue + ',' + queue
+            } else {
+              baseinfo.agentData[i].queue = queue
+            }
           }
         }
       },
@@ -1008,6 +1029,12 @@ var baseinfo = null
           case '-4':
             status = '去电回铃' // 离线去电回铃
             break
+          case '-5':
+            status = '外呼就绪' // 外呼就绪
+            break
+          case '-6':
+            status = '外呼占用' // 外呼占用
+            break
           case '14':
             status = '后处理' // 离线
             break
@@ -1021,7 +1048,7 @@ var baseinfo = null
         for (let i = 0; i < baseinfo.agentData.length; i++) {
           if (baseinfo.agentData[i].agentId === agentId) {
             switch (reasoncode) {
-              case '-100': // 来电通话，在线加1，通话人数加1
+              case '-100': // 来电通话
                 baseinfo.agentData[i].ringbackshow = false
                 baseinfo.agentData[i].callout_talkingshow = false
                 baseinfo.agentData[i].after_workingshow = false
@@ -1032,8 +1059,9 @@ var baseinfo = null
                 baseinfo.agentData[i].comein_talkingshow = true
                 baseinfo.agentData[i].loginoffshow = false
                 baseinfo.agentData[i].busyshow = false
+                baseinfo.agentData[i].otherstatus = false
                 break
-              case '-101': // 去电通话，在线加1，通话人数加1
+              case '-101': // 去电通话
                 baseinfo.agentData[i].ringbackshow = false
                 baseinfo.agentData[i].callout_talkingshow = true
                 baseinfo.agentData[i].after_workingshow = false
@@ -1044,8 +1072,9 @@ var baseinfo = null
                 baseinfo.agentData[i].comein_talkingshow = false
                 baseinfo.agentData[i].loginoffshow = false
                 baseinfo.agentData[i].busyshow = false
+                baseinfo.agentData[i].otherstatus = false
                 break
-              case '13': // 示忙，在线加1，示忙人数加1
+              case '13': // 示忙
                 baseinfo.agentData[i].ringbackshow = false
                 baseinfo.agentData[i].callout_talkingshow = false
                 baseinfo.agentData[i].after_workingshow = false
@@ -1056,8 +1085,9 @@ var baseinfo = null
                 baseinfo.agentData[i].comein_talkingshow = false
                 baseinfo.agentData[i].loginoffshow = false
                 baseinfo.agentData[i].busyshow = true
+                baseinfo.agentData[i].otherstatus = false
                 break
-              case '-3': // 来电响铃,在线加1，响铃人数加1
+              case '-3': // 来电响铃
                 baseinfo.agentData[i].ringbackshow = false
                 baseinfo.agentData[i].callout_talkingshow = false
                 baseinfo.agentData[i].after_workingshow = false
@@ -1068,8 +1098,9 @@ var baseinfo = null
                 baseinfo.agentData[i].comein_talkingshow = false
                 baseinfo.agentData[i].loginoffshow = false
                 baseinfo.agentData[i].busyshow = false
+                baseinfo.agentData[i].otherstatus = false
                 break
-              case '0': // 就绪，在线加1，空闲人数加1
+              case '0': // 就绪
                 baseinfo.agentData[i].ringbackshow = false
                 baseinfo.agentData[i].callout_talkingshow = false
                 baseinfo.agentData[i].after_workingshow = false
@@ -1080,8 +1111,9 @@ var baseinfo = null
                 baseinfo.agentData[i].comein_talkingshow = false
                 baseinfo.agentData[i].loginoffshow = false
                 baseinfo.agentData[i].busyshow = false
+                baseinfo.agentData[i].otherstatus = false
                 break
-              case '-4': // 去电回铃，在线加1，响铃人数加1
+              case '-4': // 去电回铃
                 baseinfo.agentData[i].ringbackshow = true
                 baseinfo.agentData[i].callout_talkingshow = false
                 baseinfo.agentData[i].after_workingshow = false
@@ -1092,8 +1124,9 @@ var baseinfo = null
                 baseinfo.agentData[i].comein_talkingshow = false
                 baseinfo.agentData[i].loginoffshow = false
                 baseinfo.agentData[i].busyshow = false
+                baseinfo.agentData[i].otherstatus = false
                 break
-              case '14': // 后处理，在线加1，示忙人数加1
+              case '14': // 后处理
                 baseinfo.agentData[i].ringbackshow = false
                 baseinfo.agentData[i].callout_talkingshow = false
                 baseinfo.agentData[i].after_workingshow = true
@@ -1104,6 +1137,21 @@ var baseinfo = null
                 baseinfo.agentData[i].comein_talkingshow = false
                 baseinfo.agentData[i].loginoffshow = false
                 baseinfo.agentData[i].busyshow = false
+                baseinfo.agentData[i].otherstatus = false
+                break
+              case '-5': // 外呼占用，显示为其他状态
+              case '-6': // 外呼占用，显示为其他状态
+                baseinfo.agentData[i].ringbackshow = false
+                baseinfo.agentData[i].callout_talkingshow = false
+                baseinfo.agentData[i].after_workingshow = false
+                baseinfo.agentData[i].relaxshow = false
+                baseinfo.agentData[i].readyshow = false
+                baseinfo.agentData[i].lunchshow = false
+                baseinfo.agentData[i].ringingshow = false
+                baseinfo.agentData[i].comein_talkingshow = false
+                baseinfo.agentData[i].loginoffshow = false
+                baseinfo.agentData[i].busyshow = false
+                baseinfo.agentData[i].otherstatus = true
                 break
               case '-1':
               case '-2':
@@ -1118,6 +1166,7 @@ var baseinfo = null
                 baseinfo.agentData[i].comein_talkingshow = false
                 baseinfo.agentData[i].loginoffshow = true
                 baseinfo.agentData[i].busyshow = false
+                baseinfo.agentData[i].otherstatus = false
                 break
             }
           }
@@ -1287,8 +1336,10 @@ var baseinfo = null
                     obj.comein_talkingshow = false
                     obj.loginoffshow = true
                     obj.busyshow = false
+                    obj.otherstatus = false
                   })
                   cti.connectCTI(process.env.CTI_MONITOR_WS_SERVERURL)
+                  console.log(process.env.CTI_MONITOR_WS_SERVERURL, '连接cti')
                   let agents = ''
                   for (let j = 0; j < baseinfo.agentData.length; j++) {
                     agents = agents + baseinfo.agentData[j].agentId + ','
