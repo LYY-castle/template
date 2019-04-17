@@ -119,11 +119,11 @@
           :total='pageInfo.totalCount' style="text-align: right;float:right;">
         </el-pagination>
       </el-row>
-    </el-row>  
+    </el-row>
     <el-dialog
       align:left
       width="30%"
-      title="小结标题修改"
+      title="修改小结标题"
       :visible.sync="editTitleVisible"
       append-to-body>
       <el-form size="small" label-width="100px" :model="summaryTitleDetail" ref="editNoduleTitle" :rules="rule">
@@ -143,7 +143,7 @@
     <el-dialog
       align:left
       width="30%"
-      title="小结内容修改"
+      title="修改小结内容"
       :visible.sync="editItemVisible"
       append-to-body>
       <el-form label-width="100px" >

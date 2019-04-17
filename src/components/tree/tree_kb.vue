@@ -8,21 +8,21 @@
 			@click.stop.native="nodeEditFocus"
 			@keyup.enter.stop.native="nodeEditPass(STORE,DATA,NODE)"></el-input>
 		</span>
-		<span 
+		<span
       v-if="!(DATA.isEdit)"
       class="tree-label">
 			<span>{{DATA.name}}</span>
 		</span>
 		<span class="tree-btn" v-show="!DATA.isEdit" v-if="permission">
-			<i class="tree-button tree-plus" @click.stop="nodeAdd(STORE,DATA,NODE)"></i>
-			<i class="tree-button tree-edit" @click.stop="nodeEdit(STORE,DATA,NODE)"></i>
-			<i class="tree-button tree-delete" @click.stop="nodeDel(STORE,DATA,NODE)"></i>
+			<i class="tree-button tree-plus" title="新增子节点" @click.stop="nodeAdd(STORE,DATA,NODE)"></i>
+			<i class="tree-button tree-edit" title="编辑此节点" @click.stop="nodeEdit(STORE,DATA,NODE)"></i>
+			<i class="tree-button tree-delete" title="删除此节点" @click.stop="nodeDel(STORE,DATA,NODE)"></i>
 		</span>
 		<span class="tree-btn-edit" v-show="DATA.isEdit">
-			<i class="el-icon-check" v-show="!editCancel" @click.stop="submitAdd(STORE,DATA,NODE)"></i>
-			<i class="el-icon-check" v-show="editCancel" @click.stop="submitEdit(STORE,DATA,NODE)"></i>
-			<i class="el-icon-close" v-show="!editCancel" @click.stop="nodeCancel(STORE,DATA,NODE)"></i>
-			<i class="el-icon-close" v-show="editCancel" @click.stop="editCannel(STORE,DATA,NODE)"></i>
+			<i class="el-icon-check" title="保存" v-show="!editCancel" @click.stop="submitAdd(STORE,DATA,NODE)"></i>
+			<i class="el-icon-check" title="保存" v-show="editCancel" @click.stop="submitEdit(STORE,DATA,NODE)"></i>
+			<i class="el-icon-close" title="取消" v-show="!editCancel" @click.stop="nodeCancel(STORE,DATA,NODE)"></i>
+			<i class="el-icon-close" title="取消" v-show="editCancel" @click.stop="editCannel(STORE,DATA,NODE)"></i>
 		</span>
 	</span>
 </template>
@@ -124,7 +124,7 @@ export default{
 		opacity:0.5;
 	}
 	.tree-expand .tree-btn i{
-		color:#8492a6;
+		color:#409eff;
 		font-size:0.9em;
 		margin-right:10px;
 	}
