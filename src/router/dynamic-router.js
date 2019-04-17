@@ -17,27 +17,31 @@ export default (menuData) => {
       baseRouter[i].path = '/workbench' + i
       baseRouter[i].component = Layout
       baseRouter[i].name = 'workbench' + i
-      baseRouter[i].redirect = baseRouter[i].path + '/' + data[i].sub_menus[0].template
+      if ( data[i].sub_menus){
+        baseRouter[i].redirect = baseRouter[i].path + '/' + data[i].sub_menus[0].template
+      }
       if (data[i].parent_menu_name === '软电话') {
         baseRouter[i].hidden = true
       }
       baseRouter[i].meta = {
         title: data[i].parent_menu_name, icon: 'example'
       }
-      for (let j = 0; j < data[i].sub_menus.length; j++) {
-        children[j] = {}
-        if (data[i].sub_menus[j].template === 'organization_list' || data[i].sub_menus[j].template === 'employee_list' || data[i].sub_menus[j].template === 'account_list') {
-          children[j].path = data[i].sub_menus[j].template + '/:id'
-        } else {
-          children[j].path = data[i].sub_menus[j].template
+      if (data[i].sub_menus){
+        for (let j = 0; j < data[i].sub_menus.length; j++) {
+          children[j] = {}
+          if (data[i].sub_menus[j].template === 'organization_list' || data[i].sub_menus[j].template === 'employee_list' || data[i].sub_menus[j].template === 'account_list') {
+            children[j].path = data[i].sub_menus[j].template + '/:id'
+          } else {
+            children[j].path = data[i].sub_menus[j].template
+          }
+          children[j].name = data[i].sub_menus[j].template
+          children[j].meta = {
+            title: data[i].sub_menus[j].title
+            // ,
+            // icon: 'user'
+          }
+          children[j].component = () => import('@/views/' + data[i].sub_menus[j].template + '/index')
         }
-        children[j].name = data[i].sub_menus[j].template
-        children[j].meta = {
-          title: data[i].sub_menus[j].title
-          // ,
-          // icon: 'user'
-        }
-        children[j].component = () => import('@/views/' + data[i].sub_menus[j].template + '/index')
       }
       baseRouter[i].children = children
       if (baseRouter[i].children.length === 1) {
