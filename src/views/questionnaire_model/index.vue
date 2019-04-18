@@ -64,8 +64,7 @@
             </el-table-column>
             <el-table-column align="center" label="操作">
               <template slot-scope="scope">
-                <!-- <el-button type="text" size="medium" @click="fillQuestionnaire(scope.row.id);templateId=scope.row.id">填写</el-button>
-                <el-button type="text" size="medium" @click="queryFillRecords(scope.row.id);listTemplateName=scope.row.name;listVisiable=true">查看记录</el-button> -->
+                <!-- 查看详情 -->
                 <el-button type="text" size="medium" @click="checkFillDetail(scope.row.templateId,scope.row.recordTitles)">查看详情</el-button>
                 <el-button type="text" size="medium" @click="deleteVisiable=true;deleteRecordId=scope.row.id">删除</el-button>
               </template>
@@ -144,6 +143,17 @@
                     <el-form size="small">
                       <h5 v-if="show_singleItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;单选:</h5><br/>
                         <div style="margin-top:-8px">
+                          <!-- <el-form-item v-for="(item,index) in allItems" :key="index">
+                              <div class="topic-type-content" v-show="item.type===0">
+                                <span>{{index+1}}.</span>
+                                <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
+                                <div v-for="(a,radioIndex) in item.options" class="options">
+                                  <el-radio :label="a.content" v-model="selectOption_single[index]">
+                                    {{a.content}}
+                                  </el-radio>
+                                </div>
+                            </div>
+                          </el-form-item> -->
                           <el-form-item v-for="(item,index) in show_singleItems" :key="index">
                             <div class="topic-type-content">
                                 <span>{{index+1}}.</span>
@@ -157,8 +167,6 @@
                           </el-form-item>
                         </div>
                     </el-form>
-                  
-
                   <!--  多选  -->
                   <el-form size="small">
                     <h5 v-if="show_multiItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多选:</h5><br/>
@@ -167,9 +175,6 @@
                         <div class="topic-type-content">
                           <span>{{index+1}}.</span>
                           <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
-                          <!-- <div v-for="(a,checkboxIndex) in item.options" class="options">
-                            <el-checkbox :label="a.content">{{a.content}}</el-checkbox>
-                          </div> -->
                           <el-checkbox-group v-model="selectOption_multi[index]">
                             <el-checkbox v-for="(a,checkboxIndex) in item.options" :label="a.content">{{a.content}}</el-checkbox>
                           </el-checkbox-group>
@@ -177,7 +182,6 @@
                       </el-form-item>
                     </div>
                   </el-form>
-
                   <!--  单行填空  -->
                    <el-form size="small">
                     <h5 v-if="show_fillBlanks.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;单行填空:</h5><br/>
@@ -193,7 +197,6 @@
                         </el-form-item>
                       </div>
                   </el-form>
-
                   <!--  多行填空  -->
                    <el-form size="small">
                     <h5 v-if="show_multiBlanks.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多行填空:</h5><br/>
@@ -213,7 +216,7 @@
                 </div>
                 <div class="lastbuttons" >
                   <div style="margin-top:8px">
-                    <el-button type="primary" size="small" @click="completeFillQuestionnaire(templateId,oneDetails.name);" v-if="showComplete===true">完成</el-button>
+                    <el-button type="primary" size="small" @click="completeFillQuestionnaire(templateId,oneDetails.name,);">完成</el-button>
                     <el-button type="primary" plain size="small" @click="pagePosition='1'">返回</el-button><br/><br/>
                   </div>
                 </div>
@@ -237,7 +240,6 @@
                 <div class="title-content-detail">
                   <span>{{this.oneDetails.name}}&nbsp;
                   </span><br/>
-                  <!-- <span style="font-size: 10px;padding:30px">{{this.oneDetails.modifier}}&nbsp;&nbsp;{{formatDateTime(this.oneDetails.modifyTime)}}</span> -->
                 </div>
                 <div class="survey-desc">
                   <div class="desc-content">欢迎参加调查！答卷数据仅用于统计分析，请放心填写。题目选项无对错之分，按照实际情况选择即可。感谢您的帮助！</div>
@@ -253,7 +255,7 @@
                                 <span>{{index+1}}.</span>
                                 <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
                                 <div v-for="(a,radioIndex) in item.options" class="options">
-                                  <el-radio :label="a.content" v-model="selectOption_single[index]">
+                                  <el-radio :label="a.content" v-model="selectOption_single[index]" >
                                     {{a.content}}
                                   </el-radio>
                                 </div>
@@ -261,8 +263,6 @@
                           </el-form-item><br/>
                         </div>
                     </el-form>
-                  
-
                   <!--  多选  -->
                   <el-form size="small">
                     <h5 v-if="show_multiItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多选:</h5><br/>
@@ -271,9 +271,6 @@
                         <div class="topic-type-content">
                           <span>{{index+1}}.</span>
                           <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
-                          <!-- <div v-for="(a,checkboxIndex) in item.options" class="options">
-                            <el-checkbox :label="a.content">{{a.content}}</el-checkbox>
-                          </div> -->
                           <el-checkbox-group v-model="selectOption_multi[index]">
                             <el-checkbox v-for="(a,checkboxIndex) in item.options" :label="a.content">{{a.content}}</el-checkbox>
                           </el-checkbox-group>
@@ -290,7 +287,7 @@
                           <div class="topic-type-content">
                             <span>{{index+1}}.</span>
                             <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
-                            <div v-for="(a,blankIndex) in item.options" class="options">
+                            <div v-for="(a,blankIndex) in item.options" :key="blankIndex" class="options">
                               <el-input type="text" style="width:478px;margin:2px" v-model="selectOption_blanks[index]"  maxlength="45" ></el-input>
                             </div>
                           </div>
@@ -307,20 +304,18 @@
                             <span>{{index+1}}.</span>
                             <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
                             <div v-for="(a,blankIndex) in item.options" class="options">
-                              <el-input type="textarea" rows="4"  resize="none" style="width:478px;margin:2px" v-model="selectOption_multiblanks[index]"  maxlength="45"></el-input>
+                              <el-input type="textarea" rows="4"  resize="none" style="width:478px;margin:2px;background-color:none;" v-model="selectOption_multiblanks[index]"  maxlength="45"></el-input>
                             </div>
                           </div>
                         </el-form-item>
                       </div>
                   </el-form>
-
                 </div>
                 <div class="lastbuttons" >
                   <div style="margin-top:8px">
                     <el-button type="primary" plain size="small" @click="pagePosition='1'">返回</el-button><br/><br/>
                   </div>
                 </div>
-
               </el-header>
             </el-container>
           </el-container>
@@ -330,7 +325,6 @@
     </div>
   </div>
 </template>
-
 <style lang='scss' scoped>
 .title-content {
   height: 48px;
@@ -381,6 +375,7 @@
 }
 .options {
   padding-left: 30px;
+  margin-bottom: 10px;
 }
 .lastbuttons {
   border: 1px solid #dbdbdb;
@@ -421,23 +416,27 @@
     background: url(../../../static/images/my_imgs/question_logo.png) no-repeat;
     padding-left: 50px;
 }
+
 </style>
 
 <style>
 .question .el-input__inner:focus{
-  border: 1px solid #000;
-  background:rgb(253, 249, 205);
+  border: 1px solid #dbdbdb;
+  background:none;
 }
 .question .el-input__inner:hover{
-  background:rgb(253, 249, 205);
+  background:none;
 }
 .question .el-textarea__inner:focus{
-  background:rgb(253, 249, 205);
+  border: 1px solid #dbdbdb;
+  background:none;
 }
 .question .el-textarea__inner:hover{
-  background:rgb(253, 249, 205);
+  background:none;
 }
-
+.question .el-checkbox{
+  margin-right: 20px;
+}
 </style>
 
 <script>
@@ -491,6 +490,10 @@ export default {
         name: '',
         titles: []
       },
+
+      // 整合后的数组
+      allItems:[],
+
       singleCheck: false,
       multiCheck: false,
       blanksCheck: false,
@@ -499,6 +502,7 @@ export default {
       selectOption_multi: [],
       selectOption_blanks: [],
       selectOption_multiblanks: [],
+      
       singleItems: [], // 单选 所有选项
       multiItems: [], // 多选 所有选项
       fillBlanks: [], // 单行填空 所有选项
@@ -512,7 +516,7 @@ export default {
       batchdeletVisiable: false, // 批量删除提示dialog
       deleteRecordId: '', // 需要删除记录的id
       batchDeleteIds: [], // 批量删除的ids
-      showComplete: true // 是否完成
+      // showComplete: true // 是否完成
     }
   },
 
@@ -635,7 +639,7 @@ export default {
         this.$message.error('请先选择问卷模板！')
         return
       } else {
-        this.showComplete = true
+        // this.showComplete = true
         this.fillQuestionnaire(id)
       }
     },
@@ -684,9 +688,8 @@ export default {
     },
     // 完成问卷填写
     completeFillQuestionnaire(templateId, templateName) {
-      this.showComplete = false
+      // this.showComplete = false
       this.hasBlanksOrNot(this.show_singleItems, this.show_multiItems, this.show_fillBlanks, this.show_multiBlanks, this.selectOption_single, this.selectOption_multi, this.selectOption_blanks, this.selectOption_multiblanks)
-      // console.log(this.singleCheck, this.multiCheck, this.blanksCheck, this.multiblanksCheck)
       if (this.singleCheck === true &&
         this.multiCheck === true &&
         this.blanksCheck === true &&
@@ -743,9 +746,9 @@ export default {
             ]
           })
         }
-
+        this.allItems = this.singleItems.concat(this.multiItems,this.fillBlanks,this.multiBlanks)
         // 发送请求生成记录
-        generateQuestionnaireRecord(templateId, templateName, this.singleItems, this.multiItems, this.fillBlanks, this.multiBlanks)
+        generateQuestionnaireRecord(templateId, templateName, this.allItems)
           .then(response => {
             if (response.data) {
               if (response.data.code === 0) {

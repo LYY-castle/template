@@ -25,17 +25,14 @@ export function queryOneQuestionnaire(id) {
   })
 }
 
-export function generateQuestionnaireRecord(templateId, templateName, singleItems, multiItems, fillBlanks, multiBlanks) {
+export function generateQuestionnaireRecord(templateId, templateName, allItems) {
   return request({
     url: '/questionnaire/generateRecord',
     method: 'post',
     data: {
       templateId: templateId,
       templateName: templateName,
-      singleItems: singleItems,
-      multiItems: multiItems,
-      fillBlanks: fillBlanks,
-      multiBlanks: multiBlanks
+      recordTitles: allItems
     }
   })
 }
