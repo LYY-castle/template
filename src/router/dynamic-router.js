@@ -11,7 +11,7 @@ export default (menuData) => {
   }
 
   const getRouterForMenu = (menu, parentMenu) => {
-    menu.path = menu.value ? `${menu.value}` : ''
+    menu.path = menu.value ? `/${menu.value}` : '/'
     menu.component = parentMenu ? (menu.value ? () => import('@/views/' + menu.value + '/index') : null) : Layout
     menu.hidden = menu.status === '0'
     menu.meta = {
