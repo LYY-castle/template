@@ -1,7 +1,7 @@
 <template>
   <el-container class="app-wrapper" :class="classObj">
     <el-aside
-      style="width:auto;position:relative;background:#242a2e" 
+      style="width:auto;position:relative;background:#242a2e;"
       class="sidebar-container">
       <sidebar class="sidebar-container"></sidebar>
     </el-aside>
@@ -122,7 +122,7 @@ export default {
   }
   div.hamberger-bar:hover svg path{
     fill:#fff;
-  } 
+  }
   div.hamberger-bar div.hamberger{
     position:absolute;
     top: 4px;
@@ -188,7 +188,7 @@ export default {
     margin-right: 0;
     }
   }
-  @media all and (min-width:400px) and (max-width:1023px)  {  
+  @media all and (min-width:400px) and (max-width:1023px)  {
     #app .sidebar-container {
       /* width: 137px !important; */
       width: 164px !important;
@@ -199,5 +199,5 @@ export default {
     #app .sidebar-container .svg-icon {
     margin-right: 0;
 }
-  }  
+  }
 </style>

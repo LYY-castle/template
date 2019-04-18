@@ -9,7 +9,7 @@
       <!-- <div class="hamberger-bar">
         <hamburger :class="hamburger" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
       </div> -->
-      
+
       <el-menu
         :unique-opened="true"
         style="z-index:1;"
@@ -65,6 +65,6 @@ export default {
 
   }
   @media all and (min-width:1024px) and (max-width:1280px)  {
- 
+
   }
 </style>

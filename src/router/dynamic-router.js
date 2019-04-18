@@ -1,53 +1,36 @@
-import Layout from '../views/layout/Layout'
+import S from 'string'
+import Layout from '../views/layout'
 
 export default (menuData) => {
-  const baseRouter = []
-  let rawData = []
-  if (menuData) {
-    rawData = menuData.data
+  let menuRawData = []
+  if (menuData && menuData.data && menuData.data.length) {
+    menuRawData = menuData.data
   } else {
     const sessionMenuData = sessionStorage.getItem('getMenu') && JSON.parse(sessionStorage.getItem('getMenu')).data
-    rawData = sessionMenuData || []
+    menuRawData = sessionMenuData || []
   }
-  if (rawData.length !== 0) {
-    const data = rawData
-    for (let i = 0; i < data.length; i++) {
-      const children = []
-      baseRouter[i] = {}
-      baseRouter[i].path = '/workbench' + i
-      baseRouter[i].component = Layout
-      baseRouter[i].name = 'workbench' + i
-      if ( data[i].sub_menus){
-        baseRouter[i].redirect = baseRouter[i].path + '/' + data[i].sub_menus[0].template
-      }
-      if (data[i].parent_menu_name === '软电话') {
-        baseRouter[i].hidden = true
-      }
-      baseRouter[i].meta = {
-        title: data[i].parent_menu_name, icon: 'example'
-      }
-      if (data[i].sub_menus){
-        for (let j = 0; j < data[i].sub_menus.length; j++) {
-          children[j] = {}
-          if (data[i].sub_menus[j].template === 'organization_list' || data[i].sub_menus[j].template === 'employee_list' || data[i].sub_menus[j].template === 'account_list') {
-            children[j].path = data[i].sub_menus[j].template + '/:id'
-          } else {
-            children[j].path = data[i].sub_menus[j].template
-          }
-          children[j].name = data[i].sub_menus[j].template
-          children[j].meta = {
-            title: data[i].sub_menus[j].title
-            // ,
-            // icon: 'user'
-          }
-          children[j].component = () => import('@/views/' + data[i].sub_menus[j].template + '/index')
-        }
-      }
-      baseRouter[i].children = children
-      if (baseRouter[i].children.length === 1) {
-        baseRouter[i].alwaysShow = true
-      }
+
+  const getRouterForMenu = (menu, parentMenu) => {
+    menu.path = menu.value ? `${menu.value}` : ''
+    menu.component = parentMenu ? (menu.value ? () => import('@/views/' + menu.value + '/index') : null) : Layout
+    menu.hidden = menu.status === '0'
+    menu.meta = {
+      title: menu.name,
+      icon: menu.icon
     }
+    menu.level = S(menu.idPath).count('/') - 1
+    menu.alwaysShow = menu.value ? true : (menu.children && menu.children.length)
   }
-  return baseRouter
+  const fillRecursiveRoutersFromMenus = (menus, parentMenu) => {
+    menus.forEach(menu => {
+      getRouterForMenu(menu, parentMenu)
+      if (menu.children && menu.children.length) {
+        fillRecursiveRoutersFromMenus(menu.children, menu)
+      }
+    })
+  }
+
+  fillRecursiveRoutersFromMenus(menuRawData)
+
+  return menuRawData
 }

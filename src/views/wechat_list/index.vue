@@ -366,7 +366,7 @@
                   default-time="00:00:00"
                   type="datetime" style="width:200px">
                 </el-date-picker>
-              </el-form-item>           
+              </el-form-item>
             </el-form>
             <el-form>
               <el-form-item>
@@ -575,7 +575,7 @@
     }
     .el-menu-item{
       box-sizing:border-box;
-      height: 46px;
+      height: 40px;
       padding:5px 9px 5px 11px !important;
       line-height:normal;
       color:#333 !important;

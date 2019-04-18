@@ -91,11 +91,20 @@
   .sidebar-container .nest-menu .el-submenu>.el-submenu__title,
   .sidebar-container .el-submenu .el-menu-item {
     min-width: 180px !important;
+    height: 45px;
+    line-height: 45px;
+    padding-left: 38px !important;
     // background-color: $subMenuBg !important;
     // &:hover {
-      // background-color: $menuHover !important;
+    //   background-color: $menuHover !important;
     // }
   }
+
+  .sidebar-container .nest-menu .el-submenu > .el-submenu__title,
+  .sidebar-container .el-submenu .el-menu-item.third-level-menu {
+    padding-left: 52px !important;
+  }
+
   .el-menu--collapse .el-menu .el-submenu {
     min-width: 180px !important;
   }
