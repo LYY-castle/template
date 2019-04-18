@@ -20,12 +20,20 @@ export default (menuData) => {
       icon: menu.icon
     }
     menu.alwaysShow = menu.value ? true : (menu.children && menu.children.length)
+    if (menu.level === 1 && menu.value) {
+      menu.redirect = `${menu.value}/index`
+    }
   }
   const fillRecursiveRoutersFromMenus = (menus, parentMenu) => {
     menus.forEach(menu => {
       getRouterForMenu(menu, parentMenu)
       if (menu.children && menu.children.length) {
         fillRecursiveRoutersFromMenus(menu.children, menu)
+      } else if (!parentMenu) {
+        menu.children = [{
+          path: 'index',
+          component: menu.value ? () => import('@/views/' + menu.value + '/index') : null
+        }]
       }
     })
   }
