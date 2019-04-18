@@ -5,6 +5,7 @@ const prod_env = process.env.prod_env || 'dev'
 const base_conf = {
   NODE_ENV: '"production"',
   BASE_API: '"/api/v1"',
+  BASE_API_V2: '"/api/v2"',
 }
 
 const env_conf = {

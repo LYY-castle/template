@@ -17,3 +17,15 @@
   log stdout
   errors stdout
 }
+
+0.0.0.0:80/api/v2 {
+  proxy / 127.0.0.1:9091/api/v2 {
+    transparent
+    websocket
+    keepalive 0
+    timeout 100s
+  }
+  gzip
+  log stdout
+  errors stdout
+}
