@@ -185,25 +185,25 @@
                     <div>{{agentMap[scope.row.staffId]+" ("+scope.row.staffId+")"}}</div>
                 </template>
               </el-table-column>
-              <el-table-column 
-                align="center" 
-                label="首拨数量" 
+              <el-table-column
+                align="center"
+                label="首拨数量"
                 prop="noContactNum">
               </el-table-column>
-              <el-table-column 
-                align="center" 
+              <el-table-column
+                align="center"
                 label="预约量"
-                prop="appiontNum" 
+                prop="appiontNum"
                 :show-overflow-tooltip="true">
               </el-table-column>
-              <el-table-column 
-                align="center" 
+              <el-table-column
+                align="center"
                 label="今日成功量"
                 prop="successNum">
               </el-table-column>
-              <el-table-column 
-                align="center" 
-                label="今日失败量" 
+              <el-table-column
+                align="center"
+                label="今日失败量"
                 prop="failNum"
                 :show-overflow-tooltip="true">
               </el-table-column>
@@ -223,19 +223,19 @@
                     <div>{{agentMap[scope.row.agent_id] +" ("+scope.row.agent_id+")"}}</div>
                 </template>
               </el-table-column>
-              <el-table-column 
-                align="center" 
+              <el-table-column
+                align="center"
                 label="订单数量"
                 prop="count">
               </el-table-column>
-              <el-table-column 
-                align="center" 
-                label="订单总金额" 
+              <el-table-column
+                align="center"
+                label="订单总金额"
                 prop="total_amount"
                 :show-overflow-tooltip="true">
               </el-table-column>
-              <el-table-column 
-                align="center" 
+              <el-table-column
+                align="center"
                 label="订单平均金额"
                 prop="avg_amount">
               </el-table-column>
@@ -260,9 +260,9 @@
                     <div>{{formatSeconds(scope.row.call_time_duration)}}</div>
                 </template>
               </el-table-column>
-              <el-table-column 
-                align="center" 
-                label="通话次数" 
+              <el-table-column
+                align="center"
+                label="通话次数"
                 prop="calls_number"
                 :show-overflow-tooltip="true">
               </el-table-column>
@@ -409,7 +409,7 @@ export default {
         this.$root.eventHub.$emit('monitor_workingset', this.agentArray)
         agentStatus({ agent_id: this.agentArray.join(',') }).then(res => {
           if (!res.data.errorCode) {
-            if (res.data.result.length > 0) {
+            if (res.data && res.data.result && res.data.result.length > 0) {
               for (let i = 0; i < res.data.result.length; i++) {
                 const obj = {}
                 // console.log(res.data.result[i])
