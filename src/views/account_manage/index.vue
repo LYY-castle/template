@@ -417,7 +417,7 @@ export default {
     this.formContainer()
     this.handleChangeAcitve()
     this.tempRoute = Object.assign({}, this.$route)
-    this.setTagsViewTitle()
+    // this.setTagsViewTitle()
     this.getRoles()
   },
   methods: {
@@ -918,11 +918,11 @@ export default {
         }
         this.regionOptions = list2Tree(map)
       })
-    },
-    setTagsViewTitle() {
-      const route = Object.assign({}, this.tempRoute, { title: this.$route.params.id === ':id' ? this.tempRoute.meta.title : this.tempRoute.meta.title + '-' + sessionStorage.getItem(this.$route.params.id) })
-      this.$store.dispatch('updateVisitedView', route)
     }
+    // setTagsViewTitle() {
+    //   const route = Object.assign({}, this.tempRoute, { title: this.$route.params.id === ':id' ? this.tempRoute.meta.title : this.tempRoute.meta.title + '-' + sessionStorage.getItem(this.$route.params.id) })
+    //   this.$store.dispatch('updateVisitedView', route)
+    // }
   },
   created() {
     if (this.$route.params.id !== ':id') {
@@ -941,7 +941,7 @@ export default {
     this.refreshOrganTo()
   },
   activated() {
-    this.setTagsViewTitle()
+    // this.setTagsViewTitle()
     if (this.$route.params.id !== ':id') {
       findAllAccount({ departName: sessionStorage.getItem(this.$route.params.id) }).then(
         response => {

@@ -68,3 +68,22 @@ export default {
 
   }
 </style>
+<style rel="stylesheet/scss" lang="scss" scoped>
+  // 一级无子菜单样式
+  /deep/ .menu-wrapper>a>li{
+    height: 45px;
+    line-height: 45px;
+    padding-left:12px !important;
+    background: #242A2E !important;
+    &:hover{
+      background: #181d20 !important;
+    }
+    &>i{
+      margin-right: 14px;
+      color:#fff;
+    }
+    &>span{
+      color:#fff;
+    }
+  }
+</style>

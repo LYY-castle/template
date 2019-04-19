@@ -672,10 +672,10 @@
           }
         })
       },
-      setTagsViewTitle() {
-        const route = Object.assign({}, this.tempRoute, { title: this.$route.params.id === ':id' ? this.tempRoute.meta.title : this.tempRoute.meta.title + '-' + sessionStorage.getItem(this.$route.params.id) })
-        this.$store.dispatch('updateVisitedView', route)
-      },
+      // setTagsViewTitle() {
+      //   const route = Object.assign({}, this.tempRoute, { title: this.$route.params.id === ':id' ? this.tempRoute.meta.title : this.tempRoute.meta.title + '-' + sessionStorage.getItem(this.$route.params.id) })
+      //   this.$store.dispatch('updateVisitedView', route)
+      // },
       resetForm(formName) {
         this.$refs[formName].resetFields()
       },
@@ -889,10 +889,10 @@
       this.formContainer()
       this.handleChangeAcitve()
       this.tempRoute = Object.assign({}, this.$route)
-      this.setTagsViewTitle()
+      // this.setTagsViewTitle()
     },
     activated() {
-      this.setTagsViewTitle()
+      // this.setTagsViewTitle()
       if (this.$route.params.id !== ':id') {
         query({ departName: sessionStorage.getItem(this.$route.params.id) }).then(response => {
           this.queryStaff(response)
