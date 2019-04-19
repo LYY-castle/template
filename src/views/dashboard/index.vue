@@ -75,56 +75,43 @@ export default {
     ])
   },
   mounted() {
-    console.log(this.$router)
-    // const promise = new Promise(resolve => {
     getMenu(localStorage.getItem('agentId')).then(response => {
       var data = response.data
+      this.routerData = getDynamicRouter(data)
       // 判断是否显示微信相关
-      if (this.show_wechat === 'false') {
-        for (var i = 0; i < data.data.length; i++) {
-          if (data.data[i].id === 58) {
-            data.data.splice(i, 1)
-          } else {
-            for (var j = 0; j < data.data[i].sub_menus.length; j++) {
-              if (data.data[i].sub_menus[j].id === 58) {
-                data.data[i].sub_menus.splice(j, 1)
-              }
-            }
-          }
-        }
-      }
+      // if (this.show_wechat === 'false') {
+      //   for (var i = 0; i < data.data.length; i++) {
+      //     if (data.data[i].id === 58) {
+      //       data.data.splice(i, 1)
+      //     } else {
+      //       for (var j = 0; j < data.data[i].sub_menus.length; j++) {
+      //         if (data.data[i].sub_menus[j].id === 58) {
+      //           data.data[i].sub_menus.splice(j, 1)
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
       // 存到session storage
       sessionStorage.setItem('getMenu', JSON.stringify(data))
       // 存到store里面
-      this.$store.dispatch('SetMenu', getDynamicRouter(data))
-      this.$router.addRoutes(getDynamicRouter(data))
-      this.$set(this.$router.options, 'routes', getDynamicRouter(data))
-      for (let i = 0; i < constantRouterMap.length; i++) {
-        this.$router.options.routes.push(constantRouterMap[i])
-      }
+      this.$store.dispatch('SetMenu', this.routerData)
+      this.$router.addRoutes(this.routerData)
+      this.$set(this.$router.options, 'routes', this.routerData)
+      // for (let i = 0; i < constantRouterMap.length; i++) {
+      //   this.$router.options.routes.push(constantRouterMap[i])
+      // }
       this.$router.options.routes.concat(constantRouterMap)
-      // resolve()
+      //  if (code === 403) {
+      //   sessionStorage.setItem('getMenu', '')
+      //   this.$store.dispatch('SetMenu', [])
+      //   this.$router.addRoutes(getDynamicRouter(''))
+      // }
+      console.log(this.$router)
     }).catch(error => {
-      if (error.response.status === 403) {
-        sessionStorage.setItem('getMenu', '')
-        this.$store.dispatch('SetMenu', [])
-        this.$router.addRoutes(getDynamicRouter(''))
-      }
+      // throw new Error(error)
       console.error(error)
     })
-    // })
-    // promise.then(() => {
-    // const menu = sessionStorage.getItem('getMenu')
-    // if (menu && menu.indexOf('ord_workingset') > 0) {
-    //   this.$router.push({ name: 'ord_workingset' })
-    // } else if (menu && menu.indexOf('ord_qc_workingset') > 0) {
-    //   this.$router.push({ name: 'ord_qc_workingset' })
-    // } else {
-    //   console.log('没有坐席工作台和质检员工作台的页面权限')
-    // }
-    // })
-    // 查询工号所属角色
-    // axios.all([
     // 判断现场主管权限
     checkDepart(this.agentId).then(() => {
       this.depart = true
