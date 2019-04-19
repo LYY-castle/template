@@ -34,20 +34,41 @@
                 <img slot="reference" src="../../../../static/images/enter_disable.png" title="登入" @click="countNum()" ref="login_img" class="img-all icon-container">
               </el-popover>
               <!-- 状态 -->
-              <el-dropdown trigger="click" placement="bottom" @command="changeState" >
+              <!-- <el-dropdown trigger="click" placement="bottom" @command="changeState" > -->
+                
+                <!-- <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item 
+                  :command="item.code" 
+                  :disabled="lockChange" 
+                  v-for="(item,index) in obstatus" 
+                  :key="index">
+                    {{item.name}}
+                  </el-dropdown-item> -->
+                  <!-- <el-dropdown-item command="0" :disabled="lockChange">就绪</el-dropdown-item>
+                  <el-dropdown-item command="13" :disabled="lockChange">示忙</el-dropdown-item>
+                  <el-dropdown-item command="14" :disabled="lockChange">话后</el-dropdown-item>
+                  <el-dropdown-item command="-5" :disabled="lockChange">外呼就绪</el-dropdown-item> -->
+                <!-- </el-dropdown-menu> -->
+              <!-- </el-dropdown> -->
+              <!-- <div class="status-imgs"> -->
                 <img src="../../../../static/images/nologin_state.png" title="未登录" class="img-all icon-container" v-if="agentState1">
                 <img src="../../../../static/images/busy_normal.png" title="示忙"  class="img-all icon-container" v-else-if="agentState2">
                 <img src="../../../../static/images/agent_stat38_all_ready.png" title="就绪"  class="img-all icon-container" v-else-if="agentState3">
                 <img src="../../../../static/images/back_state.png" title="话后"  class="img-all icon-container" v-else-if="agentState4">
                 <img src="../../../../static/images/auto_dial_all_ready.png" title="外呼就绪"  class="img-all icon-container" v-else-if="agentState5">
                 <img src="../../../../static/images/auto_dial_busy.png" title="外呼占用"  class="img-all icon-container" v-else-if="agentState6">
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="0" :disabled="lockChange">就绪</el-dropdown-item>
-                  <el-dropdown-item command="13" :disabled="lockChange">示忙</el-dropdown-item>
-                  <el-dropdown-item command="14" :disabled="lockChange">话后</el-dropdown-item>
-                  <el-dropdown-item command="-5" :disabled="lockChange">外呼就绪</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
+              <!-- </div> -->
+              <el-cascader
+                class="status-cascader"
+                popper-class="status-popper"
+                v-model="statuses"
+                :options="obstatus"
+                :props="cascaderProps"
+                filterable
+                change-on-select
+                @change="handleStatueChange"
+              >
+              </el-cascader>
               <!-- 号码输入框 -->
               <img src="../../../../static/images/answer_disable.png" title="接听(不可用)"  class="img-all icon-container" v-show="!answerCall">
               <img src="../../../../static/images/answer_normal.gif" title="接听"  class="img-all icon-container" v-show="answerCall" @click="agentanswercall()">
@@ -307,6 +328,9 @@ import {
   queryListByAgentId
 } from '@/api/navbar'
 import {
+  getPhoneStatus
+} from '@/api/phone_status_manage'
+import {
   getUnreadNum,
   changeRecords
 } from '@/api/wechat_list'
@@ -327,6 +351,13 @@ export default {
   name: 'layout',
   data() {
     return {
+      obstatus: [],
+      cascaderProps: {
+        label: 'name',
+        value: 'code',
+        children: 'children'
+      },
+      statuses: [],
       login_img_click_num: 0, // 登入按钮点击次数
       queues: [], // 员工拥有的技能组
       isIndeterminate: true, // 支持全选
@@ -434,6 +465,16 @@ export default {
     }
   },
   methods: {
+    handleStatueChange() {
+      let status = ''
+      if (this.statuses.length !== 0) {
+        status = this.statuses[this.statuses.length - 1].toString()
+        this.changeState(status)
+      } else {
+        status = ''
+        this.changeState(status)
+      }
+    },
     countNum() {
       this.login_img_click_num++
     },
@@ -1731,6 +1772,16 @@ export default {
   },
   mounted() {
     vm = this
+    // 查询外呼状态
+    getPhoneStatus().then(response => {
+      if (response.data.code === 0) {
+        vm.obstatus = response.data.data
+      } else {
+        console.log(response.data.message)
+      }
+    }).catch(error => {
+      throw new Error(error)
+    })
     // 查找队列
     queryListByAgentId(localStorage.getItem('agentId')).then(res => {
       if (res.data.code === 1 && res.data.data.length > 0) {
@@ -2043,6 +2094,9 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss">
+body /deep/ .status-popper{
+  left:217px !important;
+}
 .navbar{
   .el-input{
     .el-input__inner{
@@ -2401,10 +2455,10 @@ export default {
   margin-right:15px;
   box-sizing:border-box;
 }
-.img-all:hover{
-  transition:box-shadow .5s;
-  box-shadow: 0px 0px 5px 2px #888;
-}
+// .img-all:hover{
+//   transition:box-shadow .5s;
+//   box-shadow: 0px 0px 5px 2px #888;
+// }
 .navbar{
   width:100%;
   height:109px;
@@ -2461,6 +2515,23 @@ export default {
 </style>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
+.navbar{
+  /deep/ .status-cascader{
+    width:36px;
+    height:36px;
+    position:absolute;
+    top:16px;
+    left:77px;
+    opacity:0;
+    .el-cascader__label{
+      padding:0;
+    }
+    .el-input--suffix .el-input__inner{
+      padding:0;
+    }
+  }
+}
+
 .el-button{
   width:auto;
 }
