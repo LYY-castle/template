@@ -7,7 +7,7 @@
         <div style="float:left;height:72px;margin-left:22px;" v-if="havesoftphone">
           <!-- 分机号和状态选项 -->
           <div class="navbar-forms">
-            <el-form :inline="true" size="mini" style="width:417px;">
+            <el-form :inline="true" size="mini" style="width:338px;">
               <el-popover trigger="click" placement="bottom">
                 <el-form :inline="true" size="mini" style="padding-top:20px;max-width:220px;">
                   <div v-if="queues.length>0">
@@ -51,20 +51,20 @@
               <!-- 号码输入框 -->
               <img src="../../../../static/images/answer_disable.png" title="接听(不可用)"  class="img-all icon-container" v-show="!answerCall">
               <img src="../../../../static/images/answer_normal.gif" title="接听"  class="img-all icon-container" v-show="answerCall" @click="agentanswercall()">
-              <!-- <div class="icon-container"> -->
-              <img src="../../../../static/images/dial_disable.png" title="拨号(不可用)" class="img-all icon-container" v-show="!dialCall" style="margin-right:0;">
-              <img src="../../../../static/images/dial_normal.png" title="拨号"  class="img-all icon-container" v-show="dialCall" @click="agentdialout()" style="margin-right:0;">
-              <!-- </div> -->
               <el-form-item class="numberBox">
                 <el-input v-model="formInline.user" size="medium" :disabled="disabledDial" style="margin-left:-6px;"></el-input>
               </el-form-item>
+              <!-- <div class="icon-container">
+                <img src="../../../../static/images/dial_disable.png" title="拨号(不可用)" class="img-all icon-container" v-show="!dialCall" style="margin-left:0;">
+                <img src="../../../../static/images/dial_normal.png" title="拨号"  class="img-all icon-container" v-show="dialCall" @click="agentdialout()" style="margin-left:0;">
+              </div> -->
             </el-form>
           </div>
           <div class="navbar-buttons" style="float:left;">
-            <!-- <div style="float:left;" class="icon-container">
-              <img src="../../../../static/images/dial_disable.png" title="拨号(不可用)" class="img-all icon-container" v-show="!dialCall">
-              <img src="../../../../static/images/dial_normal.png" title="拨号"  class="img-all icon-container" v-show="dialCall" @click="agentdialout()">
-            </div> -->
+            <div style="float:left; margin-left: -17px; margin-right: 15px;" class="icon-container">
+              <img src="../../../../static/images/dial_disable.png" title="拨号(不可用)" class="img-all icon-container" v-show="!dialCall" />
+              <img src="../../../../static/images/dial_normal.png" title="拨号"  class="img-all icon-container" v-show="dialCall" @click="agentdialout()" />
+            </div>
             <div style="float:left;margin-right: 15px;" class="icon-container">
               <img src="../../../../static/images/hold_disable.png" title="保持(不可用)" class="img-all icon-container" v-show="holdCall1">
               <img src="../../../../static/images/hold_normal.png" title="保持" class="img-all icon-container" v-show="holdCall2" @click="agenthold()">
@@ -2437,7 +2437,7 @@ export default {
   }
   .state_now .el-form-item__content{
     // margin-top:4%;
-    width:100% 
+    width:100%
   }
   .state_now{
     // margin-top:1%;
