@@ -68,3 +68,29 @@ export default {
 
   }
 </style>
+<style rel="stylesheet/scss" lang="scss" scoped>
+  // 一级无子菜单样式
+  /deep/ .menu-wrapper>a>li{
+    height: 45px;
+    line-height: 45px;
+    padding-left:12px !important;
+    background: #242A2E !important;
+    &:hover{
+      background: #181d20 !important;
+    }
+    &>i{
+      margin-right: 14px;
+      color:#fff;
+    }
+    &>span{
+      color:#fff;
+    }
+  }
+  // 二级菜单
+  .sidebar-container /deep/ .el-scrollbar__view>.el-menu>div>.menu-wrapper>.el-submenu>.el-menu>a>.el-menu-item{
+    padding-left: 44px !important;
+  }
+  /deep/ .menu-wrapper>.el-submenu>.el-menu>.nest-menu .el-submenu__title>span{
+    padding-left: 33px !important;
+  }
+</style>

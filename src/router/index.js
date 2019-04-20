@@ -42,6 +42,19 @@ export const constantRouterMap = [
       component: () => import('@/views/dashboard/index')
     }]
   },
+  // {
+  //   path: '/report',
+  //   component: Layout,
+  //   redirect: '/report/index',
+  //   name: '报表服务',
+  //   hidden: false,
+  //   children: [{
+  //     path: 'index',
+  //     name: '报表服务',
+  //     meta: { title: '报表服务' },
+  //     component: () => import('@/views/report/index')
+  //   }]
+  // },
   {
     path: '/category',
     component: Layout,

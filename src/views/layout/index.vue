@@ -151,9 +151,9 @@ export default {
   #app .el-scrollbar__wrap{
     margin-right:-19px !important;
   }
-  #app .el-menu-item {
+  /* #app .el-menu-item {
     padding-left: 48px !important;
-  }
+  } */
   #app .el-submenu__title{
     width:164px;
   }

@@ -30,8 +30,11 @@ export default (menuData) => {
       if (menu.children && menu.children.length) {
         fillRecursiveRoutersFromMenus(menu.children, menu)
       } else if (!parentMenu) {
+        console.log(menu)
         menu.children = [{
           path: 'index',
+          name: menu.name,
+          meta: { title: menu.name },
           component: menu.value ? () => import('@/views/' + menu.value + '/index') : null
         }]
       }

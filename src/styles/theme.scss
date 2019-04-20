@@ -620,6 +620,8 @@ $menu2ItemHover1:#57AFFF !default;
         background:$menuItemHover1 !important;
       }
     }
+  }
+  .el-scrollbar__view .el-submenu>.el-menu{
     //二级
     .el-menu-item{
       color:#fff !important;
@@ -632,4 +634,10 @@ $menu2ItemHover1:#57AFFF !default;
       }
     }
   }
+  // .el-scrollbar__view .el-submenu>.el-menu .el-submenu>.el-menu{
+    //二级
+    // .el-menu-item{
+    //   padding-left:40px !important;
+    // }
+  // }
 }
