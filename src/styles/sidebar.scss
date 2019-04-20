@@ -46,7 +46,7 @@
       width: 100% !important;
     }
   }
-  .el-submenu{
+  .el-submenu{ 
     &>.el-submenu__title {
       padding-left: 10px !important;
     }
@@ -93,7 +93,6 @@
     min-width: 180px !important;
     height: 45px;
     line-height: 45px;
-    padding-left: 44px !important;
     // background-color: $subMenuBg !important;
     // &:hover {
     //   background-color: $menuHover !important;

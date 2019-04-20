@@ -86,4 +86,11 @@ export default {
       color:#fff;
     }
   }
+  // 二级菜单
+  .sidebar-container /deep/ .el-scrollbar__view>.el-menu>div>.menu-wrapper>.el-submenu>.el-menu>a>.el-menu-item{
+    padding-left: 44px !important;
+  }
+  /deep/ .menu-wrapper>.el-submenu>.el-menu>.nest-menu .el-submenu__title>span{
+    padding-left: 33px !important;
+  }
 </style>
