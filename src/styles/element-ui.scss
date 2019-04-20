@@ -73,11 +73,10 @@ ul,p,h1,h2,h3,h4,h5,h6,dl,dd{
   }
 }
 .table-container{
-  margin-top:15px;
   background: #FFFFFF;
   box-shadow: 0 0 10px 0 rgba(39,48,69,0.10);
   border-radius: 2px;
-  padding:20px;
+  padding: 20px;
   .el-table{
     width:100%;
     font-weight: normal;
@@ -106,8 +105,7 @@ ul,p,h1,h2,h3,h4,h5,h6,dl,dd{
     }
   }
   .el-collapse-item__content{
-    padding:20px;
-    padding-top:3px;
+    padding: 0 20px;
   }
 }
 .hidden-collapse{
@@ -313,7 +311,6 @@ ul,p,h1,h2,h3,h4,h5,h6,dl,dd{
     background: #28CC6C;
     border-radius: 2px;
     width:62px;
-    height:20px;
     margin:0 auto;
     color:#fff;
   }
@@ -321,7 +318,6 @@ ul,p,h1,h2,h3,h4,h5,h6,dl,dd{
     background: #F8A300;
     border-radius: 2px;
     width:62px;
-    height:20px;
     margin:0 auto;
     color:#fff;
   }
