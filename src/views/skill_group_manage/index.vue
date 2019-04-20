@@ -14,18 +14,18 @@
                     <el-form-item label="编号:">
                       <el-input placeholder="编号（限长45字符）" v-model="formInline.code" maxlength="45"></el-input>
                     </el-form-item>
-                    <el-form-item label="呼叫类型:">
+                    <!-- <el-form-item label="呼叫类型:">
                       <el-select size="small" v-model="formInline.bondType" placeholder="呼叫类型">
                         <el-option label="请选择" value=""></el-option>
                         <el-option label="呼出" value="0"></el-option>
                         <el-option label="呼入" value="1"></el-option>
-                        <el-option label="呼入与呼出" value="2"></el-option>                
+                        <el-option label="呼入与呼出" value="2"></el-option>
                       </el-select>
-                    </el-form-item>
+                    </el-form-item> -->
                     <el-form-item label="有效性:">
                       <el-select size="small" v-model="formInline.enabled" placeholder="有效性">
                         <el-option label="请选择" value=""></el-option>
-                        <el-option label="有效" value=1></el-option>          
+                        <el-option label="有效" value=1></el-option>
                         <el-option label="无效" value=0></el-option>
                       </el-select>
                     </el-form-item>
@@ -95,7 +95,7 @@
                       {{scope.row.code}}
                     </template>
                   </el-table-column>
-                  <el-table-column
+                  <!-- <el-table-column
                     align="center"
                     prop="bondType"
                     label="呼叫类型"
@@ -103,7 +103,7 @@
                     <template slot-scope="scope">
                       {{showBondType(scope.row.bondType)}}
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
                   <el-table-column
                     align="center"
                     prop="enabled"
@@ -165,12 +165,12 @@
 
           </div>
       </div>
-      <div id="minor-board" v-if="dialogAddStaff" style="float:right;width:48.5%;margin-left:15px;" >       
-        <el-form :model="staffRelationship" ref="staffRelationship" label-width="150px" class="demo-staffRelationship" size="small" :rules="rules">           
+      <div id="minor-board" v-if="dialogAddStaff" style="float:right;width:48.5%;margin-left:15px;" >
+        <el-form :model="staffRelationship" ref="staffRelationship" label-width="150px" class="demo-staffRelationship" size="small" :rules="rules">
           <div class="table-container" style="margin-top:0;">
             <el-row>
               <div class="work-title-style font14 bold">坐席列表，所属技能组：{{ownnerSkillSetName}}<i class="el-icon-close pull-right" style="cursor:pointer;" @click="closeMinorBoard()"></i></div>
-              
+
             </el-row>
             <el-row style="margin-top:1%;">
               <el-col :span="10">
@@ -279,7 +279,7 @@
         </el-form>
       </div>
     </div>
-    <el-dialog title="新建技能组" :visible.sync="dialogFormVisible" :width="autosize" @close="resetForm('ruleForm')" append-to-body >      
+    <el-dialog title="新建技能组" :visible.sync="dialogFormVisible" :width="autosize" @close="resetForm('ruleForm')" append-to-body >
       <el-form :inline="true" :model="ruleForm" ref="ruleForm" label-width="150px" class="demo-ruleForm" size="small" :rules="rules">
         <el-row>
           <el-col>
@@ -293,13 +293,13 @@
         </el-row>
         <el-row>
           <el-col>
-            <el-form-item label="呼叫类型:" prop="bondType">
+            <!-- <el-form-item label="呼叫类型:" prop="bondType">
               <el-select size="small" v-model="ruleForm.bondType" style="width:93%;" >
                 <el-option label="呼出" value="0"></el-option>
                 <el-option label="呼入" value="1"></el-option>
                 <el-option label="呼入与呼出" value="2"></el-option>
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="有效性:" prop="enabled">
               <el-switch
                 v-model="ruleForm.enabled"
@@ -323,7 +323,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="修改技能组" :visible.sync="dialogFormVisibleReverse" :width="autosize" @close="resetForm('ruleFormReverse')" append-to-body >  
+    <el-dialog title="修改技能组" :visible.sync="dialogFormVisibleReverse" :width="autosize" @close="resetForm('ruleFormReverse')" append-to-body >
       <el-form :inline="true" :model="ruleFormReverse" ref="ruleFormReverse" label-width="150px" class="demo-ruleFormReverse" size="small" :rules="rules">
         <el-row>
           <el-col>
@@ -337,13 +337,13 @@
         </el-row>
         <el-row>
           <el-col>
-            <el-form-item label="呼叫类型:" prop="bondType">
+            <!-- <el-form-item label="呼叫类型:" prop="bondType">
               <el-select size="small" v-model="ruleFormReverse.bondType" style="width:93%;" >
                 <el-option label="呼出" value="0"></el-option>
                 <el-option label="呼入" value="1"></el-option>
                 <el-option label="呼入与呼出" value="2"></el-option>
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="有效性:" prop="enabled" >
               <el-switch
                 v-model="ruleFormReverse.enabled"
@@ -367,7 +367,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="查看技能组" :visible.sync="dialogFormVisibleDetail" :width="autosize" @close="resetForm('ruleFormDetail')" append-to-body >      
+    <el-dialog title="查看技能组" :visible.sync="dialogFormVisibleDetail" :width="autosize" @close="resetForm('ruleFormDetail')" append-to-body >
       <el-form :inline="true" :model="ruleFormDetail" ref="ruleFormDetail" label-width="150px" class="demo-ruleFormDetail" size="small">
         <el-row>
           <el-col>
@@ -381,13 +381,13 @@
         </el-row>
         <el-row>
           <el-col>
-            <el-form-item label="呼叫类型:" prop="bondType">
+            <!-- <el-form-item label="呼叫类型:" prop="bondType">
               <el-select size="small" v-model="ruleFormDetail.bondType" style="width:93%;" disabled >
                 <el-option label="呼出" value="0"></el-option>
                 <el-option label="呼入" value="1"></el-option>
                 <el-option label="呼入与呼出" value="2"></el-option>
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="有效性:" prop="enabled" >
              <el-switch
                 disabled
@@ -410,7 +410,7 @@
         <el-button @click="resetForm('ruleFormDetail');dialogFormVisibleDetail= false">返回</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="添加坐席员工" style="margin-top:-8vh;" :visible.sync="dialogSelectStaff" width="86%" append-to-body  @close="tags=[];history_tags=[];filterText='';resetStaffInfo();"> 
+    <el-dialog title="添加坐席员工" style="margin-top:-8vh;" :visible.sync="dialogSelectStaff" width="86%" append-to-body  @close="tags=[];history_tags=[];filterText='';resetStaffInfo();">
       <div  style="min-width:986px;">
         <el-row >
           <el-col :span="4">
@@ -425,10 +425,10 @@
               </el-input>
             </div>
             <div style="border:solid #DCDFE6 1px;margin-top:15px;overflow:auto;max-height:587px;"  >
-              <el-tree 
+              <el-tree
               :style="treeDivCSS"
               class="filter-tree"
-              :data="treeData" 
+              :data="treeData"
               :props="defaultProps"
               default-expand-all
               @node-click="handleNodeClick"
@@ -469,7 +469,7 @@
                 <div class="work-title-style font14 bold">员工</div>
                 <span style="font-size:10px;color:red;">提示：可直接点击一行数据或勾选员工数据后点击&nbsp;&nbsp;“本次已选员工”&nbsp;&nbsp;后的&nbsp;</span><div style="display:inline;border:solid grey 1px;border-radius:50%;background-color:#57AFFF;"><i class="el-icon-d-arrow-right"></i></div><span style="font-size:10px;color:red;">&nbsp;一次性转移到本次已选员工区域。</span>
               </el-row>
-              <el-row style="margin-top:15px;">
+              <el-row style="margin-top:10px;">
                 <el-col>
                   <el-table
                     :max-height=tableHight
@@ -583,7 +583,7 @@
     </el-dialog>
   </div>
 
-  
+
 
 
 
