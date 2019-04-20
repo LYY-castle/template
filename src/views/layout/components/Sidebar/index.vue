@@ -73,13 +73,13 @@ export default {
   /deep/ .menu-wrapper>a>li{
     height: 45px;
     line-height: 45px;
-    padding-left:12px !important;
+    padding-left: 10px !important;
     background: #242A2E !important;
     &:hover{
       background: #181d20 !important;
     }
     &>i{
-      margin-right: 14px;
+      margin-right: 5px;
       color:#fff;
     }
     &>span{
@@ -88,9 +88,9 @@ export default {
   }
   // 二级菜单
   .sidebar-container /deep/ .el-scrollbar__view>.el-menu>div>.menu-wrapper>.el-submenu>.el-menu>a>.el-menu-item{
-    padding-left: 44px !important;
+    padding-left: 46px !important;
   }
   /deep/ .menu-wrapper>.el-submenu>.el-menu>.nest-menu .el-submenu__title>span{
-    padding-left: 33px !important;
+    padding-left: 35px !important;
   }
 </style>

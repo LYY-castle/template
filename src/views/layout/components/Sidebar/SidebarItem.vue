@@ -60,7 +60,7 @@ export default {
 <style>
   .el-submenu__title i {
     font-size: 14px;
-    margin-right: 16px;
+    margin-right: 5px;
     width: 14px;
     height: 14px;
   }

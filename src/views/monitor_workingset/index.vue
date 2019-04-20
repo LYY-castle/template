@@ -626,7 +626,7 @@ export default {
       }
       const param = { statistics_type: 'agent', depart_id: localStorage.getItem('departId'), agent_id: agentids, time_dimension: 'day', start_time: getStartTimestamp(moment().format(formatDateTime(new Date()).split(' ')[0]), 'day'), end_time: getEndTimestamp(moment().format(formatDateTime(new Date()).split(' ')[0]), 'day') }
       ctiRecordStatistics(param).then(res => {
-        if (!res.data.error && res.data.result) {
+        if (!res.data.error && res.data.result && res.data.result.length) {
           baseinfo.ctiData.online_time_duration = baseinfo.fomart(res.data.result[0].online_time_duration)
           baseinfo.online_time_duration = res.data.result[0].online_time_duration
           baseinfo.ctiData.free_time_duration = baseinfo.fomart(res.data.result[0].free_time_duration)
@@ -840,7 +840,7 @@ export default {
     order() {
       const param = { statistics_type: 'agent', depart_id: localStorage.getItem('departId'), time_dimension: 'day', start_time: getStartTimestamp(moment().format(formatDateTime(new Date()).split(' ')[0]), 'day'), end_time: getEndTimestamp(moment().format(formatDateTime(new Date()).split(' ')[0]), 'day') }
       orderReportStatistics(param).then(res => {
-        if (!res.data.error) {
+        if (!res.data.error && res.data.result && res.data.result.length) {
           this.orderData.count = res.data.result[0].count
           this.orderData.total_amount = res.data.result[0].total_amount
           this.orderData.avg_amount = res.data.result[0].avg_amount
