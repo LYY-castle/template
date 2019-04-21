@@ -35,12 +35,12 @@
               </el-popover>
               <!-- 状态 -->
               <!-- <el-dropdown trigger="click" placement="bottom" @command="changeState" > -->
-                
+
                 <!-- <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item 
-                  :command="item.code" 
-                  :disabled="lockChange" 
-                  v-for="(item,index) in obstatus" 
+                  <el-dropdown-item
+                  :command="item.code"
+                  :disabled="lockChange"
+                  v-for="(item,index) in obstatus"
                   :key="index">
                     {{item.name}}
                   </el-dropdown-item> -->
@@ -638,19 +638,10 @@ export default {
           this.codeUrl = `${res.data}`
         })
     },
-    // 进入我的消息页
+    // 进入我的通告页
     checkMessageList() {
-      let messagePath = ''
-      const messageRouter = getDynamicRouter(JSON.parse(sessionStorage.getItem('getMenu')))
-      for (let i = 0; i < messageRouter.length; i++) {
-        for (let j = 0; j < messageRouter[i].children.length; j++) {
-          if (messageRouter[i].children[j].name === 'notification_my') {
-            messagePath = messageRouter[i].path + '/' + messageRouter[i].children[j].name
-          }
-        }
-      }
       this.$router.push({
-        path: messagePath
+        path: process.env.BUILT_IN_ROUTERS.myNotification
       })
     },
     agentReady() {

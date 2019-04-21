@@ -363,7 +363,7 @@
         const organIds = this.multipleSelection.map(function(item, index) {
           return item.id
         })
-  
+
         delOrgansByOrganIds({
           listId: organIds,
           operatorId: JSON.parse(sessionStorage.getItem('getMenu')).agentId
@@ -542,21 +542,20 @@
       },
       handleClickOrgan(row) {
         this.$router.push({
-          name: 'organization_list',
-          // query: { parent_organ: row.departName }
+          path: process.env.BUILT_IN_ROUTERS.departManage,
           params: { id: row.departName }
         })
         // this.refreshOrgan()
       },
       handleClickStaff(row) {
         this.$router.push({
-          name: 'employee_list',
+          path: process.env.BUILT_IN_ROUTERS.employeeManage,
           query: { departName: row.departName }
         })
       },
       handleClickUser(row) {
         this.$router.push({
-          name: 'account_list',
+          path: process.env.BUILT_IN_ROUTERS.accountManage,
           query: { departName: row.departName }
         })
       },

@@ -1789,17 +1789,8 @@ export default {
           if (response.data.code === 0) {
             const isBlacklist = response.data.data.isBlacklist
             sessionStorage.setItem('isDialTask', false)
-            let path = ''
-            const router = getDynamicRouter(JSON.parse(sessionStorage.getItem('getMenu')))
-            for (let i = 0; i < router.length; i++) {
-              for (let j = 0; j < router[i].children.length; j++) {
-                if (router[i].children[j].name === 'dial_task') {
-                  path = router[i].path + '/' + router[i].children[j].name
-                }
-              }
-            }
             this.$router.push({
-              path: path,
+              path: process.env.BUILT_IN_ROUTERS.myDialTask,
               query: {
                 taskId: dailTaskCustomer.taskId,
                 campaignId: dailTaskCustomer.campaignId,
@@ -1816,17 +1807,8 @@ export default {
           if (response.data.code === 0) {
             const isBlacklist = response.data.data.isBlacklist
             sessionStorage.setItem('isDialTask', false)
-            let path = ''
-            const router = getDynamicRouter(JSON.parse(sessionStorage.getItem('getMenu')))
-            for (let i = 0; i < router.length; i++) {
-              for (let j = 0; j < router[i].children.length; j++) {
-                if (router[i].children[j].name === 'dial_task') {
-                  path = router[i].path + '/' + router[i].children[j].name
-                }
-              }
-            }
             this.$router.push({
-              path: path,
+              path: process.env.BUILT_IN_ROUTERS.myDialTask,
               query: {
                 taskId: this.dailTaskCustomer[0].taskId,
                 campaignId: this.dailTaskCustomer[0].campaignId,

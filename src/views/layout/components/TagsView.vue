@@ -117,7 +117,6 @@ export default {
           if (latestView) {
             this.$router.push(latestView)
           } else {
-            // this.$router.push('/')
             this.$router.push('/dashboard/index')
           }
         }
@@ -131,7 +130,6 @@ export default {
     },
     closeAllTags() {
       this.$store.dispatch('delAllViews')
-      // this.$router.push('/')
       this.$router.push('/dashboard/index')
     },
     openMenu(tag, e) {
@@ -166,7 +164,7 @@ export default {
   // width:90.5%;
   height:45px;
   z-index:999;
-  transition:width .3s; 
+  transition:width .3s;
   .tags-view-wrapper {
     background: #F8F8F8;
     height: 100%;

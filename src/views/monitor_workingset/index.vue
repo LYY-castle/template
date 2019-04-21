@@ -884,7 +884,7 @@ export default {
     // },
     changeToDailPage(status) {
       this.$router.push({
-        name: 'dial_task',
+        path: process.env.BUILT_IN_ROUTERS.myDialTask,
         query: { 'dialstatus': status, 'isDialTask': false }
       })
       sessionStorage.removeItem('isDialTask')
@@ -930,7 +930,7 @@ export default {
     // },
     changeToDailTask(status) {
       this.$router.push({
-        name: 'dial_task',
+        path: process.env.BUILT_IN_ROUTERS.myDialTask,
         query: { 'dialstatus': status }
       })
       sessionStorage.removeItem('isDialTask')
@@ -938,14 +938,16 @@ export default {
     },
     changeToOrderManagement() {
       this.$router.push({
-        name: 'order_management',
-        query: { 'startTime': formatDateTime(new Date().setHours(0, 0, 0, 0)),
-          'endTime': formatDateTime(new Date().setHours(23, 59, 59, 59)) }
+        path: process.env.BUILT_IN_ROUTERS.orderManage,
+        query: {
+          'startTime': formatDateTime(new Date().setHours(0, 0, 0, 0)),
+          'endTime': formatDateTime(new Date().setHours(23, 59, 59, 59))
+        }
       })
     },
     changeToMonitorPhone() {
       this.$router.push({
-        name: 'monitor_phone'
+        path: process.env.BUILT_IN_ROUTERS.phoneMonitor
       })
     }
   }

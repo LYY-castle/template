@@ -173,7 +173,7 @@
         </el-pagination>
       </el-row>
     </el-row>
-   
+
   </div>
   <!-- 详情 -->
   <div class="container record-dail" v-else>
@@ -193,7 +193,7 @@
             <span style="color:#666666;">话后小结：</span>
             <b style="color:#020202;" :title="showSummaryInfo(detailInfo.contactInfo.summaryDetailInfos)">{{showSummaryInfo(detailInfo.contactInfo.summaryDetailInfos)}}</b>
           </el-row>
-        </div> 
+        </div>
 
         <div style="width:20%;float:left;">
           <el-row class="font12">
@@ -208,7 +208,7 @@
             <span style="color:#666666;">小结备注：</span>
             <b style="color:#020202;" :title="detailInfo.contactInfo.description?detailInfo.contactInfo.description:'无'">{{detailInfo.contactInfo.description?detailInfo.contactInfo.description:"无"}}</b>
           </el-row>
-        </div> 
+        </div>
 
         <div style="width:20%;float:left;">
           <el-row class="font12">
@@ -219,7 +219,7 @@
             <span style="color:#666666;">被叫号码：</span>
             <b style="color:#020202;" :title="hideMobile(detailInfo.contactInfo.calleeNumber)">{{hideMobile(detailInfo.contactInfo.calleeNumber)}}</b>
           </el-row>
-        </div> 
+        </div>
 
         <div style="width:20%;float:left;">
           <el-row class="font12">
@@ -230,7 +230,7 @@
             <span style="color:#666666;">接听时间：</span>
             <b style="color:#020202;" :title="(detailInfo.contactInfo.answerTime)== null?'无':(detailInfo.contactInfo.answerTime)">{{(detailInfo.contactInfo.answerTime)== null?'无':(detailInfo.contactInfo.answerTime)}}</b>
           </el-row>
-        </div> 
+        </div>
 
         <div style="width:20%;float:left;">
           <el-row class="font12">
@@ -258,7 +258,7 @@
               </audio>
             </vue-plyr>
           </el-row>
-        </div> 
+        </div>
       </el-row>
       <el-row style="width:100%;border-top:1px solid #ccc;margin:20px 0;"></el-row>
       <el-row>
@@ -539,11 +539,11 @@
         top: 7px;
     }
     /*分别给左右两边的小三角形定位*/
-    .left:before{    
+    .left:before{
         border-right: 8px solid #ccc;
         left: -16px;
     }
-    .right:after{    
+    .right:after{
         border-left: 8px solid #57AFFF;
         right: -16px;
     }
@@ -914,8 +914,7 @@ audio {
             const isBlacklist = response.data.data.isBlacklist
             sessionStorage.setItem('isDialTask', false)
             this.$router.push({
-              path: 'dial_task',
-              name: 'dial_task',
+              path: process.env.BUILT_IN_ROUTERS.myDialTask,
               query: {// 通过query 传递参数
                 taskId: taskId, campaignId: campaignId, customerId: customerId, isBlacklist: isBlacklist, customerPhone: customerPhone
               }
@@ -1264,5 +1263,3 @@ audio {
   }
 
 </script>
-
-

@@ -6,6 +6,15 @@ const base_conf = {
   NODE_ENV: '"production"',
   BASE_API: '"/api/v1"',
   BASE_API_V2: '"/api/v2"',
+  BUILT_IN_ROUTERS: {
+    myNotification: '"/my_notification"',
+    myDialTask: '"/my_dial_task"',
+    phoneMonitor: '"/phone_monitor"',
+    orderManage: '"/order_manage"',
+    departManage: '"/depart_manage"',
+    employeeManage: '"/employee_manage"',
+    accountManage: '"/account_manage"'
+  }
 }
 
 const env_conf = {

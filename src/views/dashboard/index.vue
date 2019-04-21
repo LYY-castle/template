@@ -78,22 +78,9 @@ export default {
     getMenu(localStorage.getItem('agentId')).then(response => {
       var data = response.data
       this.routerData = getDynamicRouter(data)
-      // 判断是否显示微信相关
-      // if (this.show_wechat === 'false') {
-      //   for (var i = 0; i < data.data.length; i++) {
-      //     if (data.data[i].id === 58) {
-      //       data.data.splice(i, 1)
-      //     } else {
-      //       for (var j = 0; j < data.data[i].sub_menus.length; j++) {
-      //         if (data.data[i].sub_menus[j].id === 58) {
-      //           data.data[i].sub_menus.splice(j, 1)
-      //         }
-      //       }
-      //     }
-      //   }
-      // }
       // 存到session storage
       sessionStorage.setItem('getMenu', JSON.stringify(data))
+      sessionStorage.setItem('dynamicRouter', JSON.stringify(this.routerData))
       // 存到store里面
       this.$store.dispatch('SetMenu', this.routerData)
       this.$router.addRoutes(this.routerData)

@@ -87,7 +87,7 @@ export default {
         $('body').removeClass('theme2')
         $('body').addClass(val.theme)
         setTimeout(() => {
-          this.loading.close()
+          if (this.loading) this.loading.close()
         }, 1000)
       } else {
         console.log('切换主题失败')

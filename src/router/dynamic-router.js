@@ -6,7 +6,7 @@ export default (menuData) => {
   if (menuData && menuData.data && menuData.data.length) {
     menuRawData = menuData.data
   } else {
-    const sessionMenuData = sessionStorage.getItem('getMenu') && JSON.parse(sessionStorage.getItem('getMenu')).data
+    const sessionMenuData = JSON.parse(sessionStorage.getItem('getMenu')).data
     menuRawData = sessionMenuData || []
   }
 

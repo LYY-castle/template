@@ -112,7 +112,7 @@
             <div class="text item">
               <el-row>
                 <el-col :span="8">
-                  <el-card shadow="never" class="no-border"> 
+                  <el-card shadow="never" class="no-border">
                     <div style="height: 65px;line-height: 65px;text-align: center;">
                       <font class="line-center font30">{{ord_online_time_duration}}</font>
                     </div>
@@ -524,7 +524,7 @@ export default {
     },
     changeToDailPage(status) {
       this.$router.push({
-        name: 'dial_task',
+        path: process.env.BUILT_IN_ROUTERS.myDialTask,
         query: { 'dialstatus': status, 'isDialTask': false }
       })
       sessionStorage.removeItem('isDialTask')
@@ -570,7 +570,7 @@ export default {
     },
     changeToDailTask(status, agent) {
       this.$router.push({
-        name: 'dial_task',
+        path: process.env.BUILT_IN_ROUTERS.myDialTask,
         query: { 'dialstatus': status, 'agent': agent, 'startTime': formatDateTime(this.getStartTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))),
           'endTime': formatDateTime(this.getEndTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))) }
       })
@@ -579,7 +579,7 @@ export default {
     },
     changeToOrderManagement() {
       this.$router.push({
-        name: 'order_management',
+        path: process.env.BUILT_IN_ROUTERS.orderManage,
         query: { 'startTime': formatDateTime(this.getStartTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))),
           'endTime': formatDateTime(this.getEndTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))) }
       })
