@@ -1,20 +1,17 @@
 <template>
-  <div class="container">
-    <!-- 列表 主页-->
-    <div v-show="pagePosition==='1'">
+  <div class='container bg_color'>
+    <!-- 管理主页div -->
+    <div  v-show="isMainPage===true && isDetail === false">
       <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
         <el-collapse-item title="筛选条件" name="1">
           <el-form :inline="true" size="small">
-            <el-form-item label="问卷名称">
-              <el-input type="text" v-model="req2.templateName" size="medium" placeholder="问卷名称（限长45字符）" maxlength="45"></el-input>
+            <el-form-item label="问卷模板名称"> 
+              <el-input type="text" v-model="req.name" placeholder="问卷模板名称（限长45字符）" maxlength="45" class="hideBorder"></el-input>
             </el-form-item>
-            <el-form-item label="答卷工号">
-              <el-input type="text" v-model="req2.angentId" placeholder="答卷工号（限长10字符）" maxlength="10"></el-input>
+            <el-form-item label="操作人">
+              <el-input type="text" v-model="req.modifier" placeholder="操作人（限长45字符）" maxlength="45"></el-input>
             </el-form-item>
-            <el-form-item label="答卷人">
-              <el-input type="text" v-model="req2.staffName" placeholder="答卷人（限长45字符）" maxlength="45"></el-input>
-            </el-form-item>
-            <el-form-item label="答卷时间">
+            <el-form-item label="操作时间">
               <el-date-picker
                   v-model="timeValue"
                   type="datetimerange"
@@ -25,320 +22,305 @@
               </el-date-picker>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="req2.pageNo=1;getQuestionnaireRecords(req2)">查询</el-button>
+              <el-button type="primary" @click="req.pageNo=1;req.accurate='0';searchByKeyWords(req)">查询</el-button>
               <el-button @click="resetQueryCondition()">重置</el-button>
             </el-form-item>
           </el-form>
         </el-collapse-item>
       </el-collapse>
+      <!-- 问卷表 -->
       <el-row class="table-container">
         <el-row class="margin-bottom-20">
-          <div class="font14 bold">问卷管理表</div>
+          <div class="font14 bold">问卷表</div>
         </el-row>
         <el-row class="margin-bottom-20">
-          <el-button type="info" size="small" @click="showQuestionnaires=true;templateId=''">填写问卷</el-button>
-          <el-button type="danger" size="small" @click="isSelectCkb(batchDeleteIds)">批量删除</el-button>
+          <el-button type="success" size="small" @click="isMainPage = false;isDetail=true;allItems=[],questionnaireName='',asideHideOrShow=true,newHideOrShow=1;newModifyLook=1;">新建</el-button>
+          <el-button type="danger" size="small" @click="isSelectIds(batchdel.ids)" >批量删除</el-button>
         </el-row>
         <el-row>
-          <el-table :data="listRecords" @selection-change="handleSelectionChange">
+          <el-table :data="tableData" @selection-change="handleSelectionChange">
             <el-table-column align="center" type="selection" width="55"></el-table-column>
-            <el-table-column align="center" label="问卷名称">
+            <el-table-column align="center" label="问卷模板名称">
               <template slot-scope="scope">
-                <div>{{scope.row.templateName}}</div>
+                <a type="text" size="medium" @click="checkDetail(scope.row.id);newModifyLook=2;trueOrFalse=true;">{{scope.row.name}}</a>
               </template>
             </el-table-column>
-            <el-table-column align="center" label="答卷工号" width="150">
+            <el-table-column align="center" label="操作人" width="" prop="modifier">
               <template slot-scope="scope">
-                <div>{{scope.row.angentId}}</div>
+                {{scope.row.modifier}}
               </template>
             </el-table-column>
-            <el-table-column align="center" label="答卷人" width="250">
+            <el-table-column align="center" label="操作时间" width="155" >
               <template slot-scope="scope">
-                {{scope.row.staffName}}
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="答卷时间" width="155" >
-              <template slot-scope="scope">
-                <div v-html="formatDateTime(scope.row.answerTime)"></div>
+                <div v-html="formatDateTime(scope.row.modifyTime)"></div>
               </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
               <template slot-scope="scope">
-                <!-- 查看详情 -->
-                <el-button type="text" size="medium" @click="checkFillDetail(scope.row.templateId,scope.row.recordTitles)">查看详情</el-button>
-                <el-button type="text" size="medium" @click="deleteVisiable=true;deleteRecordId=scope.row.id">删除</el-button>
+                <el-button type="text" size="medium" @click="showeditDetails(scope.row.id);isMainPage=false;newModifyLook=3;isDetail=true;hideOrShowPage=true;newHideOrShow = 3;asideHideOrShow = true;">修改</el-button>
+                <el-button type="text" size="medium" @click="deleteReq.id=scope.row.id;deleteVisiable=true">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
         </el-row>
-        <el-row style="margin-top:20px;">    
+        <el-row style="margin-top:20px;">
           <el-pagination
-            v-if="pageShow2"
-            @size-change="handleSizeChange2"
-            @current-change="handleCurrentChange2"
-            :current-page='pageInfo2.pageNo'
-            :page-sizes="[10, 20, 30, 40, 50]"
-            :page-size='req2.pageSize'
-            layout="total, sizes, prev, pager, next, jumper "
-            :total='pageInfo2.totalCount' style="text-align: right;float:right;">
+              v-if="pageShow"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page='pageInfo.pageNo'
+              :page-sizes="[10, 20, 30, 40, 50]"
+              :page-size='req.pageSize'
+              layout="total, sizes, prev, pager, next, jumper "
+              :total='pageInfo.totalCount' style="text-align: right;float:right;">
           </el-pagination>
         </el-row>
       </el-row>
-      <!-- 查看模板列表 -->
-      <el-dialog width="30%" title="问卷模板" :visible.sync="showQuestionnaires" append-to-body>
-        <span style="color:red">*</span><span style="font-size:15px;">请选择问卷模板：</span>
-        <el-select size="small" style="width:100%;" v-model="templateId" placeholder="请选择问卷模板" clearable filterable>
-          <el-option
-            v-for="item in templates"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-            style="width:300px"
-          ></el-option>
-        </el-select>
+
+      <!-- 新建问卷dialog -->
+      <el-dialog width="30%" :visible.sync="questionnaireTitleVisiable" append-to-body>
+        <span style="color:red">*</span><span style="font-size:15px;">问卷模板标题：</span>
+        <el-input type="text" placeholder="请输入问卷模板标题（限长45字符）" size="medium" v-model="questionnaireName" maxlength="45"></el-input>
         <div slot="footer" class="dialog-footer" style="text-align: center;">
-          <el-button type="primary" @click="showQuestionnaires=false;goFillQuestionnaire(templateId)">确定</el-button>
-          <el-button @click="showQuestionnaires = false">取消</el-button>
+          <el-button type="primary" @click="checkTitleIsNullOrNot();questionnaireTitleVisiable = false">确定</el-button>
+          <el-button type="primary" plain @click="questionnaireTitleVisiable = false">取消</el-button>
         </div>
       </el-dialog>
 
       <!-- 删除dialog -->
       <el-dialog width="30%" title="删除提示" :visible.sync="deleteVisiable" append-to-body>
-        <span style="font-size:15px;">确定删除此问卷记录？</span>
+        <span style="font-size:15px;">确定删除此问卷模板？</span>
         <div slot="footer" class="dialog-footer" style="text-align: right;">
-          <el-button type="primary" @click="deleteVisiable = false;deleteQuestionnaireRecord(deleteRecordId);">确定</el-button>
+          <el-button type="primary" @click="deleteVisiable = false;deleteQuestionnaire(deleteReq.id);">确定</el-button>
           <el-button type="primary" plain @click="deleteVisiable = false">取消</el-button>
         </div>
       </el-dialog>
 
       <!-- 批量删除dialog -->
-      <el-dialog width="30%" title="批量删除提示" :visible.sync="batchdeletVisiable" append-to-body>
-        <span style="font-size:15px;">确定删除这些问卷记录？</span>
+      <el-dialog width="30%" title="删除提示" :visible.sync="batchdeleteVisiable" append-to-body>
+        <span style="font-size:15px;">确定删除这些问卷模板？</span>
         <div slot="footer" class="dialog-footer" style="text-align: right;">
-          <el-button type="primary" @click="batchdeletVisiable = false;batchDeleteQuestionnaireRecord(batchDeleteIds);">确定</el-button>
-          <el-button type="primary" plain @click="batchdeletVisiable = false">取消</el-button>
+          <el-button type="primary" @click="batchdeleteVisiable = false;batchdeleteQuestionnaire(batchdel.ids);">确定</el-button>
+          <el-button type="primary" plain @click="batchdeleteVisiable = false">取消</el-button>
+        </div>
+      </el-dialog>
+      <!-- 修改问卷 -->
+      <el-dialog width="30%" title="修改问卷模板名称" :visible.sync="editQuestionnaireName" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
+        <span style="color:red">*</span><span style="font-size:15px;">问卷模板标题：</span>
+        <el-input maxlength="45" type="text" placeholder="请输入问卷模板标题（限长45字符）" size="medium" v-model="questionnaireName1" clearable @change="checkEditName(questionnaireName1);"></el-input>
+        <div slot="footer" class="dialog-footer" style="text-align: center;">
+          <span style="color:red" v-if="hasQuestionnaireName===false">模板名称不能为空</span>
+          <el-button type="primary" @click="editQuestionnaireName=false;questionnaireName=questionnaireName1" v-if="hasQuestionnaireName===true">确定</el-button>
+          <el-button type="primary" plain @click="editQuestionnaireName = false" v-if="hasQuestionnaireName===true">取消</el-button>
         </div>
       </el-dialog>
     </div>
 
-    <!-- 填写问卷 -->
-    <div v-show="pagePosition==='2'" class="question">
+    <!-- 新建问卷或者修改问卷以及问卷详情 -->
+    <div  v-show="isMainPage===false && isDetail === true" class="question" ref="set_height">
       <el-row type="flex">
-        <el-col :span="2"></el-col>
-        <el-col :span="20" >
-          <el-container style="height: 750px;">
-            <el-container style="margin-left:60px">
+        <el-col :span="5"></el-col>
+        <el-col :span="14">
+          <el-container>
+            <el-aside class="select_quest" v-show="asideHideOrShow">
+              <el-menu :default-openeds="['1']" active-text-color="#121212">
+                <el-submenu index="1">
+                  <template slot="title"><i class="el-icon-menu"></i>题型选择</template>
+                  <el-menu-item-group>
+                    <div>
+                      <!-- 创建模板 -->
+                      <el-menu-item index="1-1" @click="createNewModel(1);" class="module" style="background-position:0 -4px">单选题</el-menu-item>
+                      <el-menu-item index="1-2" @click="createNewModel(2);"  class="module" style="background-position:0 -76px">多选题</el-menu-item>
+                      <el-menu-item index="1-3" @click="createNewModel(3);"  class="module" style="background-position:0 -112px">单行填空</el-menu-item>
+                      <el-menu-item index="1-4" @click="createNewModel(4);" class="module" style="background-position:0 -148px">多行填空</el-menu-item>
+                    </div>
+                  </el-menu-item-group>
+                </el-submenu>
+              </el-menu>
+            </el-aside>
+            <!-- 模板详情 -->
+            <el-container style="margin-left:150px">
               <el-header>
-                <div class="title-content-detail">
-                  <span>{{this.oneDetails.name}}&nbsp;
-                  </span><br/>
-                  <!-- <span style="font-size: 10px;padding:30px">{{this.oneDetails.modifier}}&nbsp;&nbsp;{{formatDateTime(this.oneDetails.modifyTime)}}</span> -->
+                <!-- titleHead -->
+                <div class="title-content">
+                  <input type="text" placeholder="请输入问卷模板标题（限长45字符）" v-model="questionnaireName" maxlength="45" class="title_resize" ref="inputDisplay" style="text-align:center" :disabled="trueOrFalse">
                 </div>
                 <div class="survey-desc">
                   <div class="desc-content">欢迎参加调查！答卷数据仅用于统计分析，请放心填写。题目选项无对错之分，按照实际情况选择即可。感谢您的帮助！</div>
                 </div>
-
-                <div class="quest-box">
-                  <!--  单选  -->
-                    <el-form size="small">
-                      <h5 v-if="show_singleItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;单选:</h5><br/>
-                        <div style="margin-top:-8px">
-                          <!-- <el-form-item v-for="(item,index) in allItems" :key="index">
-                              <div class="topic-type-content" v-show="item.type===0">
-                                <span>{{index+1}}.</span>
-                                <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
-                                <div v-for="(a,radioIndex) in item.options" class="options">
-                                  <el-radio :label="a.content" v-model="selectOption_single[index]">
-                                    {{a.content}}
-                                  </el-radio>
-                                </div>
+                <div>
+                    <el-form size="small" class="quest-box">
+                        <div style="margin-top:-8px" ref="questBox">
+                          <el-form-item v-for="(item,index) in allItems" :key="index" class="newStyle" v-show="hideOrShowPage" v-dragging="{item: item,list:allItems,group:'item'}">
+                            <div v-show="item.type===0">
+                                  <span>{{index+1}}.</span>
+                                  <el-input size="small" v-model="item.name" :placeholder="setplaceHolder(item.type)" style="width:493px;margin:3px;" clearable maxlength="45" class="hideBorder" :disabled="trueOrFalse"></el-input>
+                                  <div v-for="(a,radioIndex) in item.options" :key="radioIndex" class="options">
+                                    <span class="showEditOption">
+                                      <el-radio label="1" name="1"  disabled>
+                                        <el-input size="small" type="text" placeholder='选项(45个字符内)' style="width:456px;margin:2px" v-model="a.content" clearable maxlength="45" :disabled="trueOrFalse"></el-input>
+                                          <span class="editoptions" v-show="newModifyLook===1||newModifyLook===3">
+                                            <el-button icon="el-icon-arrow-up" type="text" size="mini" title="上移" @click="upOption(item.options,radioIndex,item.options.length)"></el-button>
+                                            <el-button icon="el-icon-arrow-down" type="text" size="mini" title="下移" @click="downOption(item.options,radioIndex,item.options.length)"></el-button>
+                                            <el-button icon="el-icon-delete" type="text" size="mini" title="删除" @click="removeRadio(item.options,radioIndex)"></el-button>
+                                          </span>
+                                      </el-radio>
+                                    </span>
+                                  </div>
                             </div>
-                          </el-form-item> -->
-                          <el-form-item v-for="(item,index) in show_singleItems" :key="index">
-                            <div class="topic-type-content">
-                                <span>{{index+1}}.</span>
-                                <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
-                                <div v-for="(a,radioIndex) in item.options" class="options">
-                                  <el-radio :label="a.content" v-model="selectOption_single[index]">
-                                    {{a.content}}
-                                  </el-radio>
+                            <div v-show="item.type===1">
+                                   <span>{{index+1}}.</span>
+                                   <el-input size="small" v-model="item.name" :placeholder="setplaceHolder(item.type)" style="width:493px;margin:3px" clearable maxlength="45" :disabled="trueOrFalse"></el-input> 
+                                   <div v-for="(a,checkboxIndex) in item.options" :key="checkboxIndex" class="options">
+                                    <el-checkbox disabled checked>
+                                      <span class="showEditOption">
+                                        <el-input size="small" type="text" placeholder='选项(45个字符内)' style="width:456px;margin:2px" v-model="a.content" clearable maxlength="45" :disabled="trueOrFalse"></el-input>
+                                        <span class="editoptions" v-show="newModifyLook===1||newModifyLook===3">
+                                          <el-button icon="el-icon-arrow-up" type="text" size="mini" title="上移" @click="upOption(item.options,checkboxIndex,item.options.length)"></el-button>
+                                          <el-button icon="el-icon-arrow-down" type="text" size="mini" title="下移" @click="downOption(item.options,checkboxIndex,item.options.length)"></el-button>
+                                          <el-button icon="el-icon-delete" type="text" size="mini" title="删除" @click="removeRadio(item.options,checkboxIndex)"></el-button>
+                                        </span>
+                                      </span>
+                                    </el-checkbox>
+                                  </div>
+                            </div>
+                            <div v-show="item.type===2">
+                                   <span>{{index+1}}.</span>
+                                   <el-input size="small" v-model="item.name" :placeholder="setplaceHolder(item.type)" style="width:493px;margin:3px" clearable maxlength="45" :disabled="trueOrFalse"></el-input> 
+                                   <div v-for="(a,blankIndex) in item.options" :key="blankIndex" class="options">
+                                    <el-input type="textarea" placeholder='回答' resize="none" rows="1" style="width:478px;margin:2px" v-model="a.content"  maxlength="45" :disabled="trueOrFalse"></el-input>
+                                  </div>
+                            </div>
+                            <div v-show="item.type===3">
+                                   <span>{{index+1}}.</span>
+                                   <el-input size="small" v-model="item.name" :placeholder="setplaceHolder(item.type)" style="width:493px;margin:3px" clearable maxlength="45" :disabled="trueOrFalse"></el-input> 
+                                   <div v-for="(a,blankIndex) in item.options" :key="blankIndex" class="options">
+                                    <el-input type="textarea" resize="none" rows="4" placeholder='回答' style="width:478px;margin:2px" v-model="a.content" :disabled="trueOrFalse" maxlength="150"></el-input>
+                                  </div>
+                            </div>
+                            <div class="tools" v-show="newModifyLook===1||newModifyLook===3">
+                              <div class="showaddTool" v-show="item.type===0||item.type===1">
+                                <i class="el-icon-plus" style="cursor:pointer" @click="addRadio(item.options)" title="新建选项"></i>
+                              </div>
+                              <div style="display:flex;justify-content:flex-end;width:100%">
+                                <div class="showdeleteTool" style="margin:0 20px;">
+                                <i class="el-icon-delete" style="cursor:pointer;font-size:20px;" @click="removeSingle(index)" title="点击删除这道题目"></i>
                                 </div>
+                                <div class="showDragTool my-handle" style="margin:0 20px;" >
+                                 <i class="el-icon-rank" style="cursor:pointer;font-size:20px;" title="可拖拽"></i>
+                                </div>
+                              </div>
                             </div>
                           </el-form-item>
                         </div>
                     </el-form>
-                  <!--  多选  -->
-                  <el-form size="small">
-                    <h5 v-if="show_multiItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多选:</h5><br/>
-                    <div style="margin-top:-8px">
-                      <el-form-item v-for="(item,index) in show_multiItems" :key="index">
-                        <div class="topic-type-content">
-                          <span>{{index+1}}.</span>
-                          <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
-                          <el-checkbox-group v-model="selectOption_multi[index]">
-                            <el-checkbox v-for="(a,checkboxIndex) in item.options" :label="a.content">{{a.content}}</el-checkbox>
-                          </el-checkbox-group>
-                        </div>
-                      </el-form-item>
-                    </div>
-                  </el-form>
-                  <!--  单行填空  -->
-                   <el-form size="small">
-                    <h5 v-if="show_fillBlanks.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;单行填空:</h5><br/>
-                      <div style="margin-top:-8px">
-                        <el-form-item v-for="(item,index) in show_fillBlanks" :key="index">
-                          <div class="topic-type-content">
-                            <span>{{index+1}}.</span>
-                            <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
-                            <div v-for="(a,blankIndex) in item.options" class="options">
-                              <el-input type="text" style="width:478px;margin:2px" v-model="selectOption_blanks[index]"  maxlength="45" ></el-input>
-                            </div>
-                          </div>
-                        </el-form-item>
-                      </div>
-                  </el-form>
-                  <!--  多行填空  -->
-                   <el-form size="small">
-                    <h5 v-if="show_multiBlanks.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多行填空:</h5><br/>
-                      <div style="margin-top:-8px">
-                        <el-form-item v-for="(item,index) in show_multiBlanks" :key="index">
-                          <div class="topic-type-content">
-                            <span>{{index+1}}.</span>
-                            <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
-                            <div v-for="(a,blankIndex) in item.options" class="options">
-                              <el-input type="textarea" rows="4"  resize="none" style="width:478px;margin:2px" v-model="selectOption_multiblanks[index]"  maxlength="45"></el-input>
-                            </div>
-                          </div>
-                        </el-form-item>
-                      </div>
-                  </el-form>
-
                 </div>
-                <div class="lastbuttons" >
+                <!-- 新建 -->
+                <div class="lastbuttons" v-show="newHideOrShow===1?true:false">
                   <div style="margin-top:8px">
-                    <el-button type="primary" size="small" @click="completeFillQuestionnaire(templateId,oneDetails.name,);">完成</el-button>
-                    <el-button type="primary" plain size="small" @click="pagePosition='1'">返回</el-button><br/><br/>
+                    <el-button size="small" type="primary" @click="makeQuestionnaire(questionnaireName,allItems)" class="create">生成</el-button>
+                    <el-button size="small" type="primary" plain @click="isMainPage=true;isDetail=false;questionnaireName='';allItems=[]">取消</el-button>
                   </div>
                 </div>
-
-              </el-header>
-            </el-container>
-          </el-container>
-        </el-col>
-        <el-col :span="2"></el-col>
-      </el-row>
-    </div>
-
-    <!-- 问卷记录详情 -->
-    <div  v-show="pagePosition==='3'" class="question">
-      <el-row type="flex">
-        <el-col :span="2"></el-col>
-        <el-col :span="20" >
-          <el-container style="height: 750px;">
-            <el-container style="margin-left:60px">
-              <el-header>
-                <div class="title-content-detail">
-                  <span>{{this.oneDetails.name}}&nbsp;
-                  </span><br/>
-                </div>
-                <div class="survey-desc">
-                  <div class="desc-content">欢迎参加调查！答卷数据仅用于统计分析，请放心填写。题目选项无对错之分，按照实际情况选择即可。感谢您的帮助！</div>
-                </div>
-
-                <div class="quest-box">
-                  <!--  单选  -->
-                    <el-form size="small">
-                      <h5 v-if="show_singleItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;单选:</h5><br/>
-                        <div style="margin-top:-8px">
-                          <el-form-item v-for="(item,index) in show_singleItems" :key="index">
-                            <div class="topic-type-content">
-                                <span>{{index+1}}.</span>
-                                <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
-                                <div v-for="(a,radioIndex) in item.options" class="options">
-                                  <el-radio :label="a.content" v-model="selectOption_single[index]" >
-                                    {{a.content}}
-                                  </el-radio>
-                                </div>
-                            </div>
-                          </el-form-item><br/>
-                        </div>
-                    </el-form>
-                  <!--  多选  -->
-                  <el-form size="small">
-                    <h5 v-if="show_multiItems.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多选:</h5><br/>
-                    <div style="margin-top:-8px">
-                      <el-form-item v-for="(item,index) in show_multiItems" :key="index">
-                        <div class="topic-type-content">
-                          <span>{{index+1}}.</span>
-                          <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
-                          <el-checkbox-group v-model="selectOption_multi[index]">
-                            <el-checkbox v-for="(a,checkboxIndex) in item.options" :label="a.content">{{a.content}}</el-checkbox>
-                          </el-checkbox-group>
-                        </div>
-                      </el-form-item><br/>
-                    </div>
-                  </el-form>
-
-                  <!--  单行填空  -->
-                   <el-form size="small">
-                    <h5 v-if="show_fillBlanks.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;单行填空:</h5><br/>
-                      <div style="margin-top:-8px">
-                        <el-form-item v-for="(item,index) in show_fillBlanks" :key="index">
-                          <div class="topic-type-content">
-                            <span>{{index+1}}.</span>
-                            <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
-                            <div v-for="(a,blankIndex) in item.options" :key="blankIndex" class="options">
-                              <el-input type="text" style="width:478px;margin:2px" v-model="selectOption_blanks[index]"  maxlength="45" ></el-input>
-                            </div>
-                          </div>
-                        </el-form-item><br/>
-                      </div>
-                  </el-form>
-
-                  <!--  多行填空  -->
-                   <el-form size="small">
-                    <h5 v-if="show_multiBlanks.length > 0">&nbsp;&nbsp;&nbsp;&nbsp;多行填空:</h5><br/>
-                      <div style="margin-top:-8px">
-                        <el-form-item v-for="(item,index) in show_multiBlanks" :key="index">
-                          <div class="topic-type-content">
-                            <span>{{index+1}}.</span>
-                            <span v-model="item.name" placeholder="标题" style="width:300px">{{item.name}}</span>
-                            <div v-for="(a,blankIndex) in item.options" class="options">
-                              <el-input type="textarea" rows="4"  resize="none" style="width:478px;margin:2px;background-color:none;" v-model="selectOption_multiblanks[index]"  maxlength="45"></el-input>
-                            </div>
-                          </div>
-                        </el-form-item>
-                      </div>
-                  </el-form>
-                </div>
-                <div class="lastbuttons" >
+                <!-- 查看 -->
+                <div class="lastbuttons" v-show="newHideOrShow===2?true:false">
                   <div style="margin-top:8px">
-                    <el-button type="primary" plain size="small" @click="pagePosition='1'">返回</el-button><br/><br/>
+                    <el-button type="primary" plain size="small" @click="isMainPage=true;isDetail=false;">返回</el-button><br/><br/>
+                  </div>
+                </div>
+                <!-- 修改 -->
+                <div class="lastbuttons" v-show="newHideOrShow===3?true:false">
+                  <div style="margin-top:8px">
+                    <el-button size="small" type="primary" @click="editQuestionnaire(editQuestionnaireId,questionnaireName,allItems)" class="modify">确定</el-button>
+                    <el-button size="small" type="primary" plain @click="isMainPage=true;isDetail=false;questionnaireName='';allItems=[]">返回</el-button>
                   </div>
                 </div>
               </el-header>
             </el-container>
           </el-container>
         </el-col>
-        <el-col :span="2"></el-col>
+        <el-col :span="5"></el-col>
       </el-row>
     </div>
   </div>
 </template>
-<style lang='scss' scoped>
+<style rel='stylesheet/scss' lang="scss">
+.question{
+  height: 800px!important;
+  overflow: auto;
+}
+.question .el-input.is-disabled .el-input__inner,
+.el-textarea.is-disabled .el-textarea__inner{
+  color: #000;
+  background:#fff;
+  border:none;
+}
+.el-textarea.is-disabled .el-textarea__inner{
+  border: 1px solid #dcdfe6;
+}
+.question .el-radio+.el-radio{
+  margin-left:0;
+}
+.question .el-checkbox+.el-checkbox{
+   margin-left:0;
+}
+.question .el-input__inner{
+  border:1px solid #fff;
+}
+.question .el-input__inner:focus{
+  border:1px solid #dcdfe6;
+  background: #fff;
+}
+.question .el-menu{
+  border-right: none;
+}
+.el-menu-item-group__title{
+  padding:0;
+}
+.newStyle{
+  padding-left: 30px;
+  background-color: #fff;
+  padding-bottom: 10px;
+  border: 1px solid #dcdfe6;
+  margin: 10px 0 10px 0!important;
+}
+.title_resize{
+  width:100%;
+  outline: none;
+  padding:0 30px;
+  background:none;
+  border:none;
+  font-size: 16px;
+}
+
+</style>
+
+<style rel='stylesheet/scss' lang="scss" scoped>
+.bg_color{
+  background: #fff!important;
+}
+.select_quest{
+  box-sizing: border-box;
+  width: 164px!important;
+  overflow: hidden;
+  border: 1px solid #dcdfe6;
+  position:fixed;
+}
+.myButton{
+  padding: 0px;
+  border:none;
+}
 .title-content {
   height: 48px;
   font-size: 20px;
-  text-align: center;
   line-height: 48px;
   border: 1px solid #dbdbdb;
   position: relative;
   outline: 0;
 }
 .title-content-detail {
-  height: 64px;
-  font-size: 25px;
-  text-align: center;
+  height: 88px;
+  font-size: 22px;
   line-height: 48px;
   border: 1px solid #dbdbdb;
   position: relative;
@@ -375,7 +357,6 @@
 }
 .options {
   padding-left: 30px;
-  margin-bottom: 10px;
 }
 .lastbuttons {
   border: 1px solid #dbdbdb;
@@ -384,19 +365,12 @@
   text-align: center;
   height: 50px;
 }
-.showaddTool {
-  float: right;
-  margin-right: 92%;
-  height: 0px;
-  cursor: pointer;
+.tools{
+  display:flex;
+  justify-content: space-between;
+  padding: 0 60px 0 30px;
   opacity: 0;
-}
-.showdeleteTool {
-    float: right;
-    margin-right: 55%;
-    height: 36px;
-    cursor: pointer;
-    opacity: 0;
+  user-select: none;
 }
 .editoptions {
   float: right;
@@ -405,122 +379,196 @@
 .showEditOption:hover .editoptions{
   opacity: 1;
 }
-.topic-type-content:hover .showdeleteTool,.topic-type-content:hover .showaddTool{
+.newStyle:hover .tools,.newStyle:hover .tools{
+  opacity: 1;
+}
+.topic-type-content:hover .tools,.topic-type-content:hover .tools{
   opacity: 1;
 }
 .module {
     cursor: pointer;
     height: 35px;
-    text-align: center;
+    text-align: left;
     line-height: 36px;
     background: url(../../../static/images/my_imgs/question_logo.png) no-repeat;
-    padding-left: 50px;
-}
-
-</style>
-
-<style>
-.question .el-input__inner:focus{
-  border: 1px solid #dbdbdb;
-  background:none;
-}
-.question .el-input__inner:hover{
-  background:none;
-}
-.question .el-textarea__inner:focus{
-  border: 1px solid #dbdbdb;
-  background:none;
-}
-.question .el-textarea__inner:hover{
-  background:none;
-}
-.question .el-checkbox{
-  margin-right: 20px;
+    padding-left: 0;
 }
 </style>
 
 <script>
-import { formatDateTime } from '@/utils/tools'
+import { formatDateTime, swapArray } from '@/utils/tools'
 import {
   queryByKeyWords,
+  generateQuestionnaire,
+  deleteOneQuestionnaire,
+  deleteQuestionnaires,
   queryOneQuestionnaire,
-  generateQuestionnaireRecord,
-  queryQuestionnaireRecords,
-  deleteOneRecord,
-  batchDeleteRecords
-} from '@/api/questionnaire'
-export default {
-  name: 'questionnaire',
+  modifyQuestionnaire,
+  checkByQuestionnaireName,
+  checkModifyByQuestionnaireName
+} from '@/api/questionnaire_management'
 
+export default {
+  name: 'questionnaire_management',
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        published: 'success',
+        draft: 'info',
+        deleted: 'danger'
+      }
+      return statusMap[status]
+    }
+  },
   data() {
     return {
+      trueOrFalse:false,
+      // 拖拽实现所要使用
+      list: null,
+      total: null,
+      listLoading: true,
+      listQuery: {
+        page: 1,
+        limit: 10
+      },
+      sortable: null,
+      oldList: [],
+      newList: [],
+      // 定义大数组
+      allItems:[],
+      allItemsCheck:false,
+      // 有无数据  是否显示
+      hideOrShowPage:false,
+      // 题型显示隐藏
+      asideHideOrShow:true,
+      // 查看详情时禁用input
+      look: 1,//1新建2查看3修改
+      // 按钮显示隐藏
+      newHideOrShow:1,//1新建2查看3修改
+      // 小工具按钮的显示隐藏
+      newModifyLook:1, //1新建2查看3修改
+      // 判断标题
+      checkTitle:false,
       formContainerOpen: '1',
       formContainer: this.$store.state.app.formContainer,
-      showQuestionnaires: false, // 填写问卷选择模板dialog
-      listTemplateName: '', // 记录列表模板名称
-      pagePosition: '1', // 是否是主页 1：列表主页  2:填写页面
-      templates: [], // 问卷模板数据
-      listRecords: [], // 记录列表数据
+      selectOption_single: [],
+      selectOption_multi: [],
+      selectOption_blanks: [],
+      selectOption_multiblanks: [],
+      isMainPage: true, // 判断是否是管理主页
+      isDetail: false, // 判断是否是详情
+      tableData: [], // 表格数据
       pageShow: false, // 分页显示与否
-      pageShow2: false, // 分页显示与否
       pageInfo: {}, // 分页信息
-      pageInfo2: {}, // 分页信息
       timeValue: [], // 查询时间显示
+      hasSingle: false,
+      hasMulti: false,
+      hasBlanks: false,
+      hasMultiBlanks: false,
       req: {
         accurate: '0', // 是否精确查找 0否 1是
         name: '', // 问卷模板名称
         modifier: '', // 操作人
         beginTime: '', // 操作时间开始
         afterTime: '', // 操作时间结束
-        queryAll: '1' // 查询所有问卷模板
-      },
-      req2: {
-        angentId: '', // 答卷工号
-        staffName: '', // 填写人
-        templateName: '',
-        beginTime: '', // 操作时间开始
-        afterTime: '', // 操作时间结束
         pageNo: 1,
         pageSize: 10
       },
-      // 单个问卷详情数据
-      oneDetails: {
-        modifier: '',
-        modifyTime: '',
-        name: '',
-        titles: []
+      deleteReq: {
+        id: ''
       },
+      batchdel: {
+        ids: []
+      },
+      questionnaireTitleVisiable: false, // 新建问卷标题dialog
+      deleteVisiable: false, // 删除dialog显示与否
+      batchdeleteVisiable: false, // 批量删除dialog显示与否
+      editQuestionnaireName: false, // 修改问卷模板名称dialog显示与否
+      hasQuestionnaireName: true, // 判断有无名称
+      editQuestionnaireId: '', // 需要修改的问卷模板id
+      questionnaireName: '', // 新建问卷名称
 
-      // 整合后的数组
-      allItems:[],
-
+      questionnaireName1: '', // 修改问卷名称
+      singelItems: [], // 单选 所有选项
+      multiItems: [], // 多选 所有选项
+      fillBlanks: [], // 单行填空 所有选项
+      multiBlanks: [], // 多行填空
+      // 校验
       singleCheck: false,
       multiCheck: false,
       blanksCheck: false,
       multiblanksCheck: false,
-      selectOption_single: [],
-      selectOption_multi: [],
-      selectOption_blanks: [],
-      selectOption_multiblanks: [],
-      
-      singleItems: [], // 单选 所有选项
-      multiItems: [], // 多选 所有选项
-      fillBlanks: [], // 单行填空 所有选项
-      multiBlanks: [], // 多行填空
-      show_singleItems: [], // 单选 所有选项
-      show_multiItems: [], // 多选 所有选项
-      show_fillBlanks: [], // 单行填空 所有选项
-      show_multiBlanks: [], // 多行填空
-      templateId: '', //
-      deleteVisiable: false, // 删除提示dialog
-      batchdeletVisiable: false, // 批量删除提示dialog
-      deleteRecordId: '', // 需要删除记录的id
-      batchDeleteIds: [], // 批量删除的ids
-      // showComplete: true // 是否完成
+
+      oneDetails: {
+        // 单个问卷详情数据
+        modifier: '',
+        modifyTime: '',
+        name: '',
+        titles: []
+      }
     }
   },
 
   methods: {
+    //新建或者修改时创建新模板  
+    createNewModel(num){
+      if(num === 1){
+        this.allItems.push({
+          type: 0,
+          name: '',
+          options: [
+            {
+              content: ''
+            },
+            {
+              content: ''
+            },
+            {
+              content: ''
+            }
+          ]
+        })
+      }else if(num === 2){
+        this.allItems.push({
+          type: 1,
+          name: '',
+          options: [
+            {
+              content: ''
+            },
+            {
+              content: ''
+            },
+            {
+              content: ''
+            }
+          ]
+        })
+      }else if(num === 3){
+        this.allItems.push({
+          type: 2,
+          name: '',
+          options: [
+            {
+              content: ''
+            }
+          ]
+        })
+      }else if(num === 4){
+        this.allItems.push({
+          type: 3,
+          name: '',
+          options: [
+            {
+              content: ''
+            }
+          ]
+        })
+      }
+      this.hideOrShowPage=true
+      console.log(this.allItems)
+    },
+    // 收起点击事件
     handleChangeAcitve(active = ['1']) {
       if (active.length) {
         $('.form-more').text('收起')
@@ -528,123 +576,228 @@ export default {
         $('.form-more').text('更多')
       }
     },
-    setMultiItems() {
-      for (let i = 0; i < this.show_multiItems.length; i++) {
-        this.selectOption_multi[i] = []
+    // 上移
+    upOption(arr, index, length) {
+      if (index !== 0) {
+        swapArray(arr, index, index - 1)
+      } else {
+        this.$message.error('当前该项已在顶部')
       }
     },
-    // 查询某个模板的记录列表
-    // queryFillRecords(id) {
-    //   this.req2.templateId = id
-    //   this.getQuestionnaireRecords(this.req2)
-    // },
-    // 综合查询记录列表
-    getQuestionnaireRecords(req) {
-      req.beginTime = this.timeValue ? this.timeValue[0] : null
-      req.afterTime = this.timeValue ? this.timeValue[1] : null
-      queryQuestionnaireRecords(req).then(response => {
-        if (response.data.code === 0) {
-          this.listRecords = response.data.data
-          this.pageShow2 = true
-          this.pageInfo2 = response.data.pageInfo
-        } else {
-          this.pageShow2 = false
-          this.$message.error('无查询结果，请核对查询条件')
-        }
+    // 下移
+    downOption(arr, index, length) {
+      if (index !== (length - 1)) {
+        swapArray(arr, index, index + 1)
+      } else {
+        this.$message.error('当前该项已在底部')
+      }
+    },
+
+    // 重置查询条件
+    resetQueryCondition() {
+      this.timeValue = []
+      this.req = {
+        accurate: '0',
+        name: '', // 问卷模板名称
+        modifier: '', // 操作人
+        beginTime: '', // 操作时间开始
+        afterTime: '', // 操作时间结束
+        pageNo: this.pageInfo.pageNo,
+        pageSize: this.pageInfo.pageSize
+      }
+    },
+    // 动态设置placeholder
+    setplaceHolder(num) {
+      if(num == 0){
+        return "单选题"
+      }else if(num == 1){
+        return "多选题"
+      }else if(num == 2){
+        return "单行填空"
+      }else if(num == 3){
+        return "多行填空"
+      }
+    },
+    // 删除数组元素
+    removeSingle(index) {
+      this.allItems.splice(index, 1)
+    },
+    // 删除单选
+    removeRadio(a, index) {
+      a.splice(index, 1)
+    },
+    // 新建单选项
+    addRadio(options) {
+      options.push({
+        content: '',
       })
     },
-    // 查看记录详情
-    checkFillDetail(id, recordTitles) {
-      this.show_singleItems.length = 0
-      this.show_multiItems.length = 0
-      this.show_fillBlanks.length = 0
-      this.show_multiBlanks.length = 0
-      this.selectOption_single.length = 0
-      this.selectOption_multi.length = 0
-      this.selectOption_blanks.length = 0
-      this.selectOption_multiblanks.length = 0
-      queryOneQuestionnaire(id)
-        .then(response => {
-          if (response.data.code === 0) {
-            this.oneDetails.name = response.data.data.name
-            this.oneDetails.modifier = response.data.data.modifier
-            this.oneDetails.modifyTime = formatDateTime(response.data.data.modifyTime)
-            this.oneDetails.titles = response.data.data.titles
-            // 回显问卷题目
-            for (var i = 0; i < response.data.data.titles.length; i++) {
-              if (response.data.data.titles[i].type === 0) {
-                this.show_singleItems.push(response.data.data.titles[i])
-              } else if (response.data.data.titles[i].type === 1) {
-                this.show_multiItems.push(response.data.data.titles[i])
-                this.setMultiItems()
-              } else if (response.data.data.titles[i].type === 2) {
-                this.show_fillBlanks.push(response.data.data.titles[i])
-              } else if (response.data.data.titles[i].type === 3) {
-                this.show_multiBlanks.push(response.data.data.titles[i])
-              }
-            }
-
-            // 回显勾选的答案
-            for (var j = 0; j < recordTitles.length; j++) {
-              if (recordTitles[j].type === 0) {
-                // 单选题
-                for (var k = 0; k < recordTitles[j].options.length; k++) {
-                  this.selectOption_single.push(recordTitles[j].options[k].content)
-                }
-              } else if (recordTitles[j].type === 1) {
-                // 多选题
-                for (var a = 0; a < this.show_multiItems.length; a++) {
-                  this.selectOption_multi.push([])
-                  for (var d = 0; d < recordTitles[j].options.length; d++) {
-                    this.selectOption_multi[a].push(
-                      recordTitles[j].options[d].content
-                    )
-                  }
-                }
-              } else if (recordTitles[j].type === 2) {
-                // 单行填空
-                for (var b = 0; b < recordTitles[j].options.length; b++) {
-                  this.selectOption_blanks.push(recordTitles[j].options[b].content)
-                }
-              } else if (recordTitles[j].type === 3) {
-                // 多行填空
-                for (var c = 0; c < recordTitles[j].options.length; c++) {
-                  this.selectOption_multiblanks.push(recordTitles[j].options[c].content)
-                }
-              }
-            }
-            this.listVisiable = false
-            this.pagePosition = '3'
-          }
-        })
-        .catch(error => {
-          console.log(error)
-        })
+    // 删除多选
+    removeCheckbox(a, index) {
+      a.splice(index, 1)
     },
-    // 格式化时间
-    formatDateTime: formatDateTime,
+    // 新建多选项
+    addCheckbox(options) {
+      options.push({
+        content: ''
+      })
+    },
+    
+    removeBlank(a, index) {
+      a.splice(index, 1)
+    },
+    addBlank(options) {
+      options.push({
+        content: '回答'
+      })
+    },
+    // 生成问卷
+    makeQuestionnaire(questionnaireName, allItems) {
+     if (this.questionnaireName === '' || this.questionnaireName.split(' ').join('').length === 0) {
+        this.$message.error('请先输入问卷标题！')
+        return
+      } else {
+        checkByQuestionnaireName(this.questionnaireName, '1')
+          .then(res => {
+            if (res.data && res.data.code === 0 && res.data.data.length > 0) {
+              this.$message.error('已存在同名的问卷模板！')
+              return
+            }else{
+              // 判断是否还有未填项
+              this.hasBlanksOrNotCreate(allItems)
+              console.log(1234567890)
+              if (this.allItemsCheck===true) {
+                console.log('到这里')
+                var data = {
+                    name:questionnaireName,
+                    titles:allItems
+                }
+                generateQuestionnaire(
+                  data
+                ).then(response => {
+                  console.log(response)
+                  if (response.data && response.data.code === 0) {
+                    this.$message.success(response.data.message)
+                    this.questionnaireName = ''
+                    this.allItems = []
+                    this.req.modifier = ''
+                    this.req.name = ''
+                    this.req.beginTime = ''
+                    this.req.afterTime = ''
+                    this.req.pageNo = 1
+                    this.searchByKeyWords(this.req)
+                    this.isMainPage = true
+                    this.isDetail = false
+                  } else {
+                    this.$message.error(response.data.message)
+                  }
+                })
+              }
+
+            }
+          })
+      }
+      
+    },
+    // 判断名称是否为空
+    checkEditName(questionnaireName) {
+      if (
+        questionnaireName === '' ||
+        questionnaireName.split(' ').join('').length === 0
+      ) {
+        this.hasQuestionnaireName = false
+      } else {
+        this.hasQuestionnaireName = true
+      }
+    },
+    // 修改问卷模板
+    editQuestionnaire(editQuestionnaireId,questionnaireName,allItems) {
+      console.log(editQuestionnaireId,questionnaireName)
+      if (this.questionnaireName === '' || this.questionnaireName.split(' ').join('').length === 0) {
+        this.$message.error('请先输入问卷标题！')
+        return
+      } else {
+        checkModifyByQuestionnaireName(editQuestionnaireId,questionnaireName)
+        .then(res => {
+            if (res.data.code === 1) {
+              this.$message.error(res.data.message)
+              return
+            }else{
+               if(allItems.length === 0){
+                  this.$message.error('未选择任何类型！')
+                  return
+              }else{
+                this.hasBlanksOrNotCreate(allItems)
+                if(this.allItemsCheck===true){
+                  var data = {
+                      id:editQuestionnaireId,
+                      name:questionnaireName,
+                      titles:allItems
+                  }
+                   modifyQuestionnaire(data)
+                    .then(response => {
+                    if (response.data && response.data.code === 0) {
+                      this.$message.success(response.data.message)
+                      this.questionnaireName = ''
+                      this.allItems = []
+                      this.req.modifier = ''
+                      this.req.name = ''
+                      this.req.beginTime = ''
+                      this.req.afterTime = ''
+                      this.req.pageNo = 1
+                      this.searchByKeyWords(this.req)
+                      this.isMainPage = true
+                      this.isDetail = false
+                    } else {
+                      this.$message.error(response.data.message)
+                    }
+                  })
+                }
+              }
+            }
+          })
+      }
+    },
     // 综合查询
     searchByKeyWords(req) {
       req.beginTime = this.timeValue ? this.timeValue[0] : null
       req.afterTime = this.timeValue ? this.timeValue[1] : null
       queryByKeyWords(req).then(response => {
         if (response.data.code === 0) {
-          this.templates = response.data.data
+          this.tableData = response.data.data
+          this.pageShow = true
+          this.pageInfo = response.data.pageInfo
+        } else {
+          this.pageShow = false
+          this.$message.error('无查询结果，请核对查询条件')
         }
       })
     },
-    // 判断是否选中模板
-    goFillQuestionnaire(id) {
-      if (id === '') {
-        this.$message.error('请先选择问卷模板！')
-        return
-      } else {
-        // this.showComplete = true
-        this.fillQuestionnaire(id)
+    // 页面显示条数
+    handleSizeChange(val) {
+      this.req.pageSize = val
+      this.req.pageNo = 1
+      this.pageInfo.pageNo = 1
+      this.searchByKeyWords(this.req)
+    },
+    // 翻页
+    handleCurrentChange(val) {
+      this.req.pageNo = val
+      this.searchByKeyWords(this.req)
+    },
+    // 表格多选
+    handleSelectionChange(val) {
+      this.batchdel.ids.length = 0
+      for (var i = 0; i < val.length; i++) {
+        this.batchdel.ids.push(val[i].id)
       }
     },
-    // 填写问卷  先查询详情展示模板
-    fillQuestionnaire(id) {
+    // 格式化时间
+    formatDateTime: formatDateTime,
+
+    // 查询详情
+    checkDetail(id) {
+      this.allItems=[]
       this.oneDetails.titles = {
         // 单个问卷详情数据
         modifier: '',
@@ -652,14 +805,6 @@ export default {
         name: '',
         titles: []
       }
-      this.selectOption_single.length = 0
-      this.selectOption_multi.length = 0
-      this.selectOption_blanks.length = 0
-      this.selectOption_multiblanks.length = 0
-      this.show_singleItems.length = 0
-      this.show_multiItems.length = 0
-      this.show_fillBlanks.length = 0
-      this.show_multiBlanks.length = 0
       queryOneQuestionnaire(id)
         .then(response => {
           if (response.data.code === 0) {
@@ -667,249 +812,161 @@ export default {
             this.oneDetails.modifier = response.data.data.modifier
             this.oneDetails.modifyTime = formatDateTime(response.data.data.modifyTime)
             this.oneDetails.titles = response.data.data.titles
-            for (var i = 0; i < response.data.data.titles.length; i++) {
-              if (response.data.data.titles[i].type === 0) {
-                this.show_singleItems.push(response.data.data.titles[i])
-              } else if (response.data.data.titles[i].type === 1) {
-                this.show_multiItems.push(response.data.data.titles[i])
-                this.setMultiItems()
-              } else if (response.data.data.titles[i].type === 2) {
-                this.show_fillBlanks.push(response.data.data.titles[i])
-              } else if (response.data.data.titles[i].type === 3) {
-                this.show_multiBlanks.push(response.data.data.titles[i])
-              }
-            }
-            this.pagePosition = '2'
+            this.questionnaireName = response.data.data.name
+
+            this.newHideOrShow = 2
+            this.allItems = response.data.data.titles
+            this.asideHideOrShow = false
+            this.hideOrShowPage = true
+            this.isMainPage = false
+            this.isDetail = true
           }
         })
         .catch(error => {
           console.log(error)
         })
     },
-    // 完成问卷填写
-    completeFillQuestionnaire(templateId, templateName) {
-      // this.showComplete = false
-      this.hasBlanksOrNot(this.show_singleItems, this.show_multiItems, this.show_fillBlanks, this.show_multiBlanks, this.selectOption_single, this.selectOption_multi, this.selectOption_blanks, this.selectOption_multiblanks)
-      if (this.singleCheck === true &&
-        this.multiCheck === true &&
-        this.blanksCheck === true &&
-        this.multiblanksCheck === true) {
-        this.singleItems.length = 0
-        this.multiItems.length = 0
-        this.fillBlanks.length = 0
-        this.multiBlanks.length = 0
-        for (var a = 0; a < this.show_singleItems.length; a++) {
-          this.singleItems.push({
-            type: '0',
-            name: this.show_singleItems[a].name,
-            options: [
-              {
-                content: this.selectOption_single[a] ? this.selectOption_single[a] : ''
-              }
-            ]
-          })
+    // 展示修改问卷div
+    showeditDetails(id){
+      this.allItems=[]
+      queryOneQuestionnaire(id).then(response => {
+        if (response.data.code === 0) {//请求成功
+          this.questionnaireName = response.data.data.name
+          this.editQuestionnaireId = response.data.data.id
+          this.allItems = response.data.data.titles
+          console.log(this.allItems)
         }
-
-        for (var b = 0; b < this.show_multiItems.length; b++) {
-          this.multiItems.push({
-            type: '1',
-            name: this.show_multiItems[b].name,
-            options: []
-          })
-          for (var i = 0; i < this.selectOption_multi[b].length; i++) {
-            this.multiItems[b].options.push({
-              content: this.selectOption_multi[b][i]
-            })
+      })
+    },
+    // 新建或者修改时判断页面是否还有未填的项
+    hasBlanksOrNotCreate(allItems){
+      this.allItemsCheck = false
+      if (allItems.length > 0) {//数组不为空遍历数组
+        for (var i = 0; i < allItems.length; i++) {
+          if(allItems[i].name !==''){//标题名不为空 根据题型判断option
+            if(allItems[i].type===0 || allItems[i].type===1){//单选多选题
+              if (allItems[i].options.length !== 0) {
+                for (var j = 0; j < allItems[i].options.length; j++) {
+                  if (allItems[i].options[j].content === '') {
+                    this.allItemsCheck = false
+                    this.$message.error('第'+(i+1)+'题第'+(j+1)+'个选项还有信息未完善！')
+                    return
+                  } else {
+                    this.allItemsCheck = true
+                  }
+                }
+              }else{
+                this.allItemsCheck = false
+                this.$message.error('第'+(i+1)+'题还有信息未完善！')
+                return
+              }
+            }else if(allItems[i].type===2 || allItems[i].type===3){//单行，多行
+              if(allItems[i].options !== ''){
+                this.allItemsCheck = true
+              }else{
+                this.allItemsCheck = false
+                this.$message.error('第'+(i+1)+'题还有信息未完善！')
+                return
+              }
+            }
+          }else{
+            this.allItemsCheck = false
+            this.$message.error('第'+(i+1)+'题还有信息未完善！')
+            return
           }
         }
-
-        for (var d = 0; d < this.show_fillBlanks.length; d++) {
-          this.fillBlanks.push({
-            type: '2',
-            name: this.show_fillBlanks[d].name,
-            options: [
-              {
-                content: this.selectOption_blanks[d] ? this.selectOption_blanks[d] : ''
-              }
-            ]
-          })
-        }
-
-        for (var e = 0; e < this.show_multiBlanks.length; e++) {
-          this.multiBlanks.push({
-            type: '3',
-            name: this.show_multiBlanks[e].name,
-            options: [
-              {
-                content: this.selectOption_multiblanks[e]
-              }
-            ]
-          })
-        }
-        this.allItems = this.singleItems.concat(this.multiItems,this.fillBlanks,this.multiBlanks)
-        // 发送请求生成记录
-        generateQuestionnaireRecord(templateId, templateName, this.allItems)
-          .then(response => {
-            if (response.data) {
-              if (response.data.code === 0) {
-                this.$message.success(response.data.message)
-                this.getQuestionnaireRecords(this.req2)
-                this.pagePosition = '1'
-                this.showComplete = true
-              } else {
-                this.$message.error(response.data.message)
-              }
-            } else {
-              this.$message.error('出错了，请稍后再试')
-            }
-          })
       } else {
-        this.$message.error('当前页还有未填写的信息！')
+        this.allItemsCheck = false
+        this.$message.error('未选择任何题型！')
         return
       }
     },
-    // 判断是否还有未填写
-    hasBlanksOrNot(singleItems, multiItems, fillBlanks, multiBlanks, selectOption_single, selectOption_multi, selectOption_blanks, selectOption_multiblanks) {
-      this.singleCheck = false
-      this.multiCheck = false
-      this.blanksCheck = false
-      this.multiblanksCheck = false
-
-      if (singleItems.length === 0) {
-        this.singleCheck = true
-      } else {
-        if (selectOption_single.length < singleItems.length || selectOption_single.length !== singleItems.length) {
-          return
-        } else {
-          this.singleCheck = true
-        }
-      }
-
-      if (multiItems.length === 0) {
-        this.multiCheck = true
-      } else {
-        for (let i = 0; i < selectOption_multi.length; i++) {
-          if (selectOption_multi[i].length === 0) {
-            return
-          } else {
-            this.multiCheck = true
-          }
-        }
-      }
-
-      if (fillBlanks.length === 0) {
-        this.blanksCheck = true
-      } else {
-        if (selectOption_blanks.length < fillBlanks.length || selectOption_blanks.length !== fillBlanks.length) {
-          return
-        } else {
-          for (let j = 0; j < selectOption_blanks.length; j++) {
-            if (selectOption_blanks[j] === '') {
-              return
-            } else {
-              this.blanksCheck = true
-            }
-          }
-        }
-      }
-
-      if (multiBlanks.length === 0) {
-        this.multiblanksCheck = true
-      } else {
-        if (selectOption_multiblanks.length < multiBlanks.length || selectOption_multiblanks.length !== multiBlanks.length) {
-          return
-        } else {
-          for (let k = 0; k < selectOption_multiblanks.length; k++) {
-            if (selectOption_multiblanks[k] === '') {
-              return
-            } else {
-              this.multiblanksCheck = true
-            }
-          }
-        }
-      }
-    },
-    // 单个删除问卷记录
-    deleteQuestionnaireRecord(id) {
-      deleteOneRecord(id)
+    // 删除
+    deleteQuestionnaire(id) {
+      deleteOneQuestionnaire(id)
         .then(response => {
           if (response.data.code === 0) {
-            this.req2.pageNo = 1
-            this.pageInfo2.pageNo = 1
-            this.getQuestionnaireRecords(this.req2)
+            this.deleteVisiable = false
+            this.req.pageNo = 1
+            this.pageInfo.pageNo = 1
+            this.searchByKeyWords(this.req)
             this.$message.success(response.data.message)
           } else {
             this.$message.error(response.data.message)
           }
         })
+        .catch(error => {
+          console.log(error)
+        })
     },
-    // 重置查询条件
-    resetQueryCondition() {
-      this.timeValue = []
-      this.req2 = {
-        templateName: '', // 问卷名称
-        staffName: '', // 操作人
-        angentId: '',
-        pageNo: this.pageInfo2.pageNo,
-        pageSize: this.pageInfo2.pageSize
-      }
-    },
-    // 页面显示条数
-    handleSizeChange2(val) {
-      this.req2.pageSize = val
-      this.req2.pageNo = 1
-      this.pageInfo2.pageNo = 1
-      this.getQuestionnaireRecords(this.req2)
-    },
-    // 翻页
-    handleCurrentChange2(val) {
-      this.req2.pageNo = val
-      this.getQuestionnaireRecords(this.req2)
-    },
-    // 表格多选
-    handleSelectionChange(val) {
-      this.batchDeleteIds.length = 0
-      for (var i = 0; i < val.length; i++) {
-        this.batchDeleteIds.push(val[i].id)
-      }
-    },
-    // 判断是否勾选checkbox
-    isSelectCkb(batchDeleteIds) {
-      if (batchDeleteIds.length === 0) {
-        this.$message.error('未选中任何问卷记录！')
-        return
+    // 判断是否勾选了checkbox
+    isSelectIds(ids) {
+      if (ids.length === 0) {
+        this.$message.error('未选择任何问卷！')
       } else {
-        this.batchdeletVisiable = true
+        this.batchdeleteVisiable = true
       }
     },
     // 批量删除
-    batchDeleteQuestionnaireRecord(batchDeleteIds) {
-      batchDeleteRecords(batchDeleteIds)
+    batchdeleteQuestionnaire(ids) {
+      deleteQuestionnaires(ids)
         .then(response => {
-          if (response.data) {
-            if (response.data.code === 0) {
-              this.$message.success(response.data.message)
-              this.batchdeletVisiable = false
-              this.req2.pageNo = 1
-              this.pageInfo2.pageNo = 1
-              this.getQuestionnaireRecords(this.req2)
-            } else {
-              this.$message.error(response.data.message)
-            }
+          if (response.data.code === 0) {
+            this.$message.success(response.data.message)
+            this.batchdeleteVisiable = false
+            this.req.pageNo = 1
+            this.pageInfo.pageNo = 1
+            this.searchByKeyWords(this.req)
+          } else {
+            this.$message.error(response.data.message)
           }
         })
-    }
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    // 判断问卷标题名是否为空
+    checkTitleIsNullOrNot() {
+      if (this.questionnaireName === '' || this.questionnaireName.split(' ').join('').length === 0) {
+        this.$message.error('请先输入问卷标题！')
+        return
+      } else {
+        checkByQuestionnaireName(this.questionnaireName, '1')
+          .then(res => {
+            if (res.data && res.data.code === 0 && res.data.data.length > 0) {
+              this.$message.error('已存在同名的问卷模板！')
+              return
+            }
+          })
+      }
+    },
   },
-
   mounted() {
     this.formContainer()
     this.handleChangeAcitve()
-    this.getQuestionnaireRecords(this.req2)
-    this.searchByKeyWords(this.req)
+    this.searchByKeyWords(this.req);
+    this.$dragging.$on('dragged', ({ value }) => {
+      console.log(value.item)
+      console.log(value.list)
+      console.log(value.otherData)
+      this.allItems = value.list
+      console.log(this.allItems)
+    })
+    this.$dragging.$on('dragend', () => {
+        
+    })
   },
 
-  watch: {}
+  watch: {
+  },
+  components: {
+  },
 
+  mixins: [],
+
+  vuex: {},
+
+  created() {
+  },
 }
-
 </script>

@@ -1,17 +1,18 @@
-import request from '@/utils/request'
+// import request from '@/utils/request'
+import requestV2 from '@/utils/request-v2'
 
 // 加载所有服务
-export function getAllServer(campaignId) {
-  return request({
-    url: '',
-    params: campaignId
+export function getAllServer() {
+  return requestV2({
+    url: '/workflow/workflow/servicemenu/getList',
+    method: 'get'
   })
 }
 
 // 添加服务
 export function addServer(obj) {
-  return request({
-    url: 'workflow/serviceMenu/add',
+  return requestV2({
+    url: '/workflow/workflow/serviceMenu/add',
     method: 'post',
     data: obj
   })
@@ -19,8 +20,8 @@ export function addServer(obj) {
 
 // 修改服务
 export function modifyServer(obj) {
-  return request({
-    url: 'workflow/serviceMenu/update',
+  return requestV2({
+    url: '/workflow/workflow/serviceMenu/update',
     method: 'patch',
     data: obj
   })
@@ -28,17 +29,17 @@ export function modifyServer(obj) {
 
 // 删除服务
 export function deleteServer(serverId) {
-  return request({
-    url: 'workflow/serviceMenu/delete',
+  return requestV2({
+    url: '/workflow/workflow/serviceMenu/delete',
     method: 'delete',
     params: serverId
   })
 }
 
 // 服务名校验是否与已有服务重复
-export function getServerList(serviceName) {
-  return request({
-    url: 'workflow/serviceMenu/existServiceName',
+export function checkServerName(serviceName) {
+  return requestV2({
+    url: '/workflow/workflow/serviceMenu/existServiceName',
     params: serviceName
   })
 }
