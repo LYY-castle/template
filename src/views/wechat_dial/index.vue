@@ -719,7 +719,6 @@ import {
   modifyProduct
 } from '@/api/wechat_list' // 接口
 import { navbarQueryRecords } from '@/api/navbar'
-import getDynamicRouter from '@/router/dynamic-router'
 import Emotion from '@/components/Emotion1/index'
 import vueEmoji from '@/components/Emotion3/emoji.vue'
 import emojidata from '@/components/Emotion3/emoji-data.js'

@@ -42,6 +42,18 @@ export const constantRouterMap = [
       component: () => import('@/views/dashboard/index')
     }]
   },
+  {
+    path: '/wechat_dial',
+    component: Layout,
+    redirect: '/wechat_dial/index',
+    name: '微信外呼',
+    hidden: true,
+    children: [{
+      path: 'index',
+      // redirect: '/workbench/agent',
+      component: () => import('@/views/wechat_dial/index')
+    }]
+  },
   // {
   //   path: '/report',
   //   component: Layout,

@@ -343,7 +343,6 @@ import {
   changePassword
 } from '@/utils/tools'
 import cti from '@/utils/ctijs'
-import getDynamicRouter from '@/router/dynamic-router'
 import WebsocketHeartbeatJs from 'websocket-heartbeat-js'
 var vm = null
 var interval = null
@@ -1747,17 +1746,8 @@ export default {
     },
     // 跳转到微信页面
     toWeChat() {
-      let messagePath = ''
-      const messageRouter = getDynamicRouter(JSON.parse(sessionStorage.getItem('getMenu')))
-      for (let i = 0; i < messageRouter.length; i++) {
-        for (let j = 0; j < messageRouter[i].children.length; j++) {
-          if (messageRouter[i].children[j].name === 'wechat_list') {
-            messagePath = messageRouter[i].path + '/' + messageRouter[i].children[j].name
-          }
-        }
-      }
       this.$router.push({
-        path: messagePath
+        path: process.env.BUILT_IN_ROUTERS.wechatDial
       })
     }
   },

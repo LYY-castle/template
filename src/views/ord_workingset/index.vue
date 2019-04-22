@@ -564,7 +564,7 @@ export default {
           break
       }
       this.$router.push({
-        name: 'contact_record_dail',
+        path: process.env.BUILT_IN_ROUTERS.contactRecordQuery,
         query: { 'sTime': sTime, 'eTime': eTime, 'callStatu': callStatu }
       })
     },

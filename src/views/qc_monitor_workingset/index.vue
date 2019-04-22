@@ -155,7 +155,7 @@ export default {
   methods: {
     checkNum(value) {
       this.$router.push({
-        name: 'qm_quailitymark',
+        path: process.env.BUILT_IN_ROUTERS.qualityChecking,
         query: { 'status': value }
       })
     }

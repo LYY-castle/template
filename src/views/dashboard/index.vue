@@ -20,7 +20,7 @@
 const constantRouterMap = [
   { path: '/login', component: '@/views/login/index', hidden: true },
   { path: '/404', component: '@/views/404', hidden: true },
-  { path: '/', redirect: '/login' },
+  { path: '/', redirect: '/login', hidden: true },
   {
     path: '/dashboard',
     redirect: '/dashboard/index',
@@ -31,6 +31,17 @@ const constantRouterMap = [
       name: 'dashboard',
       meta: { title: '首页' },
       component: '@/views/dashboard/index'
+    }]
+  },
+  {
+    path: '/wechat_dial',
+    redirect: '/wechat_dial/index',
+    name: '微信外呼',
+    hidden: true,
+    children: [{
+      path: 'index',
+      // redirect: '/workbench/agent',
+      component: '@/views/wechat_dial/index'
     }]
   },
   { path: '*', redirect: '/404', hidden: true }

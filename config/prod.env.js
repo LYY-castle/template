@@ -9,8 +9,11 @@ const base_conf = {
   BUILT_IN_ROUTERS: {
     myNotification: '"/my_notification"',
     myDialTask: '"/my_dial_task"',
+    wechatDial: '"/wechat_dial"',
     phoneMonitor: '"/phone_monitor"',
     orderManage: '"/order_manage"',
+    qualityChecking: '"/quality_checking"', // 质检评分.
+    contactRecordQuery: '"/contact_record_query"', // 接触历史查询.
     departManage: '"/depart_manage"',
     employeeManage: '"/employee_manage"',
     accountManage: '"/account_manage"'

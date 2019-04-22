@@ -272,7 +272,7 @@
         </el-pagination>
       </el-row>
     </el-row>
-    
+
   </div>
 
   <!-- 客户详情 div层 -->
@@ -362,7 +362,7 @@
               align="center"
               label="产品类型"
               :show-overflow-tooltip="true">
-              <template 
+              <template
                 slot-scope="scope">
                 {{scope.row.productType===null?'':scope.row.productType === '0' ? '实体产品' : '虚拟产品'}}
               </template>
@@ -375,7 +375,7 @@
             </el-table-column>
             <el-table-column
               align="center"
-              label="产品单价" 
+              label="产品单价"
               :show-overflow-tooltip="true">
               <template
                 slot-scope="scope">
@@ -519,7 +519,7 @@
         </div>
       </el-row>
     </el-row>
-   
+
     <!-- 添加微信手机号dialog -->
     <el-dialog width="30%" title="添加微信手机号" :visible.sync="addWechatPhone" append-to-body>
       微信手机号：<el-input v-model="editCustomerInfo.wechatPhone" placeholder="请输入客户微信手机号" maxlength="11" clearable></el-input>
@@ -663,7 +663,6 @@
 import { Message, MessageBox } from 'element-ui'
 import { getPhoneOwn } from '@/api/navbar'
 import { formatDateTime } from '@/utils/tools' // 格式化时间
-import getDynamicRouter from '@/router/dynamic-router'
 import {
   queryByKeywords,
   isInNodisturbPhones,
@@ -875,17 +874,8 @@ export default {
     },
     // 跳转至聊天页
     toChatPage(taskId, campaignId, customerId, customerName, customerPhone) {
-      let messagePath = ''
-      const messageRouter = getDynamicRouter(JSON.parse(sessionStorage.getItem('getMenu')))
-      for (let i = 0; i < messageRouter.length; i++) {
-        for (let j = 0; j < messageRouter[i].children.length; j++) {
-          if (messageRouter[i].children[j].name === 'wechat_list') {
-            messagePath = messageRouter[i].path + '/' + messageRouter[i].children[j].name
-          }
-        }
-      }
       this.$router.push({
-        path: messagePath,
+        path: process.env.BUILT_IN_ROUTERS.wechatDial,
         query: {
           fromDialTask: '0',
           taskId: taskId,
@@ -1939,17 +1929,8 @@ export default {
             obj = obj.reverse()
             localStorage.setItem('customerInfos', JSON.stringify(obj))
 
-            let messagePath = ''
-            const messageRouter = getDynamicRouter(JSON.parse(sessionStorage.getItem('getMenu')))
-            for (let i = 0; i < messageRouter.length; i++) {
-              for (let j = 0; j < messageRouter[i].children.length; j++) {
-                if (messageRouter[i].children[j].name === 'wechat_list') {
-                  messagePath = messageRouter[i].path + '/' + messageRouter[i].children[j].name
-                }
-              }
-            }
             this.$router.push({
-              path: messagePath,
+              path: process.env.BUILT_IN_ROUTERS.wechatDial,
               query: {
                 fromDialTask: '0',
                 taskId: customerInfo.taskId,
@@ -2350,4 +2331,3 @@ export default {
   }
 }
 </script>
-
