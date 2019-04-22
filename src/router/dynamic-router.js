@@ -6,8 +6,8 @@ export default (menuData) => {
   if (menuData && menuData.data && menuData.data.length) {
     menuRawData = menuData.data
   } else {
-    const sessionMenuData = JSON.parse(sessionStorage.getItem('getMenu')).data
-    menuRawData = sessionMenuData || []
+    const sessionMenuData = JSON.parse(sessionStorage.getItem('getMenu')) || {}
+    menuRawData = sessionMenuData.data || []
   }
 
   const getRouterForMenu = (menu, parentMenu) => {
