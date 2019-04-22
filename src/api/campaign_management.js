@@ -74,3 +74,10 @@ export function removeList(campaignId, listIds) {
     data: { 'campaignId': campaignId, 'listIds': listIds }
   })
 }
+// 获取所有问卷模板
+export function getQuestionnaires() {
+  return request({
+    url: `/questionnaire/alltemplates`,
+    method: 'get'
+  })
+}
