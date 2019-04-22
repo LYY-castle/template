@@ -509,7 +509,7 @@
               creator: this.ruleFormReverse.creator,
               createTime: this.ruleFormReverse.createTime
             }
-  
+
             if (this.edit_dept_ids.length === 0) {
               obj.select_uporgan = ''
             } else {
@@ -603,7 +603,7 @@
       handleClickOrgan(row) {
         this.selected_dept_id = []
         this.$router.push({
-          name: 'organization_list',
+          path: process.env.BUILT_IN_ROUTERS.departManage,
           // query: { parent_organ: row.departName }
           params: { id: row.id }
         })
@@ -612,14 +612,14 @@
       },
       handleClickStaff(row) {
         this.$router.push({
-          name: 'employee_list',
+          path: process.env.BUILT_IN_ROUTERS.employeeManage,
           params: { id: row.id }
         })
         sessionStorage.setItem(row.id, row.departName)
       },
       handleClickUser(row) {
         this.$router.push({
-          name: 'account_list',
+          path: process.env.BUILT_IN_ROUTERS.accountManage,
           params: { id: row.id }
         })
         sessionStorage.setItem(row.id, row.departName)
@@ -631,7 +631,7 @@
             // 由于按照ID查询后台返回数组 可以写死0位置
             const data = response.data.data[0]
             this.organData = data
-  
+
             /** 回显上级组织的逻辑 start */
             let arr = []
             arr = data.idPath.split('/')
@@ -648,7 +648,7 @@
             this.edit_dept_ids = arr
             this.reverse_edit_dept_ids = arr
             /** 回显上级组织的逻辑 end */
-  
+
             this.ruleFormReverse = {
               upId: data.upId ? data.upId : '',
               id: data.id,

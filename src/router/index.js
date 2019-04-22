@@ -50,7 +50,9 @@ export const constantRouterMap = [
     hidden: true,
     children: [{
       path: 'index',
-      // redirect: '/workbench/agent',
+      hidden: true,
+      name: '微信外呼',
+      meta: { title: '微信外呼' },
       component: () => import('@/views/wechat_dial/index')
     }]
   },

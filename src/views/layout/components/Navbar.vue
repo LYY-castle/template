@@ -1387,8 +1387,8 @@ export default {
         const customerId = data.customerId
         // const isBlacklist = data.isBlacklist
         const customerPhone = data.customerPhone
-        vm.$router.push({//
-          name: 'dial_task',
+        vm.$router.push({
+          path: process.env.BUILT_IN_ROUTERS.myDialTask,
           query: { 'agent': 'agent', 'dialstatus': '0', 'dialType': 'autocall', 'isDialTask': false, 'campaignId': campaignId, 'taskId': taskId, 'customerId': customerId, 'isBlacklist': '0', 'customerPhone': customerPhone }
         })
         // cti.setAgentStatus(agentid, '-5')

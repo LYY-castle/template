@@ -39,9 +39,10 @@ const constantRouterMap = [
     path: '/wechat_dial',
     redirect: '/wechat_dial/index',
     name: '微信外呼',
-    hidden: true,
     children: [{
       path: 'index',
+      name: '微信外呼',
+      meta: { title: '微信外呼' },
       // redirect: '/workbench/agent',
       component: '@/views/wechat_dial/index'
     }]
