@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div>
     <div class='chart-container'>
       <chart height='100%' width='100%'></chart>
     </div>
@@ -7,10 +7,10 @@
 </template>
 
 <script>
-  import Chart from '@/components/Charts/quality_task_reportChart'
+  import Chart from '@/components/Charts/quality_mark_reportChart'
 
   export default {
-    name: 'quality_task_report_',
+    name: 'quality_mark_report_',
     components: { Chart }
   }
 </script>

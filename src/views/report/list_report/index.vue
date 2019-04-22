@@ -1,6 +1,7 @@
 <template>
-  <div class="container">
-    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+  <div>
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve" style="position:relative">
+      <span class="form-more bold" style="line-height: 24px;font-size: 14px;float:right;margin-right:6px;color:#57AFFF;position:absolute;top:12px;right:40px;">收起</span>
       <el-collapse-item title="筛选条件" name="1">
         <el-form :inline="true" size="small" :model="req" ref="activeNameList" :rules="rule">
           <el-form-item label="活动名称:" v-show="activeNameList && activeNameList.length > 0" prop="campaignId">
@@ -91,7 +92,6 @@ export default {
   data() {
     return {
       formContainerOpen: '1',
-      formContainer: this.$store.state.app.formContainer,
       validate: false,
       rule: rule,
       activeNameList: [],
@@ -106,7 +106,6 @@ export default {
     }
   },
   mounted() {
-    this.formContainer()
     this.handleChangeAcitve()
     queryAllCamps().then(response => {
       if (response.data.code === 0) {

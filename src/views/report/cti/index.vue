@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div>
     <div class='chart-container'>
       <chart height='100%' width='100%'></chart>
     </div>
@@ -7,10 +7,10 @@
 </template>
 
 <script>
-  import Chart from '@/components/Charts/orderChart'
+  import Chart from '@/components/Charts/mixChart'
 
   export default {
-    name: 'order_report_',
+    name: 'cti_',
     components: { Chart }
   }
 </script>

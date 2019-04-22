@@ -81,6 +81,7 @@ export default {
     // 主题切换
     themeCommand() {
       const val = JSON.parse(localStorage.getItem('themeInfo'))
+
       if (val) {
         $('body').removeClass('theme1')
         $('body').removeClass('theme2')

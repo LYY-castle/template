@@ -527,6 +527,7 @@ import {
   checkPromission_sit, // 坐席
   checkPromission_qs // 质检主管
 } from '@/api/qm_searchquailitymark'
+import { permsManager } from '@/api/permission'
 import {
   queryrecordbytaskid,
   getMarksByTaskId,
@@ -622,11 +623,21 @@ export default {
       this.$set(this.req, 'agentid', '')
       this.$set(this.req, 'gradeId', '')
     }).catch(error => {
-      if (error.response.status !== 403) {
-        console.log(error)
-      }
+      throw new Error(error)
     })
-    // 团队长
+    // 现场主管
+    permsManager(this.agentId).then(response => {
+      this.n = 2
+      this.b = true
+      this.$set(this.req, 'contactTaskId', '')
+      this.$set(this.req, 'qcAgentid', '')
+      this.$set(this.req, 'activityId', '')
+      this.$set(this.req, 'departId', parseInt(localStorage.getItem('departId')))
+      this.$set(this.req, 'gradeId', '')
+    }).catch(error => {
+      throw new Error(error)
+    })
+    // 班组长
     checkPromission_charge(this.agentId).then(response => {
       this.n = 2
       this.b = true
@@ -636,9 +647,7 @@ export default {
       this.$set(this.req, 'departId', parseInt(localStorage.getItem('departId')))
       this.$set(this.req, 'gradeId', '')
     }).catch(error => {
-      if (error.response.status !== 403) {
-        console.log(error)
-      }
+      throw new Error(error)
     })
     // 坐席
     checkPromission_sit(this.agentId).then(response => {
@@ -650,9 +659,7 @@ export default {
       this.$set(this.req, 'agentid', localStorage.getItem('agentId'))
       this.$set(this.req, 'gradeId', '')
     }).catch(error => {
-      if (error.response.status !== 403) {
-        console.log(error)
-      }
+      throw new Error(error)
     })
     // 质检组长
     checkPromission_qs(this.agentId).then(response => {
@@ -667,9 +674,7 @@ export default {
       this.$set(this.req, 'gradeId', '')
       this.$set(this.req, 'qcdepartId', parseInt(localStorage.getItem('departId')))
     }).catch(error => {
-      if (error.response.status !== 403) {
-        console.log(error)
-      }
+      throw new Error(error)
     })
     // this.getDepartIdByAgentId(localStorage.getItem('agentId'))
     if (this.n === 2) {

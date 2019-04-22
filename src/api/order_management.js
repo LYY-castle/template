@@ -22,15 +22,15 @@ export function getAllCamps() {
   })
 }
 
-export function checkManager(agentId) {
+export function checkManager(id) {
   return request({
-    url: `auth/users/${agentId}/perms/-depart-order-query/GET`
+    url: '/auth/users/' + id + '/perms/-depart-/GET'
   })
 }
 
-export function checkStaff(agentId) {
+export function checkStaff(id) {
   return request({
-    url: `auth/users/${agentId}/perms/-staff-order-query/GET`
+    url: '/auth/users/' + id + '/perms/-staff-/GET'
   })
 }
 

@@ -50,12 +50,12 @@ service.interceptors.response.use(
     const res = response.data
     const route = router.currentRoute
     if (res.code !== 20000) {
-      if (res.code === '403') {
+      if (res.code === '401') {
         if (route.fullPath === `/login`) {
           router.replace({ path: `/login` })
         } else {
           Message({
-            message: res.msg,
+            message: res.message,
             type: 'error'
           })
           router.replace({ path: `/login` })

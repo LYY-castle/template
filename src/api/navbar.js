@@ -43,10 +43,11 @@ export function getMenu() {
 }
 export function checkSoftphonePerm(agentId) {
   return request({
-    url: '/auth/users/' + agentId + '/perms/-softbar/GET',
+    url: '/auth/users/' + agentId + '/perms/-softbar-/GET',
     method: 'get'
   })
 }
+
 export function changeWechatState(req) {
   return request({
     url: '/wechat/updateStatus',

@@ -317,7 +317,7 @@
     deleteOrderById,
     sendMessageToCustomer
   } from '@/api/order_management' // api接口引用
-
+  import { permsManager } from '@/api/permission'
   export default {
     name: 'order_management',
 
@@ -478,17 +478,32 @@
         }
       },
       async checkPermission() {
-        // 判断主管
-        await checkManager(localStorage.getItem('agentId')).then(response => {
-          this.isManager = true
-        }).catch(() => {
-          this.isManager = false
+        // 判断现场主管
+        await permsManager(localStorage.getItem('agentId')).then(response => {
+          const code = parseInt(response.data.code)
+          if (code === 200) {
+            this.isManager = true
+          } else if (code === 403) {
+            this.isManager = false
+            // 判断班组长
+            checkManager(localStorage.getItem('agentId')).then(response => {
+              const code = parseInt(response.data.code)
+              if (code === 200) this.isManager = true
+              else if (code === 403) this.isManager = false
+            }).catch(error => {
+              throw new Error(error)
+            })
+          }
+        }).catch(error => {
+          throw new Error(error)
         })
         // 判断员工
         await checkStaff(localStorage.getItem('agentId')).then(response => {
-          this.isStaff = true
-        }).catch(() => {
-          this.isStaff = false
+          const code = parseInt(response.data.code)
+          if (code === 200) this.isStaff = true
+          else if (code === 403) this.isStaff = false
+        }).catch(error => {
+          throw new Error(error)
         })
         return true
       },

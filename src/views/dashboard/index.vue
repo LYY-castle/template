@@ -1,17 +1,19 @@
 <template>
   <!-- 现场主管 -->
   <div class="dashboard">
-    <div v-show="!qcdepart||!qcstaff">
-      <!-- <h1 v-if="depart">现场主管</h1> -->
-      <monitor-workingset v-show="depart"></monitor-workingset>
-      <!-- <h1 v-if="!depart&&staff">坐席</h1> -->
-      <ord-workingset v-show="!depart&&staff"></ord-workingset>
-    </div>
-    <div v-show="!depart||!staff">
-      <!-- <h1 v-if="qcdepart">质检主管</h1> -->
-      <ordqc-workingset v-show="qcdepart"></ordqc-workingset>
-      <!-- <h1 v-if="!qcdepart&&qcstaff">质检员</h1> -->
-      <qcmonitor-workingset v-show="!qcdepart&&qcstaff"></qcmonitor-workingset>
+    <div v-if="!personnel">
+      <div v-if="!qcdepart||!qcstaff">
+        <!-- <h1 v-if="depart">现场主管</h1> -->
+        <monitor-workingset v-if="depart"></monitor-workingset>
+        <!-- <h1 v-if="!depart&&staff">坐席</h1> -->
+        <ord-workingset v-if="!depart&&staff"></ord-workingset>
+      </div>
+      <div v-if="!depart||!staff">
+        <!-- <h1 v-if="qcdepart">质检主管</h1> -->
+        <ordqc-workingset v-if="qcdepart"></ordqc-workingset>
+        <!-- <h1 v-if="!qcdepart&&qcstaff">质检员</h1> -->
+        <qcmonitor-workingset v-if="!qcdepart&&qcstaff"></qcmonitor-workingset>
+      </div>
     </div>
   </div>
 </template>
@@ -58,6 +60,7 @@ import {
   checkStaff,
   checkqcStaff
 } from '@/api/dashboard'
+import { permsManager, permsPersonnel } from '@/api/permission'
 // import Layout from '../layout/Layout'
 import getDynamicRouter from '@/router/dynamic-router'
 
@@ -70,7 +73,8 @@ export default {
       depart: false, // 现场主管
       qcdepart: false, // 质检主管
       staff: false, // 坐席
-      qcstaff: false // 质检
+      qcstaff: false, // 质检
+      personnel: false// 人事
     }
   },
   components: {
@@ -96,63 +100,78 @@ export default {
       this.$store.dispatch('SetMenu', this.routerData)
       this.$router.addRoutes(this.routerData)
       this.$set(this.$router.options, 'routes', this.routerData)
-      // for (let i = 0; i < constantRouterMap.length; i++) {
-      //   this.$router.options.routes.push(constantRouterMap[i])
-      // }
       this.$router.options.routes.concat(constantRouterMap)
-      //  if (code === 403) {
-      //   sessionStorage.setItem('getMenu', '')
-      //   this.$store.dispatch('SetMenu', [])
-      //   this.$router.addRoutes(getDynamicRouter(''))
-      // }
       console.log(this.$router)
     }).catch(error => {
-      // throw new Error(error)
       console.error(error)
     })
-    // 判断现场主管权限
-    checkDepart(this.agentId).then(() => {
-      this.depart = true
-    }).catch(error => {
-      if (error.response.status === 403) {
-        this.depart = false
-        // 判断坐席权限
-        checkStaff(this.agentId).then(() => {
-          this.staff = true
-        }).catch(error => {
-          if (error.response.status === 403) {
-            this.staff = false
-            // this.$message.error('您无权访问此页面')
-          } else {
-            throw new Error(error)
+
+    //
+    permsPersonnel().then(response => {
+      const code = parseInt(response.data.code)
+      if (code === 200) {
+        this.personnel = true
+      } else if (code === 403) {
+        this.personnel = false
+        // 判断现场主管权限
+        permsManager(this.agentId).then(response => {
+          const code = parseInt(response.data.code)
+          if (code === 200) {
+            this.depart = true
+          } else if (code === 403) {
+            this.depart = false
+            // 判断班组长权限
+            checkDepart(this.agentId).then(response => {
+              const code = parseInt(response.data.code)
+              if (code === 200) {
+                this.depart = true
+              } else if (code === 403) {
+                this.depart = false
+                // 判断坐席权限
+                checkStaff(this.agentId).then(response => {
+                  const code = parseInt(response.data.code)
+                  if (code === 200) {
+                    this.staff = true
+                  } else if (code === 403) {
+                    this.staff = false
+                  }
+                }).catch(error => {
+                  throw new Error(error)
+                })
+              }
+            }).catch(error => {
+              throw new Error(error)
+            })
           }
-        })
-      } else {
-        throw new Error(error)
-      }
-    })
-    // 判断质检主管权限
-    checkqcDepart(this.agentId).then(() => {
-      this.qcdepart = true
-    }).catch(error => {
-      if (error.response.status === 403) {
-        this.qcdepart = false
-        // 判断质检员权限
-        checkqcStaff(this.agentId).then(() => {
-          this.qcstaff = true
         }).catch(error => {
-          if (error.response.status === 403) {
-            this.qcstaff = false
-            // this.$message.error('您无权访问此页面')
-          } else {
-            throw new Error(error)
-          }
+          throw new Error(error)
         })
-      } else {
-        throw new Error(error)
+        // 判断质检主管权限
+        checkqcDepart(this.agentId).then(response => {
+          const code = parseInt(response.data.code)
+          if (code === 200) {
+            this.qcdepart = true
+          } else if (code === 403) {
+            this.qcdepart = false
+            // 判断质检员权限
+            checkqcStaff(this.agentId).then(response => {
+              const code = parseInt(response.data.code)
+              if (code === 200) {
+                this.qcstaff = true
+              } else if (code === 403) {
+                this.qcstaff = false
+              }
+            }).catch(error => {
+              throw new Error(error)
+            })
+          }
+        }).catch(error => {
+          throw new Error(error)
+        })
       }
+    }).catch(error => {
+      throw new Error(error)
     })
-    // ]).then(() => {
   }
 }
 </script>
@@ -161,7 +180,6 @@ export default {
 .dashboard {
   &.container{
     padding:0 10px;
-    // padding-top:130px;
   }
 }
 </style>
