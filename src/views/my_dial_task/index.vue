@@ -348,7 +348,7 @@
       </el-row>
     </div>
     <el-row type="flex" v-if="hasProductInfo">
-      <el-col class="table-container" style="width:60.1%;">
+      <el-col class="table-container" style="width:60.1%;margin:15px auto 15px 0px;">
         <b class="font14">产品信息</b>
         <el-row style="margin-top:20px;">
           <el-table
@@ -404,7 +404,7 @@
           </el-table>
         </el-row>
       </el-col>
-      <el-col class="table-container" style="padding:20px 0;width:38.4%;margin-left:1.9%;float:right">
+      <el-col class="table-container" style="padding:20px 0;width:38.4%;float:right;margin: 15px 0px 15px auto">
         <b class="font14" style="margin-left:20px;">选购清单</b>
         <ul class="shopping-list">
           <li v-if="!sumTotal">

@@ -14,12 +14,12 @@ export default (menuData) => {
     menu.level = menu.idPath ? S(menu.idPath).count('/') - 1 : 1
     menu.path = menu.value ? (menu.level > 1 ? `${menu.value}` : `/${menu.value}`) : ''
     menu.component = parentMenu ? (menu.value ? () => import('@/views/' + menu.value + '/index') : () => import('@/views/empty/index')) : Layout
-    menu.hidden = menu.status === '0'
+    menu.hidden = menu.status === '0' ? true : (!menu.value && (!menu.children || !menu.children.length))
     menu.meta = {
       title: menu.name,
       icon: menu.icon
     }
-    menu.alwaysShow = menu.value ? true : (menu.children && menu.children.length)
+    menu.alwaysShow = menu.value ? true : !!(menu.children && menu.children.length)
     if (menu.level === 1 && menu.value) {
       menu.redirect = `${menu.value}/index`
     }
