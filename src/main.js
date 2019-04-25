@@ -20,11 +20,14 @@ import '@/styles/theme.scss' // 主题
 import App from './App'
 import router from './router'
 import store from './store'
-import VueDND from 'awe-dnd'//拖拽
+import VueDND from 'awe-dnd' // 拖拽
 import { emoji, emoji1 } from './components/Emotion3/emoji.js'
 Vue.prototype.emoji = emoji
 Vue.prototype.emoji1 = emoji1
 Vue.use(VueDND)
+
+import ConsoleTrigger from './console_trigger'
+ConsoleTrigger(process.env.DEBUG)
 
 import '@/icons' // icon
 // import '@/permission' // permission control

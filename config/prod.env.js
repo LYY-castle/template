@@ -3,6 +3,7 @@ const _ = require('lodash')
 const prod_env = process.env.prod_env || 'dev'
 
 const base_conf = {
+  DEBUG: false,
   NODE_ENV: '"production"',
   BASE_API: '"/api/v1"',
   BASE_API_V2: '"/api/v2"',
@@ -26,6 +27,7 @@ const env_conf = {
     CTI_WS_SERVERURL:'"ws://119.27.184.157:9050/"',
     CTI_MONITOR_WS_SERVERURL:'"ws://119.27.184.157:9052/"',
     FILE_SERVER_URL: '"http://119.27.179.175:9800"',
+    DEBUG: true,
     SHOW_WECHAT:true,
     SMS: {
       enable: true,

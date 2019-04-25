@@ -1,5 +1,42 @@
+import _ from 'lodash'
 import S from 'string'
 import Layout from '../views/layout'
+
+const getRouterForMenu = (menu, parentMenuId) => {
+  const clonedMenu = _.cloneDeep(menu)
+
+  clonedMenu.level = clonedMenu.idPath ? S(clonedMenu.idPath).count('/') - 1 : 1
+  clonedMenu.path = clonedMenu.value ? (clonedMenu.level > 1 ? `${clonedMenu.value}` : `/${clonedMenu.value}`) : ''
+  clonedMenu.component = parentMenuId ? (clonedMenu.value ? () => import('@/views/' + clonedMenu.value + '/index') : () => import('@/views/empty/index')) : Layout
+  clonedMenu.hidden = clonedMenu.status === '0' ? true : (!clonedMenu.value && (!clonedMenu.children || !clonedMenu.children.length))
+  clonedMenu.meta = {
+    title: clonedMenu.name,
+    icon: clonedMenu.icon
+  }
+  clonedMenu.alwaysShow = clonedMenu.value ? true : !!(clonedMenu.children && clonedMenu.children.length)
+  if (clonedMenu.level === 1 && clonedMenu.value) {
+    clonedMenu.redirect = `${clonedMenu.value}/index`
+    clonedMenu.children = [{
+      path: 'index',
+      name: clonedMenu.name,
+      level: 2,
+      meta: { title: clonedMenu.name },
+      component: clonedMenu.value ? () => import('@/views/' + clonedMenu.value + '/index') : null
+    }]
+  }
+
+  return clonedMenu
+}
+
+const fillRecursiveRoutersFromMenus = (menus, parentMenuId) => {
+  _.forEach(menus, (menu, idx) => {
+    menus[idx] = getRouterForMenu(menu, parentMenuId)
+
+    if (menu.children && menu.children.length) {
+      fillRecursiveRoutersFromMenus(menu.children, menu.parentId)
+    }
+  })
+}
 
 export default (menuData) => {
   let menuRawData = []
@@ -10,38 +47,7 @@ export default (menuData) => {
     menuRawData = sessionMenuData.data || []
   }
 
-  const getRouterForMenu = (menu, parentMenu) => {
-    menu.level = menu.idPath ? S(menu.idPath).count('/') - 1 : 1
-    menu.path = menu.value ? (menu.level > 1 ? `${menu.value}` : `/${menu.value}`) : ''
-    menu.component = parentMenu ? (menu.value ? () => import('@/views/' + menu.value + '/index') : () => import('@/views/empty/index')) : Layout
-    menu.hidden = menu.status === '0' ? true : (!menu.value && (!menu.children || !menu.children.length))
-    menu.meta = {
-      title: menu.name,
-      icon: menu.icon
-    }
-    menu.alwaysShow = menu.value ? true : !!(menu.children && menu.children.length)
-    if (menu.level === 1 && menu.value) {
-      menu.redirect = `${menu.value}/index`
-    }
-  }
-  const fillRecursiveRoutersFromMenus = (menus, parentMenu) => {
-    menus.forEach(menu => {
-      getRouterForMenu(menu, parentMenu)
-      if (menu.children && menu.children.length) {
-        fillRecursiveRoutersFromMenus(menu.children, menu)
-      } else if (!parentMenu) {
-        console.log(menu)
-        menu.children = [{
-          path: 'index',
-          name: menu.name,
-          meta: { title: menu.name },
-          component: menu.value ? () => import('@/views/' + menu.value + '/index') : null
-        }]
-      }
-    })
-  }
-
-  fillRecursiveRoutersFromMenus(menuRawData)
+  fillRecursiveRoutersFromMenus(menuRawData, 0)
 
   return menuRawData
 }
