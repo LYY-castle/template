@@ -257,7 +257,7 @@ export default {
         }
         this.data = list2Tree({ data: result, rootId: 0, idFieldName: 'id', parentIdFielName: 'parentId' })
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     handleEdit(row) {
@@ -292,7 +292,7 @@ export default {
       deleteMenu(deleteid).then(response => {
         this.getMenuList()
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     selectIcon(iconClassName) {
@@ -319,7 +319,7 @@ export default {
       }).then(response => {
         this.getMenuList()
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     handleNewSaveAction() {
@@ -338,7 +338,7 @@ export default {
       }).then(response => {
         this.getMenuList()
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     }
   }

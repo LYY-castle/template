@@ -64,7 +64,7 @@
         </el-collapse>
       </el-row>
      
-      <el-row class="table-container">
+      <el-row class="table-container" style="margin-top:15px;">
         <el-row>
           <div class="work-title-style font14 bold">可分配名单</div>
         </el-row>
@@ -139,7 +139,7 @@
         </el-row>
       </el-row>
 
-      <el-row class="table-container" style="margin-bottom:20px">
+      <el-row class="table-container" style="margin-top:15px">
         <el-form :inline="true" size="small">
           <el-form-item label="本次分配数量:">
             <el-input-number v-model="formInline.num" :step="10" @change="handleChange"></el-input-number>

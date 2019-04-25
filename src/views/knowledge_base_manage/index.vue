@@ -1851,7 +1851,7 @@ export default{
             type: 'error'
           })
           this.titlePageShow = true
-          throw new Error(error)
+          throw error
         })
         getArticles1(bodyReq).then(response => {
           this.tableDataBody = response.data.result
@@ -1863,7 +1863,7 @@ export default{
             type: 'error'
           })
           this.bodyPageShow = true
-          throw new Error(error)
+          throw error
         })
         getArticles1(briefReq).then(response => {
           this.tableDataBrief = response.data.result
@@ -1875,7 +1875,7 @@ export default{
             type: 'error'
           })
           this.briefPageShow = true
-          throw new Error(error)
+          throw error
         })
         getArticles1(remarkReq).then(response => {
           this.tableDataRemark = response.data.result
@@ -1887,7 +1887,7 @@ export default{
             type: 'error'
           })
           this.remarkPageShow = true
-          throw new Error(error)
+          throw error
         })
       }
     },
@@ -1964,7 +1964,7 @@ export default{
           this.editDetail.remark = '服务器或网络出错！请稍后重试'
           this.editDetail.brief = '服务器或网络出错！请稍后重试'
           this.fileList = []
-          throw new Error(error)
+          throw error
         })
     },
     // 提交修改
@@ -2008,7 +2008,7 @@ export default{
             if (this.editDetail.attachments) {
               this.editDetail.attachments.length = 0
             }
-            throw new Error(error)
+            throw error
           })
       }
     },
@@ -2026,7 +2026,7 @@ export default{
           this.delUrls = this.delRowInfo.catalogs
         }
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     // 判断删除文章目录数，选择操作方式
@@ -2060,7 +2060,7 @@ export default{
             message: '删除失败',
             type: 'error'
           })
-          throw new Error(error)
+          throw error
         })
       } else {
         this.$message.error('请选择需要删除文章的目录')
@@ -2130,7 +2130,7 @@ export default{
               this.note_item.attachments.length = 0
             }
             this.getArticlesById(this.catalogid, this.nodeReq)
-            throw new Error(error)
+            throw error
           })
       }
     },
@@ -2179,7 +2179,7 @@ export default{
           this.noteDetail.brief = '服务器或网络出错！请稍后重试'
           this.noteDetail.remark = '服务器或网络出错！请稍后重试'
           this.DLurl = []
-          throw new Error(error)
+          throw error
         })
     },
     // 置顶
@@ -2319,7 +2319,7 @@ export default{
           type: 'error'
         })
         this.titlePageShow = true
-        throw new Error(error)
+        throw error
       })
     },
     bodySizeChange(val) {
@@ -2337,7 +2337,7 @@ export default{
           type: 'error'
         })
         this.bodyPageShow = true
-        throw new Error(error)
+        throw error
       })
     },
     briefSizeChange(val) {
@@ -2355,7 +2355,7 @@ export default{
           type: 'error'
         })
         this.briefPageShow = true
-        throw new Error(error)
+        throw error
       })
     },
     remarkSizeChange(val) {
@@ -2373,7 +2373,7 @@ export default{
           type: 'error'
         })
         this.remarkPageShow = true
-        throw new Error(error)
+        throw error
       })
     },
     // 高级查询分页翻页功能
@@ -2390,7 +2390,7 @@ export default{
           type: 'error'
         })
         this.titlePageShow = true
-        throw new Error(error)
+        throw error
       })
     },
     bodyCurrentChange(val) {
@@ -2406,7 +2406,7 @@ export default{
           type: 'error'
         })
         this.bodyPageShow = true
-        throw new Error(error)
+        throw error
       })
     },
     briefCurrentChange(val) {
@@ -2422,7 +2422,7 @@ export default{
           type: 'error'
         })
         this.briefPageShow = true
-        throw new Error(error)
+        throw error
       })
     },
     remarkCurrentChange(val) {
@@ -2438,7 +2438,7 @@ export default{
           type: 'error'
         })
         this.remarkPageShow = true
-        throw new Error(error)
+        throw error
       })
     },
     // 选择链接节点ID

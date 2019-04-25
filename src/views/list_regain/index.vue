@@ -50,37 +50,23 @@
             <el-input v-model="req.contactedNum" maxlength="4" min="0" type="number"></el-input>
           </el-form-item>
           <el-form-item label="分配时间">
-            <el-date-picker
-                v-model="req.distributeTimeStart"
-                type="datetime"
-                placeholder="开始时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
-            </el-date-picker>
-            到
-            <el-date-picker
-                v-model="req.distributeTimeEnd"
-                type="datetime"
-                placeholder="结束时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
+             <el-date-picker
+                v-model.trim="distributeTimeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>&nbsp;&nbsp;
           <el-form-item label="上次拨打时间">
-            <el-date-picker
-                v-model="req.lastContactTimeStart"
-                type="datetime"
-                placeholder="开始时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
-            </el-date-picker>
-            到
-            <el-date-picker
-                v-model="req.lastContactTimeEnd"
-                type="datetime"
-                placeholder="结束时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
+             <el-date-picker
+                v-model.trim="lastContactTimeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
           <el-form-item>
@@ -262,6 +248,8 @@ export default {
 
   data() {
     return {
+      lastContactTimeValue: null,
+      distributeTimeValue: null,
       formContainerOpen: '1',
       formContainer: this.$store.state.app.formContainer,
       org_options: [], // 用以展示级联的组织
@@ -315,10 +303,15 @@ export default {
       }
     },
     // 综合查询
-    searchByKeyWords(req) {
+    searchByKeyWords(val) {
+      var req = val
       if (this.selected_dept_id.length === 0) {
         req.staffId = this.allAgentIds
       }
+      req.distributeTimeStart = this.distributeTimeValue ? this.distributeTimeValue[0] : null
+      req.distributeTimeEnd = this.distributeTimeValue ? this.distributeTimeValue[1] : null
+      req.lastContactTimeStart = this.lastContactTimeValue ? this.lastContactTimeValue[0] : null
+      req.lastContactTimeEnd = this.lastContactTimeValue ? this.lastContactTimeValue[1] : null
       queryByKeywords(req)
         .then(response => {
           if (response.data.code === 0) {
@@ -427,6 +420,8 @@ export default {
       this.s_staffIds = this.allAgentIds
       this.req.staffId = this.s_staffIds
       this.s_staffs.length = 0
+      this.lastContactTimeValue = null
+      this.distributeTimeValue = null
     },
     handle(obj) {
       for (let i = 0; i < obj.length; i++) {

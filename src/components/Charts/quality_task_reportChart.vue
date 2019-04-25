@@ -684,12 +684,12 @@
                   this.search1(res.data.agentid)
                 }
               }).catch((err) => {
-                throw new Error(err)
+                throw err
               })
             })
           }
         }).catch((error) => {
-          throw new Error(error)
+          throw error
         })
       })
     },

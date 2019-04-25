@@ -512,7 +512,7 @@ export default {
           console.log('获取微信状态失败')
         }
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     // 切换微信状态
@@ -546,7 +546,7 @@ export default {
             })
           }
         }).catch(error => {
-          throw new Error(error)
+          throw error
         })
       }
     },
@@ -1761,7 +1761,7 @@ export default {
         console.log(response.data.message)
       }
     }).catch(error => {
-      throw new Error(error)
+      throw error
     })
     // 查找队列
     queryListByAgentId(localStorage.getItem('agentId')).then(res => {

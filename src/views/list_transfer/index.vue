@@ -61,36 +61,22 @@
           </el-form-item>
           <el-form-item label="分配时间：">
             <el-date-picker
-                v-model="req.distributeTimeStart"
-                type="datetime"
-                placeholder="开始时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
-            </el-date-picker>
-            到
-            <el-date-picker
-                v-model="req.distributeTimeEnd"
-                type="datetime"
-                placeholder="结束时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
+                v-model.trim="distributeTimeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>&nbsp;&nbsp;
           <el-form-item label="上次拨打时间：">
             <el-date-picker
-                v-model="req.lastContactTimeStart"
-                type="datetime"
-                placeholder="开始时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
-            </el-date-picker>
-            到
-            <el-date-picker
-                v-model="req.lastContactTimeEnd"
-                type="datetime"
-                placeholder="结束时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
+                v-model.trim="lastContactTimeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
           <el-form-item>
@@ -284,6 +270,8 @@ export default {
 
   data() {
     return {
+      lastContactTimeValue: null,
+      distributeTimeValue: null,
       formContainerOpen: '1',
       formContainer: this.$store.state.app.formContainer,
       hasAgent: false,
@@ -314,7 +302,6 @@ export default {
         lastContactTimeEnd: '',
         pageNo: 1,
         pageSize: 10
-
       },
       allAgentIds: '', // 当前部门关联的所有坐席的id
       all_staffs: [], // 当前部门关联的所有坐席
@@ -461,6 +448,8 @@ export default {
       this.s_staffIds = this.allAgentIds
       this.req.staffId = this.s_staffIds
       this.s_staffs.length = 0
+      this.distributeTimeValue = null
+      this.lastContactTimeValue = null
     },
     // 确认转移
     checkTransfer(contactTaskIds, transferToAgentId) {
@@ -484,14 +473,19 @@ export default {
           }
         })
         .catch(error => {
-          console.error(error)
+          throw error
         })
     },
     // 综合查询
-    searchByKeyWords(req) {
+    searchByKeyWords(val) {
+      var req = val
       if (this.selected_dept_id.length === 0) {
         req.staffId = this.allAgentIds
       }
+      req.distributeTimeStart = this.distributeTimeValue ? this.distributeTimeValue[0] : null
+      req.distributeTimeEnd = this.distributeTimeValue ? this.distributeTimeValue[1] : null
+      req.lastContactTimeStart = this.lastContactTimeValue ? this.lastContactTimeValue[0] : null
+      req.lastContactTimeEnd = this.lastContactTimeValue ? this.lastContactTimeValue[1] : null
       queryByKeywords(req)
         .then(response => {
           if (response.data.code === 0) {
@@ -510,7 +504,7 @@ export default {
           }
         })
         .catch(error => {
-          console.log(error)
+          throw error
         })
     },
     // 表格多选框

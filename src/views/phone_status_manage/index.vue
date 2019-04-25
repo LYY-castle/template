@@ -182,7 +182,7 @@ export default {
           this.$message.error(response.data.message)
         }
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     handleAdd() {
@@ -214,7 +214,7 @@ export default {
         }
         this.getPhoneStatus()
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     handleEdit(row) {
@@ -243,7 +243,7 @@ export default {
         }
         this.getPhoneStatus()
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     handleDelete(row) {
@@ -260,7 +260,7 @@ export default {
         this.getPhoneStatus()
         this.delOneVisiable = false
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     }
 

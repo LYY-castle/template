@@ -368,7 +368,7 @@ export default {
           this.$message.error('查询失败')
         }
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     // 查询所有字段名
@@ -381,7 +381,7 @@ export default {
         }
         this.addScreeningVisible = true
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     // 去掉基础条件重复的字段名
@@ -406,7 +406,7 @@ export default {
           this.$message.error('获取批次失败')
         }
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     // 正整数且前者不能大于后者
@@ -479,7 +479,7 @@ export default {
               getRegion(this.searchReq.city).then(response => {
                 this.screening.region.district = response.data.data
               }).catch(error => {
-                throw new Error(error)
+                throw error
               })
             } else {
               this.searchReq.city = ''
@@ -491,7 +491,7 @@ export default {
           }
         }
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     // 自定义筛选条件
@@ -684,14 +684,14 @@ export default {
                   this.$message.error('生成名单失败')
                 }
               }).catch(error => {
-                throw new Error(error)
+                throw error
               })
             }
           } else {
             this.totalCount = 0
           }
         }).catch(error => {
-          throw new Error(error)
+          throw error
         })
       }
     },
@@ -871,7 +871,7 @@ export default {
                 this.region1[index].district = response.data.data
               })
                 .catch(error => {
-                  throw new Error(error)
+                  throw error
                 })
             } else { // 包含多个市
               this.customerReverseDetail.customerAddresses[index].city = ''
@@ -899,7 +899,7 @@ export default {
               getRegion(this.addressDatas[index].city).then(response => {
                 this.region[index].district = response.data.data
               }).catch(error => {
-                throw new Error(error)
+                throw error
               })
             } else {
               this.addressDatas[index].city = ''
@@ -911,7 +911,7 @@ export default {
           }
         }
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     getRegion1(req) {
@@ -935,15 +935,15 @@ export default {
                   this.region1[i].district = response.data.data
                   this.customerReverseDetail.customerAddresses[i].district = req.customerAddresses[i].district
                 }).catch(error => {
-                  throw new Error(error)
+                  throw error
                 })
               }
             }).catch(error => {
-              throw new Error(error)
+              throw error
             })
           }
         }).catch(error => {
-          throw new Error(error)
+          throw error
         })
       }
     },

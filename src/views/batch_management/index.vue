@@ -14,21 +14,12 @@
           </el-form-item>
           <el-form-item label="操作时间：" prop="startCreateTime">
             <el-date-picker
-                v-model="req.startCreateTime"
-                type="datetime"
-                placeholder="开始时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item prop="endCreateTime">
-            到
-            <el-date-picker
-                v-model="req.endCreateTime"
-                type="datetime"
-                placeholder="结束时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
+                v-model.trim="createTimeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
           <el-form-item>
@@ -224,25 +215,6 @@
           <el-form-item prop="batchName" label="批次名称:">
             <el-input v-model="addReq.batchName" placeholder="批次名称（限长100字符）" maxlength="100"></el-input>
           </el-form-item>
-           <!-- <el-form-item prop="ascriptionId" label="客户归属:">
-            <el-select v-model="addReq.ascriptionId" placeholder="客户归属" style="width: 100%;">
-              <el-option
-                  v-for="item in ascrislistData"
-                  :key="item.ascriptionId"
-                  :label="item.ascriptionName"
-                  :value="item.ascriptionId">
-              </el-option>
-            </el-select>
-          </el-form-item> -->
-          <!-- <el-form-item prop="validityTime" label="有效时间:">
-            <el-date-picker
-                v-model="addReq.validityTime"
-                type="datetime"
-                placeholder="有效时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
-            </el-date-picker>
-          </el-form-item> -->
            <el-form-item prop="description" label="备注:">
             <el-input v-model="addReq.description" placeholder="备注（限长200字符）" maxlength="200"></el-input>
           </el-form-item>
@@ -321,6 +293,7 @@ export default {
   name: 'batch_management',
   data() {
     return {
+      createTimeValue: null,
       formContainerOpen: '1',
       formContainer: this.$store.state.app.formContainer,
       fileList: [],
@@ -611,9 +584,18 @@ export default {
         pageNo: 1,
         pageSize: 10
       }
+      this.createTimeValue = null
     },
     // 查询批次信息
-    getBatch(req) {
+    getBatch(val) {
+      var req = val
+      if (this.createTimeValue) {
+        req.startCreateTime = this.createTimeValue[0]
+        req.endCreateTime = this.createTimeValue[1]
+      } else {
+        req.startCreateTime = null
+        req.endCreateTime = null
+      }
       queryBatch(req)
         .then(response => {
           if (response.data.code === 0) {

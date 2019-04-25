@@ -14,19 +14,12 @@
           </el-form-item>
           <el-form-item label="操作时间：">
               <el-date-picker
-                v-model="req.queryStart"
-                type="datetime"
-                placeholder="开始时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
-              </el-date-picker>
-              到
-              <el-date-picker
-                v-model="req.queryStop"
-                type="datetime"
-                placeholder="结束时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
+                v-model.trim="timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
               </el-date-picker>
             </el-form-item>
           <el-form-item>
@@ -266,6 +259,7 @@ export default {
       }
     }
     return {
+      timeValue: null,
       visibleClass: '',
       formContainerOpen: '1',
       formContainer: this.$store.state.app.formContainer,
@@ -386,6 +380,7 @@ export default {
         pageNo: this.pageInfo.pageNo,
         pageSize: this.pageInfo.pageSize
       }
+      this.timeValue = null
     },
     resetAdd() {
       this.addNoDisturbPhonesDetail = {
@@ -401,7 +396,10 @@ export default {
       }
     },
     // 查询表格数据
-    querynodisturbphones(req) {
+    querynodisturbphones(val) {
+      var req = val
+      req.queryStart = this.timeValue ? this.timeValue[0] : null
+      req.queryStop = this.timeValue ? this.timeValue[1] : null
       querynodisturbphones(req).then(response => {
         if (response.data.code === 0) {
           this.tableData = response.data.data

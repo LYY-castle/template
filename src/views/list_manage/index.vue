@@ -15,19 +15,12 @@
           </el-form-item>
           <el-form-item label="操作时间:">
             <el-date-picker
-                v-model="req.startCreateTime"
-                type="datetime"
-                placeholder="开始时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
-            </el-date-picker>
-            到
-            <el-date-picker
-                v-model="req.endCreateTime"
-                type="datetime"
-                placeholder="结束时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
+                v-model.trim="timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
           <el-form-item>
@@ -167,146 +160,6 @@
         <el-button size="small" type="primary" plain @click="editVisible = false">取消</el-button>
       </div>
     </el-dialog>
-    <!-- <el-dialog
-      top="5vh"
-      width="90%"
-      :visible.sync="addVisible"
-      append-to-body>
-      <div slot="title" style="text-align: center;">
-        <el-button size="small" @click="addVisible = false;" style="float:left;" icon="el-icon-arrow-left">返 回</el-button>
-        <h3 style="display:inline;text-align:center;">新建名单</h3>
-      </div>
-      <el-row>
-        <el-form :inline="true" size="small">
-          <el-form-item>
-            <el-input v-model="searchCustomer.customerId" placeholder="客户编号（限长20字符）" maxlength="20"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-input v-model="searchCustomer.customerName" placeholder="客户姓名（限长50字符）" maxlength="50"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-input v-model="searchCustomer.mobile" placeholder="客户电话（限长50字符）" maxlength="50"></el-input>
-          </el-form-item>
-          <el-form-item label="操作时间：">
-          <el-date-picker
-              v-model="timeValue"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss">
-          </el-date-picker>
-        </el-form-item>
-          <el-form-item>
-            <el-button size="small" type="primary" @click="searchCustomer.pageNo=1;getCustomers(searchCustomer)">查询</el-button>
-            <el-button size="small" type="danger" @click="clearForm3()">重置</el-button>
-          </el-form-item>
-        </el-form>
-      </el-row>
-      <el-row>
-        <el-table
-          :data="customerTableData"
-          border
-          @selection-change="namelistSelectionChange">
-          <el-table-column
-            align="center"
-            type="selection"
-            width="55">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="customerId"
-            label="客户编号"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="customerName"
-            label="客户姓名"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="性别"
-            width="55">
-            <template
-              slot-scope="scope">
-              <div>{{showSex(scope.row.sex)}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="客户电话"
-            :show-overflow-tooltip="true">
-            <template
-              slot-scope="scope">
-              {{hideMobile(scope.row.mobile)}}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="身份证"
-            :show-overflow-tooltip="true">
-            <template
-              slot-scope="scope">
-              {{hideIdNumber(scope.row.idNumber)}}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="source"
-            label="客户来源">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="modifierName"
-            label="操作人"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{ scope.row.modifierName }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            prop="modifierTime"
-            width="155"
-            label="操作时间">
-          </el-table-column>
-        </el-table>
-      </el-row>
-      <div slot="footer" style="text-align: right;">
-        <el-pagination
-          v-if="pageShow2"
-          background
-          @size-change="namelistSizeChange"
-          @current-change="namelistPageChange"
-          :current-page='namelistPageInfo.pageNo'
-          :page-sizes="[10, 50, 100, 200, 500]"
-          :page-size='namelistPageInfo.pageSize'
-          layout="total, sizes, prev, pager, next, jumper "
-          :total='namelistPageInfo.totalCount' style="text-align:right;float:left;">
-        </el-pagination>
-        <el-form :inline="true" size="small" :model="addNameList" ref="addNameList" :rules="rule">
-          <el-form-item prop="listName" label="名单名称：">
-            <el-input v-model="addNameList.listName" placeholder="名单名称（限长50字符）" maxlength="50"></el-input>
-          </el-form-item>
-          <el-form-item prop="visible" label="名单状态：">
-            <el-switch
-            v-model="addNameList.visible"
-            active-text="可见"
-            inactive-text="不可见"
-            :active-value=1
-            :inactive-value=0
-            active-color="#67C23A"
-            ></el-switch>
-          </el-form-item>
-          <el-form-item>
-            <el-button size="small" type="success" @click="submitForm('addNameList');newNameList(addNameList)">确 定</el-button>
-            <el-button size="small" @click="addVisible = false;">取 消</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </el-dialog> -->
     <el-dialog
       width="30%"
       title="批量删除"
@@ -601,6 +454,7 @@ export default {
   name: 'sc_list_generate',
   data() {
     return {
+      timeValue: null,
       // 名单抽取
       extractVisible: false,
       screeningFormOpen: [],
@@ -608,7 +462,7 @@ export default {
       allBatch: [],
       allFieldName: [],
       totalCount: 0,
-      screeningTimeValue: [],
+      screeningTimeValue: null,
       searchReq: {
         batchId: '',
         beginScore: '',
@@ -660,7 +514,6 @@ export default {
       },
       // ---------------------
       formContainerOpen: '1',
-      timeValue: '',
       rule: rule,
       detailVisible: false,
       delVisible: false, // 删除对话框显示隐藏
@@ -710,26 +563,6 @@ export default {
         endModifierTime: '',
         pageNo: 1,
         pageSize: 10
-      },
-      searchBatch: {
-        batchId: '',
-        batchName: '',
-        validityStatus: 0,
-        createAuthor: '',
-        startCreateTime: '',
-        endCreateTime: '',
-        pageSize: 10,
-        pageNo: 1
-      },
-      searchBatch2: {
-        batchId: '',
-        batchName: '',
-        validityStatus: 0,
-        createAuthor: '',
-        startCreateTime: '',
-        endCreateTime: '',
-        pageSize: 10,
-        pageNo: 1
       },
       addNamelist: {
         listName: '',
@@ -811,13 +644,8 @@ export default {
       } else {
         this.searchReq.customRequirements = []
       }
-      if (this.screeningTimeValue.length) {
-        this.searchReq.modifyTimeStart = this.screeningTimeValue[0]
-        this.searchReq.modifyTimeEnd = this.screeningTimeValue[1]
-      } else {
-        this.searchReq.modifyTimeStart = ''
-        this.searchReq.modifyTimeEnd = ''
-      }
+      this.searchReq.modifyTimeStart = this.screeningTimeValue ? this.screeningTimeValue[0] : null
+      this.searchReq.modifyTimeEnd = this.screeningTimeValue ? this.screeningTimeValue[1] : null
       getFiltercustomers(this.searchReq).then(response => {
         if (response.data.code === 0) {
           this.totalCount = response.data.data
@@ -826,7 +654,7 @@ export default {
           this.$message.error('查询失败')
         }
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     // 查询所有字段名
@@ -839,7 +667,7 @@ export default {
         }
         this.addScreeningVisible = true
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     // 去掉基础条件重复的字段名
@@ -864,7 +692,7 @@ export default {
           this.$message.error('获取批次失败')
         }
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     // 正整数且前者不能大于后者
@@ -937,7 +765,7 @@ export default {
               getRegion(this.searchReq.city).then(response => {
                 this.screening.region.district = response.data.data
               }).catch(error => {
-                throw new Error(error)
+                throw error
               })
             } else {
               this.searchReq.city = ''
@@ -949,7 +777,7 @@ export default {
           }
         }
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     // 自定义筛选条件
@@ -1082,7 +910,7 @@ export default {
       console.log(this.searchReq)
       this.fieldType = ''
       this.fieldTags = []
-      this.screeningTimeValue = []
+      this.screeningTimeValue = null
       this.fieldValues = []
       this.customRequirements = []
       this.searchReq = {
@@ -1119,13 +947,8 @@ export default {
         } else {
           this.searchReq.customRequirements = []
         }
-        if (this.screeningTimeValue.length) {
-          this.searchReq.modifyTimeStart = this.screeningTimeValue[0]
-          this.searchReq.modifyTimeEnd = this.screeningTimeValue[1]
-        } else {
-          this.searchReq.modifyTimeStart = ''
-          this.searchReq.modifyTimeEnd = ''
-        }
+        this.searchReq.modifyTimeStart = this.screeningTimeValue ? this.screeningTimeValue[0] : null
+        this.searchReq.modifyTimeEnd = this.screeningTimeValue ? this.screeningTimeValue[1] : null
         this.addListReq.customerQueryModel = clone(this.searchReq)
         getFiltercustomers(this.searchReq).then(response => {
           if (response.data.code === 0) {
@@ -1144,14 +967,14 @@ export default {
                   this.$message.error('生成名单失败')
                 }
               }).catch(error => {
-                throw new Error(error)
+                throw error
               })
             }
           } else {
             this.totalCount = 0
           }
         }).catch(error => {
-          throw new Error(error)
+          throw error
         })
       }
     },
@@ -1218,31 +1041,10 @@ export default {
         pageNo: this.pageInfo.pageNo,
         pageSize: this.pageInfo.pageSize
       }
-    },
-    clearForm2() {
-      this.searchBatch = {
-        batchId: '',
-        batchName: '',
-        validityStatus: 0,
-        createAuthor: '',
-        startCreateTime: '',
-        endCreateTime: '',
-        pageSize: this.namelistPageInfo.pageSize,
-        pageNo: this.namelistPageInfo.pageNo
-      }
-      this.searchBatch2 = {
-        batchId: '',
-        batchName: '',
-        validityStatus: 0,
-        createAuthor: '',
-        startCreateTime: '',
-        endCreateTime: '',
-        pageSize: this.namelistPageInfo.pageSize,
-        pageNo: this.namelistPageInfo.pageNo
-      }
+      this.timeValue = null
     },
     clearForm3() {
-      this.timeValue = ''
+      this.timeValue = null
       this.searchCustomer = {
         isInternalAdmin: parseInt(localStorage.getItem('is_internal_admin')),
         customerId: '',
@@ -1256,7 +1058,10 @@ export default {
       }
     },
     // 查询名单信息
-    searchNamelist(req) {
+    searchNamelist(val) {
+      var req = val
+      req.startCreateTime = this.timeValue ? this.timeValue[0] : null
+      req.endCreateTime = this.timeValue ? this.timeValue[1] : null
       queryNamelist(req)
         .then(response => {
           if (response.data.code === 0) {
@@ -1488,11 +1293,6 @@ export default {
     namelistSizeChange(val) {
       this.searchCustomer.pageSize = val
       this.getCustomers(this.searchCustomer)
-      // this.searchBatch.pageSize = val
-      // this.searchBatch2.pageSize = val
-      // this.searchBatch2.pageNo = 1
-      // this.namelistPageInfo.pageNo = 1
-      // this.getBatch(this.searchBatch2)
     },
     // 分页翻页功能
     handleCurrentChange(val) {
@@ -1503,9 +1303,6 @@ export default {
       this.searchCustomer.pageSize = this.namelistPageInfo.pageSize
       this.searchCustomer.pageNo = val
       this.getCustomers(this.searchCustomer)
-      // this.searchBatch2.pageSize = this.namelistPageInfo.pageSize
-      // this.searchBatch2.pageNo = val
-      // this.getBatch(this.searchBatch2)
     }
   }
 }

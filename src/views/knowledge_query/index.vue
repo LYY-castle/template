@@ -293,7 +293,7 @@ export default{
       getCatalogs().then(response => {
         this.setTree = response.data
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     resetTree() {
@@ -324,7 +324,7 @@ export default{
             message: '查询失败',
             type: 'error'
           })
-          throw new Error(error)
+          throw error
         })
       }
     },
@@ -411,7 +411,7 @@ export default{
         console.log(this.historyKey)
         localStorage.setItem('kb_searchKey', JSON.stringify(this.historyKey))
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     getArticles(key = '', type) {
@@ -427,7 +427,7 @@ export default{
           this.$message.error('查询失败')
         }
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     // 详情
@@ -467,7 +467,7 @@ export default{
           this.noteDetail.brief = '服务器或网络出错！请稍后重试'
           this.noteDetail.remark = '服务器或网络出错！请稍后重试'
           this.DLurl = []
-          throw new Error(error)
+          throw error
         })
     },
     // 页面显示条数

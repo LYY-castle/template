@@ -43,20 +43,14 @@
 
           <el-form-item label="操作时间：">
             <el-date-picker
-              v-model="req.modifyTimeStart"
-              type="datetime"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
-            </el-date-picker>
-            到
-            <el-date-picker
-              v-model="req.modifyTimeEnd"
-              type="datetime"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
+              v-model.trim="modifyTimeValue"
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
+              value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
-
           <el-form-item>
             <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
             <el-button @click="clearForm(req)">重置</el-button>
@@ -323,6 +317,7 @@
 
     data() {
       return {
+        modifyTimeValue: null,
         formContainerOpen: '1',
         formContainer: this.$store.state.app.formContainer,
         tableData: [], // 表格数据
@@ -435,7 +430,10 @@
         }
       },
       // 综合查询
-      searchByKeyWords(req) {
+      searchByKeyWords(val) {
+        var req = val
+        req.modifyTimeStart = this.modifyTimeValue ? this.modifyTimeValue[0] : null
+        req.modifyTimeEnd = this.modifyTimeValue ? this.modifyTimeValue[1] : null
         if (this.isManager) {
           this.req.departId = localStorage.getItem('departId')
         } else if (this.isStaff) {
@@ -491,11 +489,11 @@
               if (code === 200) this.isManager = true
               else if (code === 403) this.isManager = false
             }).catch(error => {
-              throw new Error(error)
+              throw error
             })
           }
         }).catch(error => {
-          throw new Error(error)
+          throw error
         })
         // 判断员工
         await checkStaff(localStorage.getItem('agentId')).then(response => {
@@ -503,7 +501,7 @@
           if (code === 200) this.isStaff = true
           else if (code === 403) this.isStaff = false
         }).catch(error => {
-          throw new Error(error)
+          throw error
         })
         return true
       },
@@ -636,6 +634,7 @@
         if (this.$refs[formName] !== undefined) {
           this.$refs[formName].resetFields()
         }
+        this.modifyTimeValue = null
       }
 
     }

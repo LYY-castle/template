@@ -1244,7 +1244,7 @@
           }
           this.$forceUpdate()
         }).catch(error => {
-          throw new Error(error)
+          throw error
         })
       },
       /** 获取订单信息 */

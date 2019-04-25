@@ -741,20 +741,13 @@
             <el-input v-model="nameListExclude.listName" placeholder="名单名称"></el-input>
           </el-form-item>
           <el-form-item label="操作时间：">
-            <el-date-picker
-                v-model="nameListExclude.startCreateTime"
-                type="datetime"
-                placeholder="开始时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
-            </el-date-picker>
-            到
-            <el-date-picker
-                v-model="nameListExclude.endCreateTime"
-                type="datetime"
-                placeholder="结束时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
+             <el-date-picker
+                v-model.trim="createTimeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
           <el-form-item>
@@ -1280,7 +1273,8 @@ export default {
       // 是否展示微信相关
       show_wechat: `${process.env.SHOW_WECHAT}`,
       campaignExpiryDate: [],
-      timeValue: [],
+      timeValue: null,
+      createTimeValue: null,
       removeListVisible: false, // 单个移除
       batchListVisible: false, // 批量移除名单
       removeLists: [], // 批量移除ids
@@ -2100,7 +2094,10 @@ export default {
       })
     },
     // 查询可选名单列表
-    getNameListExclude(searchReq) {
+    getNameListExclude(val) {
+      var searchReq = val
+      searchReq.startCreateTime = this.createTimeValue ? this.createTimeValue[0] : null
+      searchReq.endCreateTime = this.createTimeValue ? this.createTimeValue[1] : null
       findNameListExcludeById(searchReq).then(response => {
         if (response.data.code === 0) {
           console.log(response.data.data)

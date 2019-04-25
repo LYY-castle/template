@@ -430,7 +430,7 @@ export default {
           this.$message(response.data.messages)
         }
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     // 查询活动下名单的分配情况

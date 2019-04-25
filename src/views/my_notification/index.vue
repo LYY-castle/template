@@ -32,8 +32,8 @@
                 v-model.trim="timeValue"
                 type="datetimerange"
                 range-separator="-"
-                start-placeholder="发布开始时间"
-                end-placeholder="发布结束时间"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
                 value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>

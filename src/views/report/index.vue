@@ -248,60 +248,6 @@ export default {
         vm.adm = false
       }
     }))
-    // 判断现场主管权限
-  //   permsManager().then(() => {
-  //     this.manager = true
-  //   }).catch(error => {
-  //     if (error.response.status === 403) {
-  //       this.manager = true
-
-  //       // 判断班组长权限
-  //       permsDepart(this.agentId).then(() => {
-  //         this.depart = true
-  //       }).catch(error => {
-  //         if (error.response.status === 403) {
-  //           this.depart = false
-  //           // 判断坐席权限
-  //           permsStaff(this.agentId).then(() => {
-  //             this.staff = true
-  //           }).catch(error => {
-  //             if (error.response.status === 403) {
-  //               this.staff = false
-  //               // this.$message.error('您无权访问此页面')
-  //             } else {
-  //               throw new Error(error)
-  //             }
-  //           })
-  //         } else {
-  //           throw new Error(error)
-  //         }
-  //       })
-
-  //       // 判断质检主管权限
-  //       permsqualityMonitorWorkingSet(this.agentId).then(() => {
-  //         this.qcdepart = true
-  //       }).catch(error => {
-  //         if (error.response.status === 403) {
-  //           this.qcdepart = false
-  //           // 判断质检员权限
-  //           permsqualityOrdWorkingSet(this.agentId).then(() => {
-  //             this.qcstaff = true
-  //           }).catch(error => {
-  //             if (error.response.status === 403) {
-  //               this.qcstaff = false
-  //               // this.$message.error('您无权访问此页面')
-  //             } else {
-  //               throw new Error(error)
-  //             }
-  //           })
-  //         } else {
-  //           throw new Error(error)
-  //         }
-  //       })
-  //     } else {
-  //       throw new Error(error)
-  //     }
-  //   })
   }
 }
 </script>

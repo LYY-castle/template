@@ -8,53 +8,32 @@
         <el-form :inline="true" size="small">
           <el-form-item label="分配时间：">
               <el-date-picker
-                  v-model="req.distributeTimeStart"
-                  type="datetime"
-                  placeholder="开始时间"
-                  value-format="yyyy-MM-dd HH:mm:ss"
-                  default-time="00:00:00">
-              </el-date-picker>
-              -
-              <el-date-picker
-                  v-model="req.distributeTimeEnd"
-                  type="datetime"
-                  placeholder="结束时间"
-                  value-format="yyyy-MM-dd HH:mm:ss"
-                  default-time="00:00:00">
+                  v-model.trim="distributeTimeValue"
+                  type="datetimerange"
+                  range-separator="-"
+                  start-placeholder="开始时间"
+                  end-placeholder="结束时间"
+                  value-format="yyyy-MM-dd HH:mm:ss">
               </el-date-picker>
           </el-form-item>&nbsp;&nbsp;
           <el-form-item label="预约时间：">
               <el-date-picker
-                  v-model="req.appointTimeStart"
-                  type="datetime"
-                  placeholder="开始时间"
-                  value-format="yyyy-MM-dd HH:mm:ss"
-                  default-time="00:00:00">
-              </el-date-picker>
-              -
-              <el-date-picker
-                  v-model="req.appointTimeEnd"
-                  type="datetime"
-                  placeholder="结束时间"
-                  value-format="yyyy-MM-dd HH:mm:ss"
-                  default-time="00:00:00">
+                  v-model.trim="appointTimeValue"
+                  type="datetimerange"
+                  range-separator="-"
+                  start-placeholder="开始时间"
+                  end-placeholder="结束时间"
+                  value-format="yyyy-MM-dd HH:mm:ss">
               </el-date-picker>
           </el-form-item><br/>
           <el-form-item label="操作时间：">
-              <el-date-picker
-                  v-model="req.modifyTimeStart"
-                  type="datetime"
-                  placeholder="开始时间"
-                  value-format="yyyy-MM-dd HH:mm:ss"
-                  default-time="00:00:00">
-              </el-date-picker>
-              -
-              <el-date-picker
-                  v-model="req.modifyTimeEnd"
-                  type="datetime"
-                  placeholder="结束时间"
-                  value-format="yyyy-MM-dd HH:mm:ss"
-                  default-time="00:00:00">
+            <el-date-picker
+                  v-model.trim="modifyTimeValue"
+                  type="datetimerange"
+                  range-separator="-"
+                  start-placeholder="开始时间"
+                  end-placeholder="结束时间"
+                  value-format="yyyy-MM-dd HH:mm:ss">
               </el-date-picker>
           </el-form-item>
             <el-form-item label="任务状态：">
@@ -695,6 +674,9 @@ export default {
 
   data() {
     return {
+      distributeTimeValue: null,
+      modifyTimeValue: null,
+      appointTimeValue: null,
       // keepReady: true,
       autoCallDial: false, // 自动外呼
       formContainerOpen: '1',
@@ -796,12 +778,6 @@ export default {
       summary_description: '', // 小结备注
       // 查询条件
       req: {
-        distributeTimeStart: '',
-        distributeTimeEnd: '',
-        appointTimeStart: '',
-        appointTimeEnd: '',
-        modifyTimeStart: '',
-        modifyTimeEnd: '',
         customerName: '',
         customerPhone: '',
         contactStatus: '0',
@@ -1125,16 +1101,16 @@ export default {
     // 综合查询
     searchByKeyWords(req) {
       const queryInfo = {}
-      queryInfo.appointTimeEnd = req.appointTimeEnd
-      queryInfo.appointTimeStart = req.appointTimeStart
+      queryInfo.appointTimeEnd = this.appointTimeValue ? this.appointTimeValue[0] : null
+      queryInfo.appointTimeStart = this.appointTimeValue ? this.appointTimeValue[1] : null
       queryInfo.contactStatus = req.contactStatus
       queryInfo.contactedNum = req.contactedNum
       queryInfo.customerName = req.customerName
       queryInfo.customerPhone = req.customerPhone
-      queryInfo.distributeTimeEnd = req.distributeTimeEnd
-      queryInfo.distributeTimeStart = req.distributeTimeStart
-      queryInfo.modifyTimeEnd = req.modifyTimeEnd
-      queryInfo.modifyTimeStart = req.modifyTimeStart
+      queryInfo.distributeTimeEnd = this.distributeTimeValue ? this.distributeTimeValue[0] : null
+      queryInfo.distributeTimeStart = this.distributeTimeValue ? this.distributeTimeValue[1] : null
+      queryInfo.modifyTimeEnd = this.modifyTimeValue ? this.modifyTimeValue[0] : null
+      queryInfo.modifyTimeStart = this.modifyTimeValue ? this.modifyTimeValue[1] : null
       queryInfo.pageNo = req.pageNo
       queryInfo.pageSize = req.pageSize
       queryInfo.staffId = req.staffId
@@ -1249,12 +1225,6 @@ export default {
 
     // 清空重置
     clearForm(obj, formName) {
-      this.req.distributeTimeStart = ''
-      this.req.distributeTimeEnd = ''
-      this.req.appointTimeStart = ''
-      this.req.appointTimeEnd = ''
-      this.req.modifyTimeStart = ''
-      this.req.modifyTimeEnd = ''
       this.req.customerName = ''
       this.req.customerPhone = ''
       this.req.pageNo = this.pageInfo.pageNo
@@ -1263,6 +1233,9 @@ export default {
       this.req.contactedNum = ''
       this.req.summaryId = ''
       this.req.campaignId = ''
+      this.distributeTimeValue = null
+      this.modifyTimeValue = null
+      this.appointTimeValue = null
       // if (this.activeName === 'firstDial') {
       //   this.req.contactStatus = '0'
       //   this.req.status = '0'
@@ -2061,7 +2034,7 @@ export default {
               this.getParametersFromContactRecordDail()
             }
           })
-          throw new Error(error)
+          throw error
         })
       })
       history.pushState(null, null, document.URL)

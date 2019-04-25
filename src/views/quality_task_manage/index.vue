@@ -25,19 +25,12 @@
           </el-form-item>
           <el-form-item label="操作时间：">
             <el-date-picker
-              v-model="req.startTime"
-              type="datetime"
-              placeholder="开始时间"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
-            </el-date-picker>
-            到
-            <el-date-picker
-              v-model="req.stopTime"
-              type="datetime"
-              placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
+                v-model.trim="timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
           <el-form-item>
@@ -191,19 +184,12 @@
           </el-form-item>
           <el-form-item label="拨打时间：">
             <el-date-picker
-              v-model="getRecords.startTime"
-              type="datetime"
-              placeholder="开始时间"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
-            </el-date-picker>
-            到
-            <el-date-picker
-              v-model="getRecords.endTime"
-              type="datetime"
-              placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
+                v-model.trim="recordsTimeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
           <el-form-item class="talktime-form" label="通话时长" prop="resideAddress">
@@ -349,6 +335,8 @@ export default {
   name: 'qm_charge_generatetask',
   data() {
     return {
+      recordsTimeValue: null,
+      timeValue: null,
       visibleClass: '',
       formContainerOpen: '1',
       formContainer: this.$store.state.app.formContainer,
@@ -501,6 +489,7 @@ export default {
         pageNo: this.req2.pageNo,
         pageSize: this.pageInfo.pageSize
       }
+      this.timeValue = null
     },
     // 清空重置
     clearForm(obj, formName) {
@@ -522,7 +511,10 @@ export default {
       }
     },
     // 查询质检任务信息
-    searchTask(req) {
+    searchTask(val) {
+      var req = val
+      req.startTime = this.timeValue ? this.timeValue[0] : null
+      req.endTime = this.timeValue ? this.timeValue[1] : null
       queryTask(req)
         .then(response => {
           if (response.data.code === 0) {
@@ -608,7 +600,10 @@ export default {
       })
     },
     // 新建页面 查询
-    getRecordsByConditions(req) {
+    getRecordsByConditions(val) {
+      var req = val
+      req.startTime = this.recordsTimeValue ? this.recordsTimeValue[0] : null
+      req.endTime = this.recordsTimeValue ? this.recordsTimeValue[1] : null
       if (req.campaign) {
         findRecordsByConditions(req).then(response => {
           if (response.data.code === 0) {

@@ -218,24 +218,24 @@
 }
 </style>
 <script>
-import treeTable from "@/components/TreeTable";
+import treeTable from '@/components/TreeTable'
 import {
   getAllServer,
   addServer,
   modifyServer,
   deleteServer,
   checkServerName
-} from "@/api/service_catalog_manage";
+} from '@/api/service_catalog_manage'
 import {
   getMenuList,
   getIconList,
   saveNewMenu,
   saveEditMenu,
   deleteMenu
-} from "@/api/menu_management";
-import { list2Tree } from "@/utils/tools";
+} from '@/api/menu_management'
+import { list2Tree } from '@/utils/tools'
 export default {
-  name: "menu_management",
+  name: 'menu_management',
   components: { treeTable },
   data() {
     return {
@@ -248,139 +248,139 @@ export default {
       defaultExpandAll: false,
       showCheckbox: true,
       iconList: [],
-      iconSelected: "",
+      iconSelected: '',
       key: 1,
       columns: [
         {
           width: 100,
           expand: true,
-          align: "left"
+          align: 'left'
         },
         {
-          label: "服务名称",
-          key: "name"
+          label: '服务名称',
+          key: 'name'
         },
         {
-          label: "服务值",
-          key: "value"
+          label: '服务值',
+          key: 'value'
         },
         {
-          label: "服务图标",
-          key: "icon",
+          label: '服务图标',
+          key: 'icon',
           width: 50
         },
         {
-          label: "服务顺序",
-          key: "menuOrder",
+          label: '服务顺序',
+          key: 'menuOrder',
           width: 50
         },
         {
-          label: "状态",
-          key: "status",
+          label: '状态',
+          key: 'status',
           width: 100
         },
         {
-          label: "操作",
-          key: "operation"
+          label: '操作',
+          key: 'operation'
         }
       ],
       data: [],
       dialogData: {
         id: null,
-        name: "",
-        value: "",
-        icon: "",
-        order: "",
-        status: "",
-        parentId: ""
+        name: '',
+        value: '',
+        icon: '',
+        order: '',
+        status: '',
+        parentId: ''
       },
       cascaderProps: {
-        label: "name",
-        value: "id",
-        children: "children"
+        label: 'name',
+        value: 'id',
+        children: 'children'
       }
-    };
+    }
   },
   mounted() {
-    this.iconList = getIconList();
-    this.getMenuList();
+    this.iconList = getIconList()
+    this.getMenuList()
   },
   methods: {
     getMenuList() {
       getAllServer()
         .then(response => {
-          const result = response.data.result;
+          const result = response.data.result
           console.log(response)
-          return;
+          return
           for (let i = 0; i < result.length; i++) {
-            result[i].parentId = parseInt(result[i].parentId);
+            result[i].parentId = parseInt(result[i].parentId)
           }
           this.data = list2Tree({
             data: result,
             rootId: 0,
-            idFieldName: "id",
-            parentIdFielName: "parentId"
-          });
+            idFieldName: 'id',
+            parentIdFielName: 'parentId'
+          })
         })
         .catch(error => {
-          throw new Error(error);
-        });
+          throw error
+        })
     },
     handleEdit(row) {
-      var parentIds = row.idPath.split("/").filter(n => {
-        return n;
-      });
-      parentIds.pop();
+      var parentIds = row.idPath.split('/').filter(n => {
+        return n
+      })
+      parentIds.pop()
       parentIds = parentIds.map(item => {
-        return parseInt(item);
-      });
-      this.dialogData.id = row.id;
-      this.dialogData.name = row.name;
-      this.dialogData.value = row.value;
-      this.dialogData.icon = row.icon;
-      this.dialogData.parentId = parentIds;
-      this.dialogData.order = row.menuOrder;
-      this.dialogData.status = row.status;
-      this.dialogEditVisible = true;
+        return parseInt(item)
+      })
+      this.dialogData.id = row.id
+      this.dialogData.name = row.name
+      this.dialogData.value = row.value
+      this.dialogData.icon = row.icon
+      this.dialogData.parentId = parentIds
+      this.dialogData.order = row.menuOrder
+      this.dialogData.status = row.status
+      this.dialogEditVisible = true
     },
     handleDelete(row) {
-      this.deleteId = row.id;
-      this.delOneVisiable = true;
+      this.deleteId = row.id
+      this.delOneVisiable = true
     },
     addOne() {
-      this.dialogData.id = null;
-      this.dialogData.name = "";
-      this.dialogData.value = "";
-      this.dialogData.icon = "";
-      this.dialogData.parentId = [];
-      this.dialogData.order = "0";
-      this.dialogData.status = "1";
-      this.dialogNewVisible = true;
+      this.dialogData.id = null
+      this.dialogData.name = ''
+      this.dialogData.value = ''
+      this.dialogData.icon = ''
+      this.dialogData.parentId = []
+      this.dialogData.order = '0'
+      this.dialogData.status = '1'
+      this.dialogNewVisible = true
     },
     deleteOne(deleteid) {
-      this.delOneVisiable = false;
+      this.delOneVisiable = false
       deleteMenu(deleteid)
         .then(response => {
-          this.getMenuList();
+          this.getMenuList()
         })
         .catch(error => {
-          throw new Error(error);
-        });
+          throw error
+        })
     },
     selectIcon(iconClassName) {
-      this.dialogData.icon = iconClassName;
-      this.dialogSelectIconVisible = false;
+      this.dialogData.icon = iconClassName
+      this.dialogSelectIconVisible = false
     },
     statusCode2String(code) {
-      return code === "0" ? "隐藏" : "显示";
+      return code === '0' ? '隐藏' : '显示'
     },
     handleEditSaveAction() {
-      this.dialogEditVisible = false;
-      var parentId = "0";
+      this.dialogEditVisible = false
+      var parentId = '0'
       if (this.dialogData.parentId.length !== 0) {
         parentId = this.dialogData.parentId[
           this.dialogData.parentId.length - 1
-        ].toString();
+        ].toString()
       }
       saveEditMenu({
         id: this.dialogData.id,
@@ -392,19 +392,19 @@ export default {
         status: this.dialogData.status
       })
         .then(response => {
-          this.getMenuList();
+          this.getMenuList()
         })
         .catch(error => {
-          throw new Error(error);
-        });
+          throw error
+        })
     },
     handleNewSaveAction() {
-      this.dialogNewVisible = false;
-      var parentId = "0";
+      this.dialogNewVisible = false
+      var parentId = '0'
       if (this.dialogData.parentId.length !== 0) {
         parentId = this.dialogData.parentId[
           this.dialogData.parentId.length - 1
-        ].toString();
+        ].toString()
       }
       saveNewMenu({
         name: this.dialogData.name,
@@ -415,12 +415,12 @@ export default {
         status: this.dialogData.status
       })
         .then(response => {
-          this.getMenuList();
+          this.getMenuList()
         })
         .catch(error => {
-          throw new Error(error);
-        });
+          throw error
+        })
     }
   }
-};
+}
 </script>

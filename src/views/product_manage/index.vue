@@ -771,7 +771,7 @@ export default {
           this.$message.error(response.data.message)
         }
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     checkNum(val) { // 属性值长度确定
@@ -817,7 +817,7 @@ export default {
           this.pageShow = false
         }
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     queryTemplateInfo() {
@@ -862,13 +862,13 @@ export default {
     //           this.$message.error(response.data.message)
     //         }
     //       }).catch(error => {
-    //         throw new Error(error)
+    //         throw error
     //       })
     //     } else {
     //       this.$message.error(response.data.message)
     //     }
     //   }).catch(error => {
-    //     throw new Error(error)
+    //     throw error
     //   })
     // },
     createTemplateInfo(formName) {
@@ -894,7 +894,7 @@ export default {
               this.$message.error(response.data.message)
             }
           }).catch(error => {
-            throw new Error(error)
+            throw error
           })
         } else {
           this.$message.error('请检查是否填写正确')
@@ -930,7 +930,7 @@ export default {
           this.$message.error(response.data.message)
         }
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     queryProductTypes() {
@@ -941,7 +941,7 @@ export default {
           this.$message.error(response.data.message)
         }
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     deleteTemplateInfos() {
@@ -957,7 +957,7 @@ export default {
             this.$message.error(response.data.message)
           }
         }).catch(error => {
-          throw new Error(error)
+          throw error
         })
       }
     },
@@ -971,7 +971,7 @@ export default {
           this.$message.error(response.data.message)
         }
       }).catch(error => {
-        throw new Error(error)
+        throw error
       })
     },
     resetForm(formName) {

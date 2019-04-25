@@ -38,19 +38,12 @@
           </el-form-item>
           <el-form-item label="联系时间：">
             <el-date-picker
-                v-model="req.startTime"
-                type="datetime"
-                placeholder="开始时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
-            </el-date-picker>
-            到
-            <el-date-picker
-                v-model="req.endTime"
-                type="datetime"
-                placeholder="结束时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
+                v-model.trim="timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
             <el-form-item label="接通状态：">
@@ -640,6 +633,7 @@ audio {
     name: 'contact_record_dail',
     data() {
       return {
+        timeValue: null,
         option: { i18n: { normal: '1×', speed: '播放速度' }},
         visibleClass: '',
         formContainerOpen: '1',
@@ -907,6 +901,7 @@ audio {
           pageNo: 1,
           status: this.oriQueryStatus
         }
+        this.timeValue = null
       },
       // 跳转到别的组件
       transferParameters(taskId, campaignId, customerId, customerPhone) {
@@ -939,11 +934,11 @@ audio {
               if (code === 200) this.isManager = true
               else if (code === 403) this.isManager = false
             }).catch(error => {
-              throw new Error(error)
+              throw error
             })
           }
         }).catch(error => {
-          throw new Error(error)
+          throw error
         })
         // 判断员工
         await isHaveStaff(localStorage.getItem('agentId')).then(response => {
@@ -951,7 +946,7 @@ audio {
           if (code === 200) this.isStaff = true
           else if (code === 403) this.isStaff = false
         }).catch(error => {
-          throw new Error(error)
+          throw error
         })
         return true
       },
@@ -1139,6 +1134,8 @@ audio {
           this.$message.error('您无法操作该页面，请联系管理员！')
           return
         }
+        req.startTime = this.timeValue ? this.timeValue[0] : null
+        req.endTime = this.timeValue ? this.timeValue[1] : null
         queryByKeyWords(req)
           .then(response => {
             if (response.data.code === 0) {
@@ -1152,7 +1149,7 @@ audio {
             }
           })
           .catch(error => {
-            console.log(error)
+            throw error
           })
       },
       // 显示活动名称
@@ -1269,7 +1266,7 @@ audio {
               this.$message.error(response.data.message)
             }
           }).catch(error => {
-            throw new Error(error)
+            throw error
           })
       }
 

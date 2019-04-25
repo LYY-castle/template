@@ -155,7 +155,7 @@ export default {
             this.$message(response.data.error)
           }
         }).catch(error => {
-          throw new Error(error)
+          throw error
         })
       } else {
         return false

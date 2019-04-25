@@ -11,19 +11,12 @@
           </el-form-item>
           <el-form-item label="操作时间：">
             <el-date-picker
-              v-model="req.modifyTimeStart"
-              type="datetime"
-              placeholder="开始时间"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
-            </el-date-picker>
-            到
-            <el-date-picker
-              v-model="req.modifyTimeEnd"
-              type="datetime"
-              placeholder="结束时间"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              default-time="00:00:00">
+              v-model.trim="timeValue"
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
+              value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
           <el-form-item label="活动名称:">
@@ -362,6 +355,7 @@
     name: 'customer_novisit',
     data() {
       return {
+        timeValue: null,
         formContainerOpen: '1',
         formContainer: this.$store.state.app.formContainer,
         detailVisible: false, // 免访客户详情
@@ -475,6 +469,7 @@
           pageNo: this.pageInfo.pageNo,
           pageSize: this.pageInfo.pageSize
         }
+        this.timeValue = null
       },
       findCampaigns() {
         findAllCampaigns().then(response => {
@@ -482,8 +477,8 @@
         })
       },
       findNoVisitCustomers(req) {
-        req.modifyTimeStart = req.modifyTimeStart ? req.modifyTimeStart : ''
-        req.modifyTimeEnd = req.modifyTimeEnd ? req.modifyTimeEnd : ''
+        req.modifyTimeStart = this.timeValue ? this.timeValue[0] : null
+        req.modifyTimeEnd = this.timeValue ? this.timeValue[1] : null
         queryNoVisitCustomers(req).then(response => {
           if (response.data.code === 0) {
             this.tableData = response.data.data

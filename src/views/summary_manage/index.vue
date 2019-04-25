@@ -14,19 +14,12 @@
           </el-form-item>
           <el-form-item label="操作时间：">
             <el-date-picker
-                v-model="req.modifyTimeStart"
-                type="datetime"
-                placeholder="开始时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
-            </el-date-picker>
-            到
-            <el-date-picker
-                v-model="req.modifyTimeEnd"
-                type="datetime"
-                placeholder="结束时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                default-time="00:00:00">
+                v-model.trim="timeValue"
+                type="datetimerange"
+                range-separator="-"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
           <el-form-item>
@@ -166,7 +159,7 @@
       </el-form>
       <div slot="footer" style="text-align: right;">
         <el-button size="small" type="primary"  @click="editNoduleDetail(setTree2)">确定</el-button>
-        <el-button size="small"  @click="editItemVisible=false">关闭</el-button>
+        <el-button size="small" type="primary" plain @click="editItemVisible=false">取消</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -234,8 +227,8 @@
       </el-form>
       <div slot="footer" style="text-align: right;">
         <el-button size="small" type="primary" @click="submitForm('addSummary');addNodule(addSummary);">确 定</el-button>
-        <el-button size="small" type="danger" @click="resetForm('addSummary');setTree=[]">重 置</el-button>
-        <el-button size="small" @click="addVisible = false">取 消</el-button>
+        <el-button size="small" @click="resetForm('addSummary');setTree=[]">重 置</el-button>
+        <el-button size="small" type="primary" plain @click="addVisible = false">取 消</el-button>
       </div>
     </el-dialog>
 
@@ -309,6 +302,7 @@ export default {
   name: 'nodule_list',
   data() {
     return {
+      timeValue: null,
       basicNodule: [],
       visibleClass: '',
       formContainerOpen: '1',
@@ -482,6 +476,7 @@ export default {
         pageNo: this.pageInfo.pageNo,
         pageSize: this.pageInfo.pageSize
       }
+      this.timeValue = null
     },
     resetForm(formName) {
       if (this.$refs[formName] !== undefined) {
@@ -516,7 +511,10 @@ export default {
     // 深度克隆
     clone: clone,
     // 查询小结信息
-    getNoduleByInfo(req) {
+    getNoduleByInfo(val) {
+      var req = val
+      req.modifyTimeStart = this.timeValue ? this.timeValue[0] : null
+      req.modifyTimeEnd = this.timeValue ? this.timeValue[1] : null
       findNoduleByInfo(req)
         .then(response => {
           if (response.data.code === 0) {

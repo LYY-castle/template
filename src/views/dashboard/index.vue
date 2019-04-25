@@ -137,15 +137,15 @@ export default {
                     this.staff = false
                   }
                 }).catch(error => {
-                  throw new Error(error)
+                  throw error
                 })
               }
             }).catch(error => {
-              throw new Error(error)
+              throw error
             })
           }
         }).catch(error => {
-          throw new Error(error)
+          throw error
         })
         // 判断质检主管权限
         checkqcDepart(this.agentId).then(response => {
@@ -163,15 +163,15 @@ export default {
                 this.qcstaff = false
               }
             }).catch(error => {
-              throw new Error(error)
+              throw error
             })
           }
         }).catch(error => {
-          throw new Error(error)
+          throw error
         })
       }
     }).catch(error => {
-      throw new Error(error)
+      throw error
     })
   }
 }
