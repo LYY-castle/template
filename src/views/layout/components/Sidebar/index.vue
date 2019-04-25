@@ -86,11 +86,18 @@ export default {
       color:#fff;
     }
   }
-  // 二级菜单
+  // 无子菜单的二级菜单
   .sidebar-container /deep/ .el-scrollbar__view>.el-menu>div>.menu-wrapper>.el-submenu>.el-menu>a>.el-menu-item{
     padding-left: 46px !important;
   }
-  /deep/ .menu-wrapper>.el-submenu>.el-menu>.nest-menu .el-submenu__title>span{
-    padding-left: 35px !important;
+  // 有子菜单的二级菜单
+  /deep/ .menu-wrapper>.el-submenu>.el-menu>.nest-menu .el-submenu__title{
+    background: #32393F !important;
+    &:hover{
+      background: #272d33 !important;
+    }
+    &>span{
+      padding-left: 35px !important;
+    }
   }
 </style>
