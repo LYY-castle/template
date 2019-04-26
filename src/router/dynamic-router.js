@@ -7,7 +7,8 @@ const getRouterForMenu = (menu) => {
 
   clonedMenu.level = clonedMenu.idPath ? S(clonedMenu.idPath).count('/') - 1 : 1
   clonedMenu.path = clonedMenu.value ? (clonedMenu.level > 1 ? `${clonedMenu.value}` : `/${clonedMenu.value}`) : ''
-  clonedMenu.component = clonedMenu.parentMenuId ? (clonedMenu.value ? () => import('@/views/' + clonedMenu.value + '/index') : () => import('@/views/empty/index')) : Layout
+  clonedMenu.component = clonedMenu.parentId === '0' ? Layout : (clonedMenu.value ? () => import('@/views/' + clonedMenu.value + '/index') : () => import('@/views/empty/index'))
+  clonedMenu.componentPath = clonedMenu.parentId === '0' ? 'Layout' : (clonedMenu.value ? '@/views/' + clonedMenu.value + '/index' : '@/views/empty/index')
   clonedMenu.hidden = clonedMenu.status === '0' ? true : (!clonedMenu.value && (!clonedMenu.children || !clonedMenu.children.length))
   clonedMenu.meta = {
     title: clonedMenu.name,
