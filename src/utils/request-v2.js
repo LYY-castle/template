@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import axios from 'axios'
-import { Message } from 'element-ui'
+import { Message, MessageBox } from 'element-ui'
 import store from '../store'
 import { getToken, setToken } from '@/utils/auth'
 // import qs from 'qs'
@@ -41,28 +41,33 @@ service.interceptors.response.use(
   response => {
     // console.log(response)
     /**
-  * code为非20000是抛错 可结合自己业务进行修改
-  */
+     * code为非20000是抛错 可结合自己业务进行修改
+     */
     const authorization = response.headers.authorization
     if (typeof authorization !== 'undefined' && authorization !== '') {
       setToken(authorization)
     }
     const res = response.data
     const route = router.currentRoute
-    if (res.code !== 20000) {
-      if (res.code === '401') {
-        if (route.fullPath === `/login`) {
-          router.replace({ path: `/login` })
+    if (res.code === '401' || res.code === 401 ||
+      res.code === '40101' || res.code === 40101) {
+      router.replace({ path: `/login` })
+      if (route.fullPath !== `/login`) {
+        if (res.code === '40101' || res.code === 40101) {
+          MessageBox.alert(res.message, '请确定', {
+            confirmButtonText: '确定',
+            type: 'warning'
+          }).then(() => {})
         } else {
           Message({
             message: res.message,
             type: 'error'
           })
-          router.replace({ path: `/login` })
         }
       }
-      return Promise.resolve(response)
+      return Promise.reject(response)
     }
+    return Promise.resolve(response)
   },
   error => {
     console.log('err' + error)// for debug

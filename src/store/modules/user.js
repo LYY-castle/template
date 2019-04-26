@@ -31,7 +31,7 @@ const user = {
       return new Promise((resolve, reject) => {
         login(username, userInfo.password, userInfo.extensionNumber.trim()).then(response => {
           const data = response.data
-          if (data.code === 1 || data.code === '1') {
+          if (data.code === 0 || data.code === '0') {
             // setToken(data.token)
             commit('SET_TOKEN', true)
           }
@@ -90,7 +90,7 @@ const user = {
         loginAnd(username, userInfo.password).then(response => {
           // this.dispatch('FedLogOut') //需要清除token重登陆
           const data = response.data
-          if (data.code === '1') {
+          if (data.code === '0') {
             // setToken(data.token)
             commit('SET_TOKEN', true)
           }

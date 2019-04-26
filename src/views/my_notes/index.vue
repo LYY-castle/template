@@ -329,8 +329,8 @@
 
 
 <script>
-import { formatDateTime } from "@/utils/tools"; // 格式化时间
-import { getRequestUser, verify } from "@/utils/tools"; // 获取当前用户信息
+import { formatDateTime } from '@/utils/tools' // 格式化时间
+import { getRequestUser, verify } from '@/utils/tools' // 获取当前用户信息
 import {
   firstIn,
   queryByKeyWords,
@@ -338,89 +338,89 @@ import {
   getNoteDetail,
   modifyNote,
   deleteOneNote
-} from "@/api/note_list"; // 接口
+} from '@/api/note_list' // 接口
 export default {
-  name: "note_list",
+  name: 'note_list',
 
   data() {
     return {
-      formContainerOpen: "1",
+      formContainerOpen: '1',
       formContainer: this.$store.state.app.formContainer,
-      isListPage: "1", // 是否是主页
-      uid: "", // 每次查询默认带上的参数
+      isListPage: '1', // 是否是主页
+      uid: '', // 每次查询默认带上的参数
       req: {
         pageNo: 1,
         pageSize: 10,
-        keyword: "",
-        startat: "",
-        endat: "",
-        uid: ""
+        keyword: '',
+        startat: '',
+        endat: '',
+        uid: ''
       },
       timeValue: [], // 查询时间显示
       tableData: [], // 表格数据
       pageShow: false, // 分页显示与否
       pageInfo: {}, // 分页信息
-      noteTitle: "", // 新建笔记标题
-      noteContent: "", //新建笔记内容
-      noteTitle1: "", // 修改笔记标题
+      noteTitle: '', // 新建笔记标题
+      noteContent: '', // 新建笔记内容
+      noteTitle1: '', // 修改笔记标题
       hasNoteTitle: true, // 判断是否有笔记标题
       noteTitleVisiable: false, // 新建笔记dialog显示与否
-      noteDetailStatus: false, //查看笔记详情dialog显示与否
-      modifyNoteDetailStatus: false, //修改笔记详情dialog显示与否
+      noteDetailStatus: false, // 查看笔记详情dialog显示与否
+      modifyNoteDetailStatus: false, // 修改笔记详情dialog显示与否
       editNoteTitleVisiable: false, // 修改笔记标题dialog
       deleteVisiable: false, // 删除dialog显示与否
-      del_noteid: "", // 删除的笔记id
-      del_uid: "", // 删除的操作人id
-      content: "",
+      del_noteid: '', // 删除的笔记id
+      del_uid: '', // 删除的操作人id
+      content: '',
       editorOption: {
         modules: {
           toolbar: [
-            ["bold", "italic", "underline", "strike", "image"], // 加粗bold 斜体italic 下划线underline 删除线strike
-            ["blockquote", "code-block"], // 引用blockquote 代码块code-block
+            ['bold', 'italic', 'underline', 'strike', 'image'], // 加粗bold 斜体italic 下划线underline 删除线strike
+            ['blockquote', 'code-block'], // 引用blockquote 代码块code-block
             [
-              { direction: "rtl" },
-              { script: "sub" },
-              { script: "super" },
-              { list: "ordered" },
-              { list: "bullet" }
+              { direction: 'rtl' },
+              { script: 'sub' },
+              { script: 'super' },
+              { list: 'ordered' },
+              { list: 'bullet' }
             ],
-            [{ size: ["small", false, "large", "huge"] }],
+            [{ size: ['small', false, 'large', 'huge'] }],
             [{ color: [] }, { background: [] }, { font: [] }, { align: [] }]
           ]
         },
-        placeholder: "在此键入文本或图片内容(上限16MB)..."
+        placeholder: '在此键入文本或图片内容(上限16MB)...'
       },
       editorOption1: {
         modules: {
           toolbar: ''
         },
-        placeholder: ""
+        placeholder: ''
       },
       note_item: {
         // 新建/修改笔记参数
-        title: "",
-        content: ""
+        title: '',
+        content: ''
       },
-      noteid: "", // 修改的笔记id
+      noteid: '', // 修改的笔记id
       noteDetail: {
         // 笔记详情
-        title: "",
-        content: ""
+        title: '',
+        content: ''
       },
       editDetail: {
         // 修改笔记详情
-        title: "",
-        content: ""
+        title: '',
+        content: ''
       }
-    };
+    }
   },
 
   methods: {
-    handleChangeAcitve(active = ["1"]) {
+    handleChangeAcitve(active = ['1']) {
       if (active.length) {
-        $(".form-more").text("收起");
+        $('.form-more').text('收起')
       } else {
-        $(".form-more").text("更多");
+        $('.form-more').text('更多')
       }
     },
 
@@ -428,55 +428,55 @@ export default {
     firstInQuery(uid) {
       firstIn(uid).then(response => {
         if (response.data.paging.note_total !== 0) {
-          this.tableData = response.data.notes;
-          this.pageShow = true;
-          this.pageInfo.pageNo = response.data.paging.page_current;
-          this.pageInfo.pageSize = response.data.paging.page_size;
-          this.pageInfo.totalCount = response.data.paging.note_total;
+          this.tableData = response.data.notes
+          this.pageShow = true
+          this.pageInfo.pageNo = response.data.paging.page_current
+          this.pageInfo.pageSize = response.data.paging.page_size
+          this.pageInfo.totalCount = response.data.paging.note_total
         } else {
-          this.pageShow = false;
-          this.$message.error("无查询结果，请核对查询条件");
+          this.pageShow = false
+          this.$message.error('无查询结果，请核对查询条件')
         }
-      });
+      })
     },
     // 综合查询
     searchByKeyWords(req) {
-      req.startat = this.timeValue ? this.timeValue[0] : null;
-      req.endat = this.timeValue ? this.timeValue[1] : null;
-      this.req.uid = this.uid;
+      req.startat = this.timeValue ? this.timeValue[0] : null
+      req.endat = this.timeValue ? this.timeValue[1] : null
+      this.req.uid = this.uid
       queryByKeyWords(req).then(response => {
         if (response.data.paging.note_total !== 0) {
-          this.tableData = response.data.notes;
-          this.pageShow = true;
-          this.pageInfo.pageNo = response.data.paging.page_current;
-          this.pageInfo.pageSize = response.data.paging.page_size;
-          this.pageInfo.totalCount = response.data.paging.note_total;
+          this.tableData = response.data.notes
+          this.pageShow = true
+          this.pageInfo.pageNo = response.data.paging.page_current
+          this.pageInfo.pageSize = response.data.paging.page_size
+          this.pageInfo.totalCount = response.data.paging.note_total
         } else {
-          this.tableData = response.data.notes;
-          this.pageShow = false;
-          this.$message.error("无查询结果，请核对查询条件");
+          this.tableData = response.data.notes
+          this.pageShow = false
+          this.$message.error('无查询结果，请核对查询条件')
         }
-      });
+      })
     },
     // 格式化时间
     formatDateTime: formatDateTime,
     // 重置查询项
     resetQueryCondition() {
-      this.timeValue = [];
+      this.timeValue = []
       this.req = {
         pageNo: this.pageInfo.pageNo,
         pageSize: this.pageInfo.pageSize,
-        keyword: "",
-        startat: "",
-        endat: ""
-      };
+        keyword: '',
+        startat: '',
+        endat: ''
+      }
     },
     // 判断修改笔记标题是否为空
     checkEditTitle(noteTitle) {
-      if (noteTitle === "" || noteTitle.split(" ").join("").length === 0) {
-        this.hasNoteTitle = false;
+      if (noteTitle === '' || noteTitle.split(' ').join('').length === 0) {
+        this.hasNoteTitle = false
       } else {
-        this.hasNoteTitle = true;
+        this.hasNoteTitle = true
       }
     },
     // 表格多选
@@ -485,15 +485,15 @@ export default {
     // },
     // 页面显示条数
     handleSizeChange(val) {
-      this.req.pageSize = val;
-      this.req.pageNo = 1;
-      this.pageInfo.pageNo = 1;
-      this.searchByKeyWords(this.req);
+      this.req.pageSize = val
+      this.req.pageNo = 1
+      this.pageInfo.pageNo = 1
+      this.searchByKeyWords(this.req)
     },
     // 分页查询
     handleCurrentChange(val) {
-      this.req.pageNo = val;
-      this.searchByKeyWords(this.req);
+      this.req.pageNo = val
+      this.searchByKeyWords(this.req)
     },
     // 待修改
     // 判断笔记标题是否为空
@@ -520,157 +520,157 @@ export default {
     // 点击新建按钮
     clickCreateButton() {
       // 显示新建dialog
-      this.noteTitleVisiable = true;
-      this.noteTitle = "";
+      this.noteTitleVisiable = true
+      this.noteTitle = ''
     },
     // 确认新建笔记
     generateNote() {
-      var noteTitle = this.noteTitle;
-      var temp_content = this.content;
-      temp_content = verify(temp_content, "<p>");
-      temp_content = verify(temp_content, "</p>");
-      temp_content = verify(temp_content, "<br>");
-      if (noteTitle === "") {
-        this.$message.error("请输入笔记标题！");
-        return;
+      var noteTitle = this.noteTitle
+      var temp_content = this.content
+      temp_content = verify(temp_content, '<p>')
+      temp_content = verify(temp_content, '</p>')
+      temp_content = verify(temp_content, '<br>')
+      if (noteTitle === '') {
+        this.$message.error('请输入笔记标题！')
+        return
       } else if (
-        temp_content === "" ||
+        temp_content === '' ||
         temp_content === null ||
-        temp_content.split(" ").join("").length === 0
+        temp_content.split(' ').join('').length === 0
       ) {
-        this.$message.error("笔记内容不能为空！");
-        return;
+        this.$message.error('笔记内容不能为空！')
+        return
       } else {
-        this.note_item.title = this.noteTitle;
-        this.note_item.content = this.content;
+        this.note_item.title = this.noteTitle
+        this.note_item.content = this.content
         addNotes(this.note_item, this.uid)
           .then(response => {
             if (response.data) {
               if (response.data.code === 1) {
-                this.$message.error("新建笔记失败：" + response.data.error);
+                this.$message.error('新建笔记失败：' + response.data.error)
               } else {
-                this.$message.success("新建笔记成功");
-                this.note_item.content = "";
-                this.note_item.title = "";
-                this.content = null;
-                this.noteTitle = "";
-                this.searchByKeyWords(this.req);
-                this.noteTitleVisiable = false;
+                this.$message.success('新建笔记成功')
+                this.note_item.content = ''
+                this.note_item.title = ''
+                this.content = null
+                this.noteTitle = ''
+                this.searchByKeyWords(this.req)
+                this.noteTitleVisiable = false
               }
             } else {
-              this.$message.error("服务出错啦...请稍后重试");
+              this.$message.error('服务出错啦...请稍后重试')
             }
           })
           .catch(error => {
-            console.log(error);
-          });
+            console.log(error)
+          })
       }
     },
     // 取消新建笔记隐藏dialog
     hideCreateNoteDialog() {
-      this.note_item.content = "";
-      this.note_item.title = "";
-      this.content = null;
-      this.noteTitle = "";
-      this.noteTitleVisiable = false;
+      this.note_item.content = ''
+      this.note_item.title = ''
+      this.content = null
+      this.noteTitle = ''
+      this.noteTitleVisiable = false
     },
     // 单个查询
     queryOne(noteid, uid) {
       getNoteDetail(noteid, uid).then(response => {
         // if (response.data.code === 200) {
         if (response.data) {
-          this.noteDetail.title = response.data.title;
-          this.noteDetail.content = response.data.content;
-          console.log("linn:" + this.noteDetail.content);
+          this.noteDetail.title = response.data.title
+          this.noteDetail.content = response.data.content
+          console.log('linn:' + this.noteDetail.content)
           // this.isListPage = "3";
-          this.noteDetailStatus = true;
+          this.noteDetailStatus = true
         } else {
-          this.$message.error("服务器出错！请稍后重试");
+          this.$message.error('服务器出错！请稍后重试')
         }
-      });
+      })
     },
     // 展示修改笔记详情
     showEditNote(noteid, uid) {
       getNoteDetail(noteid, uid).then(response => {
         // if (response.data.code === 200) {
         if (response.data) {
-          this.editDetail.title = response.data.title;
-          this.noteTitle1 = response.data.title;
-          this.editDetail.content = response.data.content;
-          this.noteid = response.data.noteid;
+          this.editDetail.title = response.data.title
+          this.noteTitle1 = response.data.title
+          this.editDetail.content = response.data.content
+          this.noteid = response.data.noteid
           // this.isListPage = "4";
-          this.modifyNoteDetailStatus = true;
+          this.modifyNoteDetailStatus = true
         } else {
-          this.$message.error("服务器出错！请稍后重试");
+          this.$message.error('服务器出错！请稍后重试')
         }
-      });
+      })
     },
     // 修改笔记
     modifyNote() {
-      var temp_content = this.editDetail.content;
-      temp_content = verify(temp_content, "<p>");
-      temp_content = verify(temp_content, "</p>");
-      temp_content = verify(temp_content, "<br>");
-      if(this.noteTitle1 === ''){
-        this.$message.error("笔记标题不能为空！");
-        return;
+      var temp_content = this.editDetail.content
+      temp_content = verify(temp_content, '<p>')
+      temp_content = verify(temp_content, '</p>')
+      temp_content = verify(temp_content, '<br>')
+      if (this.noteTitle1 === '') {
+        this.$message.error('笔记标题不能为空！')
+        return
       }
       if (
-        temp_content === "" ||
+        temp_content === '' ||
         temp_content === null ||
-        temp_content.split(" ").join("").length === 0
+        temp_content.split(' ').join('').length === 0
       ) {
-        this.$message.error("笔记内容不能为空！");
-        return;
+        this.$message.error('笔记内容不能为空！')
+        return
       } else {
-        this.note_item.title = this.noteTitle1;
-        this.note_item.content = this.editDetail.content;
+        this.note_item.title = this.noteTitle1
+        this.note_item.content = this.editDetail.content
         modifyNote(this.note_item, this.uid, this.noteid)
           .then(response => {
             if (response.data) {
               if (response.data.code === 1) {
-                this.$message.error("修改笔记失败：" + response.data.error);
+                this.$message.error('修改笔记失败：' + response.data.error)
               } else {
-                this.$message.success("修改笔记成功");
-                this.note_item.content = "";
-                this.note_item.title = "";
-                this.noteid = "";
-                this.editDetail.content = null;
-                this.editDetail.title = "";
-                this.searchByKeyWords(this.req);
+                this.$message.success('修改笔记成功')
+                this.note_item.content = ''
+                this.note_item.title = ''
+                this.noteid = ''
+                this.editDetail.content = null
+                this.editDetail.title = ''
+                this.searchByKeyWords(this.req)
                 // this.isListPage = "1";
-                this.modifyNoteDetailStatus = false;
+                this.modifyNoteDetailStatus = false
               }
             } else {
-              this.$message.error("修改笔记失败！");
+              this.$message.error('修改笔记失败！')
             }
           })
           .catch(error => {
-            console.log(error);
-          });
+            console.log(error)
+          })
       }
     },
     // 删除笔记 单个删除
     deleteNote(del_noteid, del_uid) {
       deleteOneNote(del_noteid, del_uid).then(response => {
-        this.$message.success("删除成功");
-        this.deleteVisiable = false;
-        this.req.pageNo = 1;
-        this.pageInfo.pageNo = this.searchByKeyWords(this.req);
-      });
+        this.$message.success('删除成功')
+        this.deleteVisiable = false
+        this.req.pageNo = 1
+        this.pageInfo.pageNo = this.searchByKeyWords(this.req)
+      })
     }
   },
   mounted() {
-    this.formContainer();
-    this.handleChangeAcitve();
+    this.formContainer()
+    this.handleChangeAcitve()
     getRequestUser().then(res => {
-      this.uid = res.data.agentid;
-      console.log(this.uid);
-      this.req.uid = res.data.agentid;
-      if (this.req.uid !== "") {
-        this.firstInQuery(this.req.uid);
+      this.uid = res.data.agentid
+      console.log(this.uid)
+      this.req.uid = res.data.agentid
+      if (this.req.uid !== '') {
+        this.firstInQuery(this.req.uid)
       }
-    });
+    })
   },
   watch: {},
 
@@ -681,5 +681,5 @@ export default {
   vuex: {},
 
   created() {}
-};
+}
 </script>
