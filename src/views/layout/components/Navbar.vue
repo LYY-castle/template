@@ -66,6 +66,7 @@
                 :props="cascaderProps"
                 filterable
                 change-on-select
+                @blur="statuses=[]"
                 @change="handleStatueChange"
               >
               </el-cascader>
@@ -351,6 +352,7 @@ export default {
   data() {
     return {
       obstatus: [],
+      obstatusNow: '',
       cascaderProps: {
         label: 'name',
         value: 'code',
@@ -464,15 +466,25 @@ export default {
     }
   },
   methods: {
-    handleStatueChange() {
+    getObstatusNow(data, code) {
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].code === code) {
+          this.obstatusNow = data[i].name
+          this.changeState(code)
+          break
+        } else {
+          if (data[i].children) this.getObstatusNow(data[i].children, code)
+        }
+      }
+    },
+    handleStatueChange(e) {
       let status = ''
       if (this.statuses.length !== 0) {
         status = this.statuses[this.statuses.length - 1].toString()
-        this.changeState(status)
       } else {
         status = ''
-        this.changeState(status)
       }
+      this.getObstatusNow(this.obstatus, status)
     },
     countNum() {
       this.login_img_click_num++
@@ -681,29 +693,36 @@ export default {
     changeState(val) {
       this.changeKeepReady('')
       if (this.islogin) {
-        this.formInline.region = val
-        switch (this.formInline.region) {
-          case '0':
-            this.isBusy = false
-            this.agentReady()
-            break
-          case '13':
-            this.isBusy = true
-            this.agentnotReady()
-            break
-          case '14':
-            this.isBusy = false
-            this.agentsetACW()
-            break
-          case '-5':
-            this.isBusy = false
-            this.agentSetDialInFree()
-            break
-          default:
-            this.isBusy = false
-            console.log(this.formInline.region)
-            break
+        if (this.formInline.region === val) {
+          return
+        } else {
+          this.formInline.region = val
         }
+        const agentid = localStorage.getItem('agentId')
+        localStorage.setItem('autocall', false)
+        cti.setAgentStatus(agentid, this.formInline.region)
+        // switch (this.formInline.region) {
+        //   case '0':
+        //     this.isBusy = false
+        //     this.agentReady()
+        //     break
+        //   case '13':
+        //     this.isBusy = true
+        //     this.agentnotReady()
+        //     break
+        //   case '14':
+        //     this.isBusy = false
+        //     this.agentsetACW()
+        //     break
+        //   case '-5':
+        //     this.isBusy = false
+        //     this.agentSetDialInFree()
+        //     break
+        //   default:
+        //     this.isBusy = false
+        //     console.log(this.formInline.region)
+        //     break
+        // }
       } else {
         return
       }
@@ -1661,6 +1680,29 @@ export default {
         case '-3':
         case '-4':
           break
+        default:
+          vm.lockChange = false
+          vm.islogin = true
+          vm.oldtelephonestate = vm.telephoneState
+          vm.telephoneState = vm.obstatusNow
+          if (vm.oldtelephonestate !== vm.telephoneState) {
+            clearInterval(interval)
+            vm.times()
+          }
+          vm.agentState1 = false
+          vm.agentState2 = true
+          vm.agentState3 = false
+          vm.agentState4 = false
+          vm.agentState5 = false
+          vm.formInline.region = '示忙'
+          vm.setbtnStatus('login')
+          if (vm.formInline.DN === DN) {
+            vm.disabledDN = true
+          } else {
+            vm.disabledDN = false
+            vm.formInline.DN = DN
+          }
+          break
       }
       // }
       vm.reasonCode = reasonCode
@@ -1753,6 +1795,8 @@ export default {
   },
   mounted() {
     vm = this
+    const { data } = getPhoneStatus()
+    console.log(data)
     // 查询外呼状态
     getPhoneStatus().then(response => {
       if (response.data.code === 0) {
