@@ -17,12 +17,12 @@ service.interceptors.request.use(config => {
   config.headers['Content-Type'] = 'application/json;charset=UTF-8'
   if (!!config.params && _.isPlainObject(config.body)) {
     config.params = _.omitBy(config.params, (v) => {
-      return _.isUndefined(v) || _.isNull(v)
+      return _.isUndefined(v) || _.isNull(v) || _.isNaN(v)
     })
   }
   if (!!config.body && _.isPlainObject(config.body)) {
     config.body = _.omitBy(config.body, (v) => {
-      return _.isUndefined(v) || _.isNull(v)
+      return _.isUndefined(v) || _.isNull(v) || _.isNaN(v)
     })
   }
   if (store.getters.token) {
