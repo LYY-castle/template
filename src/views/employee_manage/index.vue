@@ -323,7 +323,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button plain type="primary" @click="dialogFormVisibleDetail = false">返回</el-button>
+        <el-button plain type="primary" @click="dialogFormVisibleDetail = false">关闭</el-button>
       </div>
     </el-dialog>
     <el-dialog

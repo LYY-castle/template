@@ -481,7 +481,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: right;">
-        <el-button type="primary" plain size='small' @click="detailVisible = false">返回</el-button>
+        <el-button type="primary" plain size='small' @click="detailVisible = false">关闭</el-button>
       </div>
     </el-dialog>
     <el-dialog

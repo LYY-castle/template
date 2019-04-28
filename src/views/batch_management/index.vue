@@ -158,7 +158,7 @@
       append-to-body>
       <div class="overfl">{{failDetail}}</div>
       <div slot="footer" style="text-align: right;">
-        <el-button type="primary" plain @click="detailVisible = false">返回</el-button>
+        <el-button type="primary" plain @click="detailVisible = false">关闭</el-button>
       </div>
     </el-dialog>
     <!-- 上传文件 -->
@@ -187,7 +187,7 @@
       <span style="font-size:20px;">确定删除此内容？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
         <el-button size="small" type="primary" @click="delVisible = false;delBatch(delReq);">确定</el-button>
-        <el-button size="small" type="primary" plain @click="delVisible = false">取消</el-button>
+        <el-button size="small" type="primary" plain @click="delVisible = false">关闭</el-button>
       </div>
     </el-dialog>
     <el-dialog

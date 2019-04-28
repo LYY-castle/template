@@ -257,7 +257,7 @@
       <el-row>
         <div style="text-align:center">
           <el-button type="primary" @click="edit();editVisible=true">编辑</el-button>
-          <el-button plain type="primary" @click="searchByKeyWords(req);isMainPage = true" style="margin-right:40px;">返回</el-button>
+          <el-button plain type="primary" @click="searchByKeyWords(req);isMainPage = true" style="margin-right:40px;">关闭</el-button>
         </div>
       </el-row>
     </div>
@@ -433,7 +433,7 @@
         </el-form-item>
       </el-form>
         <div slot="footer" style="text-align: right;">
-          <el-button @click="detailVisible = false">返回</el-button>
+          <el-button @click="detailVisible = false">关闭</el-button>
         </div>
       </el-dialog>
       <!-- 接触记录修改 -->

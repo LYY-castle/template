@@ -162,7 +162,7 @@
           <el-input size="small" v-model="importInfo.uploadFileName" disabled></el-input>
         </el-form-item>
       </el-form>
-      <div style="margin-left:60%;margin-top:-56px">
+      <div style="margin-left:60%;margin-top: -52px;">
         <el-upload
           ref="upload"
           :action="uploadUrl"   
@@ -172,14 +172,10 @@
           :show-file-list="false"
           :auto-upload="false">
           <el-button slot="trigger" size="small" type="success">选取文件</el-button>
+          <el-button type="info" @click="templateVisible=true;fileType='xls';getTags()">下载模板</el-button>
         </el-upload>
       </div>
-      <div style="margin-left:77%;margin-top:-32px">
-        <el-button type="info" @click="templateVisible=true;fileType='xls';getTags()">下载模板</el-button>
-      </div>
-      <div style="marin-left:30%">
-        <span style="font-size:12px;color:red">提示：文件格式支持xls、xlsx，文件大小限制为10M</span>
-      </div>
+      <span style="font-size:12px;color:red;">提示：文件格式支持xls、xlsx，文件大小限制为10M</span>
       <br/><br/>
       <div v-if="hasFalseinfo">
         <span style="font-size:18px"><b>验证失败原因</b></span>
@@ -447,32 +443,36 @@
 
     <el-dialog
       align:left
-      width="30%"
+      width="40%"
       title="定制导入模板"
       :visible.sync="templateVisible"
       append-to-body>
       <el-form size="small" label-width="100px">
         <el-form-item label="支持字段：">
-          <el-tag :key="tag.propertyCode" v-for="tag in alltags" type="primary" @click.native="setToSelectedTags(tag)" size="medium" style="cursor:pointer;">
-            {{tag.propertyName}}
-          </el-tag>
-          <span v-if="alltags.length === 0">暂无支持字段，请先添加</span>
+          <div style="overflow-y:scroll;height: 100px;border:1px solid #dcdcdc;padding: 3px 1px 0px 6px;">
+            <el-tag :key="tag.propertyCode" v-for="tag in alltags" v-dragging="{item: tag,list:alltags,group:'tag'}" type="primary" @click.native="setToSelectedTags(tag)" size="medium" style="cursor:pointer;padding: 0px 10px;margin-right:10px">
+              {{tag.propertyName}}
+            </el-tag>
+            <span v-if="alltags.length === 0">暂无更多字段</span>
+          </div>
+          <span style="font-size:12px; color:red; margin-top: 2%;" v-if="alltags.length > 0">提示：点击字段名称添加到已选字段</span>
         </el-form-item>
-        <div style="margin-left:15%;">
-          <span style="font-size:12px;color:red" v-if="alltags.length > 0">提示：点击字段名称添加到已选字段，已选字段重复点击无效</span>
-        </div><br/>
-        <el-form-item label="已选字段：">
-          <el-tag :key="selectedtag.propertyCode" v-for="selectedtag in selectedtags" type="success" closable @close="handleClose(selectedtag)" size="medium">
-            {{selectedtag.propertyName}}
-          </el-tag>
-          <span v-if="selectedtags.length === 0">暂无已选字段</span>
-        </el-form-item><br/>
+        <br/>
+        <el-form-item label="已选字段：" style="margin-top: -18px;">
+          <div style="overflow-y:scroll;height: 100px;border:1px solid #dcdcdc;padding: 3px 1px 0px 6px;margin-top: -20px;">
+            <el-tag v-for="selectedtag in selectedtags" v-dragging="{item: selectedtag,list:selectedtags,group:'selectedtag'}" type="success" @close="handleClose(selectedtag)" size="medium" style="padding: 0px 10px;margin-right:10px" :closable="selectedtag.isRequired!==1">
+              {{selectedtag.propertyName}}
+            </el-tag>
+            <span v-if="selectedtags.length === 0">暂无已选字段</span>
+          </div>
+        </el-form-item>
+        <br/>
         <el-form-item label="文件格式：">
-          <el-radio v-model="fileType" label="xls">xls</el-radio>
+          <el-radio v-model="fileType" label="xls" style="margin-right: -15px;">xls</el-radio>
           <el-radio v-model="fileType" label="xlsx">xlsx</el-radio>
         </el-form-item>
       </el-form>
-      <div slot="footer" style="text-align: right;">
+      <div slot="footer" style="text-align: right;margin-top: -35px">
         <el-button type="primary" @click="downloadTemplate(selectedtags,fileType)">确认</el-button>
         <el-button type="primary" plain @click="templateVisible = false">取消</el-button>
       </div>
@@ -491,8 +491,8 @@
           </el-form-item>
           <el-form-item label="客户性别">
             <el-radio-group v-model="customerReverseDetail.customer.customerSex" size="small">
-              <el-radio-button label='0' border>男</el-radio-button>
-              <el-radio-button label='1' border>女</el-radio-button>
+                <el-radio-button label='0' border>男</el-radio-button>
+                <el-radio-button label='1' border>女</el-radio-button>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="身份证"  style="width:50%">
@@ -727,7 +727,7 @@
       </el-form>
       </div>
       <div slot="footer" style="text-align: right;">
-        <el-button type="primary" plain @click="detailVisible = false">返回</el-button>
+        <el-button type="primary" plain @click="detailVisible = false">关闭</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -1008,6 +1008,10 @@ export default {
         listName: '',
         validityStatus: '0'
       },
+      updateObj: {
+        id: '',
+        isSelected : ''
+      },
       fieldType: '',
       fieldValues: [],
       fieldTags: [],
@@ -1019,7 +1023,7 @@ export default {
         range: '',
         value: '',
         valueFrom: '',
-        valueTo: ''
+        valueTo: '',
       },
       customRequirements: [],
       condition: [],
@@ -1073,6 +1077,7 @@ export default {
       },
       templateVisible: false, // 下载模板对话框显示隐藏
       alltags: [], // 模板支持的所有字段
+      testAlltags: [], // 模板支持全部的所有字段
       selectedtags: [], // 模板已选择的字段
       fileType: 'xls', // 模板文件格式 默认xls
       detailVisible: false,
@@ -1831,13 +1836,25 @@ export default {
             for (var i = 0; i < this.alltags.length; i++) {
               if (this.alltags[i].isRequired === 1) {
                 this.selectedtags.push(this.alltags[i])
+                var temp = i++;
+                this.alltags.splice(temp,1)
               }
             }
             for (var j = 0; j < this.alltags.length; j++) {
               if (this.alltags[j].isSelected === 1) {
-                if (this.selectedtags.indexOf(this.alltags[j]) === -1) {
                   this.selectedtags.push(this.alltags[j])
-                }
+                  // 之所以不删除而用替换是因为删除会改变整个数组顺序导致数据紊乱
+                  this.updateObj.id = -1
+                  this.alltags.splice(j, 1, this.updateObj)
+              }
+            }
+            this.testAlltags = this.alltags
+            this.alltags = []
+            // 去除-1元素
+            for (var a = 0; a < this.testAlltags.length; a++) {
+              console.log(this.testAlltags[a].id)
+              if (this.testAlltags[a].id !== -1) {
+                this.alltags.push(this.testAlltags[a])
               }
             }
           }
@@ -1849,10 +1866,12 @@ export default {
     },
     // 点击tag事件
     setToSelectedTags(tag) {
+      this.updateObj.length=0
       if (this.selectedtags.length === 0) {
         this.selectedtags.push(tag)
-        tag.isSelected = 1
-        setIsSelected(tag).then(res => {
+        this.updateObj.id = tag.id
+        this.updateObj.isSelected = 1
+        setIsSelected(this.updateObj).then(res => {
           if (res.data.code === 0) {
             console.log('修改选中状态成功！')
           } else {
@@ -1866,21 +1885,28 @@ export default {
         for (var i = 0; i < this.selectedtags.length; i++) {
           if (this.selectedtags.indexOf(tag) === -1) {
             this.selectedtags.push(tag)
-            tag.isSelected = 1
-            setIsSelected(tag).then(res => {
+            this.updateObj.id = tag.id
+            this.updateObj.isSelected = 1
+            setIsSelected(this.updateObj).then(res => {
               if (res.data.code === 0) {
                 console.log('修改选中状态成功！')
               }
-            })
-              .catch(error => {
+            }).catch(error => {
                 console.log(error)
               })
           }
         }
       }
+      // 去除待选元素
+      for (var i = 0; i < this.alltags.length; i++) {
+        if (tag.id === this.alltags[i].id) {
+          this.alltags.splice(i,1)
+        }
+      }
     },
     // 关闭tag事件
     handleClose(selectedtag) {
+      this.updateObj.length=0
       // 先判断isRequired字段
       if (selectedtag.isRequired === 1) {
         this.$message.error('该字段为必选项！')
@@ -1888,14 +1914,17 @@ export default {
       }
       // 移除并且调用接口改变isSelected值为0
       this.selectedtags.splice(this.selectedtags.indexOf(selectedtag), 1)
-      selectedtag.isSelected = 0
-      setIsSelected(selectedtag).then(res => {
+      this.updateObj.id = selectedtag.id
+      this.updateObj.isSelected = 0
+      setIsSelected(this.updateObj).then(res => {
         if (res.data.code === 0) {
           console.log('取消选中状态成功！')
         } else {
           console.log(res.data.message)
         }
       })
+      // 加入待选元素
+      this.alltags.push(selectedtag)
     },
     // 确认下载模板
     downloadTemplate(selectedtags, fileType) {

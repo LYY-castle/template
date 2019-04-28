@@ -407,7 +407,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="resetForm('ruleFormDetail');dialogFormVisibleDetail= false">返回</el-button>
+        <el-button  type="primary" plain @click="resetForm('ruleFormDetail');dialogFormVisibleDetail= false">关闭</el-button>
       </div>
     </el-dialog>
     <el-dialog title="添加坐席员工" style="margin-top:-8vh;" :visible.sync="dialogSelectStaff" width="86%" append-to-body  @close="tags=[];history_tags=[];filterText='';resetStaffInfo();">

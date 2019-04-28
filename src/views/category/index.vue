@@ -154,7 +154,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" plain @click="dialogFormVisibleDetail = false">返回</el-button>
+        <el-button type="primary" plain @click="dialogFormVisibleDetail = false">关闭</el-button>
       </div>
     </el-dialog>
   </div>

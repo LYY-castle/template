@@ -106,7 +106,7 @@
               <span style="font-size:15px;">是否重新发送消息？</span>
               <div slot="footer" class="dialog-footer" style="text-align: center;">
                 <el-button type="primary" @click="sendMessageAgainVisible=false;sendMessageAgain(sendMessageAgain_Obj,sendMessageAgain_Index)">确定</el-button>
-                <el-button @click="sendMessageAgainVisible = false">取消</el-button>
+                <el-button @click="sendMessageAgainVisible = false">关闭 </el-button>
               </div>
             </el-dialog>
 

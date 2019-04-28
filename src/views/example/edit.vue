@@ -192,7 +192,7 @@
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
         <el-button @click="resetForm('ruleForm')">重置</el-button>
-        <el-button type="primary" plain @click="dialogFormVisible = false">取消</el-button>
+        <el-button type="primary" plain @click="dialogFormVisible = false">关闭</el-button>
       </div>
     </el-dialog>
     <el-dialog title="修改选项" :visible.sync="dialogFormVisibleReverse" width="38%" @close="resetForm('ruleFormReverse')" append-to-body>
@@ -220,7 +220,7 @@
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确定</el-button>
         <el-button @click="resetReverse">重置</el-button>
-        <el-button type="primary" plain @click="dialogFormVisibleReverse = false">取消</el-button>
+        <el-button type="primary" plain @click="dialogFormVisibleReverse = false">关闭</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -268,7 +268,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" plain @click="dialogFormVisibleDetail = false">返回</el-button>
+        <el-button type="primary" plain @click="dialogFormVisibleDetail = false">关闭</el-button>
       </div>
     </el-dialog>
   </div>

@@ -493,7 +493,7 @@
       </el-row>
       <el-row>
         <div style="text-align:center">
-          <el-button plain type="primary" size="small" @click="returnList();customerNote='';sumTotal=0;products=[];" style="margin-right:40px;">返回</el-button>
+          <el-button plain type="primary" size="small" @click="returnList();customerNote='';sumTotal=0;products=[];" style="margin-right:40px;">关闭</el-button>
           <a href="javascript:void(0);" @click="generateRecord()"><el-button type="primary" size="small">完成</el-button></a>
         </div>
       </el-row>

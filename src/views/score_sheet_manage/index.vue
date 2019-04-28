@@ -290,7 +290,7 @@
         </el-card>
       </el-form>
       <div slot="footer" class="dialog-footer">
-         <el-button @click="resetFormDetail('dialogFormVisibleDetail');dialogFormVisibleDetail = false" type="primary" plain>返 回</el-button>
+         <el-button @click="resetFormDetail('dialogFormVisibleDetail');dialogFormVisibleDetail = false" type="primary" plain>关 闭</el-button>
       </div>
     </el-dialog>
     <el-dialog

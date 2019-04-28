@@ -15,14 +15,16 @@
               <el-tag>expand: {{ scope.row._expand }}</el-tag>
               <el-tag>select: {{ scope.row._select }}</el-tag>
             </template>
-            <template slot="status" slot-scope="{scope}">
-              {{ statusCode2String(scope.row.status) }}
+            <template slot="status" slot-scope="{scope}" :class="visible">
+              <div :class="scope.row.status==='0'?'invisible':'visible'">
+                <span>{{ statusCode2String(scope.row.status)}}</span>
+              </div>
             </template>
             <template slot="icon" slot-scope="{scope}">
               <i class="icon-in-table" v-bind:class="scope.row.icon"></i>
             </template>
             <template slot="operation" slot-scope="{scope}">
-              <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
+              <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <el-button @click="handleDelete(scope.row)" type="text" size="small">删除</el-button>
             </template>
           </tree-table>
@@ -201,26 +203,28 @@ export default {
         },
         {
           label: '菜单名称',
-          key: 'name'
+          key: 'name',
+          width: 350
         },
         {
           label: '菜单值',
-          key: 'value'
+          key: 'value',
+          width: 270
         },
         {
           label: '菜单图标',
           key: 'icon',
-          width: 50
+          width: 200
         },
         {
           label: '菜单顺序',
           key: 'menuOrder',
-          width: 50
+          width: 200
         },
         {
           label: '状态',
           key: 'status',
-          width: 100
+          width: 200
         },
         {
           label: '操作',

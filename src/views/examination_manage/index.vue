@@ -735,7 +735,7 @@
             this.singleCheck = true
           }
 
-          if (selectOption_single.length===0) {
+          if (selectOption_judge.length===0) {
             this.judgeCheck = false
             return
           }

@@ -194,7 +194,7 @@
         ></quill-editor>
         <el-row style="margin-top:20px;text-align:center;">
           <el-button type="primary" plain @click="noteDetailStatus = false"
-            >返回列表</el-button
+            >关闭</el-button
           >
         </el-row>
       </div>
@@ -235,7 +235,7 @@
             plain
             @click="modifyNoteDetailStatus = false"
             size="small"
-            >取消</el-button
+            >关闭</el-button
           >
         </el-row>
       </div>
@@ -282,7 +282,7 @@
           plain
           @click="editNoteTitleVisiable = false"
           v-if="hasNoteTitle === true"
-          >取消</el-button
+          >关闭</el-button
         >
       </div>
     </el-dialog>

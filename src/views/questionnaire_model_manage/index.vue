@@ -225,7 +225,7 @@
                 <!-- 查看 -->
                 <div class="lastbuttons" v-show="newHideOrShow===2?true:false">
                   <div style="margin-top:8px">
-                    <el-button type="primary" plain size="small" @click="isMainPage=true;isDetail=false;">返回</el-button><br/><br/>
+                    <el-button type="primary" plain size="small" @click="isMainPage=true;isDetail=false;">关闭</el-button><br/><br/>
                   </div>
                 </div>
                 <!-- 修改 -->

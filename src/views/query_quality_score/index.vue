@@ -510,7 +510,7 @@
         append-to-body>
       <div>{{recodingContent}}</div>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" plain @click="recodeVisible = false;">返回</el-button>
+        <el-button type="primary" plain @click="recodeVisible = false;">关闭</el-button>
       </div>
     </el-dialog>
   </div>

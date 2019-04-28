@@ -236,7 +236,7 @@
         </el-form>
         <br/>
         <div slot="footer" style="text-align: center;">
-          <el-button type="primary" plain @click="detailVisiable=false;">返回</el-button>
+          <el-button type="primary" plain @click="detailVisiable=false;">关闭</el-button>
         </div>
     </el-dialog>
 
