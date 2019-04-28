@@ -16,7 +16,7 @@
           </el-form>
         </el-collapse-item>
       </el-collapse>
-      <el-row class="table-container">
+      <el-row class="table-container margin-bottom-15">
         <el-row class="margin-bottom-20">
           <div class="font14 bold">名单表</div>
         </el-row>
@@ -485,3 +485,8 @@
     }
   }
 </script>
+<style lang="scss" scoped>
+/deep/ .el-table__row td:last-child .cell{
+  padding-right:0;
+}
+</style>

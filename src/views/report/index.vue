@@ -2,16 +2,16 @@
   <!-- 现场主管 -->
   <div class="app-container reports">
     <div v-if="buttonVisible">
-      <div class="table-container" style="margin-top:0;" v-if="manager||depart||staff">
+      <div class="table-container margin-bottom-15" style="margin-top:0;" v-if="manager||depart||staff">
         <el-row style="margin-bottom:10px;">
           <div class="font14 bold">业务绩效</div>
         </el-row>
         <el-row :gutter="10">
           <el-col :span="4" style="text-align:center;" v-if="manager||depart||staff">
-            <el-card>
+            <el-card shadow="hover">
               <div class="card-content" @click="orderReport=true;buttonVisible=false;reportTitle='业绩报表'">
                 <div class="img-container">
-                  我是图
+                  <img style="width:60%;" src="../../../static/images/report/order_report.png" alt="业绩报表">
                 </div>
                 <span class="font14">业绩报表</span>
               </div>
@@ -19,10 +19,10 @@
           </el-col>
 
           <el-col :span="4" style="text-align:center;" v-if="manager||depart||staff">
-            <el-card>
+            <el-card shadow="hover">
               <div class="card-content" @click="OB=true;buttonVisible=false;reportTitle='外呼任务报表'">
                 <div class="img-container">
-                  我是图
+                  <img style="width:60%;" src="../../../static/images/report/ob.png" alt="外呼任务报表">
                 </div>
                 <span class="font14">外呼任务报表</span>
               </div>
@@ -30,10 +30,10 @@
           </el-col>
 
           <el-col :span="4" style="text-align:center;" v-if="manager||depart">
-            <el-card>
+            <el-card shadow="hover">
               <div class="card-content" @click="listReport=true;buttonVisible=false;reportTitle='名单报表'">
                 <div class="img-container">
-                  我是图
+                  <img style="width:60%;" src="../../../static/images/report/list_report.png" alt="名单报表">
                 </div>
                 <span class="font14">名单报表</span>
               </div>
@@ -43,16 +43,16 @@
         </el-row>
       </div>
 
-      <div class="table-container" v-if="manager||depart||staff">
+      <div class="table-container margin-bottom-15" v-if="manager||depart||staff">
         <el-row style="margin-bottom:10px;">
           <div class="font14 bold">员工绩效</div>
         </el-row>
         <el-row :gutter="10">
           <el-col style="text-align:center;" :span="4" v-if="manager||depart||staff">
-            <el-card>
+            <el-card shadow="hover">
               <div class="card-content" @click="cti=true;buttonVisible=false;reportTitle='通时报表'">
                 <div class="img-container">
-                  我是图
+                  <img style="width:60%;" src="../../../static/images/report/cti.png" alt="通时报表">
                 </div>
                 <span class="font14">通时报表</span>
               </div>
@@ -62,16 +62,16 @@
         </el-row>
       </div>
 
-      <div class="table-container" v-if="manager||depart||staff||qcdepart||qcstaff">
+      <div class="table-container margin-bottom-15" v-if="manager||depart||staff||qcdepart||qcstaff">
         <el-row style="margin-bottom:10px;">
           <div class="font14 bold">质检</div>
         </el-row>
         <el-row :gutter="10">
           <el-col :span="4" style="text-align:center;" v-if="qcdepart||qcstaff">
-            <el-card>
+            <el-card shadow="hover">
               <div class="card-content" @click="qualityTaskReport=true;buttonVisible=false;reportTitle='质检任务报表'">
                 <div class="img-container">
-                  我是图
+                  <img style="width:60%;" src="../../../static/images/report/quality_task_report.png" alt="质检任务报表">
                 </div>
                 <span class="font14">质检任务报表</span>
               </div>
@@ -79,10 +79,10 @@
           </el-col>
 
           <el-col :span="4" style="text-align:center;" v-if="manager||depart||staff">
-            <el-card>
+            <el-card shadow="hover">
               <div class="card-content" @click="qualityMarkReport=true;buttonVisible=false;reportTitle='质检计分报表'">
                 <div class="img-container">
-                  我是图
+                  <img style="width:60%;" src="../../../static/images/report/quality_mark_report.png" alt="质检计分报表">
                 </div>
                 <span class="font14">质检计分报表</span>
               </div>
@@ -90,10 +90,10 @@
           </el-col>
 
           <el-col :span="4" style="text-align:center;" v-if="manager||depart||staff">
-            <el-card>
+            <el-card shadow="hover">
               <div class="card-content" @click="qcResultReport=true;buttonVisible=false;reportTitle='质检结果报表'">
                 <div class="img-container">
-                  我是图
+                  <img style="width:60%;" src="../../../static/images/report/qc_result_report.png" alt="质检结果报表">
                 </div>
                 <span class="font14">质检结果报表</span>
               </div>
@@ -102,16 +102,16 @@
           
         </el-row>
       </div>
-      <div class="table-container" v-if="personnel">
+      <div class="table-container margin-bottom-15" v-if="personnel">
         <el-row style="margin-bottom:10px;">
           <div class="font14 bold">人事</div>
         </el-row>
         <el-row :gutter="10">
           <el-col :span="4" style="text-align:center;">
-            <el-card>
+            <el-card shadow="hover">
               <div class="card-content" @click="staffStructure=true;buttonVisible=false;reportTitle='人员结构报表'">
                 <div class="img-container">
-                  我是图
+                  <img style="width:60%;" src="../../../static/images/report/staff_structure.png" alt="人员结构报表">
                 </div>
                 <span class="font14">人员结构报表</span>
               </div>
@@ -261,10 +261,13 @@ export default {
     cursor: pointer;
     .img-container{
       background:rgb(85, 87, 85);
-      height:100px;
-      width:100px;
+      height:80px;
+      width:80px;
       margin:0 auto;
       margin-bottom:10px;
+      background: #57AFFF;
+      border-radius: 4px;
+      padding-top: 15px;
     }
   }
 }

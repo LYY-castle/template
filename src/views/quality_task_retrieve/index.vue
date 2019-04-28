@@ -19,7 +19,7 @@
         </el-form>
       </el-collapse-item>
     </el-collapse>
-    <el-row class="table-container">
+    <el-row class="table-container margin-bottom-20">
       <el-row class="margin-bottom-20">
         <div class="font14 bold">任务回收表</div>
       </el-row>
@@ -101,6 +101,9 @@
       </el-row>
     </el-row>
     <el-row class="table-container" v-if="disTableType==='0'">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">下属表</div>
+      </el-row>
       <el-table
         ref="table2"
         :data="disTable"
@@ -142,12 +145,17 @@
           :show-overflow-tooltip="true"
           label="回收数量">
           <template slot-scope="scope">
-            <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="回收数量" style="width:130px;"></el-input-number>
+            <div class="number-input">
+              <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="回收数量" style="width:100%;" controls="false" min="0"></el-input-number>
+            </div>
           </template>
         </el-table-column>
       </el-table>
     </el-row>
     <el-row class="table-container" v-if="disTableType==='1'">
+      <el-row class="margin-bottom-20">
+        <div class="font14 bold">下属表</div>
+      </el-row>
       <el-table
         ref="table3"
         :data="disTable"
@@ -194,7 +202,9 @@
           align="center"
           label="回收数量">
           <template slot-scope="scope">
-            <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="回收数量" style="width:130px;"></el-input-number>
+            <div class="number-input">
+              <el-input-number v-model="disTable[scope.$index].assignNum" size="small" placeholder="回收数量" style="width:100%;" controls="false" min="0"></el-input-number>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -435,3 +445,19 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.number-input {
+  .el-input-number {
+    /deep/ .el-input-number__decrease,
+    /deep/ .el-input-number__increase {
+      display: none;
+    }
+  }
+  /deep/ .el-input-number--small .el-input__inner{
+    padding:10px;
+  }
+}
+/deep/ .el-table__row td:last-child .cell{
+  padding-right:0;
+}
+</style>
