@@ -93,7 +93,7 @@
             width="155">
             <template slot-scope="scope">
               <div :class="scope.row.validityStatus===0?'visible':'invisible'">
-                <span>{{scope.row.validityStatus===0?'可见':'可见'}}</span>
+                <span>{{scope.row.validityStatus===0?'可见':'不可见'}}</span>
               </div>
             </template>
           </el-table-column>

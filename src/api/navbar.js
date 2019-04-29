@@ -30,7 +30,7 @@ export function addHangupContact(req) {
 }
 export function getPhoneOwn(req) {
   return request({
-    url: '/customer/getAddressOwn',
+    url: '/customer/query/phone/phoneReturn',
     method: 'get',
     params: { 'phone': req }
   })
