@@ -11,8 +11,8 @@
               <el-input placeholder="系统账号（限长45字符）" v-model="formInline.angentId" maxlength="45"></el-input>
             </el-form-item>
             <el-form-item label="账号状态：">
-              <el-select v-model="formInline.status">
-                <el-option label="所有情况" value=""></el-option>
+              <el-select v-model="formInline.status"  style="width:7em">
+                <el-option label="全部" value=""></el-option>
                 <el-option label="已停用" value="0"></el-option>
                 <el-option label="启用中" value="1"></el-option>
                 <el-option label="未启用" value="2"></el-option>

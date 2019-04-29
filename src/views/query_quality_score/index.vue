@@ -11,6 +11,7 @@
           </el-form-item>
           <el-form-item v-if="n==1||n==4" prop="activityId" label="质检活动:">
             <el-select v-model="req.activityId" placeholder="质检活动">
+              <el-option value="">全部</el-option>
               <el-option
                   v-for="item in campData"
                   :key="item.activityId"
@@ -21,6 +22,7 @@
           </el-form-item>
           <el-form-item prop="gradeId" label="质检评分表:">
             <el-select v-model="req.gradeId" placeholder="质检评分表">
+              <el-option value="">全部</el-option>
               <el-option
                   v-for="item in gradeForm"
                   :key="item.gradeId"

@@ -24,7 +24,7 @@
                     </el-form-item> -->
                     <el-form-item label="有效性:">
                       <el-select size="small" v-model="formInline.enabled" placeholder="有效性">
-                        <el-option label="请选择" value=""></el-option>
+                        <el-option label="全部" value=""></el-option>
                         <el-option label="有效" value=1></el-option>
                         <el-option label="无效" value=0></el-option>
                       </el-select>

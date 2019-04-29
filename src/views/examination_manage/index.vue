@@ -11,8 +11,8 @@
               <el-input placeholder="试卷名称" v-model="formInline.name"></el-input>
             </el-form-item>
             <el-form-item label="考试对象:">
-              <el-select v-model="formInline.useObject" placeholder="考题对象">
-                <el-option value="" label=""></el-option>
+              <el-select v-model="formInline.useObject" placeholder="考题对象"  style="width:8em">
+                <el-option value="" label="全部"></el-option>
                 <el-option value="1" label="坐席主管"></el-option>
                 <el-option value="2" label="坐席"></el-option>
                 <el-option value="3" label="质检主管"></el-option>
@@ -20,16 +20,16 @@
               </el-select>
             </el-form-item>
             <el-form-item label="难易程度:">
-              <el-select v-model="formInline.complexity" placeholder="考题等级">
-                <el-option value="" label=""></el-option>
+              <el-select v-model="formInline.complexity" placeholder="考题等级"  style="width:6em">
+                <el-option value="" label="全部"></el-option>
                 <el-option value="1" label="简单"></el-option>
                 <el-option value="2" label="中等"></el-option>
                 <el-option value="3" label="困难"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="答题状态:">
-              <el-select v-model="formInline.state" placeholder="答题状态">
-                <el-option value="" label=""></el-option>
+              <el-select v-model="formInline.state" placeholder="答题状态"  style="width:7em">
+                <el-option value="" label="全部"></el-option>
                 <el-option value="0" label="考试中"></el-option>
                 <el-option value="1" label="已完成"></el-option>
               </el-select>
@@ -422,8 +422,8 @@
 
 
 <script>
-  import {querySynthesizeReq, generateReq, submitTestPaperReq, getTestPapersRecordReq} from '@/api/examination_manage.js'
-  import {Message, MessageBox} from 'element-ui'
+  import { querySynthesizeReq, generateReq, submitTestPaperReq, getTestPapersRecordReq } from '@/api/examination_manage.js'
+  import { Message, MessageBox } from 'element-ui'
 
   export default {
     name: 'examination_manage',
@@ -437,7 +437,7 @@
           testPapersName: '',
           complexity: '',
           useObject: '',
-          userId: localStorage.getItem("agentId"),
+          userId: localStorage.getItem('agentId'),
           pageNo: 1,
           pageSize: 10
         },
@@ -448,13 +448,13 @@
         },
         rules: {
           complexity: [
-            {required: true, message: '请选择试卷难度等级', trigger: 'blur'}
+            { required: true, message: '请选择试卷难度等级', trigger: 'blur' }
           ],
           useObject: [
-            {required: true, message: '请选择试卷使用对象', trigger: 'blur'}
+            { required: true, message: '请选择试卷使用对象', trigger: 'blur' }
           ],
           testPapersName: [
-            {required: true, message: '请输入试卷名称', trigger: 'blur'}
+            { required: true, message: '请输入试卷名称', trigger: 'blur' }
           ]
         },
         pagination: {
@@ -476,7 +476,6 @@
         singleItems: [], // 单选 所有选项
         judgeItems: [], // 判断 所有选项
         multiItems: [], // 多选 所有选项
-
 
         isRightSingle: [],
         isRightJudge: [],
@@ -509,7 +508,6 @@
       this.querySynthesize(this.formInline)
     },
 
-
     methods: {
       handleChangeAcitve(active = ['1']) {
         if (active.length) {
@@ -530,7 +528,7 @@
       // 条件查询
       search(formInline) {
         const obj = {}
-        obj.userId = localStorage.getItem("agentId")
+        obj.userId = localStorage.getItem('agentId')
         obj.name = formInline.name ? formInline.name : ''
         obj.complexity = formInline.complexity ? formInline.complexity : ''
         obj.state = formInline.state ? formInline.state : ''
@@ -592,7 +590,7 @@
         this.testPapersState = ''
         this.$refs['generateForm'].validate((valid) => {
           if (valid) {
-            generateReq(generateForm, localStorage.getItem("agentId")).then(res => {
+            generateReq(generateForm, localStorage.getItem('agentId')).then(res => {
               if (res.data.code === 0) {
                 this.dialogGenerateFormVisible = false
                 this.dialogManagementFormVisible = false
@@ -620,11 +618,10 @@
                   testPapersName: '',
                   complexity: '',
                   useObject: '',
-                  userId: localStorage.getItem("agentId"),
+                  userId: localStorage.getItem('agentId'),
                   pageNo: 1,
                   pageSize: 10
                 }
-
               } else {
                 Message({
                   message: res.data.message,
@@ -696,7 +693,7 @@
               }
             }
           }
-          submitTestPaperReq(this.singleItems, this.judgeItems, this.multiItems, localStorage.getItem("agentId"), this.testPapersId, judge)
+          submitTestPaperReq(this.singleItems, this.judgeItems, this.multiItems, localStorage.getItem('agentId'), this.testPapersId, judge)
             .then(res => {
               if (res.data.code === 0) {
                 Message({
@@ -715,7 +712,6 @@
         })
       },
 
-
       // 判断是否还有未填写
       hasBlanksOrNot(selectOption_single, selectOption_multi, selectOption_judge) {
         this.singleCheck = false
@@ -723,8 +719,7 @@
         this.multiCheck = false
         debugger
         for (var i = 0; i < 10; i++) {
-
-          if (selectOption_single.length===0) {
+          if (selectOption_single.length === 0) {
             this.singleCheck = false
             return
           }
@@ -735,7 +730,7 @@
             this.singleCheck = true
           }
 
-          if (selectOption_judge.length===0) {
+          if (selectOption_judge.length === 0) {
             this.judgeCheck = false
             return
           }
@@ -749,7 +744,7 @@
           if (selectOption_multi[i].length > 0) {
             for (let j = 0; j < selectOption_multi[i].length; j++) {
               console.log(selectOption_multi[i][j].toString())
-              if (selectOption_multi[i][j].toString().indexOf("-1") >= 0) {
+              if (selectOption_multi[i][j].toString().indexOf('-1') >= 0) {
                 if (selectOption_multi[i].length === (j + 1)) {
                   this.multiCheck = false
                   return
@@ -769,7 +764,6 @@
 
       // 查看考题回显
       getTestPapersRecord(testPapersId, judge) {
-
         this.selectOption_single = []
         this.selectOption_judge = []
         this.selectOption_multi = []
@@ -796,7 +790,6 @@
           this.testPapersId = res.data.data[4]
           this.testPapersState = res.data.data[5]
           this.testPapersScore = res.data.data[6]
-
 
           var temp
           var singleSucAnswerNum = 0
@@ -856,7 +849,7 @@
           for (var c = 0; c < 10; c++) {
             this.selectOption_multi.push([])
             if (this.show_multiItems[c].isSelected !== 0) {
-              var idsArr = this.show_multiItems[c].selectedValue.split(",")
+              var idsArr = this.show_multiItems[c].selectedValue.split(',')
               var temp = idsArr.length - 1
               for (var d = 0; d < temp; d++) {
                 this.selectOption_multi[c].push(parseInt(idsArr[d]))
@@ -879,7 +872,6 @@
           this.multiAnswer.push(multiEmptyAerNum)
         })
       },
-
 
       // 生成考题窗口控制
       generateTestPapers() {

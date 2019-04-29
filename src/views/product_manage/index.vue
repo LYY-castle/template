@@ -29,10 +29,11 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item prop="modifierName" label="产品状态：">
-            <el-radio-group v-model="req.status" size="small">
-              <el-radio label='0'>上架</el-radio>
-              <el-radio label='1'>下架</el-radio>
-            </el-radio-group>
+            <el-select placeholder="产品状态：" v-model="req.status"  style="width:6em">
+              <el-option label="全部" value=''></el-option>
+              <el-option label="上架" value='0'></el-option>
+              <el-option label="下架" value='1'></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item>
             <el-button size="small" type="primary" @click="req.pageNo=1;queryTemplateList(req)">查询</el-button>

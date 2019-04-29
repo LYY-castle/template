@@ -6,7 +6,7 @@
         <el-collapse-item title="筛选条件" name="1">
           <el-form :inline="true" size="small">
             <el-form-item label="级别：">
-                <el-select v-model.trim="req.emergency_degree" placeholder="请选择" clearable size="small" >
+                <el-select v-model.trim="req.emergency_degree" placeholder="请选择" clearable size="small"  style="width:6em">
                     <el-option
                       v-for="item in options1"
                       :label="item.label"
@@ -392,7 +392,7 @@ export default {
       // 级别
       options1: [
         {
-          label: '',
+          label: '全部',
           value: ''
         },
         {

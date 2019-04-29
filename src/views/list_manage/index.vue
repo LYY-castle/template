@@ -89,7 +89,7 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="当前状态"
+            label="可见性"
             width="155">
             <template slot-scope="scope">
               <div :class="scope.row.validityStatus===0?'visible':'invisible'">
@@ -407,7 +407,7 @@
           <el-form-item label="名单名称：">
             <el-input v-model="addListReq.listName" style="width:133px;" placeholder="请输入名单名称"></el-input>
           </el-form-item>
-          <el-form-item label="名单状态：">
+          <el-form-item label="可见性：">
             <el-switch
               v-model="addListReq.validityStatus"
               active-color="#13ce66"

@@ -37,7 +37,7 @@
               </el-date-picker>
           </el-form-item>
             <el-form-item label="任务状态：">
-              <el-select v-model="req.status" placeholder="请选择">
+              <el-select v-model="req.status" placeholder="请选择"  style="width:6em">
                 <el-option
                   v-for="item in taskStatusOptions"
                   :key="item.value"
@@ -69,8 +69,8 @@
               </el-select>
           </el-form-item>
           <el-form-item label="所属员工：" v-if="departPermission">
-            <el-select v-model="req.staffId">
-              <el-option label="所有员工" :value="agentsId"></el-option>
+            <el-select v-model="req.staffId"  style="width:10em">
+              <el-option label="全部" :value="agentsId"></el-option>
               <el-option
                 v-for="item in agentsOptions"
                 :key="item.agent_id"
@@ -703,7 +703,7 @@ export default {
         {
           // 任务状态选项框
           value: '',
-          label: '所有情况'
+          label: '全部'
         },
         {
           value: '0',
@@ -2061,20 +2061,20 @@ export default {
         vm.summariesInfo = [] // 清空小结节点
         if (response.data.code === 0) {
           if (response.data && response.data.data && response.data.data.length > 0) {
-            vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
+            vm.summariesInfo.push({ 'id': '', 'name': '全部' })
             this.handle(response.data.data)
           } else {
-            vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
+            vm.summariesInfo.push({ 'id': '', 'name': '全部' })
           }
         }
       }).catch(error => {
         console.error(error)
-        vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
+        vm.summariesInfo.push({ 'id': '', 'name': '全部' })
       })
       findCampaignByUser().then(res => {
         vm.campaignsInfo = []
         if (res.data.code === 0) {
-          vm.campaignsInfo.push({ campaignId: '', campaignName: '所有活动' })
+          vm.campaignsInfo.push({ campaignId: '', campaignName: '全部' })
           if (res.data.data.length > 0) {
             for (let i = 0; i < res.data.data.length; i++) { // 返回值活动数组
               let flag = false// 初始化变量值为否
@@ -2093,7 +2093,7 @@ export default {
             }
           }
         } else {
-          vm.campaignsInfo.push({ campaignId: '', campaignName: '所有活动' })
+          vm.campaignsInfo.push({ campaignId: '', campaignName: '全部' })
         }
       })
       // this.req = this.$store.state.dialTask.req
@@ -2222,20 +2222,20 @@ export default {
         vm.summariesInfo = [] // 清空小结节点
         if (response.data.code === 0) {
           if (response.data && response.data.data && response.data.data.length > 0) {
-            vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
+            vm.summariesInfo.push({ 'id': '', 'name': '全部' })
             this.handle(response.data.data)
           } else {
-            vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
+            vm.summariesInfo.push({ 'id': '', 'name': '全部' })
           }
         }
       }).catch(error => {
         console.error(error)
-        vm.summariesInfo.push({ 'id': '', 'name': '所有小结' })
+        vm.summariesInfo.push({ 'id': '', 'name': '全部' })
       })
       findCampaignByUser().then(res => {
         vm.campaignsInfo = []
         if (res.data.code === 0) {
-          vm.campaignsInfo.push({ campaignId: '', campaignName: '所有活动' })
+          vm.campaignsInfo.push({ campaignId: '', campaignName: '全部' })
           if (res.data.data.length > 0) {
             for (let i = 0; i < res.data.data.length; i++) { // 返回值活动数组
               let flag = false// 初始化变量值为否
@@ -2254,7 +2254,7 @@ export default {
             }
           }
         } else {
-          vm.campaignsInfo.push({ campaignId: '', campaignName: '所有活动' })
+          vm.campaignsInfo.push({ campaignId: '', campaignName: '全部' })
         }
       })
       // this.req = this.$store.state.dialTask.req

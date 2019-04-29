@@ -10,18 +10,18 @@
             <el-input v-model="req.propertyName" placeholder="客户模板名（限长50字符）" maxlength="50"></el-input>
           </el-form-item>
           <el-form-item label="是否必填：" prop="isRequired">
-            <el-radio-group v-model="req.isRequired" size="small">
-              <el-radio label="">所有</el-radio>
-              <el-radio :label=0>否</el-radio>
-              <el-radio :label=1>是</el-radio>
-            </el-radio-group>
+            <el-select v-model="req.isRequired" size="small">
+              <el-option label="">所有</el-option>
+              <el-option label="0">否</el-option>
+              <el-option label="1">是</el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="是否选中：" prop="isSelected">
-            <el-radio-group v-model="req.isSelected" size="small" v-if="req.isRequired===0">
-              <el-radio label="">所有</el-radio>
-              <el-radio :label=0>否</el-radio>
-              <el-radio :label=1>是</el-radio>
-            </el-radio-group>
+            <el-select v-model="req.isSelected" size="small" v-if="req.isRequired===0">
+              <el-option label="">所有</el-option>
+              <el-option label="0">否</el-option>
+              <el-option label="1">是</el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="操作人:">
             <el-input v-model="req.modifierName" placeholder="操作人（限长50）字符" maxlength="50"></el-input>

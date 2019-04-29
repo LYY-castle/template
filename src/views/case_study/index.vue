@@ -5,7 +5,7 @@
         <el-form :inline="true" size="small" :model="req" ref="searchForm">
           <el-form-item prop="campaignId" label="质检活动:">
             <el-select v-model="req.campaignId" placeholder="质检活动">
-              <el-option label="所有活动" value="">所有活动</el-option>
+              <el-option label="全部" value="">全部</el-option>
               <el-option
                 v-for="item in campData"
                 :key="item.campaignId"

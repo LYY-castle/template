@@ -10,11 +10,11 @@
             <el-input v-model="req.campaignName" placeholder="活动名称（限长128字符）" maxlength="128"></el-input>
           </el-form-item>
           <el-form-item label="活动状态：" prop="status">
-            <el-radio-group v-model="req.status" size="small">
-              <el-radio label=''>所有</el-radio>
-              <el-radio label='0'>有效</el-radio>
-              <el-radio label='1'>无效</el-radio>
-            </el-radio-group>
+            <el-select placeholder="接通状态：" v-model="req.status">
+              <el-option label="全部" value=''></el-option>
+              <el-option label="有效" value='0'></el-option>
+              <el-option label="无效" value='1'></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item prop="modifierName" label="操作人：">
             <el-input v-model="req.modifierName" placeholder="操作人（限长50字符）" maxlength="50"></el-input>

@@ -58,10 +58,10 @@
                   </el-date-picker>
                 </el-form-item>
                 <el-form-item v-if="permission" label="发布状态：" prop="validityStatus">
-                  <el-radio-group v-model="req.status" size="small">
-                    <el-radio-button label=1 border>发布</el-radio-button>
-                    <el-radio-button label=0 border>未发布</el-radio-button>
-                  </el-radio-group>
+                  <el-select v-model="req.status">
+                    <el-option value="1" label="发布"></el-option>
+                    <el-option value="0" label="未发布"></el-option>
+                  </el-select>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" @click="getArticles1(req);req2=clone(req);">查询</el-button>

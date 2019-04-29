@@ -9,24 +9,24 @@
               <el-input placeholder="考题内容（模糊匹配）" v-model="formInline.context"></el-input>
             </el-form-item>
             <el-form-item label="考题等级:">
-              <el-select v-model="formInline.complexity" placeholder="考题等级">
-                <el-option value="" label=""></el-option>
+              <el-select v-model="formInline.complexity" placeholder="考题等级"  style="width:6em">
+                <el-option value="" label="全部"></el-option>
                 <el-option value="1" label="简单"></el-option>
                 <el-option value="2" label="中等"></el-option>
                 <el-option value="3" label="困难"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="考题类型:">
-              <el-select v-model="formInline.type" placeholder="考题类型">
-                <el-option value="" label=""></el-option>
+              <el-select v-model="formInline.type" placeholder="考题类型"  style="width:7em">
+                <el-option value="" label="全部"></el-option>
                 <el-option value="1" label="单选题"></el-option>
                 <el-option value="2" label="判断题"></el-option>
                 <el-option value="3" label="多选题"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="培训对象:">
-              <el-select v-model="formInline.useObject" placeholder="考题对象">
-                <el-option value="" label=""></el-option>
+              <el-select v-model="formInline.useObject" placeholder="考题对象"  style="width:8em">
+                <el-option value="" label="全部"></el-option>
                 <el-option value="1" label="坐席主管"></el-option>
                 <el-option value="2" label="坐席"></el-option>
                 <el-option value="3" label="质检主管"></el-option>
@@ -334,7 +334,7 @@
     uploadFileandImport,
     updateQuestions
   } from '@/api/subject_manage.js'
-  import {Message, MessageBox} from 'element-ui'
+  import { Message, MessageBox } from 'element-ui'
 
   export default {
     name: 'subject_manage',
@@ -375,19 +375,19 @@
         },
         rules: {
           type: [
-            {required: true, message: '考题类型不能为空', trigger: 'blur'}
+            { required: true, message: '考题类型不能为空', trigger: 'blur' }
           ],
           complexity: [
-            {required: true, message: '难度等级不能为空', trigger: 'blur'}
+            { required: true, message: '难度等级不能为空', trigger: 'blur' }
           ],
           useObject: [
-            {required: true, message: '考题对象不能为空', trigger: 'blur'}
+            { required: true, message: '考题对象不能为空', trigger: 'blur' }
           ],
           context: [
-            {required: true, message: '考题内容不能为空', trigger: 'blur'}
+            { required: true, message: '考题内容不能为空', trigger: 'blur' }
           ],
           uploadFileName: [
-            {required: true, message: '文件名不能为空', trigger: 'blur'}
+            { required: true, message: '文件名不能为空', trigger: 'blur' }
           ]
         },
         importInfo: { // 导入需要的信息
@@ -498,24 +498,24 @@
         this.$refs[updateForm].validate((valid) => {
           if (valid) {
             this.addForm = this.updateForm
-            this.addForm.userId = localStorage.getItem("agentId"),
-              updateQuestions(this.addForm).then(res => {
-                if (res.data.code === 0) {
-                  Message({
-                    message: res.data.message,
-                    type: 'success'
-                  })
-                  this.pagination.pageNo = 1
-                  this.search(this.formInline)
-                } else {
-                  Message({
-                    message: res.data.message,
-                    type: 'error'
-                  })
-                }
-                this.$refs[updateForm].resetFields()
-                this.dialogUpdateFormVisible = false
-              })
+            this.addForm.userId = localStorage.getItem('agentId'),
+            updateQuestions(this.addForm).then(res => {
+              if (res.data.code === 0) {
+                Message({
+                  message: res.data.message,
+                  type: 'success'
+                })
+                this.pagination.pageNo = 1
+                this.search(this.formInline)
+              } else {
+                Message({
+                  message: res.data.message,
+                  type: 'error'
+                })
+              }
+              this.$refs[updateForm].resetFields()
+              this.dialogUpdateFormVisible = false
+            })
           }
         })
       },
@@ -527,7 +527,7 @@
 
       // 导入窗口清除缓存
       batchDialog() {
-        this.importVisible=false
+        this.importVisible = false
         // this.$refs.upload.clearFiles()
         this.importInfo = {
           uploadFileName: ''
@@ -544,7 +544,7 @@
       // 上传的动作
       uploadFileInfo(fileList) {
         var formdata = new FormData()
-        if(this.importInfo.uploadFileName != '') {
+        if (this.importInfo.uploadFileName != '') {
           formdata.append('multipartFile', fileList.file)
           uploadFileandImport(formdata).then(response => {
             if (response.data.code === 0) {
@@ -563,7 +563,7 @@
             }
           })
         } else {
-          this.$message.error("上传文件不能为空")
+          this.$message.error('上传文件不能为空')
         }
       },
 
@@ -599,24 +599,24 @@
       addQuestions(addForm) {
         this.$refs[addForm].validate((valid) => {
           if (valid) {
-            this.addForm.userId = localStorage.getItem("agentId"),
-              addQuestions(this.addForm).then(res => {
-                if (res.data.code === 0) {
-                  Message({
-                    message: res.data.message,
-                    type: 'success'
-                  })
-                  this.pagination.pageNo = 1
-                  this.search(this.formInline)
-                } else {
-                  Message({
-                    message: res.data.message,
-                    type: 'error'
-                  })
-                }
-                this.$refs[addForm].resetFields()
-                this.dialogAddFormVisible = false
-              })
+            this.addForm.userId = localStorage.getItem('agentId'),
+            addQuestions(this.addForm).then(res => {
+              if (res.data.code === 0) {
+                Message({
+                  message: res.data.message,
+                  type: 'success'
+                })
+                this.pagination.pageNo = 1
+                this.search(this.formInline)
+              } else {
+                Message({
+                  message: res.data.message,
+                  type: 'error'
+                })
+              }
+              this.$refs[addForm].resetFields()
+              this.dialogAddFormVisible = false
+            })
           }
         })
       },
@@ -628,7 +628,7 @@
         // 判断是否批量删除
         if (isBatchDel != 0) {
           reminder = '确定执行批量删除操作吗？'
-          this.batchDelParam = this.multipleSelection.map(function (item, index) {
+          this.batchDelParam = this.multipleSelection.map(function(item, index) {
             return item.id
           }).join(',')
         } else {
@@ -692,7 +692,6 @@
           return '质检员'
         }
       }
-
 
     }
   }

@@ -4,7 +4,7 @@
       <el-collapse-item title="筛选条件" name="1">
         <el-form :inline="true" size="small">
           <el-form-item label="订单状态：">
-            <el-select v-model="req.status" placeholder="请选择" clearable>
+            <el-select v-model="req.status" placeholder="请选择" clearable  style="width:8em">
               <el-option
                 v-for="item in options"
                 :label="item.label"
@@ -28,7 +28,7 @@
 
           <el-form-item label="活动名称：">
             <el-select v-model="req.campaignId" placeholder="请选择" clearable filterable>
-              <el-option label="所有活动" value=""></el-option>
+              <el-option label="全部" value=""></el-option>
               <el-option
                 v-for="campaign in campaigns"
                 :label="campaign.campaignName"
@@ -339,7 +339,7 @@
         // 订单状态
         options: [
           {
-            label: '所有状态',
+            label: '全部',
             value: ''
           },
           {

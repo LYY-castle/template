@@ -135,11 +135,20 @@
             </el-form-item>
          </el-col>
         </el-row>
-        <el-form-item label="评分表状态">
+        <!-- <el-form-item label="评分表状态">
           <el-radio-group v-model='ruleForm.isDelete' size="mini">
             <el-radio-button label='0'>启用</el-radio-button>
             <el-radio-button label='2'>禁用</el-radio-button>
           </el-radio-group>
+        </el-form-item> -->
+        <el-form-item label="评分表状态">
+          <el-switch v-model='ruleForm.isDelete'
+          size="mini"
+          active-value="0"
+          active-text="启用"
+          inactive-value="2"
+          inactive-text="禁用">
+          </el-switch>
         </el-form-item>
          <el-form-item>
           <el-button size="mini" type="success" @click="add">新建</el-button>

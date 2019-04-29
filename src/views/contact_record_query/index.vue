@@ -8,7 +8,7 @@
           </el-form-item>
           <el-form-item label="活动名称：" prop="campaignId">
             <el-select placeholder="请选择活动"  @change="selectOneCampaign(campaignId)" v-model="campaignId">
-              <el-option label="所有情况" value=""></el-option>
+              <el-option label="全部" value=""></el-option>
               <el-option
               v-for="item in campaigns"
               :label="item.campaignName"
@@ -47,14 +47,14 @@
             </el-date-picker>
           </el-form-item>
             <el-form-item label="接通状态：">
-              <el-radio-group v-model="req.status"  @change="changeChoice()">
-                <el-radio-button label="-1">所有情况</el-radio-button>
-                <el-radio-button label="1">已接通</el-radio-button>
-                <el-radio-button label="0">未接通</el-radio-button>
-              </el-radio-group>
+              <el-select placeholder="接通状态：" v-model="req.status"  @change="changeChoice()"  style="width:6em">
+                <el-option label="全部" value="-1"></el-option>
+                <el-option label="已接通" value="1"></el-option>
+                <el-option label="未接通" value="0"></el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="接触类型：">
-              <el-select placeholder="接触类型：" v-model="req.contactType">
+              <el-select placeholder="接触类型：" v-model="req.contactType"  style="width:6em">
                 <el-option label="全部" value=""></el-option>
                 <el-option label="微信" value="2"></el-option>
                 <el-option label="电话" value="1"></el-option>

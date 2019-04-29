@@ -14,12 +14,12 @@
               <el-input placeholder="操作人（限45字）" maxlength="45" v-model="formInline.modifierName"></el-input>
             </el-form-item>
             <el-form-item label="完成状态:" prop="status">
-              <el-radio-group v-model="formInline.status">
-                <el-radio-button label="">所有情况</el-radio-button>
-                <el-radio-button label="0">未开始</el-radio-button>
-                <el-radio-button label="1">已完成</el-radio-button>
-                <el-radio-button label="2">未完成</el-radio-button>
-              </el-radio-group>
+              <el-select placeholder="完成状态:" v-model="formInline.status">
+                <el-option label="全部" value=""></el-option>
+                <el-option label="未开始" value="0"></el-option>
+                <el-option label="已完成" value="1"></el-option>
+                <el-option label="未完成" value="2"></el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="分配时间：">
               <el-date-picker
