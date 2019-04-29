@@ -304,12 +304,12 @@ export function changePassword(info) {
     }
   })
 }
-export function findRegionByRegionParentId(regionParentId) {
+export function findRegionByRegionParentId(parentId) {
   return request({
     url: '/customer/regioninfo',
     method: 'get',
     params: {
-      'regionParentId': regionParentId
+      'parentId': parentId
     }
   })
 }
