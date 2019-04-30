@@ -7,7 +7,7 @@ var portalUrl = "/api/v1"//远程测试
 var app = new Framework7();
 app.request.setup({
 			headers : {
-				"Authorization" : "Bearer eyJhbGciOiJIUzUxMiJ9.eyJhZ2VudGlkIjoiMTAwMDIiLCJjcmVhdGVUaW1lIjoxNTI2MjgyNDIzNTI0LCJleHBpcmF0aW9uVGltZSI6OTQ2MDgwMDAwMDAsImV4cCI6MTYyMDg5MDQyM30.irCMydZuir8XoCmutSy48IJrcjBgyr6Kaf_tYnWUQdwf0W-23pjeNYkx8kYs9NL0qAwpA4z1SisNI4b9wnluGw"
+				"Authorization" : "Bearer eyJhbGciOiJIUzI1NiJ9.eyJUT0tFTl9TVEFGRl9OQU1FIjoiU1lTVEVNIiwiVE9LRU5fREVQQVJUX05BTUUiOiJTWVNURU0iLCJUT0tFTl9TVEFGRl9OTyI6Ijk5OTkiLCJUT0tFTl9ERVBBUlRfSUQiOiIwIiwiVE9LRU5fQUNDT1VOVF9OTyI6Ijk5OTkiLCJpYXQiOjE1NTY2MTIzMjcsImp0aSI6ImU4OTQwMzNlLTYwMGQtNDhiMy05YjM1LTFlMjE0NDEzOWJkNCIsImV4cCI6MTY1MTIyMDMyN30._qqshz26ygbi5SPblCUl0oL-gwELhcl9Wa9wBNey71s"
 			}
 		});
 /* input 框内容变化事件 */

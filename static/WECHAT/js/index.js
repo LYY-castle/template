@@ -3,7 +3,7 @@ var portalUrl = "/api/v1";//远程测试
 
 $.ajaxSetup({
   headers:{
-    'Authorization':'Bearer eyJhbGciOiJIUzUxMiJ9.eyJhZ2VudGlkIjoiMTAwMjkiLCJjcmVhdGVUaW1lIjoxNTQ2NDk4NzEzOTc4LCJleHBpcmF0aW9uVGltZSI6NzIwMDAwMCwicm9sZXMiOltdLCJpcCI6IlRodSBKYW4gMDMgMTQ6NTg6MzMgQ1NUIDIwMTkiLCJzdGFmZk5hbWUiOiJJdmVyc29uTGlubiIsImxhYmVsIjoid2lzZTJjIiwiZXhwIjoxNTQ2NTA1OTEzfQ.AR54TQt7jX50M1qvw-Br8W4KKu9DtWuBNvqvlJlEyMuBvPgPy3wF0jWZITMGtRDL8oIADyEClMFKCTZULncvjg'
+    'Authorization':'Bearer eyJhbGciOiJIUzI1NiJ9.eyJUT0tFTl9TVEFGRl9OQU1FIjoiU1lTVEVNIiwiVE9LRU5fREVQQVJUX05BTUUiOiJTWVNURU0iLCJUT0tFTl9TVEFGRl9OTyI6Ijk5OTkiLCJUT0tFTl9ERVBBUlRfSUQiOiIwIiwiVE9LRU5fQUNDT1VOVF9OTyI6Ijk5OTkiLCJpYXQiOjE1NTY2MTIzMjcsImp0aSI6ImU4OTQwMzNlLTYwMGQtNDhiMy05YjM1LTFlMjE0NDEzOWJkNCIsImV4cCI6MTY1MTIyMDMyN30._qqshz26ygbi5SPblCUl0oL-gwELhcl9Wa9wBNey71s'
   },
   contentType:'application/json;charset=utf-8',
 })
@@ -70,7 +70,7 @@ function submitBindMobile(){
       type:'post',
       beforeSend: function(request) {
         request.withCredentials = true
-        request.setRequestHeader("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJhZ2VudGlkIjoiMTAwMjkiLCJjcmVhdGVUaW1lIjoxNTQ2NDk4NzEzOTc4LCJleHBpcmF0aW9uVGltZSI6NzIwMDAwMCwicm9sZXMiOltdLCJpcCI6IlRodSBKYW4gMDMgMTQ6NTg6MzMgQ1NUIDIwMTkiLCJzdGFmZk5hbWUiOiJJdmVyc29uTGlubiIsImxhYmVsIjoid2lzZTJjIiwiZXhwIjoxNTQ2NTA1OTEzfQ.AR54TQt7jX50M1qvw-Br8W4KKu9DtWuBNvqvlJlEyMuBvPgPy3wF0jWZITMGtRDL8oIADyEClMFKCTZULncvjg");
+        request.setRequestHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJUT0tFTl9TVEFGRl9OQU1FIjoiU1lTVEVNIiwiVE9LRU5fREVQQVJUX05BTUUiOiJTWVNURU0iLCJUT0tFTl9TVEFGRl9OTyI6Ijk5OTkiLCJUT0tFTl9ERVBBUlRfSUQiOiIwIiwiVE9LRU5fQUNDT1VOVF9OTyI6Ijk5OTkiLCJpYXQiOjE1NTY2MTIzMjcsImp0aSI6ImU4OTQwMzNlLTYwMGQtNDhiMy05YjM1LTFlMjE0NDEzOWJkNCIsImV4cCI6MTY1MTIyMDMyN30._qqshz26ygbi5SPblCUl0oL-gwELhcl9Wa9wBNey71s");
       },
       success:function(data){
         if(data.code === 0){
