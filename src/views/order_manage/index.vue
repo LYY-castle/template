@@ -24,7 +24,6 @@
           <el-form-item label="销售员工：" v-if="this.isManager">
             <el-input v-model="req.staffName" placeholder="员工姓名（上限50字符）" maxlength="50"></el-input>
           </el-form-item>
-          <br/>
 
           <el-form-item label="活动名称：">
             <el-select v-model="req.campaignId" placeholder="请选择" clearable filterable>

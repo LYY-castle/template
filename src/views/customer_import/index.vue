@@ -86,7 +86,7 @@
             {{selectedtag.propertyName}}
           </el-tag>
           <span v-if="selectedtags.length === 0">暂无已选字段</span>
-        </el-form-item><br/>
+        </el-form-item>
         <el-form-item label="文件格式：">
           <el-radio v-model="fileType" label="xls">xls</el-radio>
           <el-radio v-model="fileType" label="xlsx">xlsx</el-radio>

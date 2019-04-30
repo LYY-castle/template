@@ -25,7 +25,7 @@
                   end-placeholder="结束时间"
                   value-format="yyyy-MM-dd HH:mm:ss">
               </el-date-picker>
-          </el-form-item><br/>
+          </el-form-item>
           <el-form-item label="操作时间：">
             <el-date-picker
                   v-model.trim="modifyTimeValue"
@@ -49,7 +49,6 @@
           <el-form-item label="拨打次数：">
               <el-input v-model="req.contactedNum" maxlength="4" min="0" type="number"></el-input>
           </el-form-item>
-          <br/>
 
           <el-form-item label="客户姓名：">
               <el-input v-model="req.customerName" placeholder="客户姓名（限长50字符）" maxlength="50"></el-input>

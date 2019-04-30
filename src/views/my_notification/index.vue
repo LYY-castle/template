@@ -20,7 +20,7 @@
                     :value="item.value">
                   </el-option>
               </el-select>
-          </el-form-item><br/>
+          </el-form-item>
           <el-form-item label="关键字：">
             <el-input type="text" v-model.trim="req.key_text" size="small" placeholder="关键字(上限20字符)" maxlength="20"></el-input>
           </el-form-item>
