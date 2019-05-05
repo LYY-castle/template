@@ -119,6 +119,7 @@
       </el-row>
       
     </div>
+    <!-- 新建 -->
     <el-dialog title="新建评分表" :visible.sync="dialogFormVisible" width="60%" @close="resetForm('ruleForm')" append-to-body>
       <el-form size="small" :model="ruleForm" ref="ruleForm" label-width="150px" class="demo-ruleForm">
         <el-row>
@@ -150,11 +151,8 @@
           inactive-text="禁用">
           </el-switch>
         </el-form-item>
-         <el-form-item>
-          <el-button size="mini" type="success" @click="add">新建</el-button>
-        </el-form-item>
         <el-card class="box-card" v-for="(item, index) in ruleForm.gradeTitles">
-          <el-row>
+          <el-row style="padding:0;">
             <el-col :span="17">
               <el-form-item :label="parseInt(index)+1+''"  :prop="'gradeTitles.'+index+'.titleName'" :rules="{ required: true, message: '请填写评分标题', trigger: 'blur' }">
                 <el-input v-model='item.titleName' placeholder="在此输入标题,上限50字符" maxlength="50"></el-input>
@@ -165,9 +163,6 @@
             </el-col>
           </el-row>
           <el-row>
-            <el-form-item>
-              <el-button size="mini" type="success" @click="addChoice(index)">新建</el-button>
-            </el-form-item>
             <div v-for="(node, index1) in item.gradeOptions">
                 <el-row>
                   <el-col :span="14">
@@ -185,6 +180,12 @@
                   </el-col>
                 </el-row>
               </div>
+              <el-form-item>
+              <!-- 新增选项 -->
+              <el-button size="mini" type="success" @click="addChoice(index)" class="hoverShow" title="新增选项">+</el-button>
+              <!-- 新建题目 -->
+              <el-button size="mini" type="success" @click="add" class="hoverShow" title="新建题目">新建</el-button>
+            </el-form-item>
           </el-row>
         </el-card>
         </el-form>
@@ -194,6 +195,7 @@
         <el-button type="primary" plain @click="resetForm('ruleForm');dialogFormVisible = false">取消</el-button>
       </div>
     </el-dialog>
+    <!-- 修改 -->
     <el-dialog title="修改评分表" :visible.sync="dialogFormVisibleReverse" width="60%" @close="resetFormReverse('ruleFormReverse');dialogFormVisibleReverse=false" append-to-body>
       <el-form size="small" :model="ruleFormReverse" ref="ruleFormReverse" label-width="150px" class="demo-ruleForm">
         <el-row>
@@ -210,9 +212,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-         <el-form-item>
-          <el-button size="mini" type="success" @click="addReverse">新建</el-button>
-        </el-form-item>
         <el-card class="box-card" v-for="(item, index) in ruleFormReverse.gradeTitles"  v-if="ruleFormReverse.gradeTitles[index].isDelete!=='1'">
           <el-row >
             <el-col :span="17">
@@ -221,14 +220,10 @@
               </el-form-item>
             </el-col>
             <el-col :span="4" :offset="1">
-              <!-- <el-button type="danger" @click.prevent="removeReverse(index)" v-if="ruleFormReverse.gradeTitles.length>1">删除</el-button> -->
               <el-button type="danger" @click.prevent="removeReverse(index)" v-if="getGradeTitleCount(ruleFormReverse.gradeTitles)">删除</el-button>
             </el-col>
           </el-row>
           <el-row>
-            <el-form-item>
-              <el-button size="mini" type="success" @click="addReverseChoice(index)">新建</el-button>
-            </el-form-item>
             <div v-for="(node, index1) in item.gradeOptions" v-if="node.isDelete!=='1'">
                 <el-row>
                   <el-col :span="14">
@@ -242,11 +237,14 @@
                     </el-form-item>
                   </el-col>
                   <el-col :span="2" :offset="1">
-                    <!-- <el-button type="danger" @click.prevent="removeReverseChild(index,index1)" v-if="ruleFormReverse.gradeTitles[index].gradeOptions.length>1">删除</el-button> -->
                     <el-button type="danger" @click.prevent="removeReverseChild(index,index1)" v-if="getOptions(ruleFormReverse.gradeTitles[index].gradeOptions)">删除</el-button>
                   </el-col>
                 </el-row>
               </div>
+              <el-form-item>
+              <el-button size="mini" type="success" @click="addReverseChoice(index)" title="新增选项" class="hoverShow">+</el-button>
+              <el-button size="mini" type="success" @click="addReverse" title="新建题目" class="hoverShow">新建</el-button>
+            </el-form-item>
           </el-row>
         </el-card>
         </el-form>
@@ -256,6 +254,7 @@
         <el-button type="primary" plain @click="resetFormReverse('ruleFormReverse');dialogFormVisibleReverse = false">取消</el-button>
       </div>
     </el-dialog>
+    <!-- 查看 -->
     <el-dialog title="查看评分表" :visible.sync="dialogFormVisibleDetail" width="60%" @close="resetFormDetail('dialogFormVisibleDetail')" append-to-body>
       <el-form size="small" :model="ruleFormDetail" ref="ruleFormDetail" label-width="150px" class="demo-ruleForm">
         <el-row>
@@ -326,7 +325,6 @@
     </el-dialog>
   </div>
 </template>
-
 <script>
   import { findAllGradeForm, deleteGradeFormByGradeId, deleteGradeFormByTeam, getGradeByGradeId, addGrade, editGrade } from '@/api/qm_charge_scorelist'
   import { Message } from 'element-ui'
@@ -516,7 +514,7 @@
         })
       },
       addGrade() {
-        this.dialogFormVisible = true
+        this.dialogFormVisible = true // 新建
       },
       handleDelete() {
         deleteGradeFormByGradeId({ 'gradeId': this.delReq }).then(response => {
@@ -665,6 +663,7 @@
           }
         })
       },
+      // 重置数据
       resetForm(formName) {
         var obj = {
           gradeName: '',
@@ -722,6 +721,7 @@
         this.multipleSelection = val
         console.log(val)
       },
+      // 修改
       handleClick(row) {
         this.reverseRow = row
         this.dialogFormVisibleReverse = true
@@ -767,6 +767,7 @@
           }
         })
       },
+      // 查看详情
       handleClickDetail(row) {
         this.dialogFormVisibleDetail = true
         getGradeByGradeId({ 'gradeId': row.gradeId }).then(response => {
@@ -879,5 +880,24 @@
   }
 </script>
 <style>
-
+.box-card .el-card__body{
+  padding: 0!important;
+}
 </style>
+<style scoped>
+.el-card.is-always-shadow{
+  box-shadow: none;
+  padding-top:20px;
+  border:none;
+  border-bottom: 1px solid #eee;
+}
+.hoverShow{
+  visibility: hidden;
+  cursor: pointer;
+} 
+.box-card:hover .hoverShow{
+    visibility:visible;
+}
+</style>
+
+
