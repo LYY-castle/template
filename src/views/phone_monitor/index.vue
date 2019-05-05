@@ -510,6 +510,7 @@
 var baseinfo = null
   export default {
     name: 'monitor_phone',
+    inject: ['reloadCompoment'],
     data() {
       return {
         promise_arr: [],
@@ -574,8 +575,7 @@ var baseinfo = null
         })
       },
       refresh() {
-        location.reload()
-        this.$router.go(0)
+        this.reloadCompoment()
       },
       analysis(str) {
         this.analysisArr = []

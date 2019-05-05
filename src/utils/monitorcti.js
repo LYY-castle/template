@@ -1,5 +1,5 @@
 import jQuery from 'jquery'
-import that from '@/views/monitor_phone'
+import that from '@/views/phone_monitor'
 export default (new function() {
   var uuid_list = new Array()
   var uuid_dn_list = new Array()
