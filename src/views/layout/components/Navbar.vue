@@ -1907,7 +1907,8 @@ export default {
           this.changeTitle()
           this.$store.commit('SET_LOGO', response.data.data.logo)
         } else {
-          throw response.data.message
+          $('body').addClass('theme1')
+          // throw response.data.message
         }
       })
     }
