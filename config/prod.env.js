@@ -79,25 +79,11 @@ const env_conf = {
       content: '"【安安直贷】尊敬的客户，您已成功领取3000元额度、线上自动审核，24小时内有效 http://www.anancash.com/html_aa/regist/app.html?code=ssszzz01 退订回T"'
     }
   },
-  loan: {
-    TUI_WS_SERVERURL:'"ws://119.27.179.175:12268"',
+  jd: {
+    TUI_WS_SERVERURL:'"ws://119.27.179.175:12502"',
     CTI_WS_SERVERURL:'"ws://132.232.209.250:9050/"',
     CTI_MONITOR_WS_SERVERURL:'"ws://132.232.209.250:9052/"',
-    FILE_SERVER_URL: '"http://119.27.179.175:12270"',
-    SHOW_WECHAT:false,
-    SMS: {
-      enable: false,
-      platform: '1', // 1:网关，2：领创盛世.
-      type: "4",//4大类营销短信
-      sendMessageTime: 10,//通话多少秒需要发短信
-      content: '"你好，谢谢支持"'
-    }
-  },
-  test: { // jindian.
-    TUI_WS_SERVERURL:'"ws://119.27.179.175:12088"',
-    CTI_WS_SERVERURL:'"ws://119.27.179.175:9050/"',
-    CTI_MONITOR_WS_SERVERURL:'"ws://119.27.179.175:9052/"',
-    FILE_SERVER_URL: '"http://119.27.184.157:12078"',
+    FILE_SERVER_URL: '"http://119.27.179.175:12501"',
     SHOW_WECHAT:true,
     SMS: {
       enable: false,
