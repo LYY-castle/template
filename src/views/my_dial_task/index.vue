@@ -325,7 +325,7 @@
           </el-table>
       </el-row>
     </div>
-    <el-row type="flex" v-if="hasProductInfo">
+    <el-row type="flex" v-if="hasProductInfo && campaignType === 'MARKETING'">
       <el-col class="table-container" style="width:60.1%;margin:15px auto 15px 0px;">
         <b class="font14">产品信息</b>
         <el-row style="margin-top:20px;">
@@ -418,6 +418,86 @@
             v-model="customerNote">
           </el-input>
         </div>
+      </el-col>
+    </el-row>
+    <!-- 当活动类型是服务活动时 展示问卷 -->
+    <el-row type="flex" v-if="campaignType === 'SERVICE'">
+      <el-col class="table-container">
+        <b class="font14">问卷信息</b>
+        <el-tabs v-model="tabs_questionnaire">
+          <el-tab-pane v-for="(item,index) in questionnaireTabs" :key="item.id" :label="item.name" :name="index+''">
+            <el-container>
+              <el-container style="margin-left:60px">
+                  <!-- <div class="title-content-detail">
+                    <span>{{item.name}}&nbsp;
+                    </span><br/>
+                  </div> -->
+                  <!-- <div class="survey-desc">
+                    <div class="desc-content">欢迎参加调查！答卷数据仅用于统计分析，请放心填写。题目选项无对错之分，按照实际情况选择即可。感谢您的帮助！</div>
+                  </div> -->
+                  <div class="quest-box">
+                      <el-form size="small" :model="answerData[index]">
+                          <div style="margin-top:-8px">
+                            <el-form-item v-for="(item1,index1) in item.titles" :key="index1">
+                              <div class="topic-type-content">
+                                <span>{{index1+1}}.</span>
+                                <span placeholder="标题" style="width:300px">{{item1.name}}</span>
+
+                              <!-- 单选 -->
+                                  <div class="options" v-if="item1.type===0">
+                                    <el-radio-group v-model="answerData[index][item1.id]">
+                                      <el-radio 
+                                        v-for="(a, radioIndex) in item1.options"
+                                        :key="radioIndex"
+                                        :label="a.content"
+                                        v-model="a.content"></el-radio>
+                                    </el-radio-group>
+                                  </div>
+
+                                <!-- 多选 -->
+                                <div v-else-if="item1.type===1">
+                                  <el-checkbox-group v-model="answerData[index][item1.id]">
+                                    <el-checkbox 
+                                      v-for="(a,checkboxIndex) in item1.options" 
+                                      :label="a.content" 
+                                      :key="checkboxIndex"></el-checkbox>
+                                  </el-checkbox-group>
+                                </div>
+
+                                <!-- 单行 -->
+                                <div v-else-if="item1.type===2">
+                                  <el-input 
+                                    v-model="answerData[index][item1.id]"
+                                    type="text"
+                                    clearable
+                                    style="width:478px;margin:2px" 
+                                    maxlength="45"></el-input>
+                                </div>
+
+                                <!-- 多行 -->
+                                <div v-else-if="item1.type===3">
+                                  <el-input 
+                                    v-model="answerData[index][item1.id]"
+                                    type="textarea" 
+                                    rows="4"  
+                                    resize="none" 
+                                    style="width:478px;margin:2px" 
+                                    maxlength="45" ></el-input>
+                                </div>
+                              </div>
+                            </el-form-item>
+                          </div>
+                      </el-form>
+                  </div>
+                  <!-- <div class="lastbuttons" >
+                    <div style="margin-top:8px">
+                      <el-button type="primary" size="small" @click="">完成</el-button>
+                    </div>
+                  </div> -->
+              </el-container>
+            </el-container>
+          </el-tab-pane>
+        </el-tabs>
       </el-col>
     </el-row>
     <el-row class="table-container task-status" style="margin-bottom:20px;">
@@ -611,6 +691,27 @@
       opacity:0.7;
     }
   }
+  .title-content-detail {
+    height: 64px;
+    font-size: 25px;
+    text-align: center;
+    line-height: 48px;
+    border: 1px solid #dbdbdb;
+    position: relative;
+    outline: 0;
+  }
+  .quest-box {
+    margin: 4px 0;
+    width: 100%;
+    // min-height: 550px;
+  }
+  .lastbuttons {
+    border: 1px solid #dbdbdb;
+    margin-top: 4px 0;
+    width: 100%;
+    text-align: center;
+    height: 50px;
+  }
 }
 @media screen and (min-width: 1281px) and (max-width:1367px){
   .dial-task {
@@ -666,6 +767,7 @@ import {
 import { departAgents, getDepartId } from '@/api/ctiReport'
 import { permsDepart, permsStaff } from '@/api/reportPermission'
 import { getWechatCustomer } from '@/api/wechat_list'
+import { queryOneQuestionnaire, generateQuestionnaireRecord } from '@/api/questionnaire'
 var vm = null
 
 export default {
@@ -676,6 +778,9 @@ export default {
       distributeTimeValue: null,
       modifyTimeValue: null,
       appointTimeValue: null,
+      answerData: [], // 所有问卷的填写记录
+      tabs_questionnaire: '0',
+      questionnaireTabs: [], // 所有需要展示的问卷模板
       // keepReady: true,
       autoCallDial: false, // 自动外呼
       formContainerOpen: '1',
@@ -1497,10 +1602,28 @@ export default {
             this.customerColumnInfos.push(res1.data.data.customerColumnInfos[i].customerColumn)
           }
           this.campaignType = res1.data.data.campaignTypeInfo.code
-          if (this.campaignType === 'RECRUIT') {
-            this.isRecruit = true
-          } else {
-            this.isRecruit = false
+        }
+        this.questionnaireTabs = []
+        this.answerData = []
+        //  判断是否需要查询问卷
+        if (res1.data.code === 0 && res1.data.data.questionnaireIds.length > 0) {
+          // 循环查询
+          for (let j = 0; j < res1.data.data.questionnaireIds.length; j++) {
+            queryOneQuestionnaire(res1.data.data.questionnaireIds[j]).then(response => {
+              if (response.data) {
+                if (response.data.code === 0) {
+                  this.answerData.push({})
+                  this.questionnaireTabs.push(response.data.data)
+                  for (let k = 0; k < this.questionnaireTabs[j].titles.length; k++) {
+                    if (this.questionnaireTabs[j].titles[k].type === 1) {
+                      this.$set(this.answerData[j], this.questionnaireTabs[j].titles[k].id, [])
+                    } else {
+                      this.$set(this.answerData[j], this.questionnaireTabs[j].titles[k].id, '')
+                    }
+                  }
+                }
+              }
+            })
           }
         }
       })
@@ -1647,7 +1770,7 @@ export default {
       } else {
         // 生成完整接触记录及小结
         // 判断任务状态 2：成功 3：失败  3：预约
-        if (this.selectedSummarys[0] === '1' && this.campaignType !== 'RECRUIT' && this.hasProductInfo === true) {
+        if (this.selectedSummarys[0] === '1' && this.campaignType === 'MARKETING' && this.hasProductInfo === true) {
           if (this.sumTotal <= 0) {
             this.$message.error('未选择产品或产品库存不足！')
             return false
@@ -1719,6 +1842,34 @@ export default {
             }
           })
         }
+        if (taskStatus === '2' && this.campaignType === 'SERVICE' && this.questionnaireTabs.length > 0) {
+          // 是服务活动 判断问卷记录是否填写正确
+          for (let i = 0; i < this.questionnaireTabs.length; i++) {
+          // 发送请求 填写问卷
+            const params = this.questionnaireTabs[i].titles.map(item => {
+              const obj = {
+                name: item.name,
+                type: item.type
+              }
+              if (item.type === 1) { // 多选
+                if (typeof (this.answerData[i][item.id]) === 'undefined') {
+                  // obj.options = { 'content': [{}] }
+                  obj.options = []
+                } else {
+                  obj.options = this.answerData[i][item.id].map(item => {
+                    return { 'content': item }
+                  })
+                }
+              } else {
+                obj.options = [{ 'content': typeof (this.answerData[i][item.id]) === 'undefined' ? '' : this.answerData[i][item.id] }]
+              }
+              return obj
+            })
+            console.log(params)
+            generateQuestionnaireRecord(this.taskId, this.questionnaireTabs[i].id, this.questionnaireTabs[i].name, params)
+          }
+        }
+        console.log('即将修改任务状态...')
         var selectedSummarys2 = []
         selectedSummarys2.push(this.selectedSummarys[this.selectedSummarys.length - 1])
         // 选择失败、预约 或 成功但没有产品(如招聘)的情况

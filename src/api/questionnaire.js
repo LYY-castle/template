@@ -25,11 +25,12 @@ export function queryOneQuestionnaire(id) {
   })
 }
 
-export function generateQuestionnaireRecord(templateId, templateName, allItems) {
+export function generateQuestionnaireRecord(taskId, templateId, templateName, allItems) {
   return request({
     url: '/questionnaire/generateRecord',
     method: 'post',
     data: {
+      taskId: taskId,
       templateId: templateId,
       templateName: templateName,
       recordTitles: allItems

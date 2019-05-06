@@ -422,7 +422,7 @@ export default {
   },
   data() {
     return {
-      trueOrFalse:false,
+      trueOrFalse: false,
       // 拖拽实现所要使用
       list: null,
       total: null,
@@ -435,20 +435,20 @@ export default {
       oldList: [],
       newList: [],
       // 定义大数组
-      allItems:[],
-      allItemsCheck:false,
+      allItems: [],
+      allItemsCheck: false,
       // 有无数据  是否显示
-      hideOrShowPage:false,
+      hideOrShowPage: false,
       // 题型显示隐藏
-      asideHideOrShow:true,
+      asideHideOrShow: true,
       // 查看详情时禁用input
-      look: 1,//1新建2查看3修改
+      look: 1, // 1新建2查看3修改
       // 按钮显示隐藏
-      newHideOrShow:1,//1新建2查看3修改
+      newHideOrShow: 1, // 1新建2查看3修改
       // 小工具按钮的显示隐藏
-      newModifyLook:1, //1新建2查看3修改
+      newModifyLook: 1, // 1新建2查看3修改
       // 判断标题
-      checkTitle:false,
+      checkTitle: false,
       formContainerOpen: '1',
       formContainer: this.$store.state.app.formContainer,
       selectOption_single: [],
@@ -510,9 +510,9 @@ export default {
   },
 
   methods: {
-    //新建或者修改时创建新模板  
-    createNewModel(num){
-      if(num === 1){
+    // 新建或者修改时创建新模板
+    createNewModel(num) {
+      if (num === 1) {
         this.allItems.push({
           type: 0,
           name: '',
@@ -528,7 +528,7 @@ export default {
             }
           ]
         })
-      }else if(num === 2){
+      } else if (num === 2) {
         this.allItems.push({
           type: 1,
           name: '',
@@ -544,7 +544,7 @@ export default {
             }
           ]
         })
-      }else if(num === 3){
+      } else if (num === 3) {
         this.allItems.push({
           type: 2,
           name: '',
@@ -554,7 +554,7 @@ export default {
             }
           ]
         })
-      }else if(num === 4){
+      } else if (num === 4) {
         this.allItems.push({
           type: 3,
           name: '',
@@ -565,7 +565,7 @@ export default {
           ]
         })
       }
-      this.hideOrShowPage=true
+      this.hideOrShowPage = true
       console.log(this.allItems)
     },
     // 收起点击事件
@@ -608,14 +608,14 @@ export default {
     },
     // 动态设置placeholder
     setplaceHolder(num) {
-      if(num == 0){
-        return "单选题"
-      }else if(num == 1){
-        return "多选题"
-      }else if(num == 2){
-        return "单行填空"
-      }else if(num == 3){
-        return "多行填空"
+      if (num == 0) {
+        return '单选题'
+      } else if (num == 1) {
+        return '多选题'
+      } else if (num == 2) {
+        return '单行填空'
+      } else if (num == 3) {
+        return '多行填空'
       }
     },
     // 删除数组元素
@@ -629,7 +629,7 @@ export default {
     // 新建单选项
     addRadio(options) {
       options.push({
-        content: '',
+        content: ''
       })
     },
     // 删除多选
@@ -642,7 +642,7 @@ export default {
         content: ''
       })
     },
-    
+
     removeBlank(a, index) {
       a.splice(index, 1)
     },
@@ -653,7 +653,7 @@ export default {
     },
     // 生成问卷
     makeQuestionnaire(questionnaireName, allItems) {
-     if (this.questionnaireName === '' || this.questionnaireName.split(' ').join('').length === 0) {
+      if (this.questionnaireName === '' || this.questionnaireName.split(' ').join('').length === 0) {
         this.$message.error('请先输入问卷标题！')
         return
       } else {
@@ -662,15 +662,15 @@ export default {
             if (res.data && res.data.code === 0 && res.data.data.length > 0) {
               this.$message.error('已存在同名的问卷模板！')
               return
-            }else{
+            } else {
               // 判断是否还有未填项
               this.hasBlanksOrNotCreate(allItems)
               console.log(1234567890)
-              if (this.allItemsCheck===true) {
+              if (this.allItemsCheck === true) {
                 console.log('到这里')
                 var data = {
-                    name:questionnaireName,
-                    titles:allItems
+                  name: questionnaireName,
+                  titles: allItems
                 }
                 generateQuestionnaire(
                   data
@@ -693,11 +693,9 @@ export default {
                   }
                 })
               }
-
             }
           })
       }
-      
     },
     // 判断名称是否为空
     checkEditName(questionnaireName) {
@@ -711,47 +709,47 @@ export default {
       }
     },
     // 修改问卷模板
-    editQuestionnaire(editQuestionnaireId,questionnaireName,allItems) {
-      console.log(editQuestionnaireId,questionnaireName)
+    editQuestionnaire(editQuestionnaireId, questionnaireName, allItems) {
+      console.log(editQuestionnaireId, questionnaireName)
       if (this.questionnaireName === '' || this.questionnaireName.split(' ').join('').length === 0) {
         this.$message.error('请先输入问卷标题！')
         return
       } else {
-        checkModifyByQuestionnaireName(editQuestionnaireId,questionnaireName)
-        .then(res => {
+        checkModifyByQuestionnaireName(editQuestionnaireId, questionnaireName)
+          .then(res => {
             if (res.data.code === 1) {
               this.$message.error(res.data.message)
               return
-            }else{
-               if(allItems.length === 0){
-                  this.$message.error('未选择任何类型！')
-                  return
-              }else{
+            } else {
+              if (allItems.length === 0) {
+                this.$message.error('未选择任何类型！')
+                return
+              } else {
                 this.hasBlanksOrNotCreate(allItems)
-                if(this.allItemsCheck===true){
+                if (this.allItemsCheck === true) {
                   var data = {
-                      id:editQuestionnaireId,
-                      name:questionnaireName,
-                      titles:allItems
+                    id: editQuestionnaireId,
+                    name: questionnaireName,
+                    titles: allItems
                   }
-                   modifyQuestionnaire(data)
+                  modifyQuestionnaire(data)
                     .then(response => {
-                    if (response.data && response.data.code === 0) {
-                      this.$message.success(response.data.message)
-                      this.questionnaireName = ''
-                      this.allItems = []
-                      this.req.modifier = ''
-                      this.req.name = ''
-                      this.req.beginTime = ''
-                      this.req.afterTime = ''
-                      this.req.pageNo = 1
-                      this.searchByKeyWords(this.req)
-                      this.isMainPage = true
-                      this.isDetail = false
-                    } else {
-                      this.$message.error(response.data.message)
-                    }
-                  })
+                      if (response.data && response.data.code === 0) {
+                        this.$message.success(response.data.message)
+                        this.questionnaireName = ''
+                        this.allItems = []
+                        this.req.modifier = ''
+                        this.req.name = ''
+                        this.req.beginTime = ''
+                        this.req.afterTime = ''
+                        this.req.pageNo = 1
+                        this.searchByKeyWords(this.req)
+                        this.isMainPage = true
+                        this.isDetail = false
+                      } else {
+                        this.$message.error(response.data.message)
+                      }
+                    })
                 }
               }
             }
@@ -797,7 +795,7 @@ export default {
 
     // 查询详情
     checkDetail(id) {
-      this.allItems=[]
+      this.allItems = []
       this.oneDetails.titles = {
         // 单个问卷详情数据
         modifier: '',
@@ -827,10 +825,10 @@ export default {
         })
     },
     // 展示修改问卷div
-    showeditDetails(id){
-      this.allItems=[]
+    showeditDetails(id) {
+      this.allItems = []
       queryOneQuestionnaire(id).then(response => {
-        if (response.data.code === 0) {//请求成功
+        if (response.data.code === 0) { // 请求成功
           this.questionnaireName = response.data.data.name
           this.editQuestionnaireId = response.data.data.id
           this.allItems = response.data.data.titles
@@ -839,39 +837,39 @@ export default {
       })
     },
     // 新建或者修改时判断页面是否还有未填的项
-    hasBlanksOrNotCreate(allItems){
+    hasBlanksOrNotCreate(allItems) {
       this.allItemsCheck = false
-      if (allItems.length > 0) {//数组不为空遍历数组
+      if (allItems.length > 0) { // 数组不为空遍历数组
         for (var i = 0; i < allItems.length; i++) {
-          if(allItems[i].name !==''){//标题名不为空 根据题型判断option
-            if(allItems[i].type===0 || allItems[i].type===1){//单选多选题
+          if (allItems[i].name !== '') { // 标题名不为空 根据题型判断option
+            if (allItems[i].type === 0 || allItems[i].type === 1) { // 单选多选题
               if (allItems[i].options.length !== 0) {
                 for (var j = 0; j < allItems[i].options.length; j++) {
                   if (allItems[i].options[j].content === '') {
                     this.allItemsCheck = false
-                    this.$message.error('第'+(i+1)+'题第'+(j+1)+'个选项还有信息未完善！')
+                    this.$message.error('第' + (i + 1) + '题第' + (j + 1) + '个选项还有信息未完善！')
                     return
                   } else {
                     this.allItemsCheck = true
                   }
                 }
-              }else{
+              } else {
                 this.allItemsCheck = false
-                this.$message.error('第'+(i+1)+'题还有信息未完善！')
+                this.$message.error('第' + (i + 1) + '题还有信息未完善！')
                 return
               }
-            }else if(allItems[i].type===2 || allItems[i].type===3){//单行，多行
-              if(allItems[i].options !== ''){
+            } else if (allItems[i].type === 2 || allItems[i].type === 3) { // 单行，多行
+              if (allItems[i].options !== '') {
                 this.allItemsCheck = true
-              }else{
+              } else {
                 this.allItemsCheck = false
-                this.$message.error('第'+(i+1)+'题还有信息未完善！')
+                this.$message.error('第' + (i + 1) + '题还有信息未完善！')
                 return
               }
             }
-          }else{
+          } else {
             this.allItemsCheck = false
-            this.$message.error('第'+(i+1)+'题还有信息未完善！')
+            this.$message.error('第' + (i + 1) + '题还有信息未完善！')
             return
           }
         }
@@ -939,12 +937,12 @@ export default {
             }
           })
       }
-    },
+    }
   },
   mounted() {
     this.formContainer()
     this.handleChangeAcitve()
-    this.searchByKeyWords(this.req);
+    this.searchByKeyWords(this.req)
     this.$dragging.$on('dragged', ({ value }) => {
       console.log(value.item)
       console.log(value.list)
@@ -953,7 +951,7 @@ export default {
       console.log(this.allItems)
     })
     this.$dragging.$on('dragend', () => {
-        
+
     })
   },
 
@@ -967,6 +965,6 @@ export default {
   vuex: {},
 
   created() {
-  },
+  }
 }
 </script>
