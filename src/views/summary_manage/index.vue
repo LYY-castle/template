@@ -34,7 +34,7 @@
         <div class="font14 bold">小结管理表</div>
       </el-row>
       <el-row class="margin-bottom-20">
-        <el-button type="success" size="small" @click="clearForm(addSummary,'addSummary');getBasicSummaries();addVisible=true;">新建</el-button>
+        <el-button type="success" size="small" @click="clearForm(addSummary,'addSummary');addVisible=true;">新建</el-button>
         <el-button type="danger" size="small" @click="batchDelVisible=true">批量删除</el-button>
       </el-row>
       <el-row>
@@ -62,6 +62,14 @@
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
               {{ scope.row.summaryName }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="小结类型"
+            :show-overflow-tooltip="true">
+            <template slot-scope="scope">
+              {{ scope.row.summaryType === '0' ? '呼出' : '呼入' }}
             </template>
           </el-table-column>
           <el-table-column
@@ -205,17 +213,38 @@
         <el-form-item label="小结标题" prop="summaryName">
           <el-input v-model="addSummary.summaryName" size="small" maxlength="50" placeholder="小结标题（限长50字符）"></el-input>
         </el-form-item>
+        <el-form-item>
+          <span slot="label">
+            <span style="color:#f56c6c">*</span> 小结类型
+          </span>
+          <el-select v-model="addSummary.summaryType" placeholder="请选择小结类型">
+            <el-option v-for="item in summaryTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="addSummary.description" type="textarea" size="small" maxlength="255" placeholder="备注（限长255字符）"></el-input>
         </el-form-item>
         <div class="expand">
-          <div>
+          <div v-show="addSummary.summaryType === '0'">
             <!-- <el-button size="small" @click="handleAddTop">新建小结</el-button> -->
             <el-tree class="expand-tree"
             key="tree-three"
             ref="treeThree"
             v-if="isLoadingTree"
-            :data="basicNodule"
+            :data="basicCallOutNodule"
+            highlight-current
+            :props="defaultProps"
+            :expand-on-click-node="true"
+            :render-content="renderContent"
+            :default-expanded-keys="defaultExpandKeys"
+            @node-click="handleNodeClick"></el-tree>
+          </div>
+          <div v-show="addSummary.summaryType === '1'">
+            <el-tree class="expand-tree"
+            key="tree-three"
+            ref="treeThree"
+            v-if="isLoadingTree"
+            :data="basicCallInNodule"
             highlight-current
             :props="defaultProps"
             :expand-on-click-node="true"
@@ -293,7 +322,8 @@ import {
   delOneNoduleById,
   delNoduleByNoduleId,
   delNodulesByNoduleIds,
-  getBasicSummaries
+  getBasicCallOutSummaries,
+  getBasicCallInSummaries
 } from '@/api/nodule_list'
 import { formatDateTime, clone } from '@/utils/tools'
 
@@ -302,8 +332,19 @@ export default {
   name: 'nodule_list',
   data() {
     return {
+      summaryTypes: [
+        {
+          label: '呼出',
+          value: '0'
+        },
+        {
+          label: '呼入',
+          value: '1'
+        }
+      ],
       timeValue: null,
-      basicNodule: [],
+      basicCallOutNodule: [], // 呼出基本小结
+      basicCallInNodule: [], // 呼入基本小结
       visibleClass: '',
       formContainerOpen: '1',
       formContainer: this.$store.state.app.formContainer,
@@ -353,6 +394,7 @@ export default {
       },
       addSummary: {
         summaryName: '',
+        summaryType: '0',
         summaryDetailInfos: [],
         description: ''
       },
@@ -398,14 +440,20 @@ export default {
   },
   methods: {
     getBasicSummaries() {
-      getBasicSummaries().then(response => {
+      getBasicCallOutSummaries().then(response => {
         if (response.data && response.data.code === 0) {
-          this.basicNodule = response.data.data
+          this.basicCallOutNodule = response.data.data
         }
+      }).catch(error => {
+        console.error(error)
       })
-        .catch(error => {
-          console.error(error)
-        })
+      getBasicCallInSummaries().then(response => {
+        if (response.data && response.data.code === 0) {
+          this.basicCallInNodule = response.data.data
+        }
+      }).catch(error => {
+        console.error(error)
+      })
     },
     handleChangeAcitve(active = ['1']) {
       if (active.length) {
@@ -500,6 +548,9 @@ export default {
       for (const key in obj) {
         if (key !== 'pageNo') {
           obj[key] = ''
+        }
+        if (key === 'summaryType') {
+          obj[key] = '0'
         }
       }
       if (this.$refs[formName] !== undefined) {
@@ -634,16 +685,28 @@ export default {
     // 新建小结
     addNodule(addSummary) {
       var arr = []
-      for (let i = 0; i < this.basicNodule.length; i++) {
-        if (this.basicNodule[i].summaryDetailInfos && this.basicNodule[i].summaryDetailInfos.length > 0) {
-          for (let j = 0; j < this.basicNodule[i].summaryDetailInfos.length; j++) {
-            if (this.basicNodule[i].summaryDetailInfos[j].summaryDetailInfos && this.basicNodule[i].summaryDetailInfos[j].summaryDetailInfos.length > 0) {
-              arr.push(this.basicNodule[i].summaryDetailInfos[j].summaryDetailInfos)
+      let finalArr = []
+      if (addSummary.summaryType === '0') {
+        for (let i = 0; i < this.basicCallOutNodule.length; i++) {
+          if (this.basicCallOutNodule[i].summaryDetailInfos && this.basicCallOutNodule[i].summaryDetailInfos.length > 0) {
+            for (let j = 0; j < this.basicCallOutNodule[i].summaryDetailInfos.length; j++) {
+              if (this.basicCallOutNodule[i].summaryDetailInfos[j].summaryDetailInfos && this.basicCallOutNodule[i].summaryDetailInfos[j].summaryDetailInfos.length > 0) {
+                arr.push(this.basicCallOutNodule[i].summaryDetailInfos[j].summaryDetailInfos)
+              }
+            }
+          }
+        }
+      } else {
+        for (let i = 0; i < this.basicCallInNodule.length; i++) {
+          if (this.basicCallInNodule[i].summaryDetailInfos && this.basicCallInNodule[i].summaryDetailInfos.length > 0) {
+            for (let j = 0; j < this.basicCallInNodule[i].summaryDetailInfos.length; j++) {
+              if (this.basicCallInNodule[i].summaryDetailInfos[j].summaryDetailInfos && this.basicCallInNodule[i].summaryDetailInfos[j].summaryDetailInfos.length > 0) {
+                arr.push(this.basicCallInNodule[i].summaryDetailInfos[j].summaryDetailInfos)
+              }
             }
           }
         }
       }
-      let finalArr = []
       for (let k = 0; k < arr.length; k++) {
         finalArr = finalArr.concat(arr[k])
       }
@@ -652,6 +715,7 @@ export default {
       }
       addSummary.summaryDetailInfos = finalArr
       this.addVisible = false
+      console.log(addSummary)
       addNodule(addSummary)
         .then(response => {
           if (response.data.code === 0) {
