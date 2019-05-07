@@ -286,8 +286,11 @@ ul,p,h1,h2,h3,h4,h5,h6,dl,dd{
 .radio-fail.is-checked{
   span.el-radio__input.is-checked{
     .el-radio__inner{
-      background:#ED2135;
-      border:#ED2135;
+      // background:#ED2135;
+      border-color:#ED2135;
+      &::after{
+        background-color: #ED2135;
+      }
     }
   }
   span.el-radio__label{
@@ -298,8 +301,11 @@ ul,p,h1,h2,h3,h4,h5,h6,dl,dd{
 .radio-order.is-checked{
   span.el-radio__input.is-checked{
     .el-radio__inner{
-      background:#28CC6C;
-      border:#28CC6C;
+      // background:#28CC6C;
+      border-color:#28CC6C;
+      &::after{
+        background-color: #28CC6C;;
+      }
     }
   }
   span.el-radio__label{
@@ -337,4 +343,33 @@ ul,p,h1,h2,h3,h4,h5,h6,dl,dd{
 }
 .el-form-item.is-success .el-input__inner, .el-form-item.is-success .el-input__inner:focus, .el-form-item.is-success .el-textarea__inner, .el-form-item.is-success .el-textarea__inner:focus {
   border-color: #dcdfe6;
+}
+
+// checkbox颜色
+.checkbox-success.is-checked{
+  span.el-checkbox__input.is-checked{
+    .el-checkbox__inner{
+      border-color:#28CC6C;
+      &::after{
+        border-color:#28CC6C;
+      }
+    }
+  }
+  span.el-checkbox__label{
+    color:#28CC6C;
+
+  }
+}
+.checkbox-fail.is-checked{
+  span.el-checkbox__input.is-checked{
+    .el-checkbox__inner{
+      border-color:#ED2135;
+      &::after{
+        border-color: #ED2135;
+      }
+    }
+  }
+  span.el-checkbox__label{
+    color:#ED2135;
+  }
 }

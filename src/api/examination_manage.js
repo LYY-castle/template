@@ -13,7 +13,7 @@ export function generateReq(req, userId) {
     url: 'testPapers/generateTestPapers',
     method: 'get',
     params: {
-      name: req.name,
+      name: req.testPapersName,
       complexity: req.complexity,
       useObject: req.useObject,
       userId: userId
