@@ -85,7 +85,8 @@
           </el-table-column>
           <el-table-column fixed align="center" label="客户姓名" :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <a @click="transferParameters(scope.row.taskId, scope.row.campaignId,scope.row.customerId,scope.row.customerPhone)" size="medium">{{scope.row.customerName}}</a>
+              <!-- <a @click="transferParameters(scope.row.taskId, scope.row.campaignId,scope.row.customerId,scope.row.customerPhone)" size="medium">{{scope.row.customerName}}</a> -->
+              {{scope.row.customerName}}
             </template>
           </el-table-column>
           <el-table-column align="center" label="接触类型" :show-overflow-tooltip="true">
@@ -904,22 +905,22 @@ audio {
         this.timeValue = null
       },
       // 跳转到别的组件
-      transferParameters(taskId, campaignId, customerId, customerPhone) {
-        queryTaskByTaskId(taskId).then(response => {
-          if (response.data.code === 0) {
-            const isBlacklist = response.data.data.isBlacklist
-            sessionStorage.setItem('isDialTask', false)
-            this.$router.push({
-              path: process.env.BUILT_IN_ROUTERS.myDialTask,
-              query: {// 通过query 传递参数
-                taskId: taskId, campaignId: campaignId, customerId: customerId, isBlacklist: isBlacklist, customerPhone: customerPhone
-              }
-            })
-          }
-        }).catch(error => {
-          console.log(error)
-        })
-      },
+      // transferParameters(taskId, campaignId, customerId, customerPhone) {
+      //   queryTaskByTaskId(taskId).then(response => {
+      //     if (response.data.code === 0) {
+      //       const isBlacklist = response.data.data.isBlacklist
+      //       sessionStorage.setItem('isDialTask', false)
+      //       this.$router.push({
+      //         path: process.env.BUILT_IN_ROUTERS.myDialTask,
+      //         query: {// 通过query 传递参数
+      //           taskId: taskId, campaignId: campaignId, customerId: customerId, isBlacklist: isBlacklist, customerPhone: customerPhone
+      //         }
+      //       })
+      //     }
+      //   }).catch(error => {
+      //     console.log(error)
+      //   })
+      // },
       async checkPermission() {
         // 判断现场主管
         await permsManager(localStorage.getItem('agentId')).then(response => {
