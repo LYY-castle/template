@@ -308,22 +308,6 @@ export default {
   mounted() {
     this.findAllBatch()
     this.findRegionByRegionParentId('0', 1)
-    this.tableData2 = [
-      {
-        departName: 'asdasdasd',
-        noUseNumLabel: 'asdasd',
-        useNumLabel: 'asdasdas',
-        noUseNum: 123,
-        useNum: 123
-      },
-      {
-        departName: 'asdasdasd',
-        noUseNumLabel: 'asdasd',
-        useNumLabel: 'asdasdas',
-        noUseNum: 123,
-        useNum: 123
-      }
-    ]
   },
   created() {
     new Promise((resolve, reject) => {
