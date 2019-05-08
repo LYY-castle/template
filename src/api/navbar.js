@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import requestV2 from '@/utils/request-v2'
 
 export function addComeContact(req) {
   return request({
@@ -28,13 +29,21 @@ export function addHangupContact(req) {
     data: req
   })
 }
+// export function getPhoneOwn(req) {
+//   return request({
+//     url: '/customer/query/phone/phoneReturn',
+//     method: 'get',
+//     params: { 'phone': req }
+//   })
+// }
 export function getPhoneOwn(req) {
-  return request({
-    url: '/customer/query/phone/phoneReturn',
+  return requestV2({
+    url: '/customer/phoneAddress/query/phone/phoneReturn',
     method: 'get',
     params: { 'phone': req }
   })
 }
+
 export function getMenu() {
   return request({
     url: '/login/getNewMenu',

@@ -216,7 +216,7 @@
             fixed="right"
             width="180">
           <template slot-scope="scope">
-            <a v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb) && scope.row.staffId === aId" @click="sumTotal=0;products=[];customerNote='';changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);keepReady=true;" size="small" type="text">
+            <a v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb) && scope.row.staffId === aId" @click="sumTotal=0;products=[];customerNote='';changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);keepReady=true;dialTo(scope.row.taskId,scope.row.campaignId,scope.row.isBlacklist,scope.row.customerPhone);" size="small" type="text">
               <img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>
               拨打
             </a>
@@ -254,11 +254,11 @@
   </div>
 
   <!-- 客户详情 div层 -->
-  <div class="dial-task" v-else>
+  <div class="dial-task" v-else :style="autoStyle" ref="dialtask">
     <div class="table-container" style="margin-top:0;">
       <b class="font14">客户信息</b>
       <div style="display:inline-block;position:relative;top:3px;margin-left:10px;">
-        <img v-if="!hideDialTo" style="height:16px;cursor:pointer;" src="../../../static/images/dial_normal.png" alt="拨打" @click="dialTo(taskId,campaignId,isBlacklist,customerPhone)">
+        <img ref="dialButton" v-if="!hideDialTo" style="height:16px;cursor:pointer;" src="../../../static/images/dial_normal.png" alt="拨打" @click="dialTo(taskId,campaignId,isBlacklist,customerPhone)">
         <img v-if="hideDialTo" style="height:16px;cursor:disable;" src="../../../static/images/dial_disable.png" alt="拨打">
         <el-button :disabled="checkBindWechat(telCustomerInfos.customerId)" @click="toWeChat" class="wechat-btn" type="text" v-if="show_wechat==='true'"><svg-icon icon-class="wechat" class="icon-size" style="width:20px;height:16px;"/></el-button>
       </div>
@@ -505,16 +505,18 @@
         <el-form :inline="true" size="mini">
           <el-col :span="7" style="height:48px;">
             <el-form-item label="话后小结：" style="margin-bottom:12px;">
-              <el-cascader
-                size="mini"
-                placeholder="请选择小结"
-                v-model='selectedSummarys'
-                :options="nodulesTree"
-                filterable
-                :props="summaryTreeProps"
-                :show-all-levels="false"
-                @change="handleNoduleChange">
-              </el-cascader>
+              <div>
+                <el-cascader
+                  size="mini"
+                  placeholder="请选择小结"
+                  v-model='selectedSummarys'
+                  :options="nodulesTree"
+                  filterable
+                  :props="summaryTreeProps"
+                  :show-all-levels="false"
+                  @change="handleNoduleChange">
+                </el-cascader>
+              </div>
             </el-form-item>
           </el-col>
           <el-col :span="7" v-show="this.selectedSummarys[0] === '3'">
@@ -536,8 +538,8 @@
           <el-col :span="4" style="height:48px;line-height:30px;" v-if="showSendMessage === true && campaignType !== 'RECRUIT' && hasProductInfo === true">
             <el-checkbox v-model="sendMessage" checked="checked">发送支付短信</el-checkbox>
           </el-col>
-          <el-col :span="5" style="height:48px;line-height:34px;" v-if="showAutoDial===true">
-            <el-checkbox checked="checked" v-model="autoDialNext">完成后显示下一个客户</el-checkbox>
+          <el-col :span="5" style="height:48px;line-height:34px;" v-if="showAutoDial===true && !autoCallDial">
+            <el-checkbox checked="checked" v-model="autoDialNext">完成后继续拨打下一个客户</el-checkbox>
           </el-col>
           <el-col :span="5" style="height:48px;line-height:34px;" v-if="autoCallDial">
             <el-checkbox checked="checked" v-model="autoCalllNext">完成后继续自动外呼</el-checkbox>
@@ -564,7 +566,7 @@
                 type="textarea"
                 :maxlength="100"
                 :autosize="{ minRows: 4, maxRows: 6}"
-                v-model="summary_description">
+                v-model="summary_description">{{summary_description}}
               </el-input>
             </el-col>
           </el-form-item>
@@ -572,7 +574,7 @@
       </el-row>
       <el-row>
         <div style="text-align:center">
-          <el-button plain type="primary" size="small" @click="returnList();customerNote='';sumTotal=0;products=[];" style="margin-right:40px;">关闭</el-button>
+          <el-button plain type="primary" size="small" @click="returnList();customerNote='';sumTotal=0;products=[];resetReview();" style="margin-right:40px;">返回</el-button>
           <a href="javascript:void(0);" @click="generateRecord()"><el-button type="primary" size="small">完成</el-button></a>
         </div>
       </el-row>
@@ -768,13 +770,16 @@ import { departAgents, getDepartId } from '@/api/ctiReport'
 import { permsDepart, permsStaff } from '@/api/reportPermission'
 import { getWechatCustomer } from '@/api/wechat_list'
 import { queryOneQuestionnaire, generateQuestionnaireRecord } from '@/api/questionnaire'
+import { getLocalPhonePrefix, getNonLocalPhonePrefix } from '@/config/phone_config_codes'
 var vm = null
 
 export default {
-  name: 'dial_task',
+  name: 'my_dial_task',
 
   data() {
     return {
+      autoStyle: {}, // 控制窗口大小，动态出现滚动条，用于点击完成之后，置顶功能
+      customerPhones: [], // 快速拨打号码
       distributeTimeValue: null,
       modifyTimeValue: null,
       appointTimeValue: null,
@@ -783,6 +788,7 @@ export default {
       questionnaireTabs: [], // 所有需要展示的问卷模板
       // keepReady: true,
       autoCallDial: false, // 自动外呼
+      reViewAutoCallDial: false, // 自动外呼
       formContainerOpen: '1',
       formContainer: this.$store.state.app.formContainer,
       show_wechat: `${process.env.SHOW_WECHAT}`,
@@ -798,9 +804,11 @@ export default {
       sumInfo: new Map(), // 所选中的产品
       checks: {},
       products: [], // 活动下的产品,
+      tempProducts: [], // 用来回显切换页面时的缓存
       productNums: [], // 活动下的产品库存
       isRecruit: false,
-      addDays: '0',
+      addDays: '',
+      reViewAddDays: '', // 回显天数
       summariesInfo: [], // 小结下拉选择
       campaignsInfo: [], // 活动下拉选择
       taskStatusOptions: [
@@ -842,6 +850,7 @@ export default {
       isLastContactTime: false, // 判断是否是最后一次拨打次数
       isDialTask: true, // 判断是进入哪个界面  true为拨打任务  false为 拨打任务详情
       campaignType: '', // 活动类型
+      reViewCampaignType: '', // 活动类型
       taskId: '', // 任务id
       campaignId: '', // 活动id
       isBlacklist: '', // 判断是否是黑名单
@@ -861,6 +870,7 @@ export default {
       contactRecord: [], // 接触记录信息
       recordId: '', // 判断是否拨打电话的接触记录id
       appointTime: '', // 预约时间
+      reViewAppointTime: '', // 回显预约时间
       hasProductInfo: false, // 是否有产品的标志
       productInfo: [], // 需要展示的产品的id
       selectedProduct: {}, // 选中的需要生成的产品信息
@@ -868,10 +878,13 @@ export default {
       order_Params: {}, // 即将生成订单的参数
       activeTab: '', // 产品展示项
       showAutoDial: false, // 是否展示自动拨打下一个
+      reViewShowAutoDial: false, // 是否展示自动拨打下一个
       autoDialNext: true, // 完成后自动拨打下一个
       autoCalllNext: true, // 是否继续自动外呼
       showSendMessage: false, // 是否展示发送支付短信
+      reViewShowSendMessage: false, // 是否展示发送支付短信
       sendMessage: true, //  发送支付短信checkbox
+      reViewSendMessage: false, // 回显支付短信发送
       nodulesTree: [], // 需要展示的小结树 数据
       summaryTreeProps: {
         children: 'summaryDetailInfos',
@@ -879,6 +892,7 @@ export default {
         value: 'id'
       },
       selectedSummarys: [], // 选中的小结id
+      reViewSelectedSummarys: [], // 回显选中的小结
       summary_description: '', // 小结备注
       // 查询条件
       req: {
@@ -916,18 +930,55 @@ export default {
   //   }
   // },
   methods: {
+    changePhoneNum(phone) { // 改手机号为11位正常手机号
+      let result = ''
+      if (typeof phone === 'undefined' || phone === null || phone.trim() === '') return
+      switch (phone.length) {
+        case 12:
+          if (phone.substring(0, 1) === getLocalPhonePrefix()) {
+            result = phone.substring(1)
+          } else {
+            result = phone
+          }
+          break
+        case 13:
+          if (phone.substring(0, 2) === getNonLocalPhonePrefix()) {
+            result = phone.substring(2)
+          } else {
+            result = phone
+          }
+          break
+        default:
+          result = phone
+          break
+      }
+      return result
+    },
+    resetReview() { // 清空回显数据
+      this.reViewAddDays = ''
+      this.reViewAutoCallDial = false
+      this.reViewCampaignType = ''
+      this.reViewRadio = ''
+      this.reViewAppointTime = ''
+      this.reViewShowAutoDial = false
+      this.reViewShowSendMessage = false
+      this.reViewSendMessage = false
+      this.reViewSelectedSummarys = []
+      this.tempProducts = []
+      this.summary_description = ''
+    },
     changeKeepReady(val) {
       this.$store.commit('SET_KEEPREADY', val)
     },
     showContent(item) {
       switch (item) {
-        case 'customerId':return this.customerInfo.customerId
-        case 'sex': return this.showSex(this.customerInfo.customerSex)
-        case 'mobile': return this.customerPhone
-        case 'address': return this.customerInfo.address
+        case 'customerId':return this.customerInfo.customerId + ''
+        case 'sex': return this.showSex(this.customerInfo.customerSex) + ''
+        case 'mobile': return this.customerPhone + ''
+        case 'address': return this.customerInfo.address + ''
         case 'score': return this.customerInfo.score + ''
-        case 'idNumber': return this.customerInfo.idNo
-        case 'remark': return this.customerInfo.remark
+        case 'idNumber': return this.customerInfo.idNo + ''
+        case 'remark': return this.customerInfo.remark + ''
         default : return ''
       }
     },
@@ -1028,7 +1079,11 @@ export default {
         localStorage.getItem('reasonCode') === '-1' ||
         localStorage.getItem('reasonCode') === '-2'
       ) {
-        this.$message.error('请先登录话机！')
+        this.$message({
+          message: '请先登录话机！',
+          type: 'error',
+          duration: 1000
+        })
         return
       } else {
         // this.inNodisturbPhones(customerPhone)
@@ -1056,7 +1111,11 @@ export default {
                             response1.data.data.status === '2' ||
                         response1.data.data.status === '3'
                           ) {
-                            vm.$message.error('该拨打任务已结束！')
+                            vm.$message({
+                              message: '该拨打任务已结束！',
+                              type: 'error',
+                              duration: 1000
+                            })
                             return
                           } else {
                             localStorage.setItem('global_taskId', taskId)
@@ -1071,7 +1130,11 @@ export default {
                             response1.data.data.status === '2' ||
                         response1.data.data.status === '3'
                           ) {
-                            vm.$message.error('该拨打任务已结束！')
+                            vm.$message({
+                              message: '该拨打任务已结束！',
+                              type: 'error',
+                              duration: 1000
+                            })
                             return
                           } else {
                             localStorage.setItem('global_taskId', taskId)
@@ -1084,13 +1147,21 @@ export default {
                     vm.hideDialTo = true
                     vm.canContact = 0
                     // clearInterval(this.interval)
-                    vm.$message.error('超过拨打限制次数！')
+                    vm.$message({
+                      message: '超过拨打限制次数！',
+                      type: 'error',
+                      duration: 1000
+                    })
                     return
                   }
                 }
               })
             } else {
-              vm.$message.error('该号码在免访号段或黑名单中！')
+              vm.$message({
+                message: '该号码在免访号段或黑名单中！',
+                type: 'error',
+                duration: 1000
+              })
               return
             }
           })
@@ -1124,9 +1195,13 @@ export default {
     normalDial(taskId, campaignId, customerPhone) {
       this.hideDialTo = true
       if (localStorage.getItem('agentId')) {
-        const reasoncode = JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode
+        const reasoncode = localStorage.getItem(localStorage.getItem('agentId')) ? JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode : '-2'
         if (reasoncode === '-2' || reasoncode === '-3' || reasoncode === '-4' || reasoncode === '0' || reasoncode === '-100' || reasoncode === '-101' || reasoncode === '-5' || reasoncode === '-6') {
-          this.$message.error('请在示忙或后处理状态下拨打号码！')
+          this.$message({
+            message: '请在示忙或后处理状态下拨打号码！',
+            type: 'error',
+            duration: 1000
+          })
           return
         }
       }
@@ -1143,7 +1218,11 @@ export default {
               this.getRecordId(taskId, campaignId)
             }, 3000)
           } else {
-            this.$message.error('请重新登录话机！')
+            this.$message({
+              message: '请重新登录话机！',
+              type: 'error',
+              duration: 1000
+            })
             return
           }
         })
@@ -1159,7 +1238,11 @@ export default {
             this.getRecordId(taskId, campaignId)
           }, 3000)
         } else {
-          this.$message.error('请重新登录话机！')
+          this.$message({
+            message: '请重新登录话机！',
+            type: 'error',
+            duration: 1000
+          })
           return
         }
       }
@@ -1175,6 +1258,15 @@ export default {
           }
         }
       })
+    },
+    // 判断是否需要显示发送支付短信的checkbox
+    setSendMessage(radio) {
+      if (radio === '2') {
+        this.showSendMessage = true
+      } else {
+        this.showSendMessage = false
+        this.sendMessage = false
+      }
     },
     // 小结级联选择事件
     handleNoduleChange(arr) {
@@ -1367,6 +1459,7 @@ export default {
           this.campaignIds.push(val[i].campaignId)
           this.isBlacklists.push(val[i].isBlacklist)
           this.customerIds.push(val[i].customerId)
+          this.customerPhones.push(val[i].customerPhone)
         }
       }
     },
@@ -1405,9 +1498,9 @@ export default {
             vm.activeTab = ''
             vm.canContact = 1
             vm.addDays = '0'
-            vm.summary_description = ''
+            vm.summary_description = vm.summary_description ? vm.summary_description : ''
             vm.appointTime = ''
-            vm.selectedSummarys = []
+            // vm.selectedSummarys = []
             vm.showDetailInfos(taskId, campaignId, customerId, isBlacklist, customerPhone)
             vm.sendMessageToNavbar(vm.isDialTask)
             sessionStorage.setItem('isDialTask', vm.isDialTask)
@@ -1415,7 +1508,11 @@ export default {
             if (vm.isDialTask && customerPhone === '') { // 说明是刷新页面的问题
 
             } else {
-              vm.$message.error('该客户在黑名单或免访号段中,无法拨打!')
+              vm.$message({
+                message: '该客户在黑名单或免访号段中,无法拨打!',
+                type: 'error',
+                duration: 1000
+              })
             }
             vm.returnList()
           }
@@ -1439,13 +1536,19 @@ export default {
     // 快速拨打勾选
     quickDialto() {
       if (this.taskIds.length === 0) {
-        this.$message.error('您还未选中任务，或选中的任务未包含可拨打客户')
+        this.$message({
+          message: '您还未选中任务，或选中的任务未包含可拨打客户!',
+          type: 'error',
+          duration: 1000
+        })
       } else {
         sessionStorage.setItem('quickDialto', true)
+        this.autoCallDial = false// 退出自动外呼
         this.taskId = this.taskIds[0]
         this.campaignId = this.campaignIds[0]
         this.isBlacklist = this.isBlacklists[0]
         this.customerId = this.customerIds[0]
+        this.customerPhone = this.customerPhones[0]
         sessionStorage.setItem('setDetails', JSON.stringify({ 'taskIds': this.taskIds, 'campaignIds': this.campaignIds, 'isBlacklists': this.isBlacklists, 'customerIds': this.customerIds }))
         // this.$store.dispatch('setDetails', [this.taskIds, this.campaignIds, this.isBlacklists, this.customerIds])
         this.canContact = 1
@@ -1455,8 +1558,9 @@ export default {
           this.campaignIds[0],
           this.customerIds[0],
           this.isBlacklists[0],
-          null
+          this.customerPhones[0]
         )
+        this.dialTo(this.taskIds[0], this.campaignIds[0], this.isBlacklists[0], this.customerPhones[0])
         if (this.taskIds.length > 1) {
           this.showAutoDial = true
         }
@@ -1466,7 +1570,7 @@ export default {
         this.showSendMessage = false
         this.isLastContactTime = false
         this.recordId = ''
-        this.summary_description = ''
+        this.summary_description = vm.summary_description ? vm.summary_description : ''
         this.appointTime = ''
         this.selectedSummarys = []
         this.hideDialTo = false
@@ -1492,21 +1596,37 @@ export default {
         case 'idNumber':
           this.editCustomerInfo.idNo = $('#idNumberinput').val()
           if (!reg_ID.test($('#idNumberinput').val())) {
-            this.$message.error('请输入正确的身份证！')
+            this.$message({
+              message: '请输入正确的身份证！!',
+              type: 'error',
+              duration: 1000
+            })
             $('#idNumberinput').val('')
             this.changeToInput(item)
             return
           }
           editCustomerBasic(this.editCustomerInfo).then(response => {
             if (response.data.code === 0) {
-              this.$message.success('修改成功！')
+              this.$message({
+                message: '修改成功！!',
+                type: 'success',
+                duration: 1000
+              })
               this.customerInfo.idNo = $('#idNumberinput').val()
               this.changeToInput(item)
             } else {
-              this.$message.error('修改失败！')
+              this.$message({
+                message: '修改失败!',
+                type: 'error',
+                duration: 1000
+              })
               $('#idNumberinput').val('')
               this.changeToInput(item)
-              this.$message.error(response.data.message)
+              this.$message({
+                message: response.data.message,
+                type: 'error',
+                duration: 1000
+              })
             }
           }).catch(error => {
             console.log(error)
@@ -1516,18 +1636,30 @@ export default {
           this.editCustomerInfo.customerSex = $('#sexinput').val() === '男' ? 0 : $('#sexinput').val() === '女' ? 1 : null
           console.log(this.editCustomerInfo)
           if (this.editCustomerInfo.customerSex === null) {
-            this.$message.error('修改失败！')
+            this.$message({
+              message: '修改失败！',
+              type: 'error',
+              duration: 1000
+            })
             $('#sexinput').val('')
             this.changeToInput(item)
           } else {
             editCustomerBasic(this.editCustomerInfo).then(response => {
               if (response.data.code === 0) {
-                this.$message.success('修改成功！')
+                this.$message({
+                  message: '修改成功！',
+                  type: 'success',
+                  duration: 1000
+                })
                 this.customerInfo.customerSex = $('#sexinput').val() === '男' ? 0 : $('#sexinput').val() === '女' ? 1 : null
                 $('#sexinput').val('')
                 this.changeToInput(item)
               } else {
-                this.$message.error('修改失败！')
+                this.$message({
+                  message: '修改失败！',
+                  type: 'error',
+                  duration: 1000
+                })
                 this.changeToInput(item)
                 console.log(response.data.message)
               }
@@ -1537,25 +1669,41 @@ export default {
           }
           break
         case 'customerId':
-          this.$message.error('客户编号无法修改！')
+          this.$message({
+            message: '客户编号无法修改！',
+            type: 'error',
+            duration: 1000
+          })
           $('#customerIdinput').val('')
           this.changeToInput(item)
           break
         case 'score':
           this.editCustomerInfo.score = $('#scoreinput').val()
           if (!reg_num.test($('#scoreinput').val())) {
-            this.$message.error('请输入数字！')
+            this.$message({
+              message: '请输入数字！',
+              type: 'error',
+              duration: 1000
+            })
             $('#scoreinput').val('')
             this.changeToInput(item)
             return
           }
           editCustomerBasic(this.editCustomerInfo).then(response => {
             if (response.data.code === 0) {
-              this.$message.success('修改成功！')
+              this.$message({
+                message: '修改成功！',
+                type: 'success',
+                duration: 1000
+              })
               this.customerInfo.score = $('#scoreinput').val()
               this.changeToInput(item)
             } else {
-              this.$message.error('修改失败！')
+              this.$message({
+                message: '修改失败！',
+                type: 'error',
+                duration: 1000
+              })
               this.changeToInput(item)
               console.log(response.data.message)
             }
@@ -1567,11 +1715,19 @@ export default {
           this.editCustomerInfo.remark = $('#remarkinput').val()
           editCustomerBasic(this.editCustomerInfo).then(response => {
             if (response.data.code === 0) {
-              this.$message.success('修改成功！')
+              this.$message({
+                message: '修改成功！',
+                type: 'success',
+                duration: 1000
+              })
               this.customerInfo.remark = $('#remarkinput').val()
               this.changeToInput(item)
             } else {
-              this.$message.error('修改失败！')
+              this.$message({
+                message: '修改失败！',
+                type: 'error',
+                duration: 1000
+              })
               this.changeToInput(item)
               console.log(response.data.message)
             }
@@ -1664,10 +1820,13 @@ export default {
           getProducts(res3.data.data).then(res => {
             if (res.data.code === 0 && res.data.data.length > 0) {
               this.products = res.data.data
+              if (this.tempProducts.length < 1) { // tempProducts用来做缓存，最初没有缓存的时候，赋值返回来的参数
+                this.tempProducts = res.data.data
+              }
               this.productNums = []
               for (let i = 0; i < this.products.length; i++) {
                 this.productNums.push(this.products[i].productNum)
-                this.$set(this.products[i], 'number', 0)
+                this.$set(this.products[i], 'number', (this.tempProducts[i].number && this.tempProducts[i].productId === this.products[i].productId) ? this.tempProducts[i].number : 0)// 如果有缓存，则给其赋值
               }
             }
           })
@@ -1677,9 +1836,30 @@ export default {
       getSummaries(taskId).then(res4 => {
         if (res4.data.code === 0 && res4.data.data.length > 0) {
           this.nodulesTree = res4.data.data
+          this.selectedSummarys = this.reViewSelectedSummarys.length > 0 ? this.reViewSelectedSummarys : []
         }
       })
       this.isDialTask = false
+      this.showSendMessage = this.reViewShowSendMessage
+      this.campaignType = this.reViewCampaignType
+      this.showAutoDial = this.reViewShowAutoDial
+      this.autoCallDial = this.reViewAutoCallDial
+      if (this.selectedSummarys && this.selectedSummarys[0] === '3') {
+        this.addDays = this.reViewAddDays
+        this.appointTime = this.reViewAppointTime
+      }
+      // switch (this.radio) {
+      //   case '1':// 预约
+      //     this.addDays = this.reViewAddDays
+      //     this.appointTime = this.reViewAppointTime
+      //     break
+      //   case '2':// 成功
+      //     // this.sendMessage = this.reViewSendMessage
+      //     break
+      //   case '3':// 失败
+      //   default:
+      //     break
+      // }
     },
     showSex(sex) {
       if (sex === 0) {
@@ -1700,13 +1880,21 @@ export default {
         this.products[index].productNum = this.productNums[index]
         this.products[index].number = 0
         this.sumTotal = 0
-        this.$message.error('购买数量只能为整数！')
+        this.$message({
+          message: '购买数量只能为整数！',
+          type: 'error',
+          duration: 1000
+        })
         return false
       }
       if (number >= 0) {
         if (number > this.productNums[index]) {
           this.products[index].productNum = this.productNums[index]
-          this.$message.error('购买的数量不能超过产品库存！')
+          this.$message({
+            message: '购买的数量不能超过产品库存！',
+            type: 'error',
+            duration: 1000
+          })
           return false
         }
         // else {
@@ -1740,39 +1928,77 @@ export default {
         return '呼入'
       }
     },
+    checkPhone(phone) {
+      const customerPhone = this.changePhoneNum(phone)
+      const regex = customerPhone.length > 11 ? customerPhone.substring(customerPhone.length - 11) : customerPhone
+      if (localStorage.getItem('callInfo')) {
+        const caller = JSON.parse(localStorage.getItem('callInfo')).callerid
+        const callee = JSON.parse(localStorage.getItem('callInfo')).calleeid
+        if (caller && callee) {
+          const callerRegex = caller.length > 11 ? caller.substring(caller.length - 11) : caller
+          const calleeRegex = callee.length > 11 ? callee.substring(callee.length - 11) : callee
+          console.log(callerRegex, calleeRegex, regex, (callerRegex.indexOf(regex) !== -1 || calleeRegex.indexOf(regex) !== -1))
+          return callerRegex.indexOf(regex) !== -1 || calleeRegex.indexOf(regex) !== -1
+        }
+      }
+      return false
+    },
     // 生成订单/接触记录/修改任务状态
     generateRecord() {
       const taskStatus = this.selectedSummarys[0] === '1' ? '2' : this.selectedSummarys[0] === '2' ? '3' : this.selectedSummarys[0] === '3' ? '1' : ''
       // 判断 1、是否打电话 2、是否选择任务状态  3、是否勾选小结
       if (this.recordId === '') {
-        this.$message.error('您还未拨打电话！')
+        this.$message({
+          message: '您还未拨打电话！',
+          type: 'error',
+          duration: 1000
+        })
         return false
       } else if ((JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode === '-100' ||
       JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode === '-101' ||
       JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode === '-3' ||
       JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode === '-4') &&
-      (this.customerPhone === JSON.parse(localStorage.getItem('callInfo')).calleeid ||
-      this.customerPhone === JSON.parse(localStorage.getItem('callInfo')).callerid)) {
-        this.$message.error('还在通话或者响铃中，不能结束任务')
+     this.checkPhone(this.customerPhone)) {
+        this.$message({
+          message: '还在通话或者响铃中，不能结束任务',
+          type: 'error',
+          duration: 1000
+        })
         return false
       } else if (this.selectedSummarys.length === 0 || taskStatus === '') {
-        this.$message.error('未选择小结！')
+        this.$message({
+          message: '未选择小结！',
+          type: 'error',
+          duration: 1000
+        })
         return false
       } else if (this.selectedSummarys[0] === '3' && this.appointTime === '') {
-        this.$message.error('未选择预约时间！')
+        this.$message({
+          message: '未选择预约时间！',
+          type: 'error',
+          duration: 1000
+        })
         return false
       } else if (
         this.selectedSummarys[0] === '3' &&
         this.appointTime < formatDateTime(new Date())
       ) {
-        this.$message.error('预约时间不能小于当前时间！')
+        this.$message({
+          message: '预约时间不能小于当前时间！',
+          type: 'error',
+          duration: 1000
+        })
         return false
       } else {
         // 生成完整接触记录及小结
         // 判断任务状态 2：成功 3：失败  3：预约
         if (this.selectedSummarys[0] === '1' && this.campaignType === 'MARKETING' && this.hasProductInfo === true) {
           if (this.sumTotal <= 0) {
-            this.$message.error('未选择产品或产品库存不足！')
+            this.$message({
+              message: '未选择产品或产品库存不足！',
+              type: 'error',
+              duration: 1000
+            })
             return false
           }
           // 生成订单逻辑
@@ -1803,7 +2029,7 @@ export default {
               vm.products = []
               vm.sumTotal = 0
               vm.sumInfo = new Map()
-
+              vm.resetReview()// 清空缓存数据
               // 成功生成订单
               // 将产品库存减掉  调用修改产品接口
               var map = {}
@@ -1836,7 +2062,8 @@ export default {
             } else {
               this.$message({
                 message: response.data.message,
-                type: 'error'
+                type: 'error',
+                duration: 1000
               })
               return
             }
@@ -1884,24 +2111,28 @@ export default {
                   if (res1.data.code === 0) {
                   // 后处理
                     if (this.autoDialNext === true) {
+                      // 回到顶部
+                      const timer = setInterval(function() {
+                        if (vm.$refs.dialtask.scrollTop <= 0) {
+                          clearInterval(timer)
+                        } else {
+                          vm.$refs.dialtask.scrollTop -= 30
+                        }
+                      }, 30)
                       //  勾选了自动拨打下一个
                       console.log('before shift:' + this.taskIds[0] + ',' + this.campaignIds[0] + ',' + this.customerIds[0] + ',' + this.isBlacklists[0])
                       this.taskIds.shift()
                       this.campaignIds.shift()
                       this.customerIds.shift()
                       this.isBlacklists.shift()
+                      this.customerPhones.shift()
                       console.log('after shift:' + this.taskIds[0] + ',' + this.campaignIds[0] + ',' + this.customerIds[0] + ',' + this.isBlacklists[0])
                       this.taskId = this.taskIds[0]
                       this.campaignId = this.campaignIds[0]
                       this.customerId = this.customerIds[0]
                       this.isBlacklist = this.isBlacklists[0]
-                      // 判断展示 checkbox与否
-                      if (this.taskIds.length > 1) {
-                        this.showAutoDial = true
-                      } else {
-                        this.showAutoDial = false
-                        this.autoDialNext = false
-                      }
+                      this.customerPhone = this.customerPhones[0]
+                      this.dialTo(this.taskId, this.campaignId, this.isBlacklist, this.customerPhone)
                       this.activeNames = ['1', '2', '3', '4']
                       this.recordId = ''
                       this.summary_description = ''
@@ -1911,16 +2142,26 @@ export default {
                       this.selectedSummarys = []
                       this.hideDialTo = false
                       this.isLastContactTime = false
-                      this.showDetailInfos(this.taskIds[0], this.campaignIds[0], this.customerIds[0], this.isBlacklists[0], null)
+                      this.showDetailInfos(this.taskIds[0], this.campaignIds[0], this.customerIds[0], this.isBlacklists[0], this.customerPhones[0])
+                      // 判断展示 checkbox与否
+                      if (this.taskIds.length > 1) {
+                        this.showAutoDial = true
+                        this.autoCallDial = false
+                      } else {
+                        this.showAutoDial = false
+                        this.autoDialNext = false
+                      }
                     } else {
                       if (this.autoCalllNext === true) {
                         if (localStorage.getItem('autocall') === 'true') {
                           this.$root.eventHub.$emit('autocallReady', 'auto')
                         }
-                      } else {
-                        if (localStorage.getItem('autocall') === 'true') {
+                      } else { // 没有勾选继续自动外呼
+                        this.autoCallDial = false// 下次进页面时，默认不是自动外呼选项
+                        if (localStorage.getItem('autocall') === 'true') { // 向软话机栏发送手动切换自动外呼的信号
                           this.$root.eventHub.$emit('autocallReady', 'manual')
                         }
+                        localStorage.removeItem('autocall')// 移除自动外呼的缓存
                       }
                       // 没勾选自动拨打下一个 返回列表
                       this.recordId = ''
@@ -1943,14 +2184,22 @@ export default {
                       sessionStorage.removeItem('recordId')
                     }
                   } else {
-                    this.$message.error(res1.data.message)
+                    this.$message({
+                      message: res1.data.message,
+                      type: 'error',
+                      duration: 1000
+                    })
                     this.searchByKeyWords(this.req)
                     this.isDialTask = true
                     this.sendMessageToNavbar(this.isDialTask)
                   }
                 })
             } else {
-              this.$message.error(res.data.message)
+              this.$message({
+                message: res.data.message,
+                type: 'error',
+                duration: 1000
+              })
               return
             }
           }
@@ -2019,7 +2268,11 @@ export default {
       queryOneTask(customerInfo.taskId).then(response1 => {
         if (response1.data.code === 0) {
           if (response1.data.data.status === '2' || response1.data.data.status === '3') {
-            this.$message.error('该微信任务已结束！')
+            this.$message({
+              message: '该微信任务已结束！',
+              type: 'error',
+              duration: 1000
+            })
             return
           } else {
             if (!localStorage.getItem('customerInfos')) {
@@ -2279,6 +2532,24 @@ export default {
     })
   },
   activated() {
+    if (this.isDialTask) return
+    // 切换页面保留缓存开始
+    this.reViewShowSendMessage = this.showSendMessage
+    this.reViewCampaignType = this.campaignType
+    this.reViewShowAutoDial = this.showAutoDial
+    this.reViewAutoCallDial = this.autoCallDial
+    this.reViewSelectedSummarys = this.selectedSummarys
+    if (this.selectedSummarys && this.selectedSummarys[0] === '3') { // 预约情况缓存预约时间
+      this.reViewAddDays = this.addDays
+      this.reViewAppointTime = this.appointTime
+    }
+    vm = this
+    let i = 0
+    vm.sumInfo.forEach((val, key) => { // 给缓存的产品清单赋值
+      vm.tempProducts[i].number = val.number
+      i++
+    })
+    // 切换页面保留缓存结束
     // 获取微信客户列表
     getWechatCustomer(localStorage.getItem('agentId')).then(response => {
       this.customerInfos = response.data.data
@@ -2438,13 +2709,19 @@ export default {
         }
       })
     })
+    // 默认界面滚动条
+    this.autoStyle.overflow = 'auto'
+    this.autoStyle.height = '800px'
   },
   // 离开时清除定时器
   destroyed: function() {
+    this.resetReview()// 清空缓存数据
     this.customerNote = ''
     this.products = []
     this.sumTotal = 0
     this.sumInfo = new Map()
+    this.tempProducts = []
+    this.summary_description = ''
     clearInterval(this.interval)
     localStorage.removeItem('global_taskId')
     this.sendMessageToNavbar(true)

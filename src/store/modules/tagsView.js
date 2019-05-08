@@ -1,7 +1,8 @@
 const tagsView = {
   state: {
     visitedViews: [],
-    cachedViews: []
+    cachedViews: [],
+    cachedPaths: []
   },
   mutations: {
     ADD_VISITED_VIEW: (state, view) => {
@@ -18,7 +19,13 @@ const tagsView = {
         state.cachedViews.push(view.name)
       }
     },
-
+    ADD_CACHED_PATHS: (state, view) => {
+      const path = view.path.split('/')[1]
+      if (state.cachedViews.includes(path)) return
+      if (!view.meta.noCache) {
+        state.cachedViews.push(path)
+      }
+    },
     DEL_VISITED_VIEW: (state, view) => {
       for (const [i, v] of state.visitedViews.entries()) {
         if (v.path === view.path) {
@@ -82,6 +89,7 @@ const tagsView = {
     },
     addCachedView({ commit }, view) {
       commit('ADD_CACHED_VIEW', view)
+      commit('ADD_CACHED_PATHS', view)
     },
 
     delView({ dispatch, state }, view) {

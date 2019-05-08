@@ -345,6 +345,7 @@ import {
 } from '@/utils/tools'
 import cti from '@/utils/ctijs'
 import WebsocketHeartbeatJs from 'websocket-heartbeat-js'
+import { getLocalPhonePrefix, getNonLocalPhonePrefix } from '@/config/phone_config_codes'
 var vm = null
 var interval = null
 export default {
@@ -367,6 +368,7 @@ export default {
       wechatImgUrl: '../../../../static/images/wechat_online.png',
       agentArray: [], // 部门下属成员
       lockChange: false, // 默认不禁用切换状态框
+      autoCallChange: false, // 默认可以选择自动外呼
       isOrdSet: false, // 是否为普通坐席界面
       isDialTaskPage: false, // 是否为拨打详情页面
       socket_nofitication: null, // 消息通知的socket
@@ -478,6 +480,7 @@ export default {
       }
     },
     handleStatueChange(e) {
+      localStorage.setItem('autocall', false)
       let status = ''
       if (this.statuses.length !== 0) {
         status = this.statuses[this.statuses.length - 1].toString()
@@ -699,7 +702,9 @@ export default {
           this.formInline.region = val
         }
         const agentid = localStorage.getItem('agentId')
-        localStorage.setItem('autocall', false)
+        if (this.formInline.region === '-5') {
+          localStorage.setItem('autocall', true)
+        }
         cti.setAgentStatus(agentid, this.formInline.region)
         // switch (this.formInline.region) {
         //   case '0':
@@ -1221,6 +1226,7 @@ export default {
       vm.setbtnStatus('onhold')
     },
     on_hangup_event(event, agentid, DN, UUID, hangupLine, activeLineCount) {
+      localStorage.removeItem('callInfo')
       if (vm.isDialTaskPage) {
         vm.formInline.user = ''
       }
@@ -1316,8 +1322,13 @@ export default {
       }
     },
     on_answer_event(event, agentid, DN, UUID, callerid, calleeid, io, other_leg_uuid) {
+      const callInfo = {}
+      callInfo.calleeid = calleeid
+      callInfo.callerid = callerid
+      localStorage.setItem('callInfo', JSON.stringify(callInfo))
+
       addAnswerContact({
-        'event': 'on_answer_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': callerid, 'calleeid': calleeid, 'io': io, 'other_leg_uuid': other_leg_uuid
+        'event': 'on_answer_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'io': io, 'other_leg_uuid': other_leg_uuid, 'calleeid': calleeid, 'callerid': callerid
       }).then(res => {
         console.log('写入接听电话的记录:' + res)
       }).catch(error => {
@@ -1345,25 +1356,44 @@ export default {
       // }
     },
 
-    on_ringback_event(event, agentid, DN, UUID, callerid, calleeid, ori_ani, activeLine) {
+    on_ringback_event(event, agentid, DN, UUID, callerid, calleeid, ori_ani, activeLine, campaignId, dialdata) {
       vm.caller = callerid
       vm.callee = calleeid
       vm.orginCaller = ori_ani
-      if (vm.isDialTaskPage) {
-        vm.global_taskId = localStorage.getItem('global_taskId')
-      } else {
-        vm.global_taskId = ''
-      }
+      const callInfo = {}
+      callInfo.calleeid = calleeid
+      callInfo.callerid = callerid
+      localStorage.setItem('callInfo', JSON.stringify(callInfo))
       if (calleeid.length === 12) {
-        if (calleeid.substring(0, 1) === '9') {
+        if (calleeid.substring(0, 1) === getLocalPhonePrefix()) {
           calleeid = calleeid.substring(1)
         }
       } else if (calleeid.length === 13) {
-        if (calleeid.substring(0, 2) === '90') {
+        if (calleeid.substring(0, 2) === getNonLocalPhonePrefix) {
           calleeid = calleeid.substring(2)
         }
       } else {
         calleeid += ''
+      }
+      if (dialdata) {
+        vm.autoCallChange = true
+        const data = JSON.parse(dialdata).data
+        const campaignId = data.campaignId
+        const taskId = data.taskId
+        vm.global_taskId = data.taskId// ÈÎÎñid
+        const customerId = data.customerId
+        // const isBlacklist = data.isBlacklist
+        const customerPhone = data.customerPhone
+        vm.$router.push({
+          path: process.env.BUILT_IN_ROUTERS.myDialTask,
+          query: { 'agent': 'agent', 'dialstatus': '0', 'dialType': 'autocall', 'isDialTask': false, 'campaignId': campaignId, 'taskId': taskId, 'customerId': customerId, 'isBlacklist': '0', 'customerPhone': customerPhone }
+        })
+      } else {
+        if (vm.isDialTaskPage) {
+          vm.global_taskId = localStorage.getItem('global_taskId')
+        } else {
+          vm.global_taskId = ''
+        }
       }
       addDialContact({
         'event': 'on_ringback_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': callerid, 'calleeid': calleeid, 'ori_ani': ori_ani, 'ringback_time': new Date(), 'callDirection': 0, 'global_taskId': vm.global_taskId, 'activeLine': activeLine
@@ -1384,33 +1414,50 @@ export default {
       vm.caller = callerid
       vm.callee = calleeid
       vm.orginCaller = ori_ani
-      addComeContact({
-        'event': 'on_ringing_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': callerid, 'calleeid': calleeid, 'ori_ani': ori_ani, 'other_leg_uuid': other_leg_uuid, 'ringing_time': new Date(), 'callDirection': 1, 'taskId': DialData ? JSON.parse(DialData).data.taskId : null
-      }).then(res => {
-        console.log('写来电通话记录：' + res)
-      }).catch(error => {
-        console.log('error:' + error)
-      })
       vm.setbtnStatus('ringing')
       vm.oldtelephonestate = vm.telephoneState
-      vm.telephoneState = '来电振铃'
-      if (vm.oldtelephonestate !== vm.telephoneState) {
-        clearInterval(interval)
-        vm.times()
-      }
+      const callInfo = {}
+      callInfo.calleeid = calleeid
+      callInfo.callerid = callerid
+      localStorage.setItem('callInfo', JSON.stringify(callInfo))
       if (DialData) { // 判断为自动外呼
-        console.log(JSON.parse(DialData).data, 'data')
+        vm.autoCallChange = true
         const data = JSON.parse(DialData).data
         const campaignId = data.campaignId
         const taskId = data.taskId
         const customerId = data.customerId
         // const isBlacklist = data.isBlacklist
         const customerPhone = data.customerPhone
-        vm.$router.push({
+        addDialContact({
+          'event': 'on_ringing_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': calleeid, 'calleeid': callerid, 'ori_ani': ori_ani, 'ringback_time': new Date(), 'callDirection': 0, 'global_taskId': DialData ? JSON.parse(DialData).data.taskId : null, 'activeLine': activeLine
+        }).then(res => {
+          console.log('写入拨出电话记录：' + res)
+        }).catch(error => {
+          console.log('error:' + error)
+        })
+        vm.telephoneState = '去电回铃'
+        if (vm.oldtelephonestate !== vm.telephoneState) {
+          clearInterval(interval)
+          vm.times()
+        }
+        vm.$router.push({//
           path: process.env.BUILT_IN_ROUTERS.myDialTask,
           query: { 'agent': 'agent', 'dialstatus': '0', 'dialType': 'autocall', 'isDialTask': false, 'campaignId': campaignId, 'taskId': taskId, 'customerId': customerId, 'isBlacklist': '0', 'customerPhone': customerPhone }
         })
         // cti.setAgentStatus(agentid, '-5')
+      } else {
+        addComeContact({
+          'event': 'on_ringing_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': callerid, 'calleeid': calleeid, 'ori_ani': ori_ani, 'other_leg_uuid': other_leg_uuid, 'ringing_time': new Date(), 'callDirection': 1, 'taskId': DialData ? JSON.parse(DialData).data.taskId : null
+        }).then(res => {
+          console.log('写来电通话记录：' + res)
+        }).catch(error => {
+          console.log('error:' + error)
+        })
+        vm.telephoneState = '来电振铃'
+        if (vm.oldtelephonestate !== vm.telephoneState) {
+          clearInterval(interval)
+          vm.times()
+        }
       }
     },
     on_reasonchange(event, agentId, DN, reasonCode) {
@@ -1597,7 +1644,11 @@ export default {
           vm.lockChange = true
           vm.islogin = true
           vm.oldtelephonestate = vm.telephoneState
-          vm.telephoneState = '来电通话中'
+          if (localStorage.getItem('autocall') === 'true') {
+            vm.telephoneState = '去电通话中'
+          } else {
+            vm.telephoneState = '来电通话中'
+          }
           if (vm.oldtelephonestate !== vm.telephoneState) {
             clearInterval(interval)
             vm.times()
@@ -2039,8 +2090,15 @@ export default {
     this.$root.eventHub.$on('CHANGE_STATUS', () => {
       this.firstgetUnreadMessages(agentId)
     })
-    this.$root.eventHub.$on('autocallReady', () => {
-      this.agentSetDialInFree()
+    this.$root.eventHub.$on('autocallReady', (obj) => {
+      this.autoCallChange = !obj
+      if (obj === 'auto') {
+        this.agentSetDialInFree()
+      } else if (obj === 'manual') {
+        this.autoCallChange = false
+      } else {
+        this.autoCallChange = true
+      }
     })
     this.$root.eventHub.$on('DISABLED_DIAL', (str) => {
       if (str === '1') {
@@ -2113,6 +2171,7 @@ export default {
     this.$root.eventHub.$off('DIAL_TASK')
     this.$root.eventHub.$off('DIAL_TASK_DIALNM')
     this.$root.eventHub.$off('ord_set')
+    this.$root.eventHub.$off('autocallReady')
   },
   watch: {
     keepReady(val) {
