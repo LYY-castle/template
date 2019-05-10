@@ -771,6 +771,7 @@ import { permsDepart, permsStaff } from '@/api/reportPermission'
 import { getWechatCustomer } from '@/api/wechat_list'
 import { queryOneQuestionnaire, generateQuestionnaireRecord } from '@/api/questionnaire'
 import { getLocalPhonePrefix, getNonLocalPhonePrefix } from '@/config/phone_config_codes'
+import { findNoduleByNoduleId } from '@/api/nodule_list'
 var vm = null
 
 export default {
@@ -778,6 +779,7 @@ export default {
 
   data() {
     return {
+      summaryType: '',
       autoStyle: {}, // 控制窗口大小，动态出现滚动条，用于点击完成之后，置顶功能
       customerPhones: [], // 快速拨打号码
       distributeTimeValue: null,
@@ -1782,6 +1784,14 @@ export default {
             })
           }
         }
+	// 判断小结类型是呼入还是呼出
+        findNoduleByNoduleId({ noduleId: res1.data.data.summaryId }).then(response => {
+          if (response.data) {
+            if (response.data.code === 0) {
+              this.summaryType = response.data.data.summaryType
+            }
+          }
+        })
       })
       // 获取客户基本信息
       queryCustomerInfo(customerId).then(res => {

@@ -333,7 +333,8 @@ import {
 } from '@/api/phone_status_manage'
 import {
   getUnreadNum,
-  changeRecords
+  changeRecords,
+  getWechatCustomer
 } from '@/api/wechat_list'
 import {
   getStaffNameByAgentId
@@ -352,6 +353,7 @@ export default {
   name: 'layout',
   data() {
     return {
+      wechat_customerId: '',
       obstatus: [],
       obstatusNow: '',
       cascaderProps: {
@@ -452,6 +454,9 @@ export default {
     TagsView
   },
   computed: {
+    // wechat_customerId() {
+    //   return this.$store.state.app.wechat_current_customerId
+    // },
     ...mapGetters([
       'sidebar',
       'avatar'
@@ -1848,6 +1853,7 @@ export default {
     vm = this
     const { data } = getPhoneStatus()
     console.log(data)
+    const agentId = localStorage.getItem('agentId')
     // 查询外呼状态
     getPhoneStatus().then(response => {
       if (response.data.code === 0) {
@@ -1859,7 +1865,7 @@ export default {
       throw error
     })
     // 查找队列
-    queryListByAgentId(localStorage.getItem('agentId')).then(res => {
+    queryListByAgentId(agentId).then(res => {
       if (res.data.code === 1 && res.data.data.length > 0) {
         const data = res.data.data
         for (let i = 0; i < data.length; i++) {
@@ -1888,14 +1894,14 @@ export default {
       this.getWechatState()
     }
     // 查询微信未读消息 ，写死
-    navbarQueryRecords(localStorage.getItem('agentId')).then(response => {
+    navbarQueryRecords(agentId).then(response => {
       if (response.data) {
         this.msgNum_wechat1 = response.data.pageInfo ? response.data.pageInfo.totalCount : null
         this.$store.commit('CHANGE_WECHATMSG', this.msgNum_wechat1)
       }
     })
     // 查询用户手机号并存储
-    getStaffNameByAgentId({ 'agentId': localStorage.getItem('agentId') }).then(res => {
+    getStaffNameByAgentId({ 'agentId': agentId }).then(res => {
       if (res.data.code === 1) {
         const userPhone = res.data.data[0].userPhone ? res.data.data[0].userPhone : ''
         localStorage.setItem('userPhone', userPhone)
@@ -1903,25 +1909,39 @@ export default {
     })
     // 实时接收新的消息
     this.$root.eventHub.$on('RECEIVE_MESSAGES', (oneMsg) => {
+      console.log(this.$route)
       let contents = []
       contents = this.$store.state.app.wechat_contents
-      if (contents.length !== 0) {
-        // push聊天内容
-        if (contents[0].customerId === JSON.parse(oneMsg).customerId) {
+      const customerInfos = JSON.parse(localStorage.getItem('customerInfos'))
+      for (let i = 0; i < customerInfos.length; i++) {
+        if (customerInfos[i].isTalking === true) {
+          this.wechat_customerId = customerInfos[i].customerId
+        }
+      }
+      if (this.$route.path.indexOf('wechat_dial') !== -1) {
+        console.log('处于微信界面...')
+        if (this.wechat_customerId === JSON.parse(oneMsg).customerId) {
           this.$set(contents, contents.length, JSON.parse(oneMsg))
           changeRecords([JSON.parse(oneMsg).id]).then(response => {
-            console.log(response.data)
+            console.log('将消息设置为已读...')
+            // 查询此工号所有未读消息
+            navbarQueryRecords(agentId).then(response => {
+              this.$store.commit('CHANGE_WECHATMSG', response.data.pageInfo.totalCount)
+            })
           })
         }
-        this.$store.commit('SET_WECHATCONTENTS', contents)
+      } else {
+        console.log('不处于微信界面...')
       }
+      this.$store.commit('SET_WECHATCONTENTS', contents)
+
       const contentDiv = document.getElementById('short-message-content')
       const contentDivBox = document.getElementById('short-message-content-container')
       setTimeout(() => {
         contentDivBox.scrollTop = contentDiv.scrollHeight
       }, 10)
       // 查询聊天列表客户对应未读消息数量
-      getUnreadNum(localStorage.getItem('agentId')).then(response => {
+      getUnreadNum(agentId).then(response => {
         if (localStorage.getItem('customerInfos')) {
           vm.customerInfo = JSON.parse(localStorage.getItem('customerInfos'))
         } else {
@@ -1937,13 +1957,12 @@ export default {
         this.$store.commit('SET_WECHATCUSTOMERINFO', this.customerInfo)
         localStorage.setItem('customerInfos', JSON.stringify(this.customerInfo))
       })
+      // console.log(this.$store.state.app.wechat_customerInfos)
       // 查询此工号所有未读消息
-      navbarQueryRecords(localStorage.getItem('agentId')).then(response => {
+      navbarQueryRecords(agentId).then(response => {
         this.$store.commit('CHANGE_WECHATMSG', response.data.pageInfo.totalCount)
       })
-      // console.log(this.$store.state.app.wechat_customerInfos)
     })
-    const agentId = localStorage.getItem('agentId')
     // 获取主题
     if (localStorage.getItem('themeInfo')) {
       this.themeCommand()

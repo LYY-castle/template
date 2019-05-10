@@ -1,26 +1,29 @@
 <template>
 <div class="container wechat-list" @click="hideEmoji">
   <div style="height:100%;">
-    <div style="float:left;width:54%;box-shadow: 0 0 10px 0 rgba(39,48,69,0.10);border-radius: 2px;">
+    <div :class="listandchatwindow">
       <el-container>
         <el-aside>
           <el-header>
             <b class="font14">最近联系人</b>
+            <div style="background:#72BCFF;width:41px;float:right;color:#fff;text-align:center;cursor:pointer;" title='展开聊天窗口' @click="openWindow" v-if="toggleWindow">
+              <i class="el-icon-arrow-right"></i>
+            </div>
           </el-header>
           <el-menu
           active-text-color="#409EFF"
           :default-active="customerActive"
-          style="borderoverflow:auto;width:100%;text-align:left;"
+          style="width:100%;text-align:left;"
           >
             <div v-for="(item,index) in wechatCustomerInfos">
-              <el-menu-item class="font12" :index="index+''" slot="reference" @click="showNameAndSearchRecords(item.customerName,item.customerPhone,item.taskId,item.campaignId,item.customerId,item.unreadNum);dailTaskCustomer=item;customerActive=index.toString();changeCustomerTalking(index)">
+              <el-menu-item class="font12" style="height:auto;" :index="index+''" slot="reference" @click="showNameAndSearchRecords(item.customerName,item.customerPhone,item.taskId,item.campaignId,item.customerId,item.unreadNum);dailTaskCustomer=item;customerActive=index.toString();changeCustomerTalking(index)">
                 <div style="margin-bottom:7px;">
                   <span>{{item.customerName}}</span>
                   <b v-if="item.isTalking==false&&item.unreadNum>0" style="color:#ED2135;">({{item.unreadNum>99?'99+':item.unreadNum}})</b>
                 </div>
                 <div>
-                  <span style="float:left;">{{item.customerPhone}}</span>
-                  <!-- <span style="float:right;color:#ccc;">时间</span> -->
+                  <span style="text-align:left;">{{item.customerPhone}}</span>
+                  <span style="float:right;color:#ccc;">{{showLastContactTime(item.lastContactTime)}}</span>
                 </div>
               </el-menu-item>
             </div>
@@ -36,6 +39,9 @@
               {{customerPhoneHeader}}
             </b>
             <img style="width:25px;position: relative;bottom: -6px;cursor:pointer;" src="../../../static/images/dial_normal.png"  @click="toDialTask(dailTaskCustomer)" alt="拨打电话">
+            <div style="background:#72BCFF;width:41px;float:right;color:#fff;text-align:center;cursor:pointer;" title='收起聊天窗口' @click="closeWindow" v-if="!toggleWindow">
+              <i class="el-icon-arrow-left"></i>
+            </div>
           </div>
           <div id="short-message-content-container" style="background-color:#FBFBFB;padding:0;height:55.1vh;overflow-y:auto;">
             <!-- 聊天记录 对话框 div -->
@@ -156,22 +162,22 @@
             </div>
           </el-footer>
         </el-container>
-
-
       </el-container>
     </div>
 
-    <div class="elaside1"  style="position:relative;height:78vh;overflow-x:hidden;background:#FBFBFB;float:right;width:44%;box-shadow: 0 0 10px 0 rgba(39,48,69,0.10);border-radius: 2px;">
-      <el-tabs v-model="activeName" type="card" style="background: #F3F5FA;">
+    <div :class="elaside1">
+      <el-tabs v-model="activeName" type="card" style="background: #F3F5FA;height:calc(100% - 4.6vh);">
         <el-tab-pane label="客户信息" name="1" class="userinfo-container">
           <el-row :gutter="20" style="height:120px;padding:24px 20px;">
             <el-col :span="6" class="font12">
               <span>客户姓名：</span>
               <b style="color:#020202;">{{customerInfo.customerName}}</b>
             </el-col>
-            <el-col :span="6" class="font12">
+            <el-col :span="6" class="font12 description-hide">
               <span>手机号码：</span>
-              <b style="color:#020202;">{{this.customerPhone}}</b>
+              <el-popover trigger="hover" placement="bottom" :content="this.customerPhone">
+                <b  slot="reference" style="color:#020202;">{{this.customerPhone}}</b>
+              </el-popover>
             </el-col>
             <el-col :span="6" class="font12 description-hide" v-if="!(item === 'customerName' || item === 'mobile')" v-for="(item,index) in customerColumnInfos">
               <span >
@@ -207,7 +213,60 @@
           </el-row>
 
         </el-tab-pane>
-        <el-tab-pane label="产品信息" name="2">
+        <el-tab-pane label="问卷信息" name="5" v-if="campaignType === 'SERVICE'">
+          <el-tabs v-model="tabs_questionnaire" class="question">
+            <el-tab-pane v-for="(item,index) in questionnaireTabs" :key="item.id" :label="item.name" :name="index+''">
+              <el-form size="small" :model="answerData[index]" style="padding:0 10px;">
+                <el-form-item v-for="(item1,index1) in item.titles" :key="index1">
+                  <span>{{index1+1}}.</span>
+                  <span placeholder="标题" style="width:300px">{{item1.name}}</span>
+                <!-- 单选 -->
+                    <div class="options" v-if="item1.type===0">
+                      <el-radio-group v-model="answerData[index][item1.id]">
+                        <el-radio 
+                          v-for="(a, radioIndex) in item1.options"
+                          :key="radioIndex"
+                          :label="a.content"
+                          v-model="a.content"></el-radio>
+                      </el-radio-group>
+                    </div>
+
+                  <!-- 多选 -->
+                  <div v-if="item1.type===1">
+                    <el-checkbox-group v-model="answerData[index][item1.id]">
+                      <el-checkbox 
+                        v-for="(a,checkboxIndex) in item1.options" 
+                        :label="a.content" 
+                        :key="checkboxIndex"></el-checkbox>
+                    </el-checkbox-group>
+                  </div>
+
+                  <!-- 单行 -->
+                  <div v-if="item1.type===2">
+                    <el-input 
+                      v-model="answerData[index][item1.id]"
+                      type="text"
+                      clearable
+                      style="width:478px;margin:2px" 
+                      maxlength="45"></el-input>
+                  </div>
+
+                  <!-- 多行 -->
+                  <div v-if="item1.type===3">
+                    <el-input 
+                      v-model="answerData[index][item1.id]"
+                      type="textarea" 
+                      rows="4"  
+                      resize="none" 
+                      style="width:478px;margin:2px" 
+                      maxlength="45" ></el-input>
+                  </div>
+                </el-form-item>
+              </el-form>
+            </el-tab-pane>
+          </el-tabs>
+        </el-tab-pane>
+        <el-tab-pane label="产品信息" name="2" v-if="campaignType === 'MARKETING' && hasProductInfo">
           <!-- <el-row style="margin-top:20px;"> -->
             <!-- <el-form :inline="true" size="mini">
               <el-form-item>
@@ -297,7 +356,7 @@
             </el-pagination>
           </el-row> -->
         </el-tab-pane>
-        <el-tab-pane label="选购清单" name="3">
+        <el-tab-pane label="选购清单" name="3" v-if="campaignType === 'MARKETING' && hasProductInfo">
           <div class="font14" style="margin:20px 0 20px 20px;text-align:left;">
             <b>总计：</b>
             <b style="color:#ED2135;">￥ {{sumTotal}}</b>
@@ -347,10 +406,10 @@
                   @change="handleNoduleChange"
                   :show-all-levels="false">
                 </el-cascader>
+                <span style="margin-left:70px;" v-if="showSendMessage === true && campaignType === 'MARKETING' && hasProductInfo === true">
+                  <el-checkbox v-model="sendMessageOrNot" checked="checked">发送支付短信</el-checkbox>
+                </span>
               </el-form-item>
-              <el-col style="height:48px;line-height:34px;margin-top:-45px;" v-if="showSendMessage === true && campaignType !== 'RECRUIT' && hasProductInfo === true">
-                <el-checkbox v-model="sendMessageOrNot" checked="checked">发送支付短信</el-checkbox>
-              </el-col>
             </el-form>
             <el-form style="text-align:left;" :inline="true" v-show="this.selectedSummarys[0] === '3'">
               <el-form-item label="预约日期：" class="working-date-form">
@@ -384,9 +443,7 @@
           </el-row>
         </el-tab-pane>
       </el-tabs>
-      <div style="text-align: center;border-top: 1px solid rgb(220, 220, 220);margin-top: 20px;position: absolute;bottom: 0px;width: 100%;height: 68px;background: #fbfbfb;"><br/>
-        <!-- <el-checkbox v-if="showAutoDial===true" checked="checked" v-model="autoDialNext">完成后显示下一个客户</el-checkbox> -->
-        <!-- <el-checkbox v-if="showSendMessage === true && campaignType !== 'RECRUIT'" v-model="sendMessageOrNot" checked="checked">发送支付短信</el-checkbox> -->
+      <div style="z-index:999;text-align: center;border-top: 1px solid rgb(220, 220, 220);margin-top: 20px;position: absolute;bottom: 0px;width: 100%;height: 68px;background: #fbfbfb;"><br/>
         <el-button type="primary" size="small"  @click="completeTask()">完成</el-button>
       </div>
     </div>
@@ -449,6 +506,21 @@
 <style lang='scss'>
 #app{
   .wechat-list{
+    .listandchatwindow{
+      &.close {
+        width:0;
+      }
+      transition: 0.75s width;
+      float:left;
+      width:54%;
+      box-shadow: 0 0 10px 0 rgba(39,48,69,0.10);
+      border-radius: 2px;
+    }
+    .quest-box {
+      margin: 4px 0;
+      width: 100%;
+      // min-height: 550px;
+    }
     .el-form-item__label{
       font-size: 12px !important;
       color: #020202 !important;
@@ -494,10 +566,22 @@
       width:210px !important;
     }
     .elaside1 {
-      width: 41%;
-      color: #333;
-      text-align: center;
-      height:834px;
+      // width: 41%;
+      // color: #333;
+      // // text-align: center;
+      // height:834px;
+      position:relative;
+      height:78vh;
+      overflow-x:hidden;
+      background:#FBFBFB;
+      float:right;
+      width:44%;
+      transition:0.75s width;
+      box-shadow: 0 0 10px 0 rgba(39,48,69,0.10);
+      border-radius: 2px;
+      &.increasewidth{
+        width:calc(103% - 300px)
+      }
       .el-tabs__header{
         margin-bottom:0;
         height:4.6vh;
@@ -510,19 +594,26 @@
           height:4.6vh;
         }
       }
-      .el-tabs__nav-scroll{
-        height:4.6vh;
-      }
+      // .el-tabs__nav-scroll{
+      //   height:4.6vh;
+      // }
       .el-tabs__content{
         overflow-y: auto;
-        height: 643px;
+        // height: 620px;
+        height:calc(100% - 68px);
         background:#FBFBFB;
+      }
+      .question {
+        .el-tabs__content{
+          overflow-y: visible;
+          height: auto;
+        }
       }
       .el-tabs--card>.el-tabs__header .el-tabs__item.is-active{
         background:#FBFBFB;
         border-bottom:1px solid #FBFBFB;
         height:4.6vh;
-        line-height:4.6vh;
+        // line-height:4.6vh;
       }
       .shopping-list{
         border-top:1px solid #CED4E2;
@@ -723,11 +814,20 @@ import Emotion from '@/components/Emotion1/index'
 import vueEmoji from '@/components/Emotion3/emoji.vue'
 import emojidata from '@/components/Emotion3/emoji-data.js'
 import reg_emoji from '@/components/Emotion3/reg_emojis.js'
+import { queryOneQuestionnaire, generateQuestionnaireRecord } from '@/api/questionnaire'
+import { findNoduleByNoduleId } from '@/api/nodule_list'
 var vm = null
 export default {
   name: 'wechat_list1',
   data() {
     return {
+      summaryType: '',
+      toggleWindow: false,
+      elaside1: 'elaside1',
+      listandchatwindow: 'listandchatwindow',
+      answerData: [], // 所有问卷的填写记录
+      questionnaireTabs: [], // 所有需要展示的问卷模板
+      tabs_questionnaire: '0',
       customerPhoneHeader: '',
       emojidata: emojidata,
       reg_emojis: reg_emoji,
@@ -795,7 +895,6 @@ export default {
       idNumber: '',
       customerInfo: {}, // 客户基本信息
       customerColumnInfos: [], // 用来展示的客户字段
-      isRecruit: false, // 活动类型的判断
       contactRecord: [], // 接触记录信息
       activeName: '1', // 折叠板默认打开项
       msgIds: [],
@@ -818,9 +917,25 @@ export default {
     }
   },
   methods: {
+    closeWindow() {
+      this.listandchatwindow = 'listandchatwindow close'
+      this.elaside1 = 'elaside1 increasewidth'
+      this.toggleWindow = true
+    },
+    openWindow() {
+      this.listandchatwindow = 'listandchatwindow'
+      this.elaside1 = 'elaside1'
+      this.toggleWindow = false
+    },
+    showLastContactTime(t) {
+      if (t) {
+        return t.split(' ')[0]
+      } else {
+        return ''
+      }
+    },
     // 小结级联选择事件
     handleNoduleChange(arr) {
-      console.log(arr)
       if (arr[0] === '1') {
         this.showSendMessage = true
       } else if (arr[0] === '3') {
@@ -837,7 +952,7 @@ export default {
         case 'sex': return this.showSex(this.customerInfo.customerSex)
         case 'mobile': return this.customerPhone
         case 'address': return this.customerInfo.address
-        case 'score': return this.customerInfo.score
+        case 'score': return this.customerInfo.score + ''
         case 'idNumber': return this.customerInfo.idNo
         case 'remark': return this.customerInfo.remark
         default : return ''
@@ -908,7 +1023,13 @@ export default {
     },
     // 完成任务
     completeTask() {
-      const taskStatus = this.selectedSummarys[0] === '1' ? '2' : this.selectedSummarys[0] === '2' ? '3' : this.selectedSummarys[0] === '3' ? '1' : ''
+      var taskStatus
+      if (this.summaryType === '0') {
+        taskStatus = this.selectedSummarys[0] === '1' ? '2' : this.selectedSummarys[0] === '2' ? '3' : this.selectedSummarys[0] === '3' ? '1' : ''
+      } else {
+        taskStatus = this.selectedSummarys[0] === '14' ? '2' : this.selectedSummarys[0] === '15' ? '3' : ''
+      }
+      console.log('任务状态：' + taskStatus)
       if (this.selectedSummarys[0] === '3' && this.appointTime === '') {
         this.$message.error('未选择预约时间！')
         return false
@@ -924,7 +1045,7 @@ export default {
       } else {
         // 生成完整接触记录及小结
         // 判断任务状态 2：成功 3：失败  1：预约
-        if (this.selectedSummarys[0] === '1' && this.campaignType !== 'RECRUIT' && this.hasProductInfo === true) {
+        if (this.selectedSummarys[0] === '1' && this.campaignType === 'MARKETING' && this.hasProductInfo === true) {
           if (this.sumTotal <= 0) {
             this.$message.error('未选择产品或产品库存不足！')
             return false
@@ -996,13 +1117,41 @@ export default {
             }
           })
         }
+        if (taskStatus === '2' && this.campaignType === 'SERVICE' && this.questionnaireTabs.length > 0) {
+          // 是服务活动 判断问卷记录是否填写正确
+          for (let i = 0; i < this.questionnaireTabs.length; i++) {
+            // 发送请求 填写问卷
+            const params = this.questionnaireTabs[i].titles.map(item => {
+              const obj = {
+                name: item.name,
+                type: item.type
+              }
+              if (item.type === 1) { // 多选
+                if (typeof (this.answerData[i][item.id]) === 'undefined') {
+                  // obj.options = { 'content': [{}] }
+                  obj.options = []
+                } else {
+                  obj.options = this.answerData[i][item.id].map(item => {
+                    return { 'content': item }
+                  })
+                }
+              } else {
+                obj.options = [{ 'content': typeof (this.answerData[i][item.id]) === 'undefined' ? '' : this.answerData[i][item.id] }]
+              }
+              return obj
+            })
+            console.log(params)
+            generateQuestionnaireRecord(this.taskId, this.questionnaireTabs[i].id, this.questionnaireTabs[i].name, params)
+          }
+        }
+        console.log('即将修改任务状态...')
         var selectedSummarys2 = []
         selectedSummarys2.push(this.selectedSummarys[this.selectedSummarys.length - 1])
         // 选择失败、预约 或 成功但没有产品(如招聘)的情况
         // 修改任务状态
         updateTaskStatus(this.taskId, taskStatus, this.appointTime).then(response => {
           if (response.data.code === 0) {
-            this.getCustomerDetail()
+            // this.getCustomerDetail()
             // console.log('成功修改任务状态')
             // 修改小结备注
             updateRecordInfo(this.sessionId, taskStatus, selectedSummarys2, this.summary_description)
@@ -1052,6 +1201,7 @@ export default {
                     this.summary_description = ''
                     this.hasMoreRecords = false
                   }
+                  this.getCustomerDetail()
                   window.location.href = window.location.href.split('?')[0]
                 }
               })
@@ -1421,12 +1571,10 @@ export default {
     },
     changeCustomerTalking(index) {
       this.customerInfos = JSON.parse(localStorage.getItem('customerInfos'))
-      console.log(this.customerInfos)
       for (let i = 0; i < this.customerInfos.length; i++) {
         this.customerInfos[i].isTalking = false
       }
       this.customerInfos[index].isTalking = true
-      console.log(this.customerInfos)
       localStorage.setItem('customerInfos', JSON.stringify(this.customerInfos))
       this.$store.commit('SET_WECHATCUSTOMERINFO', this.customerInfos)
     },
@@ -1590,12 +1738,38 @@ export default {
             customerColumn: 'customerName'
           }, { customerColumn: 'customerPhone' })
           this.campaignType = res1.data.data.campaignTypeInfo.code
-          if (this.campaignType === 'RECRUIT') {
-            this.isRecruit = true
-          } else {
-            this.isRecruit = false
+        }
+        this.questionnaireTabs = []
+        this.answerData = []
+        //  判断是否需要查询问卷
+        if (res1.data.code === 0 && res1.data.data.questionnaireIds.length > 0) {
+          // 循环查询
+          for (let j = 0; j < res1.data.data.questionnaireIds.length; j++) {
+            queryOneQuestionnaire(res1.data.data.questionnaireIds[j]).then(response => {
+              if (response.data) {
+                if (response.data.code === 0) {
+                  this.answerData.push({})
+                  this.questionnaireTabs.push(response.data.data)
+                  for (let k = 0; k < this.questionnaireTabs[j].titles.length; k++) {
+                    if (this.questionnaireTabs[j].titles[k].type === 1) {
+                      this.$set(this.answerData[j], this.questionnaireTabs[j].titles[k].id, [])
+                    } else {
+                      this.$set(this.answerData[j], this.questionnaireTabs[j].titles[k].id, '')
+                    }
+                  }
+                }
+              }
+            })
           }
         }
+        // 判断小结类型是呼入还是呼出
+        findNoduleByNoduleId({ noduleId: res1.data.data.summaryId }).then(response => {
+          if (response.data) {
+            if (response.data.code === 0) {
+              this.summaryType = response.data.data.summaryType
+            }
+          }
+        })
       })
       queryCustomerInfo(customerId)
         .then(response1 => {
@@ -1781,8 +1955,6 @@ export default {
       }
     },
     toDialTask(dailTaskCustomer) {
-      console.log(dailTaskCustomer)
-      console.log(this.customerInfos)
       if (dailTaskCustomer.taskId) {
         queryTaskByTaskId(dailTaskCustomer.taskId).then(response => {
           if (response.data.code === 0) {
@@ -1916,7 +2088,6 @@ export default {
           }, 10)
         }
       } else {
-        console.log(123)
         this.contents = []
         this.customerPhoneHeader = ''
         this.$store.commit('SET_WECHATCONTENTS', this.contents)
