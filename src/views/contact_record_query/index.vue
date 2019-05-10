@@ -148,8 +148,8 @@
           </el-table-column>
           <el-table-column fixed="right" align="center" label="操作">
             <template slot-scope="scope">
-              <el-button v-if="scope.row.contactType =='1'" type="text" @click="contactType='1';isMainPage=false;detailInfo.recordInfo=[],detailInfo.orderInfo=[];ids.campaignId=scope.row.campaignId;ids.recordId=scope.row.recordId;ids.taskId=scope.row.taskId;ids.agentId=scope.row.staffId;ids.customerId=scope.row.customerId;contactDetail()" size="medium">详情</el-button>
-              <el-button v-if="scope.row.contactType =='2'" type="text" @click="contactType='2';isMainPage=false;detailInfo.recordInfo=[],detailInfo.orderInfo=[];ids.campaignId=scope.row.campaignId;ids.recordId=scope.row.recordId;ids.taskId=scope.row.taskId;ids.agentId=scope.row.staffId;ids.customerId=scope.row.customerId;getChatRecords(scope.row.recordId);contactDetail();" size="medium">详情</el-button>
+              <el-button v-if="scope.row.contactType =='1'" type="text" @click="contactType='1';tabs_questionnaire='0';questionnaireTabs=[];answerData=[];isMainPage=false;detailInfo.recordInfo=[],detailInfo.orderInfo=[];ids.campaignId=scope.row.campaignId;ids.recordId=scope.row.recordId;ids.taskId=scope.row.taskId;ids.agentId=scope.row.staffId;ids.customerId=scope.row.customerId;contactDetail()" size="medium">详情</el-button>
+              <el-button v-if="scope.row.contactType =='2'" type="text" @click="contactType='2';tabs_questionnaire='0';questionnaireTabs=[];answerData=[];isMainPage=false;detailInfo.recordInfo=[],detailInfo.orderInfo=[];ids.campaignId=scope.row.campaignId;ids.recordId=scope.row.recordId;ids.taskId=scope.row.taskId;ids.agentId=scope.row.staffId;ids.customerId=scope.row.customerId;getChatRecords(scope.row.recordId);contactDetail();" size="medium">详情</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -367,7 +367,7 @@
         </div>
       </div>
     </div>
-    <div :class="isWechat('order')">
+    <div :class="isWechat('order')" v-if="campaignType === 'MARKETING'">
       <b class="font14">订单详情</b>
       <el-row style="margin-top:20px;">
         <el-table :data="detailInfo.orderInfo">
@@ -396,6 +396,76 @@
           </el-table-column>
         </el-table>
       </el-row>
+    </div>
+    <div v-if="campaignType === 'SERVICE'" :class="isWechat('order')" style="height:45vh;overflow-y:auto;">
+      <el-col>
+        <b class="font14">问卷信息</b>
+        <el-tabs v-model="tabs_questionnaire">
+          <el-tab-pane v-for="(item,index) in questionnaireTabs" :key="item.id" :label="item.name" :name="index+''">
+            <el-container>
+              <el-container style="margin-left:60px">
+                  <div class="quest-box">
+                      <el-form size="small" :model="answerData[index]">
+                          <div style="margin-top:-8px">
+                            <el-form-item v-for="(item1,index1) in item.titles" :key="index1">
+                              <div class="topic-type-content">
+                                <span>{{index1+1}}.</span>
+                                <span placeholder="标题" style="width:300px">{{item1.name}}</span>
+
+                              <!-- 单选 -->
+                                  <div class="options" v-if="item1.type===0">
+                                    <el-radio-group v-model="answerData[index][item1.id]">
+                                      <el-radio 
+                                        v-for="(a, radioIndex) in item1.options"
+                                        :key="radioIndex"
+                                        :label="a.content"
+                                        disabled
+                                        v-model="a.content"></el-radio>
+                                    </el-radio-group>
+                                  </div>
+
+                                <!-- 多选 -->
+                                <div v-else-if="item1.type===1">
+                                  <el-checkbox-group v-model="answerData[index][item1.id]">
+                                    <el-checkbox 
+                                      v-for="(a,checkboxIndex) in item1.options" 
+                                      :label="a.content" 
+                                      disabled
+                                      :key="checkboxIndex"></el-checkbox>
+                                  </el-checkbox-group>
+                                </div>
+
+                                <!-- 单行 -->
+                                <div v-else-if="item1.type===2">
+                                  <el-input 
+                                    v-model="answerData[index][item1.id]"
+                                    type="text"
+                                    disabled
+                                    style="width:478px;margin:2px" 
+                                    maxlength="45"></el-input>
+                                </div>
+
+                                <!-- 多行 -->
+                                <div v-else-if="item1.type===3">
+                                  <el-input 
+                                    v-model="answerData[index][item1.id]"
+                                    type="textarea" 
+                                    rows="4"  
+                                    disabled
+                                    resize="none" 
+                                    style="width:478px;margin:2px" 
+                                    maxlength="45" ></el-input>
+                                </div>
+                              </div>
+                            </el-form-item>
+                          </div>
+                      </el-form>
+                  </div>
+              </el-container>
+            </el-container>
+          </el-tab-pane>
+        </el-tabs>
+      </el-col>
     </div>
       <!-- 订单详情 -->
       <el-dialog
@@ -438,7 +508,7 @@
         </div>
       </el-dialog>
       <!-- 接触记录修改 -->
-      <el-dialog
+    <el-dialog
       align:left
       width="30%"
       title="接触历史修改"
@@ -497,6 +567,11 @@
     }
     .font12{
       height:30px;
+    }
+    .quest-box {
+      margin: 4px 0;
+      width: 100%;
+      // min-height: 550px;
     }
     .audio-style{
       /deep/ .plyr--audio .plyr__controls{
@@ -624,6 +699,8 @@ audio {
     getStaffByDepartId,
     queryRecords
   } from '@/api/contact_record_dail' // api接口引用
+  import { getCampaignType } from '@/api/dialTask'
+  import { queryOneQuestionnaire, queryRecordsByTaskId } from '@/api/questionnaire'
   import { permsManager } from '@/api/permission'
   import Emotion from '@/components/Emotion1/index'
   import vueEmoji from '@/components/Emotion3/emoji.vue'
@@ -634,6 +711,10 @@ audio {
     name: 'contact_record_dail',
     data() {
       return {
+        tabs_questionnaire: '0',
+        questionnaireTabs: [],
+        answerData: [], // 所有问卷的填写记录
+        campaignType: '',
         timeValue: null,
         option: { i18n: { normal: '1×', speed: '播放速度' }},
         visibleClass: '',
@@ -987,6 +1068,57 @@ audio {
             })
             this.keys = []
             this.keys = a
+
+            getCampaignType(response.data.data.campaignId).then(resp => {
+              if (resp.data) {
+                if (resp.data.code === 0) {
+                  this.campaignType = resp.data.data.campaignTypeInfo.code
+                  this.questionnaireTabs = []
+                  this.answerData = []
+                  //  判断是否需要查询问卷
+                  if (resp.data.code === 0 && resp.data.data.questionnaireIds.length > 0) {
+                    // 循环查询
+                    for (let j = 0; j < resp.data.data.questionnaireIds.length; j++) {
+                      queryOneQuestionnaire(resp.data.data.questionnaireIds[j]).then(response1 => {
+                        if (response1.data) {
+                          if (response1.data.code === 0) {
+                            this.answerData.push({})
+                            this.questionnaireTabs.push(response1.data.data)
+                          }
+                        }
+                      })
+                    }
+                    // 查询问卷填写记录
+                    queryRecordsByTaskId(this.ids.taskId).then(response2 => {
+                      if (response2.data) {
+                        if (response2.data.code === 0) {
+                          for (let i = 0; i < response2.data.data.length; i++) {
+                            for (let l = 0; l < this.questionnaireTabs.length; l++) {
+                              if (response2.data.data[i].templateId === this.questionnaireTabs[l].id) {
+                                var itemData = response2.data.data[i].recordTitles
+                                this.questionnaireTabs[l].titles.forEach((item, index) => {
+                                  let temp = null
+                                  if (item.type === 1) {
+                                    temp = itemData[index].options.map(opt => {
+                                      return opt.content
+                                    })
+                                  } else {
+                                    temp = itemData[index].options[0].content
+                                  }
+                                  this.$set(this.answerData[l], item.id, temp)
+                                })
+                              }
+                            }
+                          }
+                        }
+                      }
+                    })
+                  }
+                }
+              }
+            }).catch(error => {
+              throw error
+            })
           }
         })
         queryrecordbytaskid(this.ids.taskId, this.ids.campaignId).then(response => {

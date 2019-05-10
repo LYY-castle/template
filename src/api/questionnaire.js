@@ -43,6 +43,7 @@ export function queryQuestionnaireRecords(req) {
     url: '/questionnaire/queryQuestionnaireRecords',
     method: 'get',
     params: {
+      taskId: req.taskId,
       angentId: req.angentId,
       staffName: req.staffName,
       templateName: req.templateName,
@@ -51,6 +52,13 @@ export function queryQuestionnaireRecords(req) {
       pageNo: req.pageNo,
       pageSize: req.pageSize
     }
+  })
+}
+
+export function queryRecordsByTaskId(taskId) {
+  return request({
+    url: `/questionnaire/queryRecordsByTaskId`,
+    params: { taskId: taskId }
   })
 }
 
