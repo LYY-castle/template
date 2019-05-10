@@ -7,15 +7,6 @@ export function findAllOrganGet() {
   })
 }
 
-// // 连接老版portal用这个
-// export function findAllOrganPost(obj) {
-//   return request({
-//     url: '/organization/findAllOrgan',
-//     method: 'post',
-//     data: obj
-//   })
-// }
-
 export function findAllOrganPost(obj) {
   return request({
     url: '/organization/findAllOrgan',

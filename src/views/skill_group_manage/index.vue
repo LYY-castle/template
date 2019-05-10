@@ -223,7 +223,7 @@
                   <el-table-column
                     align="center"
                     prop="departName"
-                    label="所属组织"
+                    label="所属部门"
                     :show-overflow-tooltip="true">
                     <template slot-scope="scope">
                       {{scope.row.departName}}
@@ -410,7 +410,7 @@
         <el-button  type="primary" plain @click="resetForm('ruleFormDetail');dialogFormVisibleDetail= false">关闭</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="添加坐席员工" style="margin-top:-8vh;" :visible.sync="dialogSelectStaff" width="86%" append-to-body  @close="tags=[];history_tags=[];filterText='';resetStaffInfo();">
+    <el-dialog title="添加坐席员工" style="margin-top:-8vh;" :visible.sync="dialogSelectStaff" width="86%" append-to-body   @close="tags=[];history_tags=[];filterText='';resetStaffInfo();">
       <div  style="min-width:986px;">
         <el-row >
           <el-col :span="4">
@@ -420,6 +420,7 @@
                 placeholder="请输入关键字"
                 size="small"
                 v-model="filterText"
+                @change="selectStaffItem.departName=null,selectStaffItem.departId=null"
                 clearable>
                 <i slot="prefix" class="el-input__icon el-icon-search" ></i>
               </el-input>
@@ -429,6 +430,7 @@
               :style="treeDivCSS"
               class="filter-tree"
               :data="treeData"
+              node-key="id"
               :props="defaultProps"
               default-expand-all
               @node-click="handleNodeClick"
@@ -450,10 +452,13 @@
                         <el-input placeholder="姓名" v-model="selectStaffItem.name" maxlength="45"></el-input>
                       </el-form-item>
                       <el-form-item label="工号:" >
-                        <el-input placeholder="工号" v-model="selectStaffItem.angentId" maxlength="45"></el-input>
+                        <el-input placeholder="工号" v-model="selectStaffItem.staffNo" maxlength="45"></el-input>
                       </el-form-item>
                       <el-form-item label="联系方式:">
                         <el-input placeholder="联系方式" v-model="selectStaffItem.userPhone" maxlength="45"></el-input>
+                      </el-form-item>
+                      <el-form-item label="部门:">
+                        <el-input  v-model="selectStaffItem.departName" maxlength="45" :readonly="true"></el-input>
                       </el-form-item>
                       <el-form-item>
                         <el-button type="primary" @click="searchStaffInfo(selectStaffItem,0)">查询</el-button>
@@ -489,19 +494,19 @@
                       fixed
                       align="center"
                       label="工号"
-                      prop="angentId"
+                      prop="staffNo"
                       :show-overflow-tooltip="true">
                       <template slot-scope="scope">
-                        {{scope.row.angentId}}
+                        {{scope.row.staffNo}}
                       </template>
                     </el-table-column>
                     <el-table-column
                       align="center"
-                      prop="staffName"
+                      prop="name"
                       label="姓名"
                       :show-overflow-tooltip="true">
                       <template slot-scope="scope">
-                        {{scope.row.staffName}}
+                        {{scope.row.name}}
                       </template>
                     </el-table-column>
                     <el-table-column
@@ -519,7 +524,7 @@
                       label="归属部门"
                       :show-overflow-tooltip="true">
                       <template slot-scope="scope">
-                        {{ scope.row.departName }}
+                        {{ scope.row.depart?(scope.row.depart.name?scope.row.depart.name:""):"" }}
                       </template>
                     </el-table-column>
                     <el-table-column
@@ -528,7 +533,7 @@
                       label="联系方式"
                       :show-overflow-tooltip="true">
                       <template slot-scope="scope">
-                        {{scope.row.userPhone}}
+                        {{scope.row.phone?scope.row.phone:""}}
                       </template>
                     </el-table-column>
                   </el-table>
@@ -613,13 +618,19 @@ export default {
       treeData: [],
       defaultProps: {
         children: 'children',
-        label: 'departName'
+        label: 'name'
       },
       ownnerSkillSetName: '', // 所属技能组
       ownnerSkillSetId: '', // 所属技能组id
       selectStaffTableData: [],
       staffRelationshipData: [],
-      selectStaffItem: {},
+      selectStaffItem: {
+        name: '',
+        staffNo: '',
+        userPhone: '',
+        departId: null,
+        departName: '所有部门'
+      },
       staffRelationship: {},
       formInline: {},
       pagination: {},
@@ -683,6 +694,7 @@ export default {
         parentIdFielName: 'upId'
       }
       this.treeData = list2Tree(map)
+      console.log('this.treeData', this.treeData)
     })
   },
   methods: {
@@ -756,7 +768,7 @@ export default {
     },
     filterNode(value, data) {
       if (!value) return true
-      return data.departName.indexOf(value) !== -1
+      return data.name.indexOf(value) !== -1
     },
     showSex(str) {
       let result = ''
@@ -783,7 +795,11 @@ export default {
       req.priority = '0'
       req.delFlag = '1'
       if (agentIds.length < 1) {
-        console.log('还未选则坐席员工！')
+        Message({
+          message: '请选择员工！',
+          type: 'error',
+          duration: 3 * 1000
+        })
         return
       }
       addUserSkillSet(req).then(res => {
@@ -811,7 +827,7 @@ export default {
       for (let i = 0; i < data.length; i++) {
         const tag = {}
         tag.id = data[i].id
-        tag.name = data[i].staffName + '（' + data[i].angentId + '）'
+        tag.name = data[i].name + '（' + data[i].staffNo + '）'
         new_tags.push(tag)
       }
       if (this.tags.length > 0) {
@@ -834,7 +850,7 @@ export default {
     },
     haddleRow(val) {
       const tag = {}
-      tag.name = val.staffName + '（' + val.angentId + '）'
+      tag.name = val.name + '（' + val.staffNo + '）'
       tag.id = val.id
       if (this.tags.length > 0) {
         let flag = true
@@ -853,9 +869,9 @@ export default {
     },
     resetStaffInfo() {
       this.selectStaffItem.name = ''
-      this.selectStaffItem.angentId = ''
+      this.selectStaffItem.staffNo = ''
       this.selectStaffItem.userPhone = ''
-      this.selectStaffItem.departName = null
+      this.selectStaffItem.departName = '所有部门'
       this.selectStaffItem.departId = null
       this.pagination2.pageNo = 1
       this.pagination2.pageSize = 10
@@ -864,9 +880,9 @@ export default {
       // 先清空筛选条件下的条件内容
       this.resetStaffInfo()
       const req = {}
-      req.departName = data.departName
+      req.departName = data.name
       req.departId = data.id
-      this.selectStaffItem.departName = data.departName
+      this.selectStaffItem.departName = data.name
       this.selectStaffItem.departId = data.id
       this.searchStaffInfo(req, 1)
       // if (req.departId === null) {
@@ -885,17 +901,20 @@ export default {
       }
     },
     searchStaffInfo(req, val) {
-      req.pageNo = req.pageNo ? req.pageNo : 1
-      req.pageSize = req.pageSize ? req.pageSize : (this.pagination2.pageSize ? this.pagination2.pageSize : 10)
-      req.skillsetId = this.ownnerSkillSetId
+      const param = { name: '', userPhone: '', departId: null, staffNo: '' }
+      param.name = req.name
+      param.userPhone = req.userPhone
+      param.departId = req.departId
+      param.staffNo = req.staffNo
+      param.pageNo = req.pageNo ? req.pageNo : 1
+      param.pageSize = req.pageSize ? req.pageSize : (this.pagination2.pageSize ? this.pagination2.pageSize : 10)
+      param.skillsetId = this.ownnerSkillSetId
       if (val === 0) {
-        this.selectStaffItem.departName = null
-        req.departName = null
-        queryUserSkillSet(req).then(response => {
+        queryUserSkillSet(param).then(response => {
           this.queryStaff(response)
         })
       } else {
-        queryUserSkillSetByDepart(req).then(res => {
+        queryUserSkillSetByDepart(param).then(res => {
           this.queryStaff(res)
         })
       }
@@ -949,6 +968,7 @@ export default {
     addStaff() {
       vm = this
       this.dialogSelectStaff = true
+      this.resetStaffInfo()
       this.searchStaffInfo(this.selectStaffItem)
       const req = {}
       req.skillsetId = this.ownnerSkillSetId
@@ -956,10 +976,11 @@ export default {
       queryUserSkillSetList(req).then(res => {
         if (res.data && res.data.data.length > 0) {
           const data = res.data.data
+
           for (let i = 0; i < data.length; i++) {
             const temp_tag = {}
             temp_tag.id = data[i].id
-            temp_tag.name = (data[i].staffDetail.staffName ? data[i].staffDetail.staffName : '') + '（' + (data[i].staffDetail.angentId ? data[i].staffDetail.angentId : '') + '）'
+            temp_tag.name = (data[i].staffInfo.name ? data[i].staffInfo.name : '') + '（' + (data[i].staffInfo.staffNo ? data[i].staffInfo.staffNo : '') + '）'
             vm.history_tags.push(temp_tag)
           }
         }
@@ -1000,12 +1021,12 @@ export default {
           const data = res.data.data
           for (let i = 0; i < data.length; i++) {
             const shipData = {}
-            if (data[i].staffDetail) {
-              shipData.agentId = data[i].staffDetail.angentId ? data[i].staffDetail.angentId : ''
-              shipData.agentName = data[i].staffDetail.staffName ? data[i].staffDetail.staffName : ''
-              shipData.sex = data[i].staffDetail.sex
-              shipData.departName = data[i].staffDetail.departName ? data[i].staffDetail.departName : ''
-              shipData.userPhone = data[i].staffDetail.userPhone ? data[i].staffDetail.userPhone : ''
+            if (data[i].staffInfo) {
+              shipData.agentId = data[i].staffInfo.staffNo ? data[i].staffInfo.staffNo : ''
+              shipData.agentName = data[i].staffInfo.name ? data[i].staffInfo.name : ''
+              shipData.sex = data[i].staffInfo.sex
+              shipData.departName = data[i].staffInfo.depart ? (data[i].staffInfo.depart, name ? data[i].staffInfo.depart.name : '') : ''
+              shipData.userPhone = data[i].staffInfo.phone ? data[i].staffInfo.phone : ''
               shipData.isEdit = false
             }
             shipData.id = data[i].id

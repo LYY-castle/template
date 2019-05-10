@@ -39,9 +39,9 @@ export function resetPWDById(obj) {
   })
 }
 // 角色建议
-export function findAccountByAgentid(obj) {
+export function findStaffById(obj) {
   return request({
-    url: '/account/findAccountByAgentid',
+    url: '/employee/queryone',
     method: 'get',
     params: obj
   })
@@ -99,24 +99,32 @@ export function getMenuById(roleId) {
   })
 }
 // 赋予用户角色
-export function addRole(userId, roleIds) {
+export function addRole(data) {
   return request({
-    url: `auth/users/${userId}/roles`,
+    url: `auth/users/roles`,
     method: 'post',
-    data: { 'roleIds': roleIds, 'method': 'POST' }
+    data: data
   })
 }
 // 修改用户角色
-export function editRole(userId, roleIds) {
+export function editRole(accountNo, roleIds) {
   return request({
-    url: `auth/users/${userId}/roles`,
+    url: `auth/users/roles`,
     method: 'post',
-    data: { 'roleIds': roleIds, 'method': 'PUT' }
+    data: { 'roleIds': roleIds, 'accountNo': accountNo, 'method': 'PUT' }
   })
 }
 // 查询用户角色
 export function getUserRole(userId) {
   return request({
     url: `auth/users/${userId}/roles`
+  })
+}
+// 查询员工
+export function queryStaff(page) {
+  return request({
+    url: '/employee/query',
+    method: 'get',
+    params: page
   })
 }

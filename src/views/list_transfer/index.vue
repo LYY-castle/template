@@ -3,10 +3,10 @@
     <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
       <el-collapse-item title="筛选条件" name="1">
         <el-form :inline="true" size="small">
-          <el-form-item label="组织">
+          <el-form-item label="部门">
             <el-cascader
               v-model="selected_dept_id"
-              placeholder="请选择组织"
+              placeholder="请选择部门"
               :options="org_options"
               :props="org_props"
               show-all-levels
@@ -211,11 +211,11 @@
     <!-- 选择转移的坐席dialog -->
     <el-dialog width="30%" title="操作提示" :visible.sync="transferVisible" append-to-body>
       <el-form size="small">
-        <el-form-item label="转移的组织：">
+        <el-form-item label="转移的部门：">
           <el-cascader
             style="width:100%;"
             v-model="transfer_dept_id"
-            placeholder="请选择组织"
+            placeholder="请选择部门"
             :options="org_options"
             :props="org_props"
             show-all-levels
@@ -275,11 +275,11 @@ export default {
       formContainerOpen: '1',
       formContainer: this.$store.state.app.formContainer,
       hasAgent: false,
-      org_options: [], // 用以展示级联的组织
-      selected_dept_id: [], // 级联选中的组织id
-      transfer_dept_id: [], // 用以dialog中级联选中的组织id
+      org_options: [], // 用以展示级联的部门
+      selected_dept_id: [], // 级联选中的部门id
+      transfer_dept_id: [], // 用以dialog中级联选中的部门id
       org_props: {
-        label: 'departName',
+        label: 'name',
         value: 'id',
         children: 'subDeparts'
       },

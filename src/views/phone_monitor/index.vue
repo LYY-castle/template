@@ -465,7 +465,7 @@
               :data="organData">
               <el-table-column
                 align="center"
-                label="组织名称"
+                label="部门名称"
                 prop="organName">
               </el-table-column>
                 <el-table-column
@@ -551,7 +551,7 @@ var baseinfo = null
           ringingCount: 0,
           freeCount: 0,
 
-          organNext_map: new Map(), // 下属组织
+          organNext_map: new Map(), // 下属部门
           leaderId: '' // 经理id
         },
         agentData: [], // 小组所有成员情况（默认展示为监控区的card元素）
@@ -567,7 +567,7 @@ var baseinfo = null
               for (let i = 0; i < response.data.data.length; i++) {
                 childArr.push(response.data.data[i].id)
               }
-              // childArr.splice(childArr.indexOf(obj.departId), 1)  不除去自己本身的组织
+              // childArr.splice(childArr.indexOf(obj.departId), 1)  不除去自己本身的部门
               baseinfo.departs.set(departId, childArr)
             }
             resolve()

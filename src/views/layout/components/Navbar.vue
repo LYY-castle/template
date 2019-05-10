@@ -294,9 +294,9 @@
       <span style="color:red">*</span><span style="font-size:15px;">请输入旧密码：</span><br/>
        <el-input type="password" placeholder="请输入旧密码" size="medium" v-model="changePWD.oldPassword" maxlength="20" clearable></el-input>
       <span style="color:red">*</span><span style="font-size:15px;">请输入新密码：</span><br/>
-       <el-input type="password" placeholder="请输入新密码" size="medium" v-model="changePWD.newPassword" maxlength="20" clearable></el-input>
+       <el-input type="password" placeholder="请输入新密码" size="medium" v-model="changePWD.password" maxlength="20" clearable></el-input>
       <span style="color:red">*</span><span style="font-size:15px;">请输入验证码：</span><br/>
-       <el-input type="text" placeholder="请输入验证码" size="medium" v-model="changePWD.validateCode" maxlength="4" style="width:70%" clearable></el-input>
+       <el-input type="text" placeholder="请输入验证码" size="medium" v-model="changePWD.code" maxlength="4" style="width:70%" clearable></el-input>
        <img style="position:relative;top:10px;" height="35" width="75"  :src="codeUrl" @click="getCode()">
        <!-- <div>{{codeUrl}}</div> -->
       <div slot="footer" class="dialog-footer" style="text-align: center;">
@@ -435,10 +435,11 @@ export default {
       msgNum_today_all: '', // 今日消息总数（已读+未读）
       changePwdVisiable: false, // 修改密码dialog
       changePWD: {
-        staffId: '',
+        userName: localStorage.getItem('userName'),
+        operatorId: localStorage.getItem('agentId'),
         oldPassword: '',
-        newPassword: '',
-        validateCode: ''
+        password: '',
+        code: ''
       },
       codeUrl: '',
       wechatState: null,
@@ -575,13 +576,13 @@ export default {
       if (changePWD.oldPassword === '') {
         this.$message.error('请输入原密码！')
         return
-      } else if (changePWD.newPassword === '') {
+      } else if (changePWD.password === '') {
         this.$message.error('请输入新密码！')
         return
-      } else if (changePWD.oldPassword === changePWD.newPassword) {
+      } else if (changePWD.oldPassword === changePWD.password) {
         this.$message.error('新密码与原密码一致，请尝试新的密码组合！')
         return
-      } else if (changePWD.validateCode === '') {
+      } else if (changePWD.code === '') {
         this.$message.error('请输入验证码！')
         return
       } else {
@@ -639,9 +640,10 @@ export default {
         this.logout()
       } else if (command === 'changePWD') {
         this.changePWD.staffId = localStorage.getItem('agentId')
+        this.changePWD.userName = localStorage.getItem('userName')
         this.changePWD.oldPassword = ''
-        this.changePWD.newPassword = ''
-        this.changePWD.validateCode = ''
+        this.changePWD.password = ''
+        this.changePWD.code = ''
         // 生成验证码
         generateValidateCode()
           .then(res => {

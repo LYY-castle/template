@@ -66,7 +66,7 @@
           <el-table-column
             align="center"
             prop="departName"
-            label="组织名"
+            label="部门名"
             :show-overflow-tooltip="true">
             <template slot-scope="scope">
               {{ scope.row.departName }}

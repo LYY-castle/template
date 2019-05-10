@@ -339,12 +339,12 @@
         <div style="border-bottom:1px solid #dcdfe6;width:94%;float:right;margin:-10px;" class="margin-bottom-20" v-if="campaignDetail.outcallmode === '1'"></div>
         <el-form-item>
           <span slot="label">
-            <span style="color:#f56c6c">*</span> 活动组织
+            <span style="color:#f56c6c">*</span> 活动部门
           </span>
           <el-cascader
             style="width:100%;"
             v-model="edit_dept_ids"
-            placeholder="请选择组织"
+            placeholder="请选择部门"
             :options="visibleDepts"
             :props="org_props"
             show-all-levels
@@ -364,7 +364,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="质检组织">
+        <el-form-item label="质检部门">
           <span v-for="item in qcdeptData" v-if="qcdeptData && qcdeptData.length!==0">{{(qcdeptData.length===0)?'无':item+' , '}}</span>
           <span v-if="qcdeptData && qcdeptData.length===0">无</span>
         </el-form-item>
@@ -462,13 +462,13 @@
         <!-- <el-form-item label="活动状态">
           <span>{{campaignDetail.status==='1'?'无效':'有效'}}</span>
         </el-form-item> -->
-        <el-form-item label="活动组织">
+        <el-form-item label="活动部门">
           <span>{{departName}}</span>
         </el-form-item>
         <el-form-item label="话后小结">
           <span>{{summaryName}}</span>
         </el-form-item>
-        <el-form-item label="质检组织">
+        <el-form-item label="质检部门">
           <span v-for="item in qcdeptData" v-if="qcdeptData && qcdeptData.length!==0">{{(qcdeptData.length===0)?'无':item+' , '}}</span>
           <span v-if="qcdeptData && qcdeptData.length===0">无</span>
         </el-form-item>
@@ -667,12 +667,12 @@
         <div style="border-bottom:1px solid #dcdfe6;width:94%;float:right;margin:-10px;" class="margin-bottom-20" v-if="campaignDetail.calloutMode === '1'"></div>
         <el-form-item>
           <span slot="label">
-            <span style="color:#f56c6c">*</span> 活动组织
+            <span style="color:#f56c6c">*</span> 活动部门
           </span>
           <el-cascader
             style="width:100%;"
             v-model="new_dept_ids"
-            placeholder="请选择组织"
+            placeholder="请选择部门"
             :options="visibleDepts"
             :props="org_props"
             show-all-levels
@@ -1081,10 +1081,10 @@ export default {
         }
       }
     }
-    // 选择活动组织
+    // 选择活动部门
     var checkDept = (rule, value, callback) => {
       if (this.new_dept_ids.length === 0) {
-        callback(new Error('请选择组织！'))
+        callback(new Error('请选择部门！'))
       }
     }
     return {
@@ -1263,13 +1263,13 @@ export default {
       questionnaireNames: [], // 问卷模板名称
       new_dept_ids: [], // 新建活动
       edit_dept_ids: [], // 修改活动
-      reverse_edit_dept_ids: [], // 用以回显修改组织
+      reverse_edit_dept_ids: [], // 用以回显修改部门
       org_props: {
-        label: 'departName',
+        label: 'name',
         value: 'id',
         children: 'children'
       },
-      beforeTransfer_visibleDepts: [], // 所有可见组织 - 转成树结构之前
+      beforeTransfer_visibleDepts: [], // 所有可见部门 - 转成树结构之前
       // 是否展示微信相关
       show_wechat: `${process.env.SHOW_WECHAT}`,
       campaignExpiryDate: [],
@@ -1305,9 +1305,9 @@ export default {
           name: '自动外呼'
         }
       ],
-      deptData: [], // 所有组织
-      visibleDepts: [], // 所有可见组织
-      qcdeptData: [], // 质检组织
+      deptData: [], // 所有部门
+      visibleDepts: [], // 所有可见部门
+      qcdeptData: [], // 质检部门
       allSummaryData: [], // 所有小结
       visibleSummaryData: [], // 所有可见的小结
       campaignTypes: [], // 活动类型
@@ -1315,7 +1315,7 @@ export default {
       productName: [], // 产品名称
       customerColumnInfos: [], // 选择显示的客户字段
       toshowcustomerColumnInfos: [], // 需要显示在活动详情的客户字段
-      departName: '', // 活动组织名称
+      departName: '', // 活动部门名称
       summaryName: '', // 小结名称
       campaignName: '', // 活动名称
       delReq: {
@@ -1557,7 +1557,7 @@ export default {
           if (valid) {
             if (formName === 'campaignDetail') {
               if (this.new_dept_ids.length === 0) {
-                this.$message.error('请选择活动组织')
+                this.$message.error('请选择活动部门')
                 this.validate = false
                 return
               } else {
@@ -1565,7 +1565,7 @@ export default {
               }
             } else {
               if (this.edit_dept_ids.length === 0) {
-                this.$message.error('请选择活动组织')
+                this.$message.error('请选择活动部门')
                 this.validate = false
                 return
               } else {
@@ -1676,7 +1676,7 @@ export default {
           var list
           var questionnaireId
           if (response.data.code === 0) {
-            /** 回显上级组织的逻辑 start */
+            /** 回显上级部门的逻辑 start */
             let arr = []
             for (var q = 0; q < this.beforeTransfer_visibleDepts.length; q++) {
               if (this.beforeTransfer_visibleDepts[q].id === parseInt(response.data.data.departId)) {
@@ -1694,7 +1694,7 @@ export default {
             }
             this.edit_dept_ids = arr
             this.reverse_edit_dept_ids = arr
-            /** 回显上级组织的逻辑 end */
+            /** 回显上级部门的逻辑 end */
 
             this.campaignDetail = response.data.data
             this.campaignDetail.departId = parseInt(this.campaignDetail.departId)
@@ -1758,7 +1758,7 @@ export default {
             }
           }
 
-          // 遍历查找对应活动组织
+          // 遍历查找对应活动部门
           for (var a = 0; a < this.deptData.length; a++) {
             if (this.deptData[a].id === this.campaignDetail.departId) {
               this.departName = this.deptData[a].departName
@@ -1949,13 +1949,13 @@ export default {
         console.log(error)
       })
     },
-    // 查询活动组织
+    // 查询活动部门
     getDepts() {
       queryDepts().then(response => {
         this.deptData = response.data.data
       })
     },
-    // 查询所有可见组织
+    // 查询所有可见部门
     getVisibleDepts() {
       getAllVisibleDepts().then(response => {
         this.beforeTransfer_visibleDepts = response.data.data
@@ -1986,7 +1986,7 @@ export default {
         this.marksData = response.data.data
       })
     },
-    // 详情页面查询质检组织
+    // 详情页面查询质检部门
     getDeptByCampaignId(campaignId) {
       findDeptByCampaignId(campaignId).then(response => {
         this.qcdeptData = []

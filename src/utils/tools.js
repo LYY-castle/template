@@ -296,12 +296,7 @@ export function changePassword(info) {
   return request({
     url: '/login/modifyPw',
     method: 'post',
-    data: {
-      angentId: info.staffId,
-      oldPassword: info.oldPassword,
-      password: info.newPassword,
-      code: info.validateCode
-    }
+    data: info
   })
 }
 export function findRegionByRegionParentId(parentId) {
@@ -458,7 +453,7 @@ export function list2Tree({ data = [], rootId, idFieldName = 'id', parentIdFielN
 
   return r
 }
-// 展示成树结构(obj为数组织数据，value为取值如（id)，label为树结构名称(如name))
+// 展示成树结构(obj为数部门数据，value为取值如（id)，label为树结构名称(如name))
 export function getChildren(obj, value, label) {
   const result = {}
   result.value = obj[value]

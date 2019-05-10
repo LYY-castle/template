@@ -55,7 +55,7 @@ export function quertyAllMarks() {
   })
 }
 
-// 根据活动id显示当前活动的质检组织
+// 根据活动id显示当前活动的质检部门
 export function queryQcDeptByCampaignId(campaignId) {
   return request({
     url: '/quality/getDeptByCampaignId',

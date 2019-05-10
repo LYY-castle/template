@@ -185,8 +185,8 @@
           name: '',
           phone: ''
         },
-        regionOptions: [], // 所有可见组织
-        allDepts: [], // 所有组织
+        regionOptions: [], // 所有可见部门
+        allDepts: [], // 所有部门
         tableData: [],
         multipleSelection: [],
         formInline: {
@@ -224,7 +224,7 @@
           id: '',
           departName: '',
           comment: '',
-          visible: 1 // 组织状态  0：不可见    1：可见
+          visible: 1 // 部门状态  0：不可见    1：可见
         },
         ruleFormReverse: {
           category_id: '',

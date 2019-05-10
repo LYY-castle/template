@@ -40,9 +40,9 @@
 
 <script>
   // import { isvalidUsername } from '@/utils/validate'
-  import {Message, MessageBox} from 'element-ui'
-  import {loginValid} from '@/api/login'
-  import {getCurrentTheme} from '@/api/theme'
+  import { Message, MessageBox } from 'element-ui'
+  import { loginValid } from '@/api/login'
+  import { getCurrentTheme } from '@/api/theme'
 
   export default {
     name: 'login',
@@ -68,8 +68,8 @@
           extensionNumber: ''
         },
         loginRules: {
-          username: [{required: true, trigger: 'blur', validator: validateUsername}],
-          password: [{required: true, trigger: 'blur', validator: validatePass}]
+          username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+          password: [{ required: true, trigger: 'blur', validator: validatePass }]
         },
         loading: false,
         pwdType: 'password'
@@ -110,13 +110,18 @@
           // 清除以前登录的token
           this.$store.dispatch('FedLogOut', this.loginForm)
           if (valid) {
-            localStorage.setItem('agentId', this.loginForm.username)
-            localStorage.setItem('DN', this.loginForm.extensionNumber)
             this.loading = true
             this.$store.dispatch('Login', this.loginForm).then((data) => {
               if (data.code === '0') {
+                localStorage.setItem('userName', this.loginForm.username)
+                localStorage.setItem('agentId', data.data.staffNo)
+                localStorage.setItem('agentName', data.data.staffName)
+                localStorage.setItem('departId', data.data.departId)
+                localStorage.setItem('departName', data.data.departName)
+                localStorage.setItem('accountNo', data.data.accountNo)
+                localStorage.setItem('DN', this.loginForm.extensionNumber)
                 this.loading = false
-                this.$router.push({path: '/dashboard'})
+                this.$router.push({ path: '/dashboard' })
                 // 获取主题
                 getCurrentTheme().then(response => {
                   if (response.data.code === 0) {
@@ -146,8 +151,14 @@
                   this.$store.dispatch('LoginAnd', this.loginForm).then((data) => {
                     if (data.code === '0') {
                       this.loading = false
-                      localStorage.setItem('agentId', this.loginForm.username)
-                      this.$router.push({path: '/dashboard'})
+                      localStorage.setItem('userName', this.loginForm.username)
+                      localStorage.setItem('agentId', data.data.staffNo)
+                      localStorage.setItem('agentName', data.data.staffName)
+                      localStorage.setItem('departId', data.data.departId)
+                      localStorage.setItem('departName', data.data.departName)
+                      localStorage.setItem('accountNo', data.data.accountNo)
+                      localStorage.setItem('DN', this.loginForm.extensionNumber)
+                      this.$router.push({ path: '/dashboard' })
                       // 获取主题
                       getCurrentTheme().then(response => {
                         if (response.data.code === 0) {
@@ -196,7 +207,7 @@
             type: 'success',
             duration: 1 * 1000
           })
-          this.$router.push({path: '/dashboard'})
+          this.$router.push({ path: '/dashboard' })
         }
       }).catch(error => {
         console.log(error)

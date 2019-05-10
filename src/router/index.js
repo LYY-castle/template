@@ -87,6 +87,7 @@ export const constantRouterMap = [
 ]
 
 const baseRouter = getDynamicRouter()
+console.log('baseRouter', baseRouter)
 // if (sessionStorage.getItem('getMenu') && JSON.parse(sessionStorage.getItem('getMenu')).data) {
 //   const data = JSON.parse(sessionStorage.getItem('getMenu')).data
 //   console.log(data, 'data in router')
@@ -165,7 +166,7 @@ const baseRouter = getDynamicRouter()
 //         path: 'organize',
 //         name: 'organize',
 //         component: () => import('@/views/table/index'),
-//         meta: { title: '组织管理', icon: 'user' }
+//         meta: { title: '部门管理', icon: 'user' }
 //       },
 //       {
 //         path: 'employee',

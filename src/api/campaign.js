@@ -9,7 +9,7 @@ export function findAllProduct() {
   })
 }
 
-// 获取所有活动组织
+// 获取所有活动部门
 export function queryDepts() {
   return request({
     url: `employee/queryDepts`,
@@ -17,7 +17,7 @@ export function queryDepts() {
   })
 }
 
-// 获取所有可见组织
+// 获取所有可见部门
 export function getAllVisibleDepts() {
   return request({
     url: '/organization/findAllOrganTo',
@@ -56,7 +56,7 @@ export function findMarksByCampaignId(campaignId) {
     params: { activityId: campaignId }
   })
 }
-// 根据活动id获取质检组织
+// 根据活动id获取质检部门
 export function findDeptByCampaignId(campaignId) {
   return request({
     url: `quality/getDeptByCampaignId`,

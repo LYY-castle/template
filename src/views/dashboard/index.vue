@@ -91,7 +91,7 @@ export default {
     ])
   },
   mounted() {
-    getMenu(localStorage.getItem('agentId')).then(response => {
+    getMenu(localStorage.getItem('accountNo')).then(response => {
       var data = response.data
       this.routerData = getDynamicRouter(data)
       // 存到session storage

@@ -42,7 +42,7 @@
               {{ scope.row.activityName }}
             </template>
           </el-table-column>
-          <el-table-column align="center" label="质检组织" :show-overflow-tooltip="true">
+          <el-table-column align="center" label="质检部门" :show-overflow-tooltip="true">
             <template slot-scope="scope">
               {{showQmDepart(scope.row.departName)}}
             </template>
@@ -94,11 +94,11 @@
         </el-pagination>
       </el-row>
     </el-row>
-    <!-- 指定质检组织、评分表的dialog  -->
+    <!-- 指定质检部门、评分表的dialog  -->
     <el-dialog
       align:left
       width="30%"
-      title="指定质检组织/评分表"
+      title="指定质检部门/评分表"
       :visible.sync="appointVisiable"
       append-to-body>
       <el-form label-width="100px" size="small">
@@ -111,17 +111,17 @@
         <el-form-item label="活动状态：">
             <div v-html="showStatus(campaignDetail.status)"></div>
         </el-form-item>
-        <el-form-item label="活动组织：">
+        <el-form-item label="活动部门：">
           <div>{{campaignDetail.departName}}</div>
         </el-form-item>
         <el-form-item label="话后小结：">
           <div>{{campaignDetail.summaryName}}</div>
         </el-form-item>
-        <el-form-item label="质检组织：">
+        <el-form-item label="质检部门：">
           <el-cascader
             style="width:100%;"
             v-model="appoint_qcdept"
-            placeholder="请选择组织"
+            placeholder="请选择部门"
             :options="qcdepts"
             :props="org_props"
             :show-all-levels='false'
@@ -130,7 +130,7 @@
             change-on-select
             clearable
           ></el-cascader>
-          <!-- <el-select v-model="qcdept" placeholder="请选择质检组织" clearable @change="selectQcDept">
+          <!-- <el-select v-model="qcdept" placeholder="请选择质检部门" clearable @change="selectQcDept">
               <el-option
                 v-for="qcdepart in qcdepts"
                 :label="qcdepart.departName"
@@ -185,19 +185,19 @@ export default {
       formContainer: this.$store.state.app.formContainer,
       appoint_qcdept: [], // 级联选中的
       org_props: {
-        label: 'departName',
+        label: 'name',
         value: 'id',
         children: 'children'
       },
       tableData: [], // 表格数据
       pageShow: false, // 分页显示与否
       pageInfo: {}, // 分页信息
-      appointVisiable: false, // 指定组织/评分表的dialog
-      beforeTransfer_qcdepts: [], // 转换为树结构之前的下属所有质检组织
-      qcdepts: [], // 下属所有质检组织
+      appointVisiable: false, // 指定部门/评分表的dialog
+      beforeTransfer_qcdepts: [], // 转换为树结构之前的下属所有质检部门
+      qcdepts: [], // 下属所有质检部门
       grades: [], // 所有的评分表
-      qcdept: '', // 选中的或回显的质检组织
-      qcdeptId: '', // 选中的或回显的质检组织id
+      qcdept: '', // 选中的或回显的质检部门
+      qcdeptId: '', // 选中的或回显的质检部门id
       grade: [], //  选中的或回显的评分表
       gradeIds: [], // 选中的或回显的评分表id
       timeValue: [],
@@ -235,7 +235,7 @@ export default {
         $('.form-more').text('更多')
       }
     },
-    // 质检组织显示
+    // 质检部门显示
     showQmDepart(departName) {
       if (departName) {
         return departName
@@ -325,7 +325,7 @@ export default {
           }
         })
     },
-    // 查询下属质检组织
+    // 查询下属质检部门
     searchQcDepts() {
       queryallQcdepts(localStorage.getItem('departId'))
         .then(response => {
@@ -370,7 +370,7 @@ export default {
       this.req.pageNo = val
       this.searchByCampaign(this.req)
     },
-    // 根据活动id显示当前活动的质检组织
+    // 根据活动id显示当前活动的质检部门
     showQcDeptByCampaignId(campaignId) {
       queryQcDeptByCampaignId(campaignId)
         .then(response => {
@@ -409,7 +409,7 @@ export default {
           }
         })
     },
-    // 将选择的质检组织id和名称传参
+    // 将选择的质检部门id和名称传参
     selectQcDept(value) {
       this.qcdeptId = value
       let obj = {}
@@ -430,7 +430,7 @@ export default {
     // 完成指定或修改
     completeAssign() {
       if (this.appoint_qcdept.length === 0) {
-        this.$message.error('请选择质检组织！')
+        this.$message.error('请选择质检部门！')
         return
       }
       this.assignParams.qcdeptId = this.appoint_qcdept[this.appoint_qcdept.length - 1]

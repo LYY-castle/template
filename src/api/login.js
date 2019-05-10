@@ -6,7 +6,7 @@ export function login(username, password, extensionNumber) {
     url: '/login/checkpw',
     method: 'post',
     data: {
-      agentid: username,
+      userName: username + '',
       password: md5(password),
       DN: extensionNumber
     }
@@ -18,7 +18,7 @@ export function loginAnd(username, password) {
     url: '/login/loginOutAndLogin',
     method: 'post',
     data: {
-      agentid: username,
+      userName: username + '',
       password: md5(password)
     }
   })

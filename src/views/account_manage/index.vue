@@ -18,21 +18,18 @@
                 <el-option label="未启用" value="2"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="所属组织：" v-if="$route.params.id === ':id'">
+            <el-form-item label="所属部门：" >
               <el-cascader
                 v-model="selected_dept_id"
-                placeholder="请选择组织"
+                placeholder="请选择部门"
                 :options="regionOptions"
                 :props="org_props"
                 show-all-levels
                 filterable
                 size="small"
                 change-on-select
-                clearable
+                
               ></el-cascader>
-              <!-- <el-select v-model="formInline.departName" placeholder="所属组织">
-                <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
-              </el-select> -->
             </el-form-item>
             <el-form-item label="操作人：">
               <el-input placeholder="操作人（限长45字符）" v-model="formInline.creator" maxlength="45"></el-input>
@@ -59,8 +56,16 @@
           <div class="font14 bold">账号管理表</div>
         </el-row>
         <el-row class="margin-bottom-20">
-          <el-button type="success" size="small"  @click="batchStatus=1,batchDelVisible=true">批量启用</el-button>
-          <el-button type="danger" size="small" @click="batchStatus=0,batchDelVisible=true">批量停用</el-button>
+           <el-button type="primary" size="small" @click="addAccountVisible=true;resetStaffForm(),roleMenu=[],resetAddAcountModel()">新建</el-button>
+          <el-dropdown size="small" trigger="click" @command="moreOperating" style="margin-left:10px">
+            <el-button type="info" style="width:auto">
+              更多操作<i class="el-icon-arrow-down el-icon--right"></i>
+            </el-button>
+            <el-dropdown-menu slot="dropdown" class="info">
+              <el-dropdown-item command='1'>批量启用</el-dropdown-item>
+              <el-dropdown-item command='0'>批量停用</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </el-row>
         <el-row>
           <el-table
@@ -69,6 +74,36 @@
             ref="multipleTable"
             tooltip-effect="dark"
             @selection-change="handleSelectionChange">
+
+            <!-- <el-table-column type="expand">
+              <template slot-scope="props">
+                 <el-table
+                  :data="props.row.accountCertResultInfos"
+                  stripe
+                  style="width: 30%;background:#fff"
+                  :header-cell-style="getRowClass"
+                  >
+                  <el-table-column
+                    align="center"
+                    label="用户名"
+                    prop="userName"
+                    width="180">
+                    
+                  </el-table-column>
+                  
+                  <el-table-column
+                    align="center"
+                    prop="type"
+                    label="类型">
+                    <template slot-scope="scope">
+                    <span>{{returnType(scope.row.type)}}</span>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </template>
+            </el-table-column> -->
+
+
             <el-table-column
               align="center"
               type="selection"
@@ -76,36 +111,34 @@
             </el-table-column>
             <el-table-column
               align="center"
-              prop="agentId"
+              prop="accountNo"
               label="系统账号"
               :show-overflow-tooltip="true">
             </el-table-column>
             <el-table-column
               align="center"
-              prop="staffName"
               label="姓名"
               :show-overflow-tooltip="true">
               <template slot-scope="scope">
-                {{ scope.row.staffName }}
+                {{ scope.row.staffResultInfo?scope.row.staffResultInfo.name:"" }}
               </template>
             </el-table-column>
             <el-table-column
               align="center"
               prop="departName"
-              label="所属组织"
+              label="所属部门"
               :show-overflow-tooltip="true">
               <template slot-scope="scope">
-                {{ scope.row.departName }}
+                {{ scope.row.staffResultInfo?(scope.row.staffResultInfo.depart?scope.row.staffResultInfo.depart.name:"") :""}}
               </template>
             </el-table-column>
             <el-table-column
               align="center"
-              prop="statusZH"
               label="账号状态"
               :show-overflow-tooltip="true">
               <template slot-scope="scope">
                 <div :class="scope.row.status===0?'invisible':scope.row.status=== 1?'visible':'not-enabled'">
-                  <span>{{scope.row.statusZH}}</span>
+                  <span>{{returnStatus(scope.row.status)}}</span>
                 </div>
               </template>
             </el-table-column>
@@ -115,12 +148,12 @@
               label="操作人"
               :show-overflow-tooltip="true">
               <template slot-scope="scope">
-                {{ scope.row.modifier }}
+                {{ scope.row.modifier?scope.row.modifier:"" }}
               </template>
             </el-table-column>
             <el-table-column
               align="center"
-              prop="updateTime"
+              prop="modifyTime"
               label="操作时间"
               width="155">
             </el-table-column>
@@ -130,8 +163,8 @@
               width="250">
               <template slot-scope="scope">
                 <el-button @click="handleClickDetail(scope.row)" type="text" size="small" v-show="scope.row.status !== 2">详情</el-button>
-                <el-button @click="handleClickAdd(scope.row)" type="text" size="small" v-show="scope.row.status === 2">增加</el-button>
-                <el-button @click="handleClick(scope.row)" type="text" size="small" v-show="scope.row.status !== 2">修改</el-button>
+                <!-- <el-button @click="handleClickAdd(scope.row)" type="text" size="small" v-show="scope.row.status === 2">增加</el-button> -->
+                <el-button @click="checkRoleData2 = [],roleIds=[],handleClick(scope.row)" type="text" size="small" v-show="scope.row.status !== 2">修改</el-button>
                 <el-button @click="handleClickPass(scope.row)" type="text" size="small" v-show="scope.row.status !== 2">重置密码</el-button>
                 <el-button @click="handleClickStop(scope.row)" type="text" size="small" v-show="scope.row.status === 1">停用</el-button>
                 <el-button @click="handleClickStart(scope.row)" type="text" size="small" v-show="scope.row.status === 0">启用</el-button>
@@ -190,6 +223,97 @@
         <el-button plain type="primary" @click="dialogFormVisible = false">取消</el-button>
       </div>
     </el-dialog>
+<!-- 新建 -->
+    <el-dialog title="新建系统账号" :visible.sync="addAccountVisible" width="70%" append-to-body>
+      <el-row>
+        <el-card>
+          <el-row slot="header">
+            <el-col>
+              <div>
+                <el-collapse v-model="formContainerOpenAdd"  class="form-container"  @change="handleChangeAcitveAdd">
+                  <el-collapse-item title="筛选条件" name="1">
+                    <el-form :inline="true" class="demo-form-inline" size="small">
+                      <el-form-item label="员工姓名：">
+                        <el-input placeholder="员工姓名（上限45字符）" v-model="staffForm.name" maxlength="45"></el-input>
+                      </el-form-item>
+                      <el-form-item label="员工工号：">
+                        <el-input placeholder="员工工号（上限45字符）" v-model="staffForm.staffNo" maxlength="45"></el-input>
+                      </el-form-item>
+                      <el-form-item label="所属部门：">
+                        <el-cascader
+                          v-model="staff_dept_ids"
+                          placeholder="请选择部门"
+                          :options="regionOptions"
+                          :props="org_props"
+                          show-all-levels
+                          filterable
+                          size="small"
+                          change-on-select
+                        ></el-cascader>
+                      </el-form-item>
+                      <el-form-item>
+                        <el-button type="primary" @click="findStaff()">查询</el-button>
+                        <el-button @click="resetStaffForm()">重置</el-button>
+                      </el-form-item>
+                    </el-form>
+                  </el-collapse-item>
+                </el-collapse>
+                <el-form size="small" :model="addAccountModel"  ref="addRuleForm" label-width="100px" class="demo-ruleForm" style="margin-top:20px">
+                  <el-form-item label="员工:">
+                    <el-select v-model="addAccountModel.staffId" >
+                      <el-option value="" label="请选择员工"></el-option>
+                      <el-option v-for="item in staffAll" :key="item.id" :label="item.name ? item.name + ' (' + item.staffNo + ')' : item.staffNo" :value="item.id"></el-option>
+                    </el-select>
+                  </el-form-item>
+                  <!-- <el-form-item label="用户名:" prop="userName"  >
+                    <el-input v-model="addAccountModel.userName" maxlength="20" placeholder="上限45字符" style="width:30%"></el-input>
+                  </el-form-item>
+                  <el-form-item label="密码:"  prop="password">
+                    <el-input name="password"  :type="pwdType" v-model="addAccountModel.password" placeholder="请输入密码" style="width:30%"></el-input>
+                    <span class="show-pwd" @click="showPwd"><svg-icon icon-class="eye"/></span>
+                  </el-form-item> -->
+                  <el-form-item label="状态:" prop="status">
+                    <el-switch
+                      v-model="addAccountModel.status"
+                      active-text="启用中"
+                      inactive-text="未启用"
+                      active-color="#67C23A"
+                      :active-value="1"
+                      :inactive-value="2">
+                    </el-switch>
+                  </el-form-item>
+                    <el-form-item label="类型:">
+                    <el-select v-model="addAccountModel.type" >
+                      <el-option value="" label="请选择类型"></el-option>
+                      <el-option :value="0" label="系统账号"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-form>
+              </div>
+            </el-col>
+          </el-row>
+          <div style="text-align:center">
+            <el-checkbox-group v-model="checkRoleData2" @change="checkRoles">
+              <el-checkbox-button v-for="(item,key) in roleLists" :label="key" :key="item">{{item}}</el-checkbox-button>
+            </el-checkbox-group>
+          </div>
+          <el-row style="margin-top:10px;" v-if="roleMenu.length!=0">
+              <el-card>
+                <el-row v-model="activeName" style="border-bottom:1px solid #EBEEF5;">
+                  <el-row style="color:#B4B4B4;margin-bottom:10px;"><b style="font-size:20px;">所选角色的可用功能为：</b></el-row>
+                  <el-col :span="4" v-for="item in roleMenu" style="margin-top:5px;border-bottom:1px solid #EBEEF5;">{{item.name}}</el-col>
+                </el-row>
+              </el-card>
+          </el-row>
+        </el-card>
+      </el-row>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="addRole(roleIds)">确定</el-button>
+        <el-button @click="roleMenu=[],resetAddAcountModel()">重置</el-button>
+        <el-button type="primary" plain @click="addAccountVisible = false">取消</el-button>
+      </div>
+    </el-dialog>
+
     <el-dialog title="修改系统账号角色" :visible.sync="dialogFormVisibleReverse" width="70%" append-to-body>
       <el-row>
         <el-card>
@@ -222,7 +346,7 @@
       </el-row>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="editRole(roleIds)">确定</el-button>
-        <el-button @click="getUserRole(ruleFormReverse.agentId)">重置</el-button>
+        <el-button @click="getUserRole(ruleFormReverse.accountNo)">重置</el-button>
         <el-button type="primary" plain @click="dialogFormVisibleReverse = false">取消</el-button>
       </div>
     </el-dialog>
@@ -280,7 +404,7 @@ import {
   queryDepts,
   changeState,
   resetPWDById,
-  findAccountByAgentid,
+  findStaffById,
   readProp,
   alterAccountList,
   addAccount,
@@ -289,23 +413,46 @@ import {
   getMenuById,
   addRole,
   getUserRole,
-  editRole
+  editRole,
+  queryStaff
 } from '@/api/account_list'
 import { Message } from 'element-ui'
 import { formatDateTime, list2Tree } from '@/utils/tools'
+import md5 from 'js-md5'
 
 export default {
   name: 'account_list',
   data() {
     return {
+      pwdType: 'password',
+      addAccountVisible: false,
       batchDelVisible: false,
       batchStatus: '',
       formContainerOpen: '1',
+      formContainerOpenAdd: '1',
       formContainer: this.$store.state.app.formContainer,
       selected_dept_id: [], // 查询条件
+      new_dept_ids: [],
+      staff_dept_ids: [],
+      staffAll: [],
+      staffForm: {
+        name: '',
+        staffNO: '',
+        departId: ''
+      },
+      addAccountModel: {
+        creator: '',
+        creatorId: '',
+        password: '',
+        staffId: '',
+        status: 1,
+        type: 0,
+        userName: '',
+        roleIds: []
+      },
       org_props: {
-        label: 'departName',
-        value: 'departName',
+        label: 'name',
+        value: 'id',
         children: 'children'
       },
       // 是否显示微信相关
@@ -333,32 +480,6 @@ export default {
       checkQcmonitor: false,
       checkQcchief: false,
       checkedPermission: [],
-      // roles: [
-      //   {
-      //     name: '普通坐席',
-      //     label: 'agent'
-      //   },
-      //   {
-      //     name: '团队长坐席',
-      //     label: 'monitor'
-      //   },
-      //   {
-      //     name: '坐席主管',
-      //     label: 'chief'
-      //   },
-      //   {
-      //     name: '质检员',
-      //     label: 'qc'
-      //   },
-      //   {
-      //     name: '质检队长',
-      //     label: 'qcmonitor'
-      //   },
-      //   {
-      //     name: '质检主管',
-      //     label: 'qcchief'
-      //   }
-      // ],
       checkedRoles: [],
       timeValue: [],
       staffData: {},
@@ -373,12 +494,12 @@ export default {
       multipleSelection: [],
       formInline: {
         staffName: '',
-        angentId: '',
-        creator: '',
-        start_time: '',
-        end_time: '',
+        staffNo: '',
+        modifier: '',
+        startTime: '',
+        stopTime: '',
         pageNo: 1,
-        departName: '',
+        departId: '',
         status: '',
         pageSize: 10
       },
@@ -394,6 +515,7 @@ export default {
         upDepartName: '',
         departName: '',
         agentId: '',
+        accountNo: '',
         other_accounts: []
       },
       ruleFormReverseDetail: {
@@ -416,16 +538,66 @@ export default {
   mounted() {
     this.formContainer()
     this.handleChangeAcitve()
+    this.handleChangeAcitveAdd()
     this.tempRoute = Object.assign({}, this.$route)
     // this.setTagsViewTitle()
     this.getRoles()
   },
   methods: {
+    showPwd() {
+      if (this.pwdType === 'password') {
+        this.pwdType = ''
+      } else {
+        this.pwdType = 'password'
+      }
+    },
+    findStaff() {
+      this.addAccountModel.staffId = ''
+      this.staffForm.pageable = false
+      if (this.staff_dept_ids.length > 0) {
+        this.staffForm.departId = this.staff_dept_ids[this.staff_dept_ids.length - 1]
+      }
+      queryStaff(this.staffForm).then(response => {
+        this.staffAll = response.data.data
+        console.log('staffAll', this.staffAll)
+      })
+    },
     handleChangeAcitve(active = ['1']) {
       if (active.length) {
         $('.form-more').text('收起')
       } else {
         $('.form-more').text('更多')
+      }
+    },
+    handleChangeAcitveAdd(active = ['1']) {
+      if (active.length) {
+        $('.form-more').text('收起')
+      } else {
+        $('.form-more').text('更多')
+      }
+    },
+    getRowClass({ row, column, rowIndex, columnIndex }) {
+      if (rowIndex === 0) {
+        return 'background:#fff'
+      } else {
+        return ''
+      }
+    },
+    returnType(type) {
+      if (type === 0) {
+        return '系统账号'
+      } else {
+        return '其他账号'
+      }
+    },
+    // 更多操作
+    moreOperating(val) {
+      if (val === '1') {
+        this.batchStatus = 1
+        this.batchDelVisible = true
+      } else {
+        this.batchStatus = 0
+        this.batchDelVisible = true
       }
     },
     // 查询所有角色列表
@@ -501,17 +673,28 @@ export default {
     },
     // 赋予角色
     addRole(roleIds) {
+      if (!this.addAccountModel.staffId) {
+        this.$message.error('请选择员工')
+        return
+      }
       if (this.checkRoleData2.length === 0) {
         this.$message.error('请选择角色')
         return false
       }
-      addRole(this.ruleFormReverse.agentId, roleIds).then(response => {
+      if (this.addAccountModel.password) {
+        this.addAccountModel.password = md5(this.addAccountModel.password)
+      }
+      this.addAccountModel.roleIds = roleIds
+      // 标记后台什么请求
+      this.addAccountModel['method'] = 'POST'
+      addRole(this.addAccountModel).then(response => {
         if (response.status === 200) {
           this.dialogFormVisible = false
           this.$message({
             message: '赋予用户角色成功',
             type: 'success'
           })
+
           if (this.$route.params.id !== ':id') {
             this.formInline.departName = sessionStorage.getItem(this.$route.params.id)
             findAllAccount(this.formInline).then(
@@ -526,6 +709,7 @@ export default {
               this.queryStaff(response)
             })
           }
+          this.addAccountVisible = false
         } else {
           this.$message({
             message: '赋予用户角色失败',
@@ -549,7 +733,7 @@ export default {
         })
         return false
       }
-      editRole(this.ruleFormReverse.agentId, roleIds).then(response => {
+      editRole(this.ruleFormReverse.accountNo, roleIds).then(response => {
         if (response.status === 200) {
           this.dialogFormVisibleReverse = false
           this.$message({
@@ -593,10 +777,18 @@ export default {
     all() {
       const status = this.batchStatus
       const chk_box = this.multipleSelection.map(function(item, index) {
-        return item.agentId
+        return item.id
       })
+      if (!chk_box || chk_box.length === 0) {
+        Message({
+          message: '请选择内容！',
+          type: 'error',
+          duration: 3 * 1000
+        })
+        return
+      }
       alterAccountList({
-        angentIdList: chk_box,
+        accountIds: chk_box,
         status: status
       }).then(response => {
         if (response.data.code === 1) {
@@ -643,7 +835,7 @@ export default {
                 type: 'success',
                 duration: 6 * 1000
               })
-              findAllAccount({ departName: '' }).then(response => {
+              findAllAccount({ departId: '' }).then(response => {
                 this.queryStaff(response)
               })
             } else {
@@ -655,22 +847,10 @@ export default {
             }
           })
         } else {
-          // console.log('error submit!!')
           return false
         }
       })
     },
-    // submitRoleForm(formName) {
-    //   if (this.$refs[formName] !== undefined) {
-    //     this.$refs[formName].validate(valid => {
-    //       if (valid) {
-    //         this.validate = true
-    //       } else {
-    //         this.validate = false
-    //       }
-    //     })
-    //   }
-    // },
     resetForm(formName) {
       this.checkedPermission = []
       this.checkedRoles = []
@@ -690,14 +870,37 @@ export default {
       this.selected_dept_id = []
       this.formInline = {
         staffName: '',
-        angentId: '',
-        creator: '',
-        start_time: '',
-        end_time: '',
+        staffNo: '',
+        modifier: '',
+        startTime: '',
+        stopTime: '',
         departName: '',
+        departId: '',
         status: '',
         pageNo: this.pagination.pageNo,
         pageSize: this.pagination.pageSize
+      }
+    },
+    resetAddAcountModel() {
+      this.pwdType = 'password'
+      this.checkRoleData2 = []
+      this.addAccountModel = {
+        creator: '',
+        creatorId: '',
+        password: '',
+        staffId: '',
+        status: 1,
+        type: 0,
+        userName: '',
+        roleIds: []
+      }
+    },
+    resetStaffForm() {
+      this.staff_dept_ids = []
+      this.staffForm = {
+        name: '',
+        staffNO: '',
+        departId: ''
       }
     },
     handleSelectionChange(val) {
@@ -753,37 +956,39 @@ export default {
     handleClick(row) {
       this.checkedPermission = []
       this.dialogFormVisibleReverse = true
-      findAccountByAgentid({ agentid: row.agentId }).then(response => {
+      findStaffById({ id: row.staffResultInfo.id }).then(response => {
         if (response.data.code === 1) {
+          const result = response.data.data
           this.ruleFormReverse = {
-            departId: row.departId,
-            upDepartName: response.data.depart.upDepartName,
-            departName: response.data.depart.departName,
-            agentId: response.data.account.angentId,
-            other_accounts: response.data.otherAccount
+            departId: result.depart ? (result.depart.id ? result.depart.id : '') : '',
+            upDepartName: result.depart ? (result.depart.upDepartName ? result.depart.upDepartName : '') : '',
+            departName: result.depart ? (result.depart.name ? result.depart.name : '') : '',
+            agentId: result.staffNo,
+            accountNo: row.accountNo
           }
         }
       })
-      this.getUserRole(row.agentId)
+      this.getUserRole(row.accountNo)
     },
     handleClickDetail(row) {
       this.dialogFormVisibleDetail = true
-      findAccountByAgentid({ agentid: row.agentId }).then(response => {
+      findStaffById({ id: row.staffResultInfo.id }).then(response => {
         if (response.data.code === 1) {
+          const result = response.data.data
           this.ruleFormReverse = {
-            departId: row.departId,
-            upDepartName: response.data.depart.upDepartName,
-            departName: response.data.depart.departName,
-            agentId: response.data.account.angentId,
-            other_accounts: response.data.otherAccount
+            departId: result.depart ? (result.depart.id ? result.depart.id : '') : '',
+            upDepartName: result.depart ? (result.depart.upDepartName ? result.depart.upDepartName : '') : '',
+            departName: result.depart ? (result.depart.name ? result.depart.name : '') : '',
+            agentId: result.staffNo,
+            accountNo: row.accountNo
           }
         }
       })
-      this.getUserRole(row.agentId)
+      this.getUserRole(row.accountNo)
       // row已经包含了单个的数据
     },
     handleClickPass(row) {
-      resetPWDById({ agentId: row.agentId }).then(response => {
+      resetPWDById({ accountId: row.id }).then(response => {
         if (response.data.code === 1) {
           Message({
             message: '重置密码成功，密码为该员工身份证的后六位',
@@ -795,7 +1000,7 @@ export default {
     },
     handleClickStop(row) {
       changeState({
-        angentId: row.agentId,
+        accountId: row.id,
         status: 0
       }).then(response => {
         if (response.data.code === 1) {
@@ -808,7 +1013,7 @@ export default {
     },
     handleClickStart(row) {
       changeState({
-        angentId: row.agentId,
+        accountId: row.id,
         status: 1
       }).then(response => {
         if (response.data.code === 1) {
@@ -826,14 +1031,15 @@ export default {
       this.ruleForm.departId = row.departId
       this.roleMenu.length = 0
       this.checkRoleData2 = []
-      findAccountByAgentid({ agentid: row.agentId }).then(response => {
+      findStaffById({ agentid: row.agentId }).then(response => {
         if (response.data.code === 1) {
+          const result = response.data.data
           this.ruleFormReverse = {
-            departId: row.departId,
-            upDepartName: response.data.depart.upDepartName,
-            departName: response.data.depart.departName,
-            agentId: response.data.account.angentId,
-            other_accounts: response.data.otherAccount
+            departId: result.depart ? (result.depart.id ? result.depart.id : '') : '',
+            upDepartName: result.depart ? (result.depart.upDepartName ? result.depart.upDepartName : '') : '',
+            departName: result.depart ? (result.depart.name ? result.depart.name : '') : '',
+            agentId: result.staffNo,
+            accountNo: row.accountNo
           }
         }
       })
@@ -848,8 +1054,8 @@ export default {
     },
     handleCurrentChange(val) {
       this.formInline.pageNo = val
-      this.formInline.start_time = this.timeValue ? this.timeValue[0] : null
-      this.formInline.end_time = this.timeValue ? this.timeValue[1] : null
+      this.formInline.startTime = this.timeValue ? this.timeValue[0] : null
+      this.formInline.stopTime = this.timeValue ? this.timeValue[1] : null
       findAllAccount(this.formInline).then(response => {
         this.queryStaff(response)
       })
@@ -867,22 +1073,23 @@ export default {
       if (res.data.data && res.data.data.length !== 0) {
         for (let i = 0; i <= res.data.data.length; i++) {
           if (res.data.data[i] && res.data.data.length !== 0) {
-            var data = {}
-            data.updateTime = formatDateTime(res.data.data[i][8])
-            data.agentId = res.data.data[i][5]
-            data.staffName = res.data.data[i][2]
-            data.departName = res.data.data[i][3]
-            data.statusZH =
-              res.data.data[i][6] === 0
-                ? '已停用'
-                : res.data.data[i][6] === 1
-                  ? '启用中'
-                  : res.data.data[i][6] === 2 ? '未启用' : ''
-            data.status = res.data.data[i][6]
-            data.modifier = res.data.data[i][9]
-            data.departId = res.data.data[i][7]
-            data.userPhone = res.data.data[i][4]
-            this.tableData.push(data)
+            this.tableData = res.data.data
+            // var data = {}
+            // data.updateTime = formatDateTime(res.data.data[i][8])
+            // data.agentId = res.data.data[i][5]
+            // data.staffName = res.data.data[i][2]
+            // data.departName = res.data.data[i][3]
+            // data.statusZH =
+            //   res.data.data[i][6] === 0
+            //     ? '已停用'
+            //     : res.data.data[i][6] === 1
+            //       ? '启用中'
+            //       : res.data.data[i][6] === 2 ? '未启用' : ''
+            // data.status = res.data.data[i][6]
+            // data.modifier = res.data.data[i][9]
+            // data.departId = res.data.data[i][7]
+            // data.userPhone = res.data.data[i][4]
+            // this.tableData.push(data)
           }
         }
       } else {
@@ -893,15 +1100,24 @@ export default {
         })
       }
     },
+    returnStatus(status) {
+      if (status === 0) {
+        return '已停用'
+      } else if (status === 1) {
+        return '启用中'
+      } else {
+        return '未启用'
+      }
+    },
     searchStaff(req) {
       // 根据老版本的逻辑 查询只能传分页页码的第一页
       req.pageNo = 1
       req.start_time = this.timeValue ? this.timeValue[0] : null
       req.end_time = this.timeValue ? this.timeValue[1] : null
       if (this.selected_dept_id.length === 0) {
-        req.departName = ''
+        req.departId = ''
       } else {
-        req.departName = this.selected_dept_id[this.selected_dept_id.length - 1]
+        req.departId = this.selected_dept_id[this.selected_dept_id.length - 1]
       }
       console.log(req)
       findAllAccount(req).then(response => {
@@ -917,6 +1133,34 @@ export default {
           parentIdFielName: 'upId'
         }
         this.regionOptions = list2Tree(map)
+        if (this.$route.query.id !== ':id') {
+          console.log('route', this.$route.query)
+          const departId = this.$route.query.id
+          const idPath = this.$route.query.idPath
+          console.log('departId', departId)
+          console.log('idPath', idPath)
+          findAllAccount({ departId: departId }).then(
+            response => {
+              this.queryStaff(response)
+              this.formInline.departId = departId
+              this.pagination = response.data.pageInfo
+            }
+          )
+          let arr = []
+          arr = idPath == null ? null : idPath.substring(1, idPath.length - 1).split('/')
+          if (!arr) {
+            return
+          }
+          this.selected_dept_id = []
+          for (var i = 0; i < arr.length; i++) {
+            const val = parseInt(arr[i])
+            this.selected_dept_id.push(val)
+          }
+        } else {
+          findAllAccount({ departId: '' }).then(response => {
+            this.queryStaff(response)
+          })
+        }
       })
     }
     // setTagsViewTitle() {
@@ -925,36 +1169,8 @@ export default {
     // }
   },
   created() {
-    if (this.$route.params.id !== ':id') {
-      findAllAccount({ departName: sessionStorage.getItem(this.$route.params.id) }).then(
-        response => {
-          this.queryStaff(response)
-          this.formInline.departName = sessionStorage.getItem(this.$route.params.id)
-          this.pagination = response.data.pageInfo
-        }
-      )
-    } else {
-      findAllAccount({ departName: '' }).then(response => {
-        this.queryStaff(response)
-      })
-    }
-    this.refreshOrganTo()
-  },
-  activated() {
-    // this.setTagsViewTitle()
-    if (this.$route.params.id !== ':id') {
-      findAllAccount({ departName: sessionStorage.getItem(this.$route.params.id) }).then(
-        response => {
-          this.queryStaff(response)
-          this.formInline.departName = sessionStorage.getItem(this.$route.params.id)
-          this.pagination = response.data.pageInfo
-        }
-      )
-    } else {
-      findAllAccount({ departName: '' }).then(response => {
-        this.queryStaff(response)
-      })
-    }
+    this.findStaff()
+
     this.refreshOrganTo()
   }
   // watch: {
@@ -970,7 +1186,7 @@ export default {
   // }
 }
 </script>
-<style>
+<style scoped>
 .el-checkbox + .el-checkbox {
   margin-left: 0px;
 }
@@ -984,4 +1200,13 @@ export default {
   float: right;
   margin-left: 10px;
 }
+.show-pwd {
+      position: absolute;
+      left: 27%;
+      top: 0px;
+      font-size: 16px;
+      color: $dark_gray;
+      cursor: pointer;
+      user-select: none;
+    }
 </style>

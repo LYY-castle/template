@@ -5,14 +5,14 @@
         <span class="form-more bold" style="line-height: 24px;font-size: 14px;float:right;margin-right:6px;color:#57AFFF;position:absolute;top:12px;right:40px;">收起</span>
         <el-collapse-item title="筛选条件" name="1">
           <el-form :inline="true" class="demo-form-inline" size="small">
-            <!-- <el-form-item label="所属组织：" >
-              <el-select v-model="formInline.departId" placeholder="所属组织">
+            <!-- <el-form-item label="所属部门：" >
+              <el-select v-model="formInline.departId" placeholder="所属部门">
                 <el-option v-for="item in regionOptions" :key="item.id" :label="item.departName" :value="item.id"></el-option>
               </el-select>
             </el-form-item> -->
-            <el-form-item label="所属组织：" >
+            <el-form-item label="所属部门：" >
               <el-cascader
-                placeholder="请选择组织"
+                placeholder="请选择部门"
                 v-model="formInline.departId"
                 :clearable=true
                 :options="regionOptions"
@@ -74,17 +74,17 @@
             </el-table-column>
             <el-table-column
               align="center"
-              prop="angentId"
+              prop="staffNo"
               label="员工工号"
               :show-overflow-tooltip="true">
             </el-table-column>
             <el-table-column
               align="center"
-              prop="staffName"
+              prop="name"
               label="员工姓名"
               :show-overflow-tooltip="true">
               <template slot-scope="scope">
-              {{scope.row.staffName}}
+              {{scope.row.name}}
               </template>
             </el-table-column>
             <el-table-column
@@ -95,16 +95,16 @@
             </el-table-column>
             <el-table-column
               align="center"
-              prop="departName"
-              label="所属组织"
+              prop="depart.name"
+              label="所属部门"
               :show-overflow-tooltip="true">
               <template slot-scope="scope">
-                {{ scope.row.departName }}
+                {{ scope.row.depart?(scope.row.depart.name?scope.row.depart.name:""):"" }}
               </template>
             </el-table-column>
             <el-table-column
               align="center"
-              prop="userPhone"
+              prop="phone"
               label="联系方式"
               :show-overflow-tooltip="true">
             </el-table-column>
@@ -174,8 +174,8 @@ export default {
           name: '',
           phone: ''
         },
-        regionOptions: [], // 所有组织
-        visibleDepts: [], // 所有可见组织
+        regionOptions: [], // 所有部门
+        visibleDepts: [], // 所有可见部门
         tableData: [],
         multipleSelection: [],
         formInline: {
@@ -224,7 +224,7 @@ export default {
         if (this.tableData.length !== 0) {
           for (let i = 0; i <= this.tableData.length; i++) {
             if (this.tableData[i]) {
-              this.tableData[i].hiredTime = this.tableData[i].hiredate ? Math.floor((new Date(new Date().setHours(23, 59, 59, 0)).getTime() - this.tableData[i].hiredate) / (1000 * 60 * 60 * 24) + 1) : ''
+              this.tableData[i].hiredTime = this.tableData[i].hiredate ? Math.floor((new Date(new Date().setHours(23, 59, 59, 0)).getTime() - (new Date(new Date(this.tableData[i].hiredate).setHours(0, 0, 0, 0)).getTime())) / (1000 * 60 * 60 * 24) + 1) : ''
               this.tableData[i].updateTime = formatDateTime(this.tableData[i].updateTime)
               this.tableData[i].hiredate = formatDate(this.tableData[i].hiredate)
               if (this.tableData[i].sex === 1) {
@@ -310,7 +310,7 @@ export default {
             parentIdFielName: 'upId'
           })
           for (let i = 0; i < tempTree.length; i++) {
-            const obj = getChildren(tempTree[i], 'id', 'departName')
+            const obj = getChildren(tempTree[i], 'id', 'name')
             arr.push(obj)
           }
           this.regionOptions = arr

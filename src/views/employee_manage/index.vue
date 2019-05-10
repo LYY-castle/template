@@ -8,21 +8,20 @@
               <el-input placeholder="员工姓名（上限45字符）" v-model="formInline.name" maxlength="45"></el-input>
             </el-form-item>
             <el-form-item label="员工工号：">
-              <el-input placeholder="员工工号（上限45字符）" v-model="formInline.angentId" maxlength="45"></el-input>
+              <el-input placeholder="员工工号（上限45字符）" v-model="formInline.staffNo" maxlength="45"></el-input>
             </el-form-item>
-            <el-form-item label="所属组织：" v-if="$route.params.id === ':id'">
+            <el-form-item label="所属部门：">
               <el-cascader
                 v-model="selected_dept_id"
-                placeholder="请选择组织"
-                :options="regionOptions"
+                placeholder="请选择部门"
+                :options="visibleDepts"
                 :props="org_props"
                 show-all-levels
                 filterable
                 size="small"
                 change-on-select
-                clearable
               ></el-cascader>
-              <!-- <el-select v-model="formInline.departName" placeholder="所属组织">
+              <!-- <el-select v-model="formInline.departName" placeholder="所属部门">
                 <el-option v-for="item in regionOptions" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
               </el-select> -->
             </el-form-item>
@@ -68,17 +67,17 @@
             </el-table-column>
             <el-table-column
               align="center"
-              prop="angentId"
+              prop="staffNo"
               label="员工工号"
               :show-overflow-tooltip="true">
             </el-table-column>
             <el-table-column
               align="center"
-              prop="staffName"
+              prop="name"
               label="员工姓名"
               :show-overflow-tooltip="true">
               <template slot-scope="scope">
-                <a @click="handleClickDetail(scope.row)">{{scope.row.staffName}}</a>
+                <a @click="handleClickDetail(scope.row)">{{scope.row.name}}</a>
               </template>
             </el-table-column>
             <el-table-column
@@ -89,31 +88,30 @@
             </el-table-column>
             <el-table-column
               align="center"
-              prop="departName"
-              label="所属组织"
+              label="所属部门"
               :show-overflow-tooltip="true">
               <template slot-scope="scope">
-                {{ scope.row.departName }}
+                {{ scope.row.depart==null?"":(scope.row.depart.name==null?"":scope.row.depart.name) }}
               </template>
             </el-table-column>
             <el-table-column
               align="center"
-              prop="userPhone"
+              prop="phone"
               label="联系方式"
               :show-overflow-tooltip="true">
             </el-table-column>
             <el-table-column
               align="center"
-              prop="creator"
+              prop="modifier"
               label="操作人"
               :show-overflow-tooltip="true">
               <template slot-scope="scope">
-                {{ scope.row.creator }}
+                {{ scope.row.modifier }}
               </template>
             </el-table-column>
             <el-table-column
               align="center"
-              prop="updateTime"
+              prop="modifyTime"
               label="操作时间"
               width="155">
             </el-table-column>
@@ -168,7 +166,7 @@
             size="small"
             :options="options"
             v-model="ruleForm.origin"
-            @change="handleChange()" style="width: 100%;">
+            style="width: 100%;">
           </el-cascader>
         </el-form-item>
         <el-form-item label="入司日期:" prop="hiredate">
@@ -187,10 +185,10 @@
             value-format="yyyy-MM-dd">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="组织:">
+        <el-form-item label="部门:">
           <el-cascader
             v-model="new_dept_ids"
-            placeholder="请选择组织"
+            placeholder="请选择部门"
             :options="visibleDepts"
             :props="org_props"
             show-all-levels
@@ -199,12 +197,9 @@
             change-on-select
             clearable
           ></el-cascader>
-          <!-- <el-select v-model="ruleForm.departName" placeholder="请选择部门" style="width: 100%;">
-            <el-option v-for="item in visibleDepts" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
-          </el-select> -->
         </el-form-item>
-        <el-form-item label="联系方式:" prop="userPhone">
-          <el-input v-model="ruleForm.userPhone" maxlength="20" placeholder="上限20字符"></el-input>
+        <el-form-item label="联系方式:" prop="phone">
+          <el-input v-model="ruleForm.phone" maxlength="20" placeholder="上限20字符"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -215,11 +210,11 @@
     </el-dialog>
     <el-dialog title="修改员工" :visible.sync="dialogFormVisibleReverse" width="30%" @close="resetForm('ruleFormReverse')" append-to-body>
       <el-form size="small" :model="ruleFormReverse" :rules="rules" ref="ruleFormReverse" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="工号" prop="angentId">
-          <span>{{ruleFormReverse.angentId}}</span>
+        <el-form-item label="工号" prop="staffNo">
+          <span>{{ruleFormReverse.staffNo}}</span>
         </el-form-item>
-        <el-form-item label="姓名" prop="staffName">
-          <el-input v-model="ruleFormReverse.staffName" maxlength="45" placeholder="上限45字符"></el-input>
+        <el-form-item label="姓名" prop="name">
+          <el-input v-model="ruleFormReverse.name" maxlength="45" placeholder="上限45字符"></el-input>
         </el-form-item>
         <el-form-item label="身份证" prop="idNumber">
           <el-input v-model="ruleFormReverse.idNumber" placeholder="上限45字符" maxlength="45" @change="autoFillReverse()"></el-input>
@@ -234,7 +229,7 @@
           <el-cascader
             :options="options"
             v-model="ruleFormReverse.origin"
-            @change="handleChange" style="width: 100%;">
+            style="width: 100%;">
           </el-cascader>
         </el-form-item>
         <el-form-item label="入司日期" prop="hiredate">
@@ -253,10 +248,10 @@
             value-format="yyyy-MM-dd">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="组织">
+        <el-form-item label="部门">
           <el-cascader
             v-model="edit_dept_ids"
-            placeholder="请选择组织"
+            placeholder="请选择部门"
             :options="visibleDepts"
             :props="org_props"
             show-all-levels
@@ -269,14 +264,14 @@
             <el-option v-for="item in visibleDepts" :key="item.departName" :label="item.departName" :value="item.departName"></el-option>
           </el-select> -->
         </el-form-item>
-        <el-form-item label="联系方式" prop="userPhone">
-          <el-input v-model="ruleFormReverse.userPhone" maxlength="20" placeholder="上限20字符"></el-input>
+        <el-form-item label="联系方式" prop="phone">
+          <el-input v-model="ruleFormReverse.phone" maxlength="20" placeholder="上限20字符"></el-input>
         </el-form-item>
         <el-form-item label="操作人" prop="modifier">
           <span>{{ruleFormReverse.modifier}}</span>
         </el-form-item>
         <el-form-item label="操作时间">
-          <span>{{ruleFormReverse.updateTime}}</span>
+          <span>{{ruleFormReverse.modifyTime}}</span>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -288,10 +283,10 @@
     <el-dialog title="员工详情" :visible.sync="dialogFormVisibleDetail" width="30%" append-to-body>
       <el-form size="small" :model="ruleFormReverseDetail" :rules="rules" ref="ruleFormReverseDetail" label-width="100px" class="demo-ruleForm">
         <el-form-item label="工号">
-          <span>{{ruleFormReverseDetail.angentId}}</span>
+          <span>{{ruleFormReverseDetail.staffNo}}</span>
         </el-form-item>
         <el-form-item label="姓名">
-          <span>{{ruleFormReverseDetail.staffName}}</span>
+          <span>{{ruleFormReverseDetail.name}}</span>
         </el-form-item>
         <el-form-item label="性别">
           <span v-if="ruleFormReverseDetail.sex === '1'">男</span>
@@ -309,17 +304,17 @@
         <el-form-item label="出生日期">
           <span>{{ruleFormReverseDetail.birthday}}</span>
         </el-form-item>
-        <el-form-item label="组织">
+        <el-form-item label="部门">
           <span>{{ruleFormReverseDetail.departName}}</span>
         </el-form-item>
         <el-form-item label="联系方式">
-          <span>{{ruleFormReverseDetail.userPhone}}</span>
+          <span>{{ruleFormReverseDetail.phone}}</span>
         </el-form-item>
         <el-form-item label="操作人">
           <span>{{ruleFormReverseDetail.modifier}}</span>
         </el-form-item>
         <el-form-item label="操作时间">
-          <span>{{ruleFormReverseDetail.updateTime}}</span>
+          <span>{{ruleFormReverseDetail.modifyTime}}</span>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -352,7 +347,7 @@
 </template>
 
 <script>
-  import { getAllVisibleDepts, queryDepts, query, deleteStaff, addStaff, queryone, edit, deleteAllStaff } from '@/api/employee_list'
+  import { getAllVisibleDepts, query, deleteStaff, addStaff, queryone, edit, deleteAllStaff } from '@/api/employee_list'
   import { Message } from 'element-ui'
   import { provinceAndCityData, CodeToText } from 'element-china-area-data'
   import { formatDateTime, isJson, formatDate, list2Tree } from '@/utils/tools'
@@ -417,7 +412,7 @@
       }
       var checkDept = (rule, value, callback) => {
         if (this.new_dept_ids.length === 0) {
-          callback(new Error('请选择组织！'))
+          callback(new Error('请选择部门！'))
         }
       }
       return {
@@ -427,12 +422,12 @@
         formContainerOpen: '1',
         formContainer: this.$store.state.app.formContainer,
         selected_dept_id: [], // 查询条件
-        new_dept_ids: [], // 新建员工显示组织
-        edit_dept_ids: [], // 修改员工显示组织
-        reverse_edit_dept_ids: [], // 用以回显修改员工时的组织
+        new_dept_ids: [], // 新建员工显示部门
+        edit_dept_ids: [], // 修改员工显示部门
+        reverse_edit_dept_ids: [], // 用以回显修改员工时的部门
         org_props: {
-          label: 'departName',
-          value: 'departName',
+          label: 'name',
+          value: 'id',
           children: 'children'
         },
         staffData: {},
@@ -449,20 +444,20 @@
           name: '',
           phone: ''
         },
-        regionOptions: [], // 所有组织
-        visibleDepts: [], // 所有可见组织
-        beforeTransfer_visibleDepts: [], // 所有可见组织 - 转成树结构之前
+        regionOptions: [], // 所有部门
+        visibleDepts: [], // 所有可见部门
+        beforeTransfer_visibleDepts: [], // 所有可见部门 - 转成树结构之前
         tableData: [],
         multipleSelection: [],
         formInline: {
           name: '',
-          angentId: '',
+          staffNo: '',
           modifierName: '',
           startTime: '',
           stopTime: '',
           pageNo: 1,
           pageSize: 10,
-          departName: ''
+          departId: ''
         },
         ruleForm: {
           staffName: '',
@@ -471,37 +466,37 @@
           sex: '1',
           hiredate: '',
           birthday: '',
-          departName: '',
-          userPhone: ''
+          departId: '',
+          phone: ''
         },
         ruleFormReverse: {
           id: null,
-          staffName: '',
+          name: '',
           origin: [],
           idNumber: '',
           sex: '1',
           hiredate: '',
           birthday: '',
-          departName: '',
-          userPhone: '',
-          angentId: '',
+          departId: '',
+          phone: '',
+          staffNo: '',
           modifier: '',
-          updateTime: ''
+          modifyTime: ''
   
         },
         ruleFormReverseDetail: {
           id: null,
-          staffName: '',
+          name: '',
           origin: [],
           idNumber: '',
           sex: '1',
           hiredate: '',
           birthday: '',
           departName: '',
-          userPhone: '',
-          angentId: '',
+          phone: '',
+          staffNo: '',
           modifier: '',
-          updateTime: ''
+          modifyTime: ''
   
         },
         dialogFormVisible: false,
@@ -586,14 +581,18 @@
           sex: '1',
           hiredate: '',
           birthday: '',
-          departName: '',
-          userPhone: ''
+          departId: '',
+          phone: ''
         }
       },
       deleteAll() {
         const listId = this.multipleSelection.map(function(item, index) {
           return item.id
         })
+        if (!listId || listId.length <= 0) {
+          this.$message.error('请选择要删除的内容')
+          return
+        }
         deleteAllStaff(listId).then(response => {
           if (response.data.code === 1) {
             Message({
@@ -616,19 +615,14 @@
           }
         })
       },
-      handleChange(value) {
-        console.log(value)
-        console.log(this.ruleForm.origin)
-        console.log(this.ruleFormReverse.origin)
-      },
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
             if (this.new_dept_ids.length === 0) {
-              this.$message.error('请选择组织！')
+              this.$message.error('请选择部门！')
               return
             } else {
-              this.ruleForm.departName = this.new_dept_ids[this.new_dept_ids.length - 1]
+              this.ruleForm.departId = this.new_dept_ids[this.new_dept_ids.length - 1]
             }
             this.ruleForm.sex = Number(this.ruleForm.sex)
             addStaff(this.ruleForm).then(response => {
@@ -639,10 +633,11 @@
                   this.pagination = responseData.data.pageInfo
                 })
                 this.$refs[formName].resetFields()
+              } else {
+                this.$message.error(response.data.message)
               }
             })
           } else {
-            // console.log('error submit!!')
             return false
           }
         })
@@ -652,30 +647,24 @@
           if (valid) {
             this.ruleFormReverse.sex = Number(this.ruleFormReverse.sex)
             if (this.edit_dept_ids.length === 0) {
-              this.$message.error('请选择组织！')
+              this.$message.error('请选择部门！')
               return
             } else {
-              this.ruleFormReverse.departName = this.edit_dept_ids[this.edit_dept_ids.length - 1]
+              this.ruleFormReverse.departId = this.edit_dept_ids[this.edit_dept_ids.length - 1]
             }
             edit(this.ruleFormReverse).then(response => {
               if (response.data.code === 1) {
                 this.dialogFormVisibleReverse = false
                 query(this.formInline).then(responseData => {
                   this.queryStaff(responseData)
-                  // this.pagination = responseData.data.pageInfo
                 })
               }
             })
           } else {
-            // console.log('error submit!!')
             return false
           }
         })
       },
-      // setTagsViewTitle() {
-      //   const route = Object.assign({}, this.tempRoute, { title: this.$route.params.id === ':id' ? this.tempRoute.meta.title : this.tempRoute.meta.title + '-' + sessionStorage.getItem(this.$route.params.id) })
-      //   this.$store.dispatch('updateVisitedView', route)
-      // },
       resetForm(formName) {
         this.$refs[formName].resetFields()
       },
@@ -684,18 +673,17 @@
         this.selected_dept_id = []
         this.formInline = {
           name: '',
-          angentId: '',
+          staffNo: '',
           modifierName: '',
           startTime: '',
           stopTime: '',
-          departName: '',
+          departId: '',
           pageNo: this.pagination.pageNo,
           pageSize: this.pagination.pageSize
         }
       },
       handleSelectionChange(val) {
         this.multipleSelection = val
-        console.log(val)
       },
       deleteRow() {
         deleteStaff(this.delReq).then(response => {
@@ -725,17 +713,17 @@
         this.dialogFormVisibleDetail = true
         this.ruleFormReverseDetail = {
           id: row.id,
-          staffName: row.staffName,
+          name: row.name,
           origin: isJson(row.origin) && row.origin ? CodeToText[JSON.parse(row.origin)[0]] + (typeof CodeToText[JSON.parse(row.origin)[1]] === 'undefined' ? '' : CodeToText[JSON.parse(row.origin)[1]]) : row.origin,
           idNumber: row.idNumber,
           sex: typeof row.sex === 'undefined' || row.sex === null ? '' : row.sex.toString(),
           birthday: row.birthday,
           hiredate: row.hiredate ? formatDate(row.hiredate) : '',
-          departName: row.departName,
-          userPhone: row.userPhone,
-          angentId: row.angentId,
+          departName: row.depart == null ? '' : (row.depart.name == null ? '' : row.depart.name),
+          phone: row.phone,
+          staffNo: row.staffNo,
           modifier: row.modifier,
-          updateTime: formatDateTime(row.updateTime)
+          modifyTime: formatDateTime(row.modifyTime)
         }
       },
       handleClick(row) {
@@ -745,38 +733,35 @@
             const data = response.data.data
             this.staffData = data
   
-            /** 回显上级组织的逻辑 start */
-            let str = ''
-            for (var a = 0; a < this.beforeTransfer_visibleDepts.length; a++) {
-              if (this.beforeTransfer_visibleDepts[a].id === data.departId) {
-                str = this.beforeTransfer_visibleDepts[a].namePath
-              }
-            }
+            /** 回显上级部门的逻辑 start */
+  
+            this.edit_dept_ids = []
+            this.reverse_edit_dept_ids = []
             let arr = []
-            arr = str.split('/')
-            for (var i = 0; i < arr.length; i++) {
-              if (arr[i] === null || arr[i] === '') {
-                arr.splice(i, 1)
-                i = i - 1
+            arr = data.depart == null ? null : (data.depart.idPath == null ? null : data.depart.idPath.substring(1, data.depart.idPath.length - 1).split('/'))
+            if (arr != null) {
+              for (var i = 0; i < arr.length; i++) {
+                const val = parseInt(arr[i])
+                this.edit_dept_ids.push(val)
+                this.reverse_edit_dept_ids.push(val)
               }
             }
-            this.edit_dept_ids = arr
-            this.reverse_edit_dept_ids = arr
-            /** 回显上级组织的逻辑 end */
+  
+            /** 回显上级部门的逻辑 end */
   
             this.ruleFormReverse = {
               id: data.id,
-              staffName: data.staffName,
+              name: data.name,
               origin: isJson(data.origin) && data.origin ? JSON.parse(data.origin) : ['000000', '000000'],
               idNumber: data.idNumber,
               sex: typeof data.sex === 'undefined' || data.sex === null ? '' : data.sex.toString(),
               hiredate: data.hiredate ? formatDate(data.hiredate) : '',
               birthday: data.birthday,
-              departName: data.departName,
-              userPhone: data.userPhone,
-              angentId: data.angentId,
+              departId: data.departId,
+              phone: data.phone,
+              staffNo: data.staffNo,
               modifier: data.modifier,
-              updateTime: formatDateTime(data.updateTime)
+              modifyTime: formatDateTime(data.modifyTime)
             }
           }
         })
@@ -794,7 +779,7 @@
           birthday: this.staffData.birthday,
           departName: this.staffData.departName,
           userPhone: this.staffData.userPhone,
-          angentId: this.staffData.angentId,
+          staffNo: this.staffData.staffNo,
           modifier: this.staffData.modifier,
           updateTime: formatDateTime(this.staffData.updateTime)
         }
@@ -821,12 +806,15 @@
         }
       },
       queryStaff(res) {
+        if (!res.data.data) {
+          this.tableData = []
+          return
+        }
         this.tableData = res.data.data
         this.pagination = res.data.pageInfo
         if (this.tableData.length !== 0) {
           for (let i = 0; i <= this.tableData.length; i++) {
             if (this.tableData[i]) {
-              this.tableData[i].updateTime = formatDateTime(this.tableData[i].updateTime)
               if (this.tableData[i].sex === 1) {
                 this.tableData[i].staffSex = '男'
               } else {
@@ -834,46 +822,21 @@
               }
             }
           }
-        } else {
-          Message({
-            message: '无查询结果，请核对查询条件',
-            type: 'error',
-            duration: 3 * 1000
-          })
         }
       },
       searchStaff(req) {
-        // 根据老版本的逻辑 查询只能传分页页码的第一页
         req.pageNo = 1
         req.startTime = this.timeValue ? this.timeValue[0] : null
         req.stopTime = this.timeValue ? this.timeValue[1] : null
-        this.selected_dept_id.length === 0 ? req.departName = '' : req.departName = this.selected_dept_id[this.selected_dept_id.length - 1]
+        if (this.selected_dept_id.length > 0) {
+          req.departId = this.selected_dept_id[this.selected_dept_id.length - 1]
+        }
         query(req).then(response => {
           this.queryStaff(response)
         })
       }
     },
     created() {
-      if (this.$route.params.id !== ':id') {
-        query({ departName: sessionStorage.getItem(this.$route.params.id) }).then(response => {
-          this.queryStaff(response)
-          this.formInline.departName = sessionStorage.getItem(this.$route.params.id)
-          this.pagination = response.data.pageInfo
-        })
-      } else {
-        query({ pageNo: 1 }).then(response => {
-          this.queryStaff(response)
-        })
-      }
-      queryDepts().then(response => {
-        const map = {
-          data: response.data.data,
-          rootId: 0,
-          idFieldName: 'id',
-          parentIdFielName: 'upId'
-        }
-        this.regionOptions = list2Tree(map)
-      })
       getAllVisibleDepts().then(response1 => {
         this.beforeTransfer_visibleDepts = response1.data.data
         const map = {
@@ -883,62 +846,35 @@
           parentIdFielName: 'upId'
         }
         this.visibleDepts = list2Tree(map)
+        if (this.$route.query.id !== ':id') {
+          const departId = this.$route.query.id
+          const idPath = this.$route.query.idPath
+          query({ departId: departId }).then(response => {
+            this.queryStaff(response)
+            this.formInline.departId = departId
+            this.pagination = response.data.pageInfo
+          })
+          let arr = []
+          arr = idPath == null ? null : idPath.substring(1, idPath.length - 1).split('/')
+          if (!arr) {
+            return
+          }
+          this.selected_dept_id = []
+          for (var i = 0; i < arr.length; i++) {
+            const val = parseInt(arr[i])
+            this.selected_dept_id.push(val)
+          }
+        } else {
+          query({ pageNo: 1 }).then(response => {
+            this.queryStaff(response)
+          })
+        }
       })
     },
     mounted() {
       this.formContainer()
       this.handleChangeAcitve()
       this.tempRoute = Object.assign({}, this.$route)
-      // this.setTagsViewTitle()
-    },
-    activated() {
-      // this.setTagsViewTitle()
-      if (this.$route.params.id !== ':id') {
-        query({ departName: sessionStorage.getItem(this.$route.params.id) }).then(response => {
-          this.queryStaff(response)
-          this.formInline.departName = sessionStorage.getItem(this.$route.params.id)
-          this.pagination = response.data.pageInfo
-        })
-      } else {
-        query({ pageNo: 1 }).then(response => {
-          this.queryStaff(response)
-        })
-      }
-      queryDepts().then(response => {
-        const map = {
-          data: response.data.data,
-          rootId: 0,
-          idFieldName: 'id',
-          parentIdFielName: 'upId'
-        }
-        this.regionOptions = list2Tree(map)
-      })
-      getAllVisibleDepts().then(response1 => {
-        this.beforeTransfer_visibleDepts = response1.data.data
-        const map = {
-          data: response1.data.data,
-          rootId: 0,
-          idFieldName: 'id',
-          parentIdFielName: 'upId'
-        }
-        this.visibleDepts = list2Tree(map)
-      })
     }
-    // watch: {
-    //   $route(to, pageNo) {
-    //     // 判断url是否带参
-    //     if (!to.query.departName) {
-    //       this.formInline.departName = ''
-    //       query({ pageNo: 1 }).then(response => {
-    //         this.queryStaff(response)
-    //       })
-    //     }
-    //   }
-    // }
   }
 </script>
-<!--<style>-->
-  <!--.el-table{-->
-    <!--width: 100% !important;-->
-  <!--}-->
-<!--</style>-->

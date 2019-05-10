@@ -231,7 +231,7 @@
       :close-on-click-modal=false
       :show-close=false
       append-to-body>
-      <span style="font-size:20px;">该部门下存在可见的下属组织，是否设置为不可见。</span>
+      <span style="font-size:20px;">该部门下存在可见的下属部门，是否设置为不可见。</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
         <el-button type="primary" @click="op_hints = false;updateOrganStatus(visibleData)">确定</el-button>
         <el-button type="primary" plain @click="op_hints = false;ruleFormReverse.visible=1">取消</el-button>
@@ -301,8 +301,8 @@
           name: '',
           phone: ''
         },
-        regionOptions: [], // 所有可见组织
-        allDepts: [], // 所有组织
+        regionOptions: [], // 所有可见部门
+        allDepts: [], // 所有部门
         tableData: [],
         multipleSelection: [],
         formInline: {

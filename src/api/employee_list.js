@@ -7,7 +7,7 @@ export function queryDepts() {
   })
 }
 
-// 获取所有可见组织
+// 获取所有可见部门
 export function getAllVisibleDepts() {
   return request({
     url: '/organization/findAllOrganTo',
@@ -75,14 +75,16 @@ export function edit(obj) {
     method: 'post',
     data: {
       id: obj.id,
-      staffName: obj.staffName,
+      name: obj.name,
       origin: JSON.stringify(obj.origin),
       idNumber: obj.idNumber,
       sex: obj.sex,
       birthday: obj.birthday,
       hiredate: obj.hiredate,
-      departName: obj.departName,
-      userPhone: obj.userPhone
+      departId: obj.departId,
+      phone: obj.phone,
+      modifier: localStorage.getItem('agentName'),
+      modifierId: localStorage.getItem('agentId')
     }
   })
 }
@@ -93,14 +95,17 @@ export function addStaff(req) {
     url: '/employee/add',
     method: 'post',
     data: {
-      staffName: req.staffName,
+      name: req.staffName,
       origin: JSON.stringify(req.origin),
       idNumber: req.idNumber,
       sex: req.sex,
       hiredate: req.hiredate,
       birthday: req.birthday,
-      departName: req.departName,
-      userPhone: req.userPhone
+      departId: req.departId,
+      phone: req.userPhone,
+      creatorId: localStorage.getItem('agentId'),
+      creator: localStorage.getItem('agentName')
+
     }
   })
 }

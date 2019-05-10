@@ -89,9 +89,9 @@ function getOrganListMap(){//名单id和名单名称
 }
 
 /*通过部门id查找它的下属部门或者下属员工*/
-function getOrganMap(){//组织id和组织名称
+function getOrganMap(){//部门id和部门名称
 	var map_organ = new HashMap();
-	/*查找所有组织*/
+	/*查找所有部门*/
 	$.ajax({
 		url:"/api/v1/organization/findNextOrganByAgentId",
 		async :false,//改为同步方法，否则随机查询，可能设置不了全局变量
@@ -278,10 +278,10 @@ function getCustomerNameByCustomerId(customerId){
 	}
 	return customerName;
 }
-/*查询所有组织id及名称*/
+/*查询所有部门id及名称*/
 function getAllOrganlist(){
 	var map_organlist = new HashMap();
-	/*查找所有组织*/
+	/*查找所有部门*/
 	$.ajax({
 		url:"/api/v1/organization/findAllOrganTo",
 		async :false,//改为同步方法，否则随机查询，可能设置不了全局变量
@@ -301,10 +301,10 @@ function getAllOrganlist(){
 	return map_organlist;
 }
 
-/*查询当前组织的下属组织id及名称*/
+/*查询当前部门的下属部门id及名称*/
 function getNextOrganlist(){
 	var map_nextorganlist = new HashMap();
-	/*查找所有组织*/
+	/*查找所有部门*/
 	$.ajax({
 		url:"/api/v1/organization/findNextOrganByNow",
 		async :false,//改为同步方法，否则随机查询，可能设置不了全局变量
@@ -324,10 +324,10 @@ function getNextOrganlist(){
 	})
 	return map_nextorganlist;
 }
-/*查询当前组织的下属员工id及名称*/
+/*查询当前部门的下属员工id及名称*/
 function getNextAgentlist(){
 	var map_nextagentlist = new HashMap();
-	/*查找所有组织*/
+	/*查找所有部门*/
 	$.ajax({
 		url:"/api/v1/organization/findNextAgentByNow",
 		async :false,//改为同步方法，否则随机查询，可能设置不了全局变量
@@ -443,7 +443,7 @@ function getIDCardInfo(idcard){
 	}
 	return map;
 } 
-/*通过组织id查找上级组织id*/
+/*通过部门id查找上级部门id*/
 
 function findOrganById(id){
 	var upId = '';
