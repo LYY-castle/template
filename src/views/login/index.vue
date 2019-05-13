@@ -22,7 +22,7 @@
         <!--<span class="svg-container svg-container_login">-->
         <!--<svg-icon icon-class="user" />-->
         <!--</span>-->
-        <el-input name="extensionNumber" type="text" v-model="loginForm.extensionNumber" autoComplete="on"
+        <el-input name="extensionNumber" type="text" @keyup.enter.native="handleLogin" v-model="loginForm.extensionNumber" autoComplete="on"
                   placeholder="请输入分机号码"/>
       </el-form-item>
       <!-- <el-form-item> -->
@@ -72,6 +72,7 @@
           password: [{ required: true, trigger: 'blur', validator: validatePass }]
         },
         loading: false,
+        isShowMessageBox: false,
         pwdType: 'password'
       }
     },
@@ -104,6 +105,9 @@
         }
       },
       handleLogin() {
+        if (this.isShowMessageBox){
+          return // 如果已弹窗，不再执行该事件
+        }
         this.$refs.loginForm.validate(valid => {
           // 清除缓存中的客户信息
           localStorage.removeItem('customerInfos')
@@ -143,6 +147,7 @@
                 })
               } else if (data.code === '2') {
                 this.loading = false
+                this.isShowMessageBox = true
                 MessageBox.confirm('账号已在别的地方登录！是否继续登录？', '请确认', {
                   confirmButtonText: '确定',
                   cancelButtonText: '取消',
