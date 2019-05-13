@@ -102,7 +102,7 @@ export function addStaff(req) {
       hiredate: req.hiredate,
       birthday: req.birthday,
       departId: req.departId,
-      phone: req.userPhone,
+      phone: req.phone,
       creatorId: localStorage.getItem('agentId'),
       creator: localStorage.getItem('agentName')
 

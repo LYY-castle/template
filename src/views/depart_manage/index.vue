@@ -231,12 +231,12 @@
         <el-form-item label="备注">
           <el-input type="textarea" v-model="ruleFormReverse.comment" placeholder="上限255字符" maxlength="255"></el-input>
         </el-form-item>
-        <el-form-item label="新建人">
+        <!-- <el-form-item label="新建人">
           <span>{{ruleFormReverse.creator}}</span>
         </el-form-item>
         <el-form-item label="新建时间">
           <span>{{ruleFormReverse.createTime}}</span>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitFormReverse('ruleFormReverse')">确定</el-button>
@@ -610,7 +610,7 @@
             let arr = []
             arr = data.idPath ? (data.idPath.substring(1, data.idPath.length - 1).split('/')) : null
             if (arr && arr.length > 0) {
-              for (var i = 0; i < arr.length; i++) {
+              for (var i = 0; i < arr.length - 1; i++) {
                 const val = parseInt(arr[i])
                 this.edit_dept_ids.push(val)
                 this.reverse_edit_dept_ids.push(val)

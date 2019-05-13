@@ -625,6 +625,7 @@
               this.ruleForm.departId = this.new_dept_ids[this.new_dept_ids.length - 1]
             }
             this.ruleForm.sex = Number(this.ruleForm.sex)
+            console.log('this.ruleForm', this.ruleForm)
             addStaff(this.ruleForm).then(response => {
               if (response.data.code === 1) {
                 this.dialogFormVisible = false
