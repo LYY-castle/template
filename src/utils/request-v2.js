@@ -35,6 +35,9 @@ service.interceptors.request.use(config => {
   Promise.reject(error)
 })
 
+// 是否已经弹出了消息框
+let isShowMessage = false
+
 // 根据项目需求 是否统一拦截
 // respone拦截器
 service.interceptors.response.use(
@@ -54,10 +57,13 @@ service.interceptors.response.use(
       router.replace({ path: `/login` })
       if (route.fullPath !== `/login`) {
         if (res.code === '40101' || res.code === 40101) {
-          MessageBox.alert(res.message, '请确定', {
-            confirmButtonText: '确定',
-            type: 'warning'
-          }).then(() => {})
+          if (!isShowMessage) {
+            isShowMessage = true
+            MessageBox.alert(res.message, '请确定', {
+              confirmButtonText: '确定',
+              type: 'warning'
+            }).then(() => {})
+          }
         } else {
           Message({
             message: res.message,
