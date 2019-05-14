@@ -40,6 +40,7 @@ export default {
   components: { ScrollPane },
   data() {
     return {
+      isDialTask: false,
       visible: false,
       top: 0,
       left: 0,
@@ -66,6 +67,9 @@ export default {
   },
   mounted() {
     this.addViewTags()
+    this.$root.eventHub.$on('DIAL_TASK', (obj) => {
+      this.isDialTask = obj.isDialTask
+    })
   },
   methods: {
     // generateTitle by vue-i18n
@@ -111,6 +115,14 @@ export default {
       })
     },
     closeSelectedTag(view) {
+      if (view.path === '/my_dial_task' && !this.isDialTask) {
+        this.$message({
+          message: '请完成外呼任务',
+          type: 'error',
+          duration: 2000
+        })
+        return
+      }
       this.$store.dispatch('delView', view).then(({ visitedViews }) => {
         if (this.isActive(view)) {
           const latestView = visitedViews.slice(-1)[0]

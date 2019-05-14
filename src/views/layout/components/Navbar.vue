@@ -472,6 +472,7 @@ export default {
     keepReady() {
       return this.$store.state.ctiData.keepReady
     }
+
   },
   methods: {
     getObstatusNow(data, code) {
@@ -1010,7 +1011,17 @@ export default {
       const agentId = localStorage.getItem('agentId')
       const DN = this.formInline.DN
       if (agentId !== null && DN !== null && DN !== '') {
-        cti.logoff(agentId, DN, 9)
+        JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode
+        if (localStorage.getItem(localStorage.getItem('agentId')) && JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode === '13') {
+          cti.logoff(agentId, DN, 9)
+        } else {
+          this.$message({
+            type: 'error',
+            message: '只有示忙状态下才可以登出话机！',
+            duration: 1500
+          })
+          return
+        }
         if (vm.login_img_click_num % 2 === 1) {
           vm.$refs.login_img.click()
         }
@@ -1737,6 +1748,7 @@ export default {
           break
         case '-3':
         case '-4':
+          vm.lockChange = true
           break
         default:
           vm.lockChange = false
@@ -1765,6 +1777,10 @@ export default {
       // }
       vm.reasonCode = reasonCode
       localStorage.setItem('reasonCode', vm.reasonCode)
+      vm.setMyDialTask(reasonCode)
+    },
+    setMyDialTask(reasoncode) {
+      this.$root.eventHub.$emit('phoneCanDial', reasoncode === '13')
     },
     on_loginsucess(event, agentId, DN) {
       console.log('响应事件：登录成功' + event + ',员工工号：' + agentId + '，分机：' + DN)
@@ -1860,6 +1876,14 @@ export default {
     getPhoneStatus().then(response => {
       if (response.data.code === 0) {
         vm.obstatus = response.data.data
+        // 默认设置可以切换任何状态
+        for (let i = 0; i < vm.obstatus.length; i++) {
+          if (vm.obstatus[i].code === '-5') {
+            vm.obstatus[i].disabled = vm.lockChange && vm.autoCallChange
+          } else {
+            vm.obstatus[i].disabled = vm.lockChange
+          }
+        }
       } else {
         console.log(response.data.message)
       }
@@ -2111,6 +2135,7 @@ export default {
     this.$root.eventHub.$on('CHANGE_STATUS', () => {
       this.firstgetUnreadMessages(agentId)
     })
+
     this.$root.eventHub.$on('autocallReady', (obj) => {
       this.autoCallChange = !obj
       if (obj === 'auto') {
@@ -2173,6 +2198,9 @@ export default {
         vm.$message.error('不在拨打界面，不能拨打客户')
       }
     })
+    this.$root.eventHub.$on('disabledDial', (flag) => {
+      this.disabledDial = flag
+    })
   },
   destroyed() {
     vm.login_img_click_num = 0
@@ -2193,12 +2221,29 @@ export default {
     this.$root.eventHub.$off('DIAL_TASK_DIALNM')
     this.$root.eventHub.$off('ord_set')
     this.$root.eventHub.$off('autocallReady')
+    this.$root.eventHub.$off('disabledDial')
   },
   watch: {
     keepReady(val) {
       // console.log('watch' + val)
       if (val) {
         this.changeState('13')
+      }
+    },
+    lockChange(val) {
+      for (let i = 0; i < vm.obstatus.length; i++) {
+        if (vm.obstatus[i].code === '-5') {
+          vm.obstatus[i].disabled = vm.autoCallChange || val
+        } else {
+          vm.obstatus[i].disabled = val
+        }
+      }
+    },
+    autoCallChange(val) {
+      for (let i = 0; i < vm.obstatus.length; i++) {
+        if (vm.obstatus[i].code === '-5') {
+          vm.obstatus[i].disabled = vm.lockChange || val
+        }
       }
     }
   }

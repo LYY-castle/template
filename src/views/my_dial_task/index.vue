@@ -216,23 +216,28 @@
             fixed="right"
             width="180">
           <template slot-scope="scope">
-            <a v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb) && scope.row.staffId === aId" @click="sumTotal=0;products=[];customerNote='';changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);keepReady=true;dialTo(scope.row.taskId,scope.row.campaignId,scope.row.isBlacklist,scope.row.customerPhone);" size="small" type="text">
-              <img src="../../../static/images/my_imgs/img_dial.png" alt="拨打"/>
-              拨打
-            </a>
-            <span style="padding:0 5px;" v-if="showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb)" v-show="scope.row.staffId !== aId" size="small" type="text">
-              不可拨打
-            </span>
-            <el-tooltip v-else-if="!showStatus(scope.row.status)" class="item" effect="dark"  content="该状态不能拨打" placement="left-start">
+            <a class="icofont-phone" style="font-size:22px;color:grey;" v-if="!phoneCanDial" title="请先将话机设置为示忙"></a>
+            <a class="icofont-phone" style="font-size:22px;" title="拨打"  v-else-if="phoneCanDial&&showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb) && scope.row.staffId === aId" @click="autoCallDial=false;sumTotal=0;products=[];customerNote='';changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);keepReady=true;dialTo(scope.row.taskId,scope.row.campaignId,scope.row.isBlacklist,scope.row.customerPhone);" size="small" type="text"></a>
+            <a class="icofont-phone" style="font-size:22px;color:grey;" title="无权限" v-else-if="!phoneCanDial&&showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb) && scope.row.staffId === aId" href="javascript:void(0)" size="small" type="text"></a>
+            <a class="icofont-phone" style="font-size:22px;color:grey;" title="无权限" v-else-if="phoneCanDial&&showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb)" v-show="scope.row.staffId !== aId" href="javascript:void(0)" size="small" type="text"></a>
+            <a class="icofont-phone" style="font-size:22px;color:grey;" title="该状态不能拨打" v-else-if="phoneCanDial&&!showStatus(scope.row.status)"  href="javascript:void(0)" size="small" type="text"></a>
+            <a class="icofont-phone" style="font-size:22px;color:grey;" title="该号码为免访客户" v-else-if="phoneCanDial&&!checkBlacklist(scope.row.isBlacklist)"  href="javascript:void(0)" size="small" type="text"></a>
+            <a class="icofont-phone" style="font-size:22px;color:grey;" title="该号码处于免访号段中" v-else-if="phoneCanDial&&!checkNodisturb(scope.row.isNodisturb)"  href="javascript:void(0)" size="small" type="text"></a>
+            <a class="icofont-phone" style="font-size:22px;color:grey;" title="不能拨打" v-else href="javascript:void(0)" size="small" type="text"></a>
+            <a class="icofont-wechat" style="font-size:22px;color:grey;" title="不可用" v-if="show_wechat==='true'&&!showStatus(scope.row.status) || checkBindWechat(scope.row.customerId)" href="javascript:void(0)" size="small" type="text"></a>
+            <a class="icofont-wechat" style="font-size:22px;" title="微信聊天" v-else-if="show_wechat==='true'" @click="toChatPage(scope.row.taskId, scope.row.campaignId, scope.row.customerId, scope.row.customerName, scope.row.customerPhone)" size="small" type="text"></a>
+          
+            <!-- <el-tooltip v-else-if="phoneCanDial&&!showStatus(scope.row.status)" class="item" effect="dark"  content="该状态不能拨打" placement="left-start">
               <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
-            </el-tooltip>
-            <el-tooltip v-else-if="!checkBlacklist(scope.row.isBlacklist)" class="item" effect="dark"  content="该号码为免访客户" placement="left-start">
+            </el-tooltip> -->
+
+            <!-- <el-tooltip v-else-if="phoneCanDial&&!checkBlacklist(scope.row.isBlacklist)" class="item" effect="dark"  content="该号码为免访客户" placement="left-start">
               <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
-            </el-tooltip>
-            <el-tooltip v-else-if="!checkNodisturb(scope.row.isNodisturb)" class="item" effect="dark"  content="该号码处于免访号段中" placement="left-start">
+            </el-tooltip> -->
+            <!-- <el-tooltip v-else-if="phoneCanDial&&!checkNodisturb(scope.row.isNodisturb)" class="item" effect="dark"  content="该号码处于免访号段中" placement="left-start">
               <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
-            </el-tooltip>
-            <el-button type="text" v-if="show_wechat==='true'"  class="el-icon-message" :disabled="!showStatus(scope.row.status) || checkBindWechat(scope.row.customerId)" @click="toChatPage(scope.row.taskId, scope.row.campaignId, scope.row.customerId, scope.row.customerName, scope.row.customerPhone)">微信聊天</el-button>
+            </el-tooltip> -->
+            <!-- <el-button type="text" v-if="show_wechat==='true'"  class="el-icon-message" :disabled="!showStatus(scope.row.status) || checkBindWechat(scope.row.customerId)" @click="toChatPage(scope.row.taskId, scope.row.campaignId, scope.row.customerId, scope.row.customerName, scope.row.customerPhone)">微信聊天</el-button> -->
           </template>
           </el-table-column>
         </el-table>
@@ -258,8 +263,8 @@
     <div class="table-container" style="margin-top:0;">
       <b class="font14">客户信息</b>
       <div style="display:inline-block;position:relative;top:3px;margin-left:10px;">
-        <img ref="dialButton" v-if="!hideDialTo" style="height:16px;cursor:pointer;" src="../../../static/images/dial_normal.png" alt="拨打" @click="dialTo(taskId,campaignId,isBlacklist,customerPhone)">
-        <img v-if="hideDialTo" style="height:16px;cursor:disable;" src="../../../static/images/dial_disable.png" alt="拨打">
+        <!-- <img ref="dialButton" v-if="!hideDialTo" style="height:16px;cursor:pointer;" src="../../../static/images/dial_normal.png" alt="拨打" @click="dialTo(taskId,campaignId,isBlacklist,customerPhone)"> -->
+        <!-- <img v-if="hideDialTo" style="height:16px;cursor:disable;" src="../../../static/images/dial_disable.png" alt="拨打"> -->
         <el-button :disabled="checkBindWechat(telCustomerInfos.customerId)" @click="toWeChat" class="wechat-btn" type="text" v-if="show_wechat==='true'"><svg-icon icon-class="wechat" class="icon-size" style="width:20px;height:16px;"/></el-button>
       </div>
       <el-row class="customerinfo-container">
@@ -504,7 +509,7 @@
       <el-row>
         <el-form :inline="true" size="mini">
           <el-col :span="7" style="height:48px;">
-            <el-form-item label="话后小结：" style="margin-bottom:12px;">
+            <el-form-item label="话后小结：" style="margin-bottom:12px;" :rules="{required:true}">
               <div>
                 <el-cascader
                   size="mini"
@@ -574,7 +579,7 @@
       </el-row>
       <el-row>
         <div style="text-align:center">
-          <el-button plain type="primary" size="small" @click="returnList();customerNote='';sumTotal=0;products=[];resetReview();" style="margin-right:40px;">返回</el-button>
+          <!-- <el-button plain type="primary" size="small" @click="returnList();customerNote='';sumTotal=0;products=[];resetReview();" style="margin-right:40px;">返回</el-button> -->
           <a href="javascript:void(0);" @click="generateRecord()"><el-button type="primary" size="small">完成</el-button></a>
         </div>
       </el-row>
@@ -780,6 +785,7 @@ export default {
   data() {
     return {
       summaryType: '',
+      phoneCanDial: false, // 话机是否允许拨号
       autoStyle: {}, // 控制窗口大小，动态出现滚动条，用于点击完成之后，置顶功能
       customerPhones: [], // 快速拨打号码
       distributeTimeValue: null,
@@ -1537,6 +1543,14 @@ export default {
     },
     // 快速拨打勾选
     quickDialto() {
+      if (!this.phoneCanDial) {
+        this.$message({
+          message: '电话只有在示忙状态下才可以拨号！',
+          type: 'error',
+          duration: 1000
+        })
+        return
+      }
       if (this.taskIds.length === 0) {
         this.$message({
           message: '您还未选中任务，或选中的任务未包含可拨打客户!',
@@ -1784,7 +1798,7 @@ export default {
             })
           }
         }
-	// 判断小结类型是呼入还是呼出
+        // 判断小结类型是呼入还是呼出
         findNoduleByNoduleId({ noduleId: res1.data.data.summaryId }).then(response => {
           if (response.data) {
             if (response.data.code === 0) {
@@ -2341,6 +2355,8 @@ export default {
       } else {
         this.appointTime = ''
       }
+    },
+    isDialTask(val) {
     }
   },
   created() {
@@ -2373,6 +2389,9 @@ export default {
   },
   // 模板编译/挂载之后
   mounted() {
+    if (localStorage.getItem('agentId') && localStorage.getItem(localStorage.getItem('agentId')) && JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode == '13') {
+      this.phoneCanDial = true
+    }
     this.keepReady = true
     this.addDays = '1'
     if (localStorage.getItem('autocall') === 'true') {
@@ -2539,9 +2558,13 @@ export default {
           vm.hideDialTo = true
         }
       })
+      vm.$root.eventHub.$on('phoneCanDial', (flag) => {
+        this.phoneCanDial = flag
+      })
     })
   },
   activated() {
+    this.$root.eventHub.$emit('disabledDial', true)
     if (this.isDialTask) return
     // 切换页面保留缓存开始
     this.reViewShowSendMessage = this.showSendMessage
@@ -2723,6 +2746,9 @@ export default {
     this.autoStyle.overflow = 'auto'
     this.autoStyle.height = '800px'
   },
+  deactivated() {
+    this.$root.eventHub.$emit('disabledDial', false)
+  },
   // 离开时清除定时器
   destroyed: function() {
     this.resetReview()// 清空缓存数据
@@ -2736,8 +2762,10 @@ export default {
     localStorage.removeItem('global_taskId')
     this.sendMessageToNavbar(true)
     this.$root.eventHub.$emit('DISABLED_DIAL', '')
+    this.$root.eventHub.$emit('autocallReady', 'manual')
     // this.$store.dispatch('setReq', this.req)
     this.$root.eventHub.$off('NAVBAR')
+    this.$root.eventHub.$off('phoneCanDial')
   }
 }
 </script>
