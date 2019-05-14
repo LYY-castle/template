@@ -597,7 +597,7 @@
       getDepartId().then(res => {
         this.staffAgentid = res.data.agentid
         this.departId = res.data.departId
-        permsManager(this.agentId).then(response => {
+        permsManager(localStorage.getItem('accountNo')).then(response => {
           const code = parseInt(response.data.code)
           if (code === 200) {
             this.departPermission = true
@@ -627,7 +627,7 @@
               this.search(0)
             })
           } else if (code === 403) {
-            permsorderdepart(res.data.agentid).then(r => {
+            permsorderdepart(localStorage.getItem('accountNo')).then(r => {
               const code = parseInt(r.data.code)
               if (code === 200) {
                 this.departPermission = true
@@ -680,7 +680,7 @@
                     this.formInline.agentMap = _.zipObject(this.formInline.agent_id, this.formInline.agent_real_name)
                   }
 
-                  permsorderstaff(res.data.agentid).then(re => {
+                  permsorderstaff(localStorage.getItem('accountNo')).then(re => {
                     const code = parseInt(re.data.code)
                     if (code === 200) {
                       this.departPermission = false

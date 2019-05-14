@@ -163,6 +163,7 @@ export default {
     return {
       show_wechat: `${process.env.SHOW_WECHAT}`,
       agentId: localStorage.getItem('agentId'),
+      accountNo: localStorage.getItem('accountNo'),
       depart: false, // 班组长
       staff: false, // 坐席
       qcdepart: false, // 质检主管
@@ -211,32 +212,32 @@ export default {
   mounted() {
     const vm = this
     axios.all([ // 现场主管 0 班组长 1 坐席 2 质检主管 3 质检 4 人事 5
-      permsManager(this.agentId).then(response => {
+      permsManager(this.accountNo).then(response => {
         const code = parseInt(response.data.code)
         if (code === 200) vm.manager = true
         else if (code === 403) vm.manager = false
       }),
-      permsDepart(this.agentId).then(response => {
+      permsDepart(this.accountNo).then(response => {
         const code = parseInt(response.data.code)
         if (code === 200) vm.depart = true
         else if (code === 403) vm.depart = false
       }),
-      permsStaff(this.agentId).then(response => {
+      permsStaff(this.accountNo).then(response => {
         const code = parseInt(response.data.code)
         if (code === 200) vm.staff = true
         else if (code === 403) vm.staff = false
       }),
-      permsQCDepart(this.agentId).then(response => {
+      permsQCDepart(this.accountNo).then(response => {
         const code = parseInt(response.data.code)
         if (code === 200) vm.qcdepart = true
         else if (code === 403) vm.qcdepart = false
       }),
-      permsQCStaff(this.agentId).then(response => {
+      permsQCStaff(this.accountNo).then(response => {
         const code = parseInt(response.data.code)
         if (code === 200) vm.qcstaff = true
         else if (code === 403) vm.qcstaff = false
       }),
-      permsPersonnel(this.agentId).then(response => {
+      permsPersonnel(this.accountNo).then(response => {
         const code = parseInt(response.data.code)
         if (code === 200) vm.personnel = true
         else if (code === 403) vm.personnel = false

@@ -623,7 +623,7 @@
       getDepartId().then(res => {
         this.staffAgentid = res.data.agentid
         this.departId = res.data.departId
-        permsqualityreportdepart(res.data.agentid).then(r => {
+        permsqualityreportdepart(localStorage.getItem('accountNo')).then(r => {
           const code = parseInt(r.data.code)
           if (code === 200) {
             this.departPermission = true
@@ -676,7 +676,7 @@
                 this.formInline.agentMap = _.zipObject(this.formInline.agent_id, this.formInline.agent_real_name)
               }
 
-              permsqualityreportstaff(res.data.agentid).then(re => {
+              permsqualityreportstaff(localStorage.getItem('accountNo')).then(re => {
                 const code = parseInt(re.data.code)
                 if (code === 200) {
                   this.departPermission = false

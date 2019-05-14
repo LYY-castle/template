@@ -47,3 +47,19 @@ export function permsPersonnel(id) {
     method: 'get'
   })
 }
+
+// 知识库update权限
+export function permsKBUpdate(id) {
+  return request({
+    url: `auth/users/${id}/perms/-kb-update/POST`
+  })
+}
+
+// 软电话
+export function permsSoftPhone(agentId) {
+  return request({
+    url: '/auth/users/' + agentId + '/perms/-softbar-/GET',
+    method: 'get'
+  })
+}
+

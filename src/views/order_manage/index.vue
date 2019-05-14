@@ -301,8 +301,6 @@
 <script>
   import { rule } from '@/utils/validate' // 校验工具
   import {
-    checkManager,
-    checkStaff,
     getAllCamps,
     queryByKeyWords,
     queryByOrderId,
@@ -310,7 +308,7 @@
     deleteOrderById,
     sendMessageToCustomer
   } from '@/api/order_management' // api接口引用
-  import { permsManager } from '@/api/permission'
+  import { permsManager, permsStaff, permsDepart } from '@/api/permission'
   export default {
     name: 'order_management',
 
@@ -476,14 +474,14 @@
       },
       async checkPermission() {
         // 判断现场主管
-        await permsManager(localStorage.getItem('agentId')).then(response => {
+        await permsManager(localStorage.getItem('accountNo')).then(response => {
           const code = parseInt(response.data.code)
           if (code === 200) {
             this.isManager = true
           } else if (code === 403) {
             this.isManager = false
             // 判断班组长
-            checkManager(localStorage.getItem('agentId')).then(response => {
+            permsDepart(localStorage.getItem('accountNo')).then(response => {
               const code = parseInt(response.data.code)
               if (code === 200) this.isManager = true
               else if (code === 403) this.isManager = false
@@ -495,7 +493,7 @@
           throw error
         })
         // 判断员工
-        await checkStaff(localStorage.getItem('agentId')).then(response => {
+        await permsStaff(localStorage.getItem('accountNo')).then(response => {
           const code = parseInt(response.data.code)
           if (code === 200) this.isStaff = true
           else if (code === 403) this.isStaff = false

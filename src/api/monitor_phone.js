@@ -40,15 +40,4 @@ export function getAllChildrenOrgan(departId) {
     params: { 'departId': departId }
   })
 }
-// export function checkStaffMonitor(id) { // 查看是否具有班长监控电话的功能
-//   return request({
-//     url: '/auth/users/' + id + '/perms/-staff-/GET',
-//     method: 'get'
-//   })
-// }
-// export function checkTeamMonitor(id) { // 查看是否具有经理监控电话的功能
-//   return request({
-//     url: '/auth/users/' + id + '/perms/-depart-/GET',
-//     method: 'get'
-//   })
-// }
+

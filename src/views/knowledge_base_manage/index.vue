@@ -1033,7 +1033,6 @@
 import { MessageBox } from 'element-ui'
 import TreeRender from '@/components/tree/tree_kb.vue'
 import {
-  getPermission,
   getCatalogs,
   addCatalogs,
   delCatalogs,
@@ -1048,6 +1047,9 @@ import {
   getUploadInfo,
   delUpload
 } from '@/api/kb'
+import {
+  permsKBUpdate
+} from '@/api/permission'
 import {
   clone,
   formatDateTime,
@@ -2507,20 +2509,23 @@ export default{
     this.initExpand()
     this.getCatalogs()
     // 获取权限
-    getPermission(localStorage.getItem('agentId')).then(response => {
-      if (response.data) {
+    permsKBUpdate(localStorage.getItem('accountNo')).then(response => {
+      const code = parseInt(response.data.code)
+      if (code === 200) {
         this.permission = true
         this.getArticles1(this.req)
-      } else {
-        window.location.reload()
-      }
-    }).catch(error => {
-      if (error.response.status === 403) {
+      } else if (code === 403) {
         this.permission = false
         this.getArticles1(this.req)
       } else {
+        this.$message({
+          message: response.data.message,
+          type: 'error'
+        })
         window.location.reload()
       }
+    }).catch(error => {
+      console.log(error)
     })
   }
 }

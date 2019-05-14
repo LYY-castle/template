@@ -201,12 +201,14 @@
 <script>
 import TreeRender from '@/components/tree/tree_kb.vue'
 import {
-  getPermission,
   getCatalogs,
   getArticlesDetail,
   getArticlesById,
   getArticles
 } from '@/api/kb_query'
+import {
+  permsKBUpdate
+} from '@/api/permission'
 import {
   clone,
   formatDateTime
@@ -506,20 +508,20 @@ export default{
     this.initExpand()
     this.getCatalogs()
     // 获取权限
-    getPermission(localStorage.getItem('agentId')).then(response => {
-      if (response.data) {
+    permsKBUpdate(localStorage.getItem('accountNo')).then(response => {
+      const code = parseInt(response.data.code)
+      if (code === 200) {
         this.permission = true
         this.getArticles()
-      } else {
-        window.location.reload()
-      }
-    }).catch(error => {
-      if (error.response.status === 403) {
+      } else if (code === 403) {
         this.permission = false
         this.getArticles()
       } else {
+        this.$message.error(response.data.message)
         window.location.reload()
       }
+    }).catch(error => {
+      console.log(error)
     })
   }
 }

@@ -55,13 +55,9 @@ import ordWorkingset from '../ord_workingset/index'
 import ordqcWorkingset from '../ord_qc_workingset/index'
 import qcmonitorWorkingset from '../qc_monitor_workingset/index'
 import {
-  getMenu,
-  checkDepart,
-  checkqcDepart,
-  checkStaff,
-  checkqcStaff
+  getMenu
 } from '@/api/dashboard'
-import { permsManager, permsPersonnel } from '@/api/permission'
+import { permsManager, permsPersonnel, permsDepart, permsStaff, permsQCDepart, permsQCStaff } from '@/api/permission'
 // import Layout from '../layout/Layout'
 import getDynamicRouter from '@/router/dynamic-router'
 
@@ -71,6 +67,7 @@ export default {
     return {
       show_wechat: `${process.env.SHOW_WECHAT}`,
       agentId: localStorage.getItem('agentId'),
+      accountNo: localStorage.getItem('accountNo'),
       depart: false, // 现场主管
       qcdepart: false, // 质检主管
       staff: false, // 坐席
@@ -108,28 +105,28 @@ export default {
     })
 
     //
-    permsPersonnel().then(response => {
+    permsPersonnel(this.accountNo).then(response => {
       const code = parseInt(response.data.code)
       if (code === 200) {
         this.personnel = true
       } else if (code === 403) {
         this.personnel = false
         // 判断现场主管权限
-        permsManager(this.agentId).then(response => {
+        permsManager(this.accountNo).then(response => {
           const code = parseInt(response.data.code)
           if (code === 200) {
             this.depart = true
           } else if (code === 403) {
             this.depart = false
             // 判断班组长权限
-            checkDepart(this.agentId).then(response => {
+            permsDepart(this.accountNo).then(response => {
               const code = parseInt(response.data.code)
               if (code === 200) {
                 this.depart = true
               } else if (code === 403) {
                 this.depart = false
                 // 判断坐席权限
-                checkStaff(this.agentId).then(response => {
+                permsStaff(this.accountNo).then(response => {
                   const code = parseInt(response.data.code)
                   if (code === 200) {
                     this.staff = true
@@ -148,14 +145,14 @@ export default {
           throw error
         })
         // 判断质检主管权限
-        checkqcDepart(this.agentId).then(response => {
+        permsQCDepart(this.accountNo).then(response => {
           const code = parseInt(response.data.code)
           if (code === 200) {
             this.qcdepart = true
           } else if (code === 403) {
             this.qcdepart = false
             // 判断质检员权限
-            checkqcStaff(this.agentId).then(response => {
+            permsQCStaff(this.accountNo).then(response => {
               const code = parseInt(response.data.code)
               if (code === 200) {
                 this.qcstaff = true

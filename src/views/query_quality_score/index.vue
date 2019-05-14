@@ -523,13 +523,9 @@ import {
   findQmCampaignByUser,
   findAllGradeForm,
   findQualityResultByInfo,
-  getStaffNameByAgentId,
-  checkPromission_qc, // 质检员
-  checkPromission_charge, // 现场主管
-  checkPromission_sit, // 坐席
-  checkPromission_qs // 质检主管
+  getStaffNameByAgentId
 } from '@/api/qm_searchquailitymark'
-import { permsManager } from '@/api/permission'
+import { permsManager, permsQCStaff, permsQCDepart, permsDepart, permsStaff } from '@/api/permission'
 import {
   queryrecordbytaskid,
   getMarksByTaskId,
@@ -563,6 +559,7 @@ export default {
       map_activity: new Map(),
       detailVisible: false,
       agentId: localStorage.getItem('agentId'),
+      accountNo: localStorage.getItem('accountNo'),
       campData: [], // 质检活动
       roleIds: [], // 角色ID
       roleInfo: JSON.parse(localStorage.getItem('userRole')), // 角色信息
@@ -616,65 +613,80 @@ export default {
     this.findQmCampaign()
     // 获取登陆工号的角色 1、质检员  2、团队长  3、坐席  4、质检组长
     // 质检员
-    checkPromission_qc(this.agentId).then(response => {
-      this.n = 1
-      this.a = true
-      this.$set(this.req, 'contactTaskId', '')
-      this.$set(this.req, 'qcAgentid', localStorage.getItem('agentId'))
-      this.$set(this.req, 'qualityTaskId', '')
-      this.$set(this.req, 'agentid', '')
-      this.$set(this.req, 'gradeId', '')
+    permsQCStaff(this.accountNo).then(response => {
+      const code = parseInt(response.data.code)
+      if (code === 200) {
+        this.n = 1
+        this.a = true
+        this.$set(this.req, 'contactTaskId', '')
+        this.$set(this.req, 'qcAgentid', localStorage.getItem('agentId'))
+        this.$set(this.req, 'qualityTaskId', '')
+        this.$set(this.req, 'agentid', '')
+        this.$set(this.req, 'gradeId', '')
+      }
     }).catch(error => {
       throw error
     })
     // 现场主管
-    permsManager(this.agentId).then(response => {
-      this.n = 2
-      this.b = true
-      this.$set(this.req, 'contactTaskId', '')
-      this.$set(this.req, 'qcAgentid', '')
-      this.$set(this.req, 'activityId', '')
-      this.$set(this.req, 'departId', parseInt(localStorage.getItem('departId')))
-      this.$set(this.req, 'gradeId', '')
+    permsManager(localStorage.getItem('accountNo')).then(response => {
+      const code = parseInt(response.data.code)
+      if (code === 200) {
+        this.n = 2
+        this.b = true
+        this.$set(this.req, 'contactTaskId', '')
+        this.$set(this.req, 'qcAgentid', '')
+        this.$set(this.req, 'activityId', '')
+        this.$set(this.req, 'departId', parseInt(localStorage.getItem('departId')))
+        this.$set(this.req, 'gradeId', '')
+      }
     }).catch(error => {
       throw error
     })
     // 班组长
-    checkPromission_charge(this.agentId).then(response => {
-      this.n = 2
-      this.b = true
-      this.$set(this.req, 'contactTaskId', '')
-      this.$set(this.req, 'qcAgentid', '')
-      this.$set(this.req, 'activityId', '')
-      this.$set(this.req, 'departId', parseInt(localStorage.getItem('departId')))
-      this.$set(this.req, 'gradeId', '')
+    permsDepart(this.accountNo).then(response => {
+      const code = parseInt(response.data.code)
+      if (code === 200) {
+        this.n = 2
+        this.b = true
+        this.$set(this.req, 'contactTaskId', '')
+        this.$set(this.req, 'qcAgentid', '')
+        this.$set(this.req, 'activityId', '')
+        this.$set(this.req, 'departId', parseInt(localStorage.getItem('departId')))
+        this.$set(this.req, 'gradeId', '')
+      }
     }).catch(error => {
       throw error
     })
     // 坐席
-    checkPromission_sit(this.agentId).then(response => {
-      this.n = 3
-      this.c = true
-      this.$set(this.req, 'contactTaskId', '')
-      this.$set(this.req, 'qcAgentid', '')
-      this.$set(this.req, 'contactTaskId', '')
-      this.$set(this.req, 'agentid', localStorage.getItem('agentId'))
-      this.$set(this.req, 'gradeId', '')
+    permsStaff(this.accountNo).then(response => {
+      const code = parseInt(response.data.code)
+      if (code === 200) {
+        this.n = 3
+        this.c = true
+        this.$set(this.req, 'contactTaskId', '')
+        this.$set(this.req, 'qcAgentid', '')
+        this.$set(this.req, 'contactTaskId', '')
+        this.$set(this.req, 'agentid', localStorage.getItem('agentId'))
+        this.$set(this.req, 'gradeId', '')
+      }
     }).catch(error => {
       throw error
     })
     // 质检组长
-    checkPromission_qs(this.agentId).then(response => {
-      this.n = 4
-      this.d = true
-      // if (this.searchType === '1') {
-      this.$set(this.req, 'contactTaskId', '')
-      this.$set(this.req, 'qualityTaskId', '')
-      this.$set(this.req, 'qcAgentid', '')
-      this.$set(this.req, 'agentid', '')
-      this.$set(this.req, 'activityId', '')
-      this.$set(this.req, 'gradeId', '')
-      this.$set(this.req, 'qcdepartId', parseInt(localStorage.getItem('departId')))
+    permsQCDepart(this.accountNo).then(response => {
+      const code = parseInt(response.data.code)
+      if (code === 200) {
+        this.n = 4
+        this.d = true
+        // if (this.searchType === '1') {
+        this.$set(this.req, 'contactTaskId', '')
+        this.$set(this.req, 'qualityTaskId', '')
+        this.$set(this.req, 'qcAgentid', '')
+        this.$set(this.req, 'agentid', '')
+        this.$set(this.req, 'activityId', '')
+        this.$set(this.req, 'gradeId', '')
+        this.$set(this.req, 'qcdepartId', parseInt(localStorage.getItem('departId')))
+      }
     }).catch(error => {
       throw error
     })

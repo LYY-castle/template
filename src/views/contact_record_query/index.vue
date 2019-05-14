@@ -684,8 +684,6 @@ audio {
   import {
     getAllCamps,
     queryByKeyWords,
-    isHaveManager,
-    isHaveStaff,
     getSummariesByTaskId,
     getContactByGradeId,
     queryrecordbytaskid,
@@ -701,7 +699,7 @@ audio {
   } from '@/api/contact_record_dail' // api接口引用
   import { getCampaignType } from '@/api/dialTask'
   import { queryOneQuestionnaire, queryRecordsByTaskId } from '@/api/questionnaire'
-  import { permsManager } from '@/api/permission'
+  import { permsManager, permsDepart, permsStaff } from '@/api/permission'
   import Emotion from '@/components/Emotion1/index'
   import vueEmoji from '@/components/Emotion3/emoji.vue'
   import emojidata from '@/components/Emotion3/emoji-data.js'
@@ -1004,14 +1002,14 @@ audio {
       // },
       async checkPermission() {
         // 判断现场主管
-        await permsManager(localStorage.getItem('agentId')).then(response => {
+        await permsManager(localStorage.getItem('accountNo')).then(response => {
           const code = parseInt(response.data.code)
           if (code === 200) {
             this.isManager = true
           } else if (code === 403) {
             this.isManager = false
             // 判断班组长
-            isHaveManager(localStorage.getItem('agentId')).then(response => {
+            permsDepart(localStorage.getItem('accountNo')).then(response => {
               const code = parseInt(response.data.code)
               if (code === 200) this.isManager = true
               else if (code === 403) this.isManager = false
@@ -1023,7 +1021,7 @@ audio {
           throw error
         })
         // 判断员工
-        await isHaveStaff(localStorage.getItem('agentId')).then(response => {
+        await permsStaff(localStorage.getItem('accountNo')).then(response => {
           const code = parseInt(response.data.code)
           if (code === 200) this.isStaff = true
           else if (code === 403) this.isStaff = false

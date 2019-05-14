@@ -42,12 +42,6 @@ export function getMenu() {
     method: 'post'
   })
 }
-export function checkSoftphonePerm(agentId) {
-  return request({
-    url: '/auth/users/' + agentId + '/perms/-softbar-/GET',
-    method: 'get'
-  })
-}
 
 export function changeWechatState(req) {
   return request({

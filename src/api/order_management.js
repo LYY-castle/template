@@ -22,18 +22,6 @@ export function getAllCamps() {
   })
 }
 
-export function checkManager(id) {
-  return request({
-    url: '/auth/users/' + id + '/perms/-depart-/GET'
-  })
-}
-
-export function checkStaff(id) {
-  return request({
-    url: '/auth/users/' + id + '/perms/-staff-/GET'
-  })
-}
-
 export function queryByOrderId(orderId) {
   return request({
     url: '/order/quertDetail',

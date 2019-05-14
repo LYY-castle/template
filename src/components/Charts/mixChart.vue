@@ -502,7 +502,7 @@
   import _ from 'lodash'
   import echarts from 'echarts'
   import resize from './mixins/resize'
-  import { statistics, getDepartId, totalAgent, reportAgent, departAgents } from '@/api/ctiReport'
+  import { statistics, totalAgent, reportAgent, departAgents } from '@/api/ctiReport'
   import { Message } from 'element-ui'
   import { permsdepart, permsstaff } from '@/api/reportPermission'
   import { permsManager } from '@/api/permission'
@@ -542,6 +542,7 @@
         formContainerOpen: '1',
         agentId: localStorage.getItem('agentId'),
         agentName: localStorage.getItem('agentName'),
+        accountNo: localStorage.getItem('accountNo'),
         statistics_type: '',
         departId: '',
         departPermission: false,
@@ -634,121 +635,119 @@
     // },
     mounted() {
       this.handleChangeAcitve()
-      getDepartId().then(res => {
-        this.staffAgentid = res.data.agentid
-        this.departId = res.data.departId
-        var self = this
-        this.timer = setInterval(getTotelNumber, 30000)
-        function getTotelNumber() {
-          if (self.departPermission) {
-            self.searchEvery('searchEvery')
-          }
-          if (self.staffPermission) {
-            self.searchEvery1(self.staffAgentid)
-          }
+      this.staffAgentid = localStorage.getItem('agentId')
+      this.departId = localStorage.getItem('departId')
+      var self = this
+      this.timer = setInterval(getTotelNumber, 30000)
+      function getTotelNumber() {
+        if (self.departPermission) {
+          self.searchEvery('searchEvery')
         }
-        permsManager(this.agentId).then(response => {
-          const code = parseInt(response.data.code)
-          if (code === 200) {
-            this.departPermission = true
-            this.staffPermission = false
-            departAgents(res.data.departId).then(response => {
-              this.statistics_type = response.data.result.statistics_type
-              if (response.data.result.statistics_type === 'depart') {
-                this.staffOptions = response.data.result.sub_departs
-                this.formInline.staff = response.data.result.sub_departs[0].depart_id
-                this.formInline.sub_depart_id = response.data.result.sub_departs.map(function(item, index) {
-                  return item.depart_id
-                })
-                this.formInline.sub_depart_name = response.data.result.sub_departs.map(function(item, index) {
-                  return item.depart_name
-                })
-              } else {
-                this.staffOptions = response.data.result.agents
-                this.formInline.staff = response.data.result.agents[0].agent_id
-                this.formInline.agent_id = response.data.result.agents.map(function(item, index) {
-                  return item.agent_id
-                })
-                this.formInline.agent_real_name = response.data.result.agents.map(function(item, index) {
-                  return item.real_name
-                })
-                this.formInline.agentMap = _.zipObject(this.formInline.agent_id, this.formInline.agent_real_name)
-              }
-              this.search(0)
-            })
-          } else if (code === 403) {
-            permsdepart(res.data.agentid).then(r => {
-              const code = parseInt(r.data.code)
-              if (code === 200) {
-                this.departPermission = true
-                this.staffPermission = false
-                departAgents(res.data.departId).then(response => {
-                  this.statistics_type = response.data.result.statistics_type
-                  if (response.data.result.statistics_type === 'depart') {
-                    this.staffOptions = response.data.result.sub_departs
-                    this.formInline.staff = response.data.result.sub_departs[0].depart_id
-                    this.formInline.sub_depart_id = response.data.result.sub_departs.map(function(item, index) {
-                      return item.depart_id
-                    })
-                    this.formInline.sub_depart_name = response.data.result.sub_departs.map(function(item, index) {
-                      return item.depart_name
-                    })
-                  } else {
-                    this.staffOptions = response.data.result.agents
-                    this.formInline.staff = response.data.result.agents[0].agent_id
-                    this.formInline.agent_id = response.data.result.agents.map(function(item, index) {
-                      return item.agent_id
-                    })
-                    this.formInline.agent_real_name = response.data.result.agents.map(function(item, index) {
-                      return item.real_name
-                    })
-                    this.formInline.agentMap = _.zipObject(this.formInline.agent_id, this.formInline.agent_real_name)
-                  }
-                  this.search(0)
-                })
-              } else if (code === 403) {
-                departAgents(res.data.departId).then(response => {
-                  this.statistics_type = response.data.result.statistics_type
-                  if (response.data.result.statistics_type === 'depart') {
-                    this.staffOptions = response.data.result.sub_departs
-                    this.formInline.staff = response.data.result.sub_departs[0].depart_id
-                    this.formInline.sub_depart_id = response.data.result.sub_departs.map(function(item, index) {
-                      return item.depart_id
-                    })
-                    this.formInline.sub_depart_name = response.data.result.sub_departs.map(function(item, index) {
-                      return item.depart_name
-                    })
-                  } else {
-                    this.staffOptions = response.data.result.agents
-                    this.formInline.staff = response.data.result.agents[0].agent_id
-                    this.formInline.agent_id = response.data.result.agents.map(function(item, index) {
-                      return item.agent_id
-                    })
-                    this.formInline.agent_real_name = response.data.result.agents.map(function(item, index) {
-                      return item.real_name
-                    })
-                    this.formInline.agentMap = _.zipObject(this.formInline.agent_id, this.formInline.agent_real_name)
-                  }
-
-                  permsstaff(res.data.agentid).then(re => {
-                    const code = parseInt(re.data.code)
-                    if (code === 200) {
-                      this.departPermission = false
-                      this.staffPermission = true
-                      this.search1(res.data.agentid)
-                    }
-                  }).catch((err) => {
-                    throw err
+        if (self.staffPermission) {
+          self.searchEvery1(self.staffAgentid)
+        }
+      }
+      permsManager(this.accountNo).then(response => {
+        const code = parseInt(response.data.code)
+        if (code === 200) {
+          this.departPermission = true
+          this.staffPermission = false
+          departAgents(this.departId).then(response => {
+            this.statistics_type = response.data.result.statistics_type
+            if (response.data.result.statistics_type === 'depart') {
+              this.staffOptions = response.data.result.sub_departs
+              this.formInline.staff = response.data.result.sub_departs[0].depart_id
+              this.formInline.sub_depart_id = response.data.result.sub_departs.map(function(item, index) {
+                return item.depart_id
+              })
+              this.formInline.sub_depart_name = response.data.result.sub_departs.map(function(item, index) {
+                return item.depart_name
+              })
+            } else {
+              this.staffOptions = response.data.result.agents
+              this.formInline.staff = response.data.result.agents[0].agent_id
+              this.formInline.agent_id = response.data.result.agents.map(function(item, index) {
+                return item.agent_id
+              })
+              this.formInline.agent_real_name = response.data.result.agents.map(function(item, index) {
+                return item.real_name
+              })
+              this.formInline.agentMap = _.zipObject(this.formInline.agent_id, this.formInline.agent_real_name)
+            }
+            this.search(0)
+          })
+        } else if (code === 403) {
+          permsdepart(this.accountNo).then(r => {
+            const code = parseInt(r.data.code)
+            if (code === 200) {
+              this.departPermission = true
+              this.staffPermission = false
+              departAgents(this.departId).then(response => {
+                this.statistics_type = response.data.result.statistics_type
+                if (response.data.result.statistics_type === 'depart') {
+                  this.staffOptions = response.data.result.sub_departs
+                  this.formInline.staff = response.data.result.sub_departs[0].depart_id
+                  this.formInline.sub_depart_id = response.data.result.sub_departs.map(function(item, index) {
+                    return item.depart_id
                   })
+                  this.formInline.sub_depart_name = response.data.result.sub_departs.map(function(item, index) {
+                    return item.depart_name
+                  })
+                } else {
+                  this.staffOptions = response.data.result.agents
+                  this.formInline.staff = response.data.result.agents[0].agent_id
+                  this.formInline.agent_id = response.data.result.agents.map(function(item, index) {
+                    return item.agent_id
+                  })
+                  this.formInline.agent_real_name = response.data.result.agents.map(function(item, index) {
+                    return item.real_name
+                  })
+                  this.formInline.agentMap = _.zipObject(this.formInline.agent_id, this.formInline.agent_real_name)
+                }
+                this.search(0)
+              })
+            } else if (code === 403) {
+              departAgents(this.departId).then(response => {
+                this.statistics_type = response.data.result.statistics_type
+                if (response.data.result.statistics_type === 'depart') {
+                  this.staffOptions = response.data.result.sub_departs
+                  this.formInline.staff = response.data.result.sub_departs[0].depart_id
+                  this.formInline.sub_depart_id = response.data.result.sub_departs.map(function(item, index) {
+                    return item.depart_id
+                  })
+                  this.formInline.sub_depart_name = response.data.result.sub_departs.map(function(item, index) {
+                    return item.depart_name
+                  })
+                } else {
+                  this.staffOptions = response.data.result.agents
+                  this.formInline.staff = response.data.result.agents[0].agent_id
+                  this.formInline.agent_id = response.data.result.agents.map(function(item, index) {
+                    return item.agent_id
+                  })
+                  this.formInline.agent_real_name = response.data.result.agents.map(function(item, index) {
+                    return item.real_name
+                  })
+                  this.formInline.agentMap = _.zipObject(this.formInline.agent_id, this.formInline.agent_real_name)
+                }
+
+                permsstaff(this.accountNo).then(re => {
+                  const code = parseInt(re.data.code)
+                  if (code === 200) {
+                    this.departPermission = false
+                    this.staffPermission = true
+                    this.search1(this.staffAgentid)
+                  }
+                }).catch((err) => {
+                  throw err
                 })
-              }
-            }).catch((error) => {
-              throw error
-            })
-          }
-        }).catch(error => {
-          throw error
-        })
+              })
+            }
+          }).catch((error) => {
+            throw error
+          })
+        }
+      }).catch(error => {
+        throw error
       })
     },
     beforeDestroy() {

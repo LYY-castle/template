@@ -960,15 +960,29 @@
       async checkPermission(staffId) {
         // 判断主管
         await permsqualityMonitorWorkingSet(staffId).then(response => {
-          this.isManager = true
-        }).catch(() => {
-          this.isManager = false
+          const code = parseInt(response.data.code)
+          if (code === 200) {
+            this.isManager = true
+          } else if (code === 403) {
+            this.isManager = false
+          } else {
+            this.$message(response.data.message)
+          }
+        }).catch(error => {
+          console.log(error)
         })
         // 判断员工
         await permsqualityOrdWorkingSet(staffId).then(response => {
-          this.isStaff = true
-        }).catch(() => {
-          this.isStaff = false
+          const code = parseInt(response.data.code)
+          if (code === 200) {
+            this.isStaff = true
+          } else if (code === 403) {
+            this.isStaff = false
+          } else {
+            this.$message(response.data.message)
+          }
+        }).catch(error => {
+          console.log(error)
         })
       },
       showStaffName(val) {
@@ -1540,7 +1554,7 @@
       } else {
         this.searchTask(this.formInline)
       }
-      this.checkPermission(this.staffId).then(res => {
+      this.checkPermission(localStorage.getItem('accountNo')).then(res => {
         if (this.isManager) {
           this.departId = localStorage.getItem('departId')
           getStaffByDepartId(this.departId).then(response => {

@@ -322,7 +322,6 @@ import {
   addAnswerContact,
   addHangupContact,
   getPhoneOwn,
-  checkSoftphonePerm,
   changeWechatState,
   getWechatState,
   navbarQueryRecords,
@@ -336,6 +335,7 @@ import {
   changeRecords,
   getWechatCustomer
 } from '@/api/wechat_list'
+import { permsSoftPhone } from '@/api/permission'
 import {
   getStaffNameByAgentId
 } from '@/api/employee_list'
@@ -1903,13 +1903,15 @@ export default {
         }
       }
     }).then(() => {
-      checkSoftphonePerm(agentId).then(res => {
+      permsSoftPhone(localStorage.getItem('accountNo')).then(res => {
         const code = parseInt(res.data.code)
         if (code === 200) {
           vm.havesoftphone = true
           cti.connectCTI(process.env.CTI_WS_SERVERURL)
         } else if (code === 403) {
           vm.havesoftphone = false
+        } else {
+          this.$message.error(res.data.message)
         }
       }).catch(error => {
         console.log(error)

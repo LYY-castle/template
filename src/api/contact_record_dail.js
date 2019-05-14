@@ -45,20 +45,6 @@ export function getStaffByDepartId(id) {
     params: { 'departId': id }
   })
 }
-// 判断组接触历史权限
-export function isHaveManager(id) {
-  return request({
-    url: '/auth/users/' + id + '/perms/-depart-/GET',
-    method: 'get'
-  })
-}
-// 判断人接触历史权限
-export function isHaveStaff(id) {
-  return request({
-    url: '/auth/users/' + id + '/perms/-staff-/GET',
-    method: 'get'
-  })
-}
 
 // 详情页面请求
 // 得到小结

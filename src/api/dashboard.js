@@ -25,31 +25,3 @@ export function getUserInfo() {
     method: 'get'
   })
 }
-// 现场主管
-export function checkDepart(agentId) {
-  return request({
-    url: `/auth/users/${agentId}/perms/-depart-/GET`,
-    method: 'get'
-  })
-}
-// 质检主管
-export function checkqcDepart(agentId) {
-  return request({
-    url: `/auth/users/${agentId}/perms/-qc-depart-/GET`,
-    method: 'get'
-  })
-}
-// 坐席
-export function checkStaff(agentId) {
-  return request({
-    url: `/auth/users/${agentId}/perms/-staff-/GET`,
-    method: 'get'
-  })
-}
-// 质检
-export function checkqcStaff(agentId) {
-  return request({
-    url: `/auth/users/${agentId}/perms/-qc-staff-/GET`,
-    method: 'get'
-  })
-}
