@@ -29,7 +29,10 @@ export function getAllVisibleDepts() {
 export function findAllNodules() {
   return request({
     url: `nodule/findAllNodules`,
-    method: 'get'
+    method: 'get',
+    params: {
+      type: 0
+    }
   })
 }
 
@@ -48,22 +51,25 @@ export function findAllCampaignTypes() {
     method: 'get'
   })
 }
+
 // 根据活动id获取评分表
 export function findMarksByCampaignId(campaignId) {
   return request({
     url: `quality/getMarksByCampaignId`,
     method: 'get',
-    params: { activityId: campaignId }
+    params: {activityId: campaignId}
   })
 }
+
 // 根据活动id获取质检部门
 export function findDeptByCampaignId(campaignId) {
   return request({
     url: `quality/getDeptByCampaignId`,
     method: 'get',
-    params: { activityId: campaignId }
+    params: {activityId: campaignId}
   })
 }
+
 // 修改活动
 export function modifyCampaign(req) {
   return request({

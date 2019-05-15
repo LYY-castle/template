@@ -191,6 +191,8 @@
                       duration: 2 * 1000
                     })
                   })
+                }).finally(() => {
+                  this.isShowMessageBox = false
                 })
               }
             }).catch(() => {

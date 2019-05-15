@@ -1378,7 +1378,7 @@ var baseinfo = null
                 const obj = {}
                 obj.departId = res.data.data[i].id
                 baseinfo.promise_arr.push(baseinfo.getPromise(obj.departId))
-                obj.organName = res.data.data[i].departName
+                obj.organName = res.data.data[i].name
                 obj.talkingCount = 0
                 obj.busyCount = 0
                 obj.ringingCount = 0
