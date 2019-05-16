@@ -10,7 +10,7 @@
             <el-form-item label="部门名：">
               <el-input placeholder="部门名（限长45字符）" v-model="formInline.name" maxlength="45"></el-input>
             </el-form-item>
-             <el-form-item label="上级部门名：">
+            <el-form-item label="上级部门名：">
               <el-input placeholder="上级部门名（限长45字符）" v-model="formInline.upDepartName" maxlength="45"></el-input>
             </el-form-item>
             <el-form-item label="上级部门：" v-if="$route.params.id === ':id'">
@@ -667,7 +667,6 @@
           return ''
         }
       },
-<<<<<<< Updated upstream
       searchOrgan() {
         this.formInline.startTime = this.timeValue ? this.timeValue[0] : null
         this.formInline.stopTime = this.timeValue ? this.timeValue[1] : null
@@ -686,11 +685,6 @@
             return
           }
           this.tableData = response.data.data
-=======
-      queryOrgan(res) {
-        this.tableData = res.data.data
-        if (this.tableData.length > 0) {
->>>>>>> Stashed changes
           for (let i = 0; i <= this.tableData.length; i++) {
             if (this.tableData[i]) {
               this.tableData[i].updateTime = formatDateTime(this.tableData[i].updateTime)

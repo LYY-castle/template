@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
         <el-collapse-item title="筛选条件" name="1">
-           <el-form :inline="true" class="demo-form-inline" size="small">
+          <el-form :inline="true" class="demo-form-inline" size="small">
             <el-form-item label="员工姓名：">
               <el-input placeholder="员工姓名（上限45字符）" v-model="formInline.name" maxlength="45"></el-input>
             </el-form-item>
@@ -481,13 +481,8 @@
           phone: '',
           staffNo: '',
           modifier: '',
-<<<<<<< Updated upstream
           modifyTime: ''
-  
-=======
-          updateTime: ''
 
->>>>>>> Stashed changes
         },
         ruleFormReverseDetail: {
           id: null,
@@ -501,13 +496,8 @@
           phone: '',
           staffNo: '',
           modifier: '',
-<<<<<<< Updated upstream
           modifyTime: ''
-  
-=======
-          updateTime: ''
 
->>>>>>> Stashed changes
         },
         dialogFormVisible: false,
         dialogFormVisibleReverse: false,
@@ -743,22 +733,11 @@
           if (response.data.code === 1) {
             const data = response.data.data
             this.staffData = data
-<<<<<<< Updated upstream
-  
+
             /** 回显上级部门的逻辑 start */
-  
+
             this.edit_dept_ids = []
             this.reverse_edit_dept_ids = []
-=======
-
-            /** 回显上级组织的逻辑 start */
-            let str = ''
-            for (var a = 0; a < this.beforeTransfer_visibleDepts.length; a++) {
-              if (this.beforeTransfer_visibleDepts[a].id === data.departId) {
-                str = this.beforeTransfer_visibleDepts[a].namePath
-              }
-            }
->>>>>>> Stashed changes
             let arr = []
             arr = data.depart == null ? null : (data.depart.idPath == null ? null : data.depart.idPath.substring(1, data.depart.idPath.length - 1).split('/'))
             if (arr != null) {
@@ -768,16 +747,9 @@
                 this.reverse_edit_dept_ids.push(val)
               }
             }
-<<<<<<< Updated upstream
-  
-            /** 回显上级部门的逻辑 end */
-  
-=======
-            this.edit_dept_ids = arr
-            this.reverse_edit_dept_ids = arr
-            /** 回显上级组织的逻辑 end */
 
->>>>>>> Stashed changes
+            /** 回显上级部门的逻辑 end */
+
             this.ruleFormReverse = {
               id: data.id,
               name: data.name,
