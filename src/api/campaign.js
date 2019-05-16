@@ -57,7 +57,7 @@ export function findMarksByCampaignId(campaignId) {
   return request({
     url: `quality/getMarksByCampaignId`,
     method: 'get',
-    params: {activityId: campaignId}
+    params: { activityId: campaignId }
   })
 }
 
@@ -66,7 +66,7 @@ export function findDeptByCampaignId(campaignId) {
   return request({
     url: `quality/getDeptByCampaignId`,
     method: 'get',
-    params: {activityId: campaignId}
+    params: { activityId: campaignId }
   })
 }
 

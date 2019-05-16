@@ -357,7 +357,7 @@
         <el-form-item label="话后小结" prop="summaryId">
           <el-select v-model="campaignDetail.summaryId" placeholder="请选择小结" style="width: 100%;">
             <el-option
-                v-for="item in visibleSummaryData"
+                v-for="item in allSummaryData"
                 :key="item.summaryId"
                 :label="item.summaryName"
                 :value="item.summaryId">
@@ -685,7 +685,7 @@
       <el-form-item label="话后小结" prop="summaryId">
         <el-select v-model="campaignDetail.summaryId" placeholder="请选择小结" style="width: 100%;">
           <el-option
-              v-for="item in visibleSummaryData"
+              v-for="item in allSummaryData"
               :key="item.summaryId"
               :label="item.summaryName"
               :value="item.summaryId">
@@ -1309,7 +1309,6 @@ export default {
       visibleDepts: [], // 所有可见部门
       qcdeptData: [], // 质检部门
       allSummaryData: [], // 所有小结
-      visibleSummaryData: [], // 所有可见的小结
       campaignTypes: [], // 活动类型
       marksData: [], // 评分表
       productName: [], // 产品名称
@@ -1413,7 +1412,7 @@ export default {
     this.getDepts()
     this.getVisibleDepts()
     this.getAllNodules()
-    this.getAllVisibleNodules()
+    // this.getAllVisibleNodules()
     this.getAllCampaignTypes()
   },
   methods: {
@@ -1765,9 +1764,9 @@ export default {
             }
           }
           // 遍历查找对应小结
-          for (var c = 0; c < this.visibleSummaryData.length; c++) {
-            if (this.visibleSummaryData[c].summaryId === this.campaignDetail.summaryId) {
-              this.summaryName = this.visibleSummaryData[c].summaryName
+          for (var c = 0; c < this.allSummaryData.length; c++) {
+            if (this.allSummaryData[c].summaryId === this.campaignDetail.summaryId) {
+              this.summaryName = this.allSummaryData[c].summaryName
             }
           }
         })
@@ -1970,16 +1969,16 @@ export default {
     },
     // 查询所有小结
     getAllNodules() {
-      findAllNodules().then(response => {
+      findAllNodules(0).then(response => {
         this.allSummaryData = response.data.data
       })
     },
     // 查询所有可见小结
-    getAllVisibleNodules() {
-      findAllVisibleNodules().then(response => {
-        this.visibleSummaryData = response.data.data
-      })
-    },
+    // getAllVisibleNodules() {
+    //   findAllNodules(0).then(response => {
+    //     this.allSummaryData = response.data.data
+    //   })
+    // },
     // 详情页面查询评分表
     getMarksByCampaignId(campaignId) {
       findMarksByCampaignId(campaignId).then(response => {
