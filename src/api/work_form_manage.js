@@ -6,5 +6,25 @@ export function getWorkForm() {
     method: 'get',
   })
 }
+// 新建
+export function createWorkForm(obj) {
+  return requestV2({
+    url: '/workflow/workform/create/workform',
+    method: 'post',
+    data: obj
+  })
+}
+
+// 单个删除批量删除
+export function deleteWorkForm(workFormId) {
+  return requestV2({
+    url: '/workflow/workform/delete/workform',
+    method: 'post',
+    data: {
+      id:workFormId
+    }
+  })
+}
+
 
 
