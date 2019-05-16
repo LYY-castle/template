@@ -26,7 +26,7 @@
               </el-select> -->
             </el-form-item>
             <el-form-item label="操作人：">
-              <el-input placeholder="操作人（上限45字符）" v-model="formInline.modifierName" maxlength="45"></el-input>
+              <el-input placeholder="操作人（上限45字符）" v-model="formInline.modifier" maxlength="45"></el-input>
             </el-form-item>
             <el-form-item label="操作时间：">
               <el-date-picker
@@ -450,6 +450,7 @@
         tableData: [],
         multipleSelection: [],
         formInline: {
+          modifier: '',
           name: '',
           staffNo: '',
           modifierName: '',
@@ -673,6 +674,7 @@
         this.timeValue = []
         this.selected_dept_id = []
         this.formInline = {
+          modifier: '',
           name: '',
           staffNo: '',
           modifierName: '',
