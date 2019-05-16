@@ -13,7 +13,7 @@
                   <el-form-item label="操作人：">
               <el-input placeholder="操作人（上限45字）" v-model="formInline.modifierName" maxlength="45"></el-input>
             </el-form-item>
-            <el-form-item label="操作时间："> 
+            <el-form-item label="操作时间：">
               <el-date-picker
                 v-model="timeValue"
                 type="datetimerange"
@@ -425,12 +425,6 @@
               this.tableData[i].updateTime = formatDateTime(this.tableData[i].updateTime)
             }
           }
-        } else {
-          Message({
-            message: '无查询结果，请核对查询条件',
-            type: 'error',
-            duration: 1500
-          })
         }
       },
       searchProductType(req) {

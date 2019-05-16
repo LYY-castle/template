@@ -5,7 +5,7 @@
       <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
         <el-collapse-item title="筛选条件" name="1">
           <el-form :inline="true" size="small">
-            <el-form-item label="问卷模板名称"> 
+            <el-form-item label="问卷模板名称">
               <el-input type="text" v-model="req.name" placeholder="问卷模板名称（限长45字符）" maxlength="45" class="hideBorder"></el-input>
             </el-form-item>
             <el-form-item label="操作人">
@@ -170,7 +170,7 @@
                             </div>
                             <div v-show="item.type===1">
                                    <span>{{index+1}}.</span>
-                                   <el-input size="small" v-model="item.name" :placeholder="setplaceHolder(item.type)" style="width:493px;margin:3px" clearable maxlength="45" :disabled="trueOrFalse"></el-input> 
+                                   <el-input size="small" v-model="item.name" :placeholder="setplaceHolder(item.type)" style="width:493px;margin:3px" clearable maxlength="45" :disabled="trueOrFalse"></el-input>
                                    <div v-for="(a,checkboxIndex) in item.options" :key="checkboxIndex" class="options">
                                     <el-checkbox disabled checked>
                                       <span class="showEditOption">
@@ -186,14 +186,14 @@
                             </div>
                             <div v-show="item.type===2">
                                    <span>{{index+1}}.</span>
-                                   <el-input size="small" v-model="item.name" :placeholder="setplaceHolder(item.type)" style="width:493px;margin:3px" clearable maxlength="45" :disabled="trueOrFalse"></el-input> 
+                                   <el-input size="small" v-model="item.name" :placeholder="setplaceHolder(item.type)" style="width:493px;margin:3px" clearable maxlength="45" :disabled="trueOrFalse"></el-input>
                                    <div v-for="(a,blankIndex) in item.options" :key="blankIndex" class="options">
                                     <el-input type="textarea" placeholder='回答' resize="none" rows="1" style="width:478px;margin:2px" v-model="a.content"  maxlength="45" :disabled="trueOrFalse"></el-input>
                                   </div>
                             </div>
                             <div v-show="item.type===3">
                                    <span>{{index+1}}.</span>
-                                   <el-input size="small" v-model="item.name" :placeholder="setplaceHolder(item.type)" style="width:493px;margin:3px" clearable maxlength="45" :disabled="trueOrFalse"></el-input> 
+                                   <el-input size="small" v-model="item.name" :placeholder="setplaceHolder(item.type)" style="width:493px;margin:3px" clearable maxlength="45" :disabled="trueOrFalse"></el-input>
                                    <div v-for="(a,blankIndex) in item.options" :key="blankIndex" class="options">
                                     <el-input type="textarea" resize="none" rows="4" placeholder='回答' style="width:478px;margin:2px" v-model="a.content" :disabled="trueOrFalse" maxlength="150"></el-input>
                                   </div>
@@ -510,7 +510,7 @@ export default {
   },
 
   methods: {
-    //新建或者修改时创建新模板  
+    //新建或者修改时创建新模板
     createNewModel(num){
       if(num === 1){
         this.allItems.push({
@@ -642,7 +642,7 @@ export default {
         content: ''
       })
     },
-    
+
     removeBlank(a, index) {
       a.splice(index, 1)
     },
@@ -697,7 +697,7 @@ export default {
             }
           })
       }
-      
+
     },
     // 判断名称是否为空
     checkEditName(questionnaireName) {
@@ -769,7 +769,6 @@ export default {
           this.pageInfo = response.data.pageInfo
         } else {
           this.pageShow = false
-          this.$message.error('无查询结果，请核对查询条件')
         }
       })
     },
@@ -953,7 +952,7 @@ export default {
       console.log(this.allItems)
     })
     this.$dragging.$on('dragend', () => {
-        
+
     })
   },
 

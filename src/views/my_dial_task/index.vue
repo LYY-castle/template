@@ -451,7 +451,7 @@
                               <!-- 单选 -->
                                   <div class="options" v-if="item1.type===0">
                                     <el-radio-group v-model="answerData[index][item1.id]">
-                                      <el-radio 
+                                      <el-radio
                                         v-for="(a, radioIndex) in item1.options"
                                         :key="radioIndex"
                                         :label="a.content"
@@ -462,31 +462,31 @@
                                 <!-- 多选 -->
                                 <div v-else-if="item1.type===1">
                                   <el-checkbox-group v-model="answerData[index][item1.id]">
-                                    <el-checkbox 
-                                      v-for="(a,checkboxIndex) in item1.options" 
-                                      :label="a.content" 
+                                    <el-checkbox
+                                      v-for="(a,checkboxIndex) in item1.options"
+                                      :label="a.content"
                                       :key="checkboxIndex"></el-checkbox>
                                   </el-checkbox-group>
                                 </div>
 
                                 <!-- 单行 -->
                                 <div v-else-if="item1.type===2">
-                                  <el-input 
+                                  <el-input
                                     v-model="answerData[index][item1.id]"
                                     type="text"
                                     clearable
-                                    style="width:478px;margin:2px" 
+                                    style="width:478px;margin:2px"
                                     maxlength="45"></el-input>
                                 </div>
 
                                 <!-- 多行 -->
                                 <div v-else-if="item1.type===3">
-                                  <el-input 
+                                  <el-input
                                     v-model="answerData[index][item1.id]"
-                                    type="textarea" 
-                                    rows="4"  
-                                    resize="none" 
-                                    style="width:478px;margin:2px" 
+                                    type="textarea"
+                                    rows="4"
+                                    resize="none"
+                                    style="width:478px;margin:2px"
                                     maxlength="45" ></el-input>
                                 </div>
                               </div>
@@ -1351,10 +1351,6 @@ export default {
                   data.customerPhone
                 )
               }
-            } else {
-              this.$message = '无查询结果，请核对查询条件'
-              this.tableData = response.data.data
-              this.pageShow = false
             }
           }
         })

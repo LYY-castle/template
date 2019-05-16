@@ -184,7 +184,7 @@
         </el-pagination>
       </el-row>
     </el-row>
-    
+
 
     <!-- 订单详情的dialog -->
     <el-dialog
@@ -450,7 +450,6 @@
               } else {
                 this.tableData = response.data.data
                 this.pageShow = false
-                this.$message.error('无查询结果，请核对查询条件')
               }
             }
           })

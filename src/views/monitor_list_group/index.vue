@@ -140,12 +140,6 @@
               this.tableData[i].departName = this.organList[this.organListId.indexOf(Number(this.tableData[i].departId))].departName
             }
           }
-        } else {
-          Message({
-            message: '无查询结果，请核对查询条件',
-            type: 'error',
-            duration: 3 * 1000
-          })
         }
       },
       search(req) {

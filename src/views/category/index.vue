@@ -119,7 +119,7 @@
         <el-button type="primary" plain @click="dialogFormVisibleReverse = false">取消</el-button>
       </div>
     </el-dialog>
-    
+
     <el-dialog title="选项详情" :visible.sync="dialogFormVisibleDetail" width="38%" append-to-body>
       <el-form size="small" :model="ruleFormReverseDetail" label-width="100px" class="demo-ruleForm">
         <el-form-item label="名称" class="marginBottom">
@@ -435,13 +435,6 @@
       },
       queryOrgan(res) {
         this.tableData = res.data.result
-        if (this.tableData.length === 0) {
-          Message({
-            message: '无查询结果，请核对查询条件',
-            type: 'error',
-            duration: 3 * 1000
-          })
-        }
         this.pagination.pageNo = Number(res.data.pageNo)
         this.pagination.pageSize = Number(res.data.pageSize)
         this.pagination.totalCount = Number(res.data.totalCount)

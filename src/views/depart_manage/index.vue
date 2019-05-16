@@ -667,6 +667,7 @@
           return ''
         }
       },
+<<<<<<< Updated upstream
       searchOrgan() {
         this.formInline.startTime = this.timeValue ? this.timeValue[0] : null
         this.formInline.stopTime = this.timeValue ? this.timeValue[1] : null
@@ -685,6 +686,11 @@
             return
           }
           this.tableData = response.data.data
+=======
+      queryOrgan(res) {
+        this.tableData = res.data.data
+        if (this.tableData.length > 0) {
+>>>>>>> Stashed changes
           for (let i = 0; i <= this.tableData.length; i++) {
             if (this.tableData[i]) {
               this.tableData[i].updateTime = formatDateTime(this.tableData[i].updateTime)

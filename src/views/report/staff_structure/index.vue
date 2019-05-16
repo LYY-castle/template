@@ -144,7 +144,7 @@
           </el-pagination>
         </el-row>
       </el-row>
-      
+
     </div>
   </div>
 </template>
@@ -186,7 +186,7 @@ export default {
           pageSize: 10,
           departName: ''
         }
-  
+
       }
     },
     methods: {
@@ -234,12 +234,6 @@ export default {
               }
             }
           }
-        } else {
-          Message({
-            message: '无查询结果，请核对查询条件',
-            type: 'error',
-            duration: 3 * 1000
-          })
         }
       },
       reset() {
@@ -298,7 +292,7 @@ export default {
         })
       } else {
         query({ pageNo: 1 }).then(response => {
-  
+
         })
       }
       queryDepts().then(response => {
@@ -324,7 +318,7 @@ export default {
       this.handleChangeAcitve()
       this.searchStaff(this.formInline)
     }
-  
+
   }
 </script>
 <!--<style>-->

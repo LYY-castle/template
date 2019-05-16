@@ -298,7 +298,7 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   padding: 10px;
   margin-top: 20px;
-  word-wrap:break-word; 
+  word-wrap:break-word;
   word-break:break-all;
 }
 </style>
@@ -435,7 +435,6 @@ export default {
           this.pageInfo.totalCount = response.data.paging.note_total
         } else {
           this.pageShow = false
-          this.$message.error('无查询结果，请核对查询条件')
         }
       })
     },
@@ -454,7 +453,6 @@ export default {
         } else {
           this.tableData = response.data.notes
           this.pageShow = false
-          this.$message.error('无查询结果，请核对查询条件')
         }
       })
     },

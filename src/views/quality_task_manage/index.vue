@@ -126,7 +126,7 @@
         </el-pagination>
       </el-row>
     </el-row>
-    
+
     <el-dialog
       align:left
       width="30%"
@@ -608,7 +608,6 @@ export default {
         findRecordsByConditions(req).then(response => {
           if (response.data.code === 0) {
             if (response.data.data.length === 0) {
-              this.$message('无查询结果，请核对查询条件')
               this.recodeTable = []
               this.recodePage = response.data.pageInfo
             } else {

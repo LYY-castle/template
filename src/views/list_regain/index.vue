@@ -189,7 +189,7 @@
         </el-pagination>
       </el-row>
     </el-row>
-    
+
 
     <!-- 选择转移的坐席dialog -->
     <el-dialog width="30%" title="操作提示" :visible.sync="transferVisible" append-to-body>
@@ -320,7 +320,6 @@ export default {
               this.pageInfo = response.data.pageInfo
               this.pageShow = true
             } else {
-              this.$message = '无查询结果，请核对查询条件'
               this.tableData = response.data.data
               this.pageShow = false
             }

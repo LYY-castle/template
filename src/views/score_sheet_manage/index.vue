@@ -117,7 +117,7 @@
           </el-pagination>
         </el-row>
       </el-row>
-      
+
     </div>
     <!-- 新建 -->
     <el-dialog title="新建评分表" :visible.sync="dialogFormVisible" width="60%" @close="resetForm('ruleForm')" append-to-body>
@@ -856,12 +856,6 @@
               this.tableData.push(data)
             }
           }
-        } else {
-          Message({
-            message: '无查询结果，请核对查询条件',
-            type: 'error',
-            duration: 3 * 1000
-          })
         }
       },
       searchGrade(req) {
@@ -894,7 +888,7 @@
 .hoverShow{
   visibility: hidden;
   cursor: pointer;
-} 
+}
 .box-card:hover .hoverShow{
     visibility:visible;
 }

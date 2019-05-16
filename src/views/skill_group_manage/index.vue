@@ -892,13 +892,6 @@ export default {
     queryStaff(res) {
       this.selectStaffTableData = res.data.data
       this.pagination2 = res.data.pageInfo
-      if (this.selectStaffTableData.length < 1) {
-        Message({
-          message: '无查询结果，请核对查询条件',
-          type: 'error',
-          duration: 3 * 1000
-        })
-      }
     },
     searchStaffInfo(req, val) {
       const param = { name: '', userPhone: '', departId: null, staffNo: '' }

@@ -125,7 +125,7 @@
           </el-pagination>
         </el-row>
       </el-row>
-     
+
     </div>
   </div>
 </template>
@@ -210,12 +210,6 @@
               this.tableData[i].listName = this.nameListName[this.nameListId.indexOf(this.tableData[i].listId)].listName
             }
           }
-        } else {
-          Message({
-            message: '无查询结果，请核对查询条件',
-            type: 'error',
-            duration: 3 * 1000
-          })
         }
       },
       search(req, type) {

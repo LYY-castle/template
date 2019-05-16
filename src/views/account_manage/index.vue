@@ -1092,12 +1092,6 @@ export default {
             // this.tableData.push(data)
           }
         }
-      } else {
-        Message({
-          message: '无查询结果，请核对查询条件',
-          type: 'error',
-          duration: 3 * 1000
-        })
       }
     },
     returnStatus(status) {

@@ -225,9 +225,9 @@
           ></el-cascader>
         </el-form-item>
         <el-form-item label="转移的坐席：">
-          <el-select 
-            style="width:100%;" 
-            v-model="transferToAgentId" 
+          <el-select
+            style="width:100%;"
+            v-model="transferToAgentId"
             clearable>
             <el-option
               v-for="item in s_staffs1"
@@ -494,7 +494,6 @@ export default {
               this.pageInfo = response.data.pageInfo
               this.pageShow = true
             } else {
-              this.$message = '无查询结果，请核对查询条件'
               this.tableData = response.data.data
               this.pageShow = false
             }

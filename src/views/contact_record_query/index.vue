@@ -1276,7 +1276,6 @@ audio {
             } else {
               this.tableData = response.data.data
               this.pageShow = false
-              this.$message.error('无查询结果，请核对查询条件')
             }
           })
           .catch(error => {

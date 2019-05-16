@@ -145,7 +145,7 @@
           </el-col>
         </el-row>
       </el-row>
-      
+
     </div>
     <el-dialog title="新建员工" :visible.sync="dialogFormVisible" width="30%" @close="resetForm('ruleForm')" append-to-body>
       <el-form size="small" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
@@ -481,8 +481,13 @@
           phone: '',
           staffNo: '',
           modifier: '',
+<<<<<<< Updated upstream
           modifyTime: ''
   
+=======
+          updateTime: ''
+
+>>>>>>> Stashed changes
         },
         ruleFormReverseDetail: {
           id: null,
@@ -496,8 +501,13 @@
           phone: '',
           staffNo: '',
           modifier: '',
+<<<<<<< Updated upstream
           modifyTime: ''
   
+=======
+          updateTime: ''
+
+>>>>>>> Stashed changes
         },
         dialogFormVisible: false,
         dialogFormVisibleReverse: false,
@@ -733,11 +743,22 @@
           if (response.data.code === 1) {
             const data = response.data.data
             this.staffData = data
+<<<<<<< Updated upstream
   
             /** 回显上级部门的逻辑 start */
   
             this.edit_dept_ids = []
             this.reverse_edit_dept_ids = []
+=======
+
+            /** 回显上级组织的逻辑 start */
+            let str = ''
+            for (var a = 0; a < this.beforeTransfer_visibleDepts.length; a++) {
+              if (this.beforeTransfer_visibleDepts[a].id === data.departId) {
+                str = this.beforeTransfer_visibleDepts[a].namePath
+              }
+            }
+>>>>>>> Stashed changes
             let arr = []
             arr = data.depart == null ? null : (data.depart.idPath == null ? null : data.depart.idPath.substring(1, data.depart.idPath.length - 1).split('/'))
             if (arr != null) {
@@ -747,9 +768,16 @@
                 this.reverse_edit_dept_ids.push(val)
               }
             }
+<<<<<<< Updated upstream
   
             /** 回显上级部门的逻辑 end */
   
+=======
+            this.edit_dept_ids = arr
+            this.reverse_edit_dept_ids = arr
+            /** 回显上级组织的逻辑 end */
+
+>>>>>>> Stashed changes
             this.ruleFormReverse = {
               id: data.id,
               name: data.name,
