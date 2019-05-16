@@ -18,7 +18,7 @@ const base_conf = {
     departManage: '"/depart_manage"',
     employeeManage: '"/employee_manage"',
     accountManage: '"/account_manage"'
-  }
+  } 
 }
 
 const env_conf = {
@@ -35,7 +35,8 @@ const env_conf = {
       type: "4",//4大类营销短信
       sendMessageTime: 10,//通话多少秒需要发短信
       content: '"你好，谢谢支持"'
-    }
+    },
+    WORKFLOW_AUTH_STAFFNO:'10010'
   },
   master: {
     TUI_WS_SERVERURL:'"ws://119.27.179.175:12010"',
@@ -49,7 +50,8 @@ const env_conf = {
       type: "4",//4大类营销短信
       sendMessageTime: 10,//通话多少秒需要发短信
       content: '"你好，谢谢支持"'
-    }
+    },
+    WORKFLOW_AUTH_STAFFNO:'10010'
   },
   sit: {
     TUI_WS_SERVERURL:'"ws://119.27.179.175:12133"',
@@ -63,7 +65,8 @@ const env_conf = {
       type: "4",//4大类营销短信
       sendMessageTime: 10,//通话多少秒需要发短信
       content: '"你好，谢谢支持"'
-    }
+    },
+    WORKFLOW_AUTH_STAFFNO:'10010'
   },
   crmnb: {
     TUI_WS_SERVERURL:'"ws://119.27.179.175:12132"',
@@ -77,7 +80,8 @@ const env_conf = {
       type: "4",//4大类营销短信
       sendMessageTime: 10,//通话多少秒需要发短信
       content: '"【安安直贷】尊敬的客户，您已成功领取3000元额度、线上自动审核，24小时内有效 http://www.anancash.com/html_aa/regist/app.html?code=ssszzz01 退订回T"'
-    }
+    },
+    WORKFLOW_AUTH_STAFFNO:'10010'
   },
   jd: {
     TUI_WS_SERVERURL:'"ws://119.27.179.175:12502"',
@@ -91,7 +95,8 @@ const env_conf = {
       type: "4",//4大类营销短信
       sendMessageTime: 10,//通话多少秒需要发短信
       content: '"你好，谢谢支持"'
-    }
+    },
+    WORKFLOW_AUTH_STAFFNO:'10010'
   }
 }
 

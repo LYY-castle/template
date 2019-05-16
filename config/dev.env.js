@@ -20,5 +20,6 @@ module.exports = merge(prodEnv, {
     type: "4",//4大类营销短信
     sendMessageTime: 10,//通话多少秒需要发短信
     content: '"你好，谢谢支持"'
-  }
+  },
+  WORKFLOW_AUTH_STAFFNO:'10010'
 })

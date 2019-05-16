@@ -1,9 +1,31 @@
+Skip to content
+ 
+Search or jump to…
+
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@LYYZKK 
+0
+0 0 LYYZKK/-nui
+ Code  Issues 0  Pull requests 0  Projects 0  Wiki  Insights  Settings
+-nui/src/views/service_catalog_manage/index.vue
+@mynsy mynsy 编辑上级目录不正确选择时提示并阻止提交
+9cb8d38 9 hours ago
+We found potential security vulnerabilities in your dependencies.
+Only the owner of this repository can see this message. 
+Manage your notification settings or learn more about vulnerability alerts.
+
+499 lines (498 sloc)  14.1 KB
+    
 <template>
   <div class="app-container">
     <!--主表-->
     <el-row class="table-container">
       <el-row class="margin-bottom-20">
-        <div class="font14 bold">服务管理表</div>
+        <div class="font14 bold">服务目录</div>
       </el-row>
       <el-row class="margin-bottom-20">
         <el-button type="success" @click="addOne()">新建</el-button>
@@ -21,12 +43,6 @@
             <el-tag>expand: {{ scope.row._expand }}</el-tag>
             <el-tag>select: {{ scope.row._select }}</el-tag>
           </template>
-          <template slot="status" slot-scope="{ scope }">
-            {{ statusCode2String(scope.row.status) }}
-          </template>
-          <template slot="icon" slot-scope="{ scope }">
-            <i class="icon-in-table" v-bind:class="scope.row.icon"></i>
-          </template>
           <template slot="operation" slot-scope="{ scope }">
             <el-button @click="handleEdit(scope.row)" type="text" size="small"
               >编辑</el-button
@@ -38,124 +54,136 @@
         </tree-table>
       </el-row>
     </el-row>
-    <!--新建服务对话框-->
-    <el-dialog
-      title="新建服务"
-      :visible.sync="dialogNewVisible"
-      width="30%"
-      :before-close="handleClose"
-    >
-      <el-form :model="dialogData" ref="newMenuForm" label-width="120px">
-        <el-form-item label="服务名称：" class="inputWidth">
-          <el-input size="small" v-model="dialogData.name"></el-input>
+    <!--新建对话框-->
+    <el-dialog title="新建" :visible.sync="dialogNewVisible" width="30%">
+      <el-form :model="dialogData" ref="newServiceForm" label-width="120px">
+        <el-form-item label="名称：" class="inputWidth">
+          <el-input size="small" v-model="dialogData.serviceName"></el-input>
         </el-form-item>
-        <el-form-item label="服务值：" class="inputWidth">
-          <el-input size="small" v-model="dialogData.value"></el-input>
-        </el-form-item>
-        <el-form-item label="服务所属：" class="inputWidth">
+        <el-form-item label="上级目录：" class="inputWidth">
           <el-cascader
+            v-if="dialogNewVisible"
             style="width:100%;"
             v-model="dialogData.parentId"
-            placeholder="请选择所属服务"
+            placeholder="请选择上级目录"
             :options="data"
             :props="cascaderProps"
             show-all-levels
             filterable
             size="small"
-            change-on-select
+            expand-trigger="hover"
             clearable
+            change-on-select
+            @change="handleChange"
           ></el-cascader>
         </el-form-item>
-        <el-form-item label="服务图标：" class="inputWidth">
-          <el-input size="small" v-model="dialogData.icon" :disabled="true">
-            <template slot="prepend"
-              ><i v-bind:class="dialogData.icon"></i
-            ></template>
-            <el-button
-              slot="append"
-              icon="el-icon-search"
-              @click="dialogSelectIconVisible = true"
-            ></el-button>
-          </el-input>
-        </el-form-item>
-        <el-form-item label="服务顺序：" class="inputWidth">
-          <el-input size="small" v-model="dialogData.order"></el-input>
-        </el-form-item>
-        <el-form-item label="服务状态：" class="inputWidth">
+        <el-form-item label="工作表单：" class="inputWidth" v-if="workformShow">
           <el-select
-            v-model="dialogData.status"
-            placeholder="请选择显示状态"
+            v-model="dialogData.workFormId"
+            placeholder="请选择工作表单"
             style="width:100%"
           >
-            <el-option label="显示" value="1"></el-option>
-            <el-option label="隐藏" value="0"></el-option>
+            <el-option
+              v-for="(item, i) in workforms"
+              :key="i"
+              :label="item.name"
+              :value="item.id"
+            >
+            </el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="公司签名：" class="inputWidth" v-if="workformShow">
+          <el-input
+            size="small"
+            v-model="dialogData.companySign"
+            type="text"
+            :min="0"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="短信模板编号：" class="inputWidth" v-if="workformShow">
+          <el-input
+            size="small"
+            v-model="dialogData.smsTempId"
+            type="text"
+            :min="0"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="排序值：" class="inputWidth">
+          <el-input
+            size="small"
+            v-model="dialogData.serviceRank"
+            type="number"
+            :min="0"
+          ></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="handleNewSaveAction()"
+        <el-button type="primary" @click="handleNewSaveAction"
           >确定</el-button
         >
         <el-button @click="dialogNewVisible = false">取消</el-button>
       </span>
     </el-dialog>
-    <!--编辑服务对话框-->
-    <el-dialog
-      title="编辑服务"
-      :visible.sync="dialogEditVisible"
-      width="30%"
-      :before-close="handleClose"
-    >
-      <el-form :model="dialogData" ref="newMenuForm" label-width="120px">
-        <el-form-item label="服务名称：" class="inputWidth">
-          <el-input size="small" v-model="dialogData.name"></el-input>
+    <!--编辑对话框-->
+    <el-dialog title="编辑" :visible.sync="dialogEditVisible" width="30%">
+      <el-form :model="dialogData" ref="newServiceForm" label-width="120px">
+        <el-form-item label="名称：" class="inputWidth">
+          <el-input size="small" v-model="dialogData.serviceName"></el-input>
         </el-form-item>
-        <el-form-item label="服务值：" class="inputWidth">
-          <el-input size="small" v-model="dialogData.value"></el-input>
-        </el-form-item>
-        <el-form-item label="服务所属：" class="inputWidth">
+        <el-form-item label="上级目录：" class="inputWidth" v-if="editeShow">
           <el-cascader
             style="width:100%;"
             v-model="dialogData.parentId"
-            placeholder="请选择所属服务"
+            placeholder="请选择上级目录"
             :options="data"
             :props="cascaderProps"
             show-all-levels
             filterable
             size="small"
-            change-on-select
+            expand-trigger="hover"
             clearable
+            change-on-select
+            @blur="editeChange"
           ></el-cascader>
         </el-form-item>
-        <el-form-item label="服务图标：" class="inputWidth">
-          <el-input
-            prefix-icon="dialogData.icon"
-            size="small"
-            v-model="dialogData.icon"
-            :disabled="true"
-          >
-            <template slot="prepend"
-              ><i v-bind:class="dialogData.icon"></i
-            ></template>
-            <el-button
-              slot="append"
-              icon="el-icon-search"
-              @click="dialogSelectIconVisible = true"
-            ></el-button>
-          </el-input>
-        </el-form-item>
-        <el-form-item label="服务顺序：" class="inputWidth">
-          <el-input size="small" v-model="dialogData.order"></el-input>
-        </el-form-item>
-        <el-form-item label="服务状态：" class="inputWidth">
+        <el-form-item label="工作表单：" class="inputWidth" v-if="workformShow">
           <el-select
-            v-model="dialogData.status"
-            placeholder="请选择显示状态"
+            v-model="dialogData.workFormId"
+            placeholder="请选择工作表单"
             style="width:100%"
           >
-            <el-option label="显示" value="1"></el-option>
-            <el-option label="隐藏" value="0"></el-option>
+            <el-option
+              v-for="(item, i) in workforms"
+              :key="i"
+              :label="item.name"
+              :value="item.id"
+            >
+            </el-option>
           </el-select>
+        </el-form-item>
+         <el-form-item label="公司签名：" class="inputWidth" v-if="workformShow">
+          <el-input
+            size="small"
+            v-model="dialogData.companySign"
+            type="text"
+            :min="0"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="短信模板编号：" class="inputWidth" v-if="workformShow">
+          <el-input
+            size="small"
+            v-model="dialogData.smsTempId"
+            type="text"
+            :min="0"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="排序值：" class="inputWidth">
+          <el-input
+            size="small"
+            v-model="dialogData.serviceRank"
+            type="number"
+            :min="0"
+          ></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -181,29 +209,335 @@
         >
       </div>
     </el-dialog>
-    <!--选择图标-->
-    <el-dialog
-      align:left
-      width="60%"
-      title="选择图标"
-      :visible.sync="dialogSelectIconVisible"
-      append-to-body
-    >
-      <ul>
-        <li
-          v-for="(iconClassName, index) in iconList"
-          :key="index"
-          class="icon-item"
-        >
-          <i
-            v-bind:class="iconClassName"
-            @click="selectIcon(iconClassName)"
-          ></i>
-        </li>
-      </ul>
-    </el-dialog>
   </div>
 </template>
+
+<script>
+import treeTable from "@/components/TreeTable";
+import {
+  getAllServer,
+  addServer,
+  modifyServer,
+  deleteServer,
+  checkServerName,
+  getTemplate
+} from "@/api/service_catalog_manage";
+import { list2Tree } from "@/utils/tools";
+export default {
+  name: "menu_management",
+  components: { treeTable },
+  data() {
+    return {
+      // 新建
+      dialogNewVisible: false,
+      // 编辑
+      dialogEditVisible: false,
+      // 删除单个
+      delOneVisiable: false,
+      //编辑一级时级联不显示
+      editeShow: true,
+      deleteId: 0,
+      delSelectVisiable: false,
+      defaultExpandAll: false,
+      showCheckbox: true,
+      iconList: [],
+      iconSelected: "",
+      key: 1,
+      columns: [
+        {
+          width: 100,
+          expand: true,
+          align: "left"
+        },
+        {
+          label: "服务名称",
+          key: "serviceName"
+        },
+        {
+          label: "排序值",
+          key: "serviceRank"
+        },
+        {
+          label: "操作",
+          key: "operation"
+        }
+      ],
+      // 服务清单数据
+      data: [],
+      // 编辑框当前选择的上级目录长度
+      editSuperiorDir: [],
+      // 对话框数据
+      dialogData: {
+        id: null,
+        serviceName: "",
+        serviceRank: "",
+        parentId: [],
+        workFormId: "",
+        workProcessId: "",
+        companySign:"",
+        smsTempId:""
+      },
+      cascaderProps: {
+        label: "serviceName",
+        value: "id",
+        children: "children"
+      },
+      workforms: [],
+      workformShow: false,
+
+      // 备用数据
+      backupData1:[],
+      backupData2:[],
+    };
+  },
+  mounted() {
+    this.getServerList();
+    this.getWorkFormTemplate();
+  },
+  methods: {
+    // 获取工作表单
+    getWorkFormTemplate() {
+      getTemplate()
+        .then(res => {
+          if (res.data.code === 0) {
+            console.log(res.data);
+            this.workforms = res.data.data;
+          }
+        })
+        .catch(error => {
+          throw error;
+        });
+    },
+    // 获取服务清单
+    getServerList() {
+      getAllServer()
+        .then(response => {
+          const result = response.data.data;
+          this.data = list2Tree({
+            data: result,
+            rootId: 0,
+            idFieldName: "id",
+            parentIdFielName: "parentId"
+          });
+          this.backupData1 = response.data.data
+          this.backupData2 = response.data.data
+        })
+        .catch(error => {
+          throw error;
+        });
+    },
+    editeChange(ev){
+    },
+    handleChange(value) {
+      if (value.length === 2) {
+        this.workformShow = true;
+      } else {
+        this.workformShow = false;
+      }
+    },
+    // 字符串转整数数组
+    strTransArr (str) {
+      str = str.substring(1)
+      return str.split('/').map(item => {
+        return parseInt(item)
+      })
+    },
+    // 编辑传ID
+    handleEdit(row) {
+      this.workformShow = false
+      this.dialogEditVisible = true;
+      let parentIds = this.strTransArr(row.idPath)
+      parentIds.pop()
+      this.editSuperiorDir = parentIds
+      this.dialogData.parentId = parentIds;
+      this.dialogData.id = row.id;
+      this.dialogData.serviceName = row.serviceName;
+      this.dialogData.workFormId = row.workFormId;
+      this.dialogData.serviceRank = row.serviceRank || 0;
+      this.dialogData.companySign = row.companySign
+      this.dialogData.smsTempId = row.smsTempId
+      // 判断级别
+      if (parentIds.length === 0) {
+        //一级
+        this.editeShow = false;
+      } else if (parentIds.length === 1) {
+        //二级
+        console.log(this.backupData1)
+        this.editeShow = true;
+        getAllServer()
+          .then(res => {
+            res.data.data.forEach(k => {
+              if (k.idPath.split("/").length - 1 === 2) {
+                k.disabled = true;
+              }
+            });
+            this.data = list2Tree({
+              data: res.data.data,
+              rootId: 0,
+              idFieldName: "id",
+              parentIdFielName: "parentId"
+            });
+          })
+          .catch(error => {
+            throw error;
+          });
+      } else if (parentIds.length === 2) {
+        //三级
+        this.workformShow = true;
+        this.editeShow = true;
+        getAllServer()
+          .then(res => {
+            res.data.data.forEach(m => {
+              if (m.idPath.split("/").length - 1 === 3) {
+                m.disabled = true;
+              }
+            });
+            this.data = list2Tree({
+              data: res.data.data,
+              rootId: 0,
+              idFieldName: "id",
+              parentIdFielName: "parentId"
+            });
+          })
+          .catch(error => {
+            throw error;
+          });
+      }
+    },
+    // 删除时传ID
+    handleDelete(row) {
+      this.deleteId = row.id;
+      this.delOneVisiable = true;
+    },
+    // 新建时重置数据
+    addOne() {
+      this.dialogNewVisible = true;
+      this.workformShow = false;
+      this.dialogData.workFormId = "";
+      this.dialogData.id = null;
+      this.dialogData.serviceName = "";
+      this.dialogData.parentId = [];
+      this.dialogData.serviceRank = "0";
+      this.dialogData.companySign = ""
+      this.dialogData.smsTempId = ""
+      getAllServer()
+        .then(res => {
+          res.data.data.forEach(p => {
+            if (p.idPath.split("/").length - 1 === 3) {
+              p.disabled = true;
+            }
+          });
+          this.data = list2Tree({
+            data: res.data.data,
+            rootId: 0,
+            idFieldName: "id",
+            parentIdFielName: "parentId"
+          });
+        })
+        .catch(error => {
+          throw error;
+        });
+    },
+    // 删除操作
+    deleteOne(deleteid) {
+      deleteServer(deleteid)
+        .then(response => {
+          if (response.data.code === 0) {
+            this.delOneVisiable = false;
+            this.getServerList();
+          } else {
+            this.$message.error(response.data.message);
+            return;
+          }
+        })
+        .catch(error => {
+          throw error;
+        });
+    },
+    // 编辑修改
+    handleEditSaveAction() {
+      var parentId = 0;
+      if (this.dialogData.parentId.length !== 0) {
+        parentId = this.dialogData.parentId[
+          this.dialogData.parentId.length - 1
+        ];
+      }
+      if (this.dialogData.serviceName === "") {
+        this.$message.error("请输入服务名称");
+        return;
+      }
+      if (this.dialogData.serviceRank < 0) {
+        this.$message.error("请输入大于0的排序值");
+        return;
+      }
+      if (!this.dialogData.parentId.length) {
+        this.$message.error(`请选择上级目录`);
+        return;
+      }
+      if (this.dialogData.parentId.length !== this.editSuperiorDir.length) {
+        this.$message.error(`只能选择第${this.editSuperiorDir.length}级的目录`);
+        return;
+      }
+      modifyServer({
+        id: this.dialogData.id,
+        serviceName: this.dialogData.serviceName,
+        parentId: parentId,
+        serviceRank: this.dialogData.serviceRank,
+        workFormId: this.dialogData.workFormId,
+        companySign: this.dialogData.companySign,
+        smsTempId: this.dialogData.smsTempId
+      }).then(response => {
+        if (response.data.code === 0) {
+          this.dialogEditVisible = false;
+          this.getServerList();
+        } else {
+          this.$message.error(response.data.message);
+          return;
+        }
+      });
+    },
+    // 确定新建服务
+    handleNewSaveAction() {
+      var parentId = 0;
+      if (this.dialogData.parentId.length > 0) {
+        parentId = this.dialogData.parentId[
+          this.dialogData.parentId.length - 1
+        ];
+      }
+      if (this.dialogData.serviceName === "") {
+        this.$message.error("请输入服务名称");
+        return;
+      }
+      if (this.dialogData.serviceRank < 0) {
+        this.$message.error("请输入大于0的排序值");
+        return;
+      }
+      if (this.dialogData.workFormId === "") {
+        if (this.dialogData.parentId.length === 2) {
+          this.$message.error("请选择工单目录");
+          return;
+        }
+      }
+      addServer({
+        serviceName: this.dialogData.serviceName,
+        parentId: parentId,
+        serviceRank: this.dialogData.serviceRank,
+        workFormId: this.dialogData.workFormId,
+        companySign: this.dialogData.companySign,
+        smsTempId: this.dialogData.smsTempId
+      }).then(response => {
+        if (response.data.code === 0) {
+          this.dialogNewVisible = false;
+          this.getServerList();
+        } else {
+          this.$message.error(response.data.message);
+          return;
+        }
+      });
+    }
+  }
+};
+</script>
 <style>
 .icon-item {
   float: left;
@@ -217,210 +551,3 @@
   text-align: center;
 }
 </style>
-<script>
-import treeTable from '@/components/TreeTable'
-import {
-  getAllServer,
-  addServer,
-  modifyServer,
-  deleteServer,
-  checkServerName
-} from '@/api/service_catalog_manage'
-import {
-  getMenuList,
-  getIconList,
-  saveNewMenu,
-  saveEditMenu,
-  deleteMenu
-} from '@/api/menu_management'
-import { list2Tree } from '@/utils/tools'
-export default {
-  name: 'menu_management',
-  components: { treeTable },
-  data() {
-    return {
-      dialogNewVisible: false,
-      dialogEditVisible: false,
-      dialogSelectIconVisible: false,
-      delOneVisiable: false,
-      deleteId: 0,
-      delSelectVisiable: false,
-      defaultExpandAll: false,
-      showCheckbox: true,
-      iconList: [],
-      iconSelected: '',
-      key: 1,
-      columns: [
-        {
-          width: 100,
-          expand: true,
-          align: 'left'
-        },
-        {
-          label: '服务名称',
-          key: 'name'
-        },
-        {
-          label: '服务值',
-          key: 'value'
-        },
-        {
-          label: '服务图标',
-          key: 'icon',
-          width: 50
-        },
-        {
-          label: '服务顺序',
-          key: 'menuOrder',
-          width: 50
-        },
-        {
-          label: '状态',
-          key: 'status',
-          width: 100
-        },
-        {
-          label: '操作',
-          key: 'operation'
-        }
-      ],
-      data: [],
-      dialogData: {
-        id: null,
-        name: '',
-        value: '',
-        icon: '',
-        order: '',
-        status: '',
-        parentId: ''
-      },
-      cascaderProps: {
-        label: 'name',
-        value: 'id',
-        children: 'children'
-      }
-    }
-  },
-  mounted() {
-    this.iconList = getIconList()
-    this.getMenuList()
-  },
-  methods: {
-    getMenuList() {
-      getAllServer()
-        .then(response => {
-          const result = response.data.result
-          console.log(response)
-          return
-          for (let i = 0; i < result.length; i++) {
-            result[i].parentId = parseInt(result[i].parentId)
-          }
-          this.data = list2Tree({
-            data: result,
-            rootId: 0,
-            idFieldName: 'id',
-            parentIdFielName: 'parentId'
-          })
-        })
-        .catch(error => {
-          throw error
-        })
-    },
-    handleEdit(row) {
-      var parentIds = row.idPath.split('/').filter(n => {
-        return n
-      })
-      parentIds.pop()
-      parentIds = parentIds.map(item => {
-        return parseInt(item)
-      })
-      this.dialogData.id = row.id
-      this.dialogData.name = row.name
-      this.dialogData.value = row.value
-      this.dialogData.icon = row.icon
-      this.dialogData.parentId = parentIds
-      this.dialogData.order = row.menuOrder
-      this.dialogData.status = row.status
-      this.dialogEditVisible = true
-    },
-    handleDelete(row) {
-      this.deleteId = row.id
-      this.delOneVisiable = true
-    },
-    addOne() {
-      this.dialogData.id = null
-      this.dialogData.name = ''
-      this.dialogData.value = ''
-      this.dialogData.icon = ''
-      this.dialogData.parentId = []
-      this.dialogData.order = '0'
-      this.dialogData.status = '1'
-      this.dialogNewVisible = true
-    },
-    deleteOne(deleteid) {
-      this.delOneVisiable = false
-      deleteMenu(deleteid)
-        .then(response => {
-          this.getMenuList()
-        })
-        .catch(error => {
-          throw error
-        })
-    },
-    selectIcon(iconClassName) {
-      this.dialogData.icon = iconClassName
-      this.dialogSelectIconVisible = false
-    },
-    statusCode2String(code) {
-      return code === '0' ? '隐藏' : '显示'
-    },
-    handleEditSaveAction() {
-      this.dialogEditVisible = false
-      var parentId = '0'
-      if (this.dialogData.parentId.length !== 0) {
-        parentId = this.dialogData.parentId[
-          this.dialogData.parentId.length - 1
-        ].toString()
-      }
-      saveEditMenu({
-        id: this.dialogData.id,
-        name: this.dialogData.name,
-        value: this.dialogData.value,
-        parentId: parentId,
-        icon: this.dialogData.icon,
-        menuOrder: this.dialogData.order,
-        status: this.dialogData.status
-      })
-        .then(response => {
-          this.getMenuList()
-        })
-        .catch(error => {
-          throw error
-        })
-    },
-    handleNewSaveAction() {
-      this.dialogNewVisible = false
-      var parentId = '0'
-      if (this.dialogData.parentId.length !== 0) {
-        parentId = this.dialogData.parentId[
-          this.dialogData.parentId.length - 1
-        ].toString()
-      }
-      saveNewMenu({
-        name: this.dialogData.name,
-        value: this.dialogData.value,
-        parentId: parentId,
-        icon: this.dialogData.icon,
-        menuOrder: this.dialogData.order,
-        status: this.dialogData.status
-      })
-        .then(response => {
-          this.getMenuList()
-        })
-        .catch(error => {
-          throw error
-        })
-    }
-  }
-}
-</script>

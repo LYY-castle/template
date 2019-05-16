@@ -312,8 +312,37 @@ ul,p,h1,h2,h3,h4,h5,h6,dl,dd{
     color:#28CC6C;
   }
 }
-
+.el-dialog__body{
+  /deep/ .create{
+    background: #57AFFF;
+    border-radius: 2px;
+    width:62px;
+    margin:0 auto;
+    color:#fff;
+  }
+  /deep/ .visible{
+    background: #28CC6C;
+    border-radius: 2px;
+    width:62px;
+    margin:0 auto;
+    color:#fff;
+  }
+  /deep/ .invisible{
+    background: #F8A300;
+    border-radius: 2px;
+    width:62px;
+    margin:0 auto;
+    color:#fff;
+  }
+}
 .el-table{
+  .create{
+    background: #57AFFF;
+    border-radius: 2px;
+    width:62px;
+    margin:0 auto;
+    color:#fff;
+    }
   .visible{
     background: #28CC6C;
     border-radius: 2px;

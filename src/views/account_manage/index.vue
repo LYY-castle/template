@@ -8,7 +8,7 @@
               <el-input placeholder="员工姓名（限长45字符）" v-model="formInline.staffName" maxlength="45"></el-input>
             </el-form-item>
             <el-form-item label="系统账号：">
-              <el-input placeholder="系统账号（限长45字符）" v-model="formInline.angentId" maxlength="45"></el-input>
+              <el-input placeholder="系统账号（限长45字符）" v-model="formInline.accountNo" maxlength="45"></el-input>
             </el-form-item>
             <el-form-item label="账号状态：">
               <el-select v-model="formInline.status"  style="width:7em">
@@ -32,7 +32,7 @@
               ></el-cascader>
             </el-form-item>
             <el-form-item label="操作人：">
-              <el-input placeholder="操作人（限长45字符）" v-model="formInline.creator" maxlength="45"></el-input>
+              <el-input placeholder="操作人（限长45字符）" v-model="formInline.modifier" maxlength="45"></el-input>
             </el-form-item>
             <el-form-item label="操作时间：">
               <el-date-picker
@@ -56,7 +56,7 @@
           <div class="font14 bold">账号管理表</div>
         </el-row>
         <el-row class="margin-bottom-20">
-           <el-button type="primary" size="small" @click="addAccountVisible=true;resetStaffForm(),roleMenu=[],resetAddAcountModel()">新建</el-button>
+           <el-button type="primary" size="small" @click="openAddAccountDialog()">新建</el-button>
           <el-dropdown size="small" trigger="click" @command="moreOperating" style="margin-left:10px">
             <el-button type="info" style="width:auto">
               更多操作<i class="el-icon-arrow-down el-icon--right"></i>
@@ -223,8 +223,8 @@
         <el-button plain type="primary" @click="dialogFormVisible = false">取消</el-button>
       </div>
     </el-dialog>
-<!-- 新建 -->
-    <el-dialog title="新建系统账号" :visible.sync="addAccountVisible" width="70%" append-to-body>
+<!-- 新建1 -->
+    <!-- <el-dialog title="新建系统账号" :visible.sync="" width="70%" append-to-body>
       <el-row>
         <el-card>
           <el-row slot="header">
@@ -264,7 +264,7 @@
                       <el-option value="" label="请选择员工"></el-option>
                       <el-option v-for="item in staffAll" :key="item.id" :label="item.name ? item.name + ' (' + item.staffNo + ')' : item.staffNo" :value="item.id"></el-option>
                     </el-select>
-                  </el-form-item>
+                  </el-form-item> -->
                   <!-- <el-form-item label="用户名:" prop="userName"  >
                     <el-input v-model="addAccountModel.userName" maxlength="20" placeholder="上限45字符" style="width:30%"></el-input>
                   </el-form-item>
@@ -272,7 +272,7 @@
                     <el-input name="password"  :type="pwdType" v-model="addAccountModel.password" placeholder="请输入密码" style="width:30%"></el-input>
                     <span class="show-pwd" @click="showPwd"><svg-icon icon-class="eye"/></span>
                   </el-form-item> -->
-                  <el-form-item label="状态:" prop="status">
+                  <!-- <el-form-item label="状态:" prop="status">
                     <el-switch
                       v-model="addAccountModel.status"
                       active-text="启用中"
@@ -311,6 +311,207 @@
         <el-button type="primary" @click="addRole(roleIds)">确定</el-button>
         <el-button @click="roleMenu=[],resetAddAcountModel()">重置</el-button>
         <el-button type="primary" plain @click="addAccountVisible = false">取消</el-button>
+      </div>
+    </el-dialog> -->
+
+<!-- 新建 -->
+    <el-dialog title="新建系统账号" style="margin-top:-8vh;" :visible.sync="addAccountVisible" width="86%" append-to-body   @close="tags=[];filterText='';">
+      <div  style="min-width:986px;">
+        <el-row >
+          <el-col :span="4">
+            <div>
+              <el-input
+                style="width:100%;margin:1% 0;"
+                placeholder="请输入关键字"
+                size="small"
+                v-model="filterText"
+                @change="selectStaffItem.departName=null,selectStaffItem.departId=null"
+                clearable>
+                <i slot="prefix" class="el-input__icon el-icon-search" ></i>
+              </el-input>
+            </div>
+            <div style="border:solid #DCDFE6 1px;margin-top:15px;overflow:auto;max-height:587px;"  >
+              <el-tree
+              :style="treeDivCSS"
+              class="filter-tree"
+              :data="treeData"
+              node-key="id"
+              :props="defaultProps"
+              default-expand-all
+              @node-click="handleNodeClick"
+              style="margin-top:5px"
+              :filter-node-method="filterNode"
+              ref="tree2">
+
+              </el-tree>
+            </div>
+          </el-col>
+          <el-col :span="14" style="margin-left:15px;">
+            <div>
+              <el-row :gutter="5">
+                <el-collapse v-model="formContainerOpen2" class="form-container"   @change="handleChangeActive2" style="position:relative;">
+                  <span class="form-more2 bold" style="line-height: 24px;font-size: 14px;float:right;margin-right:6px;color:#57AFFF;position:absolute;top:11px;right:41px;">收起</span>
+                  <el-collapse-item  name="2" title="筛选条件">
+                    <el-form :inline="true" class="demo-form-inline" size="small" style="margin-left:1%;">
+                      <el-form-item label="姓名:">
+                        <el-input placeholder="姓名" v-model="selectStaffItem.name" maxlength="45"></el-input>
+                      </el-form-item>
+                      <el-form-item label="工号:" >
+                        <el-input placeholder="工号" v-model="selectStaffItem.staffNo" maxlength="45"></el-input>
+                      </el-form-item>
+                      <el-form-item label="联系方式:">
+                        <el-input placeholder="联系方式" v-model="selectStaffItem.userPhone" maxlength="45"></el-input>
+                      </el-form-item>
+                      <el-form-item label="部门:">
+                        <el-input  v-model="selectStaffItem.departName" maxlength="45" :readonly="true"></el-input>
+                      </el-form-item>
+                      <el-form-item>
+                        <el-button type="primary" @click="findSelectStaff({name:selectStaffItem.name,staffNo:selectStaffItem.staffNo,userPhone:selectStaffItem.userPhone,departId:selectStaffItem.departId})">查询</el-button>
+                        <el-button  @click="resetSelectStaff()">重置</el-button>
+                      </el-form-item>
+                    </el-form>
+                  </el-collapse-item>
+                </el-collapse>
+              </el-row>
+            </div>
+            <div class="table-container">
+              <el-row>
+                <div class="work-title-style font14 bold">员工</div>
+                <span style="font-size:10px;color:red;">提示：可直接点击一行数据或勾选员工数据后点击&nbsp;&nbsp;“本次已选员工”&nbsp;&nbsp;后的&nbsp;</span><div style="display:inline;border:solid grey 1px;border-radius:50%;background-color:#57AFFF;"><i class="el-icon-d-arrow-right"></i></div><span style="font-size:10px;color:red;">&nbsp;一次性转移到本次已选员工区域。</span>
+              </el-row>
+              <el-row style="margin-top:10px;">
+                <el-col>
+                  <el-table
+                    :max-height=tableHight
+                    :header-row-style="headerRow"
+                    :data="selectStaffTableData"
+                    ref="multipleTable"
+                    @selection-change="handleSelectionChange2"
+                    tooltip-effect="dark"
+                    @row-click="haddleRow">
+                    <el-table-column
+                      fixed
+                      align="center"
+                      type="selection"
+                      width="55">
+                      </el-table-column>
+                    <el-table-column
+                      fixed
+                      align="center"
+                      label="工号"
+                      prop="staffNo"
+                      :show-overflow-tooltip="true">
+                      <template slot-scope="scope">
+                        {{scope.row.staffNo}}
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      align="center"
+                      prop="name"
+                      label="姓名"
+                      :show-overflow-tooltip="true">
+                      <template slot-scope="scope">
+                        {{scope.row.name}}
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      align="center"
+                      prop="sex"
+                      label="性别"
+                      :show-overflow-tooltip="true">
+                      <template slot-scope="scope">
+                        {{showSex(scope.row.sex)}}
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      align="center"
+                      prop="departName"
+                      label="归属部门"
+                      :show-overflow-tooltip="true">
+                      <template slot-scope="scope">
+                        {{ scope.row.depart?(scope.row.depart.name?scope.row.depart.name:""):"" }}
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      align="center"
+                      prop="userPhone"
+                      label="联系方式"
+                      :show-overflow-tooltip="true">
+                      <template slot-scope="scope">
+                        {{scope.row.phone?scope.row.phone:""}}
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </el-col>
+              </el-row>
+              <el-row style="margin-top:1%;">
+                <el-col :span="24">
+                  <el-pagination
+                    @size-change="handleSizeChange2"
+                    @current-change="handleCurrentChange2"
+                    :current-page.sync="pagination2.pageNo"
+                    :page-size="pagination2.pageSize"
+                    :page-sizes="[10, 20, 30, 40, 50]"
+                    layout="total, sizes, prev, pager, next, jumper "
+                    :total="pagination2.totalCount" style="text-align: right">
+                  </el-pagination>
+                </el-col>
+              </el-row>
+
+            </div>
+          </el-col>
+          <el-col :span="5" style="margin-left:15px;">
+            <div class="work-title-style font14 bold" style="margin-top:7px;">已选员工<div style="display:inline;border:solid grey 1px;border-radius:50%;margin-left: 10px;background-color:#57AFFF;"><i class="el-icon-d-arrow-right" style="cursor:pointer;" @click="checkTags()"></i></div></div>
+            <div style="border:solid #DCDFE6 1px;margin-top:-4px;overflow:auto;max-height:426px;" :style="tagsDivCSS">
+              <el-tag
+                size="small"
+                style="margin:3px;"
+                v-for="tag in tags"
+                :key="tag.name"
+                @close="handleCloseTag(tag)"
+                closable>
+                {{tag.name}}
+              </el-tag>
+            </div>
+            <div class="work-title-style font14 bold" style="margin-top:10px">账号信息</div>
+            <div style="border:solid #DCDFE6 1px;margin-top:-4px;overflow:auto;height:155px;" >
+             <el-form size="small" :model="addAccountModel"  ref="addRuleForm" label-width="55px" class="demo-ruleForm" style="margin-top:3px;">
+                <!-- <el-form-item label="用户名:" prop="userName"  >
+                    <el-input v-model="addAccountModel.userName" maxlength="20" placeholder="上限45字符" style="width:30%"></el-input>
+                  </el-form-item>
+                  <el-form-item label="密码:"  prop="password">
+                    <el-input name="password"  :type="pwdType" v-model="addAccountModel.password" placeholder="请输入密码" style="width:30%"></el-input>
+                    <span class="show-pwd" @click="showPwd"><svg-icon icon-class="eye"/></span>
+                  </el-form-item> -->
+                  <el-form-item label="状态:" prop="status">
+                    <el-switch
+                      v-model="addAccountModel.status"
+                      active-text="启用中"
+                      inactive-text="未启用"
+                      active-color="#67C23A"
+                      :active-value="1"
+                      :inactive-value="2">
+                    </el-switch>
+                  </el-form-item>
+                    <el-form-item label="类型:">
+                    <el-select v-model="addAccountModel.type" >
+                      <el-option :value="0" label="系统账号"></el-option>
+                    </el-select>
+                  </el-form-item>
+                   <el-form-item label="角色:">
+                    <el-select v-model="addRoleIds" multiple placeholder="请选择角色">
+                      <el-option v-for="(item,key) in roleLists" :key="key" :label="item" :value="key"></el-option>
+                    </el-select>
+                  </el-form-item>
+
+                </el-form>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+      <div slot="footer" class="dialog-footer" style="margin-right:40px;">
+          <el-button type="primary" @click="addRole()">确定</el-button>
+          <el-button @click="addAccountVisible = false">取消</el-button>
       </div>
     </el-dialog>
 
@@ -424,6 +625,30 @@ export default {
   name: 'account_list',
   data() {
     return {
+      selectStaffTableData: [],
+      addRoleIds: [], // add 角色
+      tags: [], // 标签
+      multipleSelection2: [], // 选择员工
+      tableHight: '240', // 员工表高度
+      formContainerOpen2: '1',
+      pagination2: {},
+      defaultProps: {
+        children: 'children',
+        label: 'name'
+      },
+      treeData: [],
+      treeDivCSS: {},
+      tagsDivCSS: {},
+      filterText: '',
+      selectStaffItem: {
+        name: '',
+        staffNo: '',
+        userPhone: '',
+        departId: null,
+        departName: '所有部门',
+        pageSize: 10,
+        pageNo: 1
+      },
       pwdType: 'password',
       addAccountVisible: false,
       batchDelVisible: false,
@@ -444,7 +669,7 @@ export default {
         creator: '',
         creatorId: '',
         password: '',
-        staffId: '',
+        staffIds: [],
         status: 1,
         type: 0,
         userName: '',
@@ -493,6 +718,7 @@ export default {
       tableData: [],
       multipleSelection: [],
       formInline: {
+        accountNo: '',
         staffName: '',
         staffNo: '',
         modifier: '',
@@ -539,11 +765,166 @@ export default {
     this.formContainer()
     this.handleChangeAcitve()
     this.handleChangeAcitveAdd()
+    this.handleChangeActive2()
     this.tempRoute = Object.assign({}, this.$route)
-    // this.setTagsViewTitle()
     this.getRoles()
+    this.findSelectStaff({ pageSize: 10, pageNo: 1 })
+    queryDepts().then(response => {
+      const map = {
+        data: response.data.data,
+        rootId: 0,
+        idFieldName: 'id',
+        parentIdFielName: 'upId'
+      }
+      this.treeData = list2Tree(map)
+    })
   },
   methods: {
+    handleCloseTag(val) {
+      this.tags.splice(this.tags.indexOf(val), 1)
+    },
+    haddleRow(val) {
+      const tag = {}
+      tag.name = val.name + '（' + val.staffNo + '）'
+      tag.id = val.id
+      if (this.tags.length > 0) {
+        let flag = true
+        for (let i = 0; i < this.tags.length; i++) {
+          if (this.tags[i].id === tag.id) {
+            flag = false
+            break
+          }
+        }
+        if (flag) {
+          this.tags.push(tag)
+        }
+      } else {
+        this.tags.push(tag)
+      }
+    },
+    checkTags() {
+      const data = this.multipleSelection2
+      console.log('staffId:', data)
+      if (data === null || typeof data === 'undefined' || data.length < 1) {
+        this.$message('您还未在左边员工列表勾选员工！')
+        return
+      }
+      const new_tags = []
+      for (let i = 0; i < data.length; i++) {
+        const tag = {}
+        tag.id = data[i].id
+        tag.name = data[i].name + '（' + data[i].staffNo + '）'
+        new_tags.push(tag)
+      }
+      if (this.tags.length > 0) {
+        const tags = this.tags
+        for (let j = 0; j < new_tags.length; j++) {
+          let flag = true
+          for (let q = 0; q < tags.length; q++) {
+            if (new_tags[j].id === tags[q].id) {
+              flag = false
+              break
+            }
+          }
+          if (flag) {
+            this.tags.push(new_tags[j])
+          }
+        }
+      } else {
+        this.tags = new_tags
+      }
+    },
+    filterNode(value, data) {
+      if (!value) return true
+      return data.name.indexOf(value) !== -1
+    },
+    handleChangeActive2(active = ['1']) {
+      if (active.length) {
+        $('.form-more2').text('收起')
+      } else {
+        $('.form-more2').text('更多')
+      }
+    },
+    resetSelectStaff() {
+      this.selectStaffItem.name = ''
+      this.selectStaffItem.staffNo = ''
+      this.selectStaffItem.userPhone = ''
+      this.selectStaffItem.departName = '所有部门'
+      this.selectStaffItem.departId = null
+      this.selectStaffItem.pageSize = 10
+      this.selectStaffItem.pageNo = 1
+      this.pagination2.pageNo = 1
+      this.pagination2.pageSize = 10
+    },
+    showSex(str) {
+      let result = ''
+      switch (str) {
+        case 1:
+          result = '男'
+          break
+        case 0:
+          result = '女'
+          break
+      }
+      return result
+    },
+    handleNodeClick(data) {
+      this.resetSelectStaff()
+      const req = {}
+      req.departName = data.name
+      req.departId = data.id
+      this.selectStaffItem.departName = data.name
+      this.selectStaffItem.departId = data.id
+      this.findSelectStaff(req)
+    },
+    openAddAccountDialog() {
+      var vm = this
+      this.addAccountVisible = true
+      this.resetAddAcountModel()
+      this.resetSelectStaff()
+      let body_height = document.body.clientHeight
+      this.treeDivCSS.height = '340px'
+      this.tableHight = '198'
+      this.tagsDivCSS.height = '186px'
+      window.onresize = function resize() {
+        body_height = document.body.clientHeight
+        vm.treeDivCSS.height = (85 * parseInt(body_height) / 100 - 533) > 0 ? (85 * parseInt(body_height) / 100 - 193) + 'px' : '340px'
+        vm.tableHight = (85 * parseInt(body_height) / 100 - 685) > 0 ? (85 * parseInt(body_height) / 100 - 335) : '198'
+        vm.tagsDivCSS.height = (85 * parseInt(body_height) / 100 - 526) > 0 ? (85 * parseInt(body_height) / 100 - 348) + 'px' : '186px'
+      }
+    },
+    findSelectStaff(req) {
+      queryStaff(req).then(response => {
+        this.selectStaffTableData = response.data.data
+        this.pagination2 = response.data.pageInfo
+      })
+    },
+    handleSelectionChange2(val) {
+      this.multipleSelection2 = val
+    },
+    handleSizeChange2(val) {
+      this.selectStaffItem.pageSize = val
+      this.selectStaffItem.pageNo = 1
+      this.findSelectStaff({
+        name: this.selectStaffItem.name,
+        staffNo: this.selectStaffItem.staffNo,
+        userPhone: this.selectStaffItem.userPhone,
+        departId: this.selectStaffItem.departId,
+        pageNo: this.selectStaffItem.pageNo,
+        pageSize: this.selectStaffItem.pageSize
+      })
+    },
+    handleCurrentChange2(val) {
+      this.selectStaffItem.pageNo = val
+      this.findSelectStaff({
+        name: this.selectStaffItem.name,
+        staffNo: this.selectStaffItem.staffNo,
+        userPhone: this.selectStaffItem.userPhone,
+        departId: this.selectStaffItem.departId,
+        pageNo: this.selectStaffItem.pageNo,
+        pageSize: this.selectStaffItem.pageSize
+      })
+    },
     showPwd() {
       if (this.pwdType === 'password') {
         this.pwdType = ''
@@ -551,17 +932,16 @@ export default {
         this.pwdType = 'password'
       }
     },
-    findStaff() {
-      this.addAccountModel.staffId = ''
-      this.staffForm.pageable = false
-      if (this.staff_dept_ids.length > 0) {
-        this.staffForm.departId = this.staff_dept_ids[this.staff_dept_ids.length - 1]
-      }
-      queryStaff(this.staffForm).then(response => {
-        this.staffAll = response.data.data
-        console.log('staffAll', this.staffAll)
-      })
-    },
+    // findStaff() {
+    //   this.addAccountModel.staffId = ''
+    //   this.staffForm.pageable = false
+    //   if (this.staff_dept_ids.length > 0) {
+    //     this.staffForm.departId = this.staff_dept_ids[this.staff_dept_ids.length - 1]
+    //   }
+    //   queryStaff(this.staffForm).then(response => {
+    //     this.staffAll = response.data.data
+    //   })
+    // },
     handleChangeAcitve(active = ['1']) {
       if (active.length) {
         $('.form-more').text('收起')
@@ -673,18 +1053,23 @@ export default {
     },
     // 赋予角色
     addRole(roleIds) {
-      if (!this.addAccountModel.staffId) {
+      console.log('tags:', this.tags)
+      if (!this.tags || this.tags.length === 0) {
         this.$message.error('请选择员工')
         return
       }
-      if (this.checkRoleData2.length === 0) {
+      if (this.addRoleIds.length === 0) {
         this.$message.error('请选择角色')
         return false
       }
       if (this.addAccountModel.password) {
         this.addAccountModel.password = md5(this.addAccountModel.password)
       }
-      this.addAccountModel.roleIds = roleIds
+      this.addAccountModel.roleIds = this.addRoleIds
+      this.addAccountModel.staffIds = []
+      this.tags.forEach(element => {
+        this.addAccountModel.staffIds.push(element.id)
+      })
       // 标记后台什么请求
       this.addAccountModel['method'] = 'POST'
       addRole(this.addAccountModel).then(response => {
@@ -871,6 +1256,7 @@ export default {
       this.formInline = {
         staffName: '',
         staffNo: '',
+        accountNo: '',
         modifier: '',
         startTime: '',
         stopTime: '',
@@ -883,12 +1269,12 @@ export default {
     },
     resetAddAcountModel() {
       this.pwdType = 'password'
-      this.checkRoleData2 = []
+      this.addRoleIds = []
       this.addAccountModel = {
         creator: '',
         creatorId: '',
         password: '',
-        staffId: '',
+        staffIds: [],
         status: 1,
         type: 0,
         userName: '',
@@ -1105,9 +1491,10 @@ export default {
     },
     searchStaff(req) {
       // 根据老版本的逻辑 查询只能传分页页码的第一页
+      console.log('444440', req)
       req.pageNo = 1
-      req.start_time = this.timeValue ? this.timeValue[0] : null
-      req.end_time = this.timeValue ? this.timeValue[1] : null
+      req.startTime = this.timeValue ? this.timeValue[0] : null
+      req.stopTime = this.timeValue ? this.timeValue[1] : null
       if (this.selected_dept_id.length === 0) {
         req.departId = ''
       } else {
@@ -1163,21 +1550,15 @@ export default {
     // }
   },
   created() {
-    this.findStaff()
+    // this.findStaff()
 
     this.refreshOrganTo()
+  },
+  watch: {
+    filterText(val) {
+      this.$refs.tree2.filter(val)
+    }
   }
-  // watch: {
-  //   $route(to, from) {
-  //     // 判断url是否带参
-  //     if (!to.query.departName) {
-  //       this.formInline.departName = ''
-  //       findAllAccount({ departName: '' }).then(response => {
-  //         this.queryStaff(response)
-  //       })
-  //     }
-  //   }
-  // }
 }
 </script>
 <style scoped>
@@ -1202,5 +1583,5 @@ export default {
       color: $dark_gray;
       cursor: pointer;
       user-select: none;
-    }
+}
 </style>
