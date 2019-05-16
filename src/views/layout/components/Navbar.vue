@@ -1869,8 +1869,6 @@ export default {
   },
   mounted() {
     vm = this
-    const { data } = getPhoneStatus()
-    console.log(data)
     const agentId = localStorage.getItem('agentId')
     // 查询外呼状态
     getPhoneStatus().then(response => {
@@ -1907,6 +1905,7 @@ export default {
         const code = parseInt(res.data.code)
         if (code === 200) {
           vm.havesoftphone = true
+          console.log(process.env.CTI_WS_SERVERURL, '1111')
           cti.connectCTI(process.env.CTI_WS_SERVERURL)
         } else if (code === 403) {
           vm.havesoftphone = false
@@ -1930,7 +1929,7 @@ export default {
     })
     // 查询用户手机号并存储
     getStaffNameByAgentId({ 'agentId': agentId }).then(res => {
-      if (res.data.code === 1) {
+      if (res.data.code === 1 && res.data.data.length > 0) {
         const userPhone = res.data.data[0].userPhone ? res.data.data[0].userPhone : ''
         localStorage.setItem('userPhone', userPhone)
       }
