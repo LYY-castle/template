@@ -266,7 +266,7 @@
               </el-switch>关联子部门
             </el-col>
           </el-form-item>
-          
+
           <el-form-item label="紧急程度：">
             <el-rate
              style="margin-top:10px"
@@ -319,10 +319,10 @@
 
 <style lang='scss' scoped>
 .testMy{
-  // text-overflow: ellipsis; 
+  // text-overflow: ellipsis;
   // overflow: hidden;
   // white-space:normal;
-  word-wrap:break-word; 
+  word-wrap:break-word;
   word-break:break-all;
 }
 </style>
@@ -351,7 +351,7 @@ export default {
       deptsProps: {
         id: 'id',
         // pid: 'upId',
-        label: 'departName',
+        label: 'name',
         children: 'subDeparts'
       },
       flagCheck: true, // 保存并发布标志
@@ -842,7 +842,7 @@ export default {
     this.handleChangeAcitve()
     this.searchByKeyWords(this.req)
     // 获取所有部门信息
-    // this.getAllDepts()
+    this.getAllDepts()
   },
 
   watch: {},
