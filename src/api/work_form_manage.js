@@ -14,6 +14,27 @@ export function createWorkForm(obj) {
     data: obj
   })
 }
+// 批量设置工作表单
+export function setWorkForm(obj) {
+  return requestV2({
+    url: '/workflow/workform/enabled/workform',
+    method: 'post',
+    data: obj
+  })
+}
+
+// 查看工作表单
+export function queryWorkForm(id,version,code) {
+  return requestV2({
+    url: '/workflow/workform/query/workform',
+    method: 'get',
+    params: {
+      id,
+      version,
+      code
+    }
+  })
+}
 
 // 单个删除批量删除
 export function deleteWorkForm(workFormId) {
