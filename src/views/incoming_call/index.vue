@@ -1877,10 +1877,10 @@ export default {
     // 工单记录--------------4
     // 查询工单记录
     getWorkFormRecord() {
-      this.searchWorkFormRecord.customerId = this.customerId
+      this.searchWorkFormRecord2 = clone(this.searchWorkFormRecord)
+      this.searchWorkFormRecord.customerId = this.customerInfos.customerId
       this.searchWorkFormRecord.timeStart = this.timeValue ? this.timeValue[0] : null
       this.searchWorkFormRecord.timeEnd = this.timeValue ? this.timeValue[1] : null
-      this.searchWorkFormRecord2 = clone(this.searchWorkFormRecord)
       getWorkFormRecord(this.searchWorkFormRecord).then(response => {
         console.log('工单记录', response.data.data)
         if (response.data.code === 0) {
@@ -1895,7 +1895,7 @@ export default {
     },
     workFormRecordSizeChange(val) {
       this.searchWorkFormRecord2 = clone(this.searchWorkFormRecord)
-      this.searchWorkFormRecord2.customerId = this.customerId
+      this.searchWorkFormRecord2.customerId = this.customerInfos.customerId
       this.searchWorkFormRecord2.pageSize = val
       this.searchWorkFormRecord.pageSize = val
       this.searchWorkFormRecord2.pageNo = 1
