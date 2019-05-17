@@ -1956,7 +1956,6 @@ export default {
     // 根据工单模板展示工单,初始化需绑定的绑定数据
     showWorkFormTemp(tempInfo) {
       this.workformInfo = tempInfo
-      this.addWorkForm.name = this.workformInfo.name
       this.addWorkForm.workformRecordRuleCreateInfos = []
       this.workformInfo.workformProperties.forEach((item) => {
         if (item.dataType === 'checkbox' || item.dataType === 'multipleSelect') {
@@ -1987,7 +1986,7 @@ export default {
       const obj = JSON.parse(options)
       const arr = []
       let val2
-      if (type === 'multipleSelect' || type === 'checkbox') val2 = JSON.parse(val)
+      if (type === 'select' || type === 'multipleSelect' || type === 'checkbox') val2 = JSON.parse(val)
       let result
       if (val2 !== undefined && val2.length) {
         for (var key in obj) {
