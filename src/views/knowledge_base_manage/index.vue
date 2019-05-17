@@ -839,20 +839,23 @@ export default{
         console.log(response)
         // 重载数据
         this.getCatalogs()
-        getPermission(localStorage.getItem('agentId')).then(response => {
-          if (response.data) {
+        permsKBUpdate(localStorage.getItem('accountNo')).then(response => {
+          const code = parseInt(response.data.code)
+          if (code === 200) {
             this.permission = true
             this.getArticles1(this.req)
-          } else {
-            window.location.reload()
-          }
-        }).catch(error => {
-          if (error.response.status === 403) {
+          } else if (code === 403) {
             this.permission = false
             this.getArticles1(this.req)
           } else {
+            this.$message({
+              message: response.data.message,
+              type: 'error'
+            })
             window.location.reload()
           }
+        }).catch(error => {
+          throw new Error(error)
         })
       }).catch(error => {
         throw new Error(error)
