@@ -396,7 +396,7 @@ export default (new function() {
   }
 
   this.forceBusy = function(magentid) {
-    this.setAgentStatus(magentid, '14')
+    this.setAgentStatus(magentid, '13')
   }
 
   function uuidcount() {

@@ -26,11 +26,11 @@ export function findStatusByAgentIds(obj) {
     data: { 'agentIds': obj }
   })
 }
-export function getDepartIdByAgentId(agentId) {
+export function getStaffNameByAgentId(agentId) {
   return request({
-    url: '/employee/getStaffNameByAgentId',
+    url: '/employee/query',
     method: 'get',
-    params: { 'agentId': agentId }
+    params: { 'staffNo': agentId, 'pageable': false }
   })
 }
 export function getAllChildrenOrgan(departId) {

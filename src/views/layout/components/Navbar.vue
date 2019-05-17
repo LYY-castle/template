@@ -347,6 +347,7 @@ import {
 import cti from '@/utils/ctijs'
 import WebsocketHeartbeatJs from 'websocket-heartbeat-js'
 import { getLocalPhonePrefix, getNonLocalPhonePrefix } from '@/config/phone_config_codes'
+import { defaultFormat } from 'moment'
 var vm = null
 var interval = null
 export default {
@@ -1011,7 +1012,6 @@ export default {
       const agentId = localStorage.getItem('agentId')
       const DN = this.formInline.DN
       if (agentId !== null && DN !== null && DN !== '') {
-        JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode
         if (localStorage.getItem(localStorage.getItem('agentId')) && JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode === '13') {
           cti.logoff(agentId, DN, 9)
         } else {
@@ -1783,6 +1783,7 @@ export default {
       this.$root.eventHub.$emit('phoneCanDial', reasoncode === '13')
     },
     on_loginsucess(event, agentId, DN) {
+      localStorage.removeItem('loginDn')
       console.log('响应事件：登录成功' + event + ',员工工号：' + agentId + '，分机：' + DN)
       vm.$root.eventHub.$emit('monitorphone', { 'agentId': agentId, 'DN': DN })// 发送到班长监控电话页面，提示更新班长号码
       vm.islogin = true
@@ -1817,25 +1818,50 @@ export default {
       const agentId = localStorage.getItem('agentId')
       const DN = localStorage.getItem('DN')
       vm.formInline.DN = DN
-      if (agentId !== null && DN !== null && DN !== '') { // 如果有技能组则直接登录所有队列
-        if (vm.queues.length > 0) {
-          const queues = []
-          const prioritys = []
-          for (let i = 0; i < vm.queues.length; i++) {
-            if (vm.checkedQueues.indexOf(vm.queues[i].label) === -1) {
-              vm.checkedQueues.push(vm.queues[i].label)
+      if ((localStorage.getItem('agentId') && localStorage.getItem(localStorage.getItem('agentId')) && JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode !== '-2') || (DN === localStorage.getItem('loginDn'))) {
+        if (agentId !== null && DN !== null && DN !== '') { // 如果有技能组则直接登录所有队列
+          if (vm.queues.length > 0) {
+            const queues = []
+            const prioritys = []
+            for (let i = 0; i < vm.queues.length; i++) {
+              if (vm.checkedQueues.indexOf(vm.queues[i].label) === -1) {
+                vm.checkedQueues.push(vm.queues[i].label)
+              }
+              queues.push(vm.queues[i].value)
+              prioritys.push(vm.queues[i].priority)
             }
-            queues.push(vm.queues[i].value)
-            prioritys.push(vm.queues[i].priority)
+            cti.login(agentId, DN, queues.join(','), prioritys.join(','), '1')
+          } else { // 如果没有技能组，则登录518队列
+            cti.login(agentId, DN, '518', '1', '1')
           }
-          cti.login(agentId, DN, queues.join(','), prioritys.join(','), '1')
-        } else { // 如果没有技能组，则登录518队列
-          cti.login(agentId, DN, '518', '1', '1')
         }
       }
     },
     logout() {
-      vm.agentLogoff()
+      if (localStorage.getItem('agentId') && localStorage.getItem(localStorage.getItem('agentId'))) {
+        const status = JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode
+        switch (status) {
+          case '13':
+            vm.agentLogoff()
+            break
+          case '0':
+          case '-3':
+          case '-4':
+          case '-100':
+          case '-101':
+          case '-5':
+          case '-6':
+          case '14':
+            vm.$message({
+              message: '请先登出话机',
+              type: 'error',
+              duration: 1000
+            })
+            return
+          default:
+            break
+        }
+      }
       vm.$root.eventHub.$emit('closeInterval', true)// 普通坐席计时停止
       this.$store.dispatch('LogOut').then((data) => {
         if (data.info) {

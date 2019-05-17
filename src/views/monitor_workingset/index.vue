@@ -443,6 +443,9 @@ export default {
     this.$store.dispatch('SwitchNeedLoginMgrPhone', { monitorId: localStorage.getItem('agentId'), monitorDN: '12345' })
   },
   methods: {
+    on_queuecount(event, queuename, queuecount) {
+      console.log(event, queuename, queuecount)
+    },
     on_SessionClose(evt) {
       console.log(evt)
     },

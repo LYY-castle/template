@@ -105,7 +105,7 @@
         }
       },
       handleLogin() {
-        if (this.isShowMessageBox){
+        if (this.isShowMessageBox) {
           return // 如果已弹窗，不再执行该事件
         }
         this.$refs.loginForm.validate(valid => {
@@ -124,6 +124,7 @@
                 localStorage.setItem('departName', data.data.departName)
                 localStorage.setItem('accountNo', data.data.accountNo)
                 localStorage.setItem('DN', this.loginForm.extensionNumber)
+                localStorage.setItem('loginDn', this.loginForm.extensionNumber)
                 this.loading = false
                 this.$router.push({ path: '/dashboard' })
                 // 获取主题

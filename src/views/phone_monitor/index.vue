@@ -100,14 +100,14 @@
           <div class="synthetical-item">
             <div style="display:inline-block;text-align:center">
               <div class="img-container">
-                <img src="../../../static/images/monitoring_index/free.png" alt="空闲人数"></img>
+                <img src="../../../static/images/monitoring_index/free.png" alt="就绪人数"></img>
               </div>
             </div>
             <div class="count-name">
               <div 
                 class="font12" 
                 style="color:#020202;">
-                空闲人数
+                就绪人数
               </div>
               <div class="font12 bold count-content" :title="formInline.freeCount">
                 {{formInline.freeCount}}
@@ -190,14 +190,14 @@
           <div class="synthetical-item">
             <div style="display:inline-block;text-align:center">
               <div class="img-container">
-                <img src="../../../static/images/monitoring_index/free.png" alt="空闲人数"></img>
+                <img src="../../../static/images/monitoring_index/free.png" alt="就绪人数"></img>
               </div>
             </div>
             <div class="count-name">
               <div 
                 class="font12" 
                 style="color:#020202;">
-                空闲人数
+                就绪人数
               </div>
               <div 
                 class="font12 bold count-content" :title="team.freeCount">
@@ -236,52 +236,11 @@
           <el-button :disabled="btnunListen" @click="monitorListenCall()">监听</el-button>
           <el-button :disabled="btnunWhisper" @click="monitorWisperCall()">耳语</el-button>
           <el-button :disabled="btnunIntrudeOut" @click="monitorForcerelease()">强拆</el-button>
-          <el-button :disabled="btnunForceFree" @click="monitorAvaiable()">强制示闲</el-button>
+          <el-button :disabled="btnunForceFree" @click="monitorAvaiable()">强制就绪</el-button>
           <el-button :disabled="btnunForceBusy" @click="monitorBusy()">强制示忙</el-button>
           <el-button :disabled="btnunForceLogoff" @click="monitorforceLogoff()">强制登出</el-button>
         </div>
         <div style="margin-top:20px">
-          <!-- <el-col :span="5"  v-for="(item,index) in agentData" style="margin:1% 1%" v-if="showStaff">
-            <el-card >
-              <div>
-                <div style="display:inline-block">
-                  <div>
-                    <img src="../../../static/images/ringback.jpg" alt="去电回铃" style="width:48px;height:48px" v-show="item.ringbackshow"></img>
-                    <img src="../../../static/images/callout_talking.jpg" alt="去电通话" style="width:48px;height:48px" v-show="item.callout_talkingshow"></img>
-                    <img src="../../../static/images/after_working.jpg" alt="后处理" style="width:48px;height:48px" v-show="item.after_workingshow"></img>
-                    <img src="../../../static/images/relax.jpg" alt="小休" style="width:48px;height:48px" v-show="item.relaxshow"></img>
-                    <img src="../../../static/images/ready.jpg" alt="就绪" style="width:48px;height:48px" v-show="item.readyshow"></img>
-                    <img src="../../../static/images/lunch.jpg" alt="就餐" style="width:48px;height:48px" v-show="item.lunchshow"></img>
-                    <img src="../../../static/images/ringing.jpg" alt="来电振铃" style="width:48px;height:48px" v-show="item.ringingshow"></img>
-                    <img src="../../../static/images/comein_talking.jpg" alt="来电通话" style="width:48px;height:48px" v-show="item.comein_talkingshow"></img>
-                    <img src="../../../static/images/loginoff.jpg" alt="登出" style="width:48px;height:48px" v-show="item.loginoffshow"></img>
-                    <img src="../../../static/images/busy.jpg" alt="示忙" style="width:48px;height:48px" v-show="item.busyshow"></img>
-                  </div>
-                  <div>
-                    <el-checkbox @change="change(item.agentId,item.checked)" v-model="item.checked"></el-checkbox>
-                  </div>
-                </div>
-                <div style="display:inline-block">
-                  <span><font>工号：</font>{{item.agentId}}</span><br/><br/>
-                  <span><font>分机号：</font>{{item.DN}}</span><br/>
-                </div>
-              </div>
-              <span><font>姓名：</font>{{item.staffName}}</span><br/>
-              <span><font>状态：</font>{{item.status}}</span><br/>
-              <span><font>队列：</font>{{item.queue}}</span><br/> -->
-              
-              <!-- <span><font>排队数：</font>{{item.queueCount}}</span><br/> -->
-              
-              <!-- <span><font>状态更新时间：</font></span><br/>
-              <span style="margin-left:8%;margin-right:8%">{{item.updateTime}}</span><br/>
-              <span><font>状态持续时长：</font>{{item.statusCount}}</span><br/>
-              <span><font>今日呼出通话时长：</font>{{item.talkOutCount}}</span><br/>
-              <span><font>今日呼出通话次数：</font>{{item.talkOutTimes}}次</span><br/>
-              <span><font>今日呼入通话时长：</font>{{item.comeinCount}}</span><br/>
-              <span><font>今日呼入通话次数：</font>{{item.comeinTimes}}次</span><br/>
-            </el-card>
-          </el-col> -->
-
           <el-row v-if="showStaff" style="margin:0 -15px;">
             <el-card 
               v-for="(item,index) in agentData"
@@ -394,7 +353,7 @@
                     style="display:inline-block;background:#E86BB1;height:18px;padding:0 6px;position:relative;bottom:-3px;" 
                     v-show="item.after_workingshow">
                     <span>
-                      <img src="../../../static/images/after_working.png" alt="后处理"></img>
+                      <img src="../../../static/images/after_working.png" alt="话后"></img>
                     </span>
                     <span class="font12 content" style="color:#fff;position:relative;top:-3px;">{{item.status}}</span>
                   </div>
@@ -423,41 +382,7 @@
                   <span class="font12 label">今日呼入次数：</span>
                   <span class="font12 content">{{item.comeinTimes}}</span>
                 </el-row>
-                <!-- <div style="display:inline-block">
-                  <div>
-                    <img src="../../../static/images/ringback.jpg" alt="去电回铃" style="width:48px;height:48px" v-show="item.ringbackshow"></img>
-                    <img src="../../../static/images/callout_talking.jpg" alt="去电通话" style="width:48px;height:48px" v-show="item.callout_talkingshow"></img>
-                    <img src="../../../static/images/after_working.jpg" alt="后处理" style="width:48px;height:48px" v-show="item.after_workingshow"></img>
-                    <img src="../../../static/images/relax.jpg" alt="小休" style="width:48px;height:48px" v-show="item.relaxshow"></img>
-                    <img src="../../../static/images/ready.jpg" alt="就绪" style="width:48px;height:48px" v-show="item.readyshow"></img>
-                    <img src="../../../static/images/lunch.jpg" alt="就餐" style="width:48px;height:48px" v-show="item.lunchshow"></img>
-                    <img src="../../../static/images/ringing.jpg" alt="来电振铃" style="width:48px;height:48px" v-show="item.ringingshow"></img>
-                    <img src="../../../static/images/comein_talking.jpg" alt="来电通话" style="width:48px;height:48px" v-show="item.comein_talkingshow"></img>
-                    <img src="../../../static/images/loginoff.jpg" alt="登出" style="width:48px;height:48px" v-show="item.loginoffshow"></img>
-                    <img src="../../../static/images/busy.jpg" alt="示忙" style="width:48px;height:48px" v-show="item.busyshow"></img>
-                  </div>
-                  <div>
-                    <el-checkbox @change="change(item.agentId,item.checked)" v-model="item.checked"></el-checkbox>
-                  </div>
-                </div>
-                <div style="display:inline-block">
-                  <span><font>工号：</font>{{item.agentId}}</span><br/><br/>
-                  <span><font>分机号：</font>{{item.DN}}</span><br/>
-                </div> -->
               </div>
-              <!-- <span><font>姓名：</font>{{item.staffName}}</span><br/>
-              <span><font>状态：</font>{{item.status}}</span><br/>
-              <span><font>队列：</font>{{item.queue}}</span><br/> -->
-
-              <!-- <span><font>排队数：</font>{{item.queueCount}}</span><br/> -->
-              
-              <!-- <span><font>状态更新时间：</font></span><br/>
-              <span style="margin-left:8%;margin-right:8%">{{item.updateTime}}</span><br/>
-              <span><font>状态持续时长：</font>{{item.statusCount}}</span><br/>
-              <span><font>今日呼出通话时长：</font>{{item.talkOutCount}}</span><br/>
-              <span><font>今日呼出通话次数：</font>{{item.talkOutTimes}}次</span><br/>
-              <span><font>今日呼入通话时长：</font>{{item.comeinCount}}</span><br/>
-              <span><font>今日呼入通话次数：</font>{{item.comeinTimes}}次</span><br/> -->
             </el-card>
           </el-row>
           <el-row v-if="showTeam">
@@ -490,7 +415,7 @@
               </el-table-column>
               <el-table-column
                 align="center"
-                label="空闲人数"
+                label="就绪人数"
                 prop="freeCount">
               </el-table-column>
             </el-table>
@@ -503,13 +428,13 @@
 
 <script>
   import { Message } from 'element-ui'
-  import { findNextAgentByNow, findStatusByAgentId, findNextOrganByNow, getDepartIdByAgentId, getAllChildrenOrgan, findStatusByAgentIds } from '@/api/monitor_phone'
+  import { findNextAgentByNow, findStatusByAgentId, findNextOrganByNow, getStaffNameByAgentId, getAllChildrenOrgan, findStatusByAgentIds } from '@/api/monitor_phone'
   import cti from '@/utils/monitorcti'
   import { getDownInfoByCurrentUser } from '@/api/monitor_list_single'
 
 var baseinfo = null
   export default {
-    name: 'monitor_phone',
+    name: 'phone_monitor',
     inject: ['reloadCompoment'],
     data() {
       return {
@@ -525,7 +450,7 @@ var baseinfo = null
         btnunListen: true, // 班长监控监听按钮
         btnunWhisper: true, // 班长监控耳语按钮
         btnunIntrudeOut: true, // 班长监控强拆按钮
-        btnunForceFree: true, // 班长监控强制示闲按钮
+        btnunForceFree: true, // 班长监控强制就绪按钮
         btnunForceBusy: true, // 班长监控强制示忙按钮
         btnunForceLogoff: true, // 班长监控强制登出按钮
         monitorID: '', // 班长agentId
@@ -801,7 +726,7 @@ var baseinfo = null
               this.formInline.onlineCount++
               this.formInline.ringingCount++
               break
-            case '0': // 就绪，在线加1，空闲人数加1
+            case '0': // 就绪，在线加1，就绪人数加1
               this.formInline.onlineCount++
               this.formInline.freeCount++
               break
@@ -809,9 +734,8 @@ var baseinfo = null
               this.formInline.onlineCount++
               this.formInline.ringingCount++
               break
-            case '14': // 后处理，在线加1，示忙人数加1
+            case '14': // 后处理，在线加1
               this.formInline.onlineCount++
-              this.formInline.busyCount++
               break
             case '-1':
             case '-2':
@@ -835,7 +759,6 @@ var baseinfo = null
         baseinfo.team.ringingCount = 0
         baseinfo.team.freeCount = 0
         baseinfo.team.queueCount = 0
-
         if (Object.keys(baseinfo.departInfo).length > 0) {
           for (let i = 0; i < baseinfo.organData.length; i++) {
             if (baseinfo.departInfo[baseinfo.organData[i].departId]) {
@@ -879,9 +802,7 @@ var baseinfo = null
                     break // 去电回铃
                   case '14':
                     baseinfo.organData[i].onlineCount++
-                    baseinfo.organData[i].busyCount++
                     baseinfo.team.onlineCount++
-                    baseinfo.team.busyCount++
                     break// 后处理
                   case '-1':
                     break
@@ -897,8 +818,8 @@ var baseinfo = null
       },
       handle(agentid, reasoncode) {
         return new Promise(function(resolve, reject) {
-          getDepartIdByAgentId(agentid).then(res => {
-            if (res.data.data.length > 0) {
+          getStaffNameByAgentId(agentid).then(res => {
+            if (res.data.code === 1 && res.data.data.length > 0) {
               baseinfo.departs.forEach((value, key) => { // 遍历保存了的所有子部门id
                 if (value.indexOf(res.data.data[0].departId) > -1) { // 如果匹配到哪个部门的所有子集id，那么说明当前部门的key要增加一个员工的状态
                   if (baseinfo.departInfo[key]) {
@@ -979,7 +900,6 @@ var baseinfo = null
         }
       },
       on_reasonchange(event, agentid, DN, reasoncode) {
-        console.log(event, agentid, DN, reasoncode, 'reasoncodechange')
         if ((DN === baseinfo.monitorDN || DN === '12345') && agentid === baseinfo.monitorID) {
           return
         }
@@ -1036,7 +956,7 @@ var baseinfo = null
             status = '外呼占用' // 外呼占用
             break
           case '14':
-            status = '后处理' // 离线
+            status = '话后' // 离线
             break
           default:
             status = '登出' // 离线
@@ -1313,7 +1233,7 @@ var baseinfo = null
               if (res.data.data.length > 0) {
                 var map = new Map()
                 for (var i = 0; i < res.data.data.length; i++) {
-                  map.set(res.data.data[i][1], res.data.data[i][2])
+                  map.set(res.data.data[i].staffNo, res.data.data[i].name)
                 }
                 map.delete(baseinfo.monitorID)
                 baseinfo.agentNext_map = map
