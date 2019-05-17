@@ -2,7 +2,7 @@
   <section class="app-main">
     <transition name="fade" mode="out-in">
       <!--keep-alive:include用作缓存-->
-      <keep-alive >
+      <keep-alive exclude="incoming_call">
         <router-view :key="key" class="container" v-if="isRouterAlive"></router-view>
       </keep-alive>
       <!--<router-view></router-view>-->

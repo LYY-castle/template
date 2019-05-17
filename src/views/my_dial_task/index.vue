@@ -2115,7 +2115,7 @@ export default {
         updateTaskStatus(this.taskId, taskStatus, this.appointTime).then(
           res => {
             if (res.data.code === 0) {
-              this.changeKeepReady(true)
+              this.changeKeepReady('13')
               // 修改小结备注
               updateRecordInfo(this.recordId, taskStatus, selectedSummarys2, this.summary_description)
                 .then(res1 => {

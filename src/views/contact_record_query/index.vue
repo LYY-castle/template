@@ -1,6 +1,7 @@
 <template>
   <div class='container' v-if="isMainPage===true">
-    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
+    <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve" style="position:relative">
+      <span class="form-more bold" style="line-height: 24px;font-size: 14px;float:right;margin-right:6px;color:#57AFFF;position:absolute;top:11px;right:41px;">收起</span>
       <el-collapse-item title="筛选条件" name="1">
         <el-form :inline="true" size="small">
           <el-form-item label="客户编号：">
@@ -717,7 +718,6 @@ audio {
         option: { i18n: { normal: '1×', speed: '播放速度' }},
         visibleClass: '',
         formContainerOpen: '1',
-        formContainer: this.$store.state.app.formContainer,
         emojidata: emojidata,
         reg_emojis: reg_emoji,
         keys: [],
@@ -803,7 +803,6 @@ audio {
       // this.player.options = { autoplay: true }
       // })
       // this.player.options = { 'speed': { selected: 1, options: [0.5, 0.75, 1] }}
-      this.formContainer()
       this.handleChangeAcitve()
       new Promise((resolve, reject) => {
         getStaffByDepartId(localStorage.getItem('departId')).then(response => {

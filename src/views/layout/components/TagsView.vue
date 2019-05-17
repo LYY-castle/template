@@ -20,7 +20,7 @@
         @click.middle.native="closeSelectedTag(tag)"
         @contextmenu.prevent.native="openMenu(tag,$event)">
         {{ tag.title }}
-        <span class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)" />
+        <span class="el-icon-close" @click.prevent.stop="closeSelectedTag(tag)"/>
       </router-link>
     </scroll-pane>
     <!-- <ul class='contextmenu' v-show="visible" :style="{left:left+'px',top:top+'px'}">
@@ -42,6 +42,7 @@ export default {
     return {
       isDialTask: false,
       visible: false,
+      closeIncomingCall: false,
       top: 0,
       left: 0,
       selectedTag: {}
@@ -70,6 +71,9 @@ export default {
     this.$root.eventHub.$on('DIAL_TASK', (obj) => {
       this.isDialTask = obj.isDialTask
     })
+    this.$root.eventHub.$on('SET_INCOMING_CALL', (val) => {
+      this.closeIncomingCall = val
+    })
   },
   methods: {
     // generateTitle by vue-i18n
@@ -78,8 +82,6 @@ export default {
     },
     addViewTags() {
       const { name } = this.$route
-      console.log(this.$route)
-      console.log(name)
       if (name) {
         this.$store.dispatch('addView', this.$route)
       }
@@ -118,6 +120,14 @@ export default {
       if (view.path === '/my_dial_task' && !this.isDialTask) {
         this.$message({
           message: '请完成外呼任务',
+          type: 'error',
+          duration: 2000
+        })
+        return
+      }
+      if (view.path === '/incoming_call' && !this.closeIncomingCall) {
+        this.$message({
+          message: '请先完成工单和话后小结',
           type: 'error',
           duration: 2000
         })

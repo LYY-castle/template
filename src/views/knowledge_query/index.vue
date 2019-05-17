@@ -214,7 +214,7 @@ import {
   formatDateTime
 } from '@/utils/tools'
 export default{
-  name: 'kb_query',
+  name: 'knowledge_query',
   data() {
     return {
       token: localStorage.getItem('Admin-Token'),

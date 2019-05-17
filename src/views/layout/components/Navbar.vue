@@ -317,6 +317,12 @@ import Breadcrumb from '@/components/Breadcrumb'
 import { getUserInfo } from '@/api/dashboard'
 import { Message } from 'element-ui'
 import {
+  getCustomerInfoByPhone
+} from '@/api/incoming_call'
+import {
+  addCustomer
+} from '@/api/customerManagement'
+import {
   addComeContact,
   addDialContact,
   addAnswerContact,
@@ -472,8 +478,10 @@ export default {
     },
     keepReady() {
       return this.$store.state.ctiData.keepReady
+    },
+    incomingCall() {
+      return this.$store.state.ctiData.incomingCall
     }
-
   },
   methods: {
     getObstatusNow(data, code) {
@@ -1464,17 +1472,78 @@ export default {
         })
         // cti.setAgentStatus(agentid, '-5')
       } else {
-        addComeContact({
-          'event': 'on_ringing_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': callerid, 'calleeid': calleeid, 'ori_ani': ori_ani, 'other_leg_uuid': other_leg_uuid, 'ringing_time': new Date(), 'callDirection': 1, 'taskId': DialData ? JSON.parse(DialData).data.taskId : null
-        }).then(res => {
-          console.log('写来电通话记录：' + res)
-        }).catch(error => {
-          console.log('error:' + error)
-        })
-        vm.telephoneState = '来电振铃'
-        if (vm.oldtelephonestate !== vm.telephoneState) {
-          clearInterval(interval)
-          vm.times()
+        const reg = /^\d{4}$/
+        if (vm.caller && reg.test(parseInt(vm.caller))) {
+          console.log('是友军')
+        } else if (vm.caller) {
+          // sessionStorage.setItem('inCall_customerPhone', vm.caller)
+          getCustomerInfoByPhone(vm.caller).then(response => {
+            if (response.data.code === 0) {
+              if (response.data.data) {
+                const customerInfos = response.data.data
+                let recordId
+                addComeContact({
+                  'event': 'on_ringing_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': callerid, 'calleeid': calleeid, 'ori_ani': ori_ani, 'other_leg_uuid': other_leg_uuid, 'ringing_time': new Date(), 'callDirection': 1, 'customerInfo': customerInfos
+                }).then(res => {
+                  recordId = res.data.data
+                  console.log('写来电通话记录：', res)
+                  vm.$store.commit('SET_NAV_INCOMING_CALL', true)
+                  sessionStorage.setItem('inCall_customerPhone', vm.caller)
+                  sessionStorage.setItem('inCall_customerInfos', JSON.stringify(customerInfos))
+                  sessionStorage.setItem('inCall_recordId', recordId)
+                  vm.$root.eventHub.$emit('SET_INCOMING_CALL', false)
+                  // vm.$store.dispatch('setCustomerInfosAndRecodId', { customerPhone: vm.caller, customerInfos: customerInfos, recordId: recordId })
+                  vm.$router.replace({
+                    path: '/incoming_call',
+                    name: '呼入界面'
+                  })
+                }).catch(error => {
+                  console.log('error:', error)
+                })
+                vm.telephoneState = '来电振铃'
+                if (vm.oldtelephonestate !== vm.telephoneState) {
+                  clearInterval(interval)
+                  vm.times()
+                }
+              } else {
+                let recordId
+                addCustomer({ linkDatas: [{ linkType: 0, linkValue: vm.caller, isUsually: 1 }] }).then(response => {
+                  if (response.data.code === 0) {
+                    const customerInfos = response.data.data
+                    addComeContact({
+                      'event': 'on_ringing_event', 'agentid': agentid, 'DN': DN, 'UUID': UUID, 'callerid': callerid, 'calleeid': calleeid, 'ori_ani': ori_ani, 'other_leg_uuid': other_leg_uuid, 'ringing_time': new Date(), 'callDirection': 1, 'customerInfo': customerInfos
+                    }).then(res => {
+                      recordId = res.data.data
+                      console.log('写来电通话记录：', res)
+                      vm.$store.commit('SET_NAV_INCOMING_CALL', false)
+                      sessionStorage.setItem('inCall_customerPhone', vm.caller)
+                      sessionStorage.setItem('inCall_customerInfos', JSON.stringify(customerInfos))
+                      sessionStorage.setItem('inCall_recordId', recordId)
+                      vm.$root.eventHub.$emit('SET_INCOMING_CALL', false)
+                      // vm.$store.dispatch('setCustomerInfosAndRecodId', { customerPhone: vm.caller, customerInfos: customerInfos, recordId: recordId })
+                      vm.$router.replace({
+                        path: '/incoming_call',
+                        name: '呼入界面'
+                      })
+                    }).catch(error => {
+                      console.log('error:', error)
+                    })
+                    vm.telephoneState = '来电振铃'
+                    if (vm.oldtelephonestate !== vm.telephoneState) {
+                      clearInterval(interval)
+                      vm.times()
+                    }
+                  } else {
+                    this.$message.error(response.data.message)
+                  }
+                }).catch(error => {
+                  throw error
+                })
+              }
+            }
+          }).catch(error => {
+            throw error
+          })
         }
       }
     },
@@ -1896,6 +1965,39 @@ export default {
   mounted() {
     vm = this
     const agentId = localStorage.getItem('agentId')
+    // getCustomerInfoByPhone().then(response => {
+    //   if (response.data.code === 0) {
+    //     const customerInfos = response.data.data
+    //     if (response.data.data.length) {
+    //       vm.$router.push({
+    //         path: '/incoming_call/index',
+    //         name: '呼入',
+    //         params: { 'customerPhone': 13480129429, 'customerInfos': customerInfos }
+    //       })
+    //     } else {
+    //       // addCustomer({ linkDatas: [{ linkType: 0, linkValue: vm.caller, isUsually: 1 }] }).then(response => {
+    //       //   if (response.data.code === 0) {
+    //       vm.$router.push({
+    //         path: '/incoming_call/index',
+    //         name: '呼入',
+    //         params: { 'customerPhone': 13480129429, 'customerInfos': customerInfos }
+    //       })
+    //       //   } else {
+    //       //     vm.$router.push({
+    //       //       path: '/incoming_call/index',
+    //       //       name: '呼入',
+    //       //       params: { 'customerPhone': vm.caller, 'customerInfos': customerInfos }
+    //       //     })
+    //       //     console.log(response.data.message)
+    //       //   }
+    //       // }).catch(error => {
+    //       //   throw error
+    //       // })
+    //     }
+    //   }
+    // }).catch(error => {
+    //   throw error
+    // })
     // 查询外呼状态
     getPhoneStatus().then(response => {
       if (response.data.code === 0) {
@@ -2252,12 +2354,22 @@ export default {
   },
   watch: {
     keepReady(val) {
-      // console.log('watch' + val)
       if (val) {
-        this.changeState('13')
+        if (val) this.changeState(val)
+      }
+    },
+    incomingCall(val) {
+      for (let i = 0; i < vm.obstatus.length; i++) {
+        vm.obstatus[i].disabled = val
       }
     },
     lockChange(val) {
+      if (vm.incomingCall) {
+        for (let i = 0; i < vm.obstatus.length; i++) {
+          vm.obstatus[i].disabled = vm.incomingCall
+        }
+        return
+      }
       for (let i = 0; i < vm.obstatus.length; i++) {
         if (vm.obstatus[i].code === '-5') {
           vm.obstatus[i].disabled = vm.autoCallChange || val
