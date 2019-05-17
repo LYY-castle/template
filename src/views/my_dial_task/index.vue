@@ -216,28 +216,16 @@
             fixed="right"
             width="180">
           <template slot-scope="scope">
-            <a class="icofont-phone" style="font-size:22px;color:grey;" v-if="!phoneCanDial" title="请先将话机设置为示忙"></a>
-            <a class="icofont-phone" style="font-size:22px;" title="拨打"  v-else-if="phoneCanDial&&showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb) && scope.row.staffId === aId" @click="autoCallDial=false;sumTotal=0;products=[];customerNote='';changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);keepReady=true;dialTo(scope.row.taskId,scope.row.campaignId,scope.row.isBlacklist,scope.row.customerPhone);" size="small" type="text"></a>
-            <a class="icofont-phone" style="font-size:22px;color:grey;" title="无权限" v-else-if="!phoneCanDial&&showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb) && scope.row.staffId === aId" href="javascript:void(0)" size="small" type="text"></a>
-            <a class="icofont-phone" style="font-size:22px;color:grey;" title="无权限" v-else-if="phoneCanDial&&showStatus(scope.row.status) && checkBlacklist(scope.row.isBlacklist) && checkNodisturb(scope.row.isNodisturb)" v-show="scope.row.staffId !== aId" href="javascript:void(0)" size="small" type="text"></a>
-            <a class="icofont-phone" style="font-size:22px;color:grey;" title="该状态不能拨打" v-else-if="phoneCanDial&&!showStatus(scope.row.status)"  href="javascript:void(0)" size="small" type="text"></a>
-            <a class="icofont-phone" style="font-size:22px;color:grey;" title="该号码为免访客户" v-else-if="phoneCanDial&&!checkBlacklist(scope.row.isBlacklist)"  href="javascript:void(0)" size="small" type="text"></a>
-            <a class="icofont-phone" style="font-size:22px;color:grey;" title="该号码处于免访号段中" v-else-if="phoneCanDial&&!checkNodisturb(scope.row.isNodisturb)"  href="javascript:void(0)" size="small" type="text"></a>
-            <a class="icofont-phone" style="font-size:22px;color:grey;" title="不能拨打" v-else href="javascript:void(0)" size="small" type="text"></a>
-            <a class="icofont-wechat" style="font-size:22px;color:grey;" title="不可用" v-if="show_wechat==='true'&&!showStatus(scope.row.status) || checkBindWechat(scope.row.customerId)" href="javascript:void(0)" size="small" type="text"></a>
-            <a class="icofont-wechat" style="font-size:22px;" title="微信聊天" v-else-if="show_wechat==='true'" @click="toChatPage(scope.row.taskId, scope.row.campaignId, scope.row.customerId, scope.row.customerName, scope.row.customerPhone)" size="small" type="text"></a>
-          
-            <!-- <el-tooltip v-else-if="phoneCanDial&&!showStatus(scope.row.status)" class="item" effect="dark"  content="该状态不能拨打" placement="left-start">
-              <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
-            </el-tooltip> -->
-
-            <!-- <el-tooltip v-else-if="phoneCanDial&&!checkBlacklist(scope.row.isBlacklist)" class="item" effect="dark"  content="该号码为免访客户" placement="left-start">
-              <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
-            </el-tooltip> -->
-            <!-- <el-tooltip v-else-if="phoneCanDial&&!checkNodisturb(scope.row.isNodisturb)" class="item" effect="dark"  content="该号码处于免访号段中" placement="left-start">
-              <div><img src="../../../static/images/my_imgs/img_dial_disabled.png" alt="拨打" style="cursor:default"/><span style="cursor:default">拨打</span></div>
-            </el-tooltip> -->
-            <!-- <el-button type="text" v-if="show_wechat==='true'"  class="el-icon-message" :disabled="!showStatus(scope.row.status) || checkBindWechat(scope.row.customerId)" @click="toChatPage(scope.row.taskId, scope.row.campaignId, scope.row.customerId, scope.row.customerName, scope.row.customerPhone)">微信聊天</el-button> -->
+            <a class="icofont-phone" style="font-size:22px;color:grey;" v-if="!phoneCanDial" title="请先登录话机并置为示忙"></a>
+            <a class="icofont-phone" style="font-size:22px;color:grey;" title="只有首拨或预约状态能拨打" v-else-if="!showStatus(scope.row.status)" href="javascript:void(0)" size="small" type="text"></a>
+            <a class="icofont-phone" style="font-size:22px;color:grey;" title="只能拨打属于自己的客户" v-else-if="scope.row.staffId !== aId"  href="javascript:void(0)" size="small" type="text"></a>
+            <a class="icofont-phone" style="font-size:22px;color:grey;" title="该号码为免访客户" v-else-if="!checkBlacklist(scope.row.isBlacklist)"  href="javascript:void(0)" size="small" type="text"></a>
+            <a class="icofont-phone" style="font-size:22px;color:grey;" title="该号码处于免访号段中" v-else-if="!checkNodisturb(scope.row.isNodisturb)"  href="javascript:void(0)" size="small" type="text"></a>
+            <a class="icofont-phone" style="font-size:22px;" title="拨打"  v-else @click="autoCallDial=false;sumTotal=0;products=[];customerNote='';changeToCustomerDetail(scope.row.taskId,scope.row.campaignId,scope.row.customerId,scope.row.isBlacklist,scope.row.customerPhone);keepReady=true;dialTo(scope.row.taskId,scope.row.campaignId,scope.row.isBlacklist,scope.row.customerPhone);" size="small" type="text"></a>
+            <a class="icofont-wechat" style="font-size:22px;color:grey;" title="系统不支持微信功能" v-if="show_wechat==='false'" href="javascript:void(0)" size="small" type="text"></a>
+            <a class="icofont-wechat" style="font-size:22px;color:grey;" title="该客户未绑定微信" v-else-if="checkBindWechat(scope.row.customerId)" href="javascript:void(0)" size="small" type="text"></a>
+            <a class="icofont-wechat" style="font-size:22px;color:grey;" title="只有首拨或预约才能联系" v-else-if="!showStatus(scope.row.status)" href="javascript:void(0)" size="small" type="text"></a>
+            <a class="icofont-wechat" style="font-size:22px;" title="微信聊天" v-else @click="toChatPage(scope.row.taskId, scope.row.campaignId, scope.row.customerId, scope.row.customerName, scope.row.customerPhone)" size="small" type="text"></a>
           </template>
           </el-table-column>
         </el-table>
@@ -1035,12 +1023,15 @@ export default {
     getCheckes(val, i) {
       i.propertyValueCheckbox = val
     },
+    // 状态首拨和预约才能拨打
     showStatus(status) {
       return status === '1' || status === '0'
     },
+    // 检查是否为免访号码
     checkBlacklist(isBlacklist) {
       return isBlacklist === '0'
     },
+    // 检查是否为免访号段
     checkNodisturb(isNodisturb) {
       return isNodisturb === '0'
     },
