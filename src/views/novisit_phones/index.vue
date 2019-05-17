@@ -3,11 +3,8 @@
     <el-collapse v-model="formContainerOpen" class="form-container" @change="handleChangeAcitve">
       <el-collapse-item title="筛选条件" name="1">
         <el-form :inline="true" size="small" :model="req" ref="searchForm">
-          <el-form-item prop="startNumber" label="开始号段:">
-            <el-input v-model="req.startNumber" placeholder="开始号段（限长45字符）" maxlength="45"></el-input>
-          </el-form-item>
-          <el-form-item  prop="endNumber" label="结束号段:">
-            <el-input v-model="req.endNumber" placeholder="结束号段（限长45字符）" maxlength="45"></el-input>
+          <el-form-item prop="phone" label="电话号码:">
+            <el-input v-model="req.phone" placeholder="电话号码" maxlength="45"></el-input>
           </el-form-item>
           <el-form-item  prop="modifier" label="操作人:">
             <el-input v-model="req.modifier" placeholder="操作人（限长45字符）" maxlength="45"></el-input>
@@ -291,8 +288,7 @@ export default {
       },
       // 查询 发送请求参数
       req: {
-        startNumber: '', // 号段
-        endNumber: '', // 号段
+        phone: '',
         modifier: '', // 操作人
         queryStart: '', // 操作时间
         queryStop: '', // 操作时间
@@ -372,8 +368,7 @@ export default {
     // 重置查询框内容
     reset() {
       this.req = {
-        startNumber: '', // 号段
-        endNumber: '', // 号段
+        phone: '',
         modifier: '', // 操作人
         queryStart: '', // 操作时间
         queryStop: '', // 操作时间
@@ -398,8 +393,8 @@ export default {
     // 查询表格数据
     querynodisturbphones(val) {
       var req = val
-      req.queryStart = this.timeValue ? this.timeValue[0] : null
-      req.queryStop = this.timeValue ? this.timeValue[1] : null
+      req.queryStart = this.timeValue ? this.timeValue[0] : ''
+      req.queryStop = this.timeValue ? this.timeValue[1] : ''
       querynodisturbphones(req).then(response => {
         if (response.data.code === 0) {
           this.tableData = response.data.data
