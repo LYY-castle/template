@@ -42,7 +42,7 @@ export default {
     return {
       isDialTask: false,
       visible: false,
-      closeIncomingCall: false,
+      closeIncomingCall: true,
       top: 0,
       left: 0,
       selectedTag: {}

@@ -545,7 +545,11 @@
           <el-tab-pane label="新建工单" name="5" v-if="addWorkFormTabVisible&&isAddWorkOrder">
             <div style="padding:15px;">
               <div style="text-align:center" class="margin-bottom-20">
-                <span class="font14">{{workformInfo.name}}</span>
+                <el-form>
+                  <el-form-item :inline="true">
+                    <el-input class="workform-title-input" v-model="addWorkForm.name" placeholder="请输入工单名称"></el-input>
+                  </el-form-item>
+                </el-form>
               </div>
               <div style="width:100%;">
                 <!-- <el-form :inline="true" size="small" ref="workform"> -->
@@ -554,11 +558,11 @@
                       :span="item.dataType=='textarea'?24:12" 
                       v-for="(item,index) in workformInfo.workformProperties">
                       <el-form 
-                      :inline="item.dataType=='textarea'?false:true" 
+                      label-position="right" 
                       :model="addWorkForm.workformRecordRuleCreateInfos[index]" 
                       size="small" 
                       ref="workform">
-                      <el-form-item prop="recordValue" :rules="workFormRules(item)" :label="item.name+'：'" :key="index">
+                      <el-form-item label-width="120px" prop="recordValue" :rules="workFormRules(item)" :label="item.name+'：'" :key="index">
                         <!-- input 和 textarea -->
                         <el-input 
                           v-if="item.dataType=='input'||item.dataType=='textarea'||item.dataType=='inputnumber'" 
@@ -1028,6 +1032,14 @@
       color: #333;
       // text-align: center;
       height: 834px;
+      .workform-title-input{
+        /deep/ .el-input__inner{
+          width:200px;
+          background:none;
+          border:none;
+          border-bottom:1px solid #dcdfe6;
+        }
+      }
       .callInfo{
         div.callInfo-item{
           display:inline-block;
@@ -1333,8 +1345,8 @@ export default {
       recordSummaryCreateInfo: {
         description: '',
         recordId: '',
-        summaryIds: [],
-        taskStatus: '' // 任务状态 1 预约,2 完成,3 失败
+        summaryIds: []
+        // taskStatus: '' // 任务状态 1 预约,2 完成,3 失败
       },
       option: { i18n: { normal: '1×', speed: '播放速度' }},
       customerPhoneAddress: '',
@@ -1940,6 +1952,7 @@ export default {
     // 根据工单模板展示工单,初始化需绑定的绑定数据
     showWorkFormTemp(tempInfo) {
       this.workformInfo = tempInfo
+      this.addWorkForm.name = this.workformInfo.name
       this.addWorkForm.workformRecordRuleCreateInfos = []
       this.workformInfo.workformProperties.forEach((item) => {
         if (item.dataType === 'checkbox' || item.dataType === 'multipleSelect') {
@@ -2013,7 +2026,7 @@ export default {
       })
       this.recordSummaryCreateInfo.description = null
       this.recordSummaryCreateInfo.summaryIds = []
-      this.recordSummaryCreateInfo.taskStatus = null // 任务状态 1 预约,2 完成,3 失败
+      // this.recordSummaryCreateInfo.taskStatus = null // 任务状态 1 预约,2 完成,3 失败
       // this.$store.commit('SET_CUSTOMER_INFOS', [])
       // this.$store.commit('SET_CUSTOMER_PHONE', null)
       this.customerPhoneAddress = null
@@ -2042,16 +2055,16 @@ export default {
     },
     // 小结级联选择事件
     handleNoduleChange(arr) {
-      if (arr[0] === '14') {
-        console.log('成功')
-        this.recordSummaryCreateInfo.taskStatus = '2'
-      } else if (arr[0] === '15') {
-        console.log('失败')
-        this.recordSummaryCreateInfo.taskStatus = '3'
-      } else {
-        console.log('预约')
-        this.recordSummaryCreateInfo.taskStatus = '1'
-      }
+      // if (arr[0] === '14') {
+      //   console.log('成功')
+      //   this.recordSummaryCreateInfo.taskStatus = '2'
+      // } else if (arr[0] === '15') {
+      //   console.log('失败')
+      //   this.recordSummaryCreateInfo.taskStatus = '3'
+      // } else {
+      //   console.log('预约')
+      //   this.recordSummaryCreateInfo.taskStatus = '1'
+      // }
       this.recordSummaryCreateInfo.summaryIds = arr
     },
     recordSummaryInfo() {
@@ -2111,6 +2124,9 @@ export default {
           return false
         }
         this.createAddWorkForm()
+        if (!this.addWorkForm.name) {
+          this.$message.error('请输入工单名称')
+        }
         addWorkFormRecord(this.addWorkForm).then(response => {
           if (response.data.code === 0) {
             this.recordSummaryInfo()
