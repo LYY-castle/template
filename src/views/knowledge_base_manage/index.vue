@@ -128,6 +128,7 @@
                       </template>
                     </el-table-column> -->
                     <el-table-column
+                      fixed
                       width="80"
                       align="center"
                       prop="hits"
@@ -170,7 +171,26 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      width="273"
+                      align="center"
+                      prop="approval"
+                      label="审批状态">
+                      <template slot-scope="scope">
+                        <div :class="scope.row.approved == 1?'visible':'invisible'">
+                          <span>{{scope.row.approved == 1?'已批准':'未批准'}}</span>
+                        </div>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      align="center"
+                      prop="approval_message"
+                      label="审批意见"
+                      width="325">
+                      <template slot-scope="scope">
+                        <div>{{scope.row.approval_message}}</div>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      width="325"
                       v-if="permission"
                       align="center"
                       fixed="right"
@@ -183,6 +203,7 @@
                         <el-button v-if="scope.row.status==0" @click="releaseInfo=scope.row;releaseVisible=true" type="text" size="small">发布</el-button>
                         <el-button v-if="scope.row.status==1" @click="release(scope.row)" type="text" size="small">取消发布</el-button>
                         <el-button @click="setTree2=setTree;linkVisiable=true;addLinkReq.articleId=scope.row.ID;resetTree()" type="text" size="small">添加目录</el-button>
+                        <el-button @click="approvalAction(scope.row.ID,scope.row.approved,scope.row.approval_message)" type="text" size="small">审核</el-button>
                       </template>
                     </el-table-column>
                   </el-table>
@@ -293,6 +314,14 @@
                           </template>
                         </el-table-column>
                         <el-table-column
+                          align="center"
+                          prop="approval"
+                          label="审批状态">
+                          <template slot-scope="scope">
+                            <div>{{approvalToString(scope.row.approval)}}</div>
+                          </template>
+                        </el-table-column>
+                        <el-table-column
                           width="273"
                           v-if="permission"
                           align="center"
@@ -399,6 +428,14 @@
                           label="发布时间">
                           <template slot-scope="scope">
                             <div v-if="scope.row.status==1">{{formatDateTime(scope.row.release_time)}}</div>
+                          </template>
+                        </el-table-column>
+                        <el-table-column
+                          align="center"
+                          prop="approval"
+                          label="审批状态">
+                          <template slot-scope="scope">
+                            <div>{{approvalToString(scope.row.approval)}}</div>
                           </template>
                         </el-table-column>
                         <el-table-column
@@ -516,6 +553,14 @@
                         </template>
                       </el-table-column>
                       <el-table-column
+                          align="center"
+                          prop="approval"
+                          label="审批状态">
+                          <template slot-scope="scope">
+                            <div>{{approvalToString(scope.row.approval)}}</div>
+                          </template>
+                        </el-table-column>
+                      <el-table-column
                         width="273"
                         v-if="permission"
                         align="center"
@@ -629,6 +674,14 @@
                           <div v-if="scope.row.status==1">{{formatDateTime(scope.row.release_time)}}</div>
                         </template>
                       </el-table-column>
+                      <el-table-column
+                          align="center"
+                          prop="approval"
+                          label="审批状态">
+                          <template slot-scope="scope">
+                            <div>{{approvalToString(scope.row.approval)}}</div>
+                          </template>
+                        </el-table-column>
                       <el-table-column
                         width="273"
                         v-if="permission"
@@ -910,6 +963,29 @@
               </el-row>
             </div>
           </el-dialog>
+          <!-- 审批 -->
+          <el-dialog
+            title="审批"
+            :visible.sync="approvalVisible"
+            width="50%">
+            <el-form ref="form" :model="approvalDetail" label-width="80px">
+              <el-form-item label-width="100px">
+                <span slot="label"><span style="color:red;">*</span>审批结果：</span>
+                <el-radio-group v-model="approvalDetail.approvalStatus">
+                  <el-radio label="1">批准</el-radio>
+                  <el-radio label="0">不批准</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item label-width="100px">
+                <span slot="label"><span style="color:red;">*</span>审批意见：</span>
+                  <el-input type="textarea" v-model="approvalDetail.approvalMessage" :rows="6"></el-input>
+              </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+              <el-button type="primary" @click="approvalArticle()">确定</el-button>
+              <el-button @click="approvalVisible = false">取消</el-button>
+            </span>
+          </el-dialog>
           <!-- 删除 -->
           <el-dialog
             width="30%"
@@ -919,7 +995,7 @@
             <div style="font-size:18px">
               <b>此文章存在于以下目录</b>
             </div>
-            <div v-for="item in delRowInfo.catalogs">{{item.path_name}}</div>
+            <div v-for="(item,index) in delRowInfo.catalogs" :key="index">{{item.path_name}}</div>
             <div style="font-size:18px" v-if="delType(delRowInfo)">此操作将会删除
               <b style="color:red">{{delUrl.path_name}}</b>
               下的文章，是否确定删除？</div>
@@ -1045,7 +1121,8 @@ import {
   delArticles,
   addArticlesLink,
   getUploadInfo,
-  delUpload
+  delUpload,
+  approvalArticles
 } from '@/api/kb'
 import {
   permsKBUpdate
@@ -1104,6 +1181,7 @@ export default{
       // batchDelVisible: false,
       noteTitleVisiable: false, // 新建笔记模态框显示隐藏
       editNoteTitleVisiable: false, // 修改笔记模态框显示隐藏
+      approvalVisible: false, // 审批模态框显示隐藏
       linkVisiable: false,
       releaseVisible: false,
       timeValue: null,
@@ -1208,6 +1286,11 @@ export default{
         updatorRealname: '',
         attachments: []
       },
+      approvalDetail: {
+        articleId: 0,
+        approvalStatus: '1',
+        approvalMessage: ''
+      },
       tableData: [],
       tableDataTitle: [],
       tableDataBody: [],
@@ -1240,6 +1323,37 @@ export default{
     }
   },
   methods: {
+    approvalAction(articleId, approval_status, approval_message) {
+      this.approvalDetail.articleId = articleId
+      this.approvalDetail.approvalStatus = approval_status.toString()
+      this.approvalDetail.approvalMessage = approval_message
+      this.approvalVisible = true
+    },
+    approvalArticle() {
+      approvalArticles(this.approvalDetail).then(response => {
+        this.approvalVisible = false
+        console.log(response)
+        // 重载数据
+        this.getCatalogs()
+        getPermission(localStorage.getItem('agentId')).then(response => {
+          if (response.data) {
+            this.permission = true
+            this.getArticles1(this.req)
+          } else {
+            window.location.reload()
+          }
+        }).catch(error => {
+          if (error.response.status === 403) {
+            this.permission = false
+            this.getArticles1(this.req)
+          } else {
+            window.location.reload()
+          }
+        })
+      }).catch(error => {
+        throw new Error(error)
+      })
+    },
     // tree------------------------
     initExpand() {
       this.isLoadingTree = true

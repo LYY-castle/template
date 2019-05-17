@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import requestV2 from '@/utils/request-v2'
 
 // 查询所有节点列表
 export function getCatalogs() {
@@ -113,5 +114,14 @@ export function delUpload(obj) {
   return request({
     url: `/upload/remove-object?bucketName=crm&objectName=${obj.objectName}`,
     method: 'post'
+  })
+}
+
+// 审核
+export function approvalArticles(obj) {
+  return requestV2({
+    url: '/kb/approval/article',
+    method: 'post',
+    data: obj
   })
 }
