@@ -555,38 +555,38 @@
                 <!-- <el-form :inline="true" size="small" ref="workform"> -->
                   <el-row>
                     <el-col
-                      :span="item.dataType=='textarea'?24:12" 
+                      :span="item.dataType=='textarea'?24:12"
                       v-for="(item,index) in workformInfo.workformProperties">
-                      <el-form 
-                      label-position="right" 
-                      :model="addWorkForm.workformRecordRuleCreateInfos[index]" 
-                      size="small" 
+                      <el-form
+                      label-position="right"
+                      :model="addWorkForm.workformRecordRuleCreateInfos[index]"
+                      size="small"
                       ref="workform">
                       <el-form-item label-width="120px" prop="recordValue" :rules="workFormRules(item)" :label="item.name+'：'" :key="index">
                         <!-- input 和 textarea -->
-                        <el-input 
-                          v-if="item.dataType=='input'||item.dataType=='textarea'||item.dataType=='inputnumber'" 
+                        <el-input
+                          v-if="item.dataType=='input'||item.dataType=='textarea'||item.dataType=='inputnumber'"
                           :type="item.dataType=='textarea'?'textarea':item.dataType=='inputnumber'?'number':''"
-                          :placeholder="item.placeholder" 
+                          :placeholder="item.placeholder"
                           v-model="addWorkForm.workformRecordRuleCreateInfos[index].recordValue"
                         ></el-input>
                         <!-- radio -->
-                        <el-radio-group 
-                          v-if="item.dataType=='radio'" 
-                          :placeholder="item.placeholder" 
+                        <el-radio-group
+                          v-if="item.dataType=='radio'"
+                          :placeholder="item.placeholder"
                           v-model="addWorkForm.workformRecordRuleCreateInfos[index].recordValue">
-                          <el-radio 
-                            v-for="(item2,index2) in JSON.parse(item.dataValues)" 
+                          <el-radio
+                            v-for="(item2,index2) in JSON.parse(item.dataValues)"
                             :label="index2"
                             :key="index2">
                               {{item2}}
                             </el-radio>
                         </el-radio-group>
                         <!-- select -->
-                        <el-select 
+                        <el-select
                           v-if="item.dataType=='select'||item.dataType=='multipleSelect'"
                           :multiple="item.dataType=='multipleSelect'?true:false"
-                          :placeholder="item.placeholder" 
+                          :placeholder="item.placeholder"
                           v-model="addWorkForm.workformRecordRuleCreateInfos[index].recordValue">
                           <el-option
                             v-for="(item2,index2) in JSON.parse(item.dataValues)"
@@ -596,13 +596,13 @@
                           </el-option>
                         </el-select>
                         <!-- checkbox -->
-                        <el-checkbox-group 
-                          v-if="item.dataType=='checkbox'" 
+                        <el-checkbox-group
+                          v-if="item.dataType=='checkbox'"
                           :placeholder="item.placeholder"
                           v-model="addWorkForm.workformRecordRuleCreateInfos[index].recordValue">
-                          <el-checkbox 
+                          <el-checkbox
                              v-for="(item2,index2) in JSON.parse(item.dataValues)"
-                            :label="index2" 
+                            :label="index2"
                             :key="index2">
                             {{item2}}
                           </el-checkbox>
@@ -823,8 +823,8 @@
           </el-form>
         </el-row>
         <el-row style="text-align:center;">
-          <el-button 
-            type="primary" 
+          <el-button
+            type="primary"
             v-show="(!isAddWorkOrder)||selectedWorkFormId||selectedWorkFormId===0"
             @click="handleSubmit">
               完成
@@ -1309,6 +1309,7 @@ export default {
       canSubmit: true,
       workformVali: [],
       searchWorkFormRecord: {
+        customerId: null,
         name: '',
         modifierName: '',
         timeStart: null,
@@ -1317,6 +1318,7 @@ export default {
         pageSize: 10
       },
       searchWorkFormRecord2: {
+        customerId: null,
         name: '',
         modifierName: '',
         timeStart: null,
@@ -1875,9 +1877,10 @@ export default {
     // 工单记录--------------4
     // 查询工单记录
     getWorkFormRecord() {
-      this.searchWorkFormRecord2 = clone(this.searchWorkFormRecord)
+      this.searchWorkFormRecord.customerId = this.customerId
       this.searchWorkFormRecord.timeStart = this.timeValue ? this.timeValue[0] : null
       this.searchWorkFormRecord.timeEnd = this.timeValue ? this.timeValue[1] : null
+      this.searchWorkFormRecord2 = clone(this.searchWorkFormRecord)
       getWorkFormRecord(this.searchWorkFormRecord).then(response => {
         console.log('工单记录', response.data.data)
         if (response.data.code === 0) {
@@ -1892,6 +1895,7 @@ export default {
     },
     workFormRecordSizeChange(val) {
       this.searchWorkFormRecord2 = clone(this.searchWorkFormRecord)
+      this.searchWorkFormRecord2.customerId = this.customerId
       this.searchWorkFormRecord2.pageSize = val
       this.searchWorkFormRecord.pageSize = val
       this.searchWorkFormRecord2.pageNo = 1
