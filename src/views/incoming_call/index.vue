@@ -1914,7 +1914,7 @@ export default {
         if (response.data.data) {
           this.workFormRecordTabVisible = true
           this.activeName = '7'
-          this.workformRecordDetail = response.data.data.workform
+          this.workformRecordDetail = response.data.data
           this.workformRecordContent = response.data.data.workformRecordRuleResults
         } else {
           this.$message.error(response.data.message)
@@ -1986,25 +1986,25 @@ export default {
       const obj = JSON.parse(options)
       const arr = []
       let val2
-      if (type === 'select' || type === 'multipleSelect' || type === 'checkbox') val2 = JSON.parse(val)
+      if (type === 'multipleSelect' || type === 'checkbox') val2 = JSON.parse(val)
       let result
       if (val2 !== undefined && val2.length) {
         for (var key in obj) {
           val2.forEach(item => {
-            if (parseInt(key) === parseInt(item)) arr.push(obj[key])
+            if (key === item) arr.push(obj[key])
           })
         }
         return arr.join(',')
       } else {
         for (var key2 in obj) {
-          if (parseInt(key2) === parseInt(val)) result = obj[key2]
+          if (key2 === val) result = obj[key2]
         }
         return result
       }
     },
     // 初始化添加工单请求数据
     createAddWorkForm() {
-      this.addWorkForm.name = this.workformInfo.name
+      // this.addWorkForm.name = this.workformInfo.name
       this.addWorkForm.workformId = this.selectedWorkFormId
       this.addWorkForm.customerName = this.customerInfos.customerName
       this.addWorkForm.customerId = this.customerInfos.customerId
