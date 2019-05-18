@@ -778,7 +778,6 @@
                 v-model="selectedServiceList"
                 :options="serviceListTree"
                 filterable
-                clearable
                 :props="serviceListTreeProps"
                 :show-all-levels="false"
                 @change="handleServiceListChange"
@@ -1366,6 +1365,12 @@ export default {
       editableTabs: [],
       routeParams: {},
       agentId: localStorage.getItem('agentId'),
+      defaultPagination: {
+        pageNo: 1,
+        pageSize: 10,
+        totalCount: 0,
+        totalPage: 1
+      },
       searchContactListReq: {
         contactType: '',
         customerId: '',
@@ -1384,16 +1389,16 @@ export default {
       workFormRecordList: [],
       customerInfos: [],
       serviceRecordPagination: {// 插件页码
-        pageNo: null,
-        pageSize: null,
-        totalCount: null,
-        totalPage: null
+        pageNo: 1,
+        pageSize: 10,
+        totalCount: 0,
+        totalPage: 1
       },
       workFormRecordPagination: {// 页码插件
-        pageNo: null,
-        pageSize: null,
-        totalCount: null,
-        totalPage: null
+        pageNo: 1,
+        pageSize: 10,
+        totalCount: 0,
+        totalPage: 1
       },
       serviceRecord: [1],
       basicInfo: [0, 1, 2],
@@ -1802,7 +1807,7 @@ export default {
       getContactList(this.searchContactListReq).then(response => {
         if (response.data.code === 0) {
           this.contactList = response.data.data
-          this.serviceRecordPagination = response.data.pageInfo
+          this.serviceRecordPagination = response.data.pageInfo || this.defaultPagination
         } else {
           this.$message.error(response.data.message)
         }
@@ -1885,7 +1890,7 @@ export default {
         console.log('工单记录', response.data.data)
         if (response.data.code === 0) {
           this.workFormRecordList = response.data.data
-          this.workFormRecordPagination = response.data.pageInfo
+          this.workFormRecordPagination = response.data.pageInfo || this.defaultPagination
         } else {
           this.$message.error(response.data.message)
         }
@@ -2571,7 +2576,7 @@ export default {
               response => {
                 this.$store.commit(
                   'CHANGE_WECHATMSG',
-                  response.data.pageInfo.totalCount
+                  (response.data.pageInfo || this.defaultPagination).totalCount
                 )
               }
             )
@@ -2610,7 +2615,7 @@ export default {
               }, 10)
               this.$store.commit('SET_WECHATCONTENTS', this.contents)
               // 判断是否还有更多消息记录
-              if (response.data.pageInfo.totalPage > 1) {
+              if ((response.data.pageInfo || this.defaultPagination).totalPage > 1) {
                 this.hasMoreRecords = true
               } else {
                 this.hasMoreRecords = false
@@ -2621,7 +2626,7 @@ export default {
               }
               this.$store.commit('SET_WECHATCONTENTS', this.contents)
               // 判断是否还有更多消息记录
-              if (response.data.pageInfo.totalPage > queryPageNum) {
+              if ((response.data.pageInfo || this.defaultPagination).totalPage > queryPageNum) {
                 this.hasMoreRecords = true
               } else {
                 this.hasMoreRecords = false
@@ -2712,7 +2717,7 @@ export default {
         if (response.data.code === 0) {
           this.$store.commit(
             'CHANGE_WECHATMSG',
-            response.data.pageInfo.totalCount
+            (response.data.pageInfo || this.defaultPagination).totalCount
           )
         }
       })
