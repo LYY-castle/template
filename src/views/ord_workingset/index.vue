@@ -6,7 +6,7 @@
           <el-card shadow="never" class="card-container">
             <div slot="header" class="clearfix">
               <div>
-                <b>数量统计</b>
+                <b>外呼任务统计</b>
               </div>
               <div class="font12" style="display: inline-block;line-height: 50px;cursor: pointer" @click="changeToDailTask('0','agent')">
                 <span style="padding-right: 5px">首拨数量: </span>
