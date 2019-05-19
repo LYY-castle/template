@@ -715,7 +715,7 @@
           <el-tab-pane closable label="工单记录详情" name="7" v-if="workFormRecordTabVisible">
             <div style="padding:15px;">
               <div style="text-align:center" class="margin-bottom-20">
-                <span class="font14">{{workformRecordDetail.name}}</span>
+                <h5>{{workformRecordDetail.name}}</h5>
               </div>
               <div style="width:100%;">
                 <div class="callInfo-item font12 fl" style="width:50%;margin-bottom:15px;" v-for="(item,index) in workformRecordContent" :key="index">
