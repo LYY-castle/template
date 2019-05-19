@@ -35,10 +35,13 @@
       </el-row>
     </el-row>
     <!--新建对话框-->
-    <el-dialog title="新建" :visible.sync="dialogNewVisible" width="30%">
+    <el-dialog title="新建" :visible.sync="dialogNewVisible" width="35%">
       <el-form :model="dialogData" ref="newServiceForm" label-width="120px">
         <el-form-item label="名称：" class="inputWidth">
           <el-input size="small" v-model="dialogData.serviceName"></el-input>
+        </el-form-item>
+        <el-form-item label="编号：" v-if="showCode">
+          <el-input size="small" v-model="dialogData.code"></el-input>
         </el-form-item>
         <el-form-item label="上级目录：" class="inputWidth">
           <el-cascader
@@ -51,7 +54,6 @@
             show-all-levels
             filterable
             size="small"
-            clearable
             change-on-select
             @change="handleChange"
           ></el-cascader>
@@ -80,10 +82,18 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="短信模板编号：" class="inputWidth" v-if="workformShow">
+          <el-tooltip
+            class="item"
+            effect="dark"
+            placement="top">
+            <div slot="content">此处支持代码扩展<br/>service_menu_code 代表服务目录编号<br/>work_form_status 代表工单状态<br/>其他根据工单字段名判断</div>
+            <i class="el-icon-question"></i>
+          </el-tooltip>
           <el-input
             size="small"
             v-model="dialogData.smsTempId"
-            type="text"
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 4}"
             :min="0"
           ></el-input>
         </el-form-item>
@@ -113,6 +123,9 @@
         <el-form-item label="名称：" class="inputWidth">
           <el-input size="small" v-model="dialogData.serviceName"></el-input>
         </el-form-item>
+        <el-form-item label="编号：" class="inputWidth" v-if="showCode">
+          <el-input size="small" v-model="dialogData.code"></el-input>
+        </el-form-item>
         <el-form-item label="上级目录：" class="inputWidth" v-if="editeShow">
           <el-cascader
             style="width:100%;"
@@ -123,9 +136,8 @@
             show-all-levels
             filterable
             size="small"
-            clearable
             change-on-select
-            @blur="editeChange"
+            @change="editeChange"
           ></el-cascader>
         </el-form-item>
         <el-form-item label="工作表单：" class="inputWidth" v-if="workformShow">
@@ -152,10 +164,18 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="短信模板编号：" class="inputWidth" v-if="workformShow">
+          <el-tooltip
+            class="item"
+            effect="dark"
+            placement="top">
+            <div slot="content">此处支持代码扩展<br/>service_menu_code 代表服务目录编号<br/>work_form_status 代表工单状态<br/>其他根据工单字段名判断</div>
+            <i class="el-icon-question"></i>
+          </el-tooltip>
           <el-input
             size="small"
             v-model="dialogData.smsTempId"
-            type="text"
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 4}"
             :min="0"
           ></el-input>
         </el-form-item>
@@ -224,6 +244,7 @@
         // 编辑一级时级联不显示
         editeShow: true,
         showIsNeedReview: false,
+        showCode: false,
         deleteId: 0,
         delSelectVisiable: false,
         defaultExpandAll: false,
@@ -260,6 +281,7 @@
         dialogData: {
           id: null,
           serviceName: '',
+          code: '',
           serviceRank: '',
           parentId: [],
           workFormId: '',
@@ -322,9 +344,11 @@
         if (value.length === 2) {
           this.workformShow = true
           this.showIsNeedReview = true
+          this.showCode = true
         } else {
           this.workformShow = false
           this.showIsNeedReview = false
+          this.showCode = false
         }
       },
       // 字符串转整数数组
@@ -337,6 +361,7 @@
       // 编辑传ID
       handleEdit(row) {
         this.workformShow = false
+        this.showCode = false
         this.dialogEditVisible = true
         const parentIds = this.strTransArr(row.idPath)
         parentIds.pop()
@@ -354,16 +379,17 @@
           // 一级
           this.editeShow = false
           this.showIsNeedReview = false
+          this.showCode = false
         } else if (parentIds.length === 1) {
           // 二级
           console.log(this.backupData1)
           this.editeShow = true
           this.showIsNeedReview = false
-
+          this.showCode = false
           getAllServer()
             .then(res => {
               res.data.data.forEach(p => {
-                if (p.idPath.split('/').length - 1 === 3) {
+                if (p.idPath.split('/').length - 1 === 2) {
                   p.disabled = true
                 }
               })
@@ -373,6 +399,8 @@
                 idFieldName: 'id',
                 parentIdFielName: 'parentId'
               })
+            })
+            .catch(error => {
               throw error
             })
         } else if (parentIds.length === 2) {
@@ -380,7 +408,7 @@
           this.workformShow = true
           this.editeShow = true
           this.showIsNeedReview = true
-
+          this.showCode = true
           getAllServer()
             .then(res => {
               res.data.data.forEach(p => {
@@ -394,6 +422,8 @@
                 idFieldName: 'id',
                 parentIdFielName: 'parentId'
               })
+            })
+            .catch(error => {
               throw error
             })
         }
@@ -408,6 +438,7 @@
         this.dialogNewVisible = true
         this.workformShow = false
         this.showIsNeedReview = false
+        this.showCode = false
         this.dialogData.workFormId = ''
         this.dialogData.id = null
         this.dialogData.serviceName = ''
@@ -416,6 +447,7 @@
         this.dialogData.companySign = ''
         this.dialogData.smsTempId = ''
         this.dialogData.isNeedReview = '1'
+        this.dialogData.code = ''
 
         getAllServer()
           .then(res => {
@@ -430,6 +462,8 @@
               idFieldName: 'id',
               parentIdFielName: 'parentId'
             })
+          })
+          .catch(error => {
             throw error
           })
       },
@@ -479,7 +513,8 @@
           workFormId: this.dialogData.workFormId,
           companySign: this.dialogData.companySign,
           smsTempId: this.dialogData.smsTempId,
-          isNeedReview: this.dialogData.isNeedReview
+          isNeedReview: this.dialogData.isNeedReview,
+          code: this.dialogData.code
         }).then(response => {
           if (response.data.code === 0) {
             this.dialogEditVisible = false
@@ -517,7 +552,8 @@
           workFormId: this.dialogData.workFormId,
           companySign: this.dialogData.companySign,
           smsTempId: this.dialogData.smsTempId,
-          isNeedReview: this.dialogData.isNeedReview
+          isNeedReview: this.dialogData.isNeedReview,
+          code: this.dialogData.code
         }).then(response => {
           if (response.data.code === 0) {
             this.dialogNewVisible = false
