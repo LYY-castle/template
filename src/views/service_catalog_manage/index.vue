@@ -1,25 +1,3 @@
-Skip to content
- 
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@LYYZKK 
-0
-0 0 LYYZKK/-nui
- Code  Issues 0  Pull requests 0  Projects 0  Wiki  Insights  Settings
--nui/src/views/service_catalog_manage/index.vue
-@mynsy mynsy 编辑上级目录不正确选择时提示并阻止提交
-9cb8d38 9 hours ago
-We found potential security vulnerabilities in your dependencies.
-Only the owner of this repository can see this message. 
-Manage your notification settings or learn more about vulnerability alerts.
-
-499 lines (498 sloc)  14.1 KB
-    
 <template>
   <div class="app-container">
     <!--主表-->
@@ -45,10 +23,12 @@ Manage your notification settings or learn more about vulnerability alerts.
           </template>
           <template slot="operation" slot-scope="{ scope }">
             <el-button @click="handleEdit(scope.row)" type="text" size="small"
-              >编辑</el-button
+            >编辑
+            </el-button
             >
             <el-button @click="handleDelete(scope.row)" type="text" size="small"
-              >删除</el-button
+            >删除
+            </el-button
             >
           </template>
         </tree-table>
@@ -66,7 +46,7 @@ Manage your notification settings or learn more about vulnerability alerts.
             style="width:100%;"
             v-model="dialogData.parentId"
             placeholder="请选择上级目录"
-            :options="data"
+            :options="parentData"
             :props="cascaderProps"
             show-all-levels
             filterable
@@ -116,10 +96,14 @@ Manage your notification settings or learn more about vulnerability alerts.
             :min="0"
           ></el-input>
         </el-form-item>
+        <el-form-item label="是否需要审核：" class="inputWidth" v-if="showIsNeedReview">
+          <el-radio v-model="dialogData.isNeedReview" label="1">是</el-radio>
+          <el-radio v-model="dialogData.isNeedReview" label="0">否</el-radio>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="handleNewSaveAction"
-          >确定</el-button
+        >确定</el-button
         >
         <el-button @click="dialogNewVisible = false">取消</el-button>
       </span>
@@ -135,7 +119,7 @@ Manage your notification settings or learn more about vulnerability alerts.
             style="width:100%;"
             v-model="dialogData.parentId"
             placeholder="请选择上级目录"
-            :options="data"
+            :options="parentData"
             :props="cascaderProps"
             show-all-levels
             filterable
@@ -161,7 +145,7 @@ Manage your notification settings or learn more about vulnerability alerts.
             </el-option>
           </el-select>
         </el-form-item>
-         <el-form-item label="公司签名：" class="inputWidth" v-if="workformShow">
+        <el-form-item label="公司签名：" class="inputWidth" v-if="workformShow">
           <el-input
             size="small"
             v-model="dialogData.companySign"
@@ -185,10 +169,14 @@ Manage your notification settings or learn more about vulnerability alerts.
             :min="0"
           ></el-input>
         </el-form-item>
+        <el-form-item label="是否需要审核：" class="inputWidth" v-if="showIsNeedReview">
+          <el-radio v-model="dialogData.isNeedReview" label="1">是</el-radio>
+          <el-radio v-model="dialogData.isNeedReview" label="0">否</el-radio>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="handleEditSaveAction()"
-          >确定</el-button
+        >确定</el-button
         >
         <el-button @click="dialogEditVisible = false">取消</el-button>
       </span>
@@ -205,7 +193,8 @@ Manage your notification settings or learn more about vulnerability alerts.
       <div slot="footer" style="text-align: right;">
         <el-button @click="deleteOne(deleteId)" type="primary">确认</el-button>
         <el-button @click="delOneVisiable = false" type="primary" plain
-          >取消</el-button
+        >取消
+        </el-button
         >
       </div>
     </el-dialog>
@@ -213,341 +202,346 @@ Manage your notification settings or learn more about vulnerability alerts.
 </template>
 
 <script>
-import treeTable from "@/components/TreeTable";
-import {
-  getAllServer,
-  addServer,
-  modifyServer,
-  deleteServer,
-  checkServerName,
-  getTemplate
-} from "@/api/service_catalog_manage";
-import { list2Tree } from "@/utils/tools";
-export default {
-  name: "menu_management",
-  components: { treeTable },
-  data() {
-    return {
-      // 新建
-      dialogNewVisible: false,
-      // 编辑
-      dialogEditVisible: false,
-      // 删除单个
-      delOneVisiable: false,
-      //编辑一级时级联不显示
-      editeShow: true,
-      deleteId: 0,
-      delSelectVisiable: false,
-      defaultExpandAll: false,
-      showCheckbox: true,
-      iconList: [],
-      iconSelected: "",
-      key: 1,
-      columns: [
-        {
-          width: 100,
-          expand: true,
-          align: "left"
-        },
-        {
-          label: "服务名称",
-          key: "serviceName"
-        },
-        {
-          label: "排序值",
-          key: "serviceRank"
-        },
-        {
-          label: "操作",
-          key: "operation"
-        }
-      ],
-      // 服务清单数据
-      data: [],
-      // 编辑框当前选择的上级目录长度
-      editSuperiorDir: [],
-      // 对话框数据
-      dialogData: {
-        id: null,
-        serviceName: "",
-        serviceRank: "",
-        parentId: [],
-        workFormId: "",
-        workProcessId: "",
-        companySign:"",
-        smsTempId:""
-      },
-      cascaderProps: {
-        label: "serviceName",
-        value: "id",
-        children: "children"
-      },
-      workforms: [],
-      workformShow: false,
+  import treeTable from '@/components/TreeTable'
+  import {
+    getAllServer,
+    addServer,
+    modifyServer,
+    deleteServer,
+    getTemplate
+  } from '@/api/service_catalog_manage'
+  import { list2Tree } from '@/utils/tools'
 
-      // 备用数据
-      backupData1:[],
-      backupData2:[],
-    };
-  },
-  mounted() {
-    this.getServerList();
-    this.getWorkFormTemplate();
-  },
-  methods: {
-    // 获取工作表单
-    getWorkFormTemplate() {
-      getTemplate()
-        .then(res => {
-          if (res.data.code === 0) {
-            console.log(res.data);
-            this.workforms = res.data.data;
+  export default {
+    name: 'menu_management',
+    components: { treeTable },
+    data() {
+      return {
+        // 新建
+        dialogNewVisible: false,
+        // 编辑
+        dialogEditVisible: false,
+        // 删除单个
+        delOneVisiable: false,
+        // 编辑一级时级联不显示
+        editeShow: true,
+        showIsNeedReview: false,
+        deleteId: 0,
+        delSelectVisiable: false,
+        defaultExpandAll: false,
+        showCheckbox: true,
+        iconList: [],
+        iconSelected: '',
+        key: 1,
+        columns: [
+          {
+            width: 100,
+            expand: true,
+            align: 'left'
+          },
+          {
+            label: '服务名称',
+            key: 'serviceName'
+          },
+          {
+            label: '排序值',
+            key: 'serviceRank'
+          },
+          {
+            label: '操作',
+            key: 'operation'
           }
-        })
-        .catch(error => {
-          throw error;
-        });
-    },
-    // 获取服务清单
-    getServerList() {
-      getAllServer()
-        .then(response => {
-          const result = response.data.data;
-          this.data = list2Tree({
-            data: result,
-            rootId: 0,
-            idFieldName: "id",
-            parentIdFielName: "parentId"
-          });
-          this.backupData1 = response.data.data
-          this.backupData2 = response.data.data
-        })
-        .catch(error => {
-          throw error;
-        });
-    },
-    editeChange(ev){
-    },
-    handleChange(value) {
-      if (value.length === 2) {
-        this.workformShow = true;
-      } else {
-        this.workformShow = false;
+        ],
+        // 服务清单数据
+        data: [],
+        // 上级目录数据
+        parentData: [],
+        // 编辑框当前选择的上级目录长度
+        editSuperiorDir: [],
+        // 对话框数据
+        dialogData: {
+          id: null,
+          serviceName: '',
+          serviceRank: '',
+          parentId: [],
+          workFormId: '',
+          workProcessId: '',
+          companySign: '',
+          smsTempId: '',
+          isNeedReview: '1'
+        },
+        cascaderProps: {
+          label: 'serviceName',
+          value: 'id',
+          children: 'children'
+        },
+        workforms: [],
+        workformShow: false,
+
+        // 备用数据
+        backupData1: [],
+        backupData2: []
       }
     },
-    // 字符串转整数数组
-    strTransArr (str) {
-      str = str.substring(1)
-      return str.split('/').map(item => {
-        return parseInt(item)
-      })
+    mounted() {
+      this.getServerList()
+      this.getWorkFormTemplate()
     },
-    // 编辑传ID
-    handleEdit(row) {
-      this.workformShow = false
-      this.dialogEditVisible = true;
-      let parentIds = this.strTransArr(row.idPath)
-      parentIds.pop()
-      this.editSuperiorDir = parentIds
-      this.dialogData.parentId = parentIds;
-      this.dialogData.id = row.id;
-      this.dialogData.serviceName = row.serviceName;
-      this.dialogData.workFormId = row.workFormId;
-      this.dialogData.serviceRank = row.serviceRank || 0;
-      this.dialogData.companySign = row.companySign
-      this.dialogData.smsTempId = row.smsTempId
-      // 判断级别
-      if (parentIds.length === 0) {
-        //一级
-        this.editeShow = false;
-      } else if (parentIds.length === 1) {
-        //二级
-        console.log(this.backupData1)
-        this.editeShow = true;
-        getAllServer()
+    methods: {
+      // 获取工作表单
+      getWorkFormTemplate() {
+        getTemplate()
           .then(res => {
-            res.data.data.forEach(k => {
-              if (k.idPath.split("/").length - 1 === 2) {
-                k.disabled = true;
-              }
-            });
-            this.data = list2Tree({
-              data: res.data.data,
-              rootId: 0,
-              idFieldName: "id",
-              parentIdFielName: "parentId"
-            });
-          })
-          .catch(error => {
-            throw error;
-          });
-      } else if (parentIds.length === 2) {
-        //三级
-        this.workformShow = true;
-        this.editeShow = true;
-        getAllServer()
-          .then(res => {
-            res.data.data.forEach(m => {
-              if (m.idPath.split("/").length - 1 === 3) {
-                m.disabled = true;
-              }
-            });
-            this.data = list2Tree({
-              data: res.data.data,
-              rootId: 0,
-              idFieldName: "id",
-              parentIdFielName: "parentId"
-            });
-          })
-          .catch(error => {
-            throw error;
-          });
-      }
-    },
-    // 删除时传ID
-    handleDelete(row) {
-      this.deleteId = row.id;
-      this.delOneVisiable = true;
-    },
-    // 新建时重置数据
-    addOne() {
-      this.dialogNewVisible = true;
-      this.workformShow = false;
-      this.dialogData.workFormId = "";
-      this.dialogData.id = null;
-      this.dialogData.serviceName = "";
-      this.dialogData.parentId = [];
-      this.dialogData.serviceRank = "0";
-      this.dialogData.companySign = ""
-      this.dialogData.smsTempId = ""
-      getAllServer()
-        .then(res => {
-          res.data.data.forEach(p => {
-            if (p.idPath.split("/").length - 1 === 3) {
-              p.disabled = true;
+            if (res.data.code === 0) {
+              console.log(res.data)
+              this.workforms = res.data.data
             }
-          });
-          this.data = list2Tree({
-            data: res.data.data,
-            rootId: 0,
-            idFieldName: "id",
-            parentIdFielName: "parentId"
-          });
+          })
+          .catch(error => {
+            throw error
+          })
+      },
+      // 获取服务清单
+      getServerList() {
+        getAllServer()
+          .then(res => {
+            this.data = list2Tree({
+              data: res.data.data,
+              rootId: 0,
+              idFieldName: 'id',
+              parentIdFielName: 'parentId'
+            })
+            this.backupData1 = res.data.data
+            this.backupData2 = res.data.data
+          })
+          .catch(error => {
+            throw error
+          })
+      },
+      editeChange(ev) {
+      },
+      handleChange(value) {
+        if (value.length === 2) {
+          this.workformShow = true
+        } else {
+          this.workformShow = false
+        }
+      },
+      // 字符串转整数数组
+      strTransArr(str) {
+        str = str.substring(1)
+        return str.split('/').map(item => {
+          return parseInt(item)
         })
-        .catch(error => {
-          throw error;
-        });
-    },
-    // 删除操作
-    deleteOne(deleteid) {
-      deleteServer(deleteid)
-        .then(response => {
+      },
+      // 编辑传ID
+      handleEdit(row) {
+        this.workformShow = false
+        this.dialogEditVisible = true
+        const parentIds = this.strTransArr(row.idPath)
+        parentIds.pop()
+        this.editSuperiorDir = parentIds
+        this.dialogData.parentId = parentIds
+        this.dialogData.id = row.id
+        this.dialogData.serviceName = row.serviceName
+        this.dialogData.workFormId = row.workFormId
+        this.dialogData.serviceRank = row.serviceRank || 0
+        this.dialogData.companySign = row.companySign
+        this.dialogData.smsTempId = row.smsTempId
+        this.dialogData.isNeedReview = row.isNeedReview
+        // 判断级别
+        if (parentIds.length === 0) {
+          // 一级
+          this.editeShow = false
+          this.showIsNeedReview = false
+        } else if (parentIds.length === 1) {
+          // 二级
+          console.log(this.backupData1)
+          this.editeShow = true
+          this.showIsNeedReview = false
+
+          getAllServer()
+            .then(res => {
+              res.data.data.forEach(p => {
+                if (p.idPath.split('/').length - 1 === 3) {
+                  p.disabled = true
+                }
+              })
+              this.parentData = list2Tree({
+                data: res.data.data,
+                rootId: 0,
+                idFieldName: 'id',
+                parentIdFielName: 'parentId'
+              })
+              throw error
+            })
+        } else if (parentIds.length === 2) {
+          // 三级
+          this.workformShow = true
+          this.editeShow = true
+          this.showIsNeedReview = true
+
+          getAllServer()
+            .then(res => {
+              res.data.data.forEach(p => {
+                if (p.idPath.split('/').length - 1 === 3) {
+                  p.disabled = true
+                }
+              })
+              this.parentData = list2Tree({
+                data: res.data.data,
+                rootId: 0,
+                idFieldName: 'id',
+                parentIdFielName: 'parentId'
+              })
+              throw error
+            })
+        }
+      },
+      // 删除时传ID
+      handleDelete(row) {
+        this.deleteId = row.id
+        this.delOneVisiable = true
+      },
+      // 新建时重置数据
+      addOne() {
+        this.dialogNewVisible = true
+        this.workformShow = false
+        this.showIsNeedReview = false
+        this.dialogData.workFormId = ''
+        this.dialogData.id = null
+        this.dialogData.serviceName = ''
+        this.dialogData.parentId = []
+        this.dialogData.serviceRank = '0'
+        this.dialogData.companySign = ''
+        this.dialogData.smsTempId = ''
+        this.dialogData.isNeedReview = '1'
+
+        getAllServer()
+          .then(res => {
+            res.data.data.forEach(p => {
+              if (p.idPath.split('/').length - 1 === 3) {
+                p.disabled = true
+              }
+            })
+            this.parentData = list2Tree({
+              data: res.data.data,
+              rootId: 0,
+              idFieldName: 'id',
+              parentIdFielName: 'parentId'
+            })
+            throw error
+          })
+      },
+      // 删除操作
+      deleteOne(deleteid) {
+        deleteServer(deleteid)
+          .then(response => {
+            if (response.data.code === 0) {
+              this.delOneVisiable = false
+              this.getServerList()
+            } else {
+              this.$message.error(response.data.message)
+              return
+            }
+          })
+          .catch(error => {
+            throw error
+          })
+      },
+      // 编辑修改
+      handleEditSaveAction() {
+        var parentId = 0
+        if (this.dialogData.parentId.length !== 0) {
+          parentId = this.dialogData.parentId[this.dialogData.parentId.length - 1]
+        }
+        if (this.dialogData.serviceName === '') {
+          this.$message.error('请输入服务名称')
+          return
+        }
+        if (this.dialogData.serviceRank < 0) {
+          this.$message.error('请输入大于0的排序值')
+          return
+        }
+        if (!this.dialogData.parentId.length) {
+          this.$message.error(`请选择上级目录`)
+          return
+        }
+        if (this.dialogData.parentId.length !== this.editSuperiorDir.length) {
+          this.$message.error(`只能选择第${this.editSuperiorDir.length}级的目录`)
+          return
+        }
+        modifyServer({
+          id: this.dialogData.id,
+          serviceName: this.dialogData.serviceName,
+          parentId: parentId,
+          serviceRank: this.dialogData.serviceRank,
+          workFormId: this.dialogData.workFormId,
+          companySign: this.dialogData.companySign,
+          smsTempId: this.dialogData.smsTempId,
+          isNeedReview: this.dialogData.isNeedReview
+        }).then(response => {
           if (response.data.code === 0) {
-            this.delOneVisiable = false;
-            this.getServerList();
+            this.dialogEditVisible = false
+            this.getServerList()
           } else {
-            this.$message.error(response.data.message);
-            return;
+            this.$message.error(response.data.message)
+            return
           }
         })
-        .catch(error => {
-          throw error;
-        });
-    },
-    // 编辑修改
-    handleEditSaveAction() {
-      var parentId = 0;
-      if (this.dialogData.parentId.length !== 0) {
-        parentId = this.dialogData.parentId[
-          this.dialogData.parentId.length - 1
-        ];
-      }
-      if (this.dialogData.serviceName === "") {
-        this.$message.error("请输入服务名称");
-        return;
-      }
-      if (this.dialogData.serviceRank < 0) {
-        this.$message.error("请输入大于0的排序值");
-        return;
-      }
-      if (!this.dialogData.parentId.length) {
-        this.$message.error(`请选择上级目录`);
-        return;
-      }
-      if (this.dialogData.parentId.length !== this.editSuperiorDir.length) {
-        this.$message.error(`只能选择第${this.editSuperiorDir.length}级的目录`);
-        return;
-      }
-      modifyServer({
-        id: this.dialogData.id,
-        serviceName: this.dialogData.serviceName,
-        parentId: parentId,
-        serviceRank: this.dialogData.serviceRank,
-        workFormId: this.dialogData.workFormId,
-        companySign: this.dialogData.companySign,
-        smsTempId: this.dialogData.smsTempId
-      }).then(response => {
-        if (response.data.code === 0) {
-          this.dialogEditVisible = false;
-          this.getServerList();
-        } else {
-          this.$message.error(response.data.message);
-          return;
+      },
+      // 确定新建服务
+      handleNewSaveAction() {
+        var parentId = 0
+        if (this.dialogData.parentId.length > 0) {
+          parentId = this.dialogData.parentId[this.dialogData.parentId.length - 1]
         }
-      });
-    },
-    // 确定新建服务
-    handleNewSaveAction() {
-      var parentId = 0;
-      if (this.dialogData.parentId.length > 0) {
-        parentId = this.dialogData.parentId[
-          this.dialogData.parentId.length - 1
-        ];
-      }
-      if (this.dialogData.serviceName === "") {
-        this.$message.error("请输入服务名称");
-        return;
-      }
-      if (this.dialogData.serviceRank < 0) {
-        this.$message.error("请输入大于0的排序值");
-        return;
-      }
-      if (this.dialogData.workFormId === "") {
-        if (this.dialogData.parentId.length === 2) {
-          this.$message.error("请选择工单目录");
-          return;
+        if (this.dialogData.serviceName === '') {
+          this.$message.error('请输入服务名称')
+          return
         }
-      }
-      addServer({
-        serviceName: this.dialogData.serviceName,
-        parentId: parentId,
-        serviceRank: this.dialogData.serviceRank,
-        workFormId: this.dialogData.workFormId,
-        companySign: this.dialogData.companySign,
-        smsTempId: this.dialogData.smsTempId
-      }).then(response => {
-        if (response.data.code === 0) {
-          this.dialogNewVisible = false;
-          this.getServerList();
-        } else {
-          this.$message.error(response.data.message);
-          return;
+        if (this.dialogData.serviceRank < 0) {
+          this.$message.error('请输入大于0的排序值')
+          return
         }
-      });
+        if (this.dialogData.workFormId === '') {
+          if (this.dialogData.parentId.length === 2) {
+            this.$message.error('请选择工单目录')
+            return
+          }
+        }
+        addServer({
+          serviceName: this.dialogData.serviceName,
+          parentId: parentId,
+          serviceRank: this.dialogData.serviceRank,
+          workFormId: this.dialogData.workFormId,
+          companySign: this.dialogData.companySign,
+          smsTempId: this.dialogData.smsTempId,
+          isNeedReview: this.dialogData.isNeedReview
+        }).then(response => {
+          if (response.data.code === 0) {
+            this.dialogNewVisible = false
+            this.getServerList()
+          } else {
+            this.$message.error(response.data.message)
+            return
+          }
+        })
+      }
     }
   }
-};
 </script>
 <style>
-.icon-item {
-  float: left;
-  width: 10%;
-  font-size: 3em;
-  text-align: center;
-  line-height: 3.25em;
-}
-.icon-in-table {
-  font-size: 1.5em;
-  text-align: center;
-}
+  .icon-item {
+    float: left;
+    width: 10%;
+    font-size: 3em;
+    text-align: center;
+    line-height: 3.25em;
+  }
+
+  .icon-in-table {
+    font-size: 1.5em;
+    text-align: center;
+  }
 </style>

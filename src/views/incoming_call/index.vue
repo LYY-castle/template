@@ -750,7 +750,6 @@
                 v-model="recordSummaryCreateInfo.summaryIds"
                 :options="nodulesTree"
                 filterable
-                clearable
                 :props="summaryTreeProps"
                 @change="handleNoduleChange"
                 :show-all-levels="false"
