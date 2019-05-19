@@ -51,7 +51,6 @@
             show-all-levels
             filterable
             size="small"
-            expand-trigger="hover"
             clearable
             change-on-select
             @change="handleChange"
@@ -124,7 +123,6 @@
             show-all-levels
             filterable
             size="small"
-            expand-trigger="hover"
             clearable
             change-on-select
             @blur="editeChange"
@@ -323,8 +321,10 @@
       handleChange(value) {
         if (value.length === 2) {
           this.workformShow = true
+          this.showIsNeedReview = true
         } else {
           this.workformShow = false
+          this.showIsNeedReview = false
         }
       },
       // 字符串转整数数组
@@ -463,11 +463,11 @@
           this.$message.error('请输入大于0的排序值')
           return
         }
-        if (!this.dialogData.parentId.length) {
+        if (this.editeShow && !this.dialogData.parentId.length) {
           this.$message.error(`请选择上级目录`)
           return
         }
-        if (this.dialogData.parentId.length !== this.editSuperiorDir.length) {
+        if (this.editeShow && this.dialogData.parentId.length !== this.editSuperiorDir.length) {
           this.$message.error(`只能选择第${this.editSuperiorDir.length}级的目录`)
           return
         }
