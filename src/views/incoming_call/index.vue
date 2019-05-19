@@ -547,7 +547,7 @@
               <div style="text-align:center" class="margin-bottom-20">
                 <el-form>
                   <el-form-item :inline="true">
-                    <el-input class="workform-title-input" v-model="addWorkForm.name" placeholder="请输入工单名称"></el-input>
+                    <el-input class="workform-title-input" v-model="addWorkForm.name" placeholder="请输入工单名称" title="工单名称"></el-input>
                   </el-form-item>
                 </el-form>
               </div>
@@ -1880,6 +1880,8 @@ export default {
     // 工单记录--------------4
     // 查询工单记录
     getWorkFormRecord() {
+      console.log('into getWorkFormRecord customerInfos =', this.customerInfos)
+
       this.searchWorkFormRecord2 = clone(this.searchWorkFormRecord)
       this.searchWorkFormRecord.customerId = this.customerInfos.customerId
       this.searchWorkFormRecord.timeStart = this.timeValue ? this.timeValue[0] : null
@@ -1959,6 +1961,7 @@ export default {
     // 根据工单模板展示工单,初始化需绑定的绑定数据
     showWorkFormTemp(tempInfo) {
       this.workformInfo = tempInfo
+      this.addWorkForm.name = this.workformInfo.name
       this.addWorkForm.workformRecordRuleCreateInfos = []
       this.workformInfo.workformProperties.forEach((item) => {
         if (item.dataType === 'checkbox' || item.dataType === 'multipleSelect') {
@@ -2036,7 +2039,7 @@ export default {
       // this.$store.commit('SET_CUSTOMER_INFOS', [])
       // this.$store.commit('SET_CUSTOMER_PHONE', null)
       this.customerPhoneAddress = null
-      this.customerInfos = null
+      this.customerInfos = { cuatomerName: '', cuatomerId: null }
       this.selectedServiceList = []
     },
     // 生成校验
@@ -2110,20 +2113,7 @@ export default {
           })
         }
       }
-      // this.workformVali.forEach((item) => {
-      //   // if (!this.canSubmit) {
-      //   //   return
-      //   // } else {
-      //   if (item) {
-      //     this.canSubmit = true
-      //   } else {
-      //     this.canSubmit = false
-      //     return
-      //   }
-      //   // }
-      // })
       this.canSubmit = !this.workformVali.includes(false)
-      // this.completeAll()
       if (this.canSubmit) {
         if (!this.recordSummaryCreateInfo.summaryIds) {
           this.$message.error('请选择话后小结')
@@ -2146,26 +2136,6 @@ export default {
         this.$message.error('请将工单填写完整后提交 ')
       }
     },
-    // completeAll() {
-    //   if (this.canSubmit) {
-    //     if (!this.recordSummaryCreateInfo.summaryIds) {
-    //       this.$message.error('请选择话后小结')
-    //       return false
-    //     }
-    //     this.createAddWorkForm()
-    //     addWorkFormRecord(this.addWorkForm).then(response => {
-    //       if (response.data.code === 0) {
-    //         this.recordSummaryInfo()
-    //       } else {
-    //         this.$message.error(response.data.message)
-    //       }
-    //     }).catch(error => {
-    //       throw error
-    //     })
-    //   } else {
-    //     this.$message.error('请将工单填写完整后提交 ')
-    //   }
-    // },
     // 提交完成
     handleSubmit() {
       if (this.isAddWorkOrder) {
@@ -2586,7 +2556,7 @@ export default {
       // })
     },
     changeCustomerTalking(index) {
-      this.customerInfos = JSON.parse(localStorage.getItem('customerInfos'))
+      this.customerInfos = JSON.parse(localStorage.getItem('customerInfos')) || { cuatomerName: '', cuatomerId: null }
       for (let i = 0; i < this.customerInfos.length; i++) {
         this.customerInfos[i].isTalking = false
       }
@@ -3023,12 +2993,12 @@ export default {
     // this.$store.dispatch('setCustomerInfosAndRecodId', { customerPhone: customerPhone, customerInfos: customerInfos, recordId: recordId })
     if (sessionStorage.getItem('inCall_customerInfos')) {
       this.customerPhone = sessionStorage.getItem('inCall_customerPhone')
-      this.customerInfos = JSON.parse(sessionStorage.getItem('inCall_customerInfos'))
+      this.customerInfos = JSON.parse(sessionStorage.getItem('inCall_customerInfos')) || { cuatomerName: '', cuatomerId: null }
       this.searchContactListReq.customerId = this.customerInfos ? this.customerInfos.customerId : ''
       this.recordSummaryCreateInfo.recordId = sessionStorage.getItem('inCall_recordId')
     } else {
       this.customerPhone = ''
-      this.customerInfos = { cuatomerName: '' }
+      this.customerInfos = { cuatomerName: '', cuatomerId: null }
     }
     // 查询所有服务目录
     getServiceList().then(response => {
