@@ -752,7 +752,6 @@
                 filterable
                 :props="summaryTreeProps"
                 @change="handleNoduleChange"
-                :show-all-levels="false"
               ></el-cascader>
             </el-form-item>
             <!-- <el-col
@@ -769,16 +768,16 @@
                 @change="handleChangeWorkFormSwitch">
               </el-switch>
             </el-form-item>
-            <el-form-item label="服务目录：" v-if="isAddWorkOrder">
+            <el-form-item label="服务目录：" v-if="isAddWorkOrder" >
               <el-cascader
                 size="mini"
+                style="width:130%"
                 expand-trigger="hover"
                 placeholder="请选择服务目录"
                 v-model="selectedServiceList"
                 :options="serviceListTree"
                 filterable
                 :props="serviceListTreeProps"
-                :show-all-levels="false"
                 @change="handleServiceListChange"
               ></el-cascader>
             </el-form-item>

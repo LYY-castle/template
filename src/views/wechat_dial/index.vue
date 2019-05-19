@@ -223,7 +223,7 @@
                 <!-- 单选 -->
                     <div class="options" v-if="item1.type===0">
                       <el-radio-group v-model="answerData[index][item1.id]">
-                        <el-radio 
+                        <el-radio
                           v-for="(a, radioIndex) in item1.options"
                           :key="radioIndex"
                           :label="a.content"
@@ -234,31 +234,31 @@
                   <!-- 多选 -->
                   <div v-if="item1.type===1">
                     <el-checkbox-group v-model="answerData[index][item1.id]">
-                      <el-checkbox 
-                        v-for="(a,checkboxIndex) in item1.options" 
-                        :label="a.content" 
+                      <el-checkbox
+                        v-for="(a,checkboxIndex) in item1.options"
+                        :label="a.content"
                         :key="checkboxIndex"></el-checkbox>
                     </el-checkbox-group>
                   </div>
 
                   <!-- 单行 -->
                   <div v-if="item1.type===2">
-                    <el-input 
+                    <el-input
                       v-model="answerData[index][item1.id]"
                       type="text"
                       clearable
-                      style="width:478px;margin:2px" 
+                      style="width:478px;margin:2px"
                       maxlength="45"></el-input>
                   </div>
 
                   <!-- 多行 -->
                   <div v-if="item1.type===3">
-                    <el-input 
+                    <el-input
                       v-model="answerData[index][item1.id]"
-                      type="textarea" 
-                      rows="4"  
-                      resize="none" 
-                      style="width:478px;margin:2px" 
+                      type="textarea"
+                      rows="4"
+                      resize="none"
+                      style="width:478px;margin:2px"
                       maxlength="45" ></el-input>
                   </div>
                 </el-form-item>
@@ -403,8 +403,7 @@
                   :options="nodulesTree"
                   filterable
                   :props="summaryTreeProps"
-                  @change="handleNoduleChange"
-                  :show-all-levels="false">
+                  @change="handleNoduleChange">
                 </el-cascader>
                 <span style="margin-left:70px;" v-if="showSendMessage === true && campaignType === 'MARKETING' && hasProductInfo === true">
                   <el-checkbox v-model="sendMessageOrNot" checked="checked">发送支付短信</el-checkbox>

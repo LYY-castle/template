@@ -506,7 +506,6 @@
                   :options="nodulesTree"
                   filterable
                   :props="summaryTreeProps"
-                  :show-all-levels="false"
                   @change="handleNoduleChange">
                 </el-cascader>
               </div>
