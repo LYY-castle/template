@@ -576,7 +576,7 @@
                           :placeholder="item.placeholder"
                           v-model="addWorkForm.workformRecordRuleCreateInfos[index].recordValue">
                           <el-radio
-                            v-for="(item2,index2) in JSON.parse(item.dataValues)"
+                            v-for="(item2,index2) in item.dataValues"
                             :label="index2"
                             :key="index2">
                               {{item2}}
@@ -589,7 +589,7 @@
                           :placeholder="item.placeholder"
                           v-model="addWorkForm.workformRecordRuleCreateInfos[index].recordValue">
                           <el-option
-                            v-for="(item2,index2) in JSON.parse(item.dataValues)"
+                            v-for="(item2,index2) in item.dataValues"
                             :label="item2"
                             :key="index2"
                             :value="index2">
@@ -601,7 +601,7 @@
                           :placeholder="item.placeholder"
                           v-model="addWorkForm.workformRecordRuleCreateInfos[index].recordValue">
                           <el-checkbox
-                             v-for="(item2,index2) in JSON.parse(item.dataValues)"
+                             v-for="(item2,index2) in item.dataValues"
                             :label="index2"
                             :key="index2">
                             {{item2}}
@@ -719,9 +719,9 @@
               </div>
               <div style="width:100%;">
                 <div class="callInfo-item font12 fl" style="width:50%;margin-bottom:15px;" v-for="(item,index) in workformRecordContent" :key="index">
-                  <span >{{item.workformPropertyId.name+"："}}</span>
+                  <span>{{item.workformPropertyId.name+"："}}</span>
                   <span style="color:#333;">
-                    {{item.workformPropertyId.dataType==="span"||item.workformPropertyId.dataType==="textarea"||item.workformPropertyId.dataType==="time"||item.workformPropertyId.dataType==="datetime"||item.workformPropertyId.dataType==="inputnumber"||item.workformPropertyId.dataType==="input"||item.workformPropertyId.dataType==="date"?item.recordValue:showSelectValue(item.workformPropertyId.dataType,item.workformPropertyId.dataValues,item.recordValue)}}</span>
+                    {{item.workformPropertyId.dataType==="span"||item.workformPropertyId.dataType==="textarea"||item.workformPropertyId.dataType==="time"||item.workformPropertyId.dataType==="datetime"||item.workformPropertyId.dataType==="inputnumber"||item.workformPropertyId.dataType==="input"||item.workformPropertyId.dataType==="date" ? (item.recordValue || '') : showSelectValue(item.workformPropertyId.dataType,item.workformPropertyId.dataValues,item.recordValue)}}</span>
                 </div>
               </div>
             </div>
@@ -2005,7 +2005,7 @@ export default {
         for (var key2 in obj) {
           if (key2 === val) result = obj[key2]
         }
-        return result
+        return result || ''
       }
     },
     // 初始化添加工单请求数据

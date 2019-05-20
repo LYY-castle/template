@@ -302,17 +302,17 @@ export default {
           result = arr || workformRecordRuleResult.workformPropertyId.defaultValue
           break
         case 'radio':
-          result = arr ? JSON.parse(workformRecordRuleResult.workformPropertyId.dataValues)[arr] : ''
+          result = arr ? workformRecordRuleResult.workformPropertyId.dataValues[arr] : ''
           break
         case 'select':
-          result = arr ? JSON.parse(workformRecordRuleResult.workformPropertyId.dataValues)[arr] : ''
+          result = arr ? workformRecordRuleResult.workformPropertyId.dataValues[arr] : ''
           break
         case 'checkbox':
         case 'multipleSelect':
           if (arr) {
             const temp_arr = JSON.parse(arr)
             const temp_result = []
-            const dataValues = JSON.parse(workformRecordRuleResult.workformPropertyId.dataValues)
+            const dataValues = workformRecordRuleResult.workformPropertyId.dataValues
             for (let i = 0; i < temp_arr.length; i++) {
               temp_result.push(dataValues[temp_arr[i]])
             }

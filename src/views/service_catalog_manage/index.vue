@@ -166,7 +166,7 @@
             class="item"
             effect="dark"
             placement="top">
-            <div slot="content">此处支持代码扩展<br/>service_menu_code 代表服务目录编号<br/>work_form_status 代表工单状态<br/>其他根据工单字段名判断</div>
+            <div slot="content">此处支持代码扩展<br/>work_form_status 代表工单状态<br/>其他根据工单字段名判断</div>
             <i class="el-icon-question"></i>
           </el-tooltip>
           <el-input
