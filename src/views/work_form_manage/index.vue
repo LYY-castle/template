@@ -788,11 +788,11 @@ export default {
         .then(res => {
           if (res.data.code === 0) {
             this.workFromData = res.data.data;
-            console.log(this.workFromData[0].workformProperties[2].dataValues);
-            var dataceshi = JSON.parse(
-              this.workFromData[0].workformProperties[2].dataValues
-            );
-            console.log(dataceshi);
+            // console.log(this.workFromData[0].workformProperties[0].dataValues);
+            // var dataceshi = JSON.parse(
+            //   this.workFromData[0].workformProperties[2].dataValues
+            // );
+            // console.log(dataceshi);
             if (res.data.pageInfo) {
               this.pageInfo = res.data.pageInfo;
               this.pageShow = true;
@@ -1054,7 +1054,7 @@ export default {
           workform: {},
           maxValue: "",
           minValue: "",
-          name: "span",
+          name: "描述文字",
           placeholder: "",
           regex: "",
           remark: "",
