@@ -40,9 +40,6 @@
         <el-form-item label="名称：" class="inputWidth">
           <el-input size="small" v-model="dialogData.serviceName"></el-input>
         </el-form-item>
-        <el-form-item label="编号：" v-if="showCode">
-          <el-input size="small" v-model="dialogData.code"></el-input>
-        </el-form-item>
         <el-form-item label="上级目录：" class="inputWidth">
           <el-cascader
             v-if="dialogNewVisible"
@@ -105,7 +102,10 @@
             :min="0"
           ></el-input>
         </el-form-item>
-        <el-form-item label="是否需要审核：" class="inputWidth" v-if="showIsNeedReview">
+        <el-form-item label="编号：" v-if="workformShow">
+          <el-input size="small" v-model="dialogData.code"></el-input>
+        </el-form-item>
+        <el-form-item label="是否需要审核：" class="inputWidth" v-if="workformShow">
           <el-radio v-model="dialogData.isNeedReview" label="1">是</el-radio>
           <el-radio v-model="dialogData.isNeedReview" label="0">否</el-radio>
         </el-form-item>
@@ -123,9 +123,7 @@
         <el-form-item label="名称：" class="inputWidth">
           <el-input size="small" v-model="dialogData.serviceName"></el-input>
         </el-form-item>
-        <el-form-item label="编号：" class="inputWidth" v-if="showCode">
-          <el-input size="small" v-model="dialogData.code"></el-input>
-        </el-form-item>
+
         <el-form-item label="上级目录：" class="inputWidth" v-if="editeShow">
           <el-cascader
             style="width:100%;"
@@ -187,7 +185,10 @@
             :min="0"
           ></el-input>
         </el-form-item>
-        <el-form-item label="是否需要审核：" class="inputWidth" v-if="showIsNeedReview">
+        <el-form-item label="编号：" class="inputWidth" v-if="workformShow">
+          <el-input size="small" v-model="dialogData.code"></el-input>
+        </el-form-item>
+        <el-form-item label="是否需要审核：" class="inputWidth" v-if="workformShow">
           <el-radio v-model="dialogData.isNeedReview" label="1">是</el-radio>
           <el-radio v-model="dialogData.isNeedReview" label="0">否</el-radio>
         </el-form-item>
@@ -242,9 +243,7 @@
         // 删除单个
         delOneVisiable: false,
         // 编辑一级时级联不显示
-        editeShow: true,
-        showIsNeedReview: false,
-        showCode: false,
+        editeShow: false,
         deleteId: 0,
         delSelectVisiable: false,
         defaultExpandAll: false,
@@ -343,12 +342,8 @@
       handleChange(value) {
         if (value.length === 2) {
           this.workformShow = true
-          this.showIsNeedReview = true
-          this.showCode = true
         } else {
           this.workformShow = false
-          this.showIsNeedReview = false
-          this.showCode = false
         }
       },
       // 字符串转整数数组
@@ -361,7 +356,6 @@
       // 编辑传ID
       handleEdit(row) {
         this.workformShow = false
-        this.showCode = false
         this.dialogEditVisible = true
         const parentIds = this.strTransArr(row.idPath)
         parentIds.pop()
@@ -378,14 +372,9 @@
         if (parentIds.length === 0) {
           // 一级
           this.editeShow = false
-          this.showIsNeedReview = false
-          this.showCode = false
         } else if (parentIds.length === 1) {
           // 二级
-          console.log(this.backupData1)
           this.editeShow = true
-          this.showIsNeedReview = false
-          this.showCode = false
           getAllServer()
             .then(res => {
               res.data.data.forEach(p => {
@@ -405,10 +394,8 @@
             })
         } else if (parentIds.length === 2) {
           // 三级
-          this.workformShow = true
           this.editeShow = true
-          this.showIsNeedReview = true
-          this.showCode = true
+          this.workformShow = true
           getAllServer()
             .then(res => {
               res.data.data.forEach(p => {
@@ -437,8 +424,6 @@
       addOne() {
         this.dialogNewVisible = true
         this.workformShow = false
-        this.showIsNeedReview = false
-        this.showCode = false
         this.dialogData.workFormId = ''
         this.dialogData.id = null
         this.dialogData.serviceName = ''
@@ -448,7 +433,6 @@
         this.dialogData.smsTempId = ''
         this.dialogData.isNeedReview = '1'
         this.dialogData.code = ''
-
         getAllServer()
           .then(res => {
             res.data.data.forEach(p => {
