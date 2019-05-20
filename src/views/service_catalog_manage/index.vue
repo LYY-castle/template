@@ -123,7 +123,7 @@
         <el-form-item label="名称：" class="inputWidth">
           <el-input size="small" v-model="dialogData.serviceName"></el-input>
         </el-form-item>
-        
+
         <el-form-item label="上级目录：" class="inputWidth" v-if="editeShow">
           <el-cascader
             style="width:100%;"
@@ -244,8 +244,6 @@
         delOneVisiable: false,
         // 编辑一级时级联不显示
         editeShow: false,
-        showIsNeedReview: false,
-        showCode: false,
         deleteId: 0,
         delSelectVisiable: false,
         defaultExpandAll: false,
