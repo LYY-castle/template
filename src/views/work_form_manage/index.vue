@@ -97,7 +97,7 @@
     <div v-if="createShow">
       <el-row :gutter="20">
         <!-- 选择类型 -->
-        <el-col :span="4">
+        <el-col :span="3">
           <el-menu class="el-menu-vertical-demo">
             <el-menu-item index="1" @click="addDemo(1)">
               <i class="el-icon-edit"></i>
@@ -123,9 +123,25 @@
               <i class="el-icon-arrow-down"></i>
               <span slot="title">下拉框</span>
             </el-menu-item>
+            <el-menu-item index="8" @click="addDemo(8)">
+              <i class="el-icon-date"></i>
+              <span slot="title">多选下拉框</span>
+            </el-menu-item>
             <el-menu-item index="7" @click="addDemo(7)">
               <i class="el-icon-date"></i>
+              <span slot="title">日期+时间</span>
+            </el-menu-item>
+            <el-menu-item index="9" @click="addDemo(9)">
+              <i class="el-icon-date"></i>
+              <span slot="title">日期</span>
+            </el-menu-item>
+            <el-menu-item index="10" @click="addDemo(10)">
+              <i class="el-icon-date"></i>
               <span slot="title">时间</span>
+            </el-menu-item>
+            <el-menu-item index="11" @click="addDemo(11)">
+              <i class="el-icon-date"></i>
+              <span slot="title">span</span>
             </el-menu-item>
           </el-menu>
         </el-col>
@@ -148,7 +164,9 @@
             >
               <div v-if="item.dataType === 'input'" class="demo">
                 <div class="name">{{ item.name }}</div>
-                <div class="name">{{ item.val }}</div>
+                <div class="name">
+                  <p class="white-space:normal;width:100%;">{{ item.val }}</p>
+                </div>
                 <el-input
                   size="small"
                   :disabled="item.rw === 0 ? true : false"
@@ -158,7 +176,9 @@
               </div>
               <div v-if="item.dataType === 'textarea'" class="demo">
                 <div class="name">{{ item.name }}</div>
-                <div class="name">{{ item.val }}</div>
+                <div class="name">
+                  <p>{{ item.val }}</p>
+                </div>
                 <el-input
                   size="small"
                   type="textarea"
@@ -168,18 +188,22 @@
                   :placeholder="item.placeholder"
                 ></el-input>
               </div>
-              <div v-if="item.dataType === 'number'" class="demo">
+              <div v-if="item.dataType === 'inputNumber'" class="demo">
                 <div class="name">{{ item.name }}</div>
-                <div class="name">{{ item.val }}</div>
+                <div class="name">
+                  <p>{{ item.val }}</p>
+                </div>
                 <el-input
                   size="small"
-                  type="number"
+                  type="inputNumber"
                   :disabled="item.rw === 0 ? true : false"
                 ></el-input>
               </div>
               <div v-if="item.dataType === 'radio'" class="demo">
                 <div class="name">{{ item.name }}</div>
-                <div class="name">{{ item.val }}</div>
+                <div class="name">
+                  <p>{{ item.val }}</p>
+                </div>
                 <!-- <div v-for="(a, k) in item.options" :key="k">
                   <el-radio-group>
                     <el-radio :label="k" :disabled="item.rw===0?true:false">{{
@@ -190,7 +214,9 @@
               </div>
               <div v-if="item.dataType === 'checkbox'" class="demo">
                 <div class="name">{{ item.name }}</div>
-                <div class="name">{{ item.val }}</div>
+                <div class="name">
+                  <p>{{ item.val }}</p>
+                </div>
                 <!-- <div>
                   <el-checkbox-group v-for="(a, k) in item.options" :key="k">
                     <el-checkbox label="k" :disabled="item.rw===0?true:false">{{
@@ -201,7 +227,9 @@
               </div>
               <div v-if="item.dataType === 'select'" class="demo">
                 <div class="name">{{ item.name }}</div>
-                <div class="name">{{ item.val }}</div>
+                <div class="name">
+                  <p>{{ item.val }}</p>
+                </div>
                 <!-- <el-select
                   :placeholder="item.placeholder"
                   v-model="item.value"
@@ -217,9 +245,57 @@
               </div>
               <div v-if="item.dataType === 'datetime'" class="demo">
                 <div class="name">{{ item.name }}</div>
-                <div class="name">{{ item.val }}</div>
+                <div class="name">
+                  <p>{{ item.val }}</p>
+                </div>
                 <el-date-picker
                   type="datetime"
+                  :placeholder="item.placeholder"
+                  :disabled="item.rw === 0 ? true : false"
+                >
+                </el-date-picker>
+              </div>
+              <div v-if="item.dataType === 'multipleSelect'" class="demo">
+                <div class="name">{{ item.name }}</div>
+                <div class="name">
+                  <p>{{ item.val }}</p>
+                </div>
+                <el-select
+                  v-model="item.dataValues"
+                  multiple
+                  :placeholder="item.placeholder"
+                  :disabled="item.rw === 0 ? true : false"
+                >
+                  <!-- <el-option
+                    v-for="item in item.dataValues"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option> -->
+                </el-select>
+              </div>
+              <div v-if="item.dataType === 'date'" class="demo">
+                <div class="name">{{ item.name }}</div>
+                <div class="name">
+                  <p>{{ item.val }}</p>
+                </div>
+                <el-date-picker
+                  v-model="item.dataValues"
+                  type="date"
+                  :placeholder="item.placeholder"
+                  :disabled="item.rw === 0 ? true : false"
+                >
+                </el-date-picker>
+              </div>
+               <div v-if="item.dataType === 'time'" class="demo">
+                <div class="name">{{ item.name }}</div>
+                <div class="name">
+                  <p>{{ item.val }}</p>
+                </div>
+                <el-date-picker
+                  v-model="item.dataValues"
+                  type="date"
                   :placeholder="item.placeholder"
                   :disabled="item.rw === 0 ? true : false"
                 >
@@ -301,7 +377,7 @@
               <div>
                 <div><p>字段描述</p></div>
                 <el-input
-                  type="text"
+                  type="textarea"
                   :rows="2"
                   v-model="item.val"
                 ></el-input>
@@ -373,7 +449,7 @@
                 <el-input type="text" v-model="item.remark"> </el-input>
               </div>
             </div>
-            <div v-show="item.dataType === 'number' && typeShow[index]">
+            <div v-show="item.dataType === 'inputNumber' && typeShow[index]">
               <div>
                 <div><span>字段名称</span></div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
@@ -592,7 +668,7 @@
                 <el-input type="text" v-model="item.remark"> </el-input>
               </div>
             </div>
-            <div v-show="item.dataType === '' && typeShow[index]">
+            <div v-show="item.dataType === 'datetime' && typeShow[index]">
               <div>
                 <div><span>字段名称</span></div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
@@ -712,6 +788,11 @@ export default {
         .then(res => {
           if (res.data.code === 0) {
             this.workFromData = res.data.data;
+            console.log(this.workFromData[0].workformProperties[2].dataValues);
+            var dataceshi = JSON.parse(
+              this.workFromData[0].workformProperties[2].dataValues
+            );
+            console.log(dataceshi);
             if (res.data.pageInfo) {
               this.pageInfo = res.data.pageInfo;
               this.pageShow = true;
@@ -774,7 +855,7 @@ export default {
     initFrom(num) {
       if (num === 1) {
         this.workFormTable.workformProperties.push({
-          dataType: 'input',
+          dataType: "input",
           dataValues: "",
           defaultValue: "",
           formatValue: "",
@@ -793,7 +874,7 @@ export default {
         });
       } else if (num === 2) {
         this.workFormTable.workformProperties.push({
-          dataType: 'textarea',
+          dataType: "textarea",
           dataValues: "",
           defaultValue: "",
           formatValue: "",
@@ -812,7 +893,7 @@ export default {
         });
       } else if (num === 3) {
         this.workFormTable.workformProperties.push({
-          dataType: 'number',
+          dataType: "inputNumber",
           dataValues: "",
           defaultValue: "",
           formatValue: "",
@@ -831,7 +912,7 @@ export default {
         });
       } else if (num === 4) {
         this.workFormTable.workformProperties.push({
-          dataType: 'radio',
+          dataType: "radio",
           dataValues: "",
           defaultValue: "",
           formatValue: "",
@@ -850,7 +931,7 @@ export default {
         });
       } else if (num === 5) {
         this.workFormTable.workformProperties.push({
-          dataType: 'checkbox',
+          dataType: "checkbox",
           dataValues: "",
           defaultValue: "",
           formatValue: "",
@@ -869,7 +950,7 @@ export default {
         });
       } else if (num === 6) {
         this.workFormTable.workformProperties.push({
-          dataType: 'select',
+          dataType: "select",
           dataValues: "",
           defaultValue: "",
           formatValue: "",
@@ -888,7 +969,45 @@ export default {
         });
       } else if (num === 7) {
         this.workFormTable.workformProperties.push({
-          dataType: 'datetime',
+          dataType: "datetime",
+          dataValues: "",
+          defaultValue: "",
+          formatValue: "",
+          isRequired: 0,
+          isSmsColumn: 0,
+          workform: {},
+          maxValue: "",
+          minValue: "",
+          name: "日期+时间",
+          placeholder: "",
+          regex: "",
+          remark: "",
+          rw: 0,
+          val: "",
+          styleValue: ""
+        });
+      } else if (num === 8) {
+        this.workFormTable.workformProperties.push({
+          dataType: "multipleSelect",
+          dataValues: "",
+          defaultValue: "",
+          formatValue: "",
+          isRequired: 0,
+          isSmsColumn: 0,
+          workform: {},
+          maxValue: "",
+          minValue: "",
+          name: "多选下拉框",
+          placeholder: "",
+          regex: "",
+          remark: "",
+          rw: 0,
+          val: "",
+          styleValue: ""
+        });
+      } else if (num === 9) {
+        this.workFormTable.workformProperties.push({
+          dataType: "time",
           dataValues: "",
           defaultValue: "",
           formatValue: "",
@@ -898,6 +1017,44 @@ export default {
           maxValue: "",
           minValue: "",
           name: "时间",
+          placeholder: "",
+          regex: "",
+          remark: "",
+          rw: 0,
+          val: "",
+          styleValue: ""
+        });
+      } else if (num === 10) {
+        this.workFormTable.workformProperties.push({
+          dataType: "date",
+          dataValues: "",
+          defaultValue: "",
+          formatValue: "",
+          isRequired: 0,
+          isSmsColumn: 0,
+          workform: {},
+          maxValue: "",
+          minValue: "",
+          name: "日期",
+          placeholder: "",
+          regex: "",
+          remark: "",
+          rw: 0,
+          val: "",
+          styleValue: ""
+        });
+      } else if (num === 11) {
+        this.workFormTable.workformProperties.push({
+          dataType: "span",
+          dataValues: "",
+          defaultValue: "",
+          formatValue: "",
+          isRequired: 0,
+          isSmsColumn: 0,
+          workform: {},
+          maxValue: "",
+          minValue: "",
+          name: "span",
           placeholder: "",
           regex: "",
           remark: "",
@@ -1058,5 +1215,9 @@ export default {
 }
 .el-input {
   margin: 5px 0;
+}
+.el-menu-item {
+  height: 40px;
+  line-height: 40px;
 }
 </style>
