@@ -1966,39 +1966,6 @@ export default {
   mounted() {
     vm = this
     const agentId = localStorage.getItem('agentId')
-    // getCustomerInfoByPhone().then(response => {
-    //   if (response.data.code === 0) {
-    //     const customerInfos = response.data.data
-    //     if (response.data.data.length) {
-    //       vm.$router.push({
-    //         path: '/incoming_call/index',
-    //         name: '呼入',
-    //         params: { 'customerPhone': 13480129429, 'customerInfos': customerInfos }
-    //       })
-    //     } else {
-    //       // addCustomer({ linkDatas: [{ linkType: 0, linkValue: vm.caller, isUsually: 1 }] }).then(response => {
-    //       //   if (response.data.code === 0) {
-    //       vm.$router.push({
-    //         path: '/incoming_call/index',
-    //         name: '呼入',
-    //         params: { 'customerPhone': 13480129429, 'customerInfos': customerInfos }
-    //       })
-    //       //   } else {
-    //       //     vm.$router.push({
-    //       //       path: '/incoming_call/index',
-    //       //       name: '呼入',
-    //       //       params: { 'customerPhone': vm.caller, 'customerInfos': customerInfos }
-    //       //     })
-    //       //     console.log(response.data.message)
-    //       //   }
-    //       // }).catch(error => {
-    //       //   throw error
-    //       // })
-    //     }
-    //   }
-    // }).catch(error => {
-    //   throw error
-    // })
     // 查询外呼状态
     getPhoneStatus().then(response => {
       if (response.data.code === 0) {

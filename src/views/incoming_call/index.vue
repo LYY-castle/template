@@ -36,6 +36,7 @@
               <el-menu-item
                 style="height:auto;"
                 class="font12"
+                v-if="customerPhone"
                 index="1">
                 <div style="margin-bottom:7px;">
                   <span>{{customerInfos.customerName?customerInfos.customerName:''}}</span>
@@ -447,7 +448,7 @@
           <el-tab-pane label="话术知识库" name="3">
             <knowledge-query></knowledge-query>
           </el-tab-pane>
-          <el-tab-pane label="工单记录" name="4">
+          <el-tab-pane label="工单记录" name="4" v-if="isConversation.workformRecordVisible">
             <el-collapse class="form-container" v-model="serviceRecord" @change="handleChangeAcitve" style="box-shadow:none;margin-bottom:0;border-top:none;border-left:none;position:relative;">
               <span class="form-more bold" style="line-height: 24px;font-size: 14px;float:right;margin-right:6px;color:#57AFFF;position:absolute;top:12px;right:40px;">{{callInfoActive[0]}}</span>
               <el-collapse-item class="callInfo" title="筛选条件" :name="1">
@@ -744,6 +745,8 @@
           <el-form :inline="true">
             <el-form-item label="话后小结：">
               <el-cascader
+                :class="isConversation.summaryDisabled?'disabled':''"
+                :disabled="isConversation.summaryDisabled"
                 size="mini"
                 expand-trigger="hover"
                 placeholder="请选择小结"
@@ -762,6 +765,7 @@
             </el-col> -->
             <el-form-item label="是否产生工单：">
               <el-switch
+                :disabled="isConversation.addWorkformDisabled"
                 active-text="是"
                 inactive-text="否"
                 v-model="isAddWorkOrder"
@@ -822,6 +826,7 @@
         <el-row style="text-align:center;">
           <el-button
             type="primary"
+            v-if="isConversation.completeButtonVisible"
             v-show="(!isAddWorkOrder)||selectedWorkFormId||selectedWorkFormId===0"
             @click="handleSubmit">
               完成
@@ -865,8 +870,8 @@
         <el-button
           type="primary"
           @click="fileVisible = false;sendVisible=true;sendMessage('file')"
-        >确 定</el-button>
-        <el-button @click="fileVisible = false;sendVisible=true;removeFile()">取 消</el-button>
+        >确定</el-button>
+        <el-button @click="fileVisible = false;sendVisible=true;removeFile()">取消</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -878,7 +883,7 @@
         <img style="width:100%" :src="imgsrc">
       </div>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
-        <el-button type="primary" @click="imageDetailVisible = false;">确 定</el-button>
+        <el-button type="primary" @click="imageDetailVisible = false;">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -977,6 +982,14 @@
   .summary{
     /deep/ .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item{
       margin-bottom:10px;
+    }
+    .disabled{
+      /deep/ .el-cascader .el-input, .el-cascader .el-input__inner{
+        cursor:not-allowed;
+      }
+      /deep/ .el-cascader__label{
+        cursor:not-allowed;
+      }
     }
   }
   .incoming-call {
@@ -1262,8 +1275,7 @@ import {
   getWorkFormRecordDetail,
   getWorkFormTempById,
   addWorkFormRecord,
-  recordSummaryInfo,
-  getCustomerInfoByPhone
+  recordSummaryInfo
 } from '@/api/incoming_call'
 import {
   getContactByGradeId,
@@ -1297,6 +1309,11 @@ export default {
   inject: ['reloadCompoment'],
   data() {
     return {
+      isConversation: {
+        summaryDisabled: false,
+        addWorkformDisabled: false,
+        workformRecordInvisible: false
+      },
       reload: true,
       showCustomerAddresses: false,
       timeValue: null,
@@ -2089,6 +2106,12 @@ export default {
           sessionStorage.removeItem('inCall_customerPhone')
           sessionStorage.removeItem('inCall_customerInfos')
           sessionStorage.removeItem('inCall_recordId')
+          this.isConversation = {
+            summaryDisabled: true,
+            addWorkformDisabled: true,
+            workformRecordVisible: false,
+            completeButtonVisible: false
+          }
         } else {
           this.$message.error(response.data.message)
         }
@@ -3000,6 +3023,23 @@ export default {
       this.customerPhone = ''
       this.customerInfos = { cuatomerName: '', cuatomerId: null }
     }
+    if (this.customerPhone) {
+      this.customerActive = '1' // 进入界面默认选中第一个客户
+      this.isConversation = {
+        summaryDisabled: false,
+        addWorkformDisabled: false,
+        workformRecordVisible: true,
+        completeButtonVisible: true
+      }
+    } else if (!this.customerPhone) {
+      this.customerActive = ''
+      this.isConversation = {
+        summaryDisabled: true,
+        addWorkformDisabled: true,
+        workformRecordVisible: false,
+        completeButtonVisible: false
+      }
+    }
     // 查询所有服务目录
     getServiceList().then(response => {
       if (response.data.code === 0) {
@@ -3017,7 +3057,7 @@ export default {
         if (response.data.code === 0) {
           this.customerPhoneAddress = response.data.data
         } else {
-          this.$message.error(response.data.message)
+          console.log(response.data.message) // 静默报错
         }
       }).catch(error => {
         throw error
