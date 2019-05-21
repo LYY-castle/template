@@ -256,29 +256,72 @@
         <el-button :disabled="checkBindWechat(telCustomerInfos.customerId)" @click="toWeChat" class="wechat-btn" type="text" v-if="show_wechat==='true'"><svg-icon icon-class="wechat" class="icon-size" style="width:20px;height:16px;"/></el-button>
       </div>
       <el-row class="customerinfo-container">
-        <el-col :span="6" class="font12">
-          <span>客户姓名：</span>
-          <b style="color:#020202;">{{customerInfo.customerName}}</b>
-        </el-col>
-        <el-col :span="6" class="font12">
-          <span>手机号码：</span>
-          <b style="color:#020202;">{{this.customerPhone}}</b>
-        </el-col>
-        <el-col :span="6" class="font12 description-hide" v-if="!(item === 'customerName' || item === 'mobile')" v-for="(item,index) in customerColumnInfos">
-          <span >
-            {{item === 'customerId' ? '客户编号' : item === 'sex' ? '性别' : item === 'mobile' ? '联系电话' : item === 'province' ? '所在省' : item === 'city' ? '所在市' : item === 'district' ? '所在县/区' : item === 'detail' ? '详细地址' : item === 'score' ?'客户评分' : item === 'remark' ? '备注' : item === 'idNumber' ? '身份证' : item === 'address' ? '客户地址' : ''}}
+        <el-col :span="8" class="font12 description-hide" v-for="(item,index) in customerColumnInfos" v-if="!(item === 'city' || item === 'district')">
+          <span>
+            {{showCustomerColumnName(item)}}
           </span>
-          <el-popover trigger="hover" placement="bottom" :content="showContent(item)">
-            <b style="color:#020202;" :class="item" v-if="!isInput" slot="reference">{{item === 'customerId' ? customerInfo.customerId : item === 'sex' ? showSex(customerInfo.customerSex): item === 'mobile' ? this.customerPhone : item === 'province' ? customerInfo.province: item === 'city' ? customerInfo.city : item === 'district' ? customerInfo.district: item === 'detail' ? customerInfo.detail : item === 'score' ? customerInfo.score : item === 'remark' ? customerInfo.remark : item === 'idNumber'? customerInfo.idNo : item === 'address' ? customerInfo.address : ''}}</b>
+          <el-popover trigger="hover" placement="bottom" :content="showCustomerColumnValue(item)">
+            <b style="color:#020202;" :class="item" slot="reference">{{showCustomerColumnValue(item)}}</b>
           </el-popover>
-          <el-input size="mini" style="width:45%;display:none;" :class="item" :id="item+'input'"></el-input>&nbsp;&nbsp;
-          <i class="el-icon-circle-check-outline" @click="modifyCustomerInfo(customerInfo.customerId,item)" style="cursor:pointer;display:none;" :id="item+'btn1'"></i>
-          <i class="el-icon-circle-close-outline" @click="changeToInput(item)" style="cursor:pointer;display:none;" :id="item+'btn2'"></i>
+          <el-input size="mini" style="width:45%;display:none;" :class="item" :id="item+'input'" v-if="showInputInfo(item)" v-model="customerVmodels[item]"></el-input>&nbsp;&nbsp;
+          <el-radio-group v-model="customerVmodels[item]" style="display:none;" :class="item" v-if="item === 'customerSex'">
+            <el-radio :label="0">
+              <span style="font-size:12px;">男</span>
+            </el-radio>
+            <el-radio :label="1">
+              <span style="font-size:12px;">女</span>
+            </el-radio>
+          </el-radio-group>
+          <el-radio-group v-model="customerVmodels[item]" style="display:none;" :class="item" v-if="item === 'isMarried'">
+            <el-radio :label="1">
+              <span style="font-size:12px;">是</span>
+            </el-radio>
+            <el-radio :label="0">
+              <span style="font-size:12px;">否</span>
+            </el-radio>
+          </el-radio-group>
+          <el-date-picker
+            size="mini"
+            style="display:none;"
+            v-if="item === 'birthday'"
+            :class="item"
+            v-model="customerVmodels[item]"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="选择日期">
+          </el-date-picker>
+          <el-select v-model="customerVmodels.provinceCode" placeholder="省" @change="getCities(customerVmodels.provinceCode)" v-if="item === 'province'" style="display:none;width:85px;" :class="item" size="mini">
+            <el-option
+              v-for="(province,index) in provinces"
+              :key="province.id"
+              :value="province.regionCode"
+              :label="province.regionName"
+            ></el-option>
+          </el-select>
+          <el-select v-model="customerVmodels.cityCode" placeholder="市" @change="getDistricts(customerVmodels.cityCode)" v-if="item === 'province'" style="display:none;width:85px;" :class="item" size="mini">
+            <el-option
+              v-for="(city,index) in cities"
+              :key="city.id"
+              :value="city.regionCode"
+              :label="city.regionName"
+            ></el-option>
+          </el-select>
+          <el-select v-model="customerVmodels.districtCode" placeholder="县" v-if="item === 'province'" style="display:none;width:85px;" :class="item" size="mini">
+            <el-option
+              v-for="(district,index) in districts"
+              :key="district.id"
+              :value="district.regionCode"
+              :label="district.regionName"
+            ></el-option>
+          </el-select>
+          <i class="el-icon-circle-check-outline" @click="modifyCustomerInfo(customerInfo.customerId,customerInfo.linkId,customerInfo.addressId,customerInfo.carinfoId,item,index)" style="cursor:pointer;display:none;" :id="item+'btn1'"></i>
+          <i class="el-icon-circle-close-outline" @click="cancelEdit(item)" style="cursor:pointer;display:none;" :id="item+'btn2'"></i>
           <i :id="item+'edit'" @click="changeToInput(item)" style="cursor:pointer;">
             <img src="../../../static/images/edit_btn.png">
           </i>
         </el-col>
       </el-row>
+      
       <el-row style="width:100%;border-top:1px solid #ccc;margin:20px 0;"></el-row>
       <el-row>
         <b class="font14">接触记录</b>
@@ -571,7 +614,6 @@
         </div>
       </el-row>
     </el-row>
-
     <!-- 添加微信手机号dialog -->
     <el-dialog width="30%" title="添加微信手机号" :visible.sync="addWechatPhone" append-to-body>
       微信手机号：<el-input v-model="editCustomerInfo.wechatPhone" placeholder="请输入客户微信手机号" maxlength="11" clearable></el-input>
@@ -735,7 +777,7 @@
 // import cti from '@/utils/ctijs' //
 import { Message, MessageBox } from 'element-ui'
 import { getPhoneOwn } from '@/api/navbar'
-import { formatDateTime } from '@/utils/tools' // 格式化时间
+import { formatDateTime, clone } from '@/utils/tools' // 格式化时间
 import {
   queryByKeywords,
   isInNodisturbPhones,
@@ -756,7 +798,13 @@ import {
   getProducts,
   addMoreOrder,
   modifyProduct,
-  editCustomerBasic
+  editCustomerBasic,
+  editCustomerCar,
+  addCustomerCar,
+  editCustomerLink,
+  editCustomerAddress,
+  addCustomerAddress,
+  getRegion
 } from '@/api/dialTask' // 接口
 import { departAgents, getDepartId } from '@/api/ctiReport'
 import { permsDepart, permsStaff } from '@/api/reportPermission'
@@ -771,6 +819,15 @@ export default {
 
   data() {
     return {
+      provinces: [],
+      cities: [],
+      districts: [],
+      addAddress: false, // 用来判断是增加地址或是修改地址的标志
+      addCar: false, // 用来判断是增加车辆或是修改修改的标志
+      customerVmodels: {},
+      allCustomerParams: {
+        customerName: ''
+      },
       summaryType: '',
       phoneCanDial: false, // 话机是否允许拨号
       autoStyle: {}, // 控制窗口大小，动态出现滚动条，用于点击完成之后，置顶功能
@@ -837,7 +894,15 @@ export default {
       editWechatPhone: false, // 修改微信手机号dialog
       editCustomerInfo: {
         customerId: ''
-        // wechatPhone: ''
+      },
+      editCarInfo: {
+        carinfoId: ''
+      },
+      editLinkInfo: {
+        linkId: ''
+      },
+      editAddressInfo: {
+        addressId: ''
       },
       interval: null,
       canContact: 1,
@@ -925,6 +990,41 @@ export default {
   //   }
   // },
   methods: {
+    getCities(parentid) {
+      getRegion(parentid).then(res => {
+        if (res.data.code === 0) {
+          this.customerVmodels.cityCode = ''
+          this.customerVmodels.districtCode = ''
+          this.cities = res.data.data
+          if (res.data.data[0].regionLevel === 2 && res.data.data.length === 1) {
+            this.customerVmodels.cityCode = res.data.data[0].regionCode
+            this.getDistricts(res.data.data[0].regionCode)
+          }
+        }
+      })
+    },
+    getDistricts(parentid) {
+      getRegion(parentid).then(res => {
+        if (res.data.code === 0) {
+          this.districts = res.data.data
+          this.customerVmodels.districtCode = ''
+        }
+      })
+    },
+    showInputInfo(item) {
+      if (item === 'customerName' || item === 'idNo' || item === 'linkValue' || item === 'score' || item === 'detail' ||
+       item === 'remark' || item === 'nation' || item === 'nativePlace' || item === 'highestEducation' || item === 'height' ||
+       item === 'weight' || item === 'carBrand' || item === 'carType' || item === 'licenseNo' || item === 'vinNo' || item === 'engineNo') {
+        return true
+      } else {
+        return false
+      }
+    },
+    cancelEdit(item) {
+      this.customerVmodels = clone(this.customerInfo)
+      this.customerVmodels.linkValue = this.customerPhone
+      this.changeToInput(item)
+    },
     changePhoneNum(phone) { // 改手机号为11位正常手机号
       let result = ''
       if (typeof phone === 'undefined' || phone === null || phone.trim() === '') return
@@ -965,15 +1065,53 @@ export default {
     changeKeepReady(val) {
       this.$store.commit('SET_KEEPREADY', val)
     },
-    showContent(item) {
+    showCustomerColumnName(item) {
       switch (item) {
-        case 'customerId':return this.customerInfo.customerId + ''
-        case 'sex': return this.showSex(this.customerInfo.customerSex) + ''
-        case 'mobile': return this.customerPhone + ''
-        case 'address': return this.customerInfo.address + ''
-        case 'score': return this.customerInfo.score + ''
-        case 'idNumber': return this.customerInfo.idNo + ''
-        case 'remark': return this.customerInfo.remark + ''
+        case 'customerName': return '客户姓名：'
+        case 'customerSex': return '性别：'
+        case 'idNo': return '身份证：'
+        case 'linkValue': return '手机号码：'
+        case 'score': return '客户评分：'
+        case 'province': return '地区：' // 这里由于省市县里 只要有省就要显示 因此取了province
+        case 'detail': return '详细地址：'
+        case 'remark': return '备注：'
+        case 'birthday': return '出生年月：'
+        case 'nation': return '民族：'
+        case 'nativePlace': return '籍贯：'
+        case 'highestEducation': return '最高学历：'
+        case 'height': return '身高(cm)：'
+        case 'weight': return '体重(kg)：'
+        case 'isMarried': return '是否婚配：'
+        case 'carBrand': return '车辆品牌：'
+        case 'carType': return '车辆类型：'
+        case 'licenseNo': return '车牌号：'
+        case 'vinNo': return '车辆识别码：'
+        case 'engineNo': return '发动机号：'
+        default : return ''
+      }
+    },
+    showCustomerColumnValue(item) {
+      switch (item) {
+        case 'customerName': return this.customerVmodels.customerName ? this.customerVmodels.customerName + '' : '未知'
+        case 'customerSex': return this.customerVmodels.customerSex === 0 ? '男' : this.customerVmodels.customerSex === 1 ? '女' : '未知'
+        case 'idNo': return this.customerVmodels.idNo ? this.customerVmodels.idNo + '' : '未知'
+        case 'linkValue': return !this.customerVmodels.linkValue ? '' : this.customerVmodels.linkValue + ''
+        case 'score': return this.customerVmodels.score === null ? '' : this.customerVmodels.score + ''
+        case 'province': return this.customerVmodels.address ? this.customerVmodels.address + '' : '未知'
+        case 'detail': return this.customerVmodels.detail ? this.customerVmodels.detail + '' : '未知'
+        case 'remark': return this.customerVmodels.remark === null ? '未知' : this.customerVmodels.remark + ''
+        case 'birthday': return this.customerVmodels.birthday === null ? '未知' : this.customerVmodels.birthday + ''
+        case 'nation': return this.customerVmodels.nation === null ? '未知' : this.customerVmodels.nation + ''
+        case 'nativePlace': return this.customerVmodels.nativePlace === null ? '未知' : this.customerVmodels.nativePlace + ''
+        case 'highestEducation': return this.customerVmodels.highestEducation === null ? '未知' : this.customerVmodels.highestEducation + ''
+        case 'height': return this.customerVmodels.height === null ? '未知' : this.customerVmodels.height + ''
+        case 'weight': return this.customerVmodels.weight === null ? '未知' : this.customerVmodels.weight + ''
+        case 'isMarried': return this.customerVmodels.isMarried === null ? '未知' : this.customerVmodels.isMarried === 0 ? '未婚' : '已婚'
+        case 'carBrand': return this.customerVmodels.carBrand === null ? '未知' : this.customerVmodels.carBrand + ''
+        case 'carType': return this.customerVmodels.carType === null ? '未知' : this.customerVmodels.carType + ''
+        case 'licenseNo': return this.customerVmodels.licenseNo === null ? '未知' : this.customerVmodels.licenseNo + ''
+        case 'vinNo': return this.customerVmodels.vinNo === null ? '未知' : this.customerVmodels.vinNo + ''
+        case 'engineNo': return this.customerVmodels.engineNo === null ? '未知' : this.customerVmodels.engineNo + ''
         default : return ''
       }
     },
@@ -1583,161 +1721,430 @@ export default {
     },
     changeToInput(item) {
       switch (item) {
-        case 'sex': $('div.sex').toggle(); $('b.sex').toggle(); $('#sexedit').toggle(); $('#sexbtn1').toggle(); $('#sexbtn2').toggle(); break
-        case 'idNumber': $('div.idNumber').toggle(); $('b.idNumber').toggle(); $('#idNumberedit').toggle(); $('#idNumberbtn1').toggle(); $('#idNumberbtn2').toggle(); break
-        case 'customerId': $('div.customerId').toggle(); $('b.customerId').toggle(); $('#customerIdedit').toggle(); $('#customerIdbtn1').toggle(); $('#customerIdbtn2').toggle(); break
+        case 'customerName':$('div.customerName').toggle(); $('b.customerName').toggle(); $('#customerNameedit').toggle(); $('#customerNamebtn1').toggle(); $('#customerNamebtn2').toggle(); break
+        case 'customerSex': $('div.customerSex').toggle(); $('b.customerSex').toggle(); $('#customerSexedit').toggle(); $('#customerSexbtn1').toggle(); $('#customerSexbtn2').toggle(); break
+        case 'idNo': $('div.idNo').toggle(); $('b.idNo').toggle(); $('#idNoedit').toggle(); $('#idNobtn1').toggle(); $('#idNobtn2').toggle(); break
         case 'score': $('div.score').toggle(); $('b.score').toggle(); $('#scoreedit').toggle(); $('#scorebtn1').toggle(); $('#scorebtn2').toggle(); break
         case 'remark': $('div.remark').toggle(); $('b.remark').toggle(); $('#remarkedit').toggle(); $('#remarkbtn1').toggle(); $('#remarkbtn2').toggle(); break
+        case 'linkValue': $('div.linkValue').toggle(); $('b.linkValue').toggle(); $('#linkValueedit').toggle(); $('#linkValuebtn1').toggle(); $('#linkValuebtn2').toggle(); break
+        case 'province': $('div.province').toggle(); $('b.province').toggle(); $('#provinceedit').toggle(); $('#provincebtn1').toggle(); $('#provincebtn2').toggle(); break
+        case 'detail': $('div.detail').toggle(); $('b.detail').toggle(); $('#detailedit').toggle(); $('#detailbtn1').toggle(); $('#detailbtn2').toggle(); break
+        case 'birthday': $('div.birthday').toggle(); $('b.birthday').toggle(); $('#birthdayedit').toggle(); $('#birthdaybtn1').toggle(); $('#birthdaybtn2').toggle(); break
+        case 'nation': $('div.nation').toggle(); $('b.nation').toggle(); $('#nationedit').toggle(); $('#nationbtn1').toggle(); $('#nationbtn2').toggle(); break
+        case 'nativePlace':$('div.nativePlace').toggle(); $('b.nativePlace').toggle(); $('#nativePlaceedit').toggle(); $('#nativePlacebtn1').toggle(); $('#nativePlacebtn2').toggle(); break
+        case 'highestEducation': $('div.highestEducation').toggle(); $('b.highestEducation').toggle(); $('#highestEducationedit').toggle(); $('#highestEducationbtn1').toggle(); $('#highestEducationbtn2').toggle(); break
+        case 'height': $('div.height').toggle(); $('b.height').toggle(); $('#heightedit').toggle(); $('#heightbtn1').toggle(); $('#heightbtn2').toggle(); break
+        case 'weight':$('div.weight').toggle(); $('b.weight').toggle(); $('#weightedit').toggle(); $('#weightbtn1').toggle(); $('#weightbtn2').toggle(); break
+        case 'isMarried': $('div.isMarried').toggle(); $('b.isMarried').toggle(); $('#isMarriededit').toggle(); $('#isMarriedbtn1').toggle(); $('#isMarriedbtn2').toggle(); break
+        case 'carBrand': $('div.carBrand').toggle(); $('b.carBrand').toggle(); $('#carBrandedit').toggle(); $('#carBrandbtn1').toggle(); $('#carBrandbtn2').toggle(); break
+        case 'carType': $('div.carType').toggle(); $('b.carType').toggle(); $('#carTypeedit').toggle(); $('#carTypebtn1').toggle(); $('#carTypebtn2').toggle(); break
+        case 'licenseNo': $('div.licenseNo').toggle(); $('b.licenseNo').toggle(); $('#licenseNoedit').toggle(); $('#licenseNobtn1').toggle(); $('#licenseNobtn2').toggle(); break
+        case 'vinNo': $('div.vinNo').toggle(); $('b.vinNo').toggle(); $('#vinNoedit').toggle(); $('#vinNobtn1').toggle(); $('#vinNobtn2').toggle(); break
+        case 'engineNo': $('div.engineNo').toggle(); $('b.engineNo').toggle(); $('#engineNoedit').toggle(); $('#engineNobtn1').toggle(); $('#engineNobtn2').toggle(); break
       }
     },
-    modifyCustomerInfo(customerId, item) {
+    changeLocationValue(v, arr) {
+      const obj = arr.find((item) => {
+        return item.regionCode === v
+      })
+      return obj.regionName
+    },
+    modifyCustomerInfo(customerId, linkId, addressId, carinfoId, item, index) {
       const reg_ID = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/
-      const reg_num = /^[0-9]*$/
+      const reg_phone = /^[1][3,4,5,6,7,8][0-9]{9}$/
+      this.editCustomerInfo = {}
+      this.editCarInfo = {}
+      this.editAddressInfo = {}
+      this.editLinkInfo = {}
       this.editCustomerInfo.customerId = customerId
+      this.editLinkInfo.customerId = customerId
+      this.editLinkInfo.linkId = linkId
+      this.editAddressInfo.customerId = customerId
+      this.editAddressInfo.addressId = addressId
+      this.editCarInfo.customerId = customerId
+      this.editCarInfo.carinfoId = carinfoId
       switch (item) {
-        case 'idNumber':
-          this.editCustomerInfo.idNo = $('#idNumberinput').val()
-          if (!reg_ID.test($('#idNumberinput').val())) {
-            this.$message({
-              message: '请输入正确的身份证！!',
-              type: 'error',
-              duration: 1000
-            })
-            $('#idNumberinput').val('')
-            this.changeToInput(item)
+        case 'customerName':
+          if (this.isEmpty(this.customerVmodels.customerName)) {
+            this.$message.error('客户姓名不能为空！')
+            this.cancelEdit(item)
             return
           }
-          editCustomerBasic(this.editCustomerInfo).then(response => {
-            if (response.data.code === 0) {
-              this.$message({
-                message: '修改成功！!',
-                type: 'success',
-                duration: 1000
-              })
-              this.customerInfo.idNo = $('#idNumberinput').val()
-              this.changeToInput(item)
-            } else {
-              this.$message({
-                message: '修改失败!',
-                type: 'error',
-                duration: 1000
-              })
-              $('#idNumberinput').val('')
-              this.changeToInput(item)
-              this.$message({
-                message: response.data.message,
-                type: 'error',
-                duration: 1000
-              })
-            }
-          }).catch(error => {
-            console.log(error)
-          })
+          this.editCustomerInfo.customerName = this.customerVmodels.customerName
+          this.editCustomerBasicInfo(this.editCustomerInfo, item, '客户姓名')
           break
-        case 'sex':
-          this.editCustomerInfo.customerSex = $('#sexinput').val() === '男' ? 0 : $('#sexinput').val() === '女' ? 1 : null
-          console.log(this.editCustomerInfo)
-          if (this.editCustomerInfo.customerSex === null) {
-            this.$message({
-              message: '修改失败！',
-              type: 'error',
-              duration: 1000
-            })
-            $('#sexinput').val('')
-            this.changeToInput(item)
-          } else {
-            editCustomerBasic(this.editCustomerInfo).then(response => {
-              if (response.data.code === 0) {
-                this.$message({
-                  message: '修改成功！',
-                  type: 'success',
-                  duration: 1000
-                })
-                this.customerInfo.customerSex = $('#sexinput').val() === '男' ? 0 : $('#sexinput').val() === '女' ? 1 : null
-                $('#sexinput').val('')
+        case 'customerSex':
+          if (this.customerVmodels.customerSex === null || this.isEmpty(this.customerVmodels.customerSex)) {
+            this.$message.error('请选择客户性别！')
+            this.cancelEdit(item)
+            return
+          }
+          this.editCustomerInfo.customerSex = this.customerVmodels.customerSex
+          this.editCustomerBasicInfo(this.editCustomerInfo, item, '客户性别')
+          break
+        case 'idNo':
+          if (!reg_ID.test(this.customerVmodels.idNo)) {
+            this.$message.error('请输入正确的身份证号！')
+            this.cancelEdit(item)
+            return
+          }
+          this.editCustomerInfo.idNo = this.customerVmodels.idNo
+          this.editCustomerBasicInfo(this.editCustomerInfo, item, '身份证')
+          break
+        case 'linkValue':
+          if (this.isEmpty(this.customerVmodels.linkValue) || !reg_phone.test(this.customerVmodels.linkValue)) {
+            this.$message.error('请输入正确的手机号码！')
+            this.cancelEdit(item)
+            return
+          }
+          this.editLinkInfo.linkValue = this.customerVmodels.linkValue
+          this.editLinkInfo.linkType = 0
+          this.editCustomerLinkInfo(this.editLinkInfo, item, '手机号码')
+          break
+        case 'province':
+          this.editAddressInfo.province = this.customerVmodels.provinceCode
+          this.editAddressInfo.city = this.customerVmodels.cityCode
+          this.editAddressInfo.district = this.customerVmodels.districtCode
+          this.editAddressInfo.addressType = 1
+          if (!this.addAddress) {
+            editCustomerAddress(this.editAddressInfo).then(res => {
+              if (res.data.code === 0) {
+                this.$message.success('修改客户地址成功！')
+                const province = this.changeLocationValue(this.editAddressInfo.province, this.provinces)
+                const city = this.changeLocationValue(this.editAddressInfo.city, this.cities)
+                const district = this.changeLocationValue(this.editAddressInfo.district, this.districts)
+                this.customerInfo.provinceCode = this.customerVmodels.provinceCode
+                this.customerInfo.cityCode = this.customerVmodels.cityCode
+                this.customerInfo.districtCode = this.customerVmodels.districtCode
+                this.customerInfo.address = province + city + district
+                this.customerVmodels.address = province + city + district
                 this.changeToInput(item)
               } else {
-                this.$message({
-                  message: '修改失败！',
-                  type: 'error',
-                  duration: 1000
-                })
-                this.changeToInput(item)
-                console.log(response.data.message)
+                this.$message.error('修改客户地址失败！')
+                this.cancelEdit(item)
               }
             }).catch(error => {
-              console.log(error)
+              throw error
+            })
+          } else {
+            // 增加客户地址
+            this.editAddressInfo.isDefault = 1 // 设为默认地址
+            addCustomerAddress(this.editAddressInfo).then(res => {
+              if (res.data.code === 0) {
+                this.addAddress = false
+                this.customerInfo.addressId = res.data.message
+                this.$message.success('修改客户地址成功！')
+                const province = this.changeLocationValue(this.customerVmodels.provinceCode, this.provinces)
+                const city = this.changeLocationValue(this.customerVmodels.cityCode, this.cities)
+                const district = this.changeLocationValue(this.customerVmodels.districtCode, this.districts)
+                this.customerInfo.provinceCode = this.customerVmodels.provinceCode
+                this.customerInfo.cityCode = this.customerVmodels.cityCode
+                this.customerInfo.districtCode = this.customerVmodels.districtCode
+                this.customerInfo.address = province + city + district
+                this.customerVmodels.address = province + city + district
+                this.changeToInput(item)
+              } else {
+                this.$message.error('修改客户地址失败！')
+                this.cancelEdit(item)
+              }
+            }).catch(error => {
+              throw error
             })
           }
           break
-        case 'customerId':
-          this.$message({
-            message: '客户编号无法修改！',
+        case 'detail':
+          this.editAddressInfo.addressType = 1
+          this.editAddressInfo.detail = this.customerVmodels.detail
+          if (!this.addAddress) {
+            editCustomerAddress(this.editAddressInfo).then(res => {
+              if (res.data.code === 0) {
+                this.$message.success('修改详细地址成功！')
+                this.customerInfo.detail = this.customerVmodels.detail
+                this.changeToInput(item)
+              } else {
+                this.$message.error('修改详细地址失败！')
+                this.cancelEdit(item)
+              }
+            }).catch(error => {
+              throw error
+            })
+          } else {
+            // 增加客户地址
+            this.editAddressInfo.isDefault = 1 // 设为默认地址
+            addCustomerAddress(this.editAddressInfo).then(res => {
+              if (res.data.code === 0) {
+                this.addAddress = false
+                this.customerInfo.addressId = res.data.message
+                this.$message.success('修改详细地址成功！')
+                this.customerInfo.detail = this.customerVmodels.detail
+                this.changeToInput(item)
+              } else {
+                this.$message.error('修改详细地址失败！')
+                this.cancelEdit(item)
+              }
+            }).catch(error => {
+              throw error
+            })
+          }
+          break
+        case 'score':
+          if (typeof (parseInt(this.customerVmodels.score)) !== 'number') {
+            this.$message.error('客户评分只能为数字！')
+            this.cancelEdit(item)
+            return
+          }
+          if (isNaN(this.customerVmodels.score)) {
+            this.$message.error('客户评分只能为数字！')
+            this.cancelEdit(item)
+            return
+          }
+          if (this.customerVmodels.score < 0) {
+            this.$message.error('客户评分不能为负数！')
+            this.cancelEdit(item)
+            return
+          }
+          this.editCustomerInfo.score = this.customerVmodels.score
+          this.editCustomerBasicInfo(this.editCustomerInfo, item, '客户评分')
+          break
+        case 'remark':
+          this.editCustomerInfo.remark = this.customerVmodels.remark
+          this.editCustomerBasicInfo(this.editCustomerInfo, item, '备注')
+          break
+        case 'birthday':
+          this.editCustomerInfo.birthday = this.customerVmodels.birthday
+          this.editCustomerBasicInfo(this.editCustomerInfo, item, '出生年月')
+          break
+        case 'nation':
+          this.editCustomerInfo.nation = this.customerVmodels.nation
+          this.editCustomerBasicInfo(this.editCustomerInfo, item, '民族')
+          break
+        case 'nativePlace':
+          this.editCustomerInfo.nativePlace = this.customerVmodels.nativePlace
+          this.editCustomerBasicInfo(this.editCustomerInfo, item, '籍贯')
+          break
+        case 'highestEducation':
+          this.editCustomerInfo.highestEducation = this.customerVmodels.highestEducation
+          this.editCustomerBasicInfo(this.editCustomerInfo, item, '最高学历')
+          break
+        case 'height':
+          if (typeof (parseInt(this.customerVmodels.height)) !== 'number') {
+            this.$message.error('身高只能为数字！')
+            this.cancelEdit(item)
+            return
+          }
+          if (isNaN(this.customerVmodels.height)) {
+            this.$message.error('身高只能为数字！')
+            this.cancelEdit(item)
+            return
+          }
+          if (this.customerVmodels.height < 0) {
+            this.$message.error('身高不能为负数！')
+            this.cancelEdit(item)
+            return
+          }
+          this.editCustomerInfo.height = this.customerVmodels.height
+          this.editCustomerBasicInfo(this.editCustomerInfo, item, '身高')
+          break
+        case 'weight':
+          if (typeof (parseInt(this.customerVmodels.weight)) !== 'number') {
+            this.$message.error('体重只能为数字！')
+            this.cancelEdit(item)
+            return
+          }
+          if (isNaN(this.customerVmodels.weight)) {
+            this.$message.error('体重只能为数字！')
+            this.cancelEdit(item)
+            return
+          }
+          if (this.customerVmodels.weight < 0) {
+            this.$message.error('体重不能为负数！')
+            this.cancelEdit(item)
+            return
+          }
+          this.editCustomerInfo.weight = this.customerVmodels.weight
+          this.editCustomerBasicInfo(this.editCustomerInfo, item, '体重')
+          break
+        case 'isMarried':
+          this.editCustomerInfo.isMarried = this.customerVmodels.isMarried
+          this.editCustomerBasicInfo(this.editCustomerInfo, item, '')
+          break
+        case 'carBrand':
+          this.editCarInfo.carBrand = this.customerVmodels.carBrand
+          if (!this.addCar) {
+            this.editCustomerCarInfo(this.editCarInfo, item, '车辆品牌')
+          } else {
+            // 增加车辆信息
+            addCustomerCar(this.editCarInfo).then(res => {
+              if (res.data.code === 0) {
+                this.addCar = false
+                this.customerInfo.carinfoId = res.data.message
+                this.$message.success('修改车辆品牌成功！')
+                this.$set(this.customerInfo, item, this.customerVmodels[item])
+                this.changeToInput(item)
+              } else {
+                this.$message.error('修改车辆品牌失败！')
+                this.cancelEdit(item)
+              }
+            })
+          }
+          break
+        case 'carType':
+          this.editCarInfo.carType = this.customerVmodels.carType
+          if (!this.addCar) {
+            this.editCustomerCarInfo(this.editCarInfo, item, '车辆类型')
+          } else {
+            // 增加车辆信息
+            addCustomerCar(this.editCarInfo).then(res => {
+              if (res.data.code === 0) {
+                this.addCar = false
+                this.customerInfo.carinfoId = res.data.message
+                this.$message.success('修改车辆类型成功！')
+                this.$set(this.customerInfo, item, this.customerVmodels[item])
+                this.changeToInput(item)
+              } else {
+                this.$message.error('修改车辆类型失败！')
+                this.cancelEdit(item)
+              }
+            })
+          }
+          break
+        case 'licenseNo':
+          this.editCarInfo.licenseNo = this.customerVmodels.licenseNo
+          if (!this.addCar) {
+            this.editCustomerCarInfo(this.editCarInfo, item, '车牌号')
+          } else {
+            // 增加车辆信息
+            addCustomerCar(this.editCarInfo).then(res => {
+              if (res.data.code === 0) {
+                this.addCar = false
+                this.customerInfo.carinfoId = res.data.message
+                this.$message.success('修改车牌号成功！')
+                this.$set(this.customerInfo, item, this.customerVmodels[item])
+                this.changeToInput(item)
+              } else {
+                this.$message.error('修改车牌号失败！')
+                this.cancelEdit(item)
+              }
+            })
+          }
+          break
+        case 'vinNo':
+          this.editCarInfo.vinNo = this.customerVmodels.vinNo
+          if (!this.addCar) {
+            this.editCustomerCarInfo(this.editCarInfo, item, '车辆识别码')
+          } else {
+            // 增加车辆信息
+            addCustomerCar(this.editCarInfo).then(res => {
+              if (res.data.code === 0) {
+                this.addCar = false
+                this.customerInfo.carinfoId = res.data.message
+                this.$message.success('修改车辆识别码成功！')
+                this.$set(this.customerInfo, item, this.customerVmodels[item])
+                this.changeToInput(item)
+              } else {
+                this.$message.error('修改车辆识别码失败！')
+                this.cancelEdit(item)
+              }
+            })
+          }
+          break
+        case 'engineNo':
+          this.editCarInfo.engineNo = this.customerVmodels.engineNo
+          if (!this.addCar) {
+            this.editCustomerCarInfo(this.editCarInfo, item, '发动机号')
+          } else {
+            // 增加车辆信息
+            addCustomerCar(this.editCarInfo).then(res => {
+              if (res.data.code === 0) {
+                this.addCar = false
+                this.customerInfo.carinfoId = res.data.message
+                this.$message.success('修改发动机号成功！')
+                this.$set(this.customerInfo, item, this.customerVmodels[item])
+                this.changeToInput(item)
+              } else {
+                this.$message.error('修改发动机号失败！')
+                this.cancelEdit(item)
+              }
+            })
+          }
+          break
+      }
+    },
+    isEmpty(obj) {
+      if (typeof (obj) === 'undefined' || obj === null || obj === '') {
+        return true
+      } else {
+        return false
+      }
+    },
+    editCustomerBasicInfo(data, item, msg) {
+      editCustomerBasic(data).then(res => {
+        if (res.data.code === 0) {
+          this.$message.success({
+            message: '修改' + msg + '成功！',
+            type: 'success',
+            duration: 1000
+          })
+          // this.customerInfo[item] = this.customerVmodels[item]
+          this.$set(this.customerInfo, item, this.customerVmodels[item])
+          this.changeToInput(item)
+        } else {
+          this.$message.success({
+            message: '修改' + msg + '失败！',
             type: 'error',
             duration: 1000
           })
-          $('#customerIdinput').val('')
+          this.cancelEdit(item)
+        }
+      }).catch(error => {
+        throw error
+      })
+    },
+    editCustomerCarInfo(data, item, msg) {
+      editCustomerCar(data).then(res => {
+        if (res.data.code === 0) {
+          this.$message.success({
+            message: '修改' + msg + '成功！',
+            type: 'success',
+            duration: 1000
+          })
+          // this.customerInfo[item] = this.customerVmodels[item]
+          this.$set(this.customerInfo, item, this.customerVmodels[item])
           this.changeToInput(item)
-          break
-        case 'score':
-          this.editCustomerInfo.score = $('#scoreinput').val()
-          if (!reg_num.test($('#scoreinput').val())) {
-            this.$message({
-              message: '请输入数字！',
-              type: 'error',
-              duration: 1000
-            })
-            $('#scoreinput').val('')
-            this.changeToInput(item)
-            return
-          }
-          editCustomerBasic(this.editCustomerInfo).then(response => {
-            if (response.data.code === 0) {
-              this.$message({
-                message: '修改成功！',
-                type: 'success',
-                duration: 1000
-              })
-              this.customerInfo.score = $('#scoreinput').val()
-              this.changeToInput(item)
-            } else {
-              this.$message({
-                message: '修改失败！',
-                type: 'error',
-                duration: 1000
-              })
-              this.changeToInput(item)
-              console.log(response.data.message)
-            }
-          }).catch(error => {
-            console.log(error)
+        } else {
+          this.$message.success({
+            message: '修改' + msg + '失败！',
+            type: 'error',
+            duration: 1000
           })
-          break
-        case 'remark':
-          this.editCustomerInfo.remark = $('#remarkinput').val()
-          editCustomerBasic(this.editCustomerInfo).then(response => {
-            if (response.data.code === 0) {
-              this.$message({
-                message: '修改成功！',
-                type: 'success',
-                duration: 1000
-              })
-              this.customerInfo.remark = $('#remarkinput').val()
-              this.changeToInput(item)
-            } else {
-              this.$message({
-                message: '修改失败！',
-                type: 'error',
-                duration: 1000
-              })
-              this.changeToInput(item)
-              console.log(response.data.message)
-            }
-          }).catch(error => {
-            console.log(error)
+          this.cancelEdit(item)
+        }
+      }).catch(error => {
+        throw error
+      })
+    },
+    editCustomerLinkInfo(data, item, msg) {
+      editCustomerLink(data).then(res => {
+        if (res.data.code === 0) {
+          this.$message.success({
+            message: '修改' + msg + '成功！',
+            type: 'success',
+            duration: 1000
           })
-          break
-      }
+          // this.customerInfo[item] = this.customerVmodels[item]
+          this.$set(this.customerInfo, item, this.customerVmodels[item])
+          this.changeToInput(item)
+        } else {
+          this.$message.success({
+            message: '修改' + msg + '失败！',
+            type: 'error',
+            duration: 1000
+          })
+          this.cancelEdit(item)
+        }
+      }).catch(error => {
+        throw error
+      })
     },
     // 展示拨打页面详情
     showDetailInfos(
@@ -1793,27 +2200,79 @@ export default {
           }
         })
       })
-      // 获取客户基本信息
+      // 获取客户信息
       queryCustomerInfo(customerId).then(res => {
         if (res.data.code === 0) {
           this.customerInfo = res.data.data
           this.idNumber = res.data.data.idNo
-          const customerLinks = res.data.data.customerLinks
-          const customerAddress = res.data.data.customerAddresses
+          const customerLinks = res.data.data.linkResultInfos
+          const customerAddress = res.data.data.addressResultInfos
+          const customerCars = res.data.data.carResultInfos
           if (customerLinks.length > 0) {
             for (var i = 0; i < customerLinks.length; i++) {
               if (customerLinks[i].linkType === 0 && customerLinks[i].isUsually === 1) {
+                this.customerInfo.linkValue = customerLinks[i].linkValue
                 this.customerPhone = customerLinks[i].linkValue
+                this.customerInfo.linkId = customerLinks[i].linkId
               }
             }
           }
           if (customerAddress.length > 0) {
+            this.addAddress = false
+            // 原本有地址的情况
             for (var j = 0; j < customerAddress.length; j++) {
               if (customerAddress[j].isDefault === 1) {
-                this.customerInfo.address = customerAddress[j].province + customerAddress[j].city + customerAddress[j].district + customerAddress[j].detail
+                this.customerInfo.address = customerAddress[j].provinceName + customerAddress[j].cityName + customerAddress[j].districtName // 这里取出的地址是中文而非code
+                this.customerInfo.provinceCode = customerAddress[j].province
+                this.customerInfo.cityCode = customerAddress[j].city
+                this.customerInfo.districtCode = customerAddress[j].district
+                this.customerInfo.detail = customerAddress[j].detail
+                this.customerInfo.addressId = customerAddress[j].addressId
+                getRegion(0).then(res => {
+                  if (res.data.code === 0) {
+                    this.provinces = res.data.data
+                  }
+                })
+                getRegion(this.customerInfo.provinceCode).then(res => {
+                  if (res.data.code === 0) {
+                    this.cities = res.data.data
+                  }
+                })
+                getRegion(this.customerInfo.cityCode).then(res => {
+                  if (res.data.code === 0) {
+                    this.districts = res.data.data
+                  }
+                })
               }
             }
+          } else {
+            // 该客户没有存地址的情况
+            this.addAddress = true
+            this.customerInfo.provinceCode = ''
+            this.customerInfo.cityCode = ''
+            this.customerInfo.districtCode = ''
+            this.customerInfo.address = ''
+            getRegion(0).then(res => {
+              if (res.data.code === 0) {
+                this.provinces = res.data.data
+              }
+            })
           }
+          if (customerCars.length > 0) {
+            this.addCar = false
+            // 原本有车辆信息的情况
+            this.customerInfo.carinfoId = customerCars[0].carinfoId
+            this.customerInfo.carBrand = customerCars[0].carBrand
+            this.customerInfo.carType = customerCars[0].carType
+            this.customerInfo.licenseNo = customerCars[0].licenseNo
+            this.customerInfo.vinNo = customerCars[0].vinNo
+            this.customerInfo.engineNo = customerCars[0].engineNo
+          } else {
+            // 客户没有车辆的情况
+            this.addCar = true
+          }
+          this.customerVmodels = clone(this.customerInfo)
+          this.customerVmodels.linkValue = this.customerPhone
         }
       })
       // 判断是否有接触记录信息
@@ -2341,8 +2800,6 @@ export default {
       } else {
         this.appointTime = ''
       }
-    },
-    isDialTask(val) {
     }
   },
   created() {

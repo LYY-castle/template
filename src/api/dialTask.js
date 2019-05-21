@@ -218,3 +218,52 @@ export function editCustomerBasic(data) {
     data: data
   })
 }
+
+export function editCustomerCar(data) {
+  return request({
+    url: `/customer/updatecar`,
+    method: 'post',
+    data: data
+  })
+}
+
+export function addCustomerCar(data) {
+  return request({
+    url: `/customer/addcar`,
+    method: 'post',
+    data: data
+  })
+}
+
+export function editCustomerLink(data) {
+  return request({
+    url: `/customer/updatelink`,
+    method: 'post',
+    data: data
+  })
+}
+
+export function editCustomerAddress(data) {
+  return request({
+    url: `/customer/updateaddress`,
+    method: 'post',
+    data: data
+  })
+}
+
+export function addCustomerAddress(data) {
+  return request({
+    url: `/customer/addaddress`,
+    method: 'post',
+    data: data
+  })
+}
+
+// 查询地区
+export function getRegion(req) {
+  return request({
+    url: `/customer/regioninfo`,
+    params: { 'parentId': req }
+  })
+}
+

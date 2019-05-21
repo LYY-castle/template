@@ -194,17 +194,9 @@
           <el-select v-model="customerColumnInfos" placeholder="请选择展示的客户字段" style="width:100%" multiple>
             <el-option
               v-for="item in customerParams"
-              :key="item.value"
-              :label="item.name"
-              :value="item.value"
-              v-if="show_wechat==='true'"
-            ></el-option>
-            <el-option
-              v-for="item in customerParams1"
-              :key="item.value"
-              :label="item.name"
-              :value="item.value"
-              v-if="show_wechat==='false'"
+              :key="item.id"
+              :label="item.propertyName"
+              :value="item.propertyCode"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -508,21 +500,13 @@
           <span slot="label">
             <span style="color:#f56c6c">*</span> 客户配置项
           </span>
-          <el-select v-model="customerColumnInfos" placeholder="请选择展示的客户字段" style="width:100%" multiple v-if="show_wechat==='true'">
+          <el-select v-model="customerColumnInfos" placeholder="请选择展示的客户字段" style="width:100%">
             <el-option
               v-for="item in customerParams"
-              :key="item.value"
-              :label="item.name"
-              :value="item.value"
+              :key="item.id"
+              :label="item.propertyName"
+              :value="item.propertyCode"
             ></el-option>
-          </el-select>
-          <el-select v-model="customerColumnInfos" placeholder="请选择展示的客户字段" style="width:100%" multiple v-else>
-            <el-option
-                v-for="item in customerParams1"
-                :key="item.value"
-                :label="item.name"
-                :value="item.value"
-              ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="呼出方式" prop="calloutMode">
@@ -1010,6 +994,7 @@ import {
   removeList,
   getQuestionnaires
 } from '@/api/campaign_management'
+import { getAllField } from '@/api/customerManagement'
 import { formatDateTime, clone, list2Tree } from '@/utils/tools'
 
 export default {
@@ -1188,78 +1173,7 @@ export default {
           label: '换时间段拨打'
         }
       ],
-      customerParams: [
-        {
-          value: 'customerId',
-          name: '客户编号'
-        },
-        {
-          value: 'customerName',
-          name: '客户姓名'
-        },
-        {
-          value: 'sex',
-          name: '性别'
-        },
-        {
-          value: 'mobile',
-          name: '联系电话'
-        },
-        {
-          value: 'address',
-          name: '客户地址'
-        },
-        {
-          value: 'idNumber',
-          name: '身份证'
-        },
-        {
-          value: 'score',
-          name: '客户评分'
-        },
-        {
-          value: 'remark',
-          name: '备注'
-        }
-      ],
-      customerParams1: [
-        {
-          value: 'customerId',
-          name: '客户编号'
-        },
-        {
-          value: 'customerName',
-          name: '客户姓名'
-        },
-        {
-          value: 'sex',
-          name: '性别'
-        },
-        {
-          value: 'mobile',
-          name: '联系电话'
-        },
-        {
-          value: 'address',
-          name: '客户地址'
-        },
-        {
-          value: 'idNumber',
-          name: '身份证'
-        },
-        {
-          value: 'idNumber',
-          name: '身份证'
-        },
-        {
-          value: 'score',
-          name: '客户评分'
-        },
-        {
-          value: 'remark',
-          name: '备注'
-        }
-      ],
+      customerParams: [], // 客户配置项
       questionnaireNames: [], // 问卷模板名称
       new_dept_ids: [], // 新建活动
       edit_dept_ids: [], // 修改活动
@@ -1409,6 +1323,7 @@ export default {
     this.findCampaignByConditions(this.req)
     this.getAllProduct()
     this.getAllQuestionnaires()
+    this.getCustomerColumns()
     this.getDepts()
     this.getVisibleDepts()
     this.getAllNodules()
@@ -1416,6 +1331,17 @@ export default {
     this.getAllCampaignTypes()
   },
   methods: {
+    getCustomerColumns() {
+      getAllField().then(response => {
+        if (response.data) {
+          if (response.data.code === 0) {
+            this.customerParams = response.data.data
+          }
+        }
+      }).catch(error => {
+        throw error
+      })
+    },
     handleChangeAcitve(active = ['1']) {
       if (active.length) {
         $('.form-more').text('收起')

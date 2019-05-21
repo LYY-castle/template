@@ -186,8 +186,8 @@
           <el-form-item label="本次分配数量:" class="number-input">
             <el-input-number
               v-model="formInline.num"
-              min="0"
-              controls="false"
+              :min="0"
+              :controls="false"
               @change="handleChange"
             />
           </el-form-item>
