@@ -18,17 +18,17 @@ const base_conf = {
     departManage: '"/depart_manage"',
     employeeManage: '"/employee_manage"',
     accountManage: '"/account_manage"'
-  } 
+  }
 }
 
 const env_conf = {
   dev: {
-    TUI_WS_SERVERURL:'"ws://119.27.179.175:12010"',
-    CTI_WS_SERVERURL:'"ws://119.27.184.157:9050/"',
-    CTI_MONITOR_WS_SERVERURL:'"ws://119.27.184.157:9052/"',
+    TUI_WS_SERVERURL: '"ws://119.27.179.175:12010"',
+    CTI_WS_SERVERURL: '"ws://119.27.184.157:9050/"',
+    CTI_MONITOR_WS_SERVERURL: '"ws://119.27.184.157:9052/"',
     FILE_SERVER_URL: '"http://119.27.179.175:9800"',
     DEBUG: true,
-    SHOW_WECHAT:true,
+    SHOW_WECHAT: true,
     SMS: {
       enable: true,
       platform: '1', // 1:网关，2：领创盛世.
@@ -36,29 +36,14 @@ const env_conf = {
       sendMessageTime: 10,//通话多少秒需要发短信
       content: '"你好，谢谢支持"'
     },
-    WORKFLOW_AUTH_STAFFNO:'10010'
-  },
-  master: {
-    TUI_WS_SERVERURL:'"ws://119.27.179.175:12010"',
-    CTI_WS_SERVERURL:'"ws://119.27.184.157:9050/"',
-    CTI_MONITOR_WS_SERVERURL:'"ws://119.27.184.157:9052/"',
-    FILE_SERVER_URL: '"http://119.27.179.175:9800"',
-    SHOW_WECHAT:true,
-    SMS: {
-      enable: true,
-      platform: '1', // 1:网关，2：领创盛世.
-      type: "4",//4大类营销短信
-      sendMessageTime: 10,//通话多少秒需要发短信
-      content: '"你好，谢谢支持"'
-    },
-    WORKFLOW_AUTH_STAFFNO:'10010'
+    WORKFLOW_AUTH_STAFFNO: '10010'
   },
   sit: {
-    TUI_WS_SERVERURL:'"ws://119.27.179.175:12133"',
-    CTI_WS_SERVERURL:'"ws://119.27.184.157:9050/"',
-    CTI_MONITOR_WS_SERVERURL:'"ws://119.27.184.157:9052/"',
+    TUI_WS_SERVERURL: '"ws://119.27.179.175:12123"',
+    CTI_WS_SERVERURL: '"ws://119.27.184.157:9050/"',
+    CTI_MONITOR_WS_SERVERURL: '"ws://119.27.184.157:9052/"',
     FILE_SERVER_URL: '"http://119.27.184.90:9800"',
-    SHOW_WECHAT:true,
+    SHOW_WECHAT: true,
     SMS: {
       enable: false,
       platform: '1', // 1:网关，2：领创盛世.
@@ -66,29 +51,14 @@ const env_conf = {
       sendMessageTime: 10,//通话多少秒需要发短信
       content: '"你好，谢谢支持"'
     },
-    WORKFLOW_AUTH_STAFFNO:'10010'
-  },
-  crmnb: {
-    TUI_WS_SERVERURL:'"ws://119.27.179.175:12132"',
-    CTI_WS_SERVERURL:'"ws://132.232.209.250:9050/"',
-    CTI_MONITOR_WS_SERVERURL:'"ws://132.232.209.250:9052/"',
-    FILE_SERVER_URL: '"http://118.24.177.4:9800"',
-    SHOW_WECHAT:false,
-    SMS: {
-      enable: true,
-      platform: '1', // 1:网关，2：领创盛世.
-      type: "4",//4大类营销短信
-      sendMessageTime: 10,//通话多少秒需要发短信
-      content: '"【安安直贷】尊敬的客户，您已成功领取3000元额度、线上自动审核，24小时内有效 http://www.anancash.com/html_aa/regist/app.html?code=ssszzz01 退订回T"'
-    },
-    WORKFLOW_AUTH_STAFFNO:'10010'
+    WORKFLOW_AUTH_STAFFNO: '10010'
   },
   jd: {
-    TUI_WS_SERVERURL:'"ws://119.27.179.175:12502"',
-    CTI_WS_SERVERURL:'"ws://132.232.209.250:9050/"',
-    CTI_MONITOR_WS_SERVERURL:'"ws://132.232.209.250:9052/"',
+    TUI_WS_SERVERURL: '"ws://119.27.179.175:12502"',
+    CTI_WS_SERVERURL: '"ws://132.232.209.250:9050/"',
+    CTI_MONITOR_WS_SERVERURL: '"ws://132.232.209.250:9052/"',
     FILE_SERVER_URL: '"http://119.27.179.175:12501"',
-    SHOW_WECHAT:true,
+    SHOW_WECHAT: true,
     SMS: {
       enable: false,
       platform: '1', // 1:网关，2：领创盛世.
@@ -96,7 +66,7 @@ const env_conf = {
       sendMessageTime: 10,//通话多少秒需要发短信
       content: '"你好，谢谢支持"'
     },
-    WORKFLOW_AUTH_STAFFNO:'10010'
+    WORKFLOW_AUTH_STAFFNO: '10010'
   }
 }
 
