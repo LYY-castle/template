@@ -247,7 +247,7 @@
             <b style="color:#020202;">电话录音</b>
           </el-row>
           <el-row class="font12">
-            <vue-plyr ref="plyr" class="audio-style" :options="option">
+            <vue-plyr v-if="showPlayer" ref="plyr" class="audio-style" :options="option">
               <audio>
                 <source :src="detailInfo.contactInfo.soundRecordUrl"/>
               </audio>
@@ -259,7 +259,7 @@
       <el-row>
         <div style="text-align:center">
           <el-button type="primary" @click="edit();editVisible=true">编辑</el-button>
-          <el-button plain type="primary" @click="searchByKeyWords(req);isMainPage = true" style="margin-right:40px;">关闭</el-button>
+          <el-button plain type="primary" @click="searchByKeyWords(req);isMainPage = true;showPlayer=false;" style="margin-right:40px;">关闭</el-button>
         </div>
       </el-row>
     </div>
@@ -710,6 +710,7 @@ audio {
     name: 'contact_record_dail',
     data() {
       return {
+        showPlayer: false,
         tabs_questionnaire: '0',
         questionnaireTabs: [],
         answerData: [], // 所有问卷的填写记录
@@ -1054,8 +1055,9 @@ audio {
         })
         getContactByGradeId(this.ids.recordId).then(response => {
           if (response.data.code === 0) {
-            this.detailInfo.contactInfo = response.data.data
+            this.$set(this.detailInfo, 'contactInfo', response.data.data)
             // this.checkedSummaryKeys(response.data.data.summaryDetailInfos)
+            this.showPlayer = true
             const a = response.data.data.summaryDetailInfos.map(function(item, index) {
               if (item) {
                 return item.id
