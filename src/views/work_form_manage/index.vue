@@ -12,18 +12,27 @@
             createWorkFrom;
             tableShow = false;
             createShow = true;
+            show = 1;
           "
           >新建</el-button
         >
-        <!-- <el-button type="danger" size="small" @click="batchDelVisible = true"
+        <el-button
+          type="danger"
+          size="small"
+          @click="mutipleDelete([workFormData])"
           >批量删除</el-button
-        > -->
+        >
         <!-- <el-button type="info" size="small" @click="importVisible=true;importInfo.uploadFileName='';importInfo.batchName='';importInfo.source=''">导入客户</el-button> -->
       </el-row>
       <el-row>
-        <el-table :data="workFromData" highlight-current-row>
-          <!-- <el-table-column align="center" type="selection" width="55">
-          </el-table-column> -->
+        <el-table
+          :data="workFormData"
+          highlight-current-row
+          @selection-change="handleSelectionChange"
+          ref="multipleTable"
+        >
+          <el-table-column align="center" type="selection" width="55">
+          </el-table-column>
 
           <el-table-column
             align="center"
@@ -60,7 +69,7 @@
           <el-table-column align="center" label="操作" width="100">
             <template slot-scope="scope">
               <el-button
-                @click="searchByCustomerId(scope.row, 2)"
+                @click="showModifyContent(scope.row)"
                 type="text"
                 size="small"
                 >修改</el-button
@@ -68,7 +77,7 @@
               <el-button
                 @click="
                   delVisible = true;
-                  workFormId = scope.row.id;
+                  workFormId = [scope.row.id];
                 "
                 type="text"
                 size="small"
@@ -95,59 +104,62 @@
     </el-row>
     <!-- 新建工作表单 -->
     <div v-if="createShow">
-      <el-row :gutter="20">
+      <el-row :gutter="20" class="colmn">
         <!-- 选择类型 -->
-        <el-col :span="3">
+        <el-col :span="3" class="leftside" v-if="show === 1 || show === 2">
+          
           <el-menu class="el-menu-vertical-demo">
+            <el-menu-item style="font-size:18px;font-weight:800">控件列表</el-menu-item>
             <el-menu-item index="1" @click="addDemo(1)">
-              <i class="el-icon-edit"></i>
+              <i class="icofont-underline"></i>
               <span slot="title">单行文本</span>
             </el-menu-item>
             <el-menu-item index="2" @click="addDemo(2)">
-              <i class="el-icon-tickets"></i>
+              <i class="icofont-small-cap"></i>
               <span slot="title">多行文本</span>
             </el-menu-item>
             <el-menu-item index="3" @click="addDemo(3)">
-              <i class="el-icon-plus"></i>
+              <i class="icofont-numbered"></i>
               <span slot="title">数字</span>
             </el-menu-item>
             <el-menu-item index="4" @click="addDemo(4)">
-              <i class="el-icon-circle-check-outline"></i>
+              <i class="icofont-check-alt"></i>
               <span slot="title">单选框</span>
             </el-menu-item>
             <el-menu-item index="5" @click="addDemo(5)">
-              <i class="el-icon-success"></i>
+              <i class="icofont-checked"></i>
               <span slot="title">多选框</span>
             </el-menu-item>
             <el-menu-item index="6" @click="addDemo(6)">
-              <i class="el-icon-arrow-down"></i>
+              <i class="icofont-thin-down"></i>
               <span slot="title">下拉框</span>
             </el-menu-item>
-            <el-menu-item index="8" @click="addDemo(8)">
-              <i class="el-icon-date"></i>
-              <span slot="title">多选下拉框</span>
-            </el-menu-item>
             <el-menu-item index="7" @click="addDemo(7)">
-              <i class="el-icon-date"></i>
+              <i class="icofont-ui-timer"></i>
               <span slot="title">日期+时间</span>
             </el-menu-item>
+            <el-menu-item index="8" @click="addDemo(8)">
+              <i class="icofont-stylish-down"></i>
+              <span slot="title">多级下拉框</span>
+            </el-menu-item>
             <el-menu-item index="9" @click="addDemo(9)">
-              <i class="el-icon-date"></i>
+              <i class="icofont-table"></i>
               <span slot="title">日期</span>
             </el-menu-item>
             <el-menu-item index="10" @click="addDemo(10)">
-              <i class="el-icon-date"></i>
+              <i class="icofont-wall-clock"></i>
               <span slot="title">时间</span>
             </el-menu-item>
             <el-menu-item index="11" @click="addDemo(11)">
-              <i class="el-icon-date"></i>
+              <i class="icofont-code"></i>
               <span slot="title">span</span>
             </el-menu-item>
           </el-menu>
         </el-col>
         <!-- 模板 -->
-        <el-col :span="12" style="background-color: #fff;">
+        <el-col :span="11" style="background-color: #fff;">
           <div class="template">
+            <div style="font-size:18px;font-weight:800">工单模板</div>
             <div class="title" @click="changeTitle">
               {{ workFormTable.name }}
             </div>
@@ -172,6 +184,7 @@
                   :disabled="item.rw === 0 ? true : false"
                   style="inputWidth"
                   :placeholder="item.placeholder"
+                  v-model="item.dataValues"
                 ></el-input>
               </div>
               <div v-if="item.dataType === 'textarea'" class="demo">
@@ -186,6 +199,7 @@
                   :disabled="item.rw === 0 ? true : false"
                   style="inputWidth"
                   :placeholder="item.placeholder"
+                  v-model="item.dataValues"
                 ></el-input>
               </div>
               <div v-if="item.dataType === 'inputNumber'" class="demo">
@@ -195,8 +209,10 @@
                 </div>
                 <el-input
                   size="small"
-                  type="inputNumber"
+                  type="number"
                   :disabled="item.rw === 0 ? true : false"
+                  :placeholder="item.placeholder"
+                  v-model="item.dataValues"
                 ></el-input>
               </div>
               <div v-if="item.dataType === 'radio'" class="demo">
@@ -252,6 +268,7 @@
                   type="datetime"
                   :placeholder="item.placeholder"
                   :disabled="item.rw === 0 ? true : false"
+                  v-model="item.dataValues"
                 >
                 </el-date-picker>
               </div>
@@ -288,7 +305,7 @@
                 >
                 </el-date-picker>
               </div>
-               <div v-if="item.dataType === 'time'" class="demo">
+              <div v-if="item.dataType === 'time'" class="demo">
                 <div class="name">{{ item.name }}</div>
                 <div class="name">
                   <p>{{ item.val }}</p>
@@ -301,6 +318,19 @@
                 >
                 </el-date-picker>
               </div>
+              <div v-if="item.dataType === 'span'" class="demo">
+                <div class="name">{{ item.name }}</div>
+                <div class="name">
+                  <p>{{ item.val }}</p>
+                </div>
+                <quill-editor
+                  :disabled="item.rw === 0 ? true : false"
+                  v-model="item.dataValues"
+                  :options="editorOption"
+                  :placeholder="item.placeholder"
+                  style="white-space:pre"
+                ></quill-editor>
+              </div>
               <div class="tools">
                 <i class="el-icon-plus" @click="addDemo()"></i>
                 <i
@@ -312,7 +342,18 @@
               </div>
             </div>
             <div style="display: flex;justify-content: center;">
-              <el-button size="small" type="primary" @click="submitUpload"
+              <el-button
+                size="small"
+                type="primary"
+                @click="modifyWorkForm"
+                v-if="show === 2"
+                >修改</el-button
+              >
+              <el-button
+                size="small"
+                type="primary"
+                @click="submitUpload"
+                v-if="show === 1"
                 >提交</el-button
               >
               <el-button
@@ -320,9 +361,10 @@
                 type="primary"
                 plain
                 @click="
-                  workFormTable = [];
+                  initWorkFormTable;
                   createShow = false;
                   tableShow = true;
+                  show = 0;
                 "
                 >返回</el-button
               >
@@ -330,10 +372,11 @@
           </div>
         </el-col>
         <!-- 设值 -->
-        <el-col :span="7" class="setting">
+        <el-col :span="6" class="setting" v-if="show === 1 || show === 2">
+          <div style="font-size:18px;font-weight:800">字段属性</div>
           <div v-show="table">
             <div>
-              <div><span>工单名称</span></div>
+              <div><span>工单名称:</span></div>
               <el-input
                 type="textarea"
                 :rows="1"
@@ -341,22 +384,14 @@
               ></el-input>
             </div>
             <div>
-              <div><span>工单有效性</span></div>
+              <div><span>工单有效性:</span></div>
               <el-radio-group v-model="workFormTable.enabled">
                 <el-radio label="1">有效</el-radio><br />
                 <el-radio label="0">无效</el-radio>
               </el-radio-group>
             </div>
             <div>
-              <div><span>工单备注</span></div>
-              <el-input
-                type="textarea"
-                :rows="1"
-                v-model="workFormTable.remark"
-              ></el-input>
-            </div>
-            <div>
-              <div><span>工单版本</span></div>
+              <div><span>工单备注:</span></div>
               <el-input
                 type="textarea"
                 :rows="1"
@@ -369,13 +404,13 @@
             :key="index"
             v-show="text"
           >
-            <div v-show="item.dataType === 'input' && typeShow[index]">
+            <div v-if="item.dataType === 'input' && typeShow[index]">
               <div>
-                <div><span>字段名称</span></div>
+                <div><span>字段名称:</span></div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
-                <div><p>字段描述</p></div>
+                <div><span>字段描述</span></div>
                 <el-input
                   type="textarea"
                   :rows="2"
@@ -384,38 +419,40 @@
               </div>
               <div>
                 <div><span>默认值</span></div>
-                <el-input type="text"></el-input>
+                <el-input type="text" v-model="item.dataValues"></el-input>
               </div>
 
               <div>
-                <div><span>默认占位符</span></div>
+                <div><span>默认占位符:</span></div>
                 <el-input type="text" v-model="item.placeholder"></el-input>
               </div>
 
               <div>
-                <div><span>设置</span></div>
+                <div><span>设置:</span></div>
                 <el-radio-group v-model="item.rw">
-                  <el-radio label="0">只读</el-radio><br />
-                  <el-radio label="1">可读可写</el-radio>
+                  <el-radio label="0">不可读不可写</el-radio><br />
+                  <el-radio label="1">不可读可写</el-radio><br />
+                  <el-radio label="2">可读不可写</el-radio><br />
+                  <el-radio label="3">可读可写</el-radio>
                 </el-radio-group>
               </div>
               <div>
-                <div><span>校验规则</span></div>
+                <div><span>校验规则:</span></div>
                 <el-input type="text" v-model="item.regex"></el-input>
               </div>
 
               <div>
-                <div><span>备注</span></div>
+                <div><span>备注:</span></div>
                 <el-input type="text" v-model="item.remark"> </el-input>
               </div>
             </div>
-            <div v-show="item.dataType === 'textarea' && typeShow[index]">
+            <div v-if="item.dataType === 'textarea' && typeShow[index]">
               <div>
-                <div><span>字段名称</span></div>
+                <div><span>字段名称:</span></div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
-                <div><p>字段描述</p></div>
+                <div><span>字段描述:</span></div>
                 <el-input
                   type="textarea"
                   :rows="2"
@@ -424,38 +461,40 @@
               </div>
               <div>
                 <div><span>默认值</span></div>
-                <el-input type="text"></el-input>
+                <el-input type="text" v-model="item.dataValues"></el-input>
               </div>
 
               <div>
-                <div><span>默认占位符</span></div>
+                <div><span>默认占位符:</span></div>
                 <el-input type="text" v-model="item.placeholder"></el-input>
               </div>
 
               <div>
-                <div><span>设置</span></div>
+                <div><span>设置:</span></div>
                 <el-radio-group v-model="item.rw">
-                  <el-radio label="0">只读</el-radio><br />
-                  <el-radio label="1">可读可写</el-radio>
+                  <el-radio label="0">不可读不可写</el-radio><br />
+                  <el-radio label="1">不可读可写</el-radio><br />
+                  <el-radio label="2">可读不可写</el-radio><br />
+                  <el-radio label="3">可读可写</el-radio>
                 </el-radio-group>
               </div>
               <div>
-                <div><span>校验规则</span></div>
+                <div><span>校验规则:</span></div>
                 <el-input type="text" v-model="item.regex"></el-input>
               </div>
 
               <div>
-                <div><span>备注</span></div>
+                <div><span>备注:</span></div>
                 <el-input type="text" v-model="item.remark"> </el-input>
               </div>
             </div>
-            <div v-show="item.dataType === 'inputNumber' && typeShow[index]">
+            <div v-if="item.dataType === 'inputNumber' && typeShow[index]">
               <div>
-                <div><span>字段名称</span></div>
+                <div><span>字段名称:</span></div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
-                <div><p>字段描述</p></div>
+                <div><span>字段描述:</span></div>
                 <el-input
                   type="textarea"
                   :rows="2"
@@ -464,38 +503,40 @@
               </div>
               <div>
                 <div><span>默认值</span></div>
-                <el-input type="text"></el-input>
+                <el-input type="number" v-model="item.dataValues"></el-input>
               </div>
 
               <div>
-                <div><span>默认占位符</span></div>
+                <div><span>默认占位符:</span></div>
                 <el-input type="text" v-model="item.placeholder"></el-input>
               </div>
 
               <div>
-                <div><span>设置</span></div>
+                <div><span>设置:</span></div>
                 <el-radio-group v-model="item.rw">
-                  <el-radio label="0">只读</el-radio><br />
-                  <el-radio label="1">可读可写</el-radio>
+                  <el-radio label="0">不可读不可写</el-radio><br />
+                  <el-radio label="1">不可读可写</el-radio><br />
+                  <el-radio label="2">可读不可写</el-radio><br />
+                  <el-radio label="3">可读可写</el-radio>
                 </el-radio-group>
               </div>
               <div>
-                <div><span>校验规则</span></div>
+                <div><span>校验规则:</span></div>
                 <el-input type="text" v-model="item.regex"></el-input>
               </div>
 
               <div>
-                <div><span>备注</span></div>
+                <div><span>备注:</span></div>
                 <el-input type="text" v-model="item.remark"> </el-input>
               </div>
             </div>
-            <div v-show="item.dataType === 'radio' && typeShow[index]">
+            <div v-if="item.dataType === 'radio' && typeShow[index]">
               <div>
-                <div><span>字段名称</span></div>
+                <div><span>字段名称:</span></div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
-                <div><p>字段描述</p></div>
+                <div><span>字段描述:</span></div>
                 <el-input
                   type="textarea"
                   :rows="2"
@@ -542,29 +583,31 @@
               </div>
 
               <div>
-                <div><span>设置</span></div>
+                <div><span>设置:</span></div>
                 <el-radio-group v-model="item.rw">
-                  <el-radio label="0">只读</el-radio><br />
-                  <el-radio label="1">可读可写</el-radio>
+                  <el-radio label="0">不可读不可写</el-radio><br />
+                  <el-radio label="1">不可读可写</el-radio><br />
+                  <el-radio label="2">可读不可写</el-radio><br />
+                  <el-radio label="3">可读可写</el-radio>
                 </el-radio-group>
               </div>
               <div>
-                <div><span>校验规则</span></div>
+                <div><span>校验规则:</span></div>
                 <el-input type="text" v-model="item.regex"></el-input>
               </div>
 
               <div>
-                <div><span>备注</span></div>
+                <div><span>备注:</span></div>
                 <el-input type="text" v-model="item.remark"> </el-input>
               </div>
             </div>
-            <div v-show="item.dataType === 'checkbox' && typeShow[index]">
+            <div v-if="item.dataType === 'checkbox' && typeShow[index]">
               <div>
-                <div><span>字段名称</span></div>
+                <div><span>字段名称:</span></div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
-                <div><p>字段描述</p></div>
+                <div><span>字段描述:</span></div>
                 <el-input
                   type="textarea"
                   :rows="2"
@@ -611,29 +654,31 @@
               </div> -->
 
               <div>
-                <div><span>设置</span></div>
+                <div><span>设置:</span></div>
                 <el-radio-group v-model="item.rw">
-                  <el-radio label="0">只读</el-radio><br />
-                  <el-radio label="1">可读可写</el-radio>
+                  <el-radio label="0">不可读不可写</el-radio><br />
+                  <el-radio label="1">不可读可写</el-radio><br />
+                  <el-radio label="2">可读不可写</el-radio><br />
+                  <el-radio label="3">可读可写</el-radio>
                 </el-radio-group>
               </div>
               <div>
-                <div><span>校验规则</span></div>
+                <div><span>校验规则:</span></div>
                 <el-input type="text" v-model="item.regex"></el-input>
               </div>
 
               <div>
-                <div><span>备注</span></div>
+                <div><span>备注:</span></div>
                 <el-input type="text" v-model="item.remark"> </el-input>
               </div>
             </div>
-            <div v-show="item.dataType === 'select' && typeShow[index]">
+            <div v-if="item.dataType === 'select' && typeShow[index]">
               <div>
-                <div><span>字段名称</span></div>
+                <div><span>字段名称:</span></div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
-                <div><p>字段描述</p></div>
+                <div><span>字段描述:</span></div>
                 <el-input
                   type="textarea"
                   :rows="2"
@@ -652,29 +697,31 @@
                 </div> -->
               </div>
               <div>
-                <div><span>设置</span></div>
+                <div><span>设置:</span></div>
                 <el-radio-group v-model="item.rw">
-                  <el-radio label="0">只读</el-radio><br />
-                  <el-radio label="1">可读可写</el-radio>
+                  <el-radio label="0">不可读不可写</el-radio><br />
+                  <el-radio label="1">不可读可写</el-radio><br />
+                  <el-radio label="2">可读不可写</el-radio><br />
+                  <el-radio label="3">可读可写</el-radio>
                 </el-radio-group>
               </div>
               <div>
-                <div><span>校验规则</span></div>
+                <div><span>校验规则:</span></div>
                 <el-input type="text" v-model="item.regex"></el-input>
               </div>
 
               <div>
-                <div><span>备注</span></div>
+                <div><span>备注:</span></div>
                 <el-input type="text" v-model="item.remark"> </el-input>
               </div>
             </div>
-            <div v-show="item.dataType === 'datetime' && typeShow[index]">
+            <div v-if="item.dataType === 'datetime' && typeShow[index]">
               <div>
-                <div><span>字段名称</span></div>
+                <div><span>字段名称:</span></div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
-                <div><p>字段描述</p></div>
+                <div><span>字段描述:</span></div>
                 <el-input
                   type="textarea"
                   :rows="2"
@@ -683,28 +730,204 @@
               </div>
               <div>
                 <div><span>默认值</span></div>
-                <el-input type="text"></el-input>
+                <el-input type="text" v-model="item.dataValues"></el-input>
               </div>
 
               <div>
-                <div><span>默认占位符</span></div>
+                <div><span>默认占位符:</span></div>
                 <el-input type="text" v-model="item.placeholder"></el-input>
               </div>
 
               <div>
-                <div><span>设置</span></div>
+                <div><span>设置:</span></div>
                 <el-radio-group v-model="item.rw">
-                  <el-radio label="0">只读</el-radio><br />
-                  <el-radio label="1">可读可写</el-radio>
+                  <el-radio label="0">不可读不可写</el-radio><br />
+                  <el-radio label="1">不可读可写</el-radio><br />
+                  <el-radio label="2">可读不可写</el-radio><br />
+                  <el-radio label="3">可读可写</el-radio>
                 </el-radio-group>
               </div>
               <div>
-                <div><span>校验规则</span></div>
+                <div><span>校验规则:</span></div>
                 <el-input type="text" v-model="item.regex"></el-input>
               </div>
 
               <div>
-                <div><span>备注</span></div>
+                <div><span>备注:</span></div>
+                <el-input type="text" v-model="item.remark"> </el-input>
+              </div>
+            </div>
+            <div v-if="item.dataType === 'multipleSelect' && typeShow[index]">
+              <div>
+                <div><span>字段名称:</span></div>
+                <el-input type="text" :rows="1" v-model="item.name"></el-input>
+              </div>
+              <div>
+                <div><span>字段描述:</span></div>
+                <el-input
+                  type="textarea"
+                  :rows="2"
+                  v-model="item.val"
+                ></el-input>
+              </div>
+              <div>
+                <div><span>选择项</span></div>
+                <!-- <div>
+                  <el-input
+                    type="text"
+                    v-for="(a, k) in item.options"
+                    :key="k"
+                    v-model="a.content"
+                  ></el-input>
+                </div> -->
+              </div>
+              <div>
+                <div><span>设置:</span></div>
+                <el-radio-group v-model="item.rw">
+                  <el-radio label="0">不可读不可写</el-radio><br />
+                  <el-radio label="1">不可读可写</el-radio><br />
+                  <el-radio label="2">可读不可写</el-radio><br />
+                  <el-radio label="3">可读可写</el-radio>
+                </el-radio-group>
+              </div>
+              <div>
+                <div><span>校验规则:</span></div>
+                <el-input type="text" v-model="item.regex"></el-input>
+              </div>
+
+              <div>
+                <div><span>备注:</span></div>
+                <el-input type="text" v-model="item.remark"> </el-input>
+              </div>
+            </div>
+            <div v-if="item.dataType === 'date' && typeShow[index]">
+              <div>
+                <div><span>字段名称:</span></div>
+                <el-input type="text" :rows="1" v-model="item.name"></el-input>
+              </div>
+              <div>
+                <div><span>字段描述:</span></div>
+                <el-input
+                  type="textarea"
+                  :rows="2"
+                  v-model="item.val"
+                ></el-input>
+              </div>
+              <div>
+                <div><span>默认值</span></div>
+                <el-input type="text" v-model="item.dataValues"></el-input>
+              </div>
+
+              <div>
+                <div><span>默认占位符:</span></div>
+                <el-input type="text" v-model="item.placeholder"></el-input>
+              </div>
+
+              <div>
+                <div><span>设置:</span></div>
+                <el-radio-group v-model="item.rw">
+                  <el-radio label="0">不可读不可写</el-radio><br />
+                  <el-radio label="1">不可读可写</el-radio><br />
+                  <el-radio label="2">可读不可写</el-radio><br />
+                  <el-radio label="3">可读可写</el-radio>
+                </el-radio-group>
+              </div>
+              <div>
+                <div><span>校验规则:</span></div>
+                <el-input type="text" v-model="item.regex"></el-input>
+              </div>
+
+              <div>
+                <div><span>备注:</span></div>
+                <el-input type="text" v-model="item.remark"> </el-input>
+              </div>
+            </div>
+            <div v-if="item.dataType === 'time' && typeShow[index]">
+              <div>
+                <div><span>字段名称:</span></div>
+                <el-input type="text" :rows="1" v-model="item.name"></el-input>
+              </div>
+              <div>
+                <div><span>字段描述:</span></div>
+                <el-input
+                  type="textarea"
+                  :rows="2"
+                  v-model="item.val"
+                ></el-input>
+              </div>
+              <div>
+                <div><span>默认值</span></div>
+                <el-input type="text" v-model="item.dataValues"></el-input>
+              </div>
+
+              <div>
+                <div><span>默认占位符:</span></div>
+                <el-input type="text" v-model="item.placeholder"></el-input>
+              </div>
+
+              <div>
+                <div><span>设置:</span></div>
+                <el-radio-group v-model="item.rw">
+                  <el-radio label="0">不可读不可写</el-radio><br />
+                  <el-radio label="1">不可读可写</el-radio><br />
+                  <el-radio label="2">可读不可写</el-radio><br />
+                  <el-radio label="3">可读可写</el-radio>
+                </el-radio-group>
+              </div>
+              <div>
+                <div><span>校验规则:</span></div>
+                <el-input type="text" v-model="item.regex"></el-input>
+              </div>
+
+              <div>
+                <div><span>备注:</span></div>
+                <el-input type="text" v-model="item.remark"> </el-input>
+              </div>
+            </div>
+            <div v-if="item.dataType === 'span' && typeShow[index]">
+              <div>
+                <div><span>字段名称:</span></div>
+                <el-input type="text" :rows="1" v-model="item.name"></el-input>
+              </div>
+              <div>
+                <div><span>字段描述:</span></div>
+                <el-input
+                  type="textarea"
+                  :rows="2"
+                  v-model="item.val"
+                ></el-input>
+              </div>
+              <div>
+                <div><span>详细内容</span></div>
+                <quill-editor
+                  :disabled="item.rw === 0 ? true : false"
+                  v-model="item.dataValues"
+                  :options="editorOption"
+                  :placeholder="item.placeholder"
+                  style="white-space:pre"
+                ></quill-editor>
+              </div>
+              <div>
+                <div><span>默认占位符:</span></div>
+                <el-input type="text" v-model="item.placeholder"></el-input>
+              </div>
+
+              <div>
+                <div><span>设置:</span></div>
+                <el-radio-group v-model="item.rw">
+                  <el-radio label="0">不可读不可写</el-radio><br />
+                  <el-radio label="1">不可读可写</el-radio><br />
+                  <el-radio label="2">可读不可写</el-radio><br />
+                  <el-radio label="3">可读可写</el-radio>
+                </el-radio-group>
+              </div>
+              <div>
+                <div><span>校验规则:</span></div>
+                <el-input type="text" v-model="item.regex"></el-input>
+              </div>
+
+              <div>
+                <div><span>备注:</span></div>
                 <el-input type="text" v-model="item.remark"> </el-input>
               </div>
             </div>
@@ -712,7 +935,7 @@
         </el-col>
       </el-row>
     </div>
-    <!-- 单个删除dialog -->
+    <!-- 删除dialog -->
     <el-dialog
       width="30%"
       title="操作提示"
@@ -729,7 +952,13 @@
           "
           >确定</el-button
         >
-        <el-button type="primary" plain @click="delVisible = false"
+        <el-button
+          type="primary"
+          plain
+          @click="
+            delVisible = false;
+            workFormId = [];
+          "
           >取消</el-button
         >
       </div>
@@ -751,24 +980,53 @@ export default {
     return {
       formContainerOpen: "1",
       // 工作表单列表
-      workFromData: [],
+      workFormData: [],
+      workFormId: [],
       createShow: false,
       delVisible: false,
       tableShow: true,
       table: true, //标题显示
       text: false, //单题属性显示
-      // 数据双向绑定
+      show: 0, //1新建，2修改，3查看
       // 单个展示
       typeShow: [],
       // 工作表单
       workFormTable: {
+        creatorId: localStorage.getItem("agentId"),
+        creatorName: localStorage.getItem("userName"),
         name: "工单名称",
         enabled: "1",
         remark: "",
-        version: 0,
         workformProperties: []
       },
-
+      // 修改工作表单
+      modifyWorkFormTable: {
+        id:'',
+        modifierId: localStorage.getItem("agentId"),
+        modifierName: localStorage.getItem("userName"),
+        name: "工单名称",
+        enabled: "1",
+        remark: "",
+        workformProperties: []
+      },
+      editorOption: {
+        modules: {
+          toolbar: [
+            ["bold", "italic", "underline", "strike", "image"], // 加粗bold 斜体italic 下划线underline 删除线strike
+            ["blockquote", "code-block"], // 引用blockquote 代码块code-block
+            [
+              { direction: "rtl" },
+              { script: "sub" },
+              { script: "super" },
+              { list: "ordered" },
+              { list: "bullet" }
+            ],
+            [{ size: ["small", false, "large", "huge"] }],
+            [{ color: [] }, { background: [] }, { font: [] }, { align: [] }]
+          ]
+        },
+        placeholder: "这里可以显示HTML内容"
+      },
       // 分页数据
       pageShow: false,
       pageInfo: {}
@@ -778,7 +1036,7 @@ export default {
     this.getWorkFormList();
     this.$dragging.$on("dragged", ({ value }) => {
       // this.workFormTable = value.list;
-      console.log(this.workFormTable);
+      console.log(this.workFormTable.workformProperties);
     });
   },
   methods: {
@@ -787,12 +1045,7 @@ export default {
       getWorkForm()
         .then(res => {
           if (res.data.code === 0) {
-            this.workFromData = res.data.data;
-            // console.log(this.workFromData[0].workformProperties[0].dataValues);
-            // var dataceshi = JSON.parse(
-            //   this.workFromData[0].workformProperties[2].dataValues
-            // );
-            // console.log(dataceshi);
+            this.workFormData = res.data.data;
             if (res.data.pageInfo) {
               this.pageInfo = res.data.pageInfo;
               this.pageShow = true;
@@ -801,7 +1054,7 @@ export default {
             }
           } else {
             this.$message(res.data.messages);
-            this.workFromData = res.data.data;
+            this.workFormData = res.data.data;
             this.pageShow = false;
           }
         })
@@ -827,23 +1080,7 @@ export default {
     },
     // 删除题目类型
     removeDemo(index) {
-      this.workFormTable.splice(index, 1);
-    },
-    // 删除工作表单
-    deleteWorkForm(workFormId) {
-      deleteWorkForm(workFormId)
-        .then(response => {
-          if (response.data.code === 0) {
-            this.$message.success(response.data.message);
-            this.getWorkFormList();
-          } else {
-            this.$message.error(response.data.message);
-          }
-        })
-        .catch(error => {
-          console.log(error);
-          this.$message("删除失败");
-        });
+      this.workFormTable.workformProperties.splice(index, 1);
     },
 
     // 标题属性切换
@@ -853,7 +1090,9 @@ export default {
     },
     // 点击类型初始化题型
     initFrom(num) {
+      console.log(num);
       if (num === 1) {
+        console.log(1);
         this.workFormTable.workformProperties.push({
           dataType: "input",
           dataValues: "",
@@ -861,7 +1100,6 @@ export default {
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
-          workform: {},
           maxValue: "",
           minValue: "",
           name: "单行文本",
@@ -872,6 +1110,7 @@ export default {
           val: "",
           styleValue: ""
         });
+        console.log(1111);
       } else if (num === 2) {
         this.workFormTable.workformProperties.push({
           dataType: "textarea",
@@ -880,7 +1119,6 @@ export default {
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
-          workform: {},
           maxValue: "",
           minValue: "",
           name: "多行文本",
@@ -899,7 +1137,6 @@ export default {
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
-          workform: {},
           maxValue: "",
           minValue: "",
           name: "数字",
@@ -918,7 +1155,6 @@ export default {
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
-          workform: {},
           maxValue: "",
           minValue: "",
           name: "单选框",
@@ -937,7 +1173,6 @@ export default {
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
-          workform: {},
           maxValue: "",
           minValue: "",
           name: "多选框",
@@ -956,7 +1191,6 @@ export default {
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
-          workform: {},
           maxValue: "",
           minValue: "",
           name: "下拉框",
@@ -975,7 +1209,6 @@ export default {
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
-          workform: {},
           maxValue: "",
           minValue: "",
           name: "日期+时间",
@@ -994,7 +1227,6 @@ export default {
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
-          workform: {},
           maxValue: "",
           minValue: "",
           name: "多选下拉框",
@@ -1007,16 +1239,15 @@ export default {
         });
       } else if (num === 9) {
         this.workFormTable.workformProperties.push({
-          dataType: "time",
+          dataType: "date",
           dataValues: "",
           defaultValue: "",
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
-          workform: {},
           maxValue: "",
           minValue: "",
-          name: "时间",
+          name: "日期",
           placeholder: "",
           regex: "",
           remark: "",
@@ -1026,16 +1257,15 @@ export default {
         });
       } else if (num === 10) {
         this.workFormTable.workformProperties.push({
-          dataType: "date",
+          dataType: "time",
           dataValues: "",
           defaultValue: "",
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
-          workform: {},
           maxValue: "",
           minValue: "",
-          name: "日期",
+          name: "时间",
           placeholder: "",
           regex: "",
           remark: "",
@@ -1051,7 +1281,6 @@ export default {
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
-          workform: {},
           maxValue: "",
           minValue: "",
           name: "描述文字",
@@ -1066,6 +1295,7 @@ export default {
     },
     // 点击题项初始化数据
     changeItem(item, index) {
+      console.log(index);
       this.table = false;
       this.text = false;
       this.typeShow.length = this.workFormTable.workformProperties.length;
@@ -1074,6 +1304,22 @@ export default {
       }
       this.typeShow[index] = true;
       this.text = this.typeShow[index];
+    },
+    // 批量删除状态切换
+    handleSelectionChange(val) {
+      this.workFormId = val;
+      console.log(this.workFormId);
+    },
+    // 批量删除
+    mutipleDelete(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row);
+        });
+        this.delVisible = true;
+      } else {
+        this.$refs.multipleTable.clearSelection();
+      }
     },
     // 上移
     upOption(arr, index, length) {
@@ -1095,9 +1341,95 @@ export default {
     removeRadio(a, index) {
       a.splice(index, 1);
     },
-    // 提交
+    // 初始化表单属性
+    initWorkFormTable() {
+      this.workFormTable = {
+        creatorId: localStorage.getItem("agentId"),
+        creatorName: localStorage.getItem("userName"),
+        name: "工单名称",
+        enabled: "1",
+        remark: "",
+        workformProperties: []
+      };
+    },
+    // 新建
     submitUpload() {
-      console.log(this.workFormTable);
+      if (this.workFormTable.workformProperties.length !== 0) {
+        createWorkForm(this.workFormTable).then(res => {
+          if (res.data.code === 0) {
+            this.$message.success(res.data.message);
+            this.tableShow = true;
+            this.createShow = false;
+            this.getWorkFormList();
+            this.workFormTable = {
+              creatorId: localStorage.getItem("agentId"),
+              creatorName: localStorage.getItem("userName"),
+              name: "工单名称",
+              enabled: "1",
+              remark: "",
+              workformProperties: []
+            };
+          } else {
+            this.$message.error(res.data.messages);
+          }
+        });
+      } else {
+        this.$message.error("请选择至少一种模板题型");
+      }
+    },
+
+    // 删除工作表单
+    deleteWorkForm(workFormId) {
+      deleteWorkForm(workFormId)
+        .then(response => {
+          if (response.data.code === 0) {
+            this.$message.success(response.data.message);
+            this.getWorkFormList();
+          } else {
+            this.$message.error(response.data.message);
+          }
+        })
+        .catch(error => {
+          console.log(error);
+          this.$message("删除失败");
+        });
+    },
+    // 修改传值
+    showModifyContent(row) {
+      this.modifyWorkFormTable.id = row.id
+      this.workFormTable = row
+      this.createShow = true;
+      this.tableShow = false;
+      this.show = 2;
+    },
+    // 修改
+    modifyWorkForm(row) {
+      this.modifyWorkFormTable.name = this.workFormTable.name;
+      this.modifyWorkFormTable.enabled = this.workFormTable.enabled;
+      this.modifyWorkFormTable.remark = this.workFormTable.remark;
+      this.modifyWorkFormTable.workformProperties = this.workFormTable.workformProperties;
+      if (this.modifyWorkFormTable.workformProperties.length !== 0) {
+        createWorkForm(this.modifyWorkFormTable).then(res => {
+          if (res.data.code === 0) {
+            this.$message.success(res.data.message);
+            this.tableShow = true;
+            this.createShow = false;
+            this.getWorkFormList();
+            this.modifyWorkFormTable = {
+              modifierId: localStorage.getItem("agentId"),
+              modifierName: localStorage.getItem("userName"),
+              name: "工单名称",
+              enabled: "1",
+              remark: "",
+              workformProperties: []
+            };
+          } else {
+            this.$message.error(res.data.message);
+          }
+        });
+      } else {
+        this.$message.error("请选择至少一种模板题型");
+      }
     },
     // 页面显示条数
     handleSizeChange(val) {
@@ -1118,6 +1450,10 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
+.colmn {
+  display: flex;
+  justify-content: space-between;
+}
 .table-container {
   .form-container {
     box-shadow: none;
@@ -1125,7 +1461,17 @@ export default {
     border-left: solid 4px #57afff;
   }
 }
-
+.leftside {
+  min-width: 150px;
+  padding-left: 0;
+}
+.leftside .el-menu-item {
+  padding: 0 10px;
+  padding-left: 0;
+  i {
+    font-size: 20px;
+  }
+}
 .inputWidth {
   width: 55%;
 }
@@ -1140,6 +1486,7 @@ export default {
 }
 .title {
   padding: 10px;
+  margin-top:10px;
   &:hover {
     border: 1px dashed #eee;
     background-color: rgba(87, 175, 255, 0.1);
@@ -1157,7 +1504,7 @@ export default {
   }
 }
 .template {
-  padding: 20px 10px;
+  padding: 10px 0;
   height: 800px;
   overflow: hidden;
   overflow-y: auto;
@@ -1172,8 +1519,10 @@ export default {
     background-color: rgba(87, 175, 255, 0.1);
     i {
       display: block;
+      font-size: 20px;
     }
   }
+
   .demo {
     padding: 10px;
     .name {
@@ -1187,15 +1536,15 @@ export default {
   height: 800px;
   margin-left: 15px;
   padding: 20px;
-  overflow: hidden;
-  overflow-y: auto;
+  overflow: auto;
   &::-webkit-scrollbar {
     width: 0;
   }
   & > div {
     margin-bottom: 10px;
     span {
-      font-size: 14px;
+      font-size: 12px;
+      color: #96999e;
       display: inline-block;
       margin: 15px 0 5px 0;
     }

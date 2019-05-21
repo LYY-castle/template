@@ -42,7 +42,7 @@ export function deleteWorkForm(workFormId) {
     url: '/workflow/workform/delete/workform',
     method: 'post',
     data: {
-      id:workFormId
+      ids:workFormId
     }
   })
 }
