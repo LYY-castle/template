@@ -703,7 +703,7 @@
                     <b style="color:#020202;">电话录音</b>
                   </el-row>
                   <el-row class="font12">
-                    <vue-plyr ref="plyr" class="audio-style" :options="option">
+                    <vue-plyr ref="plyr" class="audio-style" :options="option" v-if="showPlayer">
                       <audio>
                         <source :src="detailInfo.contactInfo.soundRecordUrl"/>
                       </audio>
@@ -1364,6 +1364,7 @@ export default {
         summaryIds: []
         // taskStatus: '' // 任务状态 1 预约,2 完成,3 失败
       },
+      showPlayer: false,
       option: { i18n: { normal: '1×', speed: '播放速度' }},
       customerPhoneAddress: '',
       ids: {
@@ -1788,6 +1789,7 @@ export default {
     handleTabRemove(targetName) {
       if (targetName === '6') { // 关闭服务记录详情
         this.recordDailTabVisible = false
+        this.showPlayer = false
         this.activeName = '2'
       } else if (targetName === '7') { // 关闭工单记录详情
         this.workFormRecordTabVisible = false
@@ -1837,8 +1839,8 @@ export default {
       this.showRecordDailTab()
       getContactByGradeId(this.ids.recordId).then(response => {
         if (response.data.code === 0) {
-          this.detailInfo.contactInfo = response.data.data
-          // this.checkedSummaryKeys(response.data.data.summaryDetailInfos)
+          this.$set(this.detailInfo, 'contactInfo', response.data.data)
+          this.showPlayer = true
           const a = response.data.data.summaryDetailInfos.map(function(item, index) {
             if (item) {
               return item.id
