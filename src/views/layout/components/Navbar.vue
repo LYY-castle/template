@@ -161,9 +161,9 @@
               <el-button circle style="background:none;color:#AAACAE;border:none;padding:5.5px;"><svg-icon icon-class="user" class="icon-size"/></el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item disabled>
-                  <span><b>工号：</b>{{userInfo.staffId}}</span><br/>
-                  <span><b>用户：</b>{{userInfo.userName}}</span><br/>
-                  <span><b>部门：</b>{{userInfo.departName}}</span><br/>
+                  <span><b>登录帐号：</b>{{userInfo.accountNo}}</span><br/>
+                  <span><b>员工姓名：</b>{{userInfo.agentName}}</span><br/>
+                  <span><b>所属部门：</b>{{userInfo.departName}}</span><br/>
                 </el-dropdown-item>
                 <el-dropdown-item style="text-align:center" divided command="changePWD">
                   <i class="el-icon-edit-outline">  修改密码</i>
@@ -230,9 +230,9 @@
                 <el-button circle style="background:none;color:#AAACAE;border:none;padding:5.5px;"><svg-icon icon-class="user" class="icon-size"/></el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item disabled>
-                    <span><b>工号：</b>{{userInfo.staffId}}</span><br/>
-                    <span><b>用户：</b>{{userInfo.userName}}</span><br/>
-                    <span><b>部门：</b>{{userInfo.departName}}</span><br/>
+                    <span><b>登录帐号：</b>{{userInfo.accountNo}}</span><br/>
+                    <span><b>员工姓名：</b>{{userInfo.agentName}}</span><br/>
+                    <span><b>所属部门：</b>{{userInfo.departName}}</span><br/>
                   </el-dropdown-item>
                   <el-dropdown-item style="text-align:center" divided command="changePWD">
                     <i class="el-icon-edit-outline">  修改密码</i>
@@ -423,9 +423,10 @@ export default {
       orginCaller: '',
 
       userInfo: {
-        userName: '',
-        staffId: '',
-        departName: ''
+        agentName: localStorage.getItem('agentName') ? localStorage.getItem('agentName') : '',
+        staffId: localStorage.getItem('agentId') ? localStorage.getItem('agentId') : '',
+        departName: localStorage.getItem('departName') ? localStorage.getItem('departName') : '',
+        accountNo: localStorage.getItem('accountNo') ? localStorage.getItem('accountNo') : ''
       },
       havesoftphone: false,
       value: 'shanghai',
@@ -2153,16 +2154,6 @@ export default {
       $('div.hamberger-bar').addClass('closed')
     }
 
-    getUserInfo().then(res => {
-      localStorage.setItem('departId', res.data.departId)
-      localStorage.setItem('agentName', res.data.agentName)
-      localStorage.setItem('is_internal_admin', res.data.is_internal_admin)
-      this.userInfo.userName = res.data.agentName
-      this.userInfo.staffId = res.data.agentId
-      this.userInfo.departName = res.data.departName
-    }).catch(error => {
-      console.log(error)
-    })
     // 刚进页面获取未读消息数量
     this.firstgetUnreadMessages(agentId)
 
