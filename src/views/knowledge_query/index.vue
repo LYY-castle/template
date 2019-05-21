@@ -93,18 +93,7 @@
                   </li>
                 </ul>
               </div>
-              <div style="position:fixed;bottom: 19px;right: 295px;">
-                <el-pagination
-                  @size-change="handleSizeChange"
-                  @current-change="handleCurrentChange"
-                  :current-page="pageInfo.pageNo"
-                  :page-sizes="[10, 20, 30, 40, 50]"
-                  :page-size="pageInfo.pageSize"
-                  layout="total, sizes, prev, pager, next, jumper "
-                  :total="pageInfo.total" 
-                  style="text-align: right;float:right;">
-                </el-pagination>
-              </div>
+              
               <div class="click-rank">
                 <div class="font12 margin-bottom-20">找到{{pageInfo.total}}条结果</div>
                 <div class="font14" style="margin-bottom:10px;">点击量排行</div>
@@ -123,6 +112,18 @@
                   </li>
                 </ul>
               </div>
+            </div>
+            <div>
+              <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="pageInfo.pageNo"
+                :page-sizes="[10, 20, 30, 40, 50]"
+                :page-size="pageInfo.pageSize"
+                layout="total, sizes, prev, pager, next, jumper "
+                :total="pageInfo.total" 
+                style="text-align: right;float:right;margin-right:260px;">
+              </el-pagination>
             </div>
           </section>
           <!-- 详情 -->
