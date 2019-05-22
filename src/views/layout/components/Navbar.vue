@@ -1488,7 +1488,7 @@ export default {
                 }).then(res => {
                   recordId = res.data.data
                   console.log('写来电通话记录：', res)
-                  vm.$store.commit('SET_NAV_INCOMING_CALL', true)
+                  vm.$store.commit('SET_NAV_INCOMING_CALL', new Date().getTime())
                   sessionStorage.setItem('inCall_customerPhone', vm.caller)
                   sessionStorage.setItem('inCall_customerInfos', JSON.stringify(customerInfos))
                   sessionStorage.setItem('inCall_recordId', recordId)
@@ -1516,7 +1516,7 @@ export default {
                     }).then(res => {
                       recordId = res.data.data
                       console.log('写来电通话记录：', res)
-                      vm.$store.commit('SET_NAV_INCOMING_CALL', false)
+                      vm.$store.commit('SET_NAV_INCOMING_CALL', new Date().getTime())
                       sessionStorage.setItem('inCall_customerPhone', vm.caller)
                       sessionStorage.setItem('inCall_customerInfos', JSON.stringify(customerInfos))
                       sessionStorage.setItem('inCall_recordId', recordId)
