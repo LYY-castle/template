@@ -107,9 +107,10 @@
       <el-row :gutter="20" class="colmn">
         <!-- 选择类型 -->
         <el-col :span="3" class="leftside" v-if="show === 1 || show === 2">
-          
           <el-menu class="el-menu-vertical-demo">
-            <el-menu-item style="font-size:18px;font-weight:800">控件列表</el-menu-item>
+            <el-menu-item style="font-size:18px;font-weight:800"
+              >控件列表</el-menu-item
+            >
             <el-menu-item index="1" @click="addDemo(1)">
               <i class="icofont-underline"></i>
               <span slot="title">单行文本</span>
@@ -181,10 +182,12 @@
                 </div>
                 <el-input
                   size="small"
-                  :disabled="item.rw === 0 ? true : false"
+                  disabled
                   style="inputWidth"
                   :placeholder="item.placeholder"
                   v-model="item.dataValues"
+                  :maxlength="item.maxValue"
+                  :minlength="item.minValue"
                 ></el-input>
               </div>
               <div v-if="item.dataType === 'textarea'" class="demo">
@@ -196,10 +199,12 @@
                   size="small"
                   type="textarea"
                   :rows="1"
-                  :disabled="item.rw === 0 ? true : false"
+                  disabled
                   style="inputWidth"
                   :placeholder="item.placeholder"
                   v-model="item.dataValues"
+                  :maxlength="item.maxValue"
+                  :minlength="item.minValue"
                 ></el-input>
               </div>
               <div v-if="item.dataType === 'inputNumber'" class="demo">
@@ -210,9 +215,11 @@
                 <el-input
                   size="small"
                   type="number"
-                  :disabled="item.rw === 0 ? true : false"
+                  disabled
                   :placeholder="item.placeholder"
                   v-model="item.dataValues"
+                  :maxlength="item.maxValue"
+                  :minlength="item.minValue"
                 ></el-input>
               </div>
               <div v-if="item.dataType === 'radio'" class="demo">
@@ -267,7 +274,7 @@
                 <el-date-picker
                   type="datetime"
                   :placeholder="item.placeholder"
-                  :disabled="item.rw === 0 ? true : false"
+                  disabled
                   v-model="item.dataValues"
                 >
                 </el-date-picker>
@@ -281,7 +288,7 @@
                   v-model="item.dataValues"
                   multiple
                   :placeholder="item.placeholder"
-                  :disabled="item.rw === 0 ? true : false"
+                  disabled
                 >
                   <!-- <el-option
                     v-for="item in item.dataValues"
@@ -301,7 +308,7 @@
                   v-model="item.dataValues"
                   type="date"
                   :placeholder="item.placeholder"
-                  :disabled="item.rw === 0 ? true : false"
+                  disabled
                 >
                 </el-date-picker>
               </div>
@@ -310,13 +317,8 @@
                 <div class="name">
                   <p>{{ item.val }}</p>
                 </div>
-                <el-date-picker
-                  v-model="item.dataValues"
-                  type="date"
-                  :placeholder="item.placeholder"
-                  :disabled="item.rw === 0 ? true : false"
-                >
-                </el-date-picker>
+                <el-time-picker :placeholder="item.placeholder" :value-format="item.formatValue">
+                </el-time-picker>
               </div>
               <div v-if="item.dataType === 'span'" class="demo">
                 <div class="name">{{ item.name }}</div>
@@ -324,11 +326,12 @@
                   <p>{{ item.val }}</p>
                 </div>
                 <quill-editor
-                  :disabled="item.rw === 0 ? true : false"
+                  disabled
                   v-model="item.dataValues"
                   :options="editorOption"
                   :placeholder="item.placeholder"
-                  style="white-space:pre"
+                  :maxlength="item.maxValue"
+                  :minlength="item.minValue"
                 ></quill-editor>
               </div>
               <div class="tools">
@@ -426,7 +429,19 @@
                 <div><span>默认占位符:</span></div>
                 <el-input type="text" v-model="item.placeholder"></el-input>
               </div>
-
+              <div>
+                <div><span>范围:</span></div>
+                <el-input
+                  type="number"
+                  v-model="item.minValue"
+                  placeholder="最小长度"
+                ></el-input>
+                <el-input
+                  type="number"
+                  v-model="item.maxValue"
+                  placeholder="最大长度"
+                ></el-input>
+              </div>
               <div>
                 <div><span>设置:</span></div>
                 <el-radio-group v-model="item.rw">
@@ -900,7 +915,7 @@
               <div>
                 <div><span>详细内容</span></div>
                 <quill-editor
-                  :disabled="item.rw === 0 ? true : false"
+                  disabled
                   v-model="item.dataValues"
                   :options="editorOption"
                   :placeholder="item.placeholder"
@@ -1001,7 +1016,7 @@ export default {
       },
       // 修改工作表单
       modifyWorkFormTable: {
-        id:'',
+        id: "",
         modifierId: localStorage.getItem("agentId"),
         modifierName: localStorage.getItem("userName"),
         name: "工单名称",
@@ -1396,8 +1411,8 @@ export default {
     },
     // 修改传值
     showModifyContent(row) {
-      this.modifyWorkFormTable.id = row.id
-      this.workFormTable = row
+      this.modifyWorkFormTable.id = row.id;
+      this.workFormTable = row;
       this.createShow = true;
       this.tableShow = false;
       this.show = 2;
@@ -1486,7 +1501,7 @@ export default {
 }
 .title {
   padding: 10px;
-  margin-top:10px;
+  margin-top: 10px;
   &:hover {
     border: 1px dashed #eee;
     background-color: rgba(87, 175, 255, 0.1);
