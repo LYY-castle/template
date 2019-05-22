@@ -342,11 +342,16 @@ export default {
       req.id = obj.id
       req.status = obj.status
       req.reasonForStatus = obj.reasonForStatus
-
       updateWorkformRecordStatus(req).then(res => {
         if (res.data.code === 0) {
           this.editVisible = false
           this.queryList(this.req)
+        } else {
+          this.$message({
+            message: res.data.message || '修改失败',
+            type: 'error',
+            duration: 1000
+          })
         }
       })
     },
@@ -355,7 +360,11 @@ export default {
         if (res.data.code === 0) {
           this.workformRecordDetail = res.data.data
         } else {
-          console.log('未查到工单记录')
+          this.$message({
+            message: res.data.message,
+            type: 'error',
+            duration: 1000
+          })
         }
       })
     },
@@ -365,7 +374,11 @@ export default {
           this.editWorkformRecord = res.data.data
           this.editWorkformRecord.status = this.editWorkformRecord.status === 2 ? 2 : 3// 如果是失败，则为失败，其他都算默认成功
         } else {
-          console.log('未查到工单记录')
+          this.$message({
+            message: res.data.message,
+            type: 'error',
+            duration: 1000
+          })
         }
       })
     },
