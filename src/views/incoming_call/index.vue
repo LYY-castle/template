@@ -764,13 +764,15 @@
               <el-checkbox v-model="sendMessageOrNot" checked="checked">发送支付短信</el-checkbox>
             </el-col> -->
             <el-form-item label="是否产生工单：">
-              <el-switch
-                :disabled="isConversation.addWorkformDisabled"
-                active-text="是"
-                inactive-text="否"
-                v-model="isAddWorkOrder"
-                @change="handleChangeWorkFormSwitch">
-              </el-switch>
+              <div @click="checkSummaryIds">
+                <el-switch
+                  :disabled="isConversation.addWorkformDisabled"
+                  active-text="是"
+                  inactive-text="否"
+                  v-model="isAddWorkOrder"
+                  @change="handleChangeWorkFormSwitch">
+                </el-switch>
+              </div>
             </el-form-item>
             <el-form-item label="服务目录：" v-if="isAddWorkOrder" >
               <el-cascader
@@ -1777,15 +1779,6 @@ export default {
     formatSeconds: formatSeconds,
     hideIdNumber: hideIdNumber,
     hideMobile: hideMobile,
-    handleChangeWorkFormSwitch(val) {
-      if (!val) {
-        this.selectedServiceList = []
-        this.selectedWorkFormId = ''
-        this.addWorkFormTabVisible = false
-        this.activeName = '4'
-        this.getWorkFormRecord()
-      }
-    },
     handleTabRemove(targetName) {
       if (targetName === '6') { // 关闭服务记录详情
         this.recordDailTabVisible = false
@@ -1948,23 +1941,6 @@ export default {
       })
     },
     // 新建工单----------5
-    // 服务目录级联选择事件
-    handleServiceListChange(arr) {
-      this.addWorkForm.workServiceMenuId = arr[arr.length - 1]
-      if (arr.length <= 2) {
-        this.selectedServiceList = []
-        this.$message.error('请选择服务项目')
-      } else {
-        for (let i = 0; i < this.serviceList.length; i++) {
-          if (this.serviceList[i].id === arr[arr.length - 1]) {
-            this.selectedWorkFormId = this.serviceList[i].workFormId
-            this.addWorkFormTabVisible = true
-            this.activeName = '5'
-          }
-        }
-        this.getWorkFormTempById(this.selectedWorkFormId)
-      }
-    },
     // 查询工单模板
     getWorkFormTempById() {
       getWorkFormTempById(this.selectedWorkFormId).then(response => {
@@ -2081,19 +2057,83 @@ export default {
         return []
       }
     },
+    checkSummaryIds() {
+      if (this.recordSummaryCreateInfo.summaryIds && this.recordSummaryCreateInfo.summaryIds.length === 0) {
+        this.isAddWorkOrder = false
+        this.$message.error('请先选择话后小结')
+      }
+    },
+    // 选择是否产生工单
+    handleChangeWorkFormSwitch(val) {
+      if (!val) {
+        this.selectedServiceList = []
+        this.selectedWorkFormId = ''
+        this.addWorkFormTabVisible = false
+        this.activeName = '4'
+        this.getWorkFormRecord()
+      }
+    },
     // 小结级联选择事件
     handleNoduleChange(arr) {
-      // if (arr[0] === '14') {
-      //   console.log('成功')
-      //   this.recordSummaryCreateInfo.taskStatus = '2'
-      // } else if (arr[0] === '15') {
-      //   console.log('失败')
-      //   this.recordSummaryCreateInfo.taskStatus = '3'
-      // } else {
-      //   console.log('预约')
-      //   this.recordSummaryCreateInfo.taskStatus = '1'
-      // }
+      var checkedSummaryId = arr[arr.length - 1]
       this.recordSummaryCreateInfo.summaryIds = arr
+      console.log(checkedSummaryId)
+      // 查询所有服务目录
+      getServiceList().then(response => {
+        if (response.data.code === 0) {
+          this.serviceList = clone(response.data.data)
+          const serviceListFullTree = list2Tree({ data: response.data.data, rootId: 0 })
+          // 比对小结对应的服务目录(暂时写死)
+          switch (checkedSummaryId) {
+            case '14': // 咨询
+              this.serviceListTree = serviceListFullTree.filter(item => {
+                return (item.id === 1)
+              })
+              break
+            case '15': // 预定
+              this.serviceListTree = serviceListFullTree.filter(item => {
+                return (item.id === 2)
+              })
+              break
+            case '16': // 退货
+              this.serviceListTree = serviceListFullTree.filter(item => {
+                return (item.id === 4)
+              })
+              break
+            case '17': // 投诉
+              this.serviceListTree = serviceListFullTree.filter(item => {
+                return (item.id === 3)
+              })
+              break
+            case '18': // 催办
+              this.serviceListTree = serviceListFullTree.filter(item => {
+                return (item.id === 80)
+              })
+              break
+          }
+        } else {
+          this.$message.error(response.data.message)
+        }
+      }).catch(error => {
+        throw error
+      })
+    },
+    // 服务目录级联选择事件
+    handleServiceListChange(arr) {
+      this.addWorkForm.workServiceMenuId = arr[arr.length - 1]
+      if (arr.length <= 2) {
+        this.selectedServiceList = []
+        this.$message.error('请选择服务项目')
+      } else {
+        for (let i = 0; i < this.serviceList.length; i++) {
+          if (this.serviceList[i].id === arr[arr.length - 1]) {
+            this.selectedWorkFormId = this.serviceList[i].workFormId
+            this.addWorkFormTabVisible = true
+            this.activeName = '5'
+          }
+        }
+        this.getWorkFormTempById(this.selectedWorkFormId)
+      }
     },
     recordSummaryInfo() {
       recordSummaryInfo(this.recordSummaryCreateInfo).then(response => {
@@ -3042,17 +3082,6 @@ export default {
         completeButtonVisible: false
       }
     }
-    // 查询所有服务目录
-    getServiceList().then(response => {
-      if (response.data.code === 0) {
-        this.serviceList = clone(response.data.data)
-        this.serviceListTree = list2Tree({ data: response.data.data, rootId: 0 })
-      } else {
-        this.$message.error(response.data.message)
-      }
-    }).catch(error => {
-      throw error
-    })
     if (this.customerPhone) {
       // 查询号码归属地
       getPhoneAddress(this.customerPhone).then(response => {
