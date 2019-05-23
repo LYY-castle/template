@@ -5,15 +5,7 @@
         <div class="font14 bold">工作表单</div>
       </el-row>
       <el-row class="margin-bottom-20">
-        <el-button
-          type="success"
-          size="small"
-          @click="
-            createWorkFrom;
-            tableShow = false;
-            createShow = true;
-            show = 1;
-          "
+        <el-button type="success" size="small" @click="createWorkFrom()"
           >新建</el-button
         >
         <el-button
@@ -108,50 +100,50 @@
         <!-- 选择类型 -->
         <el-col :span="3" class="leftside" v-if="show === 1 || show === 2">
           <el-menu class="el-menu-vertical-demo">
-            <el-menu-item style="font-size:18px;font-weight:800"
+            <el-menu-item index="12" style="font-size:18px;font-weight:800"
               >控件列表</el-menu-item
             >
-            <el-menu-item index="1" @click="addDemo(1)">
+            <el-menu-item index="1" @click="addDemo('input')">
               <i class="icofont-underline"></i>
               <span slot="title">单行文本</span>
             </el-menu-item>
-            <el-menu-item index="2" @click="addDemo(2)">
+            <el-menu-item index="2" @click="addDemo('textarea')">
               <i class="icofont-small-cap"></i>
               <span slot="title">多行文本</span>
             </el-menu-item>
-            <el-menu-item index="3" @click="addDemo(3)">
+            <el-menu-item index="3" @click="addDemo('inputNumber')">
               <i class="icofont-numbered"></i>
               <span slot="title">数字</span>
             </el-menu-item>
-            <el-menu-item index="4" @click="addDemo(4)">
+            <el-menu-item index="4" @click="addDemo('radio')">
               <i class="icofont-check-alt"></i>
               <span slot="title">单选框</span>
             </el-menu-item>
-            <el-menu-item index="5" @click="addDemo(5)">
+            <el-menu-item index="5" @click="addDemo('checkbox')">
               <i class="icofont-checked"></i>
               <span slot="title">多选框</span>
             </el-menu-item>
-            <el-menu-item index="6" @click="addDemo(6)">
+            <el-menu-item index="6" @click="addDemo('select')">
               <i class="icofont-thin-down"></i>
               <span slot="title">下拉框</span>
             </el-menu-item>
-            <el-menu-item index="7" @click="addDemo(7)">
+            <el-menu-item index="7" @click="addDemo('datetime')">
               <i class="icofont-ui-timer"></i>
               <span slot="title">日期+时间</span>
             </el-menu-item>
-            <el-menu-item index="8" @click="addDemo(8)">
+            <el-menu-item index="8" @click="addDemo('multipleSelect')">
               <i class="icofont-stylish-down"></i>
               <span slot="title">多级下拉框</span>
             </el-menu-item>
-            <el-menu-item index="9" @click="addDemo(9)">
+            <el-menu-item index="9" @click="addDemo('date')">
               <i class="icofont-table"></i>
               <span slot="title">日期</span>
             </el-menu-item>
-            <el-menu-item index="10" @click="addDemo(10)">
+            <el-menu-item index="10" @click="addDemo('time')">
               <i class="icofont-wall-clock"></i>
               <span slot="title">时间</span>
             </el-menu-item>
-            <el-menu-item index="11" @click="addDemo(11)">
+            <el-menu-item index="11" @click="addDemo('span')">
               <i class="icofont-code"></i>
               <span slot="title">span</span>
             </el-menu-item>
@@ -284,20 +276,20 @@
                 <div class="name">
                   <p>{{ item.val }}</p>
                 </div>
-                <el-select
+                <!-- <el-select
                   v-model="item.dataValues"
                   multiple
                   :placeholder="item.placeholder"
                   disabled
                 >
-                  <!-- <el-option
+                  <el-option
                     v-for="item in item.dataValues"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
                   >
-                  </el-option> -->
-                </el-select>
+                  </el-option>
+                </el-select> -->
               </div>
               <div v-if="item.dataType === 'date'" class="demo">
                 <div class="name">{{ item.name }}</div>
@@ -317,7 +309,10 @@
                 <div class="name">
                   <p>{{ item.val }}</p>
                 </div>
-                <el-time-picker :placeholder="item.placeholder" :value-format="item.formatValue">
+                <el-time-picker
+                  :placeholder="item.placeholder"
+                  :value-format="item.formatValue"
+                >
                 </el-time-picker>
               </div>
               <div v-if="item.dataType === 'span'" class="demo">
@@ -335,10 +330,10 @@
                 ></quill-editor>
               </div>
               <div class="tools">
-                <i class="el-icon-plus" @click="addDemo()"></i>
+                <i class="el-icon-plus" @click="addDemo(item.dataType)"></i>
                 <i
                   class="el-icon-delete"
-                  @click="removeDemo(index)"
+                  @click="removeDemo(item, index)"
                   title="删除"
                 ></i>
                 <i class="el-icon-rank" title="可拖拽"></i>
@@ -443,13 +438,18 @@
                 ></el-input>
               </div>
               <div>
-                <div><span>设置:</span></div>
-                <el-radio-group v-model="item.rw">
-                  <el-radio label="0">不可读不可写</el-radio><br />
-                  <el-radio label="1">不可读可写</el-radio><br />
-                  <el-radio label="2">可读不可写</el-radio><br />
-                  <el-radio label="3">可读可写</el-radio>
+                <div><span>填写方式:</span></div>
+                <el-radio-group v-model="item.propertyUsage">
+                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="1">审核填写</el-radio>
                 </el-radio-group>
+              </div>
+              <div>
+                <div><span>设置:</span></div>
+                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
+                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
+                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                </el-checkbox-group>
               </div>
               <div>
                 <div><span>校验规则:</span></div>
@@ -483,15 +483,19 @@
                 <div><span>默认占位符:</span></div>
                 <el-input type="text" v-model="item.placeholder"></el-input>
               </div>
-
+              <div>
+                <div><span>填写方式:</span></div>
+                <el-radio-group v-model="item.propertyUsage">
+                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="1">审核填写</el-radio>
+                </el-radio-group>
+              </div>
               <div>
                 <div><span>设置:</span></div>
-                <el-radio-group v-model="item.rw">
-                  <el-radio label="0">不可读不可写</el-radio><br />
-                  <el-radio label="1">不可读可写</el-radio><br />
-                  <el-radio label="2">可读不可写</el-radio><br />
-                  <el-radio label="3">可读可写</el-radio>
-                </el-radio-group>
+                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
+                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
+                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                </el-checkbox-group>
               </div>
               <div>
                 <div><span>校验规则:</span></div>
@@ -525,15 +529,19 @@
                 <div><span>默认占位符:</span></div>
                 <el-input type="text" v-model="item.placeholder"></el-input>
               </div>
-
+              <div>
+                <div><span>填写方式:</span></div>
+                <el-radio-group v-model="item.propertyUsage">
+                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="1">审核填写</el-radio>
+                </el-radio-group>
+              </div>
               <div>
                 <div><span>设置:</span></div>
-                <el-radio-group v-model="item.rw">
-                  <el-radio label="0">不可读不可写</el-radio><br />
-                  <el-radio label="1">不可读可写</el-radio><br />
-                  <el-radio label="2">可读不可写</el-radio><br />
-                  <el-radio label="3">可读可写</el-radio>
-                </el-radio-group>
+                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
+                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
+                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                </el-checkbox-group>
               </div>
               <div>
                 <div><span>校验规则:</span></div>
@@ -596,15 +604,19 @@
                   </el-radio-group>
                 </div> -->
               </div>
-
+              <div>
+                <div><span>填写方式:</span></div>
+                <el-radio-group v-model="item.propertyUsage">
+                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="1">审核填写</el-radio>
+                </el-radio-group>
+              </div>
               <div>
                 <div><span>设置:</span></div>
-                <el-radio-group v-model="item.rw">
-                  <el-radio label="0">不可读不可写</el-radio><br />
-                  <el-radio label="1">不可读可写</el-radio><br />
-                  <el-radio label="2">可读不可写</el-radio><br />
-                  <el-radio label="3">可读可写</el-radio>
-                </el-radio-group>
+                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
+                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
+                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                </el-checkbox-group>
               </div>
               <div>
                 <div><span>校验规则:</span></div>
@@ -633,7 +645,7 @@
                 <div><span>选择项</span></div>
                 <div v-for="(a, k) in item.options" :key="k">
                   <el-checkbox-group>
-                    <el-checkbox label="复选框 A"
+                    <el-checkbox label="可读"
                       ><el-input
                         size="small"
                         type="text"
@@ -667,15 +679,19 @@
                   </el-checkbox-group>
                 </div>
               </div> -->
-
+              <div>
+                <div><span>填写方式:</span></div>
+                <el-radio-group v-model="item.propertyUsage">
+                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="1">审核填写</el-radio>
+                </el-radio-group>
+              </div>
               <div>
                 <div><span>设置:</span></div>
-                <el-radio-group v-model="item.rw">
-                  <el-radio label="0">不可读不可写</el-radio><br />
-                  <el-radio label="1">不可读可写</el-radio><br />
-                  <el-radio label="2">可读不可写</el-radio><br />
-                  <el-radio label="3">可读可写</el-radio>
-                </el-radio-group>
+                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
+                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
+                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                </el-checkbox-group>
               </div>
               <div>
                 <div><span>校验规则:</span></div>
@@ -712,13 +728,18 @@
                 </div> -->
               </div>
               <div>
-                <div><span>设置:</span></div>
-                <el-radio-group v-model="item.rw">
-                  <el-radio label="0">不可读不可写</el-radio><br />
-                  <el-radio label="1">不可读可写</el-radio><br />
-                  <el-radio label="2">可读不可写</el-radio><br />
-                  <el-radio label="3">可读可写</el-radio>
+                <div><span>填写方式:</span></div>
+                <el-radio-group v-model="item.propertyUsage">
+                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="1">审核填写</el-radio>
                 </el-radio-group>
+              </div>
+              <div>
+                <div><span>设置:</span></div>
+                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
+                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
+                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                </el-checkbox-group>
               </div>
               <div>
                 <div><span>校验规则:</span></div>
@@ -752,15 +773,19 @@
                 <div><span>默认占位符:</span></div>
                 <el-input type="text" v-model="item.placeholder"></el-input>
               </div>
-
+              <div>
+                <div><span>填写方式:</span></div>
+                <el-radio-group v-model="item.propertyUsage">
+                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="1">审核填写</el-radio>
+                </el-radio-group>
+              </div>
               <div>
                 <div><span>设置:</span></div>
-                <el-radio-group v-model="item.rw">
-                  <el-radio label="0">不可读不可写</el-radio><br />
-                  <el-radio label="1">不可读可写</el-radio><br />
-                  <el-radio label="2">可读不可写</el-radio><br />
-                  <el-radio label="3">可读可写</el-radio>
-                </el-radio-group>
+                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
+                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
+                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                </el-checkbox-group>
               </div>
               <div>
                 <div><span>校验规则:</span></div>
@@ -797,13 +822,18 @@
                 </div> -->
               </div>
               <div>
-                <div><span>设置:</span></div>
-                <el-radio-group v-model="item.rw">
-                  <el-radio label="0">不可读不可写</el-radio><br />
-                  <el-radio label="1">不可读可写</el-radio><br />
-                  <el-radio label="2">可读不可写</el-radio><br />
-                  <el-radio label="3">可读可写</el-radio>
+                <div><span>填写方式:</span></div>
+                <el-radio-group v-model="item.propertyUsage">
+                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="1">审核填写</el-radio>
                 </el-radio-group>
+              </div>
+              <div>
+                <div><span>设置:</span></div>
+                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
+                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
+                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                </el-checkbox-group>
               </div>
               <div>
                 <div><span>校验规则:</span></div>
@@ -837,15 +867,19 @@
                 <div><span>默认占位符:</span></div>
                 <el-input type="text" v-model="item.placeholder"></el-input>
               </div>
-
+              <div>
+                <div><span>填写方式:</span></div>
+                <el-radio-group v-model="item.propertyUsage">
+                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="1">审核填写</el-radio>
+                </el-radio-group>
+              </div>
               <div>
                 <div><span>设置:</span></div>
-                <el-radio-group v-model="item.rw">
-                  <el-radio label="0">不可读不可写</el-radio><br />
-                  <el-radio label="1">不可读可写</el-radio><br />
-                  <el-radio label="2">可读不可写</el-radio><br />
-                  <el-radio label="3">可读可写</el-radio>
-                </el-radio-group>
+                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
+                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
+                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                </el-checkbox-group>
               </div>
               <div>
                 <div><span>校验规则:</span></div>
@@ -879,15 +913,19 @@
                 <div><span>默认占位符:</span></div>
                 <el-input type="text" v-model="item.placeholder"></el-input>
               </div>
-
+              <div>
+                <div><span>填写方式:</span></div>
+                <el-radio-group v-model="item.propertyUsage">
+                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="1">审核填写</el-radio>
+                </el-radio-group>
+              </div>
               <div>
                 <div><span>设置:</span></div>
-                <el-radio-group v-model="item.rw">
-                  <el-radio label="0">不可读不可写</el-radio><br />
-                  <el-radio label="1">不可读可写</el-radio><br />
-                  <el-radio label="2">可读不可写</el-radio><br />
-                  <el-radio label="3">可读可写</el-radio>
-                </el-radio-group>
+                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
+                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
+                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                </el-checkbox-group>
               </div>
               <div>
                 <div><span>校验规则:</span></div>
@@ -926,15 +964,19 @@
                 <div><span>默认占位符:</span></div>
                 <el-input type="text" v-model="item.placeholder"></el-input>
               </div>
-
+              <div>
+                <div><span>填写方式:</span></div>
+                <el-radio-group v-model="item.propertyUsage">
+                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="1">审核填写</el-radio>
+                </el-radio-group>
+              </div>
               <div>
                 <div><span>设置:</span></div>
-                <el-radio-group v-model="item.rw">
-                  <el-radio label="0">不可读不可写</el-radio><br />
-                  <el-radio label="1">不可读可写</el-radio><br />
-                  <el-radio label="2">可读不可写</el-radio><br />
-                  <el-radio label="3">可读可写</el-radio>
-                </el-radio-group>
+                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
+                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
+                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                </el-checkbox-group>
               </div>
               <div>
                 <div><span>校验规则:</span></div>
@@ -993,6 +1035,12 @@ export default {
   name: "work_form_manage",
   data() {
     return {
+      // 可读可写
+      read: 1,
+      wite: 1,
+      checked1:true,
+      checked2: true,
+      checklist:['可读','可写'],
       formContainerOpen: "1",
       // 工作表单列表
       workFormData: [],
@@ -1061,6 +1109,7 @@ export default {
         .then(res => {
           if (res.data.code === 0) {
             this.workFormData = res.data.data;
+            
             if (res.data.pageInfo) {
               this.pageInfo = res.data.pageInfo;
               this.pageShow = true;
@@ -1078,7 +1127,19 @@ export default {
         });
     },
     // 新建初始化
-    createWorkFrom() {},
+    createWorkFrom() {
+      this.tableShow = false;
+      this.createShow = true;
+      this.show = 1;
+      this.workFormTable = {
+        creatorId: localStorage.getItem("agentId"),
+        creatorName: localStorage.getItem("userName"),
+        name: "工单名称",
+        enabled: "1",
+        remark: "",
+        workformProperties: []
+      };
+    },
     // 时间格式转换,
     formatDateTime: formatDateTime,
     // 收起展开
@@ -1090,23 +1151,27 @@ export default {
       }
     },
     // 添加模板
-    addDemo(num) {
-      this.initFrom(num);
+    addDemo(item) {
+      this.initFrom(item);
     },
     // 删除题目类型
-    removeDemo(index) {
+    removeDemo(item, index) {
       this.workFormTable.workformProperties.splice(index, 1);
     },
+    // 设置可读可写
 
+    changeChecklist(item){
+      console.log(item)
+    },
     // 标题属性切换
     changeTitle() {
       this.table = true;
       this.text = false;
     },
     // 点击类型初始化题型
-    initFrom(num) {
-      console.log(num);
-      if (num === 1) {
+    initFrom(obj) {
+      console.log(obj);
+      if (obj === "input") {
         console.log(1);
         this.workFormTable.workformProperties.push({
           dataType: "input",
@@ -1121,12 +1186,13 @@ export default {
           placeholder: "",
           regex: "",
           remark: "",
-          rw: 0,
+          rw: 3,
           val: "",
-          styleValue: ""
+          styleValue: "",
+          propertyUsage: 0
         });
         console.log(1111);
-      } else if (num === 2) {
+      } else if (obj === "textarea") {
         this.workFormTable.workformProperties.push({
           dataType: "textarea",
           dataValues: "",
@@ -1140,11 +1206,12 @@ export default {
           placeholder: "",
           regex: "",
           remark: "",
-          rw: 0,
+          rw: 3,
           val: "",
-          styleValue: ""
+          styleValue: "",
+          propertyUsage: 0
         });
-      } else if (num === 3) {
+      } else if (obj === "inputNumber") {
         this.workFormTable.workformProperties.push({
           dataType: "inputNumber",
           dataValues: "",
@@ -1158,11 +1225,12 @@ export default {
           placeholder: "",
           regex: "",
           remark: "",
-          rw: 0,
+          rw: 3,
           val: "",
-          styleValue: ""
+          styleValue: "",
+          propertyUsage: 0
         });
-      } else if (num === 4) {
+      } else if (obj === "radio") {
         this.workFormTable.workformProperties.push({
           dataType: "radio",
           dataValues: "",
@@ -1176,11 +1244,12 @@ export default {
           placeholder: "",
           regex: "",
           remark: "",
-          rw: 0,
+          rw: 3,
           val: "",
-          styleValue: ""
+          styleValue: "",
+          propertyUsage: 0
         });
-      } else if (num === 5) {
+      } else if (obj === "checkbox") {
         this.workFormTable.workformProperties.push({
           dataType: "checkbox",
           dataValues: "",
@@ -1194,11 +1263,12 @@ export default {
           placeholder: "",
           regex: "",
           remark: "",
-          rw: 0,
+          rw: 3,
           val: "",
-          styleValue: ""
+          styleValue: "",
+          propertyUsage: 0
         });
-      } else if (num === 6) {
+      } else if (obj === "select") {
         this.workFormTable.workformProperties.push({
           dataType: "select",
           dataValues: "",
@@ -1212,11 +1282,12 @@ export default {
           placeholder: "",
           regex: "",
           remark: "",
-          rw: 0,
+          rw: 3,
           val: "",
-          styleValue: ""
+          styleValue: "",
+          propertyUsage: 0
         });
-      } else if (num === 7) {
+      } else if (obj === "datetime") {
         this.workFormTable.workformProperties.push({
           dataType: "datetime",
           dataValues: "",
@@ -1230,11 +1301,12 @@ export default {
           placeholder: "",
           regex: "",
           remark: "",
-          rw: 0,
+          rw: 3,
           val: "",
-          styleValue: ""
+          styleValue: "",
+          propertyUsage: 0
         });
-      } else if (num === 8) {
+      } else if (obj === "multipleSelect") {
         this.workFormTable.workformProperties.push({
           dataType: "multipleSelect",
           dataValues: "",
@@ -1248,11 +1320,12 @@ export default {
           placeholder: "",
           regex: "",
           remark: "",
-          rw: 0,
+          rw: 3,
           val: "",
-          styleValue: ""
+          styleValue: "",
+          propertyUsage: 0
         });
-      } else if (num === 9) {
+      } else if (obj === "date") {
         this.workFormTable.workformProperties.push({
           dataType: "date",
           dataValues: "",
@@ -1266,11 +1339,12 @@ export default {
           placeholder: "",
           regex: "",
           remark: "",
-          rw: 0,
+          rw: 3,
           val: "",
-          styleValue: ""
+          styleValue: "",
+          propertyUsage: 0
         });
-      } else if (num === 10) {
+      } else if (obj === "time") {
         this.workFormTable.workformProperties.push({
           dataType: "time",
           dataValues: "",
@@ -1284,11 +1358,12 @@ export default {
           placeholder: "",
           regex: "",
           remark: "",
-          rw: 0,
+          rw: 3,
           val: "",
-          styleValue: ""
+          styleValue: "",
+          propertyUsage: 0
         });
-      } else if (num === 11) {
+      } else if (obj === "span") {
         this.workFormTable.workformProperties.push({
           dataType: "span",
           dataValues: "",
@@ -1302,14 +1377,16 @@ export default {
           placeholder: "",
           regex: "",
           remark: "",
-          rw: 0,
+          rw: 3,
           val: "",
-          styleValue: ""
+          styleValue: "",
+          propertyUsage: 0
         });
       }
     },
     // 点击题项初始化数据
     changeItem(item, index) {
+      console.log(this.workFormTable)
       console.log(index);
       this.table = false;
       this.text = false;
@@ -1369,6 +1446,7 @@ export default {
     },
     // 新建
     submitUpload() {
+      console.log(this.checklist)
       if (this.workFormTable.workformProperties.length !== 0) {
         createWorkForm(this.workFormTable).then(res => {
           if (res.data.code === 0) {
@@ -1416,6 +1494,7 @@ export default {
       this.createShow = true;
       this.tableShow = false;
       this.show = 2;
+      console.log(row)
     },
     // 修改
     modifyWorkForm(row) {
