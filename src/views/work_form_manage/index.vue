@@ -5,15 +5,8 @@
         <div class="font14 bold">工作表单</div>
       </el-row>
       <el-row class="margin-bottom-20">
-        <el-button type="success" size="small" @click="createWorkFrom()"
-          >新建</el-button
-        >
-        <el-button
-          type="danger"
-          size="small"
-          @click="mutipleDelete([workFormData])"
-          >批量删除</el-button
-        >
+        <el-button type="success" size="small" @click="createWorkFrom()">新建</el-button>
+        <el-button type="danger" size="small" @click="mutipleDelete([workFormData])">批量删除</el-button>
         <!-- <el-button type="info" size="small" @click="importVisible=true;importInfo.uploadFileName='';importInfo.batchName='';importInfo.source=''">导入客户</el-button> -->
       </el-row>
       <el-row>
@@ -23,17 +16,10 @@
           @selection-change="handleSelectionChange"
           ref="multipleTable"
         >
-          <el-table-column align="center" type="selection" width="55">
-          </el-table-column>
+          <el-table-column align="center" type="selection" width="55"></el-table-column>
 
-          <el-table-column
-            align="center"
-            label="表单名"
-            :show-overflow-tooltip="true"
-          >
-            <template slot-scope="scope">
-              {{ scope.row.name }}
-            </template>
+          <el-table-column align="center" label="表单名" :show-overflow-tooltip="true">
+            <template slot-scope="scope">{{ scope.row.name }}</template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -41,31 +27,20 @@
             label="操作人"
             :show-overflow-tooltip="true"
           >
-            <template slot-scope="scope">
-              {{ scope.row.modifierName }}
-            </template>
+            <template slot-scope="scope">{{ scope.row.modifierName }}</template>
           </el-table-column>
           <!-- 操作时间 -->
           <el-table-column align="center" width="155" label="操作时间">
-            <template slot-scope="scope">
-              {{ formatDateTime(scope.row.modifyTime) }}
-            </template>
+            <template slot-scope="scope">{{ formatDateTime(scope.row.modifyTime) }}</template>
           </el-table-column>
 
           <el-table-column align="center" label="备注">
-            <template slot-scope="scope">
-              {{ scope.row.remark }}
-            </template>
+            <template slot-scope="scope">{{ scope.row.remark }}</template>
           </el-table-column>
           <!-- 操作 -->
           <el-table-column align="center" label="操作" width="100">
             <template slot-scope="scope">
-              <el-button
-                @click="showModifyContent(scope.row)"
-                type="text"
-                size="small"
-                >修改</el-button
-              >
+              <el-button @click="showModifyContent(scope.row)" type="text" size="small">修改</el-button>
               <el-button
                 @click="
                   delVisible = true;
@@ -73,8 +48,7 @@
                 "
                 type="text"
                 size="small"
-                >删除</el-button
-              >
+              >删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -90,8 +64,7 @@
           layout="total, sizes, prev, pager, next, jumper "
           :total="pageInfo.totalCount"
           style="text-align: right;float:right;"
-        >
-        </el-pagination>
+        ></el-pagination>
       </el-row>
     </el-row>
     <!-- 新建工作表单 -->
@@ -100,9 +73,7 @@
         <!-- 选择类型 -->
         <el-col :span="3" class="leftside" v-if="show === 1 || show === 2">
           <el-menu class="el-menu-vertical-demo">
-            <el-menu-item index="12" style="font-size:18px;font-weight:800"
-              >控件列表</el-menu-item
-            >
+            <el-menu-item index="12" style="font-size:18px;font-weight:800">控件列表</el-menu-item>
             <el-menu-item index="1" @click="addDemo('input')">
               <i class="icofont-underline"></i>
               <span slot="title">单行文本</span>
@@ -153,9 +124,7 @@
         <el-col :span="11" style="background-color: #fff;">
           <div class="template">
             <div style="font-size:18px;font-weight:800">工单模板</div>
-            <div class="title" @click="changeTitle">
-              {{ workFormTable.name }}
-            </div>
+            <div class="title" @click="changeTitle" style="text-align:center">{{ workFormTable.name }}</div>
             <div
               class="selectShow"
               v-for="(item, index) in workFormTable.workformProperties"
@@ -225,7 +194,7 @@
                       a.content
                     }}</el-radio>
                   </el-radio-group>
-                </div> -->
+                </div>-->
               </div>
               <div v-if="item.dataType === 'checkbox'" class="demo">
                 <div class="name">{{ item.name }}</div>
@@ -238,7 +207,7 @@
                       a.content
                     }}</el-checkbox>
                   </el-checkbox-group>
-                </div> -->
+                </div>-->
               </div>
               <div v-if="item.dataType === 'select'" class="demo">
                 <div class="name">{{ item.name }}</div>
@@ -256,7 +225,7 @@
                     :value="a.content"
                     :disabled="item.rw===0?true:false"
                   ></el-option>
-                </el-select> -->
+                </el-select>-->
               </div>
               <div v-if="item.dataType === 'datetime'" class="demo">
                 <div class="name">{{ item.name }}</div>
@@ -268,8 +237,7 @@
                   :placeholder="item.placeholder"
                   disabled
                   v-model="item.dataValues"
-                >
-                </el-date-picker>
+                ></el-date-picker>
               </div>
               <div v-if="item.dataType === 'multipleSelect'" class="demo">
                 <div class="name">{{ item.name }}</div>
@@ -289,7 +257,7 @@
                     :value="item.value"
                   >
                   </el-option>
-                </el-select> -->
+                </el-select>-->
               </div>
               <div v-if="item.dataType === 'date'" class="demo">
                 <div class="name">{{ item.name }}</div>
@@ -301,19 +269,14 @@
                   type="date"
                   :placeholder="item.placeholder"
                   disabled
-                >
-                </el-date-picker>
+                ></el-date-picker>
               </div>
               <div v-if="item.dataType === 'time'" class="demo">
                 <div class="name">{{ item.name }}</div>
                 <div class="name">
                   <p>{{ item.val }}</p>
                 </div>
-                <el-time-picker
-                  :placeholder="item.placeholder"
-                  :value-format="item.formatValue"
-                >
-                </el-time-picker>
+                <el-time-picker :placeholder="item.placeholder" :value-format="item.formatValue"></el-time-picker>
               </div>
               <div v-if="item.dataType === 'span'" class="demo">
                 <div class="name">{{ item.name }}</div>
@@ -331,29 +294,13 @@
               </div>
               <div class="tools">
                 <i class="el-icon-plus" @click="addDemo(item.dataType)"></i>
-                <i
-                  class="el-icon-delete"
-                  @click="removeDemo(item, index)"
-                  title="删除"
-                ></i>
+                <i class="el-icon-delete" @click="removeDemo(item, index)" title="删除"></i>
                 <i class="el-icon-rank" title="可拖拽"></i>
               </div>
             </div>
             <div style="display: flex;justify-content: center;">
-              <el-button
-                size="small"
-                type="primary"
-                @click="modifyWorkForm"
-                v-if="show === 2"
-                >修改</el-button
-              >
-              <el-button
-                size="small"
-                type="primary"
-                @click="submitUpload"
-                v-if="show === 1"
-                >提交</el-button
-              >
+              <el-button size="small" type="primary" @click="modifyWorkForm" v-if="show === 2">修改</el-button>
+              <el-button size="small" type="primary" @click="submitUpload" v-if="show === 1">提交</el-button>
               <el-button
                 size="small"
                 type="primary"
@@ -364,8 +311,7 @@
                   tableShow = true;
                   show = 0;
                 "
-                >返回</el-button
-              >
+              >返回</el-button>
             </div>
           </div>
         </el-col>
@@ -374,200 +320,294 @@
           <div style="font-size:18px;font-weight:800">字段属性</div>
           <div v-show="table">
             <div>
-              <div><span>工单名称:</span></div>
-              <el-input
-                type="textarea"
-                :rows="1"
-                v-model="workFormTable.name"
-              ></el-input>
+              <div>
+                <span>工单名称:</span>
+              </div>
+              <el-input type="textarea" :rows="1" v-model="workFormTable.name"></el-input>
             </div>
             <div>
-              <div><span>工单有效性:</span></div>
+              <div>
+                <span>工单有效性:</span>
+              </div>
               <el-radio-group v-model="workFormTable.enabled">
-                <el-radio label="1">有效</el-radio><br />
-                <el-radio label="0">无效</el-radio>
+                <el-radio :label="1">有效</el-radio>
+                <el-radio :label="0">无效</el-radio>
               </el-radio-group>
             </div>
             <div>
-              <div><span>工单备注:</span></div>
-              <el-input
-                type="textarea"
-                :rows="1"
-                v-model="workFormTable.remark"
-              ></el-input>
+              <div>
+                <span>工单备注:</span>
+              </div>
+              <el-input type="textarea" :rows="1" v-model="workFormTable.remark"></el-input>
             </div>
           </div>
-          <div
-            v-for="(item, index) in workFormTable.workformProperties"
-            :key="index"
-            v-show="text"
-          >
+          <div v-for="(item, index) in workFormTable.workformProperties" :key="index" v-show="text">
             <div v-if="item.dataType === 'input' && typeShow[index]">
               <div>
-                <div><span>字段名称:</span></div>
+                <div>
+                  <span>字段名称:</span>
+                </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
-                <div><span>字段描述</span></div>
-                <el-input
-                  type="textarea"
-                  :rows="2"
-                  v-model="item.val"
-                ></el-input>
+                <div>
+                  <span>字段描述</span>
+                </div>
+                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
               <div>
-                <div><span>默认值</span></div>
+                <div>
+                  <span>默认值</span>
+                </div>
                 <el-input type="text" v-model="item.dataValues"></el-input>
               </div>
 
               <div>
-                <div><span>默认占位符:</span></div>
+                <div>
+                  <span>默认占位符:</span>
+                </div>
                 <el-input type="text" v-model="item.placeholder"></el-input>
               </div>
               <div>
-                <div><span>范围:</span></div>
-                <el-input
-                  type="number"
-                  v-model="item.minValue"
-                  placeholder="最小长度"
-                ></el-input>
-                <el-input
-                  type="number"
-                  v-model="item.maxValue"
-                  placeholder="最大长度"
-                ></el-input>
+                <div>
+                  <span>范围:</span>
+                </div>
+                <el-input type="number" v-model="item.minValue" placeholder="最小长度"></el-input>
+                <el-input type="number" v-model="item.maxValue" placeholder="最大长度"></el-input>
               </div>
               <div>
-                <div><span>填写方式:</span></div>
+                <div>
+                  <span>填写方式:</span>
+                </div>
                 <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="0">新增填写</el-radio>
                   <el-radio :label="1">审核填写</el-radio>
                 </el-radio-group>
               </div>
               <div>
-                <div><span>设置:</span></div>
-                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
-                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
-                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                <div>
+                  <span>设置:</span>
+                </div>
+                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
+                  <el-checkbox label="1">可读</el-checkbox>
+                  <el-checkbox label="2">可写</el-checkbox>
                 </el-checkbox-group>
               </div>
               <div>
-                <div><span>校验规则:</span></div>
+                <div>
+                  <span>是否必填：</span>
+                </div>
+                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
+              </div>
+              <div>
+                <div>
+                  <span>校验规则:</span>
+                </div>
                 <el-input type="text" v-model="item.regex"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>规则提醒:</span>
+                </div>
+                <el-input type="text" v-model="item.regMsg"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>属性值排序:</span>
+                </div>
+                <el-input type="number" v-model="item.propertySort"></el-input>
               </div>
 
               <div>
-                <div><span>备注:</span></div>
-                <el-input type="text" v-model="item.remark"> </el-input>
+                <div>
+                  <span>备注:</span>
+                </div>
+                <el-input type="text" v-model="item.remark"></el-input>
               </div>
             </div>
             <div v-if="item.dataType === 'textarea' && typeShow[index]">
               <div>
-                <div><span>字段名称:</span></div>
+                <div>
+                  <span>字段名称:</span>
+                </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
-                <div><span>字段描述:</span></div>
-                <el-input
-                  type="textarea"
-                  :rows="2"
-                  v-model="item.val"
-                ></el-input>
+                <div>
+                  <span>字段描述:</span>
+                </div>
+                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
               <div>
-                <div><span>默认值</span></div>
+                <div>
+                  <span>默认值</span>
+                </div>
                 <el-input type="text" v-model="item.dataValues"></el-input>
               </div>
 
               <div>
-                <div><span>默认占位符:</span></div>
+                <div>
+                  <span>默认占位符:</span>
+                </div>
                 <el-input type="text" v-model="item.placeholder"></el-input>
               </div>
               <div>
-                <div><span>填写方式:</span></div>
+                <div>
+                  <span>范围:</span>
+                </div>
+                <el-input type="number" v-model="item.minValue" placeholder="最小长度"></el-input>
+                <el-input type="number" v-model="item.maxValue" placeholder="最大长度"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>填写方式:</span>
+                </div>
                 <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="0">新增填写</el-radio>
                   <el-radio :label="1">审核填写</el-radio>
                 </el-radio-group>
               </div>
               <div>
-                <div><span>设置:</span></div>
-                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
-                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
-                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                <div>
+                  <span>设置:</span>
+                </div>
+                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
+                  <el-checkbox label="1">可读</el-checkbox>
+                  <el-checkbox label="2">可写</el-checkbox>
                 </el-checkbox-group>
               </div>
               <div>
-                <div><span>校验规则:</span></div>
+                <div>
+                  <span>是否必填：</span>
+                </div>
+                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
+              </div>
+              <div>
+                <div>
+                  <span>校验规则:</span>
+                </div>
                 <el-input type="text" v-model="item.regex"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>规则提醒:</span>
+                </div>
+                <el-input type="text" v-model="item.regMsg"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>属性值排序:</span>
+                </div>
+                <el-input type="number" v-model="item.propertySort"></el-input>
               </div>
 
               <div>
-                <div><span>备注:</span></div>
-                <el-input type="text" v-model="item.remark"> </el-input>
+                <div>
+                  <span>备注:</span>
+                </div>
+                <el-input type="text" v-model="item.remark"></el-input>
               </div>
             </div>
             <div v-if="item.dataType === 'inputNumber' && typeShow[index]">
               <div>
-                <div><span>字段名称:</span></div>
+                <div>
+                  <span>字段名称:</span>
+                </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
-                <div><span>字段描述:</span></div>
-                <el-input
-                  type="textarea"
-                  :rows="2"
-                  v-model="item.val"
-                ></el-input>
+                <div>
+                  <span>字段描述:</span>
+                </div>
+                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
               <div>
-                <div><span>默认值</span></div>
+                <div>
+                  <span>默认值</span>
+                </div>
                 <el-input type="number" v-model="item.dataValues"></el-input>
               </div>
 
               <div>
-                <div><span>默认占位符:</span></div>
+                <div>
+                  <span>默认占位符:</span>
+                </div>
                 <el-input type="text" v-model="item.placeholder"></el-input>
               </div>
               <div>
-                <div><span>填写方式:</span></div>
+                <div>
+                  <span>范围:</span>
+                </div>
+                <el-input type="number" v-model="item.minValue" placeholder="最小长度"></el-input>
+                <el-input type="number" v-model="item.maxValue" placeholder="最大长度"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>填写方式:</span>
+                </div>
                 <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="0">新增填写</el-radio>
                   <el-radio :label="1">审核填写</el-radio>
                 </el-radio-group>
               </div>
               <div>
-                <div><span>设置:</span></div>
-                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
-                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
-                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                <div>
+                  <span>设置:</span>
+                </div>
+                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
+                  <el-checkbox label="1">可读</el-checkbox>
+                  <el-checkbox label="2">可写</el-checkbox>
                 </el-checkbox-group>
               </div>
               <div>
-                <div><span>校验规则:</span></div>
+                <div>
+                  <span>是否必填：</span>
+                </div>
+                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
+              </div>
+              <div>
+                <div>
+                  <span>校验规则:</span>
+                </div>
                 <el-input type="text" v-model="item.regex"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>规则提醒:</span>
+                </div>
+                <el-input type="text" v-model="item.regMsg"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>属性值排序:</span>
+                </div>
+                <el-input type="number" v-model="item.propertySort"></el-input>
               </div>
 
               <div>
-                <div><span>备注:</span></div>
-                <el-input type="text" v-model="item.remark"> </el-input>
+                <div>
+                  <span>备注:</span>
+                </div>
+                <el-input type="text" v-model="item.remark"></el-input>
               </div>
             </div>
             <div v-if="item.dataType === 'radio' && typeShow[index]">
               <div>
-                <div><span>字段名称:</span></div>
+                <div>
+                  <span>字段名称:</span>
+                </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
-                <div><span>字段描述:</span></div>
-                <el-input
-                  type="textarea"
-                  :rows="2"
-                  v-model="item.val"
-                ></el-input>
+                <div>
+                  <span>字段描述:</span>
+                </div>
+                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
               <div>
-                <div><span>选择项</span></div>
+                <div>
+                  <span>选择项</span>
+                </div>
                 <!-- <div v-for="(a, k) in item.options" :key="k">
                   <el-radio-group>
                     <el-radio :label="1"
@@ -602,44 +642,70 @@
                       ></el-button>
                     </el-radio>
                   </el-radio-group>
-                </div> -->
+                </div>-->
               </div>
               <div>
-                <div><span>填写方式:</span></div>
+                <div>
+                  <span>填写方式:</span>
+                </div>
                 <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="0">新增填写</el-radio>
                   <el-radio :label="1">审核填写</el-radio>
                 </el-radio-group>
               </div>
               <div>
-                <div><span>设置:</span></div>
-                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
-                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
-                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                <div>
+                  <span>设置:</span>
+                </div>
+                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
+                  <el-checkbox label="1">可读</el-checkbox>
+                  <el-checkbox label="2">可写</el-checkbox>
                 </el-checkbox-group>
               </div>
               <div>
-                <div><span>校验规则:</span></div>
+                <div>
+                  <span>是否必填：</span>
+                </div>
+                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
+              </div>
+              <div>
+                <div>
+                  <span>校验规则:</span>
+                </div>
                 <el-input type="text" v-model="item.regex"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>规则提醒:</span>
+                </div>
+                <el-input type="text" v-model="item.regMsg"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>属性值排序:</span>
+                </div>
+                <el-input type="number" v-model="item.propertySort"></el-input>
               </div>
 
               <div>
-                <div><span>备注:</span></div>
-                <el-input type="text" v-model="item.remark"> </el-input>
+                <div>
+                  <span>备注:</span>
+                </div>
+                <el-input type="text" v-model="item.remark"></el-input>
               </div>
             </div>
             <div v-if="item.dataType === 'checkbox' && typeShow[index]">
               <div>
-                <div><span>字段名称:</span></div>
+                <div>
+                  <span>字段名称:</span>
+                </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
-                <div><span>字段描述:</span></div>
-                <el-input
-                  type="textarea"
-                  :rows="2"
-                  v-model="item.val"
-                ></el-input>
+                <div>
+                  <span>字段描述:</span>
+                </div>
+                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
               <!-- <div>
                 <div><span>选择项</span></div>
@@ -678,46 +744,74 @@
                     </el-checkbox>
                   </el-checkbox-group>
                 </div>
-              </div> -->
+              </div>-->
               <div>
-                <div><span>填写方式:</span></div>
+                <div>
+                  <span>填写方式:</span>
+                </div>
                 <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="0">新增填写</el-radio>
                   <el-radio :label="1">审核填写</el-radio>
                 </el-radio-group>
               </div>
               <div>
-                <div><span>设置:</span></div>
-                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
-                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
-                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                <div>
+                  <span>设置:</span>
+                </div>
+                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
+                  <el-checkbox label="1">可读</el-checkbox>
+                  <el-checkbox label="2">可写</el-checkbox>
                 </el-checkbox-group>
               </div>
               <div>
-                <div><span>校验规则:</span></div>
+                <div>
+                  <span>是否必填：</span>
+                </div>
+                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
+              </div>
+              <div>
+                <div>
+                  <span>校验规则:</span>
+                </div>
                 <el-input type="text" v-model="item.regex"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>规则提醒:</span>
+                </div>
+                <el-input type="text" v-model="item.regMsg"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>属性值排序:</span>
+                </div>
+                <el-input type="number" v-model="item.propertySort"></el-input>
               </div>
 
               <div>
-                <div><span>备注:</span></div>
-                <el-input type="text" v-model="item.remark"> </el-input>
+                <div>
+                  <span>备注:</span>
+                </div>
+                <el-input type="text" v-model="item.remark"></el-input>
               </div>
             </div>
             <div v-if="item.dataType === 'select' && typeShow[index]">
               <div>
-                <div><span>字段名称:</span></div>
+                <div>
+                  <span>字段名称:</span>
+                </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
-                <div><span>字段描述:</span></div>
-                <el-input
-                  type="textarea"
-                  :rows="2"
-                  v-model="item.val"
-                ></el-input>
+                <div>
+                  <span>字段描述:</span>
+                </div>
+                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
               <div>
-                <div><span>选择项</span></div>
+                <div>
+                  <span>选择项</span>
+                </div>
                 <!-- <div>
                   <el-input
                     type="text"
@@ -725,93 +819,151 @@
                     :key="k"
                     v-model="a.content"
                   ></el-input>
-                </div> -->
+                </div>-->
               </div>
               <div>
-                <div><span>填写方式:</span></div>
+                <div>
+                  <span>填写方式:</span>
+                </div>
                 <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="0">新增填写</el-radio>
                   <el-radio :label="1">审核填写</el-radio>
                 </el-radio-group>
               </div>
               <div>
-                <div><span>设置:</span></div>
-                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
-                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
-                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                <div>
+                  <span>设置:</span>
+                </div>
+                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
+                  <el-checkbox label="1">可读</el-checkbox>
+                  <el-checkbox label="2">可写</el-checkbox>
                 </el-checkbox-group>
               </div>
               <div>
-                <div><span>校验规则:</span></div>
+                <div>
+                  <span>是否必填：</span>
+                </div>
+                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
+              </div>
+              <div>
+                <div>
+                  <span>校验规则:</span>
+                </div>
                 <el-input type="text" v-model="item.regex"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>规则提醒:</span>
+                </div>
+                <el-input type="text" v-model="item.regMsg"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>属性值排序:</span>
+                </div>
+                <el-input type="number" v-model="item.propertySort"></el-input>
               </div>
 
               <div>
-                <div><span>备注:</span></div>
-                <el-input type="text" v-model="item.remark"> </el-input>
+                <div>
+                  <span>备注:</span>
+                </div>
+                <el-input type="text" v-model="item.remark"></el-input>
               </div>
             </div>
             <div v-if="item.dataType === 'datetime' && typeShow[index]">
               <div>
-                <div><span>字段名称:</span></div>
+                <div>
+                  <span>字段名称:</span>
+                </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
-                <div><span>字段描述:</span></div>
-                <el-input
-                  type="textarea"
-                  :rows="2"
-                  v-model="item.val"
-                ></el-input>
+                <div>
+                  <span>字段描述:</span>
+                </div>
+                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
               <div>
-                <div><span>默认值</span></div>
+                <div>
+                  <span>默认值</span>
+                </div>
                 <el-input type="text" v-model="item.dataValues"></el-input>
               </div>
 
               <div>
-                <div><span>默认占位符:</span></div>
+                <div>
+                  <span>默认占位符:</span>
+                </div>
                 <el-input type="text" v-model="item.placeholder"></el-input>
               </div>
               <div>
-                <div><span>填写方式:</span></div>
+                <div>
+                  <span>填写方式:</span>
+                </div>
                 <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="0">新增填写</el-radio>
                   <el-radio :label="1">审核填写</el-radio>
                 </el-radio-group>
               </div>
               <div>
-                <div><span>设置:</span></div>
-                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
-                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
-                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                <div>
+                  <span>设置:</span>
+                </div>
+                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
+                  <el-checkbox label="1">可读</el-checkbox>
+                  <el-checkbox label="2">可写</el-checkbox>
                 </el-checkbox-group>
               </div>
               <div>
-                <div><span>校验规则:</span></div>
+                <div>
+                  <span>是否必填：</span>
+                </div>
+                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
+              </div>
+              <div>
+                <div>
+                  <span>校验规则:</span>
+                </div>
                 <el-input type="text" v-model="item.regex"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>规则提醒:</span>
+                </div>
+                <el-input type="text" v-model="item.regMsg"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>属性值排序:</span>
+                </div>
+                <el-input type="number" v-model="item.propertySort"></el-input>
               </div>
 
               <div>
-                <div><span>备注:</span></div>
-                <el-input type="text" v-model="item.remark"> </el-input>
+                <div>
+                  <span>备注:</span>
+                </div>
+                <el-input type="text" v-model="item.remark"></el-input>
               </div>
             </div>
             <div v-if="item.dataType === 'multipleSelect' && typeShow[index]">
               <div>
-                <div><span>字段名称:</span></div>
+                <div>
+                  <span>字段名称:</span>
+                </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
-                <div><span>字段描述:</span></div>
-                <el-input
-                  type="textarea"
-                  :rows="2"
-                  v-model="item.val"
-                ></el-input>
+                <div>
+                  <span>字段描述:</span>
+                </div>
+                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
               <div>
-                <div><span>选择项</span></div>
+                <div>
+                  <span>选择项</span>
+                </div>
                 <!-- <div>
                   <el-input
                     type="text"
@@ -819,139 +971,227 @@
                     :key="k"
                     v-model="a.content"
                   ></el-input>
-                </div> -->
+                </div>-->
               </div>
               <div>
-                <div><span>填写方式:</span></div>
+                <div>
+                  <span>填写方式:</span>
+                </div>
                 <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="0">新增填写</el-radio>
                   <el-radio :label="1">审核填写</el-radio>
                 </el-radio-group>
               </div>
               <div>
-                <div><span>设置:</span></div>
-                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
-                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
-                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                <div>
+                  <span>设置:</span>
+                </div>
+                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
+                  <el-checkbox label="1">可读</el-checkbox>
+                  <el-checkbox label="2">可写</el-checkbox>
                 </el-checkbox-group>
               </div>
               <div>
-                <div><span>校验规则:</span></div>
+                <div>
+                  <span>是否必填：</span>
+                </div>
+                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
+              </div>
+              <div>
+                <div>
+                  <span>校验规则:</span>
+                </div>
                 <el-input type="text" v-model="item.regex"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>规则提醒:</span>
+                </div>
+                <el-input type="text" v-model="item.regMsg"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>属性值排序:</span>
+                </div>
+                <el-input type="number" v-model="item.propertySort"></el-input>
               </div>
 
               <div>
-                <div><span>备注:</span></div>
-                <el-input type="text" v-model="item.remark"> </el-input>
+                <div>
+                  <span>备注:</span>
+                </div>
+                <el-input type="text" v-model="item.remark"></el-input>
               </div>
             </div>
             <div v-if="item.dataType === 'date' && typeShow[index]">
               <div>
-                <div><span>字段名称:</span></div>
+                <div>
+                  <span>字段名称:</span>
+                </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
-                <div><span>字段描述:</span></div>
-                <el-input
-                  type="textarea"
-                  :rows="2"
-                  v-model="item.val"
-                ></el-input>
+                <div>
+                  <span>字段描述:</span>
+                </div>
+                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
               <div>
-                <div><span>默认值</span></div>
+                <div>
+                  <span>默认值</span>
+                </div>
                 <el-input type="text" v-model="item.dataValues"></el-input>
               </div>
 
               <div>
-                <div><span>默认占位符:</span></div>
+                <div>
+                  <span>默认占位符:</span>
+                </div>
                 <el-input type="text" v-model="item.placeholder"></el-input>
               </div>
               <div>
-                <div><span>填写方式:</span></div>
+                <div>
+                  <span>填写方式:</span>
+                </div>
                 <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="0">新增填写</el-radio>
                   <el-radio :label="1">审核填写</el-radio>
                 </el-radio-group>
               </div>
               <div>
-                <div><span>设置:</span></div>
-                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
-                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
-                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                <div>
+                  <span>设置:</span>
+                </div>
+                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
+                  <el-checkbox label="1">可读</el-checkbox>
+                  <el-checkbox label="2">可写</el-checkbox>
                 </el-checkbox-group>
               </div>
               <div>
-                <div><span>校验规则:</span></div>
+                <div>
+                  <span>是否必填：</span>
+                </div>
+                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
+              </div>
+              <div>
+                <div>
+                  <span>校验规则:</span>
+                </div>
                 <el-input type="text" v-model="item.regex"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>规则提醒:</span>
+                </div>
+                <el-input type="text" v-model="item.regMsg"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>属性值排序:</span>
+                </div>
+                <el-input type="number" v-model="item.propertySort"></el-input>
               </div>
 
               <div>
-                <div><span>备注:</span></div>
-                <el-input type="text" v-model="item.remark"> </el-input>
+                <div>
+                  <span>备注:</span>
+                </div>
+                <el-input type="text" v-model="item.remark"></el-input>
               </div>
             </div>
             <div v-if="item.dataType === 'time' && typeShow[index]">
               <div>
-                <div><span>字段名称:</span></div>
+                <div>
+                  <span>字段名称:</span>
+                </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
-                <div><span>字段描述:</span></div>
-                <el-input
-                  type="textarea"
-                  :rows="2"
-                  v-model="item.val"
-                ></el-input>
+                <div>
+                  <span>字段描述:</span>
+                </div>
+                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
               <div>
-                <div><span>默认值</span></div>
+                <div>
+                  <span>默认值</span>
+                </div>
                 <el-input type="text" v-model="item.dataValues"></el-input>
               </div>
 
               <div>
-                <div><span>默认占位符:</span></div>
+                <div>
+                  <span>默认占位符:</span>
+                </div>
                 <el-input type="text" v-model="item.placeholder"></el-input>
               </div>
               <div>
-                <div><span>填写方式:</span></div>
+                <div>
+                  <span>填写方式:</span>
+                </div>
                 <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="0">新增填写</el-radio>
                   <el-radio :label="1">审核填写</el-radio>
                 </el-radio-group>
               </div>
               <div>
-                <div><span>设置:</span></div>
-                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
-                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
-                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                <div>
+                  <span>设置:</span>
+                </div>
+                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
+                  <el-checkbox label="1">可读</el-checkbox>
+                  <el-checkbox label="2">可写</el-checkbox>
                 </el-checkbox-group>
               </div>
               <div>
-                <div><span>校验规则:</span></div>
+                <div>
+                  <span>是否必填：</span>
+                </div>
+                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
+              </div>
+              <div>
+                <div>
+                  <span>校验规则:</span>
+                </div>
                 <el-input type="text" v-model="item.regex"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>规则提醒:</span>
+                </div>
+                <el-input type="text" v-model="item.regMsg"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>属性值排序:</span>
+                </div>
+                <el-input type="number" v-model="item.propertySort"></el-input>
               </div>
 
               <div>
-                <div><span>备注:</span></div>
-                <el-input type="text" v-model="item.remark"> </el-input>
+                <div>
+                  <span>备注:</span>
+                </div>
+                <el-input type="text" v-model="item.remark"></el-input>
               </div>
             </div>
             <div v-if="item.dataType === 'span' && typeShow[index]">
               <div>
-                <div><span>字段名称:</span></div>
+                <div>
+                  <span>字段名称:</span>
+                </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
-                <div><span>字段描述:</span></div>
-                <el-input
-                  type="textarea"
-                  :rows="2"
-                  v-model="item.val"
-                ></el-input>
+                <div>
+                  <span>字段描述:</span>
+                </div>
+                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
               <div>
-                <div><span>详细内容</span></div>
+                <div>
+                  <span>详细内容</span>
+                </div>
                 <quill-editor
                   disabled
                   v-model="item.dataValues"
@@ -961,31 +1201,59 @@
                 ></quill-editor>
               </div>
               <div>
-                <div><span>默认占位符:</span></div>
+                <div>
+                  <span>默认占位符:</span>
+                </div>
                 <el-input type="text" v-model="item.placeholder"></el-input>
               </div>
               <div>
-                <div><span>填写方式:</span></div>
+                <div>
+                  <span>填写方式:</span>
+                </div>
                 <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio><br />
+                  <el-radio :label="0">新增填写</el-radio>
                   <el-radio :label="1">审核填写</el-radio>
                 </el-radio-group>
               </div>
               <div>
-                <div><span>设置:</span></div>
-                <el-checkbox-group v-model="item.rw" @change="changeChecklist(item)">
-                  <el-checkbox label="" true-label="1" false-label="0">可读</el-checkbox>
-                  <el-checkbox label="" true-label="2" false-label="0">可写</el-checkbox>
+                <div>
+                  <span>设置:</span>
+                </div>
+                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
+                  <el-checkbox label="1">可读</el-checkbox>
+                  <el-checkbox label="2">可写</el-checkbox>
                 </el-checkbox-group>
               </div>
               <div>
-                <div><span>校验规则:</span></div>
+                <div>
+                  <span>是否必填：</span>
+                </div>
+                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
+              </div>
+              <div>
+                <div>
+                  <span>校验规则:</span>
+                </div>
                 <el-input type="text" v-model="item.regex"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>规则提醒:</span>
+                </div>
+                <el-input type="text" v-model="item.regMsg"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>属性值排序:</span>
+                </div>
+                <el-input type="number" v-model="item.propertySort"></el-input>
               </div>
 
               <div>
-                <div><span>备注:</span></div>
-                <el-input type="text" v-model="item.remark"> </el-input>
+                <div>
+                  <span>备注:</span>
+                </div>
+                <el-input type="text" v-model="item.remark"></el-input>
               </div>
             </div>
           </div>
@@ -993,12 +1261,7 @@
       </el-row>
     </div>
     <!-- 删除dialog -->
-    <el-dialog
-      width="30%"
-      title="操作提示"
-      :visible.sync="delVisible"
-      append-to-body
-    >
+    <el-dialog width="30%" title="操作提示" :visible.sync="delVisible" append-to-body>
       <span style="font-size:20px;">确定删除此工作表单？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
         <el-button
@@ -1007,8 +1270,7 @@
             delVisible = false;
             deleteWorkForm(workFormId);
           "
-          >确定</el-button
-        >
+        >确定</el-button>
         <el-button
           type="primary"
           plain
@@ -1016,8 +1278,7 @@
             delVisible = false;
             workFormId = [];
           "
-          >取消</el-button
-        >
+        >取消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -1038,9 +1299,9 @@ export default {
       // 可读可写
       read: 1,
       wite: 1,
-      checked1:true,
+      checked1: true,
       checked2: true,
-      checklist:['可读','可写'],
+
       formContainerOpen: "1",
       // 工作表单列表
       workFormData: [],
@@ -1058,7 +1319,7 @@ export default {
         creatorId: localStorage.getItem("agentId"),
         creatorName: localStorage.getItem("userName"),
         name: "工单名称",
-        enabled: "1",
+        enabled: 1,
         remark: "",
         workformProperties: []
       },
@@ -1068,7 +1329,7 @@ export default {
         modifierId: localStorage.getItem("agentId"),
         modifierName: localStorage.getItem("userName"),
         name: "工单名称",
-        enabled: "1",
+        enabled: 1,
         remark: "",
         workformProperties: []
       },
@@ -1109,7 +1370,7 @@ export default {
         .then(res => {
           if (res.data.code === 0) {
             this.workFormData = res.data.data;
-            
+
             if (res.data.pageInfo) {
               this.pageInfo = res.data.pageInfo;
               this.pageShow = true;
@@ -1135,7 +1396,7 @@ export default {
         creatorId: localStorage.getItem("agentId"),
         creatorName: localStorage.getItem("userName"),
         name: "工单名称",
-        enabled: "1",
+        enabled: 1,
         remark: "",
         workformProperties: []
       };
@@ -1160,8 +1421,12 @@ export default {
     },
     // 设置可读可写
 
-    changeChecklist(item){
-      console.log(item)
+    changeChecklist(item) {
+      console.log(item);
+      //   this.workFormTable.workformProperties.forEach(a => {
+      //     a.checklist = item.checklist;
+      //   });
+      console.log(this.workFormTable);
     },
     // 标题属性切换
     changeTitle() {
@@ -1189,7 +1454,10 @@ export default {
           rw: 3,
           val: "",
           styleValue: "",
-          propertyUsage: 0
+          propertyUsage: 0,
+          checklist: ["1", "2"],
+          propertySort: 0,
+          regMsg: ""
         });
         console.log(1111);
       } else if (obj === "textarea") {
@@ -1209,7 +1477,10 @@ export default {
           rw: 3,
           val: "",
           styleValue: "",
-          propertyUsage: 0
+          propertyUsage: 0,
+          checklist: ["1", "2"],
+          propertySort: 0,
+          regMsg: ""
         });
       } else if (obj === "inputNumber") {
         this.workFormTable.workformProperties.push({
@@ -1228,7 +1499,10 @@ export default {
           rw: 3,
           val: "",
           styleValue: "",
-          propertyUsage: 0
+          propertyUsage: 0,
+          checklist: ["1", "2"],
+          propertySort: 0,
+          regMsg: ""
         });
       } else if (obj === "radio") {
         this.workFormTable.workformProperties.push({
@@ -1247,7 +1521,10 @@ export default {
           rw: 3,
           val: "",
           styleValue: "",
-          propertyUsage: 0
+          propertyUsage: 0,
+          checklist: ["1", "2"],
+          propertySort: 0,
+          regMsg: ""
         });
       } else if (obj === "checkbox") {
         this.workFormTable.workformProperties.push({
@@ -1266,7 +1543,10 @@ export default {
           rw: 3,
           val: "",
           styleValue: "",
-          propertyUsage: 0
+          propertyUsage: 0,
+          checklist: ["1", "2"],
+          propertySort: 0,
+          regMsg: ""
         });
       } else if (obj === "select") {
         this.workFormTable.workformProperties.push({
@@ -1285,7 +1565,10 @@ export default {
           rw: 3,
           val: "",
           styleValue: "",
-          propertyUsage: 0
+          propertyUsage: 0,
+          checklist: ["1", "2"],
+          propertySort: 0,
+          regMsg: ""
         });
       } else if (obj === "datetime") {
         this.workFormTable.workformProperties.push({
@@ -1304,7 +1587,10 @@ export default {
           rw: 3,
           val: "",
           styleValue: "",
-          propertyUsage: 0
+          propertyUsage: 0,
+          checklist: ["1", "2"],
+          propertySort: 0,
+          regMsg: ""
         });
       } else if (obj === "multipleSelect") {
         this.workFormTable.workformProperties.push({
@@ -1323,7 +1609,10 @@ export default {
           rw: 3,
           val: "",
           styleValue: "",
-          propertyUsage: 0
+          propertyUsage: 0,
+          checklist: ["1", "2"],
+          propertySort: 0,
+          regMsg: ""
         });
       } else if (obj === "date") {
         this.workFormTable.workformProperties.push({
@@ -1342,7 +1631,10 @@ export default {
           rw: 3,
           val: "",
           styleValue: "",
-          propertyUsage: 0
+          propertyUsage: 0,
+          checklist: ["1", "2"],
+          propertySort: 0,
+          regMsg: ""
         });
       } else if (obj === "time") {
         this.workFormTable.workformProperties.push({
@@ -1361,7 +1653,10 @@ export default {
           rw: 3,
           val: "",
           styleValue: "",
-          propertyUsage: 0
+          propertyUsage: 0,
+          checklist: ["1", "2"],
+          propertySort: 0,
+          regMsg: ""
         });
       } else if (obj === "span") {
         this.workFormTable.workformProperties.push({
@@ -1380,13 +1675,16 @@ export default {
           rw: 3,
           val: "",
           styleValue: "",
-          propertyUsage: 0
+          propertyUsage: 0,
+          checklist: ["1", "2"],
+          propertySort: 0,
+          regMsg: ""
         });
       }
     },
     // 点击题项初始化数据
     changeItem(item, index) {
-      console.log(this.workFormTable)
+      console.log(this.workFormTable);
       console.log(index);
       this.table = false;
       this.text = false;
@@ -1439,15 +1737,32 @@ export default {
         creatorId: localStorage.getItem("agentId"),
         creatorName: localStorage.getItem("userName"),
         name: "工单名称",
-        enabled: "1",
+        enabled: 1,
         remark: "",
         workformProperties: []
       };
     },
     // 新建
     submitUpload() {
-      console.log(this.checklist)
+      console.log(this.checklist);
       if (this.workFormTable.workformProperties.length !== 0) {
+        this.workFormTable.workformProperties.forEach(item => {
+          if (item.checklist) {
+            if (item.checklist.length === 2) {
+              item.rw = 3;
+            } else if (item.checklist.length === 1) {
+              if (item.checklist[0] === "1") {
+                item.rw = 1;
+              } else {
+                item.rw = 2;
+              }
+            }
+          }else{
+              item.rw = 0
+          }
+          // let {checklist,...otherObj} = item
+          delete item.checklist;
+        });
         createWorkForm(this.workFormTable).then(res => {
           if (res.data.code === 0) {
             this.$message.success(res.data.message);
@@ -1489,12 +1804,26 @@ export default {
     },
     // 修改传值
     showModifyContent(row) {
+      console.log(row);
       this.modifyWorkFormTable.id = row.id;
       this.workFormTable = row;
       this.createShow = true;
       this.tableShow = false;
       this.show = 2;
-      console.log(row)
+      this.table = true;
+      this.text = false;
+      row.workformProperties.forEach(item => {
+        if (item.rw === 3) {
+          item.checklist = ["1", "2"];
+        } else if (item.rw === 2) {
+          item.checklist = ["2"];
+        } else if (item.rw === 1) {
+          item.checklist = ["1"];
+        } else {
+          item.checklist = [];
+        }
+        item.isRequired = item.isRequired===1?true:false
+      });
     },
     // 修改
     modifyWorkForm(row) {
@@ -1502,6 +1831,10 @@ export default {
       this.modifyWorkFormTable.enabled = this.workFormTable.enabled;
       this.modifyWorkFormTable.remark = this.workFormTable.remark;
       this.modifyWorkFormTable.workformProperties = this.workFormTable.workformProperties;
+      this.modifyWorkFormTable.workformProperties.forEach(item => {
+        delete item.checklist;
+        item.isRequired = item.isRequired?1:0
+      });
       if (this.modifyWorkFormTable.workformProperties.length !== 0) {
         createWorkForm(this.modifyWorkFormTable).then(res => {
           if (res.data.code === 0) {
@@ -1599,7 +1932,7 @@ export default {
 }
 .template {
   padding: 10px 0;
-  height: 800px;
+  height: 600px;
   overflow: hidden;
   overflow-y: auto;
   &::-webkit-scrollbar {
@@ -1627,7 +1960,7 @@ export default {
 }
 .setting {
   background-color: #fff;
-  height: 800px;
+  height: 600px;
   margin-left: 15px;
   padding: 20px;
   overflow: auto;
@@ -1651,7 +1984,7 @@ export default {
 }
 .el-radio,
 .el-radio + .el-radio {
-  margin: 10px 0;
+  margin: 0 20px 0 0;
 }
 .el-checkbox {
   margin-bottom: 10px;
