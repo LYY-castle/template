@@ -1774,7 +1774,7 @@ export default {
           this.editCustomerBasicInfo(this.editCustomerInfo, item, '客户姓名')
           break
         case 'customerSex':
-          if (this.customerVmodels.customerSex === null || this.isEmpty(this.customerVmodels.customerSex)) {
+          if (this.isEmpty(this.customerVmodels.customerSex)) {
             this.$message.error('请选择客户性别！')
             this.cancelEdit(item)
             return

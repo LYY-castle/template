@@ -39,7 +39,7 @@
                 v-if="customerPhone"
                 index="1">
                 <div style="margin-bottom:7px;">
-                  <span>{{customerInfos.customerName?customerInfos.customerName:''}}</span>
+                  <span>{{menuCustomerName}}</span>
                 </div>
                 <div style="overflow:hidden">
                   <span style="text-align:left">{{customerPhone}}</span>
@@ -318,36 +318,131 @@
               </el-collapse-item>
               <div style="position:relative;border-bottom: 1px solid #ebeef5;">
                 <span class="form-more bold" style="line-height: 24px;font-size: 14px;float:right;margin-right:6px;color:#57AFFF;position:absolute;top:12px;right:40px;">{{callInfoActive[1]}}</span>
-                <el-collapse-item class="customerInfo" title="客户名片" :name="1">
-                  <div class="customerInfo-item font12">
-                    <span >姓名：</span>
-                    <span style="color:#333;">{{customerInfos.customerName?customerInfos.customerName:''}}</span>
-                  </div>
-                  <div class="customerInfo-item font12">
-                    <span>性别：</span>
-                    <span style="color:#333;">{{customerInfos.customerSex===0?'男':customerInfos.customerSex===1?'女':''}}</span>
-                  </div>
-                  <div v-if="customerInfos.linkResultInfos!==undefined&&customerInfos.linkResultInfos.length>0" class="customerInfo-item font12" v-for="(item2,index) in customerInfos.linkResultInfos">
-                    <span>{{'手机号码'+(index+1)+'：'}}</span>
-                    <span style="color:#333;" :key="index">{{item2.linkValue}}</span>
-                  </div>
-                  <div v-if="customerInfos.linkResultInfos!==undefined&&customerInfos.linkResultInfos.length===0" class="customerInfo-item font12">
-                    <span>手机号码：</span>
-                    <span style="color:#333;">无</span>
-                  </div>
-                  <div class="customerInfo-item font12">
-                    <span>身份证：</span>
-                    <span style="color:#333;">{{customerInfos.idNo?customerInfos.idNo:''}}</span>
-                  </div>
-                  <div v-if="customerInfos.addressResultInfos!==undefined&&customerInfos.addressResultInfos.length>0" class="customerInfo-item font12" v-for="(item,index) in customerInfos.addressResultInfos">
-                    <span>{{'地址'+(index+1)+'：'}}</span>
-                    <span style="color:#333;" :key="index">{{item.provinceName+item.cityName+item.districtName+item.detail}}</span>
-                  </div>
-                  <div v-if="customerInfos.addressResultInfos!==undefined&&customerInfos.addressResultInfos.length===0" class="customerInfo-item font12">
-                    <span>地址:</span>
-                    <span style="color:#333;">无</span>
-                  </div>
+                <el-collapse-item class="customerInfo" title="客户名片" :name="1" v-if="customerPhone">
+                  <el-row>
+                    <span class="font12 bold" style="color:#333">基础信息</span>
+                  </el-row>
+                  <!-- <el-row style="border-bottom:1px solid #54B8FF;"></el-row> -->
+                  <el-row>
+                    <el-col class="customerInfo-item font12" :span="6">
+                      <span style="line-height:30px;">姓名：</span>
+                      <span style="color:#333;line-height:30px;" v-if="!customerInfosFormVisbile.customerName">{{customerInfos.customerName?customerInfos.customerName:'未知'}}</span>
+                      <el-input v-model="customerInfos.customerName" :inline="true" size="mini" style="width:45%;" v-if="customerInfosFormVisbile.customerName" placeholder="姓名"></el-input>
+                      <i class="el-icon-circle-check-outline" style="cursor:pointer;" v-if="customerInfosFormVisbile.customerName" @click="editCustomer('customerName')"></i>
+                      <i class="el-icon-circle-close-outline" style="cursor:pointer;" v-if="customerInfosFormVisbile.customerName" @click="cancelEditCustomer('customerName')"></i>
+                      <i v-if="!customerInfosFormVisbile.customerName" style="cursor:pointer;" @click="customerInfosFormToggle('customerName')">
+                        <img src="../../../static/images/edit_btn.png">
+                      </i>
+                    </el-col>
+                    <el-col class="customerInfo-item font12" :span="6">
+                      <span style="line-height:30px;">性别：</span>
+                      <span style="color:#333;line-height:30px;" v-if="!customerInfosFormVisbile.customerSex">{{customerInfos.customerSex===0?'男':customerInfos.customerSex===1?'女':'未知'}}</span>
+                      <el-radio-group v-if="customerInfosFormVisbile.customerSex" v-model="customerInfos.customerSex">
+                        <el-radio :label="0">
+                          <span style="font-size:12px;">男</span>
+                        </el-radio>
+                        <el-radio :label="1">
+                          <span style="font-size:12px;">女</span>
+                        </el-radio>
+                      </el-radio-group>
+                      <i class="el-icon-circle-check-outline" style="cursor:pointer;" v-if="customerInfosFormVisbile.customerSex" @click="editCustomer('customerSex')"></i>
+                      <i class="el-icon-circle-close-outline" style="cursor:pointer;" v-if="customerInfosFormVisbile.customerSex" @click="cancelEditCustomer('customerSex')"></i>
+                      <i v-if="!customerInfosFormVisbile.customerSex" style="cursor:pointer;" @click="customerInfosFormToggle('customerSex')">
+                        <img src="../../../static/images/edit_btn.png">
+                      </i>
+                    </el-col>
+                    <el-col class="customerInfo-item font12" :span="6">
+                      <span style="line-height:30px;">身份证：</span>
+                      <span style="color:#333;line-height:30px;" v-if="!customerInfosFormVisbile.idNo">{{customerInfos.idNo?customerInfos.idNo:'未知'}}</span>
+                      <el-input v-model="customerInfos.idNo" :inline="true" size="mini" style="width:45%;" v-if="customerInfosFormVisbile.idNo" placeholder="身份证"></el-input>
+                      <i class="el-icon-circle-check-outline" style="cursor:pointer;" v-if="customerInfosFormVisbile.idNo" @click="editCustomer('idNo')"></i>
+                      <i class="el-icon-circle-close-outline" style="cursor:pointer;" v-if="customerInfosFormVisbile.idNo" @click="cancelEditCustomer('idNo')"></i>
+                      <i v-if="!customerInfosFormVisbile.idNo" style="cursor:pointer;" @click="customerInfosFormToggle('idNo')">
+                        <img src="../../../static/images/edit_btn.png">
+                      </i>
+                    </el-col>
+                  </el-row>  
+                  <el-row style="margin-top:15px;">
+                    <el-row>
+                      <span class="font12 bold" style="color:#333">联系信息</span>
+                      <span 
+                        class="el-icon-circle-plus-outline" 
+                        style="cursor:pointer;color:#28CC6C;font-size:14px;position:relative;top:1px;left:2px;" 
+                        title="添加联系信息" 
+                        @click="handleAddContactInfo"></span>
+                    </el-row>
+                    <!-- <el-row style="border-bottom:1px solid #54B8FF;"></el-row> -->
+                    <el-row>
+                      <el-col v-if="customerInfos.linkResultInfos!==undefined&&customerInfos.linkResultInfos.length>0" class="customerInfo-item font12" v-for="(item2,index) in customerInfos.linkResultInfos" :span="6">
+                        <span style="line-height:30px;">{{'手机号码'+(index+1)+'：'}}</span>
+                        <span style="color:#333;line-height:30px;" :key="index" v-if="!customerInfosFormVisbile.linkResultInfos[index]">{{item2.linkValue}}</span>
+                        <el-input v-model="customerInfos.linkResultInfos[index].linkValue" :inline="true" size="mini" style="width:45%;" v-if="customerInfosFormVisbile.linkResultInfos[index]" placeholder="手机号码"></el-input>
+                        <i class="el-icon-circle-check-outline" style="cursor:pointer;" v-if="customerInfosFormVisbile.linkResultInfos[index]" @click="editCustomer('linkResultInfos',index,false)"></i>
+                        <i class="el-icon-circle-close-outline" style="cursor:pointer;" v-if="customerInfosFormVisbile.linkResultInfos[index]" @click="customerInfosFormToggle('linkResultInfos',index,false)"></i>
+                        <i 
+                          v-if="customerPhone!==customerInfos.linkResultInfos[index].linkValue&&!(customerInfosFormVisbile.linkResultInfos[index])" 
+                          style="cursor:pointer;" 
+                          @click="customerInfosFormToggle('linkResultInfos',index,true)">
+                          <img src="../../../static/images/edit_btn.png">
+                        </i>
+                      </el-col>
+                      <!-- <el-col v-if="customerInfos.linkResultInfos!==undefined&&customerInfos.linkResultInfos.length===0||!(customerInfos.linkResultInfos)" class="customerInfo-item font12" :span="6">
+                        <span>手机号码：</span>
+                        <span style="color:#333;">无</span>
+                      </el-col> -->
+                    </el-row>
+                  </el-row>
+                  <el-row style="margin-top:15px;">
+                    <el-row>
+                      <span class="font12 bold" style="color:#333">地址信息</span>
+                      <span v-if="provincesCache" class="el-icon-circle-plus-outline" style="cursor:pointer;color:#28CC6C;font-size:14px;position:relative;top:1px;left:2px;" title="添加地址信息" @click="handleAddAddressInfo"></span>
+                    </el-row>
+                    <!-- <el-row style="border-bottom:1px solid #54B8FF;"></el-row> -->
+                    <el-row>
+                      <el-col v-if="customerInfos.addressResultInfos!==undefined&&customerInfos.addressResultInfos.length>0" class="customerInfo-item font12" v-for="(item,index2) in customerInfos.addressResultInfos">
+                        <span>{{'地址'+(index2+1)+'：'}}</span>
+                        <span style="color:#333;line-height:30px;" :key="index2" v-if="!(customerInfosFormVisbile.addressResultInfos[index2])&&item.districtName">{{item.provinceName+item.cityName+item.districtName+item.detail}}</span>
+                        <div style="display:inline-block;width:90%;" v-if="customerInfosFormVisbile.addressResultInfos[index2]">
+                          <el-select v-model="customerVmodels[index2].province" placeholder="省" @change="getCities(customerVmodels[index2].province,index2)" style="width:85px;" size="mini">
+                            <el-option
+                              v-for="(province,index3) in provinces[index2]"
+                              :key="province.id"
+                              :value="province.regionCode"
+                              :label="province.regionName"
+                            ></el-option>
+                          </el-select>
+                          <el-select v-model="customerVmodels[index2].city" placeholder="市" @change="getDistricts(customerVmodels[index2].city,index2)" style="width:85px;" size="mini">
+                            <el-option
+                              v-for="(city,index3) in cities[index2]"
+                              :key="city.id"
+                              :value="city.regionCode"
+                              :label="city.regionName"
+                            ></el-option>
+                          </el-select>
+                          <el-select v-model="customerVmodels[index2].district" placeholder="县" style="width:85px;" size="mini">
+                            <el-option
+                              v-for="(district,index3) in districts[index2]"
+                              :key="district.id"
+                              :value="district.regionCode"
+                              :label="district.regionName"
+                            ></el-option>
+                          </el-select>
+                          <el-input v-model="customerVmodels[index2].detail" :inline="true" size="mini" placeholder="详细地址" style="width:75%;"></el-input>
+                        </div>
+                        <i class="el-icon-circle-check-outline" style="cursor:pointer;" v-if="customerInfosFormVisbile.addressResultInfos[index2]" @click="editCustomer('addressResultInfos',index2,false)"></i>
+                        <i class="el-icon-circle-close-outline" style="cursor:pointer;" v-if="customerInfosFormVisbile.addressResultInfos[index2]" @click="customerInfosFormToggle('addressResultInfos',index2,false)"></i>
+                        <i v-if="!customerInfosFormVisbile.addressResultInfos[index2]&&provinces&&provinces.length" style="cursor:pointer;" @click="handleEditRegion(index2);">
+                          <img src="../../../static/images/edit_btn.png">
+                        </i>
+                      </el-col>
+                      <!-- <el-col v-if="customerInfos.addressResultInfos!==undefined&&customerInfos.addressResultInfos.length===0||!(customerInfos.addressResultInfos)" class="customerInfo-item font12" :span="24">
+                        <span>地址:</span>
+                        <span style="color:#333;">无</span>
+                      </el-col> -->
+                    </el-row>
+                  </el-row>
                 </el-collapse-item>
+                
               </div>
               <!-- <div style="position:relative;border-bottom: 1px solid #ebeef5;">
                 <span class="form-more bold" style="line-height: 24px;font-size: 14px;float:right;margin-right:6px;color:#57AFFF;position:absolute;top:12px;right:40px;">{{callInfoActive[2]}}</span>
@@ -1058,12 +1153,12 @@
           margin-right:20px;
         }
       }
-      .customerInfo{
-        div.customerInfo-item{
-          display:inline-block;
-          margin-right:20px;
-        }
-      }
+      // .customerInfo{
+        // div.customerInfo-item{
+          // display:inline-block;
+          // margin-right:20px;
+        // }
+      // }
       .el-tabs{
         height:100%;
       }
@@ -1269,6 +1364,10 @@ import {
   list2Tree
 } from '@/utils/tools'
 import {
+  getRegion,
+  editCustomer
+} from '@/api/customerManagement'
+import {
   getContactList,
   getPhoneAddress,
   getSummary,
@@ -1277,7 +1376,8 @@ import {
   getWorkFormRecordDetail,
   getWorkFormTempById,
   addWorkFormRecord,
-  recordSummaryInfo
+  recordSummaryInfo,
+  getCustomerInfoByPhone
 } from '@/api/incoming_call'
 import {
   getContactByGradeId,
@@ -1311,7 +1411,31 @@ export default {
   inject: ['reloadCompoment'],
   data() {
     return {
-      isConversation: {
+      menuCustomerName: '',
+      customerEditReq: {
+        customer: {},
+        customerAddresses: [],
+        customerLinks: [],
+        customerCars: []
+      },
+      customerInfosFormVisbile: {// 控制客户名片编辑表单与内容的切换
+        customerName: null,
+        customerSex: null,
+        idNo: null,
+        linkResultInfos: [],
+        addressResultInfos: []
+      },
+      customerVmodels: [{
+        province: null,
+        city: null,
+        district: null,
+        detail: null
+      }],
+      provincesCache: null,
+      provinces: [],
+      cities: [],
+      districts: [],
+      isConversation: { // 控制在是否会话中的表单可用不可用
         summaryDisabled: false,
         addWorkformDisabled: false,
         workformRecordInvisible: false
@@ -1779,6 +1903,34 @@ export default {
     formatSeconds: formatSeconds,
     hideIdNumber: hideIdNumber,
     hideMobile: hideMobile,
+    getCustomerInfoByPhone() {
+      getCustomerInfoByPhone(this.customerPhone).then(response => {
+        this.customerInfos = response.data.data
+        sessionStorage.setItem('inCall_customerInfos', JSON.stringify(this.customerInfos))
+        this.menuCustomerName = clone(this.customerInfos.customerName)
+        this.createCustomerInfosFormVisbile(response.data.data)
+        // 地址信息回显
+        if (this.customerInfos.addressResultInfos.length) this.customerVmodels = clone(this.customerInfos.addressResultInfos)
+        for (let i = 0; i < this.customerVmodels.length; i++) {
+          for (const key in this.customerVmodels[i]) {
+            if (key.indexOf('modifier') !== -1) {
+              delete this.customerVmodels[i][key]
+            }
+          }
+        }
+      }).catch(error => {
+        throw error
+      })
+    },
+    handleChangeWorkFormSwitch(val) {
+      if (!val) {
+        this.selectedServiceList = []
+        this.selectedWorkFormId = ''
+        this.addWorkFormTabVisible = false
+        this.activeName = '4'
+        this.getWorkFormRecord()
+      }
+    },
     handleTabRemove(targetName) {
       if (targetName === '6') { // 关闭服务记录详情
         this.recordDailTabVisible = false
@@ -1802,6 +1954,180 @@ export default {
       }
     },
     // 基本信息--------------1
+    // 初始化联系信息及地址信息表单显示隐藏数据
+    createCustomerInfosFormVisbile(customerInfo) {
+      getRegion(0).then(res => {
+        if (res.data.code === 0) {
+          this.provincesCache = res.data.data
+          customerInfo.addressResultInfos.forEach(() => {
+            this.provinces.push(res.data.data)
+            this.customerInfosFormVisbile['addressResultInfos'].push(false)
+          })
+        }
+      }).catch(error => {
+        throw error
+      })
+      customerInfo.linkResultInfos.forEach(() => {
+        this.customerInfosFormVisbile['linkResultInfos'].push(false)
+      })
+    },
+    // 编辑时显示隐藏表单
+    customerInfosFormToggle(fieldName, index, val) {
+      if (index === 0 || index) {
+        if (this.customerInfos[fieldName][index].isAdd) {
+          this.customerInfos[fieldName].splice(index, 1)
+          if (this.customerInfosFormVisbile[fieldName][index]) {
+            this.customerVmodels.splice(index, 1)
+          }
+        } else {
+          this.$set(this.customerInfosFormVisbile[fieldName], index, val)
+          this.customerInfos = JSON.parse(sessionStorage.getItem('inCall_customerInfos'))
+          if (fieldName === 'addressResultInfos') {
+            // 还原回显数据
+            this.customerVmodels = clone(this.customerInfos.addressResultInfos)
+            for (let i = 0; i < this.customerVmodels.length; i++) {
+              for (const key in this.customerVmodels[i]) {
+                if (key.indexOf('modifier') !== -1) {
+                  delete this.customerVmodels[i][key]
+                }
+              }
+            }
+          }
+        }
+      } else {
+        this.customerInfosFormVisbile[fieldName] = true
+      }
+    },
+    cancelEditCustomer(fieldName) {
+      this.customerInfos = JSON.parse(sessionStorage.getItem('inCall_customerInfos'))
+      this.customerInfosFormVisbile[fieldName] = false
+    },
+    // 点击添加联系信息
+    handleAddContactInfo() {
+      this.customerInfos.linkResultInfos.push({ isAdd: true, linkType: 0, customerId: this.customerInfos.customerId })
+      this.customerInfosFormVisbile.linkResultInfos.push(true)
+    },
+    // 点击添加地址信息
+    handleAddAddressInfo(index) {
+      // if (!this.provinces.length) {}
+      this.provinces.push(this.provincesCache)
+      this.customerInfos.addressResultInfos.push({ isAdd: true, province: null, city: null, district: null, detail: null })
+      this.customerInfosFormVisbile.addressResultInfos.push(true)
+      this.customerVmodels.push({ province: null, city: null, district: null, detail: null })
+    },
+    // 编辑并回显客户地址信息
+    handleEditRegion(index) {
+      this.customerInfosFormToggle('addressResultInfos', index, true)
+      getRegion(this.customerInfos.addressResultInfos[index].province).then(res => {
+        if (res.data.code === 0) {
+          this.$set(this.cities, index, res.data.data)
+        }
+      }).catch(error => {
+        throw error
+      })
+      getRegion(this.customerInfos.addressResultInfos[index].city).then(res => {
+        if (res.data.code === 0) {
+          this.$set(this.districts, index, res.data.data)
+        }
+      }).catch(error => {
+        throw error
+      })
+    },
+    getProvince() {
+      getRegion(0).then(res => {
+        if (res.data.code === 0) {
+          this.provinces = res.data.data
+        }
+      }).catch(error => {
+        throw error
+      })
+    },
+    getCities(parentid, index) {
+      getRegion(parentid).then(res => {
+        if (res.data.code === 0) {
+          this.customerVmodels[index].city = ''
+          this.customerVmodels[index].district = ''
+          this.$set(this.cities, index, res.data.data)
+          console.log('getCities', res.data.data)
+          if (res.data.data[0].regionLevel === 2 && res.data.data.length === 1) {
+            this.customerVmodels[index].city = res.data.data[0].regionCode
+            this.getDistricts(res.data.data[0].regionCode, index)
+          }
+        }
+      })
+    },
+    getDistricts(parentid, index) {
+      getRegion(parentid).then(res => {
+        if (res.data.code === 0) {
+          this.$set(this.districts, index, res.data.data)
+          this.customerVmodels[index].district = ''
+        }
+      })
+    },
+    // 初始化修改客户请求参数
+    createCustomerEditReq() {
+      this.customerEditReq.customer.customerId = this.customerInfos.customerId
+      this.customerEditReq.customer.customerName = this.customerInfos.customerName
+      this.customerEditReq.customer.customerSex = this.customerInfos.customerSex
+      this.customerEditReq.customer.idNo = this.customerInfos.idNo
+      this.customerEditReq.customerLinks = this.customerInfos.linkResultInfos
+      this.customerEditReq.customerAddresses = this.customerVmodels
+      console.log('customerVmodels', this.customerVmodels)
+      console.log('customerEditReq', this.customerEditReq)
+    },
+    // 校验修改信息
+    valiCustomer() {
+      let result = true
+      const reg_ID = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/
+      // const reg_phone = /^[1][3,4,5,6,7,8][0-9]{9}$/
+      const customer = this.customerEditReq.customer
+      // const customerAddresses = this.customerEditReq.customerAddresses
+      // const customerLinks = this.customerEditReq.customerLinks
+      this.createCustomerEditReq()
+      if (customer.idNo && (!reg_ID.test(customer.idNo))) {
+        this.$message.error('请输入正确的身份证号！')
+        result = false
+      }
+      return result
+    },
+    // 修改客户信息
+    editCustomer(fieldName, index, val) {
+      if (!this.valiCustomer()) {
+        return false
+      }
+      // 隐藏表单
+      if (index === 0 || index) {
+        this.$set(this.customerInfosFormVisbile[fieldName], index, val)
+      } else {
+        this.customerInfosFormVisbile[fieldName] = false
+      }
+      this.customerInfos.addressResultInfos = this.customerVmodels
+      editCustomer(this.customerEditReq).then(response => {
+        if (response.data.code === 0) {
+          this.$message.success(response.data.message)
+          getCustomerInfoByPhone(this.customerPhone).then(response => {
+            this.customerInfos = response.data.data
+            sessionStorage.setItem('inCall_customerInfos', JSON.stringify(this.customerInfos))
+            this.menuCustomerName = clone(this.customerInfos.customerName)
+            // 地址信息回显
+            if (this.customerInfos.addressResultInfos.length) this.customerVmodels = clone(this.customerInfos.addressResultInfos)
+            for (let i = 0; i < this.customerVmodels.length; i++) {
+              for (const key in this.customerVmodels[i]) {
+                if (key.indexOf('modifier') !== -1) {
+                  delete this.customerVmodels[i][key]
+                }
+              }
+            }
+          })
+        } else {
+          this.customerInfosFormToggle(fieldName, index, val)
+          this.$message.error(response.data.message)
+        }
+      }).catch(error => {
+        this.customerInfosFormToggle(fieldName, index, val)
+        throw error
+      })
+    },
     // 服务记录--------------2
     resetServiceRecordForm() {
       this.searchContactListReq.contactType = ''
@@ -1893,7 +2219,6 @@ export default {
     // 查询工单记录
     getWorkFormRecord() {
       console.log('into getWorkFormRecord customerInfos =', this.customerInfos)
-
       this.searchWorkFormRecord2 = clone(this.searchWorkFormRecord)
       this.searchWorkFormRecord.customerId = this.customerInfos.customerId
       this.searchWorkFormRecord.timeStart = this.timeValue ? this.timeValue[0] : null
@@ -2061,16 +2386,6 @@ export default {
       if (this.recordSummaryCreateInfo.summaryIds && this.recordSummaryCreateInfo.summaryIds.length === 0) {
         this.isAddWorkOrder = false
         this.$message.error('请先选择话后小结')
-      }
-    },
-    // 选择是否产生工单
-    handleChangeWorkFormSwitch(val) {
-      if (!val) {
-        this.selectedServiceList = []
-        this.selectedWorkFormId = ''
-        this.addWorkFormTabVisible = false
-        this.activeName = '4'
-        this.getWorkFormRecord()
       }
     },
     // 小结级联选择事件
@@ -3058,6 +3373,7 @@ export default {
     // this.$store.dispatch('setCustomerInfosAndRecodId', { customerPhone: customerPhone, customerInfos: customerInfos, recordId: recordId })
     if (sessionStorage.getItem('inCall_customerInfos')) {
       this.customerPhone = sessionStorage.getItem('inCall_customerPhone')
+      this.getCustomerInfoByPhone()
       this.customerInfos = JSON.parse(sessionStorage.getItem('inCall_customerInfos')) || { cuatomerName: '', cuatomerId: null }
       this.searchContactListReq.customerId = this.customerInfos ? this.customerInfos.customerId : ''
       this.recordSummaryCreateInfo.recordId = sessionStorage.getItem('inCall_recordId')
