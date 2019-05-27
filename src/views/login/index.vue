@@ -192,7 +192,7 @@
                       duration: 2 * 1000
                     })
                   })
-                }).finally(() => {
+                }).catch(() => {
                   this.isShowMessageBox = false
                 })
               }
