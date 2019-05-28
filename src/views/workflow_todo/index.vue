@@ -636,6 +636,11 @@ export default {
               if (workformRecordRuleResults[i].workformProperty && workformRecordRuleResults[i].workformProperty.propertyUsage === 1) {
                 this.showConfirmInfo = true
               }
+              if (workformRecordRuleResults[i].workformProperty && workformRecordRuleResults[i].workformProperty.defaultValue) {
+                if (!workformRecordRuleResults[i].recordValue) {
+                  this.editWorkformRecord.workformRecordRuleResults[i].recordValue = workformRecordRuleResults[i].workformProperty.defaultValue
+                }
+              }
             }
           }
         } else {
