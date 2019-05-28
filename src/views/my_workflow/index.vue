@@ -6,9 +6,6 @@
           <el-form-item prop="name" label="工单名称:">
             <el-input v-model="req.name" placeholder="工单名称（限长50字符）" maxlength="50"></el-input>
           </el-form-item>
-          <el-form-item prop="customerId" label="客户编号:">
-            <el-input v-model="req.customerId" placeholder="客户编号" maxlength="50"></el-input>
-          </el-form-item>
           <el-form-item prop="customerName" label="客户名称:">
             <el-input v-model="req.customerName" placeholder="客户名称" maxlength="50"></el-input>
           </el-form-item>
@@ -55,10 +52,10 @@
             prop="name"
             :show-overflow-tooltip="true">
           </el-table-column>
-          <el-table-column
+               <el-table-column
             align="center"
-            label="客户编号"
-            prop="customerId"
+            label="工单号"
+            prop="code"
             :show-overflow-tooltip="true">
           </el-table-column>
           <el-table-column
@@ -66,6 +63,15 @@
             label="客户名称"
             prop="customerName"
             :show-overflow-tooltip="true">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="服务目录"
+            prop="serviceMenu"
+            :show-overflow-tooltip="true">
+            <template slot-scope="scope">
+              {{scope.row.serviceMenu?scope.row.serviceMenu.namePath:"未找到关联的服务目录"}}
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -102,6 +108,7 @@
             width="200">
             <template slot-scope="scope">
               <el-button @click="detailVisible=true;getWorkformRecordDetailById(scope.row.id);" type="text" size="small">详情</el-button>
+              <el-button @click="reSendMsg(scope.row.id);" type="text" size="small">重发短信</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -120,9 +127,9 @@
       </el-row>
     </el-row>
     <!-- 工单记录详情 -->
-    <el-dialog
+     <el-dialog
       align:left
-      width="40%"
+      width="50%"
       title="工单详情"
       :visible.sync="detailVisible"
       append-to-body>
@@ -142,8 +149,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="客户编号：" prop="customerId">
-              <span>{{workformRecordDetail.customerId}}</span>
+            <el-form-item label="工单号：" prop="code" >
+              <div style="with:95%;overflow:auto;">{{workformRecordDetail.code}}</div>
             </el-form-item>
           </el-col>
         </el-row>
@@ -160,6 +167,11 @@
           </el-col>
         </el-row>
         <el-row>
+          <el-col :span="12">
+            <el-form-item label="服务目录：" prop="serviceMenu">
+              <div style="display:inline-block;text-align:center;" >{{workformRecordDetail.serviceMenu?workformRecordDetail.serviceMenu.namePath:""}}</div>
+            </el-form-item>
+          </el-col>
           <el-col :span="12">
             <el-form-item label="执行状态：" prop="status">
               <div style="display:inline-block;text-align:center;" :class="workformRecordDetail.status==0?'create':workformRecordDetail.status==3?'visible':'invisible'">{{showStatus(workformRecordDetail.status)}}</div>
@@ -195,7 +207,7 @@
         </el-row>
         <div v-for="(item, index) in workformRecordDetail.workformRecordRuleResults">
           <el-col :span="12">
-            <el-form-item :label="item.workformPropertyId.name+'：'">
+            <el-form-item :label="item.workformProperty.name+'：'" label-width="180px;">
               <span>{{showValues(item)}}</span>
             </el-form-item>
           </el-col>
@@ -208,7 +220,7 @@
   </div>
 </template>
 <script>
-import { queryList, queryOne } from '@/api/workform_record'
+import { queryList, queryOne, reSendMsg } from '@/api/workform_record'
 export default {
   name: 'my_workflow',
   data() {
@@ -217,7 +229,7 @@ export default {
         workform: {},
         workformRecordRuleResults: [
           {
-            workformPropertyId: {}
+            workformProperty: {}
           }
         ]
       }, // 工单记录详情
@@ -247,9 +259,28 @@ export default {
     this.queryList(this.req)
   },
   methods: {
+    reSendMsg(id) {
+      if (window.confirm('确认为这条工单重新发送短信？')) {
+        reSendMsg(id).then(res => {
+          if (res.data && res.data.code === 0) {
+            this.$message({
+              message: res.data.message,
+              type: 'success',
+              duration: 1000
+            })
+          } else {
+            this.$message({
+              message: res.data.message,
+              type: 'error',
+              duration: 1000
+            })
+          }
+        })
+      }
+    },
     showValues(workformRecordRuleResult) {
       let result = ''
-      const dataType = workformRecordRuleResult.workformPropertyId.dataType
+      const dataType = workformRecordRuleResult.workformProperty.dataType
       const arr = workformRecordRuleResult.recordValue
       switch (dataType) {
         case 'input':
@@ -259,21 +290,24 @@ export default {
         case 'span':
         case 'inputnumber':
         case 'textarea':
-          result = arr || workformRecordRuleResult.workformPropertyId.defaultValue
+          result = arr || workformRecordRuleResult.workformProperty.defaultValue
           break
         case 'radio':
         case 'select':
-          result = arr ? JSON.parse(workformRecordRuleResult.workformPropertyId.dataValues)[arr] : ''
+          result = arr ? JSON.parse(workformRecordRuleResult.workformProperty.dataValues)[arr] : ''
           break
         case 'checkbox':
         case 'multipleSelect':
           if (arr) {
-            const temp_arr = JSON.parse(arr)
+            const temp_arr = arr.split(',')
             const temp_result = []
-            const dataValues = JSON.parse(workformRecordRuleResult.workformPropertyId.dataValues)
+            const dataValues = JSON.parse(workformRecordRuleResult.workformProperty.dataValues)
             for (let i = 0; i < temp_arr.length; i++) {
-              temp_result.push(dataValues[temp_arr[i]])
+              if (dataValues[temp_arr[i]]) {
+                temp_result.push(dataValues[temp_arr[i]])
+              }
             }
+
             result = temp_result.join('，')
           } else {
             result = ''
@@ -283,7 +317,7 @@ export default {
           result = arr
           break
       }
-      return result
+      return result == null ? '' : result
     },
     getWorkformRecordDetailById(id) {
       queryOne(id).then(res => {
@@ -296,6 +330,8 @@ export default {
     },
     queryList(req) {
       const requestParam = {}
+      requestParam.pageNo = req.pageNo
+      requestParam.pageSize = req.pageSize
       requestParam.timeStart = this.timeValue ? this.timeValue[0] : null
       requestParam.timeEnd = this.timeValue ? this.timeValue[1] : null
       requestParam.creatorId = localStorage.getItem('agentId')

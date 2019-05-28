@@ -2001,7 +2001,6 @@ export default {
         const code = parseInt(res.data.code)
         if (code === 200) {
           vm.havesoftphone = true
-          console.log(process.env.CTI_WS_SERVERURL, '1111')
           cti.connectCTI(process.env.CTI_WS_SERVERURL)
         } else if (code === 403) {
           vm.havesoftphone = false

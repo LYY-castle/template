@@ -36,7 +36,7 @@ export function getServiceList() {
 // 创建工单记录
 export function addWorkFormRecord(data) {
   return request_v2({
-    url: '/workflow/workformRecord/add',
+    url: '/workflow/workformRecords',
     method: 'post',
     data: data
   })
@@ -44,22 +44,32 @@ export function addWorkFormRecord(data) {
 // 查询工单记录列表
 export function getWorkFormRecord(req) {
   return request_v2({
-    url: '/workflow/workformRecord/queryList',
+    url: '/workflow/workformRecords',
+    method: 'get',
     params: req
   })
 }
 // 查询工单记录详情
 export function getWorkFormRecordDetail(id) {
   return request_v2({
-    url: '/workflow/workformRecord/queryOne',
-    params: { id: id }
+    url: `/workflow/workformRecord/${id}`,
+    method: 'get'
   })
 }
 // 通过id查询工单模板
 export function getWorkFormTempById(id) {
   return request_v2({
-    url: '/workflow/workform/query/workform',
-    params: { id: id }
+    url: '/workflow/workform',
+    method: 'get',
+    params: { 'id': id }
+
+  })
+}
+// 通过工单模板id重发短信
+export function reSendMsg(id) {
+  return request_v2({
+    url: `/workflow/workformRecord/reSendMsg/${id}`,
+    method: 'patch'
   })
 }
 // 修改接触记录小结和备注信息

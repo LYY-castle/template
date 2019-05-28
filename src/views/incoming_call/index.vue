@@ -466,7 +466,7 @@
                   </el-form-item>
                   <el-form-item label="呼叫方式：">
                     <el-select v-model="searchContactListReq.callDirection">
-                      <el-option value="" label="请选择"></el-option>
+                      <el-option value="" label="全部"></el-option>
                       <el-option value="0" label="呼出"></el-option>
                       <el-option value="1" label="呼入"></el-option>
                     </el-select>
@@ -574,7 +574,7 @@
                   </el-form-item>
                   <el-form-item>
                     <el-button type="primary" @click="getWorkFormRecord">查询</el-button>
-                    <el-button>重置</el-button>
+                    <el-button @click="resetReq">重置</el-button>
                   </el-form-item>
                 </el-form>
               </el-collapse-item>
@@ -586,15 +586,32 @@
               <el-table
                 :data="workFormRecordList"
                 style="width: 100%">
-                <!-- <el-table-column
-                  prop=""
-                  label="服务目录"
-                  align="center">
-                </el-table-column> -->
                 <el-table-column
+                  align="center"
+                  label="名称"
                   prop="name"
-                  label="工单名称"
-                  align="center">
+                  :show-overflow-tooltip="true">
+                </el-table-column>
+                <el-table-column
+                  align="center"
+                  label="工单号"
+                  prop="code"
+                  :show-overflow-tooltip="true">
+                </el-table-column>
+                <el-table-column
+                  align="center"
+                  label="客户名称"
+                  prop="customerName"
+                  :show-overflow-tooltip="true">
+                </el-table-column>
+                <el-table-column
+                  align="center"
+                  label="服务目录"
+                  prop="serviceMenu"
+                  :show-overflow-tooltip="true">
+                  <template slot-scope="scope">
+                    {{scope.row.serviceMenu?scope.row.serviceMenu.namePath:"未找到关联的服务目录"}}
+                  </template>
                 </el-table-column>
                 <el-table-column
                   prop="name"
@@ -622,6 +639,7 @@
                   align="center">
                   <template slot-scope="scope">
                     <el-button type="text" size="medium" @click="getWorkFormRecordDetail(scope.row.id)">查看</el-button>
+                    <el-button type="text" size="medium" @click="reSendMsg(scope.row.id)">重发短信</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -658,7 +676,7 @@
                       :model="addWorkForm.workformRecordRuleCreateInfos[index]"
                       size="small"
                       ref="workform">
-                      <el-form-item label-width="120px" prop="recordValue" :rules="workFormRules(item)" :label="item.name+'：'" :key="index">
+                      <el-form-item label-width="180px" prop="recordValue" v-if="item.propertyUsage===0"  :rules="workFormRules(item)" :label="item.name+'：'" :key="index">
                         <!-- input 和 textarea -->
                         <el-input
                           v-if="item.dataType=='input'||item.dataType=='textarea'||item.dataType=='inputnumber'"
@@ -814,10 +832,20 @@
                 <h5>{{workformRecordDetail.name}}</h5>
               </div>
               <div style="width:100%;">
+                <div class="callInfo-item font12 fl" style="width:50%;margin-bottom:15px;">
+                   <span>工单号：</span>
+                   <span style="color:#333;">{{workformRecordDetail.code}}</span>
+                </div>
+                <div class="callInfo-item font12 fl" style="width:50%;margin-bottom:15px;">
+                   <span>服务目录：</span>
+                   <span style="color:#333;" >{{workformRecordDetail.serviceMenu?workformRecordDetail.serviceMenu.namePath:""}}</span>
+                </div>
+              </div>
+              <div style="width:100%;">
                 <div class="callInfo-item font12 fl" style="width:50%;margin-bottom:15px;" v-for="(item,index) in workformRecordContent" :key="index">
-                  <span>{{item.workformPropertyId.name + "："}}</span>
+                  <span>{{item.workformProperty.name + "："}}</span>
                   <span style="color:#333;">
-                    {{item.workformPropertyId.dataType==="span"||item.workformPropertyId.dataType==="textarea"||item.workformPropertyId.dataType==="time"||item.workformPropertyId.dataType==="datetime"||item.workformPropertyId.dataType==="inputnumber"||item.workformPropertyId.dataType==="input"||item.workformPropertyId.dataType==="date" ? (item.recordValue || '') : (showSelectValue(item.workformPropertyId.dataType,item.workformPropertyId.dataValues,item.recordValue) || '')}}</span>
+                    {{item.workformProperty.dataType==="span"||item.workformProperty.dataType==="textarea"||item.workformProperty.dataType==="time"||item.workformProperty.dataType==="datetime"||item.workformProperty.dataType==="inputnumber"||item.workformProperty.dataType==="input"||item.workformProperty.dataType==="date" ? (item.recordValue || '') : (showSelectValue(item.workformProperty.dataType,item.workformProperty.dataValues,item.recordValue) || '')}}</span>
                 </div>
               </div>
             </div>
@@ -1377,7 +1405,8 @@ import {
   getWorkFormTempById,
   addWorkFormRecord,
   recordSummaryInfo,
-  getCustomerInfoByPhone
+  getCustomerInfoByPhone,
+  reSendMsg
 } from '@/api/incoming_call'
 import {
   getContactByGradeId,
@@ -1900,6 +1929,36 @@ export default {
     }
   },
   methods: {
+    reSendMsg(id) {
+      if (window.confirm('确认为这条工单重新发送短信？')) {
+        reSendMsg(id).then(res => {
+          if (res.data && res.data.code === 0) {
+            this.$message({
+              message: res.data.message,
+              type: 'success',
+              duration: 1000
+            })
+          } else {
+            this.$message({
+              message: res.data.message,
+              type: 'error',
+              duration: 1000
+            })
+          }
+        })
+      }
+    },
+    resetReq() { // 工单记录查询的重置按钮
+      this.searchWorkFormRecord = {
+        customerId: null,
+        name: '',
+        modifierName: '',
+        timeStart: null,
+        timeEnd: null,
+        pageNo: 1,
+        pageSize: 10 }
+      this.timeValue = null
+    },
     formatSeconds: formatSeconds,
     hideIdNumber: hideIdNumber,
     hideMobile: hideMobile,
@@ -2286,22 +2345,22 @@ export default {
       this.workformInfo.workformProperties.forEach((item) => {
         if (item.dataType === 'checkbox' || item.dataType === 'multipleSelect') {
           this.addWorkForm.workformRecordRuleCreateInfos.push({
-            workformPropertyId: item.id,
+            workformProperty: item.id,
             recordValue: []
           })
         } else if (item.dataType === 'input') {
           this.addWorkForm.workformRecordRuleCreateInfos.push({
-            workformPropertyId: item.id,
+            workformProperty: item.id,
             recordValue: item.defaultValue
           })
         } else if (item.dataType === 'span') {
           this.addWorkForm.workformRecordRuleCreateInfos.push({
-            workformPropertyId: item.id,
+            workformProperty: item.id,
             recordValue: item.defaultValue
           })
         } else {
           this.addWorkForm.workformRecordRuleCreateInfos.push({
-            workformPropertyId: item.id,
+            workformProperty: item.id,
             recordValue: null
           })
         }
@@ -2312,12 +2371,16 @@ export default {
       const obj = JSON.parse(options)
       const arr = []
       let val2
-      if (type === 'multipleSelect' || type === 'checkbox') val2 = JSON.parse(val)
+      if (type === 'multipleSelect' || type === 'checkbox') {
+        val2 = JSON.parse(JSON.stringify(val.split(',')))
+      }
       let result
       if (val2 !== undefined && val2.length) {
         for (var key in obj) {
           val2.forEach(item => {
-            if (key === item) arr.push(obj[key])
+            if (key === item) {
+              arr.push(obj[key])
+            }
           })
         }
         return arr.join(',')
@@ -2503,6 +2566,7 @@ export default {
         if (!this.addWorkForm.name) {
           this.$message.error('请输入工单名称')
         }
+        console.log(this.addWorkForm, '1111111111111111111')
         addWorkFormRecord(this.addWorkForm).then(response => {
           if (response.data.code === 0) {
             this.recordSummaryInfo()
