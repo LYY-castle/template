@@ -19,7 +19,7 @@
           <el-table-column align="center" type="selection" width="55"></el-table-column>
 
           <el-table-column align="center" label="表单名" :show-overflow-tooltip="true">
-            <template slot-scope="scope">{{ scope.row.name }}</template>
+            <template slot-scope="scope" @click="edite(scope.row)">{{ scope.row.name }}</template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -44,7 +44,7 @@
               <el-button
                 @click="
                   delVisible = true;
-                  workFormId = [scope.row.id];
+                  workFormId = scope.row.id;
                 "
                 type="text"
                 size="small"
@@ -135,11 +135,11 @@
             >{{ workFormTable.name }}</div>
             <div
               class="selectShow"
-              v-for="(item, index) in workFormTable.workformProperties"
+              v-for="(item, index) in workFormTable.workformPropertyCreateInfos"
               :key="index"
               v-dragging="{
                 item: item,
-                list: workFormTable.workformProperties,
+                list: workFormTable.workformPropertyCreateInfos,
                 group: 'item'
               }"
               @click="changeItem(item, index)"
@@ -196,13 +196,15 @@
                 <div class="name">
                   <p>{{ item.val }}</p>
                 </div>
-                <!-- <div v-for="(a, k) in item.options" :key="k">
-                  <el-radio-group>
-                    <el-radio :label="k" :disabled="item.rw===0?true:false">{{
-                      a.content
-                    }}</el-radio>
+                <div v-for="(item1,a) in item.dataValues" :key="a">
+                  <el-radio-group v-model="item.dataValues">
+                    <el-radio :label="a" disabled>
+                      {{
+                      item1
+                      }}
+                    </el-radio>
                   </el-radio-group>
-                </div>-->
+                </div>
               </div>
               <div v-if="item.dataType === 'checkbox'" class="demo">
                 <div class="name">{{ item.name }}</div>
@@ -307,36 +309,36 @@
                 </div>
                 <div>
                   <div style="display:flex;justify-content: space-between;">
-                    <el-select v-model="detailAdd.code1" placeholder="请选择" disabled>
-                    <el-option
-                      v-for="item in province"
-                      :key="item.id"
-                      :label="item.regionName"
-                      :value="item.regionCode"
-                    ></el-option>
-                  </el-select>
-                  <el-select v-model="detailAdd.code2" placeholder="请选择" disabled>
-                    <el-option
-                      v-for="item in city"
-                      :key="item.id"
-                      :label="item.regionName"
-                      :value="item.regionCode"
-                    ></el-option>
-                  </el-select>
-                  <el-select v-model="detailAdd.code3" placeholder="请选择" disabled>
-                    <el-option
-                      v-for="item in area"
-                      :key="item.id"
-                      :label="item.regionName"
-                      :value="item.regionCode"
-                    ></el-option>
-                  </el-select>
+                    <el-select v-model="item.defaultValue.province" placeholder="请选择" disabled>
+                      <el-option
+                        v-for="item in province"
+                        :key="item.id"
+                        :label="item.regionName"
+                        :value="item.regionCode"
+                      ></el-option>
+                    </el-select>
+                    <el-select v-model="item.defaultValue.city" placeholder="请选择" disabled>
+                      <el-option
+                        v-for="item in city"
+                        :key="item.id"
+                        :label="item.regionName"
+                        :value="item.regionCode"
+                      ></el-option>
+                    </el-select>
+                    <el-select v-model="item.defaultValue.area" placeholder="请选择" disabled>
+                      <el-option
+                        v-for="item in area"
+                        :key="item.id"
+                        :label="item.regionName"
+                        :value="item.regionCode"
+                      ></el-option>
+                    </el-select>
                   </div>
                   <el-input
                     type="textarea"
                     rows="2"
                     :placeholder="item.placeholder"
-                    v-model="detailAdd.detailText"
+                    v-model="item.defaultValue.detail"
                     disabled
                   ></el-input>
                 </div>
@@ -390,7 +392,11 @@
               <el-input type="textarea" :rows="1" v-model="workFormTable.remark"></el-input>
             </div>
           </div>
-          <div v-for="(item, index) in workFormTable.workformProperties" :key="index" v-show="text">
+          <div
+            v-for="(item, index) in workFormTable.workformPropertyCreateInfos"
+            :key="index"
+            v-show="text"
+          >
             <div v-if="item.dataType === 'input' && typeShow[index]">
               <div>
                 <div>
@@ -410,7 +416,16 @@
                 </div>
                 <el-input type="text" v-model="item.dataValues"></el-input>
               </div>
-
+              <div>
+                <div>
+                  <span>默认值类型</span>
+                </div>
+                <el-input
+                  type="number"
+                  v-model="item.defaultValueType"
+                  @change="checkData(item.defaultValueType)"
+                ></el-input>
+              </div>
               <div>
                 <div>
                   <span>默认占位符:</span>
@@ -493,7 +508,16 @@
                 </div>
                 <el-input type="text" v-model="item.dataValues"></el-input>
               </div>
-
+              <div>
+                <div>
+                  <span>默认值类型</span>
+                </div>
+                <el-input
+                  type="number"
+                  v-model="item.defaultValueType"
+                  @change="checkData(item.defaultValueType)"
+                ></el-input>
+              </div>
               <div>
                 <div>
                   <span>默认占位符:</span>
@@ -576,7 +600,16 @@
                 </div>
                 <el-input type="number" v-model="item.dataValues"></el-input>
               </div>
-
+              <div>
+                <div>
+                  <span>默认值类型</span>
+                </div>
+                <el-input
+                  type="number"
+                  v-model="item.defaultValueType"
+                  @change="checkData(item.defaultValueType)"
+                ></el-input>
+              </div>
               <div>
                 <div>
                   <span>默认占位符:</span>
@@ -657,15 +690,10 @@
                 <div>
                   <span>选择项</span>
                 </div>
-                <!-- <div v-for="(a, k) in item.options" :key="k">
-                  <el-radio-group>
-                    <el-radio :label="1"
-                      ><el-input
-                        size="small"
-                        type="text"
-                        v-model="a.content"
-                        clearable
-                      ></el-input>
+                <div>
+                  <el-radio-group v-model="item.values">
+                    <el-radio :label="k">
+                      <el-input v-model="arr[k]" size="small" type="text" clearable></el-input>
                       <el-button
                         icon="el-icon-arrow-up"
                         type="text"
@@ -691,7 +719,17 @@
                       ></el-button>
                     </el-radio>
                   </el-radio-group>
-                </div>-->
+                </div>
+              </div>
+              <div>
+                <div>
+                  <span>默认值类型</span>
+                </div>
+                <el-input
+                  type="number"
+                  v-model="item.defaultValueType"
+                  @change="checkData(item.defaultValueType)"
+                ></el-input>
               </div>
               <div>
                 <div>
@@ -796,6 +834,16 @@
               </div>-->
               <div>
                 <div>
+                  <span>默认值类型</span>
+                </div>
+                <el-input
+                  type="number"
+                  v-model="item.defaultValueType"
+                  @change="checkData(item.defaultValueType)"
+                ></el-input>
+              </div>
+              <div>
+                <div>
                   <span>填写方式:</span>
                 </div>
                 <el-radio-group v-model="item.propertyUsage">
@@ -872,6 +920,16 @@
               </div>
               <div>
                 <div>
+                  <span>默认值类型</span>
+                </div>
+                <el-input
+                  type="number"
+                  v-model="item.defaultValueType"
+                  @change="checkData(item.defaultValueType)"
+                ></el-input>
+              </div>
+              <div>
+                <div>
                   <span>填写方式:</span>
                 </div>
                 <el-radio-group v-model="item.propertyUsage">
@@ -939,7 +997,16 @@
                 </div>
                 <el-input type="text" v-model="item.dataValues"></el-input>
               </div>
-
+              <div>
+                <div>
+                  <span>默认值类型</span>
+                </div>
+                <el-input
+                  type="number"
+                  v-model="item.defaultValueType"
+                  @change="checkData(item.defaultValueType)"
+                ></el-input>
+              </div>
               <div>
                 <div>
                   <span>默认占位符:</span>
@@ -1024,6 +1091,16 @@
               </div>
               <div>
                 <div>
+                  <span>默认值类型</span>
+                </div>
+                <el-input
+                  type="number"
+                  v-model="item.defaultValueType"
+                  @change="checkData(item.defaultValueType)"
+                ></el-input>
+              </div>
+              <div>
+                <div>
                   <span>填写方式:</span>
                 </div>
                 <el-radio-group v-model="item.propertyUsage">
@@ -1091,7 +1168,16 @@
                 </div>
                 <el-input type="text" v-model="item.dataValues"></el-input>
               </div>
-
+              <div>
+                <div>
+                  <span>默认值类型</span>
+                </div>
+                <el-input
+                  type="number"
+                  v-model="item.defaultValueType"
+                  @change="checkData(item.defaultValueType)"
+                ></el-input>
+              </div>
               <div>
                 <div>
                   <span>默认占位符:</span>
@@ -1167,7 +1253,16 @@
                 </div>
                 <el-input type="text" v-model="item.dataValues"></el-input>
               </div>
-
+              <div>
+                <div>
+                  <span>默认值类型</span>
+                </div>
+                <el-input
+                  type="number"
+                  v-model="item.defaultValueType"
+                  @change="checkData(item.defaultValueType)"
+                ></el-input>
+              </div>
               <div>
                 <div>
                   <span>默认占位符:</span>
@@ -1250,6 +1345,16 @@
               </div>
               <div>
                 <div>
+                  <span>默认值类型</span>
+                </div>
+                <el-input
+                  type="number"
+                  v-model="item.defaultValueType"
+                  @change="checkData(item.defaultValueType)"
+                ></el-input>
+              </div>
+              <div>
+                <div>
                   <span>默认占位符:</span>
                 </div>
                 <el-input type="text" v-model="item.placeholder"></el-input>
@@ -1322,33 +1427,58 @@
                 </div>
                 <div>
                   <div style="display:flex;justify-content: space-between;flex-wrap:wrap;">
-                    <el-select v-model="detailAdd.code1" placeholder="请选择" style="width:100%;" @change="getLower1">
-                    <el-option
-                      v-for="item in province"
-                      :key="item.id"
-                      :label="item.regionName"
-                      :value="item.regionCode"
-                    ></el-option>
-                  </el-select>
-                  <el-select v-model="detailAdd.code2" placeholder="请选择" style="width:100%;" @change="getLower2">
-                    <el-option
-                      v-for="item in city"
-                      :key="item.id"
-                      :label="item.regionName"
-                      :value="item.regionCode"
-                    ></el-option>
-                  </el-select>
-                  <el-select v-model="detailAdd.code3" placeholder="请选择" style="width:100%;">
-                    <el-option
-                      v-for="item in area"
-                      :key="item.id"
-                      :label="item.regionName"
-                      :value="item.regionCode"
-                    ></el-option>
-                  </el-select>
+                    <el-select
+                      v-model="item.defaultValue.province"
+                      placeholder="请选择"
+                      style="width:100%;"
+                      @change="getLower1(item)"
+                    >
+                      <el-option
+                        v-for="item in province"
+                        :key="item.id"
+                        :label="item.regionName"
+                        :value="item.regionCode"
+                      ></el-option>
+                    </el-select>
+                    <el-select
+                      v-model="item.defaultValue.city"
+                      placeholder="请选择"
+                      style="width:100%;"
+                      @change="getLower2(item)"
+                    >
+                      <el-option
+                        v-for="item in city"
+                        :key="item.id"
+                        :label="item.regionName"
+                        :value="item.regionCode"
+                      ></el-option>
+                    </el-select>
+                    <el-select
+                      v-model="item.defaultValue.area"
+                      placeholder="请选择"
+                      style="width:100%;"
+                      @change="event"
+                    >
+                      <el-option
+                        v-for="item in area"
+                        :key="item.id"
+                        :label="item.regionName"
+                        :value="item.regionCode"
+                      ></el-option>
+                    </el-select>
                   </div>
-                  <el-input type="textarea" rows="2" v-model="detailAdd.detailText"></el-input>
+                  <el-input type="textarea" rows="2" v-model="item.defaultValue.detail"></el-input>
                 </div>
+              </div>
+              <div>
+                <div>
+                  <span>默认值类型</span>
+                </div>
+                <el-input
+                  type="number"
+                  v-model="item.defaultValueType"
+                  @change="checkData(item.defaultValueType)"
+                ></el-input>
               </div>
               <div>
                 <div>
@@ -1430,6 +1560,14 @@
         >取消</el-button>
       </div>
     </el-dialog>
+    <!-- 校验提醒 -->
+    <el-dialog title="提示" :visible.sync="checkDialogVisible" width="30%">
+      <span>请输入0或者1</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="checkDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="checkDialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -1466,6 +1604,7 @@ export default {
       show: 0, //1新建，2修改，3查看
       // 单个展示
       typeShow: [],
+      checkDialogVisible:false,
       // 工作表单
       workFormTable: {
         creatorId: localStorage.getItem("agentId"),
@@ -1506,11 +1645,11 @@ export default {
       // 分页数据
       pageShow: false,
       pageInfo: {},
-
+      arr: [],
       // 省市区三级联动
       province: [],
-      city:[],
-      area:[],
+      city: [],
+      area: [],
       detailAdd: {
         code1: "",
         code2: "",
@@ -1521,43 +1660,42 @@ export default {
   },
   mounted() {
     this.getWorkFormList();
-    this.$dragging.$on("dragged", ({ value }) => {
-      // this.workFormTable = value.list;
-      console.log(this.workFormTable.workformProperties);
-    });
-    this.getAddress()
+    this.$dragging.$on("dragged", ({ value }) => {});
+    this.getAddress();
   },
   methods: {
     // 获取地址
     getAddress() {
-      console.log(window.screen.height)
-
       getAddress(1).then(res => {
-        if(res.data.code === 0){
-          this.province = res.data.data
+        if (res.data.code === 0) {
+          this.province = res.data.data;
         }
       });
     },
     // 获取下一级地址
-    getLower1(value){
-      getLowerAddress(value).then(res=>{
-        this.city = []
-        this.area = []
-        this.detailAdd.code2 = ""
-        this.detailAdd.code3 = ""
-        if(res.data.code === 0){
-          this.city = res.data.data
+    getLower1(item) {
+      getLowerAddress(item.defaultValue.province).then(res => {
+        this.city = [];
+        this.area = [];
+        item.defaultValue.city = "";
+        item.defaultValue.area = "";
+        if (res.data.code === 0) {
+          this.city = res.data.data;
         }
-      })
+      });
     },
-    getLower2(value){
-      getLowerAddress(value).then(res=>{
-        this.area = []
-        this.detailAdd.code3 = ""
-        if(res.data.code === 0){
-          this.area = res.data.data
+    getLower2(item) {
+      console.log(2222);
+      getLowerAddress(item.defaultValue.city).then(res => {
+        this.area = [];
+        item.defaultValue.area = "";
+        if (res.data.code === 0) {
+          this.area = res.data.data;
         }
-      })
+      });
+    },
+    event() {
+      console.log(123);
     },
     // 获取列表数据
     getWorkFormList() {
@@ -1565,7 +1703,9 @@ export default {
         .then(res => {
           if (res.data.code === 0) {
             this.workFormData = res.data.data;
-
+            // this.arr = JSON.parse(
+            //   this.workFormData[5].workformPropertyCreateInfos[6].dataValues
+            // );
             if (res.data.pageInfo) {
               this.pageInfo = res.data.pageInfo;
               this.pageShow = true;
@@ -1593,7 +1733,7 @@ export default {
         name: "工单名称",
         enabled: 1,
         remark: "",
-        workformProperties: []
+        workformPropertyCreateInfos: []
       };
     },
     // 时间格式转换,
@@ -1612,14 +1752,14 @@ export default {
     },
     // 删除题目类型
     removeDemo(item, index) {
-      this.workFormTable.workformProperties.splice(index, 1);
+      this.workFormTable.workformPropertyCreateInfos.splice(index, 1);
     },
     // 设置可读可写
 
     changeChecklist(item) {
-        this.workFormTable.workformProperties.forEach(a => {
-          a.checklist = item.checklist;
-        });
+      this.workFormTable.workformPropertyCreateInfos.forEach(a => {
+        a.checklist = item.checklist;
+      });
     },
     // 标题属性切换
     changeTitle() {
@@ -1629,10 +1769,10 @@ export default {
     // 点击类型初始化题型
     initFrom(obj) {
       if (obj === "input") {
-        this.workFormTable.workformProperties.push({
+        this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "input",
           dataValues: "",
-          defaultValue: "",
+          defaultValue: {},
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1651,10 +1791,10 @@ export default {
           regMsg: ""
         });
       } else if (obj === "textarea") {
-        this.workFormTable.workformProperties.push({
+        this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "textarea",
           dataValues: "",
-          defaultValue: "",
+          defaultValue: {},
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1673,10 +1813,10 @@ export default {
           regMsg: ""
         });
       } else if (obj === "inputNumber") {
-        this.workFormTable.workformProperties.push({
+        this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "inputNumber",
           dataValues: "",
-          defaultValue: "",
+          defaultValue: {},
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1695,10 +1835,10 @@ export default {
           regMsg: ""
         });
       } else if (obj === "radio") {
-        this.workFormTable.workformProperties.push({
+        this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "radio",
           dataValues: "",
-          defaultValue: "",
+          defaultValue: {},
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1717,10 +1857,10 @@ export default {
           regMsg: ""
         });
       } else if (obj === "checkbox") {
-        this.workFormTable.workformProperties.push({
+        this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "checkbox",
           dataValues: "",
-          defaultValue: "",
+          defaultValue: {},
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1739,10 +1879,10 @@ export default {
           regMsg: ""
         });
       } else if (obj === "select") {
-        this.workFormTable.workformProperties.push({
+        this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "select",
           dataValues: "",
-          defaultValue: "",
+          defaultValue: {},
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1761,10 +1901,10 @@ export default {
           regMsg: ""
         });
       } else if (obj === "datetime") {
-        this.workFormTable.workformProperties.push({
+        this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "datetime",
           dataValues: "",
-          defaultValue: "",
+          defaultValue: {},
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1783,10 +1923,10 @@ export default {
           regMsg: ""
         });
       } else if (obj === "multipleSelect") {
-        this.workFormTable.workformProperties.push({
+        this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "multipleSelect",
           dataValues: "",
-          defaultValue: "",
+          defaultValue: {},
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1805,10 +1945,10 @@ export default {
           regMsg: ""
         });
       } else if (obj === "date") {
-        this.workFormTable.workformProperties.push({
+        this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "date",
           dataValues: "",
-          defaultValue: "",
+          defaultValue: {},
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1827,10 +1967,10 @@ export default {
           regMsg: ""
         });
       } else if (obj === "time") {
-        this.workFormTable.workformProperties.push({
+        this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "time",
           dataValues: "",
-          defaultValue: "",
+          defaultValue: {},
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1849,10 +1989,10 @@ export default {
           regMsg: ""
         });
       } else if (obj === "span") {
-        this.workFormTable.workformProperties.push({
+        this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "span",
           dataValues: "",
-          defaultValue: "",
+          defaultValue: {},
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1871,10 +2011,10 @@ export default {
           regMsg: ""
         });
       } else if (obj === "address") {
-        this.workFormTable.workformProperties.push({
+        this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "address",
           dataValues: "",
-          defaultValue: "",
+          defaultValue: {},
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1894,12 +2034,26 @@ export default {
         });
       }
     },
+    // 检验默认数据类型规定0：string，1：object
+    checkData(item) {
+      console.log(item);
+      if (item !== 0 || item !== 1) {
+        this.checkDialogVisible = true
+      } else {
+        console.log("yes");
+        item = item;
+      }
+    },
     // 点击题项初始化数据
     changeItem(item, index) {
       this.table = false;
       this.text = false;
-      this.typeShow.length = this.workFormTable.workformProperties.length;
-      for (let i = 0; i < this.workFormTable.workformProperties.length; i++) {
+      this.typeShow.length = this.workFormTable.workformPropertyCreateInfos.length;
+      for (
+        let i = 0;
+        i < this.workFormTable.workformPropertyCreateInfos.length;
+        i++
+      ) {
         this.typeShow[i] = false;
       }
       this.typeShow[index] = true;
@@ -1948,13 +2102,13 @@ export default {
         name: "工单名称",
         enabled: 1,
         remark: "",
-        workformProperties: []
+        workformPropertyCreateInfos: []
       };
     },
     // 新建
     submitUpload() {
-      if (this.workFormTable.workformProperties.length !== 0) {
-        this.workFormTable.workformProperties.forEach(item => {
+      if (this.workFormTable.workformPropertyCreateInfos.length !== 0) {
+        this.workFormTable.workformPropertyCreateInfos.forEach(item => {
           if (item.checklist) {
             if (item.checklist.length === 2) {
               item.rw = 3;
@@ -1968,8 +2122,19 @@ export default {
           } else {
             item.rw = 0;
           }
-          // let {checklist,...otherObj} = item
           delete item.checklist;
+          if (
+            item.dataType === "radio" ||
+            item.dataType === "checkbox" ||
+            item.dataType === "select" ||
+            item.dataType === "multipleSelect"
+          ) {
+            item.dataValues = JSON.stringify(item.dataValues);
+          }
+          if (item.dataType === "address") {
+            item.defaultValue = JSON.stringify(item.defaultValue);
+          }
+          item.defaultValueType = parseInt(item.defaultValueType);
         });
         createWorkForm(this.workFormTable).then(res => {
           if (res.data.code === 0) {
@@ -1983,7 +2148,7 @@ export default {
               name: "工单名称",
               enabled: "1",
               remark: "",
-              workformProperties: []
+              workformPropertyCreateInfos: []
             };
           } else {
             this.$message.error(res.data.messages);
@@ -1993,7 +2158,6 @@ export default {
         this.$message.error("请选择至少一种模板题型");
       }
     },
-
     // 删除工作表单
     deleteWorkForm(workFormId) {
       deleteWorkForm(workFormId)
@@ -2013,6 +2177,7 @@ export default {
     showModifyContent(row) {
       this.modifyWorkFormTable.id = row.id;
       this.workFormTable = row;
+      this.workFormTable.workformPropertyCreateInfos = row.workformProperties;
       this.createShow = true;
       this.tableShow = false;
       this.show = 2;
@@ -2029,6 +2194,29 @@ export default {
           item.checklist = [];
         }
         item.isRequired = item.isRequired === 1 ? true : false;
+        if (
+          item.dataType === "radio" ||
+          item.dataType === "checkbox" ||
+          item.dataType === "select" ||
+          item.dataType === "multipleSelect"
+        ) {
+          item.dataValues = JSON.parse(item.dataValues);
+        }
+        if (item.dataType === "address") {
+          item.defaultValue = JSON.parse(item.defaultValue);
+        }
+        item.defaultValueType = String(item.defaultValueType);
+        let address = item.defaultValue;
+        getLowerAddress(String(address.province)).then(res => {
+          if (res.data.code === 0) {
+            this.city = res.data.data;
+          }
+        });
+        getLowerAddress(String(address.city)).then(res => {
+          if (res.data.code === 0) {
+            this.area = res.data.data;
+          }
+        });
       });
     },
     // 修改
@@ -2036,12 +2224,24 @@ export default {
       this.modifyWorkFormTable.name = this.workFormTable.name;
       this.modifyWorkFormTable.enabled = this.workFormTable.enabled;
       this.modifyWorkFormTable.remark = this.workFormTable.remark;
-      this.modifyWorkFormTable.workformProperties = this.workFormTable.workformProperties;
-      this.modifyWorkFormTable.workformProperties.forEach(item => {
+      this.modifyWorkFormTable.workformPropertyUpdateInfos = this.workFormTable.workformPropertyCreateInfos;
+      this.modifyWorkFormTable.workformPropertyUpdateInfos.forEach(item => {
         delete item.checklist;
         item.isRequired = item.isRequired ? 1 : 0;
+        if (
+          item.dataType === "radio" ||
+          item.dataType === "checkbox" ||
+          item.dataType === "select" ||
+          item.dataType === "multipleSelect"
+        ) {
+          item.dataValues = JSON.stringify(item.dataValues);
+        }
+        if (item.dataType === "address") {
+          item.defaultValue = JSON.stringify(item.defaultValue);
+        }
+        item.defaultValueType = parseInt(item.defaultValueType);
       });
-      if (this.modifyWorkFormTable.workformProperties.length !== 0) {
+      if (this.modifyWorkFormTable.workformPropertyUpdateInfos.length !== 0) {
         updateWorkForm(this.modifyWorkFormTable).then(res => {
           if (res.data.code === 0) {
             this.$message.success(res.data.message);
@@ -2054,7 +2254,7 @@ export default {
               name: "工单名称",
               enabled: "1",
               remark: "",
-              workformProperties: []
+              workformPropertyUpdateInfos: []
             };
           } else {
             this.$message.error(res.data.message);
@@ -2063,6 +2263,10 @@ export default {
       } else {
         this.$message.error("请选择至少一种模板题型");
       }
+    },
+    // 查看编辑
+    edite(row) {
+      console.log(row);
     },
     // 页面显示条数
     handleSizeChange(val) {

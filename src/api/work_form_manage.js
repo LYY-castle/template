@@ -14,6 +14,7 @@ export function createWorkForm(obj) {
     data: obj
   })
 }
+// 修改
 export function updateWorkForm(obj) {
   return requestV2({
     url: '/workflow/workforms',
@@ -47,7 +48,7 @@ export function queryWorkForm(id,version,code) {
 export function deleteWorkForm(workFormId) {
   return requestV2({
     url: '/workflow/workform',
-    method: 'post',
+    method: 'delete',
     data: {
       id:workFormId
     }
