@@ -28,7 +28,7 @@
                 filterable
                 size="small"
                 change-on-select
-                
+
               ></el-cascader>
             </el-form-item>
             <el-form-item label="操作人：">
@@ -88,9 +88,9 @@
                     label="用户名"
                     prop="userName"
                     width="180">
-                    
+
                   </el-table-column>
-                  
+
                   <el-table-column
                     align="center"
                     prop="type"
@@ -349,7 +349,7 @@
           <el-col :span="14" style="margin-left:15px;">
             <div>
               <el-row :gutter="5">
-                <el-collapse v-model="formContainerOpen2" class="form-container"   @change="handleChangeActive2" style="position:relative;">
+                <el-collapse v-model="formContainerOpen2" class="form-container"   @change="handleChangeActive2" style="position: relative; margin-bottom: 0px;">
                   <span class="form-more2 bold" style="line-height: 24px;font-size: 14px;float:right;margin-right:6px;color:#57AFFF;position:absolute;top:11px;right:41px;">收起</span>
                   <el-collapse-item  name="2" title="筛选条件">
                     <el-form :inline="true" class="demo-form-inline" size="small" style="margin-left:1%;">
