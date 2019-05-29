@@ -2,6 +2,7 @@
   <!-- 现场主管 -->
   <div class="dashboard">
     <div v-if="!personnel">
+      <incall-statistical :role="role" v-if="depart||staff"></incall-statistical>
       <div v-if="!qcdepart||!qcstaff">
         <!-- <h1 v-if="depart">现场主管</h1> -->
         <monitor-workingset v-if="depart"></monitor-workingset>
@@ -54,6 +55,7 @@ import monitorWorkingset from '../monitor_workingset/index'
 import ordWorkingset from '../ord_workingset/index'
 import ordqcWorkingset from '../ord_qc_workingset/index'
 import qcmonitorWorkingset from '../qc_monitor_workingset/index'
+import incallStatistical from '../incall_statistical/index'
 import {
   getMenu
 } from '@/api/dashboard'
@@ -65,6 +67,7 @@ export default {
   name: 'dashboard',
   data() {
     return {
+      role: '',
       show_wechat: `${process.env.SHOW_WECHAT}`,
       agentId: localStorage.getItem('agentId'),
       accountNo: localStorage.getItem('accountNo'),
@@ -79,7 +82,8 @@ export default {
     monitorWorkingset,
     ordWorkingset,
     ordqcWorkingset,
-    qcmonitorWorkingset
+    qcmonitorWorkingset,
+    incallStatistical
   },
   computed: {
     ...mapGetters([
@@ -116,6 +120,7 @@ export default {
           const code = parseInt(response.data.code)
           if (code === 200) {
             this.depart = true
+            this.role = 'depart'
           } else if (code === 403) {
             this.depart = false
             // 判断班组长权限
@@ -123,6 +128,7 @@ export default {
               const code = parseInt(response.data.code)
               if (code === 200) {
                 this.depart = true
+                this.role = 'depart'
               } else if (code === 403) {
                 this.depart = false
                 // 判断坐席权限
@@ -130,6 +136,7 @@ export default {
                   const code = parseInt(response.data.code)
                   if (code === 200) {
                     this.staff = true
+                    this.role = 'staff'
                   } else if (code === 403) {
                     this.staff = false
                   }
