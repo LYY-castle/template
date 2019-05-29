@@ -118,13 +118,21 @@
               <i class="icofont-code"></i>
               <span slot="title">span</span>
             </el-menu-item>
+            <el-menu-item index="12" @click="addDemo('address')">
+              <i class="icofont-address-book"></i>
+              <span slot="title">地址</span>
+            </el-menu-item>
           </el-menu>
         </el-col>
         <!-- 模板 -->
-        <el-col :span="11" style="background-color: #fff;">
+        <el-col :span="13" style="background-color: #fff;">
           <div class="template">
             <div style="font-size:18px;font-weight:800">工单模板</div>
-            <div class="title" @click="changeTitle" style="text-align:center">{{ workFormTable.name }}</div>
+            <div
+              class="title"
+              @click="changeTitle"
+              style="text-align:center"
+            >{{ workFormTable.name }}</div>
             <div
               class="selectShow"
               v-for="(item, index) in workFormTable.workformProperties"
@@ -291,6 +299,47 @@
                   :maxlength="item.maxValue"
                   :minlength="item.minValue"
                 ></quill-editor>
+              </div>
+              <div v-if="item.dataType === 'address'" class="demo">
+                <div class="name">{{ item.name }}</div>
+                <div class="name">
+                  <p>{{ item.val }}</p>
+                </div>
+                <div>
+                  <div style="display:flex;justify-content: space-between;">
+                    <el-select v-model="detailAdd.code1" placeholder="请选择" disabled>
+                    <el-option
+                      v-for="item in province"
+                      :key="item.id"
+                      :label="item.regionName"
+                      :value="item.regionCode"
+                    ></el-option>
+                  </el-select>
+                  <el-select v-model="detailAdd.code2" placeholder="请选择" disabled>
+                    <el-option
+                      v-for="item in city"
+                      :key="item.id"
+                      :label="item.regionName"
+                      :value="item.regionCode"
+                    ></el-option>
+                  </el-select>
+                  <el-select v-model="detailAdd.code3" placeholder="请选择" disabled>
+                    <el-option
+                      v-for="item in area"
+                      :key="item.id"
+                      :label="item.regionName"
+                      :value="item.regionCode"
+                    ></el-option>
+                  </el-select>
+                  </div>
+                  <el-input
+                    type="textarea"
+                    rows="2"
+                    :placeholder="item.placeholder"
+                    v-model="detailAdd.detailText"
+                    disabled
+                  ></el-input>
+                </div>
               </div>
               <div class="tools">
                 <i class="el-icon-plus" @click="addDemo(item.dataType)"></i>
@@ -1193,7 +1242,6 @@
                   <span>详细内容</span>
                 </div>
                 <quill-editor
-                  disabled
                   v-model="item.dataValues"
                   :options="editorOption"
                   :placeholder="item.placeholder"
@@ -1248,7 +1296,108 @@
                 </div>
                 <el-input type="number" v-model="item.propertySort"></el-input>
               </div>
-
+              <div>
+                <div>
+                  <span>备注:</span>
+                </div>
+                <el-input type="text" v-model="item.remark"></el-input>
+              </div>
+            </div>
+            <div v-if="item.dataType === 'address' && typeShow[index]">
+              <div>
+                <div>
+                  <span>字段名称:</span>
+                </div>
+                <el-input type="text" :rows="1" v-model="item.name"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>字段描述:</span>
+                </div>
+                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>默认值</span>
+                </div>
+                <div>
+                  <div style="display:flex;justify-content: space-between;flex-wrap:wrap;">
+                    <el-select v-model="detailAdd.code1" placeholder="请选择" style="width:100%;" @change="getLower1">
+                    <el-option
+                      v-for="item in province"
+                      :key="item.id"
+                      :label="item.regionName"
+                      :value="item.regionCode"
+                    ></el-option>
+                  </el-select>
+                  <el-select v-model="detailAdd.code2" placeholder="请选择" style="width:100%;" @change="getLower2">
+                    <el-option
+                      v-for="item in city"
+                      :key="item.id"
+                      :label="item.regionName"
+                      :value="item.regionCode"
+                    ></el-option>
+                  </el-select>
+                  <el-select v-model="detailAdd.code3" placeholder="请选择" style="width:100%;">
+                    <el-option
+                      v-for="item in area"
+                      :key="item.id"
+                      :label="item.regionName"
+                      :value="item.regionCode"
+                    ></el-option>
+                  </el-select>
+                  </div>
+                  <el-input type="textarea" rows="2" v-model="detailAdd.detailText"></el-input>
+                </div>
+              </div>
+              <div>
+                <div>
+                  <span>默认占位符:</span>
+                </div>
+                <el-input type="text" v-model="item.placeholder"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>填写方式:</span>
+                </div>
+                <el-radio-group v-model="item.propertyUsage">
+                  <el-radio :label="0">新增填写</el-radio>
+                  <el-radio :label="1">审核填写</el-radio>
+                </el-radio-group>
+              </div>
+              <div>
+                <div>
+                  <span>设置:</span>
+                </div>
+                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
+                  <el-checkbox label="1">可读</el-checkbox>
+                  <el-checkbox label="2">可写</el-checkbox>
+                </el-checkbox-group>
+              </div>
+              <div>
+                <div>
+                  <span>是否必填：</span>
+                </div>
+                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
+              </div>
+              <div>
+                <div>
+                  <span>校验规则:</span>
+                </div>
+                <el-input type="text" v-model="item.regex"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>规则提醒:</span>
+                </div>
+                <el-input type="text" v-model="item.regMsg"></el-input>
+              </div>
+              <div>
+                <div>
+                  <span>属性值排序:</span>
+                </div>
+                <el-input type="number" v-model="item.propertySort"></el-input>
+              </div>
               <div>
                 <div>
                   <span>备注:</span>
@@ -1288,7 +1437,10 @@ import {
   getWorkForm,
   deleteWorkForm,
   createWorkForm,
-  queryWorkForm
+  queryWorkForm,
+  updateWorkForm,
+  getAddress,
+  getLowerAddress
 } from "@/api/work_form_manage";
 import { formatDateTime, swapArray } from "@/utils/tools";
 
@@ -1321,7 +1473,7 @@ export default {
         name: "工单名称",
         enabled: 1,
         remark: "",
-        workformProperties: []
+        workformPropertyCreateInfos: []
       },
       // 修改工作表单
       modifyWorkFormTable: {
@@ -1331,7 +1483,7 @@ export default {
         name: "工单名称",
         enabled: 1,
         remark: "",
-        workformProperties: []
+        workformPropertyUpdateInfos: []
       },
       editorOption: {
         modules: {
@@ -1353,7 +1505,18 @@ export default {
       },
       // 分页数据
       pageShow: false,
-      pageInfo: {}
+      pageInfo: {},
+
+      // 省市区三级联动
+      province: [],
+      city:[],
+      area:[],
+      detailAdd: {
+        code1: "",
+        code2: "",
+        code3: "",
+        detailText: "12334"
+      }
     };
   },
   mounted() {
@@ -1362,8 +1525,40 @@ export default {
       // this.workFormTable = value.list;
       console.log(this.workFormTable.workformProperties);
     });
+    this.getAddress()
   },
   methods: {
+    // 获取地址
+    getAddress() {
+      console.log(window.screen.height)
+
+      getAddress(1).then(res => {
+        if(res.data.code === 0){
+          this.province = res.data.data
+        }
+      });
+    },
+    // 获取下一级地址
+    getLower1(value){
+      getLowerAddress(value).then(res=>{
+        this.city = []
+        this.area = []
+        this.detailAdd.code2 = ""
+        this.detailAdd.code3 = ""
+        if(res.data.code === 0){
+          this.city = res.data.data
+        }
+      })
+    },
+    getLower2(value){
+      getLowerAddress(value).then(res=>{
+        this.area = []
+        this.detailAdd.code3 = ""
+        if(res.data.code === 0){
+          this.area = res.data.data
+        }
+      })
+    },
     // 获取列表数据
     getWorkFormList() {
       getWorkForm()
@@ -1422,11 +1617,9 @@ export default {
     // 设置可读可写
 
     changeChecklist(item) {
-      console.log(item);
-      //   this.workFormTable.workformProperties.forEach(a => {
-      //     a.checklist = item.checklist;
-      //   });
-      console.log(this.workFormTable);
+        this.workFormTable.workformProperties.forEach(a => {
+          a.checklist = item.checklist;
+        });
     },
     // 标题属性切换
     changeTitle() {
@@ -1435,9 +1628,7 @@ export default {
     },
     // 点击类型初始化题型
     initFrom(obj) {
-      console.log(obj);
       if (obj === "input") {
-        console.log(1);
         this.workFormTable.workformProperties.push({
           dataType: "input",
           dataValues: "",
@@ -1459,7 +1650,6 @@ export default {
           propertySort: 0,
           regMsg: ""
         });
-        console.log(1111);
       } else if (obj === "textarea") {
         this.workFormTable.workformProperties.push({
           dataType: "textarea",
@@ -1680,12 +1870,32 @@ export default {
           propertySort: 0,
           regMsg: ""
         });
+      } else if (obj === "address") {
+        this.workFormTable.workformProperties.push({
+          dataType: "address",
+          dataValues: "",
+          defaultValue: "",
+          formatValue: "",
+          isRequired: 0,
+          isSmsColumn: 0,
+          maxValue: "",
+          minValue: "",
+          name: "地址",
+          placeholder: "",
+          regex: "",
+          remark: "",
+          rw: 3,
+          val: "",
+          styleValue: "",
+          propertyUsage: 0,
+          checklist: ["1", "2"],
+          propertySort: 0,
+          regMsg: ""
+        });
       }
     },
     // 点击题项初始化数据
     changeItem(item, index) {
-      console.log(this.workFormTable);
-      console.log(index);
       this.table = false;
       this.text = false;
       this.typeShow.length = this.workFormTable.workformProperties.length;
@@ -1698,7 +1908,6 @@ export default {
     // 批量删除状态切换
     handleSelectionChange(val) {
       this.workFormId = val;
-      console.log(this.workFormId);
     },
     // 批量删除
     mutipleDelete(rows) {
@@ -1744,7 +1953,6 @@ export default {
     },
     // 新建
     submitUpload() {
-      console.log(this.checklist);
       if (this.workFormTable.workformProperties.length !== 0) {
         this.workFormTable.workformProperties.forEach(item => {
           if (item.checklist) {
@@ -1757,8 +1965,8 @@ export default {
                 item.rw = 2;
               }
             }
-          }else{
-              item.rw = 0
+          } else {
+            item.rw = 0;
           }
           // let {checklist,...otherObj} = item
           delete item.checklist;
@@ -1798,13 +2006,11 @@ export default {
           }
         })
         .catch(error => {
-          console.log(error);
           this.$message("删除失败");
         });
     },
     // 修改传值
     showModifyContent(row) {
-      console.log(row);
       this.modifyWorkFormTable.id = row.id;
       this.workFormTable = row;
       this.createShow = true;
@@ -1822,7 +2028,7 @@ export default {
         } else {
           item.checklist = [];
         }
-        item.isRequired = item.isRequired===1?true:false
+        item.isRequired = item.isRequired === 1 ? true : false;
       });
     },
     // 修改
@@ -1833,10 +2039,10 @@ export default {
       this.modifyWorkFormTable.workformProperties = this.workFormTable.workformProperties;
       this.modifyWorkFormTable.workformProperties.forEach(item => {
         delete item.checklist;
-        item.isRequired = item.isRequired?1:0
+        item.isRequired = item.isRequired ? 1 : 0;
       });
       if (this.modifyWorkFormTable.workformProperties.length !== 0) {
-        createWorkForm(this.modifyWorkFormTable).then(res => {
+        updateWorkForm(this.modifyWorkFormTable).then(res => {
           if (res.data.code === 0) {
             this.$message.success(res.data.message);
             this.tableShow = true;
@@ -1879,7 +2085,8 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
 .colmn {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
+  height: 100%;
 }
 .table-container {
   .form-container {
@@ -1946,7 +2153,7 @@ export default {
     background-color: rgba(87, 175, 255, 0.1);
     i {
       display: block;
-      font-size: 20px;
+      font-size: 16px;
     }
   }
 
@@ -1963,7 +2170,7 @@ export default {
   height: 600px;
   margin-left: 15px;
   padding: 20px;
-  overflow: auto;
+  overflow-y: auto;
   &::-webkit-scrollbar {
     width: 0;
   }
@@ -1995,5 +2202,8 @@ export default {
 .el-menu-item {
   height: 40px;
   line-height: 40px;
+}
+.el-select {
+  margin: 5px 0;
 }
 </style>
