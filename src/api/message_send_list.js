@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import request_v2 from '@/utils/request-v2'
 export function messageSendRecords(param) {
   return request({
     url: '/message/messageSendRecords',
@@ -6,11 +7,11 @@ export function messageSendRecords(param) {
     params: param
   })
 }
-export function sendMessage(param) {
+export function sendMessage(sms) {
   return request({
     url: '/message/sendMessage',
     method: 'post',
-    data: param
+    data: sms
   })
 }
 // 查询审核通过的短信模板

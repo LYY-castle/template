@@ -130,8 +130,20 @@
           prop="text"
           label="短信内容"
           :rules="{ required: true, message: '短信内容不能为空', trigger: 'blur' }">
-          <el-input type="textarea" v-model="dynamicValidateForm.text"></el-input>
-          <span><span style="color:red">*</span>短信内容只允许更改{}里面的内容，修改其他地方无效!</span>
+          <el-input type="textarea" v-model="dynamicValidateForm.text" :rows="4" readonly></el-input>
+          <!-- <span><span style="color:red">*</span>短信内容只允许更改{}里面的内容，修改其他地方无效!</span> -->
+        </el-form-item>
+        <el-form-item v-show="showInputAndPreview && paramsArr.length > 0">
+          <span slot="label">
+              <span style="color:#f56c6c">*</span> 变量值
+            </span>
+          <div v-for="(item,index) in paramsArr">
+            <span>{{'变量 ' + item}}</span>
+            <el-input v-model="paramsValue[item]" @change="setPreview(item)"></el-input>
+          </div>
+        </el-form-item>
+        <el-form-item label="短信预览" v-show="showInputAndPreview">
+          <span>{{msg_transfer}}</span>
         </el-form-item>
         <el-form-item
           v-for="(domain, index) in dynamicValidateForm.domains"
@@ -275,7 +287,7 @@ import { messageSendRecords, findTemplateList, getAllTemplateGroup, sendMessage 
 import { Message } from 'element-ui'
 import { formatDateTime } from '@/utils/tools'
 export default {
-  name: 'message_send_list',
+  name: 'message_template_manage',
   data() {
     return {
       formContainerOpen: '1',
@@ -330,7 +342,13 @@ export default {
         }],
         name: '',
         text: ''
-      }
+      },
+      paramsArr: [], // 变量数组
+      paramsValue: [],
+      paramsValue_beforeTransfer: [],
+      msg_transfer: '',
+      signName: '', // 签名
+      showInputAndPreview: false // 途约-展示变量输入框和预览框
     }
   },
   mounted() {
@@ -340,6 +358,15 @@ export default {
     this.getAllTemplateGroup()
   },
   methods: {
+    setPreview(v) {
+      if (typeof (this.paramsValue_beforeTransfer[v]) === 'undefined') {
+        this.paramsValue_beforeTransfer[v] = this.paramsValue[v]
+        this.msg_transfer = this.msg_transfer.replace('${' + v + '}', this.paramsValue[v])
+      } else {
+        this.msg_transfer = this.msg_transfer.replace(this.paramsValue_beforeTransfer[v], this.paramsValue[v])
+        this.paramsValue_beforeTransfer[v] = this.paramsValue[v]
+      }
+    },
     handleChangeAcitve(active = ['1']) {
       if (active.length) {
         $('.form-more').text('收起')
@@ -369,15 +396,28 @@ export default {
       })
     },
     sendMessage() {
+      var sms = {}
+      var PhoneNumbers = []
       var param = {}
-      var phone = []
-      param.text = this.dynamicValidateForm.text
       this.dynamicValidateForm.domains.forEach(element => {
-        phone.push(element.value)
+        PhoneNumbers.push(element.value)
       })
-      param.phone = phone.join(',')
-      param.templateid = this.radio
-      sendMessage(param).then(response => {
+      if (this.paramsArr.length > 0) {
+        for (var i = 0; i < this.paramsArr.length; i++) {
+          if (typeof (this.paramsValue[this.paramsArr[i]]) === 'undefined' || this.paramsValue[this.paramsArr[i]] === '' || this.paramsValue[this.paramsArr[i]] === null) {
+            this.$message.error('变量 ' + this.paramsArr[i] + '为必填项！')
+            this.send = false
+            return
+          }
+          param[this.paramsArr[i]] = this.paramsValue[this.paramsArr[i]]
+        }
+        sms.param = param
+      }
+      sms.signName = this.signName
+      sms.PhoneNumbers = PhoneNumbers.join(',')
+      sms.templateCode = this.radio
+      console.log('发送短信参数为：', sms)
+      sendMessage(sms).then(response => {
         if (response.data.code === 0) {
           Message({
             message: response.data.message,
@@ -542,6 +582,9 @@ export default {
       })
     },
     resetForm(formName) {
+      this.showInputAndPreview = false
+      this.paramsArr = []
+      this.paramsValue = []
       this.$refs[formName].resetFields()
     },
     removeDomain(item) {
@@ -560,8 +603,30 @@ export default {
       if (this.radio) {
         this.messageTableData.forEach(element => {
           if (element.templateid === this.radio) {
+            const pattern = /(?<={).*?(?=})/g
+            this.signName = element.autograph
             this.dynamicValidateForm.name = element.name
             this.dynamicValidateForm.text = element.content
+            this.msg_transfer = this.dynamicValidateForm.text
+            this.paramsArr = []
+            this.paramsValue = []
+            this.dynamicValidateForm.domains = []
+            this.addDomain()
+            if (element.groupId === 1 && element.content.indexOf('${') !== -1) {
+              // 判断是途约且包含变量
+              this.showInputAndPreview = true
+              // 第一种方法 正则截取变量
+              this.paramsArr = element.content.match(pattern)
+              // 第二种方法 stupid截取
+              // const arr1 = element.content.split('${')
+              // for (var i = 0; i < arr1.length; i++) {
+              //   if (arr1[i].indexOf('}') !== -1) {
+              //    this.paramsArr.push(arr1[i].split('}')[0])
+              //   }
+              // }
+            } else {
+              this.showInputAndPreview = false
+            }
           }
         })
         this.messageVisible = false
