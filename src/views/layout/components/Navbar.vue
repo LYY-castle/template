@@ -354,6 +354,7 @@ import cti from '@/utils/ctijs'
 import WebsocketHeartbeatJs from 'websocket-heartbeat-js'
 import { getLocalPhonePrefix, getNonLocalPhonePrefix } from '@/config/phone_config_codes'
 import { defaultFormat } from 'moment'
+// import func from '../../../../vue-temp/vue-editor-bridge'
 var vm = null
 var interval = null
 export default {
@@ -485,6 +486,17 @@ export default {
     }
   },
   methods: {
+    prevent(e) {
+      e = e || window.event
+      // 兼容IE8和Firefox 4之前的版本
+      if (e) {
+        e.returnValue = '通话或者响铃中不能刷新页面'
+        return
+      }
+      // Chrome, Safari, Firefox 4+, Opera 12+ , IE 9+
+      e.preventDefault()
+      return '通话或者响铃中不能刷新页面'
+    },
     getObstatusNow(data, code) {
       for (let i = 0; i < data.length; i++) {
         if (data[i].code === code) {
@@ -923,7 +935,6 @@ export default {
     getPromise(num) {
       return new Promise(function(resolve, reject) {
         getPhoneOwn(num).then(res => {
-          console.log(res)
           vm.dialNum = res.data
           resolve()
         })
@@ -967,7 +978,7 @@ export default {
           if (regex.test(dialNum)) {
             this.getPromise(dialNum).then(function() {
               vm.dialCall = false
-              cti.makecall(DN, dialNum)
+              cti.makecall(DN, vm.dialNum)
             })
           } else {
             vm.dialCall = false
@@ -1863,7 +1874,11 @@ export default {
           vm.$refs.login_img.click()
         }
       }
-      cti.setAgentStatus(agentId, '13')
+      if (localStorage.getItem('isACW') === 'true') { // 如果刷新页面前是话后状态，则改为话后
+        cti.setAgentStatus(agentId, '14')
+      } else {
+        cti.setAgentStatus(agentId, '13')
+      }
     },
     on_error(event, errortype, errordescription) {
       console.log('响应事件：错误提示' + event + ',错误原因：' + errortype + '，错误描述：' + errordescription)
@@ -1890,6 +1905,11 @@ export default {
       vm.formInline.DN = DN
       if ((localStorage.getItem('agentId') && localStorage.getItem(localStorage.getItem('agentId')) && JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode !== '-2') || (DN === localStorage.getItem('loginDn'))) {
         if (agentId !== null && DN !== null && DN !== '') { // 如果有技能组则直接登录所有队列
+          let flag = false
+          if (!localStorage.getItem('loginDn')) {
+            flag = JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode === '14'// 如果刷新前是话后状态，刷新信后也回到话后状态
+            localStorage.setItem('isACW', flag)
+          }
           if (vm.queues.length > 0) {
             const queues = []
             const prioritys = []
@@ -2340,6 +2360,13 @@ export default {
         if (vm.obstatus[i].code === '-5') {
           vm.obstatus[i].disabled = vm.lockChange || val
         }
+      }
+    },
+    reasonCode(val) {
+      if (val === '-3' || val === '-4' || val === '-5' || val === '-6' || val === '-100' || val === '-101') {
+        window.addEventListener('beforeunload', this.prevent, false)
+      } else {
+        window.removeEventListener('beforeunload', this.prevent, false)
       }
     }
   }

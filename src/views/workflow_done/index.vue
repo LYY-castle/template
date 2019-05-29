@@ -267,7 +267,11 @@ export default {
   },
   methods: {
     reSendMsg(id) {
-      if (window.confirm('确认为这条工单重新发送短信？')) {
+      this.$confirm('确认重发短信？', '请确认', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
         reSendMsg(id).then(res => {
           if (res.data && res.data.code === 0) {
             this.$message({
@@ -277,13 +281,13 @@ export default {
             })
           } else {
             this.$message({
-              message: res.data.message,
+              message: res.data.message || '未知错误',
               type: 'error',
               duration: 1000
             })
           }
         })
-      }
+      })
     },
     showValues(workformRecordRuleResult) {
       let result = ''
