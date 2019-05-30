@@ -359,6 +359,9 @@ export default {
   },
   methods: {
     setPreview(v) {
+      console.log(this.paramsValue_beforeTransfer)
+      console.log('原本值：' + this.paramsValue_beforeTransfer[v])
+      console.log('现在值：' + this.paramsValue[v])
       if (typeof (this.paramsValue_beforeTransfer[v]) === 'undefined') {
         this.paramsValue_beforeTransfer[v] = this.paramsValue[v]
         this.msg_transfer = this.msg_transfer.replace('${' + v + '}', this.paramsValue[v])
@@ -418,28 +421,29 @@ export default {
       sms.template_code = this.radio
       sms.template_name = this.dynamicValidateForm.name
       sms.content = this.msg_transfer
+      console.log(this.paramsValue_beforeTransfer)
       console.log('发送短信参数为：', sms)
-      sendMessage(sms).then(response => {
-        if (response.data.code === 0) {
-          Message({
-            message: '发送成功！',
-            type: 'success',
-            duration: 3 * 1000
-          })
-          this.send = false
-          this.sendVisible = false
-          setTimeout(() => {
-            this.messageSendRecords()
-          }, 3000)
-        } else {
-          Message({
-            message: response.data.message,
-            type: 'error',
-            duration: 3 * 1000
-          })
-          this.send = false
-        }
-      })
+      // sendMessage(sms).then(response => {
+      //   if (response.data.code === 0) {
+      //     Message({
+      //       message: '发送成功！',
+      //       type: 'success',
+      //       duration: 3 * 1000
+      //     })
+      //     this.send = false
+      //     this.sendVisible = false
+      //     setTimeout(() => {
+      //       this.messageSendRecords()
+      //     }, 3000)
+      //   } else {
+      //     Message({
+      //       message: response.data.message,
+      //       type: 'error',
+      //       duration: 3 * 1000
+      //     })
+      //     this.send = false
+      //   }
+      // })
     },
     messageSendRecords() {
       this.req.beginTime = ''
@@ -614,6 +618,7 @@ export default {
             this.msg_transfer = this.dynamicValidateForm.text
             this.paramsArr = []
             this.paramsValue = []
+            this.paramsValue_beforeTransfer = []
             this.dynamicValidateForm.domains = []
             this.addDomain()
             if (element.groupId === 1 && element.content.indexOf('${') !== -1) {
