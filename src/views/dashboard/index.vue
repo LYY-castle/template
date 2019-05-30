@@ -15,6 +15,7 @@
         <!-- <h1 v-if="!qcdepart&&qcstaff">质检员</h1> -->
         <qcmonitor-workingset v-if="!qcdepart&&qcstaff"></qcmonitor-workingset>
       </div>
+      <incall-statistical :role="role" v-if="depart||staff"></incall-statistical>
     </div>
   </div>
 </template>
