@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import request_v2 from '@/utils/request-v2'
 export function messageSendRecords(param) {
   return request({
     url: '/message/messageSendRecords',

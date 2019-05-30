@@ -15,8 +15,8 @@
           <el-form-item prop="code" label="短信状态:">
             <el-select v-model="req.code">
               <el-option label="全部" value="" selected></el-option>
-              <el-option label="成功" value="000000"></el-option>
-              <el-option label="失败" value="100001"></el-option>
+              <el-option label="成功" value="3"></el-option>
+              <el-option label="失败" value="2"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item prop="creator" label="操作人:">
@@ -61,7 +61,7 @@
           </el-table-column>
           <el-table-column
             align="left"
-            label="模板内容"
+            label="短信内容"
             prop="text"
             :show-overflow-tooltip="true">
           </el-table-column>
@@ -74,8 +74,8 @@
             align="center"
             label="短信状态">
               <template slot-scope="scope">
-                <div :class="scope.row.code==='000000'?'visible':'invisible'">
-                  <span>{{scope.row.code==='000000'?'成功':'失败'}}</span>
+                <div :class="scope.row.code==='3'?'visible':'invisible'">
+                  <span>{{scope.row.code==='3'?'成功':'失败'}}</span>
                 </div>
               </template>
           </el-table-column>
@@ -413,20 +413,25 @@ export default {
         }
         sms.param = param
       }
-      sms.signName = this.signName
-      sms.PhoneNumbers = PhoneNumbers.join(',')
-      sms.templateCode = this.radio
+      sms.sign_name = this.signName
+      sms.phone_numbers = PhoneNumbers
+      sms.template_code = this.radio
+      sms.template_name = this.dynamicValidateForm.name
+      sms.content = this.msg_transfer
+      console.log(this.msg_transfer)
       console.log('发送短信参数为：', sms)
       sendMessage(sms).then(response => {
         if (response.data.code === 0) {
           Message({
-            message: response.data.message,
+            message: '发送成功！',
             type: 'success',
             duration: 3 * 1000
           })
           this.send = false
           this.sendVisible = false
-          this.messageSendRecords()
+          setTimeout(() => {
+            this.messageSendRecords()
+          }, 3000)
         } else {
           Message({
             message: response.data.message,
