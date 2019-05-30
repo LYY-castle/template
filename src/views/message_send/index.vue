@@ -418,7 +418,6 @@ export default {
       sms.template_code = this.radio
       sms.template_name = this.dynamicValidateForm.name
       sms.content = this.msg_transfer
-      console.log(this.msg_transfer)
       console.log('发送短信参数为：', sms)
       sendMessage(sms).then(response => {
         if (response.data.code === 0) {
