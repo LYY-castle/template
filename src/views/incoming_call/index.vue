@@ -1470,12 +1470,7 @@ export default {
         linkResultInfos: [],
         addressResultInfos: []
       },
-      customerVmodels: [{
-        province: null,
-        city: null,
-        district: null,
-        detail: null
-      }],
+      customerVmodels: [],
       provincesCache: null,
       provinces: [],
       cities: [],
@@ -2102,7 +2097,7 @@ export default {
         return false
       }
       this.provinces.push(this.provincesCache)
-      this.customerInfos.addressResultInfos.push({ isAdd: true, province: null, city: null, district: null, detail: null })
+      this.customerInfos.addressResultInfos.push({ isAdd: true })
       this.customerInfosFormVisbile.addressResultInfos.push(true)
       this.customerVmodels.push({ province: '', city: '', district: '', detail: '' })
     },
@@ -2156,7 +2151,7 @@ export default {
       })
     },
     // 初始化修改客户请求参数
-    createCustomerEditReq() {
+    createCustomerEditReq(fieldName) {
       let result = true
       this.customerEditReq.customer.customerId = this.customerInfos.customerId
       this.customerEditReq.customer.customerName = this.customerInfos.customerName
@@ -2164,15 +2159,13 @@ export default {
       this.customerEditReq.customer.idNo = this.customerInfos.idNo
       this.customerEditReq.customerLinks = this.customerInfos.linkResultInfos
       this.customerEditReq.customerAddresses = this.customerVmodels
-      console.log('customerVmodels', this.customerVmodels)
-      console.log('customerEditReq', this.customerEditReq)
-      const lastAddress = this.customerEditReq.customerAddresses[this.customerEditReq.customerAddresses.length - 1]
+      const lastAddress = this.customerVmodels[this.customerVmodels.length - 1]
       const lastLink = this.customerEditReq.customerLinks[this.customerEditReq.customerLinks.length - 1]
-      if (lastLink && !lastLink.linkValue) {
+      if (fieldName === 'linkResultInfos' && lastLink && !lastLink.linkValue) {
         this.$message.error('添加的联系信息不能为空')
         result = false
       }
-      if (lastAddress && !lastAddress.province) {
+      if (fieldName === 'addressResultInfos' && lastAddress && !lastAddress.province) {
         this.$message.error('添加的地址信息的省份不能为空')
         result = false
       }
@@ -2194,7 +2187,7 @@ export default {
     },
     // 修改客户信息
     editCustomer(fieldName, index, val) {
-      if (!this.createCustomerEditReq()) {
+      if (!this.createCustomerEditReq(fieldName)) {
         return false
       }
       if (!this.valiCustomer()) {
@@ -2206,7 +2199,6 @@ export default {
       } else {
         this.customerInfosFormVisbile[fieldName] = false
       }
-      this.customerInfos.addressResultInfos = this.customerVmodels
       editCustomer(this.customerEditReq).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
