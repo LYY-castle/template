@@ -1,38 +1,20 @@
 <template>
   <div class="container incoming-call" @click="hideEmoji">
     <div>
-      <div
-        style="float:left;height:79vh;width:auto;box-shadow: 0 0 10px 0 rgba(39,48,69,0.10);border-radius: 2px;">
+      <div :class="listandchatwindow">
         <el-container style="height:100%;">
           <el-aside>
             <el-header>
               <b class="font14">当前会话</b>
+              <div style="background:#72BCFF;width:41px;float:right;color:#fff;text-align:center;cursor:pointer;" title='展开聊天窗口' @click="openWindow" v-if="toggleWindow">
+                <i class="el-icon-arrow-right"></i>
+              </div>
             </el-header>
             <el-menu
               active-text-color="#409EFF"
               :default-active="customerActive"
               style="borderoverflow:auto;width:100%;text-align:left;"
             >
-              <!-- <div v-for="(item,index) in wechatCustomerInfos">
-                <el-menu-item
-                  class="font12"
-                  :index="index+''"
-                  slot="reference"
-                  @click="showNameAndSearchRecords(item.customerName,item.customerPhone,item.taskId,item.campaignId,item.customerId,item.unreadNum);dailTaskCustomer=item;customerActive=index.toString();changeCustomerTalking(index)"
-                >
-                  <div style="margin-bottom:7px;">
-                    <span>{{item.customerName}}</span>
-                    <b
-                      v-if="item.isTalking==false&&item.unreadNum>0"
-                      style="color:#ED2135;"
-                    >({{item.unreadNum>99?'99+':item.unreadNum}})</b>
-                  </div>
-                  <div>
-                    <span style="float:left;">{{item.customerPhone}}</span> -->
-                    <!-- <span style="float:right;color:#ccc;">时间</span> -->
-                  <!-- </div>
-                </el-menu-item>
-              </div> -->
               <el-menu-item
                 style="height:auto;"
                 class="font12"
@@ -47,7 +29,7 @@
               </el-menu-item>
             </el-menu>
           </el-aside>
-          <el-container class="chat-record-container" v-if="false">
+          <el-container class="chat-record-container">
             <!-- 客户姓名div-->
             <div class="chat-header">
               <b
@@ -61,6 +43,9 @@
                 @click="toDialTask(dailTaskCustomer)"
                 alt="拨打电话"
               >
+              <div style="background:#72BCFF;width:41px;float:right;color:#fff;text-align:center;cursor:pointer;" title='收起聊天窗口' @click="closeWindow" v-if="!toggleWindow">
+                <i class="el-icon-arrow-left"></i>
+              </div>
             </div>
             <div
               id="short-message-content-container"
@@ -298,9 +283,7 @@
           </el-container>
         </el-container>
       </div>
-      <div
-        class="elaside1"
-        style="position:relative;height:51vh;overflow-x:hidden;background:#FBFBFB;float:right;width:calc(100% - 240px);box-shadow: 0 0 10px 0 rgba(39,48,69,0.10);border-radius: 2px;">
+      <div :class="elaside1">
         <el-tabs v-model="activeName" type="card" style="background: #F3F5FA;" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
           <el-tab-pane label="基本信息" name="1">
             <el-collapse class="form-container" v-model="basicInfo" @change="basicInfoChangeAcitve" style="box-shadow:none;border-top:none;border-left:none;position:relative;">
@@ -860,7 +843,7 @@
           </el-tab-pane> -->
         </el-tabs>
       </div>
-      <div class="summary table-container fr" style="padding:15px;width:calc(100% - 240px);min-height:calc(27vh - 15px);">
+      <div :class="summary">
         <el-row class="margin-bottom-15">
           <div class="font14 bold">小结</div>
         </el-row>
@@ -1105,6 +1088,14 @@
       height: 50px;
   }
   .summary{
+    width:44%;
+    transition:0.75s width;
+    padding:15px;
+    height: 30%;
+    // min-height:calc(27vh - 15px);
+    &.increasewidth{
+        width:calc(100% - 240px);
+      }
     /deep/ .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item{
       margin-bottom:10px;
     }
@@ -1118,6 +1109,18 @@
     }
   }
   .incoming-call {
+    .listandchatwindow{
+      &.close {
+        width:0;
+      }
+      transition: 0.75s width;
+      float:left;
+      width:54%;
+      height:79vh;
+      box-shadow: 0 0 10px 0 rgba(39,48,69,0.10);
+      border-radius: 2px;
+    }
+
     /deep/ .el-form-item__label {
       font-size: 12px !important;
       color: #020202 !important;
@@ -1163,10 +1166,20 @@
       width: 210px !important;
     }
     /deep/ .elaside1 {
-      width: 41%;
+      position:relative;
+      height:51vh;
+      overflow-x:hidden;
+      background:#FBFBFB;
+      float:right;
+      transition:0.75s width;
+      box-shadow: 0 0 10px 0 rgba(39,48,69,0.10);
+      border-radius: 2px;
       color: #333;
-      // text-align: center;
-      height: 834px;
+      // width: calc(100% - 240px);
+      width: 44%;
+      &.increasewidth{
+        width:calc(100% - 240px);
+      }
       .workform-title-input{
         /deep/ .el-input__inner{
           width:200px;
@@ -1469,6 +1482,10 @@ export default {
         addWorkformDisabled: false,
         workformRecordInvisible: false
       },
+      toggleWindow: false,
+      elaside1: 'elaside1',
+      listandchatwindow: 'listandchatwindow',
+      summary: 'summary table-container fr',
       reload: true,
       showCustomerAddresses: false,
       timeValue: null,
@@ -1929,6 +1946,18 @@ export default {
     }
   },
   methods: {
+    closeWindow() {
+      this.listandchatwindow = 'listandchatwindow close'
+      this.elaside1 = 'elaside1 increasewidth'
+      this.summary = 'summary table-container fr increasewidth '
+      this.toggleWindow = true
+    },
+    openWindow() {
+      this.listandchatwindow = 'listandchatwindow'
+      this.elaside1 = 'elaside1'
+      this.summary = 'summary table-container fr'
+      this.toggleWindow = false
+    },
     reSendMsg(id) {
       this.$confirm('确认重发短信？', '请确认', {
         confirmButtonText: '确定',
