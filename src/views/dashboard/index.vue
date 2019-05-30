@@ -2,7 +2,6 @@
   <!-- 现场主管 -->
   <div class="dashboard">
     <div v-if="!personnel">
-      <incall-statistical :role="role" v-if="depart||staff"></incall-statistical>
       <div v-if="!qcdepart||!qcstaff">
         <!-- <h1 v-if="depart">现场主管</h1> -->
         <monitor-workingset v-if="depart"></monitor-workingset>
