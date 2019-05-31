@@ -159,9 +159,9 @@
         <el-form-item label="短信模板内容：" prop="content">
           <el-input type="textarea" v-model="addMessageTemplateDetail.content" placeholder="例如：您的验证码是{1},{2}分钟内有效。若非本人操作请忽略此消息...上限500字符" :rows="4"></el-input>
         </el-form-item>
-         <el-form-item label="Tips：" >
+         <!-- <el-form-item label="Tips：" >
           <span>短信模板内容中至少要有一个动态参数并用{}括起来，否则会直接失败。例如：您的验证码是{1}，{2}...第一个花括号为1代表第一个参数，第二个花括号为2代表第二个参数，以此类推。</span>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
         <div slot="footer" style="text-align: right;">
           <el-button type="primary" @click="submitForm('addMessageForm',addMessageTemplateDetail);addTemplate(addMessageTemplateDetail);">确定</el-button>
@@ -216,9 +216,9 @@
         <el-form-item label="短信模板内容：" prop="content">
           <el-input type="textarea" v-model="editTemplateDetail.content" placeholder="例如：您的验证码是{1},{2}分钟内有效。若非本人操作请忽略此消息...上限500字符" :rows="4"></el-input>
         </el-form-item>
-         <el-form-item label="Tips：" >
+         <!-- <el-form-item label="Tips：" >
           <span>短信模板内容中至少要有一个动态参数并用{}括起来，否则会直接失败。例如：您的验证码是{1}，{2}...第一个花括号为1代表第一个参数，第二个花括号为2代表第二个参数，以此类推。</span>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" style="text-align: right;">
         <el-button type="primary" @click="submitForm('editTemplateForm',editTemplateDetail);editTemplate(editTemplateDetail);">确定</el-button>

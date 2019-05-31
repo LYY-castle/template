@@ -6,11 +6,11 @@ export function messageSendRecords(param) {
     params: param
   })
 }
-export function sendMessage(param) {
+export function sendMessage(sms) {
   return request({
     url: '/message/sendMessage',
     method: 'post',
-    data: param
+    data: sms
   })
 }
 // 查询审核通过的短信模板
