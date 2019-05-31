@@ -490,12 +490,12 @@ export default {
       e = e || window.event
       // 兼容IE8和Firefox 4之前的版本
       if (e) {
-        e.returnValue = '通话或者响铃中不能刷新页面'
+        e.returnValue = '请勿在通话或响铃状态刷新页面'
         return
       }
       // Chrome, Safari, Firefox 4+, Opera 12+ , IE 9+
       e.preventDefault()
-      return '通话或者响铃中不能刷新页面'
+      return '请勿在通话或响铃状态刷新页面'
     },
     getObstatusNow(data, code) {
       for (let i = 0; i < data.length; i++) {
@@ -943,7 +943,7 @@ export default {
     agentdialout() {
       if (localStorage.getItem(localStorage.getItem('agentId')) && JSON.parse(localStorage.getItem(localStorage.getItem('agentId'))).reasoncode === '0') {
         Message({
-          message: '不能在就绪的状态下拨打电话，请切换成其他状态！',
+          message: '请在非就绪状态外呼！',
           type: 'error',
           duration: 1 * 1000
         })
@@ -1037,7 +1037,7 @@ export default {
         } else {
           this.$message({
             type: 'error',
-            message: '只有示忙状态下才可以登出话机！',
+            message: '请在示忙状态登出话机',
             duration: 1500
           })
           return
