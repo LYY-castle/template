@@ -2153,21 +2153,31 @@ export default {
     // 初始化修改客户请求参数
     createCustomerEditReq(fieldName) {
       let result = true
-      this.customerEditReq.customer.customerId = this.customerInfos.customerId
-      this.customerEditReq.customer.customerName = this.customerInfos.customerName
-      this.customerEditReq.customer.customerSex = this.customerInfos.customerSex
-      this.customerEditReq.customer.idNo = this.customerInfos.idNo
-      this.customerEditReq.customerLinks = this.customerInfos.linkResultInfos
-      this.customerEditReq.customerAddresses = this.customerVmodels
-      const lastAddress = this.customerVmodels[this.customerVmodels.length - 1]
-      const lastLink = this.customerEditReq.customerLinks[this.customerEditReq.customerLinks.length - 1]
-      if (fieldName === 'linkResultInfos' && lastLink && !lastLink.linkValue) {
-        this.$message.error('添加的联系信息不能为空')
-        result = false
+      this.customerEditReq = {
+        customer: {},
+        customerAddresses: [],
+        customerLinks: [],
+        customerCars: []
       }
-      if (fieldName === 'addressResultInfos' && lastAddress && !lastAddress.province) {
-        this.$message.error('添加的地址信息的省份不能为空')
-        result = false
+      this.customerEditReq.customer.customerId = this.customerInfos.customerId
+      if (fieldName === 'linkResultInfos') {
+        const lastLink = this.customerEditReq.customerLinks[this.customerEditReq.customerLinks.length - 1]
+        this.customerEditReq.customerLinks = this.customerInfos.linkResultInfos
+        if (lastLink && !lastLink.linkValue) {
+          this.$message.error('添加的联系信息不能为空')
+          result = false
+        }
+      } else if (fieldName === 'addressResultInfos') {
+        const lastAddress = this.customerVmodels[this.customerVmodels.length - 1]
+        this.customerEditReq.customerAddresses = this.customerVmodels
+        if (lastAddress && !lastAddress.province) {
+          this.$message.error('添加的地址信息的省份不能为空')
+          result = false
+        }
+      } else {
+        this.customerEditReq.customer.customerName = this.customerInfos.customerName
+        this.customerEditReq.customer.customerSex = this.customerInfos.customerSex
+        this.customerEditReq.customer.idNo = this.customerInfos.idNo
       }
       return result
     },
@@ -2203,11 +2213,20 @@ export default {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
           getCustomerInfoByPhone(this.customerPhone).then(response => {
-            this.customerInfos = response.data.data
+            // if (fieldName === 'linkResultInfos') {
+            //   this.customerInfos.linkResultInfos = response.data.data.linkResultInfos
+            // } else if (fieldName === 'addressResultInfos') {
+            //   this.customerInfos.addressResultInfos = response.data.data.addressResultInfos
+            // } else {
+
+            // }
+            this.customerInfos[fieldName] = response.data.data[fieldName]
             sessionStorage.setItem('inCall_customerInfos', JSON.stringify(this.customerInfos))
             this.menuCustomerName = clone(this.customerInfos.customerName)
             // 地址信息回显
-            if (this.customerInfos.addressResultInfos.length) this.customerVmodels = clone(this.customerInfos.addressResultInfos)
+            // if (this.customerInfos.addressResultInfos.length) this.customerVmodels = clone(this.customerInfos.addressResultInfos)
+            console.log('字段名', fieldName)
+            if (fieldName === 'addressResultInfos') this.customerVmodels = clone(this.customerInfos.addressResultInfos)
             for (let i = 0; i < this.customerVmodels.length; i++) {
               for (const key in this.customerVmodels[i]) {
                 if (key.indexOf('modifier') !== -1) {
