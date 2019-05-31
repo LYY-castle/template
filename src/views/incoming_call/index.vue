@@ -541,7 +541,7 @@
             </el-row>
           </el-tab-pane>
           <el-tab-pane label="话术知识库" name="3">
-            <knowledge-query :hideHits="hideHits"></knowledge-query>
+            <knowledge-query></knowledge-query>
           </el-tab-pane>
           <el-tab-pane label="工单记录" name="4" v-if="isConversation.workformRecordVisible">
             <el-collapse class="form-container" v-model="serviceRecord" @change="handleChangeAcitve" style="box-shadow:none;margin-bottom:0;border-top:none;border-left:none;position:relative;">
@@ -3433,8 +3433,6 @@ export default {
   },
 
   mounted() {
-    // 隐藏话术知识库点击量排行
-    this.hideHits = true
     // const customerPhone = sessionStorage.getItem('inCall_customerPhone')
     // const customerInfos = JSON.parse(sessionStorage.getItem('inCall_customerInfos'))
     // const recordId = sessionStorage.getItem('inCall_recordId')
@@ -3608,9 +3606,6 @@ export default {
     //   })
     // })
     // }
-  },
-  beforeDestroy() {
-    this.hideHits = false
   },
 
   beforeRouteLeave(to, from, next) {

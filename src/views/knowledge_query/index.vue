@@ -65,7 +65,7 @@
                 <!-- </el-row> -->
               </el-form>
             </div>
-            <div :class="!hideHits?'kb-content':'kb-content no-hits'">
+            <div class="kb-content">
               <div class="list">
                 <ul>
                   <li v-if="!articlesList.length">
@@ -94,7 +94,7 @@
                 </ul>
               </div>
               
-              <div class="click-rank" v-if="!hideHits">
+              <div class="click-rank">
                 <div class="font12 margin-bottom-20">找到{{pageInfo.total}}条结果</div>
                 <div class="font14" style="margin-bottom:10px;">点击量排行</div>
                 <ul>
@@ -122,7 +122,7 @@
                 :page-size="pageInfo.pageSize"
                 layout="total, sizes, prev, pager, next, jumper "
                 :total="pageInfo.total" 
-                :style="!hideHits?'text-align: right;float:right;margin-right:260px;':'text-align: right;float:right;'">
+                style="text-align: right;float:right;margin-right:260px;">
               </el-pagination>
             </div>
           </section>
@@ -216,7 +216,6 @@ import {
 } from '@/utils/tools'
 export default{
   name: 'knowledge_query',
-  props: ['hideHits'],
   data() {
     return {
       token: localStorage.getItem('Admin-Token'),
@@ -581,11 +580,6 @@ export default{
       width:100%;
       height: calc(92.2% - 52px);
       overflow-y:auto;
-      &.no-hits{
-        .list{
-          width:100%;
-        }
-      }
       .list{
         height:100%;
         width: calc(100% - 240px);
