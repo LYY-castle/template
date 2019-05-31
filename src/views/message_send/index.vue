@@ -446,6 +446,18 @@ export default {
         // }
       })
     },
+    unique(arr) {
+      var hash = []
+      for (var i = 0; i < arr.length; i++) {
+        for (var j = i + 1; j < arr.length; j++) {
+          if (arr[i] === arr[j]) {
+            ++i
+          }
+        }
+        hash.push(arr[i])
+      }
+      return hash
+    },
     sendMessage() {
       var sms = {}
       var phoneNumbers = []
@@ -464,6 +476,8 @@ export default {
             return
           }
         }
+        // 去重
+        phoneNumbers = this.unique(phoneNumbers)
       }
       if (this.paramsArr.length > 0) {
         for (var j = 0; j < this.paramsArr.length; j++) {
