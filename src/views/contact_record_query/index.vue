@@ -715,7 +715,7 @@ audio {
         questionnaireTabs: [],
         answerData: [], // 所有问卷的填写记录
         campaignType: '',
-        timeValue: null,
+        timeValue: [],
         option: { i18n: { normal: '1×', speed: '播放速度' }},
         visibleClass: '',
         formContainerOpen: '1',
@@ -807,10 +807,10 @@ audio {
       this.handleChangeAcitve()
       new Promise((resolve, reject) => {
         getStaffByDepartId(localStorage.getItem('departId')).then(response => {
-          const lists = response.data.dataAll
+          const lists = response.data.data
           this.staffs = []
           lists.forEach(element => {
-            this.staffs.push({ 'staffName': element[2], 'angentId': element[1] })
+            this.staffs.push({ 'staffName': element.name, 'angentId': element.staffNo })
           })
           resolve()
         })
@@ -832,27 +832,36 @@ audio {
       player() { return this.$refs.plyr.player }
     },
     created() {
+      if (typeof (this.$route.query.agentid) !== 'undefined') {
+        this.req.agentid = this.$route.query.agentid
+      } else {
+        this.req.agentid = localStorage.getItem('agentId')
+        this.oriAgentId = localStorage.getItem('agentId')
+        this.staffInfo.agentid = localStorage.getItem('agentId')
+      }
+      if (typeof (this.$route.query.contactType) !== 'undefined') {
+        this.req.contactType = this.$route.query.contactType
+      }
       if (typeof (this.$route.query.sTime) !== 'undefined') {
         this.req.startTime = this.$route.query.sTime
         this.oriSTime = this.$route.query.sTime
+        this.timeValue[0] = this.$route.query.sTime
       }
       if (typeof (this.$route.query.eTime) !== 'undefined') {
         this.req.endTime = this.$route.query.eTime
         this.oriETime = this.$route.query.eTime
+        this.timeValue[1] = this.$route.query.eTime
       }
       if (typeof (this.$route.query.callStatu) === 'undefined') {
         this.req.status = '-1'
       } else {
-        this.req.agentid = localStorage.getItem('agentId')
-        if (this.$route.query.callStatu === 1) {
+        if (this.$route.query.callStatu + '' === '1') {
           this.req.status = '1'
           this.oriQueryStatus = '1'
         } else {
           this.req.status = '0'
           this.oriQueryStatus = '0'
         }
-        this.oriAgentId = localStorage.getItem('agentId')
-        this.staffInfo.agentid = localStorage.getItem('agentId')
       }
       this.req.pageNo = 1
     },
@@ -981,7 +990,7 @@ audio {
           pageNo: 1,
           status: this.oriQueryStatus
         }
-        this.timeValue = null
+        this.timeValue = []
       },
       // 跳转到别的组件
       // transferParameters(taskId, campaignId, customerId, customerPhone) {
@@ -1008,18 +1017,20 @@ audio {
             this.isManager = true
           } else if (code === 403) {
             this.isManager = false
-            // 判断班组长
-            permsDepart(localStorage.getItem('accountNo')).then(response => {
-              const code = parseInt(response.data.code)
-              if (code === 200) this.isManager = true
-              else if (code === 403) this.isManager = false
-            }).catch(error => {
-              throw error
-            })
           }
         }).catch(error => {
           throw error
         })
+        if (!this.isManager) {
+          // 判断班组长
+          await permsDepart(localStorage.getItem('accountNo')).then(response => {
+            const code = parseInt(response.data.code)
+            if (code === 200) this.isManager = true
+            else if (code === 403) this.isManager = false
+          }).catch(error => {
+            throw error
+          })
+        }
         // 判断员工
         await permsStaff(localStorage.getItem('accountNo')).then(response => {
           const code = parseInt(response.data.code)

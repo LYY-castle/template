@@ -109,11 +109,11 @@
               <div>
                 <div class="font12" style="display: inline-block;line-height: 25px;">
                   <font style="padding-right: 5px">通话时间: </font>
-                  <font class="bold under-line" style="cursor: pointer"  @click="changeToMonitorPhone()">{{ctiData.call_time_duration}}</font>
+                  <font class="bold" >{{ctiData.call_time_duration}}</font>
                 </div>
                 <div class="font12" style="float: right;line-height: 25px">
                   <font style="padding-right: 5px">通话次数: </font>
-                  <font class="bold under-line" style="cursor: pointer" @click="changeToMonitorPhone()">{{ctiData.calls_number}}</font>
+                  <font class="bold under-line" style="cursor: pointer" @click="changeToDailTaskList()">{{ctiData.calls_number}}</font>
                 </div>
               </div>
               <div class="font12">
@@ -443,6 +443,12 @@ export default {
     this.$store.dispatch('SwitchNeedLoginMgrPhone', { monitorId: localStorage.getItem('agentId'), monitorDN: '12345' })
   },
   methods: {
+    changeToDailTaskList() { // 跳转到接触记录
+      this.$router.push({
+        path: process.env.BUILT_IN_ROUTERS.contactRecordQuery,
+        query: { 'callStatu': 1, 'sTime': formatDateTime(new Date().setHours(0, 0, 0, 0)), 'eTime': formatDateTime(new Date().setHours(23, 59, 59, 0)), 'agentid': '', 'contactType': '1' }
+      })
+    },
     on_queuecount(event, queuename, queuecount) {
       console.log(event, queuename, queuecount)
     },

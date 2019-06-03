@@ -2812,6 +2812,7 @@ export default {
           const dayEnd = formatDateTime(new Date().setHours(23, 59, 59, 0))
           this.req.modifyTimeStart = dayStart
           this.req.modifyTimeEnd = dayEnd
+          this.modifyTimeValue = [dayStart, dayEnd]
         }
       } else { // 说明是跳拨打页面
         this.isDialTask = this.$route.query.isDialTask
