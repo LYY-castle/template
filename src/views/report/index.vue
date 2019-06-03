@@ -58,7 +58,7 @@
               </div>
             </el-card>
           </el-col>
-          
+
         </el-row>
       </div>
 
@@ -99,7 +99,7 @@
               </div>
             </el-card>
           </el-col>
-          
+
         </el-row>
       </div>
       <div class="table-container margin-bottom-15" v-if="personnel">
@@ -117,13 +117,13 @@
               </div>
             </el-card>
           </el-col>
-          
+
         </el-row>
       </div>
     </div>
     <div v-if="!buttonVisible">
       <div class="table-container margin-bottom-15" style="margin-top:0;padding:10px;text-align:center;position:relative;">
-        <el-button title="返回" style="width:auto;position:absolute;left:6px;top:6px;padding:1px 9px;" type="primary" size="small" @click="handleBack()"><i class="el-icon-back" style="font-size:20px;font-weight:bold;"></i></el-button>
+        <el-button title="返回" style="width:auto;position:absolute;left:6px;top:6px;padding:1px 1px;" type="primary" size="small" @click="handleBack()"><i class="el-icon-arrow-left" style="font-size:20px;font-weight:bold;"></i></el-button>
         <h3 class="font14">{{reportTitle}}</h3>
       </div>
       <order-report v-if="orderReport"></order-report>
