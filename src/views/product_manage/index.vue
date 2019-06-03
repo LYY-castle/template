@@ -65,13 +65,13 @@
             align="center"
             label="编号"
             prop="productId">
-          </el-table-column> 
+          </el-table-column>
           <el-table-column
             align="center"
             label="名称"
             prop="productName"
             :show-overflow-tooltip="true">
-          </el-table-column> 
+          </el-table-column>
           <el-table-column
             width="80"
             align="center"
@@ -89,7 +89,7 @@
             <template slot-scope="scope">
               {{scope.row.productPurpose===0?'销售':scope.row.productPurpose===1?'促销':''}}
             </template>
-          </el-table-column> 
+          </el-table-column>
           <el-table-column
             width="50"
             align="center"
@@ -98,7 +98,7 @@
             <template slot-scope="scope">
               {{scope.row.status==='0'?'上架':scope.row.status==='1'?'下架':''}}
             </template>
-          </el-table-column> 
+          </el-table-column>
           <el-table-column
             align="center"
             label="数量"
@@ -112,12 +112,12 @@
             <template slot-scope="scope">
               {{scope.row.price +" 元"}}
             </template>
-          </el-table-column> 
+          </el-table-column>
           <el-table-column
             align="center"
             label="描述"
             prop="description">
-          </el-table-column> 
+          </el-table-column>
           <el-table-column
             align="center"
             label="操作人"
@@ -160,7 +160,7 @@
     <!-- 新建产品 -->
     <el-dialog
       align:left
-      width="86%"
+      width="40%"
       title="新建产品"
       :visible.sync="addVisible"
       append-to-body>
@@ -214,20 +214,20 @@
           :label="item.propertyName"
           :key="item.key"
           :rules="[{required: item.isRequired==='1' ,trigger: 'change' }]">
-          <el-input v-model="item.propertyValue" v-if="item.templateType==='text'" 
+          <el-input v-model="item.propertyValue" v-if="item.templateType==='text'"
           :readonly="item.showOrInput==='0'" style="width: 80%;">
            </el-input> -->
 
            <!-- <el-button @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='text'" style="width: 15%;margin-left: 10px;">修改</el-button>
            <el-button @click.prevent="removeItem(item)" v-if="item.templateType==='text'" style="width: 15%;">删除</el-button> -->
-          
+
           <!-- <el-input type="textarea" v-model="item.propertyValue" v-if="item.templateType==='textarea'" :readonly="item.showOrInput==='0'"  style="width: 60%;"></el-input> -->
-          
+
           <!-- <el-button @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='textarea'" style="width: 15%;margin-left: 10px;">修改</el-button>
           <el-button @click.prevent="removeItem(item)" v-if="item.templateType==='textarea'" style="width: 15%;">删除</el-button> -->
-          
-          <!-- <el-radio-group v-model="item.propertyType" :readonly="item.showOrInput==='0'" 
-            style="width: 80%;" 
+
+          <!-- <el-radio-group v-model="item.propertyType" :readonly="item.showOrInput==='0'"
+            style="width: 80%;"
             v-if="item.templateType==='radio'">
             <el-radio
                 v-for="tag in item.propertyValue"
@@ -240,8 +240,8 @@
 
           <!-- <el-button  @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='radio'" style="width: 15%;margin-left: 10px;">修改</el-button>
           <el-button @click.prevent="removeItem(item)" v-if="item.templateType==='radio'" style="width: 15%;">删除</el-button> -->
-          
-          <!-- <el-select  v-model="item.propertyType"  :readonly="item.showOrInput==='0'"   style="width: 80%;" 
+
+          <!-- <el-select  v-model="item.propertyType"  :readonly="item.showOrInput==='0'"   style="width: 80%;"
           v-if="item.templateType==='select'" >
             <el-option
                 v-for="tag in item.propertyValueSelect"
@@ -250,11 +250,11 @@
                 disabled>
             </el-option>
           </el-select> -->
-          
+
           <!-- <el-button @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='select'"  style="width: 15%;margin-left: 10px;">修改</el-button>
           <el-button @click.prevent="removeItem(item)" v-if="item.templateType==='select'"  style="width: 15%;">删除</el-button> -->
-          
-          <!-- <el-checkbox-group  v-model="item.propertyType"  style="width: 80%;line-height:1" 
+
+          <!-- <el-checkbox-group  v-model="item.propertyType"  style="width: 80%;line-height:1"
              :readonly="item.showOrInput==='0'"  v-if="item.templateType==='checkbox'" >
             <el-checkbox
                 v-for="tag in item.propertyValueCheckbox"
@@ -278,7 +278,7 @@
       <!-- 修改产品 -->
     <el-dialog
       align:left
-      width="86%"
+      width="40%"
       title="修改产品"
       :visible.sync="modifyVisible"
       append-to-body>
@@ -326,13 +326,13 @@
           :key="item.key"
           :rules="[{required: item.isRequired==='1' ,trigger: 'change' }]">
           <el-input v-model="item.propertyValue" v-if="item.templateType==='text'" readonly="true" style="width: 80%;"></el-input> -->
-          
+
           <!-- <el-button @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='text'" style="width: 20%;margin-left: 10px;">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='text'" style="width: 20%;">删除</el-button> -->
-          
+
           <!-- <el-input type="textarea" v-model="item.propertyValue" v-if="item.templateType==='textarea'" readonly="true" style="width: 80%;"></el-input> -->
-          
+
           <!-- <el-button @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='textarea'" style="width: 20%;margin-left: 10px;">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='textarea'" style="width: 20%;">删除</el-button> -->
-          
+
           <!-- <el-radio-group v-model="item.propertyType" readonly="true" style="width: 80%;display:inline-block;line-height:1;" v-if="item.templateType==='radio'" >
             <el-radio
                 v-for="tag in item.propertyValueRadio"
@@ -342,9 +342,9 @@
                 :disabled="true">
             </el-radio>
           </el-radio-group> -->
-          
+
           <!-- <el-button  @click.prevent="modifyPropertyVisible=true;modifyItem(item)" v-if="item.templateType==='radio'" style="width: 20%;margin-left: 10px;">修改</el-button><el-button @click.prevent="removeItem(item)" v-if="item.templateType==='radio'" style="width: 20%;">删除</el-button> -->
-          
+
           <!-- <el-checkbox-group multiple v-model="item.propertyType" readonly="true"  style="width: 80%;line-height:1;display:inline-block" v-if="item.templateType==='checkbox'" >
             <el-checkbox
                 v-for="tag in item.propertyValueCheckbox"
@@ -461,7 +461,7 @@
             <el-input v-model="domain.value" style="width: 80%;" v-show="parseInt(productPropertyInfo.propertyLength)>50||productPropertyInfo.propertyLength===''" placeholder="限长50字符" maxlength="50"></el-input>
             <el-button @click.prevent="removeDomain(domain)" style="margin-left: 10px;">删除</el-button>
         </el-form-item> -->
-        
+
       <!-- </el-form>
         <div slot="footer" style="text-align: right;">
           <el-button size="small" type="danger" @click="resetProductPropertyInfo();">重 置</el-button>
