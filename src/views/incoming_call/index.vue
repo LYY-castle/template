@@ -2173,6 +2173,7 @@ export default {
         }
       } else if (fieldName === 'addressResultInfos') {
         const lastAddress = this.customerVmodels[this.customerVmodels.length - 1]
+        if (this.customerVmodels.length === 1) this.customerVmodels[0]['isDefault'] = 1
         this.customerEditReq.customerAddresses = this.customerVmodels
         if (lastAddress && !lastAddress.province) {
           this.$message.error('添加的地址信息的省份不能为空')
@@ -2213,7 +2214,6 @@ export default {
       } else {
         this.customerInfosFormVisbile[fieldName] = false
       }
-      console.log('修改客户', this.customerEditReq.customerAddresses)
       editCustomer(this.customerEditReq).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
@@ -2222,7 +2222,6 @@ export default {
             sessionStorage.setItem('inCall_customerInfos', JSON.stringify(this.customerInfos))
             this.menuCustomerName = clone(this.customerInfos.customerName)
             // 地址信息回显
-            console.log('字段名', fieldName)
             if (fieldName === 'addressResultInfos') this.customerVmodels = clone(this.customerInfos.addressResultInfos)
             for (let i = 0; i < this.customerVmodels.length; i++) {
               for (const key in this.customerVmodels[i]) {
@@ -2633,7 +2632,6 @@ export default {
         if (!this.addWorkForm.name) {
           this.$message.error('请输入工单名称')
         }
-        console.log(this.addWorkForm, '1111111111111111111')
         addWorkFormRecord(this.addWorkForm).then(response => {
           if (response.data.code === 0) {
             this.recordSummaryInfo()
