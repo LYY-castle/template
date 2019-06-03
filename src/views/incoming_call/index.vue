@@ -385,6 +385,8 @@
                           @click="customerInfosFormToggle('linkResultInfos',index,true)">
                           <img src="../../../static/images/edit_btn.png">
                         </i>
+                        <el-button v-if="item2.isUsually===0" size="mini" type="text" @click="setDefaultLink('linkResultInfos',index,false)" style="color:#54B8FF;">设为默认</el-button>
+                        <el-tag :disable-transitions="true" v-if="item2.isUsually===1" size="mini">默认</el-tag>
                       </el-col>
                       <!-- <el-col v-if="customerInfos.linkResultInfos!==undefined&&customerInfos.linkResultInfos.length===0||!(customerInfos.linkResultInfos)" class="customerInfo-item font12" :span="6">
                         <span>手机号码：</span>
@@ -434,6 +436,8 @@
                         <i v-if="!customerInfosFormVisbile.addressResultInfos[index2]&&provinces&&provinces.length" style="cursor:pointer;" @click="handleEditRegion(index2);">
                           <img src="../../../static/images/edit_btn.png">
                         </i>
+                        <el-button v-if="item.isDefault===0" size="mini" type="text" @click="setDefaultAddress('addressResultInfos',index2,false)" style="color:#54B8FF;">设为默认</el-button>
+                        <el-tag :disable-transitions="true" v-if="item.isDefault===1" size="mini">默认</el-tag>
                       </el-col>
                       <!-- <el-col v-if="customerInfos.addressResultInfos!==undefined&&customerInfos.addressResultInfos.length===0||!(customerInfos.addressResultInfos)" class="customerInfo-item font12" :span="24">
                         <span>地址:</span>
@@ -2209,22 +2213,15 @@ export default {
       } else {
         this.customerInfosFormVisbile[fieldName] = false
       }
+      console.log('修改客户', this.customerEditReq.customerAddresses)
       editCustomer(this.customerEditReq).then(response => {
         if (response.data.code === 0) {
           this.$message.success(response.data.message)
           getCustomerInfoByPhone(this.customerPhone).then(response => {
-            // if (fieldName === 'linkResultInfos') {
-            //   this.customerInfos.linkResultInfos = response.data.data.linkResultInfos
-            // } else if (fieldName === 'addressResultInfos') {
-            //   this.customerInfos.addressResultInfos = response.data.data.addressResultInfos
-            // } else {
-
-            // }
             this.customerInfos[fieldName] = response.data.data[fieldName]
             sessionStorage.setItem('inCall_customerInfos', JSON.stringify(this.customerInfos))
             this.menuCustomerName = clone(this.customerInfos.customerName)
             // 地址信息回显
-            // if (this.customerInfos.addressResultInfos.length) this.customerVmodels = clone(this.customerInfos.addressResultInfos)
             console.log('字段名', fieldName)
             if (fieldName === 'addressResultInfos') this.customerVmodels = clone(this.customerInfos.addressResultInfos)
             for (let i = 0; i < this.customerVmodels.length; i++) {
@@ -2243,6 +2240,19 @@ export default {
         this.$set(this.customerInfosFormVisbile[fieldName], index, true)
         throw error
       })
+    },
+    // 设置默认地址或联系方式
+    setDefaultAddress(fieldName, index, val) {
+      for (let i = 0; i < this.customerInfos.addressResultInfos.length; i++) {
+        index === i ? this.customerVmodels[i].isDefault = 1 : this.customerVmodels[i].isDefault = 0
+      }
+      this.editCustomer(fieldName, index, val)
+    },
+    setDefaultLink(fieldName, index, val) {
+      for (let i = 0; i < this.customerInfos.linkResultInfos.length; i++) {
+        index === i ? this.customerInfos.linkResultInfos[i].isUsually = 1 : this.customerInfos.linkResultInfos[i].isUsually = 0
+      }
+      this.editCustomer(fieldName, index, val)
     },
     // 服务记录--------------2
     resetServiceRecordForm() {
