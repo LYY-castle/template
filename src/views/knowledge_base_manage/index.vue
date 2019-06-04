@@ -232,12 +232,10 @@
             :visible.sync="addArticles"
             append-to-body>
             <div style="text-align:center">
-              <h3>
-                {{noteTitle}}
-                <el-tooltip class="item" effect="dark" content="修改标题" placement="right-start">
-                  <el-button style="font-size:16px;" type="text" icon="el-icon-edit-outline" @click="editNoteTitleVisiable=true;editDetail.title=noteTitle" size="mini" circle></el-button>
-                </el-tooltip>
-              </h3>
+      
+              <!-- <label class="el-form-item__label" style="width: 50px;"><span style="color:red">*</span>标题:</label>
+              <el-input type="text" placeholder="请输入标题" size="small" v-model="noteTitle" maxlength="45"></el-input> -->
+
               <!-- <el-row style="text-align:left">
                 <el-form :inline="true">
                   <el-form-item label="标签:" style="float:left;min-height:41px;">
@@ -265,7 +263,11 @@
               </el-row> -->
               <el-row>
                 <el-form size="small">
-                  <el-form-item label-width="45px" label="概要:">
+                  <el-form-item label-width="60px" label="" style="position:relative;">
+                    <label class="el-form-item__label" style="width:60px;position:absolute;top:0;left:-60px;"><span style="color:red">*</span>标题:</label>
+                    <el-input type="text" placeholder="请输入标题" v-model="noteTitle" maxlength="45"></el-input>
+                  </el-form-item>
+                  <el-form-item label-width="60px" label="概要:">
                     <el-input :rows="4" v-model="brief" type="textarea" class="article-textarea" autosize placeholder="请输入内容"/>
                   </el-form-item>
                 </el-form>
@@ -302,7 +304,7 @@
                   </el-form>
                 </el-row>
                 <el-row>
-                  <el-button type="primary" @click="generateNote();" size="small" :disabled="uploadDisable">确定</el-button>
+                  <el-button type="primary" @click="generateNote(noteTitle);" size="small" :disabled="uploadDisable">确定</el-button>
                   <el-button type="primary" plain @click="noteTitle='';addArticles=false;body=null;brief=null;remark=null" size="small">取消</el-button>
                 </el-row>
               </el-row>
@@ -315,11 +317,6 @@
             :visible.sync="editArticles"
             append-to-body>
             <div style="text-align:center">
-              <h3>{{editDetail.title}}
-                <el-tooltip class="item" effect="dark" content="修改标题" placement="right-start">
-                  <el-button style="font-size:16px;" type="text" icon="el-icon-edit-outline" @click="editNoteTitleVisiable=true" size="mini" circle></el-button>
-                </el-tooltip>
-              </h3>
               <!-- <el-row style="text-align:left">
                 <el-form :inline="true">
                   <el-form-item label="标签:" style="float:left;min-height:41px;">
@@ -347,6 +344,15 @@
               </el-row> -->
               <el-row>
                 <el-form size="small">
+                  <el-form-item>
+                    <el-input 
+                      v-model="editDetail.title" 
+                      clearable
+                      placeholder="请输入标题"
+                      class="title-input"
+                      >
+                    </el-input>
+                  </el-form-item>
                   <el-form-item label-width="45px" label="概要:">
                     <el-input :rows="1" v-model="editDetail.brief" type="textarea" class="article-textarea" autosize placeholder="请输入内容"/>
                   </el-form-item>
@@ -385,7 +391,7 @@
                   </el-form>
                 </el-row>
                 <el-row>
-                  <el-button type="primary" @click="modifyNote();" size="small" :disabled="uploadDisable">确定</el-button>
+                  <el-button type="primary" @click="modifyNote(editDetail.title);" size="small" :disabled="uploadDisable">确定</el-button>
                   <el-button type="primary" plain @click="editDetail.title='';editArticles=false;editDetail.body=null" size="small">取消</el-button>
                 </el-row>
               </el-row>
@@ -534,29 +540,6 @@
               <el-button type="primary" @click="batchDelVisible = false;">确 定</el-button>
             </div>
           </el-dialog> -->
-          <!-- 新建文章输入标题 -->
-          <el-dialog
-            width="30%"
-            title="新建文章"
-            :visible.sync="noteTitleVisiable"
-            append-to-body>
-            <span style="color:red">*</span><span style="font-size:15px;">标题：</span>
-            <el-input type="text" placeholder="请输入标题" size="medium" v-model="noteTitle" maxlength="45"></el-input>
-            <div slot="footer" class="dialog-footer" style="text-align: center;">
-              <el-button type="primary" @click="checkTitleIsNullOrNot(noteTitle);">确定</el-button>
-              <el-button @click="noteTitle=null;noteTitleVisiable = false">取消</el-button>
-            </div>
-          </el-dialog>
-          <!-- 修改标题 dialog -->
-          <el-dialog width="30%" title="修改标题" :visible.sync="editNoteTitleVisiable" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
-            <span style="color:red">*</span><span style="font-size:15px;">标题：</span>
-              <el-input maxlength="45" type="text" placeholder="请输入标题" size="medium" v-model="editDetail.title" clearable @change="checkEditTitle(editDetail.title);"></el-input>
-            <div slot="footer" class="dialog-footer" style="text-align: center;">
-            <span style="color:red" v-if="hasNoteTitle===false">标题不能为空</span>
-              <el-button type="primary" @click="editNoteTitleVisiable=false;noteTitle=editDetail.title" v-if="hasNoteTitle===true">确定</el-button>
-              <el-button @click="editNoteTitleVisiable = false" v-if="hasNoteTitle===true">取消</el-button>
-            </div>
-          </el-dialog>
           <!-- 发布的newdays -->
           <el-dialog
             width="30%"
@@ -601,12 +584,6 @@
       </el-container>
     </el-container>
   </div>
-  <!-- <div style="width:100%;min-height:99vh;" id="kb">
-    <el-aside style="width:19%;">
-      
-    </el-aside>
-    
-  </div> -->
 </template>
 
 <script>
@@ -683,8 +660,7 @@ export default{
       addVisible: false,
       delVisible: false,
       // batchDelVisible: false,
-      noteTitleVisiable: false, // 新建笔记模态框显示隐藏
-      editNoteTitleVisiable: false, // 修改笔记模态框显示隐藏
+      editNoteTitleVisiable: false,
       approvalVisible: false, // 审批模态框显示隐藏
       linkVisiable: false,
       releaseVisible: false,
@@ -692,7 +668,6 @@ export default{
       noteTitle: '', // 新建标题
       brief: '',
       remark: '',
-      hasNoteTitle: true, // 判断是否有标题
       newdays: 0,
       releaseInfo: {},
       body: '',
@@ -1362,7 +1337,7 @@ export default{
         return false
       } else {
         this.noteTitle = ''
-        this.noteTitleVisiable = true
+        this.addArticles = true
       }
     },
     // 节点ID查询文章
@@ -1498,11 +1473,11 @@ export default{
     checkTitleIsNullOrNot(noteTitle) {
       if (noteTitle === '') {
         this.$message.error('请输入标题！')
-        this.noteTitleVisiable = true
-        return
+        this.addArticles = true
+        return false
       } else {
         this.addArticles = true
-        this.noteTitleVisiable = false
+        return true
       }
     },
     // 打开修改页面
@@ -1545,7 +1520,10 @@ export default{
         })
     },
     // 提交修改
-    modifyNote() {
+    modifyNote(noteTitle) {
+      if (!this.checkEditTitle(noteTitle)) {
+        return false
+      }
       var temp_content = this.editDetail.body
       temp_content = verify(temp_content, '<p>')
       temp_content = verify(temp_content, '</p>')
@@ -1646,20 +1624,25 @@ export default{
     // 判断修改标题是否为空
     checkEditTitle(noteTitle) {
       if (noteTitle === '' || noteTitle.split(' ').join('').length === 0) {
-        this.hasNoteTitle = false
+        this.editArticles = true
+        this.$message.error('请输入文章标题')
+        return false
       } else {
-        this.hasNoteTitle = true
+        return true
       }
     },
     // 提交新建
-    generateNote() {
+    generateNote(noteTitle) {
+      if (!this.checkTitleIsNullOrNot(noteTitle)) {
+        return false
+      }
       var temp_content = this.body
       temp_content = verify(temp_content, '<p>')
       temp_content = verify(temp_content, '</p>')
       temp_content = verify(temp_content, '<br>')
       if (temp_content === '' || temp_content === null || temp_content.split(' ').join('').length === 0) {
         this.$message.error('内容不能为空！')
-        return
+        return false
       } else {
         this.note_item.title = this.noteTitle
         this.note_item.body = this.body
@@ -2361,5 +2344,12 @@ export default{
   #kb>.el-container{
       min-height:80vh;
     }
+  }
+</style>
+<style rel="stylesheet/scss" lang="scss" scoped>
+  .title-input /deep/.el-input__inner{
+    text-align:center;
+    outline:none;
+    font-size:16px;
   }
 </style>
