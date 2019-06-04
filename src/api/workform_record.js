@@ -37,3 +37,27 @@ export function reSendMsg(id) {
     method: 'patch'
   })
 }
+// 新增催办
+export function addUrge(req) {
+  return requestv2({
+    url: `/workflow/workformRecordUrges`,
+    method: 'post',
+    data: req
+  })
+}
+// 查询催办列表
+export function queryUrgeList(req) {
+  return requestv2({
+    url: '/workflow/workformRecordUrges',
+    method: 'get',
+    params: req
+  })
+}
+// 取消催办
+export function cancelUrge(id) {
+  return requestv2({
+    url: `/workflow/workformRecordUrge/${id}`,
+    method: 'delete'
+
+  })
+}

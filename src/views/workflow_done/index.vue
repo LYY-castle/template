@@ -73,15 +73,6 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="参照模板"
-            prop="workform"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{scope.row.workform.name}}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
             label="操作人" :show-overflow-tooltip="true">
             <template slot-scope="scope">
               {{(scope.row.modifierName == null) ? '无':scope.row.modifierName}}
@@ -93,11 +84,49 @@
             label="操作时间"
             width="155">
           </el-table-column>
-          <el-table-column align="center" label="状态" >
+          <el-table-column align="center" label="工单状态" >
             <template slot-scope="scope">
               <div :class="scope.row.status==0?'create':scope.row.status==3?'visible':'invisible'">
                 <span>{{showStatus(scope.row.status)}}</span>
               </div>
+            </template>
+          </el-table-column>
+          <el-table-column
+                prop="urgeCounts"
+                label="催办状态"
+                :render-header="showQuestion"
+                align="center">
+            <template slot-scope="scope">
+              <el-badge   v-if="scope.row.urgeCounts==null||scope.row.urgeCounts==0" :hidden="scope.row.urgeCounts==null||scope.row.urgeCounts==0">
+                <el-tag size="small" type="info">未催办</el-tag>
+              </el-badge>
+              <el-badge :value="scope.row.urgeCounts" class="badge_item" type="primary" v-else-if="scope.row.urgeCounts>0">
+                <el-popover trigger="click">
+                  <el-table :data="urgeList" >
+                    <el-table-column 
+                      label="催办内容"
+                      width="180"
+                      prop="urgeContent"
+                      :show-overflow-tooltip="true">
+                    </el-table-column>
+                    <el-table-column
+                      label="催办人"
+                      prop="creatorName"
+                      :show-overflow-tooltip="true">
+                      </el-table-column>
+                    <el-table-column
+                      label="催办时间"
+                      width="180"
+                      prop="createTime"
+                      :show-overflow-tooltip="true">
+                      </el-table-column>
+                  </el-table>
+                  <a slot="reference" @click="showUrgeList(scope.row.id)"><el-tag size="small" type="success" >已催办</el-tag></a>
+                </el-popover>
+              </el-badge>
+              <el-badge v-else>
+                <el-tag size="small">未知情况</el-tag>
+              </el-badge>
             </template>
           </el-table-column>
           <el-table-column
@@ -218,11 +247,12 @@
   </div>
 </template>
 <script>
-import { queryList, queryOne, reSendMsg } from '@/api/workform_record'
+import { queryList, queryOne, reSendMsg, queryUrgeList } from '@/api/workform_record'
 export default {
   name: 'workflow_done',
   data() {
     return {
+      urgeList: [],
       WORKFLOW_AUTH_STAFFNO: false,
       workformRecordDetail: {
         workform: {},
@@ -266,6 +296,24 @@ export default {
     this.queryList(this.req)
   },
   methods: {
+    showQuestion(h, { column, $index }) {
+      return (<span>催办状态&nbsp;<el-tooltip content='点击查看详情' placement='top'><i class='el-icon-question' /></el-tooltip></span>)
+    },
+    showUrgeList(workformRecordId) {
+      const req = {}
+      req.workformRecordId = workformRecordId
+      queryUrgeList(req).then(res => {
+        if (res.data.code === 0 && res.data.data) {
+          this.urgeList = res.data.data
+        } else {
+          this.$message({
+            message: res.data.message || '催办记录不完善',
+            type: 'error',
+            duration: 1000
+          })
+        }
+      })
+    },
     reSendMsg(id) {
       this.$confirm('确认重发短信？', '请确认', {
         confirmButtonText: '确定',
@@ -432,3 +480,9 @@ export default {
   }
 }
 </script>
+<style>
+.badge_item {
+  margin-top: 10px;
+  margin-right: 5px;
+}
+</style>

@@ -72,6 +72,30 @@ export function reSendMsg(id) {
     method: 'patch'
   })
 }
+// 新增催办
+export function addUrge(req) {
+  return request_v2({
+    url: `/workflow/workformRecordUrges`,
+    method: 'post',
+    data: req
+  })
+}
+// 查询催办列表
+export function queryUrgeList(req) {
+  return request_v2({
+    url: '/workflow/workformRecordUrges',
+    method: 'get',
+    params: req
+  })
+}
+// 取消催办
+export function cancelUrge(id) {
+  return request_v2({
+    url: `/workflow/workformRecordUrge/${id}`,
+    method: 'delete'
+
+  })
+}
 // 修改接触记录小结和备注信息
 export function recordSummaryInfo(data) {
   return request_v2({

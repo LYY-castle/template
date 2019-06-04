@@ -75,15 +75,6 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="参照模板"
-            prop="workform"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-              {{scope.row.workform.name}}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
             label="操作人" :show-overflow-tooltip="true">
             <template slot-scope="scope">
               {{(scope.row.modifierName == null) ? '无':scope.row.modifierName}}
@@ -95,11 +86,56 @@
             label="操作时间"
             width="155">
           </el-table-column>
-          <el-table-column align="center" label="状态" >
+          <el-table-column align="center" label="工单状态" >
             <template slot-scope="scope">
               <div :class="scope.row.status==0?'create':scope.row.status==3?'visible':'invisible'">
                 <span>{{showStatus(scope.row.status)}}</span>
               </div>
+            </template>
+          </el-table-column>
+          <el-table-column
+                prop="urgeCounts"
+                label="催办状态"
+                :render-header="showQuestion"
+                align="center">
+            <template slot-scope="scope">
+              <el-badge   v-if="scope.row.urgeCounts==null||scope.row.urgeCounts==0" :hidden="scope.row.urgeCounts==null||scope.row.urgeCounts==0">
+                <el-tag size="small" type="info">未催办</el-tag>
+              </el-badge>
+              <el-badge :value="scope.row.urgeCounts" class="badge_item" type="primary" v-else-if="scope.row.urgeCounts>0">
+                <el-popover trigger="click">
+                  <el-table :data="urgeList" >
+                    <el-table-column 
+                      label="催办内容"
+                      width="180"
+                      prop="urgeContent"
+                      :show-overflow-tooltip="true">
+                    </el-table-column>
+                    <el-table-column
+                      label="催办人"
+                      prop="creatorName"
+                      :show-overflow-tooltip="true">
+                      </el-table-column>
+                    <el-table-column
+                      label="催办时间"
+                      width="180"
+                      prop="createTime"
+                      :show-overflow-tooltip="true">
+                      </el-table-column>
+                    <el-table-column
+                      label="操作"
+                      :show-overflow-tooltip="true">
+                       <template slot-scope="scope">
+                          <el-button type="text" size="small" @click="toCancelUrge(scope.row.id)">取消催办</el-button>
+                       </template>
+                      </el-table-column>
+                  </el-table>
+                  <a slot="reference" @click="showUrgeList(scope.row.id)"><el-tag size="small" type="success" >已催办</el-tag></a>
+                </el-popover>
+              </el-badge>
+              <el-badge v-else>
+                <el-tag size="small">未知情况</el-tag>
+              </el-badge>
             </template>
           </el-table-column>
           <el-table-column
@@ -108,6 +144,7 @@
             width="200">
             <template slot-scope="scope">
               <el-button @click="detailVisible=true;getWorkformRecordDetailById(scope.row.id);" type="text" size="small">详情</el-button>
+              <el-button type="text" size="small" @click="toAddUrge(scope.row.id)">催办</el-button>
               <el-button @click="reSendMsg(scope.row.id);" type="text" size="small">重发短信</el-button>
             </template>
           </el-table-column>
@@ -217,14 +254,44 @@
         <el-button type="primary" plain @click="detailVisible = false">关闭</el-button>
       </div>
     </el-dialog>
+       <el-dialog
+      width="30%"
+      title="催办"
+      :visible.sync="urgeVisible"
+      :before-close="cancelUrge"
+      append-to-body>
+      <el-form v-model="addUrge" ref="addUrge">
+        <el-form-item label="工单号：" v-model="addUrge.workformRecordId">{{addUrge.workformRecordId}}</el-form-item>
+        <el-form-item label="工单名称：" v-model="addUrge.workformRecordName">{{addUrge.workformRecordName}}</el-form-item>
+        <el-form-item label="催办内容：" >
+          <el-input type="textarea" v-model="addUrge.urgeContent" placeholder="请输入催办内容" :autosize="{ minRows: 2, maxRows: 4}" style="resize:vertical;" :value="addUrge.urgeContent"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button
+          type="primary"
+          @click="submitUrge()"
+        >确定</el-button>
+        <el-button @click="cancelUrge()">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-import { queryList, queryOne, reSendMsg } from '@/api/workform_record'
+import { queryList, queryOne, reSendMsg, addUrge, queryUrgeList, cancelUrge } from '@/api/workform_record'
 export default {
   name: 'my_workflow',
   data() {
     return {
+      urgeList: [],
+      addUrge: {
+        workformRecordId: null,
+        workformRecordName: '',
+        urgeContent: '',
+        creatorId: '',
+        creatorName: ''
+      },
+      urgeVisible: false, // 催办弹窗
       workformRecordDetail: {
         workform: {},
         workformRecordRuleResults: [
@@ -259,6 +326,92 @@ export default {
     this.queryList(this.req)
   },
   methods: {
+    showQuestion(h, { column, $index }) {
+      return (<span>催办状态&nbsp;<el-tooltip content='点击查看详情' placement='top'><i class='el-icon-question' /></el-tooltip></span>)
+    },
+    toCancelUrge(id) {
+      this.$confirm('确认取消催办？', '请确认', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        cancelUrge(id).then(res => {
+          if (res.data && res.data.code === 0) {
+            this.$message({
+              message: res.data.message,
+              type: 'success',
+              duration: 1000
+            })
+            this.queryList(this.req)
+          } else {
+            this.$message({
+              message: res.data.message || '未知错误',
+              type: 'error',
+              duration: 1000
+            })
+          }
+        })
+      })
+    },
+    showUrgeList(workformRecordId) {
+      const req = {}
+      req.workformRecordId = workformRecordId
+      queryUrgeList(req).then(res => {
+        if (res.data.code === 0 && res.data.data) {
+          this.urgeList = res.data.data
+        } else {
+          this.$message({
+            message: res.data.message || '催办记录不完善',
+            type: 'error',
+            duration: 1000
+          })
+        }
+      })
+    },
+    submitUrge() {
+      this.addUrge.creatorId = localStorage.getItem('agentId')
+      this.addUrge.creatorName = localStorage.getItem('agentName')
+      addUrge(this.addUrge).then(res => {
+        if (res.data.code === 0) {
+          this.cancelUrge()// 清缓存
+          this.queryList(this.req)
+        } else {
+          this.$message({
+            message: res.data.message || '催办失败',
+            type: 'error',
+            duration: 1000
+          })
+          return
+        }
+      })
+    },
+    cancelUrge() {
+      this.urgeVisible = false
+      this.addUrge = {
+        workformRecordId: null,
+        workformRecordName: '',
+        urgeContent: '',
+        creatorId: '',
+        creatorName: ''
+      }
+    },
+    toAddUrge(workFormRecordId) {
+      const vm = this
+      queryOne(workFormRecordId).then(res => {
+        if (res.data.code === 0 && res.data.data) {
+          vm.addUrge.workformRecordId = (res.data.data.id == null) ? '' : res.data.data.id
+          vm.addUrge.workformRecordName = (res.data.data.name == null) ? '' : res.data.data.name
+        } else {
+          vm.$message({
+            message: res.data.message || '未查到工单记录',
+            type: 'error',
+            duration: 1000
+          })
+          return
+        }
+      })
+      this.urgeVisible = true
+    },
     reSendMsg(id) {
       this.$confirm('确认重发短信？', '请确认', {
         confirmButtonText: '确定',
@@ -422,3 +575,9 @@ export default {
   }
 }
 </script>
+<style>
+.badge_item {
+  margin-top: 10px;
+  margin-right: 5px;
+}
+</style>
