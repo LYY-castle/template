@@ -60,13 +60,14 @@
               <!-- </div> -->
               <el-cascader
                 class="status-cascader"
-                popper-class="status-popper"
+                :popper-class="statusPopper"
                 v-model="statuses"
                 :options="obstatus"
                 :props="cascaderProps"
                 filterable
                 change-on-select
                 @blur="statuses=[]"
+                @focus="popperVisible"
                 @change="handleStatueChange"
               >
               </el-cascader>
@@ -361,6 +362,8 @@ export default {
   name: 'layout',
   data() {
     return {
+      // statusPopper: 'status-popper',
+      statusPopper: '',
       wechat_customerId: '',
       obstatus: [],
       obstatusNow: '',
@@ -506,6 +509,18 @@ export default {
         } else {
           if (data[i].children) this.getObstatusNow(data[i].children, code)
         }
+      }
+    },
+    popperVisible() {
+      if (sessionStorage.getItem('sidebarStatus') === '0') {
+        this.statusPopper = 'status-popper'
+        $('.status-popper').hide().removeClass('sideBarClosed')
+      } else if (sessionStorage.getItem('sidebarStatus') === '1') {
+        this.statusPopper = 'status-popper sideBarClosed'
+        $('.status-popper').hide().addClass('sideBarClosed')
+      } else {
+        this.statusPopper = 'status-popper'
+        $('.status-popper').hide().removeClass('sideBarClosed')
       }
     },
     handleStatueChange(e) {
@@ -2375,6 +2390,9 @@ export default {
 <style rel="stylesheet/scss" lang="scss">
 body /deep/ .status-popper{
   left:217px !important;
+  &.sideBarClosed{
+    left:88px !important;
+  }
 }
 .navbar{
   .el-input{
