@@ -3,7 +3,7 @@
     <div>
       <el-row :gutter="5">
         <el-col :span="8">
-          <el-card shadow="never" class="card-container">
+          <el-card shadow="never" class="card-container" style="margin-bottom:10px;">
             <div slot="header" class="clearfix">
               <div style="margin-bottom:50px;">
                 <b>呼入统计</b>
@@ -13,21 +13,21 @@
               <el-row>
                 <el-col :span="8">
                   <el-card shadow="never" class="no-border">
-                    <div class="item-content" style="cursor:auto;">
-                      <span class="line-center font30">{{incallStatistical.ringCount?incallStatistical.ringCount:0}}</span>
+                    <div class="item-content" style="cursor:point;">
+                      <span class="line-center font30" @click="changeToDialTaskList('-1')" >{{incallStatistical.ringCount?incallStatistical.ringCount:0}}</span>
                     </div>
                     <div style="text-align: center;">
-                      <span class="font12" style="height:40px;">振铃次数</span>
+                      <span class="font12" style="height:40px;" >振铃次数</span>
                     </div>
                   </el-card>
                 </el-col>
                 <el-col :span="8">
                   <el-card shadow="never" class="no-border">
-                    <div class="item-content" style="cursor:auto;">
-                      <span class="line-center font30">{{incallStatistical.answerCount?incallStatistical.answerCount:0}}</span>
+                    <div class="item-content" style="cursor:point;">
+                      <span class="line-center font30" @click="changeToDialTaskList('1')">{{incallStatistical.answerCount?incallStatistical.answerCount:0}}</span>
                     </div>
                     <div style="text-align: center">
-                      <span class="font12" style="height:40px;">接听次数</span>
+                      <span class="font12" style="height:40px;" >接听次数</span>
                     </div>
                   </el-card>
                 </el-col>
@@ -39,7 +39,7 @@
           <el-card shadow="never" class="card-container">
             <div slot="header" class="clearfix">
               <div style="margin-bottom:50px;">
-                <b>通话统计</b>
+                <b>呼入话务量统计</b>
               </div>
             </div>
             <div class="text item">
@@ -88,7 +88,7 @@
 
 <script>
 import { getSubordinate, getIncallStatistical } from '@/api/dashboard'
-import { sec_to_time } from '@/utils/tools'
+import { sec_to_time, formatDateTime } from '@/utils/tools'
 export default {
   name: 'incall_statistical',
   props: ['role'],
@@ -146,6 +146,12 @@ export default {
   methods: {
     sec_to_time(second = 0) {
       return sec_to_time(second)
+    },
+    changeToDialTaskList(status) {
+      this.$router.push({
+        path: process.env.BUILT_IN_ROUTERS.contactRecordQuery,
+        query: { 'callStatu': status, 'sTime': formatDateTime(new Date().setHours(0, 0, 0, 0)), 'eTime': formatDateTime(new Date().setHours(23, 59, 59, 0)), 'agentid': '', 'contactType': '1', 'callDirection': '1' }
+      })
     }
   }
 }

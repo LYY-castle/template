@@ -33,7 +33,8 @@ export function queryByKeyWords(req) {
       departId: req.departId,
       agentid: req.agentid,
       contactType: req.contactType,
-      status: req.status === '-1' ? null : req.status
+      status: req.status === '-1' ? null : req.status,
+      callDirection: req.callDirection === '' ? null : req.callDirection
     }
   })
 }

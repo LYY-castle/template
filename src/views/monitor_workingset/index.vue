@@ -104,7 +104,7 @@
           <el-card shadow="never" class="card-container">
             <div slot="header" class="clearfix">
               <div>
-                <b>通话统计</b>
+                <b>总话务量统计</b>
               </div>
               <div>
                 <div class="font12" style="display: inline-block;line-height: 25px;">
@@ -131,10 +131,8 @@
               <el-row>
                 <el-col :span="8" >
                   <el-card shadow="never" class="no-border">
-                    <div class="item-content">
-                      <a @click="changeToMonitorPhone()">
-                        <font class="line-center font30 under-line">{{ctiData.online_time_duration}}</font>
-                      </a>
+                    <div class="item-content" style="cursor:default;">
+                      <font class="line-center font30">{{ctiData.online_time_duration}}</font>
                     </div>
                     <div style="text-align: center">
                       <font class="font12" style="height:40px;">在线时长</font>
@@ -143,22 +141,18 @@
                 </el-col>
                 <el-col :span="8">
                   <el-card shadow="never" class="no-border">
-                    <div class="item-content">
-                      <a @click="changeToMonitorPhone()">
-                        <font class="line-center font30 under-line">{{ctiData.free_time_duration}}</font>
-                      </a>
+                    <div class="item-content" style="cursor:default;">
+                      <font class="line-center font30">{{ctiData.free_time_duration}}</font>
                     </div>
-                    <div style="text-align: center">
+                    <div style="text-align: center" >
                       <font class="font12" style="height:40px;">空闲时长</font>
                     </div>
                   </el-card>
                 </el-col>
                 <el-col :span="8">
                   <el-card shadow="never" class="no-border">
-                    <div class="item-content">
-                      <a @click="changeToMonitorPhone()">
-                        <font class="line-center font30 under-line" >{{ctiData.busy_time_duration}}</font>
-                      </a>
+                    <div class="item-content" style="cursor:default;">
+                      <font class="line-center font30" >{{ctiData.busy_time_duration}}</font>
                     </div>
                     <div style="text-align: center">
                       <font class="font12" style="height:40px;">示忙时长</font>
@@ -446,7 +440,7 @@ export default {
     changeToDailTaskList() { // 跳转到接触记录
       this.$router.push({
         path: process.env.BUILT_IN_ROUTERS.contactRecordQuery,
-        query: { 'callStatu': 1, 'sTime': formatDateTime(new Date().setHours(0, 0, 0, 0)), 'eTime': formatDateTime(new Date().setHours(23, 59, 59, 0)), 'agentid': '', 'contactType': '1' }
+        query: { 'callStatu': 1, 'sTime': formatDateTime(new Date().setHours(0, 0, 0, 0)), 'eTime': formatDateTime(new Date().setHours(23, 59, 59, 0)), 'agentid': '', 'contactType': '1', 'callDirection': '0' }
       })
     },
     on_queuecount(event, queuename, queuecount) {
