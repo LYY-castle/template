@@ -73,10 +73,8 @@
               <el-row>
                 <el-col :span="8">
                   <el-card shadow="never" class="no-border">
-                    <div class="item-content">
-                      <a class="bold" @click="changeToOrderManagement()" >
-                        <font class="line-center font30 under-line">{{orderData.total_amount}}</font>
-                      </a>
+                    <div class="item-content" style="cursor:default;" >
+                      <font class="line-center font30 " style="cursor:default;">{{orderData.total_amount}}</font>
                     </div>
                     <div style="text-align: center">
                       <font class="font12">订单总金额</font>
@@ -85,12 +83,10 @@
                 </el-col>
                 <el-col :span="8">
                   <el-card shadow="never" class="no-border">
-                    <div class="item-content">
-                      <a class="bold" @click="changeToOrderManagement()">
-                        <font class="line-center font30 under-line">{{orderData.avg_amount}}</font>
-                      </a>
+                    <div class="item-content"  style="cursor:default;">
+                      <font class="line-center font30 bold" style="cursor:default;">{{orderData.avg_amount}}</font>
                     </div>
-                    <div style="text-align: center">
+                    <div style="text-align: center;" >
                       <font class="font12" style="height:40px;">订单平均金额</font>
                     </div>
                   </el-card>

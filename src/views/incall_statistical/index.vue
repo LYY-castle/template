@@ -3,7 +3,7 @@
     <div>
       <el-row :gutter="5">
         <el-col :span="8">
-          <el-card shadow="never" class="card-container" style="margin-bottom:10px;">
+          <el-card shadow="never" class="card-container" style="margin-bottom:20px;">
             <div slot="header" class="clearfix">
               <div style="margin-bottom:50px;">
                 <b>呼入统计</b>
