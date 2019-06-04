@@ -808,7 +808,7 @@
                   <el-input size="small" v-model="scope.row.detail"></el-input>
                 </template>
               </el-table-column>
-              <el-table-column align="center" label="是否默认">
+              <el-table-column align="center" label="是否默认" width="110px">
                 <template slot-scope="scope">
                   <el-switch
                     @change="setRegionOnly(0,scope.$index)"
