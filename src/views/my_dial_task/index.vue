@@ -314,8 +314,8 @@
               :label="district.regionName"
             ></el-option>
           </el-select>
-          <i class="el-icon-circle-check-outline" @click="modifyCustomerInfo(customerInfo.customerId,customerInfo.linkId,customerInfo.addressId,customerInfo.carinfoId,item,index)" style="cursor:pointer;display:none;" :id="item+'btn1'"></i>
-          <i class="el-icon-circle-close-outline" @click="cancelEdit(item)" style="cursor:pointer;display:none;" :id="item+'btn2'"></i>
+          <i class="el-icon-circle-check-outline" title="保存" @click="modifyCustomerInfo(customerInfo.customerId,customerInfo.linkId,customerInfo.addressId,customerInfo.carinfoId,item,index)" style="display:none;" :id="item+'btn1'"></i>
+          <i class="el-icon-circle-close-outline" title="取消" @click="cancelEdit(item)" style="margin-left:3px;display:none;" :id="item+'btn2'"></i>
           <i :id="item+'edit'" @click="changeToInput(item)" style="cursor:pointer;">
             <img src="../../../static/images/edit_btn.png">
           </i>
@@ -644,6 +644,21 @@
 
 <style lang='scss' scoped>
 .dial-task{
+  .el-icon-circle-check-outline,.el-icon-circle-close-outline{
+    font-size:16px;
+    cursor:pointer;
+    position:relative;
+    top:2px;
+    &:hover{
+      opacity: 0.7;
+    }
+  }
+  .el-icon-circle-check-outline{
+    color:#28CC6C;
+  }
+  .el-icon-circle-close-outline{
+    color:#ED2135;
+  }
   .description-hide{
     text-overflow: ellipsis;
     white-space:nowrap;
