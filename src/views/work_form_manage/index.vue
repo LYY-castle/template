@@ -6,7 +6,7 @@
       </el-row>
       <el-row class="margin-bottom-20">
         <el-button type="success" size="small" @click="createWorkFrom()">新建</el-button>
-        <el-button type="danger" size="small" @click="mutipleDelete([workFormData])">批量删除</el-button>
+        <el-button type="danger" size="small" @click="mutipledelVisible = true">批量删除</el-button>
         <!-- <el-button type="info" size="small" @click="importVisible=true;importInfo.uploadFileName='';importInfo.batchName='';importInfo.source=''">导入客户</el-button> -->
       </el-row>
       <el-row>
@@ -19,7 +19,9 @@
           <el-table-column align="center" type="selection" width="55"></el-table-column>
 
           <el-table-column align="center" label="表单名" :show-overflow-tooltip="true">
-            <template slot-scope="scope" @click="edite(scope.row)">{{ scope.row.name }}</template>
+            <template slot-scope="scope">
+              <span @click="edite(scope.row)" style="color:red;cursor:pointer;">{{ scope.row.name }}</span>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -43,7 +45,7 @@
               <el-button @click="showModifyContent(scope.row)" type="text" size="small">修改</el-button>
               <el-button
                 @click="
-                  delVisible = true;
+                  singledelVisible = true;
                   workFormId = scope.row.id;
                 "
                 type="text"
@@ -98,13 +100,13 @@
               <i class="icofont-thin-down"></i>
               <span slot="title">下拉框</span>
             </el-menu-item>
-            <el-menu-item index="7" @click="addDemo('datetime')">
-              <i class="icofont-ui-timer"></i>
-              <span slot="title">日期+时间</span>
-            </el-menu-item>
             <el-menu-item index="8" @click="addDemo('multipleSelect')">
               <i class="icofont-stylish-down"></i>
               <span slot="title">多级下拉框</span>
+            </el-menu-item>
+            <el-menu-item index="7" @click="addDemo('datetime')">
+              <i class="icofont-ui-timer"></i>
+              <span slot="title">日期+时间</span>
             </el-menu-item>
             <el-menu-item index="9" @click="addDemo('date')">
               <i class="icofont-table"></i>
@@ -151,10 +153,10 @@
                 </div>
                 <el-input
                   size="small"
-                  disabled
+                  :disabled="show===3?false:true"
                   style="inputWidth"
                   :placeholder="item.placeholder"
-                  v-model="item.dataValues"
+                  v-model="item.defaultValue"
                   :maxlength="item.maxValue"
                   :minlength="item.minValue"
                 ></el-input>
@@ -168,10 +170,10 @@
                   size="small"
                   type="textarea"
                   :rows="1"
-                  disabled
+                  :disabled="show===3?false:true"
                   style="inputWidth"
                   :placeholder="item.placeholder"
-                  v-model="item.dataValues"
+                  v-model="item.defaultValue"
                   :maxlength="item.maxValue"
                   :minlength="item.minValue"
                 ></el-input>
@@ -184,9 +186,9 @@
                 <el-input
                   size="small"
                   type="number"
-                  disabled
+                  :disabled="show===3?false:true"
                   :placeholder="item.placeholder"
-                  v-model="item.dataValues"
+                  v-model="item.defaultValue"
                   :maxlength="item.maxValue"
                   :minlength="item.minValue"
                 ></el-input>
@@ -196,13 +198,14 @@
                 <div class="name">
                   <p>{{ item.val }}</p>
                 </div>
-                <div v-for="(item1,a) in item.dataValues" :key="a">
-                  <el-radio-group v-model="item.dataValues">
-                    <el-radio :label="a" disabled>
-                      {{
-                      item1
-                      }}
-                    </el-radio>
+                <div>
+                  <el-radio-group v-model="item.defaultValue">
+                    <el-radio
+                      :label="item1.value"
+                      :disabled="show===3?false:true"
+                      v-for="(item1,index1) in item.dataValues"
+                      :key="index1"
+                    ></el-radio>
                   </el-radio-group>
                 </div>
               </div>
@@ -211,82 +214,47 @@
                 <div class="name">
                   <p>{{ item.val }}</p>
                 </div>
-                <!-- <div>
-                  <el-checkbox-group v-for="(a, k) in item.options" :key="k">
-                    <el-checkbox label="k" :disabled="item.rw===0?true:false">{{
-                      a.content
-                    }}</el-checkbox>
+                <div>
+                  <el-checkbox-group v-model="item.defaultValue">
+                    <el-checkbox
+                      v-for="(item2,index2) in item.dataValues"
+                      :key="index2"
+                      :label="item2.value"
+                    ></el-checkbox>
                   </el-checkbox-group>
-                </div>-->
+                </div>
               </div>
-              <div v-if="item.dataType === 'select'" class="demo">
+              <div
+                v-if="item.dataType === 'select'|| item.dataType === 'multipleSelect'"
+                class="demo"
+              >
                 <div class="name">{{ item.name }}</div>
                 <div class="name">
                   <p>{{ item.val }}</p>
                 </div>
-                <!-- <el-select
+                <el-select
                   :placeholder="item.placeholder"
-                  v-model="item.value"
-                  :disabled="item.rw===0?true:false"
+                  v-model="item.defaultValue"
+                  :disabled="show===3?false:true"
+                  :multiple="item.dataType==='multipleSelect'?true:false"
                 >
-                  <el-option
-                    v-for="(a, i) in item.options"
-                    :key="i"
-                    :value="a.content"
-                    :disabled="item.rw===0?true:false"
-                  ></el-option>
-                </el-select>-->
+                  <el-option v-for="i in item.dataValues" :key="i.value" :value="i.value"></el-option>
+                </el-select>
               </div>
-              <div v-if="item.dataType === 'datetime'" class="demo">
+              <div
+                v-if="item.dataType === 'datetime'||item.dataType === 'date'||item.dataType === 'time'"
+                class="demo"
+              >
                 <div class="name">{{ item.name }}</div>
                 <div class="name">
                   <p>{{ item.val }}</p>
                 </div>
                 <el-date-picker
-                  type="datetime"
+                  :type="item.dataType"
                   :placeholder="item.placeholder"
-                  disabled
-                  v-model="item.dataValues"
+                  :disabled="show===3?false:true"
+                  v-model="item.defaultValue"
                 ></el-date-picker>
-              </div>
-              <div v-if="item.dataType === 'multipleSelect'" class="demo">
-                <div class="name">{{ item.name }}</div>
-                <div class="name">
-                  <p>{{ item.val }}</p>
-                </div>
-                <!-- <el-select
-                  v-model="item.dataValues"
-                  multiple
-                  :placeholder="item.placeholder"
-                  disabled
-                >
-                  <el-option
-                    v-for="item in item.dataValues"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  >
-                  </el-option>
-                </el-select>-->
-              </div>
-              <div v-if="item.dataType === 'date'" class="demo">
-                <div class="name">{{ item.name }}</div>
-                <div class="name">
-                  <p>{{ item.val }}</p>
-                </div>
-                <el-date-picker
-                  v-model="item.dataValues"
-                  type="date"
-                  :placeholder="item.placeholder"
-                  disabled
-                ></el-date-picker>
-              </div>
-              <div v-if="item.dataType === 'time'" class="demo">
-                <div class="name">{{ item.name }}</div>
-                <div class="name">
-                  <p>{{ item.val }}</p>
-                </div>
-                <el-time-picker :placeholder="item.placeholder" :value-format="item.formatValue"></el-time-picker>
               </div>
               <div v-if="item.dataType === 'span'" class="demo">
                 <div class="name">{{ item.name }}</div>
@@ -294,8 +262,8 @@
                   <p>{{ item.val }}</p>
                 </div>
                 <quill-editor
-                  disabled
-                  v-model="item.dataValues"
+                  :disabled="show===3?false:true"
+                  v-model="item.defaultValue"
                   :options="editorOption"
                   :placeholder="item.placeholder"
                   :maxlength="item.maxValue"
@@ -309,7 +277,11 @@
                 </div>
                 <div>
                   <div style="display:flex;justify-content: space-between;">
-                    <el-select v-model="item.defaultValue.province" placeholder="请选择" disabled>
+                    <el-select
+                      v-model="item.defaultValue.province"
+                      placeholder="请选择"
+                      :disabled="show===3?false:true"
+                    >
                       <el-option
                         v-for="item in province"
                         :key="item.id"
@@ -317,7 +289,11 @@
                         :value="item.regionCode"
                       ></el-option>
                     </el-select>
-                    <el-select v-model="item.defaultValue.city" placeholder="请选择" disabled>
+                    <el-select
+                      v-model="item.defaultValue.city"
+                      placeholder="请选择"
+                      :disabled="show===3?false:true"
+                    >
                       <el-option
                         v-for="item in city"
                         :key="item.id"
@@ -325,7 +301,11 @@
                         :value="item.regionCode"
                       ></el-option>
                     </el-select>
-                    <el-select v-model="item.defaultValue.area" placeholder="请选择" disabled>
+                    <el-select
+                      v-model="item.defaultValue.area"
+                      placeholder="请选择"
+                      :disabled="show===3?false:true"
+                    >
                       <el-option
                         v-for="item in area"
                         :key="item.id"
@@ -339,7 +319,7 @@
                     rows="2"
                     :placeholder="item.placeholder"
                     v-model="item.defaultValue.detail"
-                    disabled
+                    :disabled="show===3?false:true"
                   ></el-input>
                 </div>
               </div>
@@ -367,7 +347,7 @@
           </div>
         </el-col>
         <!-- 设值 -->
-        <el-col :span="6" class="setting" v-if="show === 1 || show === 2">
+        <el-col :span="7" class="setting" v-if="show === 1 || show === 2" :rules="rules">
           <div style="font-size:18px;font-weight:800">字段属性</div>
           <div v-show="table">
             <div>
@@ -414,17 +394,13 @@
                 <div>
                   <span>默认值</span>
                 </div>
-                <el-input type="text" v-model="item.dataValues"></el-input>
+                <el-input type="text" v-model="item.defaultValue"></el-input>
               </div>
               <div>
                 <div>
                   <span>默认值类型</span>
                 </div>
-                <el-input
-                  type="number"
-                  v-model="item.defaultValueType"
-                  @change="checkData(item.defaultValueType)"
-                ></el-input>
+                <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
               <div>
                 <div>
@@ -506,17 +482,13 @@
                 <div>
                   <span>默认值</span>
                 </div>
-                <el-input type="text" v-model="item.dataValues"></el-input>
+                <el-input type="text" v-model="item.defaultValue"></el-input>
               </div>
               <div>
                 <div>
                   <span>默认值类型</span>
                 </div>
-                <el-input
-                  type="number"
-                  v-model="item.defaultValueType"
-                  @change="checkData(item.defaultValueType)"
-                ></el-input>
+                <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
               <div>
                 <div>
@@ -598,17 +570,13 @@
                 <div>
                   <span>默认值</span>
                 </div>
-                <el-input type="number" v-model="item.dataValues"></el-input>
+                <el-input type="number" v-model="item.defaultValue"></el-input>
               </div>
               <div>
                 <div>
                   <span>默认值类型</span>
                 </div>
-                <el-input
-                  type="number"
-                  v-model="item.defaultValueType"
-                  @change="checkData(item.defaultValueType)"
-                ></el-input>
+                <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
               <div>
                 <div>
@@ -691,45 +659,45 @@
                   <span>选择项</span>
                 </div>
                 <div>
-                  <el-radio-group v-model="item.values">
-                    <el-radio :label="k">
-                      <el-input v-model="arr[k]" size="small" type="text" clearable></el-input>
-                      <el-button
-                        icon="el-icon-arrow-up"
-                        type="text"
-                        size="mini"
-                        title="上移"
-                        @click="upOption(item.options, k, item.options.length)"
-                      ></el-button>
-                      <el-button
-                        icon="el-icon-arrow-down"
-                        type="text"
-                        size="mini"
-                        title="下移"
-                        @click="
-                          downOption(item.options, k, item.options.length)
+                  <div v-for="(item5,index5) in item.dataValues" :key="index5">
+                    <el-input v-model="item5.value" size="small" type="text"></el-input>
+                    <el-button
+                      icon="el-icon-arrow-up"
+                      type="text"
+                      size="mini"
+                      title="上移"
+                      @click="upOption(item.dataValues, index5, item.dataValues.length)"
+                    ></el-button>
+                    <el-button
+                      icon="el-icon-arrow-down"
+                      type="text"
+                      size="mini"
+                      title="下移"
+                      @click="
+                          downOption(item.dataValues, index5, item.dataValues.length)
                         "
-                      ></el-button>
-                      <el-button
-                        icon="el-icon-delete"
-                        type="text"
-                        size="mini"
-                        title="删除"
-                        @click="removeRadio(item.options, k)"
-                      ></el-button>
-                    </el-radio>
-                  </el-radio-group>
+                    ></el-button>
+                    <el-button
+                      icon="el-icon-delete"
+                      type="text"
+                      size="mini"
+                      title="删除"
+                      @click="removeRadio(item.dataValues, index5)"
+                    ></el-button>
+                  </div>
                 </div>
+              </div>
+              <div>
+                <div>
+                  <span>默认值</span>
+                </div>
+                <el-input type="text" v-model="item.defaultValue"></el-input>
               </div>
               <div>
                 <div>
                   <span>默认值类型</span>
                 </div>
-                <el-input
-                  type="number"
-                  v-model="item.defaultValueType"
-                  @change="checkData(item.defaultValueType)"
-                ></el-input>
+                <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
               <div>
                 <div>
@@ -737,7 +705,7 @@
                 </div>
                 <el-radio-group v-model="item.propertyUsage">
                   <el-radio :label="0">新增填写</el-radio>
-                  <el-radio :label="1">审核填写</el-radio>
+                  <el-radio :label="5">审核填写</el-radio>
                 </el-radio-group>
               </div>
               <div>
@@ -794,53 +762,50 @@
                 </div>
                 <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
-              <!-- <div>
-                <div><span>选择项</span></div>
-                <div v-for="(a, k) in item.options" :key="k">
-                  <el-checkbox-group>
-                    <el-checkbox label="可读"
-                      ><el-input
-                        size="small"
-                        type="text"
-                        v-model="a.content"
-                        clearable
-                      ></el-input>
-                      <el-button
-                        icon="el-icon-arrow-up"
-                        type="text"
-                        size="mini"
-                        title="上移"
-                        @click="upOption(item.options, a, item.options.length)"
-                      ></el-button>
-                      <el-button
-                        icon="el-icon-arrow-down"
-                        type="text"
-                        size="mini"
-                        title="下移"
-                        @click="
-                          downOption(item.options, a, item.options.length)
-                        "
-                      ></el-button>
-                      <el-button
-                        icon="el-icon-delete"
-                        type="text"
-                        size="mini"
-                        title="删除"
-                        @click="removeRadio(item.options, a)"
-                      ></el-button>
-                    </el-checkbox>
-                  </el-checkbox-group>
+              <div>
+                <div>
+                  <span>选择项</span>
                 </div>
-              </div>-->
+                <div>
+                  <div v-for="(item6,index6) in item.dataValues" :key="index6">
+                    <el-input v-model="item6.value" size="small" type="text"></el-input>
+                    <el-button
+                      icon="el-icon-arrow-up"
+                      type="text"
+                      size="mini"
+                      title="上移"
+                      @click="upOption(item.dataValues, index6, item.dataValues.length)"
+                    ></el-button>
+                    <el-button
+                      icon="el-icon-arrow-down"
+                      type="text"
+                      size="mini"
+                      title="下移"
+                      @click="
+                          downOption(item.dataValues, index6, item.dataValues.length)
+                        "
+                    ></el-button>
+                    <el-button
+                      icon="el-icon-delete"
+                      type="text"
+                      size="mini"
+                      title="删除"
+                      @click="removeRadio(item.dataValues, index6)"
+                    ></el-button>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div>
+                  <span>默认值</span>
+                </div>
+                <el-input type="text" v-model="item.defaultValue"></el-input>
+              </div>
               <div>
                 <div>
                   <span>默认值类型</span>
                 </div>
-                <el-input
-                  type="number"
-                  v-model="item.defaultValueType"
-                  @change="checkData(item.defaultValueType)"
-                ></el-input>
+                <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
               <div>
                 <div>
@@ -905,28 +870,47 @@
                 </div>
                 <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
+
               <div>
                 <div>
                   <span>选择项</span>
                 </div>
-                <!-- <div>
-                  <el-input
+                <div v-for="(item7,index7) in item.dataValues" :key="index7">
+                  <el-input type="text" v-model="item7.value" size="small" style="width:70%;"></el-input>
+                  <el-button
+                    icon="el-icon-arrow-up"
                     type="text"
-                    v-for="(a, k) in item.options"
-                    :key="k"
-                    v-model="a.content"
-                  ></el-input>
-                </div>-->
+                    size="mini"
+                    title="上移"
+                    @click="upOption(item.dataValues, index7, item.dataValues.length)"
+                  ></el-button>
+                  <el-button
+                    icon="el-icon-arrow-down"
+                    type="text"
+                    size="mini"
+                    title="下移"
+                    @click="downOption(item.dataValues, index7, item.dataValues.length)"
+                  ></el-button>
+                  <el-button
+                    icon="el-icon-delete"
+                    type="text"
+                    size="mini"
+                    title="删除"
+                    @click="removeRadio(item.dataValues, index7)"
+                  ></el-button>
+                </div>
+              </div>
+              <div>
+                <div>
+                  <span>默认值</span>
+                </div>
+                <el-input type="text" v-model="item.defaultValue"></el-input>
               </div>
               <div>
                 <div>
                   <span>默认值类型</span>
                 </div>
-                <el-input
-                  type="number"
-                  v-model="item.defaultValueType"
-                  @change="checkData(item.defaultValueType)"
-                ></el-input>
+                <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
               <div>
                 <div>
@@ -978,7 +962,7 @@
                 <el-input type="text" v-model="item.remark"></el-input>
               </div>
             </div>
-            <div v-if="item.dataType === 'datetime' && typeShow[index]">
+            <div v-if="item.dataType === 'datetime'&& typeShow[index]">
               <div>
                 <div>
                   <span>字段名称:</span>
@@ -995,17 +979,13 @@
                 <div>
                   <span>默认值</span>
                 </div>
-                <el-input type="text" v-model="item.dataValues"></el-input>
+                <el-input type="text" v-model="item.defaultValue"></el-input>
               </div>
               <div>
                 <div>
                   <span>默认值类型</span>
                 </div>
-                <el-input
-                  type="number"
-                  v-model="item.defaultValueType"
-                  @change="checkData(item.defaultValueType)"
-                ></el-input>
+                <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
               <div>
                 <div>
@@ -1080,24 +1060,42 @@
                 <div>
                   <span>选择项</span>
                 </div>
-                <!-- <div>
-                  <el-input
+                <div v-for="(item8,index8) in item.dataValues" :key="index8">
+                  <el-input type="text" v-model="item8.value" size="small" style="width:70%;"></el-input>
+                  <el-button
+                    icon="el-icon-arrow-up"
                     type="text"
-                    v-for="(a, k) in item.options"
-                    :key="k"
-                    v-model="a.content"
-                  ></el-input>
-                </div>-->
+                    size="mini"
+                    title="上移"
+                    @click="upOption(item.dataValues, index8, item.dataValues.length)"
+                  ></el-button>
+                  <el-button
+                    icon="el-icon-arrow-down"
+                    type="text"
+                    size="mini"
+                    title="下移"
+                    @click="downOption(item.dataValues, index8, item.dataValues.length)"
+                  ></el-button>
+                  <el-button
+                    icon="el-icon-delete"
+                    type="text"
+                    size="mini"
+                    title="删除"
+                    @click="removeRadio(item.dataValues, index8)"
+                  ></el-button>
+                </div>
+              </div>
+              <div>
+                <div>
+                  <span>默认值</span>
+                </div>
+                <el-input type="text" v-model="item.defaultValue"></el-input>
               </div>
               <div>
                 <div>
                   <span>默认值类型</span>
                 </div>
-                <el-input
-                  type="number"
-                  v-model="item.defaultValueType"
-                  @change="checkData(item.defaultValueType)"
-                ></el-input>
+                <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
               <div>
                 <div>
@@ -1166,17 +1164,13 @@
                 <div>
                   <span>默认值</span>
                 </div>
-                <el-input type="text" v-model="item.dataValues"></el-input>
+                <el-input type="text" v-model="item.defaultValue"></el-input>
               </div>
               <div>
                 <div>
                   <span>默认值类型</span>
                 </div>
-                <el-input
-                  type="number"
-                  v-model="item.defaultValueType"
-                  @change="checkData(item.defaultValueType)"
-                ></el-input>
+                <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
               <div>
                 <div>
@@ -1251,17 +1245,13 @@
                 <div>
                   <span>默认值</span>
                 </div>
-                <el-input type="text" v-model="item.dataValues"></el-input>
+                <el-input type="text" v-model="item.defaultValue"></el-input>
               </div>
               <div>
                 <div>
                   <span>默认值类型</span>
                 </div>
-                <el-input
-                  type="number"
-                  v-model="item.defaultValueType"
-                  @change="checkData(item.defaultValueType)"
-                ></el-input>
+                <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
               <div>
                 <div>
@@ -1337,7 +1327,7 @@
                   <span>详细内容</span>
                 </div>
                 <quill-editor
-                  v-model="item.dataValues"
+                  v-model="item.defaultValue"
                   :options="editorOption"
                   :placeholder="item.placeholder"
                   style="white-space:pre"
@@ -1347,11 +1337,7 @@
                 <div>
                   <span>默认值类型</span>
                 </div>
-                <el-input
-                  type="number"
-                  v-model="item.defaultValueType"
-                  @change="checkData(item.defaultValueType)"
-                ></el-input>
+                <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
               <div>
                 <div>
@@ -1425,60 +1411,49 @@
                 <div>
                   <span>默认值</span>
                 </div>
-                <div>
-                  <div style="display:flex;justify-content: space-between;flex-wrap:wrap;">
-                    <el-select
-                      v-model="item.defaultValue.province"
-                      placeholder="请选择"
-                      style="width:100%;"
-                      @change="getLower1(item)"
-                    >
-                      <el-option
-                        v-for="item in province"
-                        :key="item.id"
-                        :label="item.regionName"
-                        :value="item.regionCode"
-                      ></el-option>
-                    </el-select>
-                    <el-select
-                      v-model="item.defaultValue.city"
-                      placeholder="请选择"
-                      style="width:100%;"
-                      @change="getLower2(item)"
-                    >
-                      <el-option
-                        v-for="item in city"
-                        :key="item.id"
-                        :label="item.regionName"
-                        :value="item.regionCode"
-                      ></el-option>
-                    </el-select>
-                    <el-select
-                      v-model="item.defaultValue.area"
-                      placeholder="请选择"
-                      style="width:100%;"
-                      @change="event"
-                    >
-                      <el-option
-                        v-for="item in area"
-                        :key="item.id"
-                        :label="item.regionName"
-                        :value="item.regionCode"
-                      ></el-option>
-                    </el-select>
-                  </div>
-                  <el-input type="textarea" rows="2" v-model="item.defaultValue.detail"></el-input>
+                <div style="display:flex;justify-content: space-between;flex-wrap:wrap;">
+                  <el-select
+                    v-model="item.defaultValue.province"
+                    placeholder="请选择"
+                    style="width:100%;"
+                    @change="getLower1(item)"
+                  >
+                    <el-option
+                      v-for="item in province"
+                      :key="item.id"
+                      :label="item.regionName"
+                      :value="item.regionCode"
+                    ></el-option>
+                  </el-select>
+                  <el-select
+                    v-model="item.defaultValue.city"
+                    placeholder="请选择"
+                    style="width:100%;"
+                    @change="getLower2(item)"
+                  >
+                    <el-option
+                      v-for="item in city"
+                      :key="item.id"
+                      :label="item.regionName"
+                      :value="item.regionCode"
+                    ></el-option>
+                  </el-select>
+                  <el-select v-model="item.defaultValue.area" placeholder="请选择" style="width:100%;">
+                    <el-option
+                      v-for="item in area"
+                      :key="item.id"
+                      :label="item.regionName"
+                      :value="item.regionCode"
+                    ></el-option>
+                  </el-select>
                 </div>
+                <el-input type="textarea" rows="2" v-model="item.defaultValue.detail"></el-input>
               </div>
               <div>
                 <div>
                   <span>默认值类型</span>
                 </div>
-                <el-input
-                  type="number"
-                  v-model="item.defaultValueType"
-                  @change="checkData(item.defaultValueType)"
-                ></el-input>
+                <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
               <div>
                 <div>
@@ -1539,14 +1514,14 @@
         </el-col>
       </el-row>
     </div>
-    <!-- 删除dialog -->
-    <el-dialog width="30%" title="操作提示" :visible.sync="delVisible" append-to-body>
+    <!-- 单个删除dialog -->
+    <el-dialog width="30%" title="操作提示" :visible.sync="singledelVisible" append-to-body>
       <span style="font-size:20px;">确定删除此工作表单？</span>
       <div slot="footer" class="dialog-footer" style="text-align: right;">
         <el-button
           type="primary"
           @click="
-            delVisible = false;
+            singledelVisible = false;
             deleteWorkForm(workFormId);
           "
         >确定</el-button>
@@ -1554,8 +1529,27 @@
           type="primary"
           plain
           @click="
-            delVisible = false;
-            workFormId = [];
+            singledelVisible = false;
+          "
+        >取消</el-button>
+      </div>
+    </el-dialog>
+    <!-- 批量删除 -->
+    <el-dialog width="30%" title="操作提示" :visible.sync="mutipledelVisible" append-to-body>
+      <span style="font-size:20px;">确定删除此选中工作的表单？</span>
+      <div slot="footer" class="dialog-footer" style="text-align: right;">
+        <el-button
+          type="primary"
+          @click="
+            mutipledelVisible = false;
+            mutipleDelete(deleteIds);
+          "
+        >确定</el-button>
+        <el-button
+          type="primary"
+          plain
+          @click="
+            mutipledelVisible = false;
           "
         >取消</el-button>
       </div>
@@ -1578,7 +1572,8 @@ import {
   queryWorkForm,
   updateWorkForm,
   getAddress,
-  getLowerAddress
+  getLowerAddress,
+  mutipledeleteWorkForm
 } from "@/api/work_form_manage";
 import { formatDateTime, swapArray } from "@/utils/tools";
 
@@ -1586,25 +1581,21 @@ export default {
   name: "work_form_manage",
   data() {
     return {
-      // 可读可写
-      read: 1,
-      wite: 1,
-      checked1: true,
-      checked2: true,
-
       formContainerOpen: "1",
       // 工作表单列表
       workFormData: [],
       workFormId: [],
       createShow: false,
-      delVisible: false,
+      singledelVisible: false,
+      mutipledelVisible: false,
+      deleteIds: [],
       tableShow: true,
       table: true, //标题显示
       text: false, //单题属性显示
       show: 0, //1新建，2修改，3查看
       // 单个展示
       typeShow: [],
-      checkDialogVisible:false,
+      checkDialogVisible: false,
       // 工作表单
       workFormTable: {
         creatorId: localStorage.getItem("agentId"),
@@ -1614,6 +1605,10 @@ export default {
         remark: "",
         workformPropertyCreateInfos: []
       },
+      rules: {
+        name: [{ required: true, message: "请输入工单名称", trigger: "blur" }]
+      },
+
       // 修改工作表单
       modifyWorkFormTable: {
         id: "",
@@ -1649,13 +1644,15 @@ export default {
       // 省市区三级联动
       province: [],
       city: [],
-      area: [],
-      detailAdd: {
-        code1: "",
-        code2: "",
-        code3: "",
-        detailText: "12334"
-      }
+      area: [
+        {
+          id: 0,
+          regionCode: "",
+          regionLevel: 1,
+          regionName: "",
+          regionParentId: ""
+        }
+      ]
     };
   },
   mounted() {
@@ -1664,7 +1661,7 @@ export default {
     this.getAddress();
   },
   methods: {
-    // 获取地址
+    // 获取一级地址
     getAddress() {
       getAddress(1).then(res => {
         if (res.data.code === 0) {
@@ -1672,30 +1669,30 @@ export default {
         }
       });
     },
-    // 获取下一级地址
+    // 获取二级级地址
     getLower1(item) {
+      this.city = [];
+      this.area = [];
+      item.defaultValue.city = "";
+      item.defaultValue.area = "";
       getLowerAddress(item.defaultValue.province).then(res => {
-        this.city = [];
-        this.area = [];
-        item.defaultValue.city = "";
-        item.defaultValue.area = "";
         if (res.data.code === 0) {
           this.city = res.data.data;
         }
       });
     },
+    // 获取三级地址
     getLower2(item) {
-      console.log(2222);
+      this.area = [];
+      item.defaultValue.area = "";
       getLowerAddress(item.defaultValue.city).then(res => {
-        this.area = [];
-        item.defaultValue.area = "";
         if (res.data.code === 0) {
           this.area = res.data.data;
         }
       });
     },
-    event() {
-      console.log(123);
+    changeArea(item) {
+      console.log(item);
     },
     // 获取列表数据
     getWorkFormList() {
@@ -1703,9 +1700,6 @@ export default {
         .then(res => {
           if (res.data.code === 0) {
             this.workFormData = res.data.data;
-            // this.arr = JSON.parse(
-            //   this.workFormData[5].workformPropertyCreateInfos[6].dataValues
-            // );
             if (res.data.pageInfo) {
               this.pageInfo = res.data.pageInfo;
               this.pageShow = true;
@@ -1772,7 +1766,8 @@ export default {
         this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "input",
           dataValues: "",
-          defaultValue: {},
+          defaultValue: "",
+          defaultValueType: "0",
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1794,7 +1789,8 @@ export default {
         this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "textarea",
           dataValues: "",
-          defaultValue: {},
+          defaultValue: "",
+          defaultValueType: "0",
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1816,7 +1812,8 @@ export default {
         this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "inputNumber",
           dataValues: "",
-          defaultValue: {},
+          defaultValue: "",
+          defaultValueType: "0",
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1837,8 +1834,13 @@ export default {
       } else if (obj === "radio") {
         this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "radio",
-          dataValues: "",
-          defaultValue: {},
+          dataValues: [
+            { value: "选项1" },
+            { value: "选项2" },
+            { value: "选项3" }
+          ],
+          defaultValue: "",
+          defaultValueType: "0",
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1859,8 +1861,13 @@ export default {
       } else if (obj === "checkbox") {
         this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "checkbox",
-          dataValues: "",
-          defaultValue: {},
+          dataValues: [
+            { value: "选项1" },
+            { value: "选项2" },
+            { value: "选项3" }
+          ],
+          defaultValue: "",
+          defaultValueType: "0",
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1881,8 +1888,13 @@ export default {
       } else if (obj === "select") {
         this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "select",
-          dataValues: "",
-          defaultValue: {},
+          dataValues: [
+            { value: "选项1" },
+            { value: "选项2" },
+            { value: "选项3" }
+          ],
+          defaultValue: "",
+          defaultValueType: "0",
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1904,7 +1916,8 @@ export default {
         this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "datetime",
           dataValues: "",
-          defaultValue: {},
+          defaultValue: "",
+          defaultValueType: "0",
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1925,8 +1938,13 @@ export default {
       } else if (obj === "multipleSelect") {
         this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "multipleSelect",
-          dataValues: "",
-          defaultValue: {},
+          dataValues: [
+            { value: "选项1" },
+            { value: "选项2" },
+            { value: "选项3" }
+          ],
+          defaultValue: "",
+          defaultValueType: "0",
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1948,7 +1966,8 @@ export default {
         this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "date",
           dataValues: "",
-          defaultValue: {},
+          defaultValue: "",
+          defaultValueType: "0",
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1970,7 +1989,8 @@ export default {
         this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "time",
           dataValues: "",
-          defaultValue: {},
+          defaultValue: "",
+          defaultValueType: "0",
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -1992,7 +2012,8 @@ export default {
         this.workFormTable.workformPropertyCreateInfos.push({
           dataType: "span",
           dataValues: "",
-          defaultValue: {},
+          defaultValue: "",
+          defaultValueType: "0",
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -2015,6 +2036,7 @@ export default {
           dataType: "address",
           dataValues: "",
           defaultValue: {},
+          defaultValueType: "0",
           formatValue: "",
           isRequired: 0,
           isSmsColumn: 0,
@@ -2037,12 +2059,12 @@ export default {
     // 检验默认数据类型规定0：string，1：object
     checkData(item) {
       console.log(item);
-      if (item !== 0 || item !== 1) {
-        this.checkDialogVisible = true
-      } else {
-        console.log("yes");
-        item = item;
-      }
+      // if (item !== 0 || item !== 1) {
+      //   this.checkDialogVisible = true;
+      // } else {
+      //   console.log("yes");
+      //   item = item;
+      // }
     },
     // 点击题项初始化数据
     changeItem(item, index) {
@@ -2061,17 +2083,24 @@ export default {
     },
     // 批量删除状态切换
     handleSelectionChange(val) {
-      this.workFormId = val;
+      this.deleteIds.length = 0;
+      for (var i = 0; i < val.length; i++) {
+        this.deleteIds.push(val[i].id);
+      }
     },
     // 批量删除
-    mutipleDelete(rows) {
-      if (rows) {
-        rows.forEach(row => {
-          this.$refs.multipleTable.toggleRowSelection(row);
+    mutipleDelete(ids) {
+      if (ids.length !== 0) {
+        mutipledeleteWorkForm(ids).then(res => {
+          if (res.data.code === 0) {
+            this.$message.success(res.data.message);
+            this.getWorkFormList();
+          } else {
+            this.$message.error(res.data.message);
+          }
         });
-        this.delVisible = true;
       } else {
-        this.$refs.multipleTable.clearSelection();
+        this.$message.error("请选择要删除的工单");
       }
     },
     // 上移
@@ -2105,8 +2134,46 @@ export default {
         workformPropertyCreateInfos: []
       };
     },
+
+    // 新建修改成功
+    success() {
+      this.tableShow = true;
+      this.createShow = false;
+      this.getWorkFormList();
+      this.workFormTable = {
+        creatorId: localStorage.getItem("agentId"),
+        creatorName: localStorage.getItem("userName"),
+        name: "工单名称",
+        enabled: "1",
+        remark: "",
+        workformPropertyCreateInfos: []
+      };
+    },
+    // dateValues转成对象字符串
+    arrToString(arr) {
+      const array = arr;
+      const target = {};
+      array.forEach(a => {
+        const source = JSON.parse(`{"${a.value}":"${a.value}"}`);
+        Object.assign(target, source);
+      });
+      return JSON.stringify(target);
+    },
+    // 字符串对象转数组
+    stringToArr(str) {
+      let obj = JSON.parse(str);
+      let arr = [];
+      for (let key in obj) {
+        arr.push({ value: key });
+      }
+      return arr;
+    },
     // 新建
     submitUpload() {
+      if (this.workFormTable.name === "") {
+        this.$message.error("请输入工单名称");
+        return;
+      }
       if (this.workFormTable.workformPropertyCreateInfos.length !== 0) {
         this.workFormTable.workformPropertyCreateInfos.forEach(item => {
           if (item.checklist) {
@@ -2129,37 +2196,47 @@ export default {
             item.dataType === "select" ||
             item.dataType === "multipleSelect"
           ) {
-            item.dataValues = JSON.stringify(item.dataValues);
+            item.dataValues = this.arrToString(item.dataValues);
           }
           if (item.dataType === "address") {
             item.defaultValue = JSON.stringify(item.defaultValue);
           }
-          item.defaultValueType = parseInt(item.defaultValueType);
         });
-        createWorkForm(this.workFormTable).then(res => {
-          if (res.data.code === 0) {
-            this.$message.success(res.data.message);
-            this.tableShow = true;
-            this.createShow = false;
-            this.getWorkFormList();
-            this.workFormTable = {
-              creatorId: localStorage.getItem("agentId"),
-              creatorName: localStorage.getItem("userName"),
-              name: "工单名称",
-              enabled: "1",
-              remark: "",
-              workformPropertyCreateInfos: []
-            };
+        this.workFormTable.workformPropertyCreateInfos.forEach(item => {
+          if (
+            item.name !== "" &&
+            item.val !== "" &&
+            item.defaultValue !== "" &&
+            item.defaultValueType !== ""
+          ) {
+            if (
+              item.defaultValueType === "0" ||
+              item.defaultValueType === "1"
+            ) {
+              console.log(this.workFormTable);
+              createWorkForm(this.workFormTable).then(res => {
+                if (res.data.code === 0) {
+                  this.$message.success(res.data.message);
+                  this.success();
+                } else {
+                  this.$message.error(res.data.messages);
+                }
+              });
+            } else {
+              this.$message.error("默认值类型请输入0或1");
+            }
           } else {
-            this.$message.error(res.data.messages);
+            this.$message.error("请完善信息");
           }
         });
       } else {
-        this.$message.error("请选择至少一种模板题型");
+        this.$message.error("请至少选择一种模板题型");
+        return;
       }
     },
     // 删除工作表单
     deleteWorkForm(workFormId) {
+      console.log(workFormId);
       deleteWorkForm(workFormId)
         .then(response => {
           if (response.data.code === 0) {
@@ -2175,14 +2252,112 @@ export default {
     },
     // 修改传值
     showModifyContent(row) {
+      row.workformProperties.forEach(item => {
+        if (item.rw === 3) {
+          item.checklist = ["1", "2"];
+        } else if (item.rw === 2) {
+          item.checklist = ["2"];
+        } else if (item.rw === 1) {
+          item.checklist = ["1"];
+        } else {
+          item.checklist = [];
+        }
+        item.isRequired = item.isRequired === 1 ? true : false;
+        item.defaultValueType = String(item.defaultValueType);
+        if (
+          item.dataType === "radio" ||
+          item.dataType === "checkbox" ||
+          item.dataType === "select" ||
+          item.dataType === "multipleSelect"
+        ) {
+          item.dataValues = this.stringToArr(item.dataValues);
+        }
+        if (item.dataType === "address") {
+          item.defaultValue = JSON.parse(item.defaultValue);
+          let address = item.defaultValue;
+          getLowerAddress(String(address.province)).then(res => {
+            if (res.data.code === 0) {
+              this.city = res.data.data;
+            }
+          });
+          getLowerAddress(String(address.city)).then(res => {
+            if (res.data.code === 0) {
+              this.area = res.data.data;
+            }
+          });
+        }
+      });
       this.modifyWorkFormTable.id = row.id;
-      this.workFormTable = row;
       this.workFormTable.workformPropertyCreateInfos = row.workformProperties;
       this.createShow = true;
       this.tableShow = false;
       this.show = 2;
       this.table = true;
       this.text = false;
+      console.log(this.workFormTable);
+    },
+    // 修改
+    modifyWorkForm(row) {
+      if (this.workFormTable.workformPropertyCreateInfos.length !== 0) {
+        this.workFormTable.workformPropertyCreateInfos.forEach(item => {
+          delete item.checklist;
+          item.isRequired = item.isRequired ? 1 : 0;
+          if (
+            item.dataType === "radio" ||
+            item.dataType === "checkbox" ||
+            item.dataType === "select" ||
+            item.dataType === "multipleSelect"
+          ) {
+            item.dataValues = this.arrToString(item.dataValues);
+          }
+          if (item.dataType === "address") {
+            item.defaultValue = JSON.stringify(item.defaultValue);
+          }
+        });
+        this.workFormTable.workformPropertyCreateInfos.forEach(item => {
+          if (
+            item.name !== "" &&
+            item.val !== "" &&
+            item.defaultValue !== "" &&
+            item.defaultValueType !== ""
+          ) {
+            console.log(item.defaultValue);
+            if (
+              item.defaultValueType !== "0" ||
+              item.defaultValueType !== "1"
+            ) {
+              this.$message.error("默认值类型请输入0或1");
+              return;
+            }
+          } else {
+            this.$message.error("请完善信息");
+            return;
+          }
+        });
+        this.modifyWorkFormTable.name = this.workFormTable.name;
+        this.modifyWorkFormTable.enabled = this.workFormTable.enabled;
+        this.modifyWorkFormTable.remark = this.workFormTable.remark;
+        this.modifyWorkFormTable.workformPropertyUpdateInfos = this.workFormTable.workformPropertyCreateInfos;
+        updateWorkForm(this.modifyWorkFormTable).then(res => {
+          if (res.data.code === 0) {
+            this.$message.success(res.data.message);
+            this.success();
+          } else {
+            this.$message.error(res.data.message);
+          }
+        });
+      } else {
+        this.$message.error("请至少选择一种模板题型");
+        return;
+      }
+    },
+    // 查看编辑
+    edite(row) {
+      this.workFormTable = row;
+      this.workFormTable.workformPropertyCreateInfos = row.workformProperties;
+      this.createShow = true;
+      this.tableShow = false;
+      this.show = 3;
       row.workformProperties.forEach(item => {
         if (item.rw === 3) {
           item.checklist = ["1", "2"];
@@ -2205,7 +2380,7 @@ export default {
         if (item.dataType === "address") {
           item.defaultValue = JSON.parse(item.defaultValue);
         }
-        item.defaultValueType = String(item.defaultValueType);
+        // item.defaultValueType = String(item.defaultValueType);
         let address = item.defaultValue;
         getLowerAddress(String(address.province)).then(res => {
           if (res.data.code === 0) {
@@ -2218,55 +2393,6 @@ export default {
           }
         });
       });
-    },
-    // 修改
-    modifyWorkForm(row) {
-      this.modifyWorkFormTable.name = this.workFormTable.name;
-      this.modifyWorkFormTable.enabled = this.workFormTable.enabled;
-      this.modifyWorkFormTable.remark = this.workFormTable.remark;
-      this.modifyWorkFormTable.workformPropertyUpdateInfos = this.workFormTable.workformPropertyCreateInfos;
-      this.modifyWorkFormTable.workformPropertyUpdateInfos.forEach(item => {
-        delete item.checklist;
-        item.isRequired = item.isRequired ? 1 : 0;
-        if (
-          item.dataType === "radio" ||
-          item.dataType === "checkbox" ||
-          item.dataType === "select" ||
-          item.dataType === "multipleSelect"
-        ) {
-          item.dataValues = JSON.stringify(item.dataValues);
-        }
-        if (item.dataType === "address") {
-          item.defaultValue = JSON.stringify(item.defaultValue);
-        }
-        item.defaultValueType = parseInt(item.defaultValueType);
-      });
-      if (this.modifyWorkFormTable.workformPropertyUpdateInfos.length !== 0) {
-        updateWorkForm(this.modifyWorkFormTable).then(res => {
-          if (res.data.code === 0) {
-            this.$message.success(res.data.message);
-            this.tableShow = true;
-            this.createShow = false;
-            this.getWorkFormList();
-            this.modifyWorkFormTable = {
-              modifierId: localStorage.getItem("agentId"),
-              modifierName: localStorage.getItem("userName"),
-              name: "工单名称",
-              enabled: "1",
-              remark: "",
-              workformPropertyUpdateInfos: []
-            };
-          } else {
-            this.$message.error(res.data.message);
-          }
-        });
-      } else {
-        this.$message.error("请选择至少一种模板题型");
-      }
-    },
-    // 查看编辑
-    edite(row) {
-      console.log(row);
     },
     // 页面显示条数
     handleSizeChange(val) {
@@ -2409,5 +2535,8 @@ export default {
 }
 .el-select {
   margin: 5px 0;
+}
+.el-checkbox + .el-checkbox {
+  margin-left: 0;
 }
 </style>

@@ -54,6 +54,17 @@ export function deleteWorkForm(workFormId) {
     }
   })
 }
+// 批量删除
+
+export function mutipledeleteWorkForm(ids) {
+  return requestV2({
+    url: '/workflow/workforms',
+    method: 'delete',
+    data: {
+      ids:ids
+    }
+  })
+}
 
 // 省市区三级联动
 // 根据地区级别查询地区
