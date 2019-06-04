@@ -555,6 +555,7 @@
               <el-table-column align="center" label="是否默认" width="110px">
                 <template slot-scope="scope">
                   <el-switch
+                    @change="setRegionOnly(1,scope.$index)"
                     v-model="scope.row.isDefault"
                     active-color="#13ce66"
                     inactive-color="#ff4949"
@@ -600,6 +601,7 @@
               <el-table-column align="center" label="是否常用">
                 <template slot-scope="scope">
                   <el-switch
+                    @change="setPhoneOnly(1,scope.$index,scope.row.linkType,scope.row.isUsually)"
                     v-model="scope.row.isUsually"
                     active-color="#13ce66"
                     inactive-color="#ff4949"
@@ -806,9 +808,10 @@
                   <el-input size="small" v-model="scope.row.detail"></el-input>
                 </template>
               </el-table-column>
-              <el-table-column align="center" label="是否默认">
+              <el-table-column align="center" label="是否默认" width="110px">
                 <template slot-scope="scope">
                   <el-switch
+                    @change="setRegionOnly(0,scope.$index)"
                     v-model="scope.row.isDefault"
                     active-color="#13ce66"
                     inactive-color="#ff4949"
@@ -854,6 +857,7 @@
               <el-table-column align="center" label="是否常用">
                 <template slot-scope="scope">
                   <el-switch
+                    @change="setPhoneOnly(0,scope.$index,scope.row.linkType,scope.row.isUsually)"
                     v-model="scope.row.isUsually"
                     active-color="#13ce66"
                     inactive-color="#ff4949"
@@ -1010,7 +1014,7 @@ export default {
       },
       updateObj: {
         id: '',
-        isSelected : ''
+        isSelected: ''
       },
       fieldType: '',
       fieldValues: [],
@@ -1023,7 +1027,7 @@ export default {
         range: '',
         value: '',
         valueFrom: '',
-        valueTo: '',
+        valueTo: ''
       },
       customRequirements: [],
       condition: [],
@@ -1570,15 +1574,61 @@ export default {
       this.totalCount = 0
       this.resetScreeningForm()
     },
+    setRegionOnly(type, index) {
+      if (type === 0) {
+        // 新建时
+        for (var i = 0; i < this.addressDatas.length; i++) {
+          if (index === i) {
+            this.addressDatas[i].isDefault = 1
+          } else {
+            this.addressDatas[i].isDefault = 0
+          }
+        }
+      } else {
+        // 修改时
+        for (var j = 0; j < this.customerReverseDetail.customerAddresses.length; j++) {
+          if (index === j) {
+            this.customerReverseDetail.customerAddresses[j].isDefault = 1
+          } else {
+            this.customerReverseDetail.customerAddresses[j].isDefault = 0
+          }
+        }
+      }
+    },
+    setPhoneOnly(type, index, linkType, isUsually) {
+      if (type === 0) {
+        // 新建时
+        if (linkType === 0 && isUsually === 1) {
+          this.$message.error('常用电话只能有一个！')
+          this.linkDatas[index].isUsually = 0
+        }
+      } else {
+        // 修改时
+        if (linkType === 0 && isUsually === 1) {
+          this.$message.error('常用电话只能有一个！')
+          this.customerReverseDetail.customerLinks[index].isUsually = 0
+        }
+      }
+    },
     // ---------------------------------
     addAddress() {
-      this.addressDatas.push({
-        province: '',
-        city: '',
-        district: '',
-        detail: '',
-        isDefault: 0
-      })
+      if (this.addressDatas.length > 0) {
+        this.addressDatas.push({
+          province: '',
+          city: '',
+          district: '',
+          detail: '',
+          isDefault: 0
+        })
+      } else {
+        this.addressDatas.push({
+          province: '',
+          city: '',
+          district: '',
+          detail: '',
+          isDefault: 1
+        })
+      }
       this.region.push({
         province: '',
         city: '',
@@ -1587,13 +1637,23 @@ export default {
       this.getRegion(0, this.region.length - 1)
     },
     addAddress1() {
-      this.customerReverseDetail.customerAddresses.push({
-        province: '',
-        city: '',
-        district: '',
-        detail: '',
-        isDefault: 0
-      })
+      if (this.customerReverseDetail.customerAddresses.length > 0) {
+        this.customerReverseDetail.customerAddresses.push({
+          province: '',
+          city: '',
+          district: '',
+          detail: '',
+          isDefault: 0
+        })
+      } else {
+        this.customerReverseDetail.customerAddresses.push({
+          province: '',
+          city: '',
+          district: '',
+          detail: '',
+          isDefault: 1
+        })
+      }
       this.region1.push({
         province: [],
         city: [],
@@ -1836,16 +1896,16 @@ export default {
             for (var i = 0; i < this.alltags.length; i++) {
               if (this.alltags[i].isRequired === 1) {
                 this.selectedtags.push(this.alltags[i])
-                var temp = i++;
-                this.alltags.splice(temp,1)
+                var temp = i++
+                this.alltags.splice(temp, 1)
               }
             }
             for (var j = 0; j < this.alltags.length; j++) {
               if (this.alltags[j].isSelected === 1) {
-                  this.selectedtags.push(this.alltags[j])
-                  // 之所以不删除而用替换是因为删除会改变整个数组顺序导致数据紊乱
-                  this.updateObj.id = -1
-                  this.alltags.splice(j, 1, this.updateObj)
+                this.selectedtags.push(this.alltags[j])
+                // 之所以不删除而用替换是因为删除会改变整个数组顺序导致数据紊乱
+                this.updateObj.id = -1
+                this.alltags.splice(j, 1, this.updateObj)
               }
             }
             this.testAlltags = this.alltags
@@ -1866,7 +1926,7 @@ export default {
     },
     // 点击tag事件
     setToSelectedTags(tag) {
-      this.updateObj.length=0
+      this.updateObj.length = 0
       if (this.selectedtags.length === 0) {
         this.selectedtags.push(tag)
         this.updateObj.id = tag.id
@@ -1892,21 +1952,21 @@ export default {
                 console.log('修改选中状态成功！')
               }
             }).catch(error => {
-                console.log(error)
-              })
+              console.log(error)
+            })
           }
         }
       }
       // 去除待选元素
       for (var i = 0; i < this.alltags.length; i++) {
         if (tag.id === this.alltags[i].id) {
-          this.alltags.splice(i,1)
+          this.alltags.splice(i, 1)
         }
       }
     },
     // 关闭tag事件
     handleClose(selectedtag) {
-      this.updateObj.length=0
+      this.updateObj.length = 0
       // 先判断isRequired字段
       if (selectedtag.isRequired === 1) {
         this.$message.error('该字段为必选项！')
