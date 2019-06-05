@@ -220,6 +220,7 @@
                       v-for="(item2,index2) in item.dataValues"
                       :key="index2"
                       :label="item2.value"
+                      :disabled="show===3?false:true"
                     ></el-checkbox>
                   </el-checkbox-group>
                 </div>
@@ -330,7 +331,7 @@
               </div>
             </div>
             <div style="display: flex;justify-content: center;">
-              <el-button size="small" type="primary" @click="modifyWorkForm" v-if="show === 2">修改</el-button>
+              <el-button size="small" type="primary" @click="modifyWorkForm" v-if="show === 2">确认</el-button>
               <el-button size="small" type="primary" @click="submitUpload" v-if="show === 1">提交</el-button>
               <el-button
                 size="small"
@@ -342,7 +343,7 @@
                   tableShow = true;
                   show = 0;
                 "
-              >返回</el-button>
+              >取消</el-button>
             </div>
           </div>
         </el-col>
@@ -376,6 +377,7 @@
             v-for="(item, index) in workFormTable.workformPropertyCreateInfos"
             :key="index"
             v-show="text"
+            class="singchange"
           >
             <div v-if="item.dataType === 'input' && typeShow[index]">
               <div>
@@ -659,31 +661,45 @@
                   <span>选择项</span>
                 </div>
                 <div>
-                  <div v-for="(item5,index5) in item.dataValues" :key="index5">
-                    <el-input v-model="item5.value" size="small" type="text"></el-input>
-                    <el-button
-                      icon="el-icon-arrow-up"
-                      type="text"
-                      size="mini"
-                      title="上移"
-                      @click="upOption(item.dataValues, index5, item.dataValues.length)"
-                    ></el-button>
-                    <el-button
-                      icon="el-icon-arrow-down"
-                      type="text"
-                      size="mini"
-                      title="下移"
-                      @click="
+                  <div v-for="(item5,index5) in item.dataValues" :key="index5" class="addDemo">
+                    <div>
+                      <el-input v-model="item5.value" size="small" type="text"></el-input>
+                    </div>
+                    <div class="addDemoTools">
+                      <div class="tool">
+                        <i
+                          class="el-icon-plus"
+                          style="cursor:pointer;color:#54B8FF;font-size:12px;"
+                          @click="addRadio(item.dataValues)"
+                          title="新建选项"
+                        ></i>
+                        <div>
+                          <el-button
+                            icon="el-icon-arrow-up"
+                            type="text"
+                            size="mini"
+                            title="上移"
+                            @click="upOption(item.dataValues, index5, item.dataValues.length)"
+                          ></el-button>
+                          <el-button
+                            icon="el-icon-arrow-down"
+                            type="text"
+                            size="mini"
+                            title="下移"
+                            @click="
                           downOption(item.dataValues, index5, item.dataValues.length)
                         "
-                    ></el-button>
-                    <el-button
-                      icon="el-icon-delete"
-                      type="text"
-                      size="mini"
-                      title="删除"
-                      @click="removeRadio(item.dataValues, index5)"
-                    ></el-button>
+                          ></el-button>
+                          <el-button
+                            icon="el-icon-delete"
+                            type="text"
+                            size="mini"
+                            title="删除"
+                            @click="removeRadio(item.dataValues, index5)"
+                          ></el-button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -767,31 +783,45 @@
                   <span>选择项</span>
                 </div>
                 <div>
-                  <div v-for="(item6,index6) in item.dataValues" :key="index6">
-                    <el-input v-model="item6.value" size="small" type="text"></el-input>
-                    <el-button
-                      icon="el-icon-arrow-up"
-                      type="text"
-                      size="mini"
-                      title="上移"
-                      @click="upOption(item.dataValues, index6, item.dataValues.length)"
-                    ></el-button>
-                    <el-button
-                      icon="el-icon-arrow-down"
-                      type="text"
-                      size="mini"
-                      title="下移"
-                      @click="
+                  <div v-for="(item6,index6) in item.dataValues" :key="index6" class="addDemo">
+                    <div>
+                      <el-input v-model="item6.value" size="small" type="text"></el-input>
+                    </div>
+                    <div class="addDemoTools">
+                      <div class="tool">
+                        <i
+                          class="el-icon-plus"
+                          style="cursor:pointer;color:#54B8FF;font-size:12px;"
+                          @click="addRadio(item.dataValues)"
+                          title="新建选项"
+                        ></i>
+                        <div>
+                          <el-button
+                            icon="el-icon-arrow-up"
+                            type="text"
+                            size="mini"
+                            title="上移"
+                            @click="upOption(item.dataValues, index6, item.dataValues.length)"
+                          ></el-button>
+                          <el-button
+                            icon="el-icon-arrow-down"
+                            type="text"
+                            size="mini"
+                            title="下移"
+                            @click="
                           downOption(item.dataValues, index6, item.dataValues.length)
                         "
-                    ></el-button>
-                    <el-button
-                      icon="el-icon-delete"
-                      type="text"
-                      size="mini"
-                      title="删除"
-                      @click="removeRadio(item.dataValues, index6)"
-                    ></el-button>
+                          ></el-button>
+                          <el-button
+                            icon="el-icon-delete"
+                            type="text"
+                            size="mini"
+                            title="删除"
+                            @click="removeRadio(item.dataValues, index6)"
+                          ></el-button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -875,29 +905,45 @@
                 <div>
                   <span>选择项</span>
                 </div>
-                <div v-for="(item7,index7) in item.dataValues" :key="index7">
-                  <el-input type="text" v-model="item7.value" size="small" style="width:70%;"></el-input>
-                  <el-button
-                    icon="el-icon-arrow-up"
-                    type="text"
-                    size="mini"
-                    title="上移"
-                    @click="upOption(item.dataValues, index7, item.dataValues.length)"
-                  ></el-button>
-                  <el-button
-                    icon="el-icon-arrow-down"
-                    type="text"
-                    size="mini"
-                    title="下移"
-                    @click="downOption(item.dataValues, index7, item.dataValues.length)"
-                  ></el-button>
-                  <el-button
-                    icon="el-icon-delete"
-                    type="text"
-                    size="mini"
-                    title="删除"
-                    @click="removeRadio(item.dataValues, index7)"
-                  ></el-button>
+                <div v-for="(item7,index7) in item.dataValues" :key="index7" class="addDemo">
+                  <div>
+                    <el-input type="text" v-model="item7.value" size="small"></el-input>
+                  </div>
+                  <div class="addDemoTools">
+                    <div class="tool">
+                      <i
+                        class="el-icon-plus"
+                        style="cursor:pointer;color:#54B8FF;font-size:12px;"
+                        @click="addRadio(item.dataValues)"
+                        title="新建选项"
+                      ></i>
+                      <div>
+                        <el-button
+                          icon="el-icon-arrow-up"
+                          type="text"
+                          size="mini"
+                          title="上移"
+                          @click="upOption(item.dataValues, index7, item.dataValues.length)"
+                        ></el-button>
+                        <el-button
+                          icon="el-icon-arrow-down"
+                          type="text"
+                          size="mini"
+                          title="下移"
+                          @click="
+                          downOption(item.dataValues, index7, item.dataValues.length)
+                        "
+                        ></el-button>
+                        <el-button
+                          icon="el-icon-delete"
+                          type="text"
+                          size="mini"
+                          title="删除"
+                          @click="removeRadio(item.dataValues, index7)"
+                        ></el-button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div>
@@ -1060,36 +1106,91 @@
                 <div>
                   <span>选择项</span>
                 </div>
-                <div v-for="(item8,index8) in item.dataValues" :key="index8">
-                  <el-input type="text" v-model="item8.value" size="small" style="width:70%;"></el-input>
-                  <el-button
-                    icon="el-icon-arrow-up"
-                    type="text"
-                    size="mini"
-                    title="上移"
-                    @click="upOption(item.dataValues, index8, item.dataValues.length)"
-                  ></el-button>
-                  <el-button
-                    icon="el-icon-arrow-down"
-                    type="text"
-                    size="mini"
-                    title="下移"
-                    @click="downOption(item.dataValues, index8, item.dataValues.length)"
-                  ></el-button>
-                  <el-button
-                    icon="el-icon-delete"
-                    type="text"
-                    size="mini"
-                    title="删除"
-                    @click="removeRadio(item.dataValues, index8)"
-                  ></el-button>
+                <div v-for="(item8,index8) in item.dataValues" :key="index8" class="addDemo">
+                  <div>
+                    <el-input type="text" v-model="item8.value" size="small"></el-input>
+                  </div>
+                  <div class="addDemoTools">
+                    <div class="tool">
+                      <i
+                        class="el-icon-plus"
+                        style="cursor:pointer;color:#54B8FF;font-size:12px;"
+                        @click="addRadio(item.dataValues)"
+                        title="新建选项"
+                      ></i>
+                      <div>
+                        <el-button
+                          icon="el-icon-arrow-up"
+                          type="text"
+                          size="mini"
+                          title="上移"
+                          @click="upOption(item.dataValues, index8, item.dataValues.length)"
+                        ></el-button>
+                        <el-button
+                          icon="el-icon-arrow-down"
+                          type="text"
+                          size="mini"
+                          title="下移"
+                          @click="
+                          downOption(item.dataValues, index8, item.dataValues.length)
+                        "
+                        ></el-button>
+                        <el-button
+                          icon="el-icon-delete"
+                          type="text"
+                          size="mini"
+                          title="删除"
+                          @click="removeRadio(item.dataValues, index8)"
+                        ></el-button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div>
                 <div>
                   <span>默认值</span>
                 </div>
-                <el-input type="text" v-model="item.defaultValue"></el-input>
+                <div>
+                  <div class="addDemo" v-for="(item9,index9) in item.defaultValue" :key="index9">
+                    <el-input type="text" v-model="item9.value"></el-input>
+                    <div class="addDemoTools">
+                      <div class="tool">
+                        <i
+                          class="el-icon-plus"
+                          style="cursor:pointer;color:#54B8FF;font-size:12px;"
+                          @click="addRadio(item.defaultValue)"
+                          title="新建选项"
+                        ></i>
+                        <div>
+                          <el-button
+                            icon="el-icon-arrow-up"
+                            type="text"
+                            size="mini"
+                            title="上移"
+                            @click="upOption(item.defaultValue, index9, item.defaultValue.length)"
+                          ></el-button>
+                          <el-button
+                            icon="el-icon-arrow-down"
+                            type="text"
+                            size="mini"
+                            title="下移"
+                            @click="
+                          downOption(item.defaultValue, index9, item.defaultValue.length)
+                        "
+                          ></el-button>
+                          <el-button
+                            icon="el-icon-delete"
+                            type="text"
+                            size="mini"
+                            title="删除"
+                            @click="removeRadio(item.defaultValue, index9)"
+                          ></el-button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div>
                 <div>
@@ -1596,7 +1697,7 @@ export default {
       // 单个展示
       typeShow: [],
       checkDialogVisible: false,
-      // 工作表单
+      // 新建工作表单
       workFormTable: {
         creatorId: localStorage.getItem("agentId"),
         creatorName: localStorage.getItem("userName"),
@@ -1614,9 +1715,6 @@ export default {
         id: "",
         modifierId: localStorage.getItem("agentId"),
         modifierName: localStorage.getItem("userName"),
-        name: "工单名称",
-        enabled: 1,
-        remark: "",
         workformPropertyUpdateInfos: []
       },
       editorOption: {
@@ -1640,7 +1738,9 @@ export default {
       // 分页数据
       pageShow: false,
       pageInfo: {},
+      reqPag:{},
       arr: [],
+
       // 省市区三级联动
       province: [],
       city: [],
@@ -1695,8 +1795,8 @@ export default {
       console.log(item);
     },
     // 获取列表数据
-    getWorkFormList() {
-      getWorkForm()
+    getWorkFormList(reqPag) {
+      getWorkForm(reqPag)
         .then(res => {
           if (res.data.code === 0) {
             this.workFormData = res.data.data;
@@ -1707,7 +1807,7 @@ export default {
               this.pageShow = false;
             }
           } else {
-            this.$message(res.data.messages);
+            this.$message.error(res.data.message);
             this.workFormData = res.data.data;
             this.pageShow = false;
           }
@@ -1943,7 +2043,7 @@ export default {
             { value: "选项2" },
             { value: "选项3" }
           ],
-          defaultValue: "",
+          defaultValue: [{ value: "选项1" }],
           defaultValueType: "0",
           formatValue: "",
           isRequired: 0,
@@ -2134,20 +2234,17 @@ export default {
         workformPropertyCreateInfos: []
       };
     },
-
+    // 新建选项
+    addRadio(options) {
+      options.push({
+        value: ""
+      });
+    },
     // 新建修改成功
     success() {
       this.tableShow = true;
       this.createShow = false;
       this.getWorkFormList();
-      this.workFormTable = {
-        creatorId: localStorage.getItem("agentId"),
-        creatorName: localStorage.getItem("userName"),
-        name: "工单名称",
-        enabled: "1",
-        remark: "",
-        workformPropertyCreateInfos: []
-      };
     },
     // dateValues转成对象字符串
     arrToString(arr) {
@@ -2175,60 +2272,68 @@ export default {
         return;
       }
       if (this.workFormTable.workformPropertyCreateInfos.length !== 0) {
-        this.workFormTable.workformPropertyCreateInfos.forEach(item => {
-          if (item.checklist) {
-            if (item.checklist.length === 2) {
-              item.rw = 3;
-            } else if (item.checklist.length === 1) {
-              if (item.checklist[0] === "1") {
-                item.rw = 1;
-              } else {
-                item.rw = 2;
-              }
-            }
-          } else {
-            item.rw = 0;
-          }
-          delete item.checklist;
-          if (
-            item.dataType === "radio" ||
-            item.dataType === "checkbox" ||
-            item.dataType === "select" ||
-            item.dataType === "multipleSelect"
-          ) {
-            item.dataValues = this.arrToString(item.dataValues);
-          }
-          if (item.dataType === "address") {
-            item.defaultValue = JSON.stringify(item.defaultValue);
-          }
-        });
-        this.workFormTable.workformPropertyCreateInfos.forEach(item => {
-          if (
-            item.name !== "" &&
-            item.val !== "" &&
-            item.defaultValue !== "" &&
-            item.defaultValueType !== ""
-          ) {
+        let flag = true;
+        if (flag) {
+          this.workFormTable.workformPropertyCreateInfos.forEach(item => {
             if (
-              item.defaultValueType === "0" ||
-              item.defaultValueType === "1"
+              item.name !== "" &&
+              item.val !== "" &&
+              item.defaultValue !== "" &&
+              item.defaultValueType !== ""
             ) {
-              console.log(this.workFormTable);
-              createWorkForm(this.workFormTable).then(res => {
-                if (res.data.code === 0) {
-                  this.$message.success(res.data.message);
-                  this.success();
-                } else {
-                  this.$message.error(res.data.messages);
-                }
-              });
+              if (
+                item.defaultValueType !== "0" ||
+                item.defaultValueType !== "1"
+              ) {
+                this.$message.error("默认值类型请输入0或1");
+                flag = false;
+              }
+              
             } else {
-              this.$message.error("默认值类型请输入0或1");
+              this.$message.error("请完善信息");
+              flag = false;
             }
-          } else {
-            this.$message.error("请完善信息");
-          }
-        });
+            if (item.checklist) {
+                if (item.checklist.length === 2) {
+                  item.rw = 3;
+                } else if (item.checklist.length === 1) {
+                  if (item.checklist[0] === "1") {
+                    item.rw = 1;
+                  } else {
+                    item.rw = 2;
+                  }
+                }
+              } else {
+                item.rw = 0;
+              }
+              delete item.checklist;
+              if (
+                item.dataType === "radio" ||
+                item.dataType === "checkbox" ||
+                item.dataType === "select"
+              ) {
+                item.dataValues = this.arrToString(item.dataValues);
+              }
+              if (item.dataType === "multipleSelect") {
+                item.dataValues = this.arrToString(item.dataValues);
+                item.defaultValue = this.arrToString(item.defaultValue);
+              }
+              if (item.dataType === "address") {
+                item.defaultValue = JSON.stringify(item.defaultValue);
+              }
+          });
+        }
+        if (flag) {
+          createWorkForm(this.workFormTable).then(res => {
+            if (res.data.code === 0) {
+              this.$message.success(res.data.message);
+              this.success();
+            } else {
+              this.$message.error(res.data.message);
+              this.success();
+            }
+          });
+        }
       } else {
         this.$message.error("请至少选择一种模板题型");
         return;
@@ -2252,6 +2357,7 @@ export default {
     },
     // 修改传值
     showModifyContent(row) {
+      console.log(row);
       row.workformProperties.forEach(item => {
         if (item.rw === 3) {
           item.checklist = ["1", "2"];
@@ -2267,10 +2373,13 @@ export default {
         if (
           item.dataType === "radio" ||
           item.dataType === "checkbox" ||
-          item.dataType === "select" ||
-          item.dataType === "multipleSelect"
+          item.dataType === "select"
         ) {
           item.dataValues = this.stringToArr(item.dataValues);
+        }
+        if (item.dataType === "multipleSelect") {
+          item.dataValues = this.stringToArr(item.dataValues);
+          item.defaultValue = this.stringToArr(item.defaultValue);
         }
         if (item.dataType === "address") {
           item.defaultValue = JSON.parse(item.defaultValue);
@@ -2288,13 +2397,15 @@ export default {
         }
       });
       this.modifyWorkFormTable.id = row.id;
+      this.workFormTable.name = row.name;
+      this.workFormTable.enabled = row.enabled;
+      this.workFormTable.remark = row.remark;
       this.workFormTable.workformPropertyCreateInfos = row.workformProperties;
       this.createShow = true;
       this.tableShow = false;
       this.show = 2;
       this.table = true;
       this.text = false;
-      console.log(this.workFormTable);
     },
     // 修改
     modifyWorkForm(row) {
@@ -2305,10 +2416,13 @@ export default {
           if (
             item.dataType === "radio" ||
             item.dataType === "checkbox" ||
-            item.dataType === "select" ||
-            item.dataType === "multipleSelect"
+            item.dataType === "select"
           ) {
             item.dataValues = this.arrToString(item.dataValues);
+          }
+          if (item.dataType === "multipleSelect") {
+            item.dataValues = this.arrToString(item.dataValues);
+            item.defaultValue = this.arrToString(item.defaultValue);
           }
           if (item.dataType === "address") {
             item.defaultValue = JSON.stringify(item.defaultValue);
@@ -2344,6 +2458,7 @@ export default {
             this.success();
           } else {
             this.$message.error(res.data.message);
+            this.success();
           }
         });
       } else {
@@ -2396,17 +2511,19 @@ export default {
     },
     // 页面显示条数
     handleSizeChange(val) {
-      this.req2.pageSize = val;
-      this.req.pageSize = val;
-      this.pageInfo.pageNo = 1;
-      this.req.pageNo = 1;
-      this.req2.pageNo = 1;
-      this.searchCustomer(this.req2);
+      console.log(val)
+      this.reqPag.pageNo = 1
+      this.reqPag.pageSize = val;
+      console.log(this.pageInfo)
+      this.getWorkFormList(this.reqPag);
     },
     // 分页翻页功能
     handleCurrentChange(val) {
-      this.req2.pageNo = val;
-      this.searchCustomer(this.req2);
+      console.log(val)
+      this.reqPag.pageNo = val;
+      this.reqPag.pageSize = this.pageInfo.pageSize
+      console.log(this.pageInfo)
+      this.getWorkFormList(this.reqPag);
     }
   }
 };
@@ -2496,10 +2613,10 @@ export default {
   }
 }
 .setting {
+  padding-top: 10px;
   background-color: #fff;
   height: 600px;
   margin-left: 15px;
-  padding: 20px;
   overflow-y: auto;
   &::-webkit-scrollbar {
     width: 0;
@@ -2518,6 +2635,21 @@ export default {
       margin: 15px 0 5px 0;
     }
   }
+  .singchange {
+    .tool {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .addDemoTools {
+      display: none;
+    }
+    .addDemo:hover {
+      .addDemoTools {
+        display: block;
+      }
+    }
+  }
 }
 .el-radio,
 .el-radio + .el-radio {
@@ -2525,6 +2657,7 @@ export default {
 }
 .el-checkbox {
   margin-bottom: 10px;
+  margin-right: 20px;
 }
 .el-input {
   margin: 5px 0;

@@ -1,9 +1,10 @@
 import requestV2 from '@/utils/request-v2'
 // 获取工作表单列表数据
-export function getWorkForm() {
+export function getWorkForm(obj) {
   return requestV2({
     url: '/workflow/workformList',
     method: 'get',
+    params:obj
   })
 }
 // 新建
