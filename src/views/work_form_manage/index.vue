@@ -353,7 +353,7 @@
           <div v-show="table">
             <div>
               <div>
-                <span>工单名称:</span>
+                <span class="star">工单名称:</span>
               </div>
               <el-input type="textarea" :rows="1" v-model="workFormTable.name"></el-input>
             </div>
@@ -382,25 +382,25 @@
             <div v-if="item.dataType === 'input' && typeShow[index]">
               <div>
                 <div>
-                  <span>字段名称:</span>
+                  <span class="star">字段名称:</span>
                 </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
                 <div>
-                  <span>字段描述</span>
+                  <span class="star">字段描述:</span>
                 </div>
                 <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
               <div>
                 <div>
-                  <span>默认值</span>
+                  <span class="star">默认值:</span>
                 </div>
                 <el-input type="text" v-model="item.defaultValue"></el-input>
               </div>
               <div>
                 <div>
-                  <span>默认值类型</span>
+                  <span class="star">默认值类型:</span>
                 </div>
                 <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
@@ -470,25 +470,25 @@
             <div v-if="item.dataType === 'textarea' && typeShow[index]">
               <div>
                 <div>
-                  <span>字段名称:</span>
+                  <span class="star">字段名称:</span>
                 </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
                 <div>
-                  <span>字段描述:</span>
+                  <span class="star">字段描述:</span>
                 </div>
                 <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
               <div>
                 <div>
-                  <span>默认值</span>
+                  <span class="star">默认值:</span>
                 </div>
                 <el-input type="text" v-model="item.defaultValue"></el-input>
               </div>
               <div>
                 <div>
-                  <span>默认值类型</span>
+                  <span class="star">默认值类型:</span>
                 </div>
                 <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
@@ -558,25 +558,25 @@
             <div v-if="item.dataType === 'inputNumber' && typeShow[index]">
               <div>
                 <div>
-                  <span>字段名称:</span>
+                  <span class="star">字段名称:</span>
                 </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
                 <div>
-                  <span>字段描述:</span>
+                  <span class="star">字段描述:</span>
                 </div>
                 <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
               <div>
                 <div>
-                  <span>默认值</span>
+                  <span class="star">默认值:</span>
                 </div>
                 <el-input type="number" v-model="item.defaultValue"></el-input>
               </div>
               <div>
                 <div>
-                  <span>默认值类型</span>
+                  <span class="star">默认值类型:</span>
                 </div>
                 <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
@@ -646,13 +646,13 @@
             <div v-if="item.dataType === 'radio' && typeShow[index]">
               <div>
                 <div>
-                  <span>字段名称:</span>
+                  <span class="star">字段名称:</span>
                 </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
                 <div>
-                  <span>字段描述:</span>
+                  <span class="star">字段描述:</span>
                 </div>
                 <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
@@ -673,7 +673,7 @@
                           @click="addRadio(item.dataValues)"
                           title="新建选项"
                         ></i>
-                        <div>
+                        <div v-if="item.dataValues.length > 1">
                           <el-button
                             icon="el-icon-arrow-up"
                             type="text"
@@ -705,13 +705,13 @@
               </div>
               <div>
                 <div>
-                  <span>默认值</span>
+                  <span class="star">默认值:</span>
                 </div>
                 <el-input type="text" v-model="item.defaultValue"></el-input>
               </div>
               <div>
                 <div>
-                  <span>默认值类型</span>
+                  <span class="star">默认值类型:</span>
                 </div>
                 <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
@@ -768,13 +768,13 @@
             <div v-if="item.dataType === 'checkbox' && typeShow[index]">
               <div>
                 <div>
-                  <span>字段名称:</span>
+                  <span class="star">字段名称:</span>
                 </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
                 <div>
-                  <span>字段描述:</span>
+                  <span class="star">字段描述:</span>
                 </div>
                 <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
@@ -827,13 +827,13 @@
               </div>
               <div>
                 <div>
-                  <span>默认值</span>
+                  <span class="star">默认值:</span>
                 </div>
                 <el-input type="text" v-model="item.defaultValue"></el-input>
               </div>
               <div>
                 <div>
-                  <span>默认值类型</span>
+                  <span class="star">默认值类型:</span>
                 </div>
                 <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
@@ -890,13 +890,13 @@
             <div v-if="item.dataType === 'select' && typeShow[index]">
               <div>
                 <div>
-                  <span>字段名称:</span>
+                  <span class="star">字段名称:</span>
                 </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
                 <div>
-                  <span>字段描述:</span>
+                  <span class="star">字段描述:</span>
                 </div>
                 <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
@@ -948,13 +948,13 @@
               </div>
               <div>
                 <div>
-                  <span>默认值</span>
+                  <span class="star">默认值:</span>
                 </div>
                 <el-input type="text" v-model="item.defaultValue"></el-input>
               </div>
               <div>
                 <div>
-                  <span>默认值类型</span>
+                  <span class="star">默认值类型:</span>
                 </div>
                 <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
@@ -1011,25 +1011,25 @@
             <div v-if="item.dataType === 'datetime'&& typeShow[index]">
               <div>
                 <div>
-                  <span>字段名称:</span>
+                  <span class="star">字段名称:</span>
                 </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
                 <div>
-                  <span>字段描述:</span>
+                  <span class="star">字段描述:</span>
                 </div>
                 <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
               <div>
                 <div>
-                  <span>默认值</span>
+                  <span class="star">默认值:</span>
                 </div>
                 <el-input type="text" v-model="item.defaultValue"></el-input>
               </div>
               <div>
                 <div>
-                  <span>默认值类型</span>
+                  <span class="star">默认值类型:</span>
                 </div>
                 <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
@@ -1092,13 +1092,13 @@
             <div v-if="item.dataType === 'multipleSelect' && typeShow[index]">
               <div>
                 <div>
-                  <span>字段名称:</span>
+                  <span class="star">字段名称:</span>
                 </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
                 <div>
-                  <span>字段描述:</span>
+                  <span class="star">字段描述:</span>
                 </div>
                 <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
@@ -1149,7 +1149,7 @@
               </div>
               <div>
                 <div>
-                  <span>默认值</span>
+                  <span class="star">默认值:</span>
                 </div>
                 <div>
                   <div class="addDemo" v-for="(item9,index9) in item.defaultValue" :key="index9">
@@ -1194,7 +1194,7 @@
               </div>
               <div>
                 <div>
-                  <span>默认值类型</span>
+                  <span class="star">默认值类型:</span>
                 </div>
                 <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
@@ -1251,25 +1251,25 @@
             <div v-if="item.dataType === 'date' && typeShow[index]">
               <div>
                 <div>
-                  <span>字段名称:</span>
+                  <span class="star">字段名称:</span>
                 </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
                 <div>
-                  <span>字段描述:</span>
+                  <span class="star">字段描述:</span>
                 </div>
                 <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
               <div>
                 <div>
-                  <span>默认值</span>
+                  <span class="star">默认值:</span>
                 </div>
                 <el-input type="text" v-model="item.defaultValue"></el-input>
               </div>
               <div>
                 <div>
-                  <span>默认值类型</span>
+                  <span class="star">默认值类型:</span>
                 </div>
                 <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
@@ -1332,25 +1332,25 @@
             <div v-if="item.dataType === 'time' && typeShow[index]">
               <div>
                 <div>
-                  <span>字段名称:</span>
+                  <span class="star">字段名称:</span>
                 </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
                 <div>
-                  <span>字段描述:</span>
+                  <span class="star">字段描述:</span>
                 </div>
                 <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
               <div>
                 <div>
-                  <span>默认值</span>
+                  <span class="star">默认值:</span>
                 </div>
                 <el-input type="text" v-model="item.defaultValue"></el-input>
               </div>
               <div>
                 <div>
-                  <span>默认值类型</span>
+                  <span class="star">默认值类型:</span>
                 </div>
                 <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
@@ -1413,13 +1413,13 @@
             <div v-if="item.dataType === 'span' && typeShow[index]">
               <div>
                 <div>
-                  <span>字段名称:</span>
+                  <span class="star">字段名称:</span>
                 </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
                 <div>
-                  <span>字段描述:</span>
+                  <span class="star">字段描述:</span>
                 </div>
                 <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
@@ -1436,7 +1436,7 @@
               </div>
               <div>
                 <div>
-                  <span>默认值类型</span>
+                  <span class="star">默认值类型:</span>
                 </div>
                 <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
@@ -1498,19 +1498,19 @@
             <div v-if="item.dataType === 'address' && typeShow[index]">
               <div>
                 <div>
-                  <span>字段名称:</span>
+                  <span class="star">字段名称:</span>
                 </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
               <div>
                 <div>
-                  <span>字段描述:</span>
+                  <span class="star">字段描述:</span>
                 </div>
                 <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
               <div>
                 <div>
-                  <span>默认值</span>
+                  <span class="star">默认值:</span>
                 </div>
                 <div style="display:flex;justify-content: space-between;flex-wrap:wrap;">
                   <el-select
@@ -1552,7 +1552,7 @@
               </div>
               <div>
                 <div>
-                  <span>默认值类型</span>
+                  <span class="star">默认值类型:</span>
                 </div>
                 <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
@@ -1738,7 +1738,7 @@ export default {
       // 分页数据
       pageShow: false,
       pageInfo: {},
-      reqPag:{},
+      reqPag: {},
       arr: [],
 
       // 省市区三级联动
@@ -2285,45 +2285,43 @@ export default {
                 item.defaultValueType === "0" ||
                 item.defaultValueType === "1"
               ) {
-                console.log(item.defaultValueType)
-              }else{
-                console.log(item.defaultValueType)
+                if (item.checklist) {
+                  if (item.checklist.length === 2) {
+                    item.rw = 3;
+                  } else if (item.checklist.length === 1) {
+                    if (item.checklist[0] === "1") {
+                      item.rw = 1;
+                    } else {
+                      item.rw = 2;
+                    }
+                  }
+                } else {
+                  item.rw = 0;
+                }
+                delete item.checklist;
+                if (
+                  item.dataType === "radio" ||
+                  item.dataType === "checkbox" ||
+                  item.dataType === "select"
+                ) {
+                  item.dataValues = this.arrToString(item.dataValues);
+                }
+                if (item.dataType === "multipleSelect") {
+                  item.dataValues = this.arrToString(item.dataValues);
+                  item.defaultValue = this.arrToString(item.defaultValue);
+                }
+                if (item.dataType === "address") {
+                  item.defaultValue = JSON.stringify(item.defaultValue);
+                }
+              } else {
+                console.log(item.defaultValueType);
                 this.$message.error("默认值类型请输入0或1");
                 flag = false;
               }
-              
             } else {
               this.$message.error("请完善信息");
               flag = false;
             }
-            if (item.checklist) {
-                if (item.checklist.length === 2) {
-                  item.rw = 3;
-                } else if (item.checklist.length === 1) {
-                  if (item.checklist[0] === "1") {
-                    item.rw = 1;
-                  } else {
-                    item.rw = 2;
-                  }
-                }
-              } else {
-                item.rw = 0;
-              }
-              delete item.checklist;
-              if (
-                item.dataType === "radio" ||
-                item.dataType === "checkbox" ||
-                item.dataType === "select"
-              ) {
-                item.dataValues = this.arrToString(item.dataValues);
-              }
-              if (item.dataType === "multipleSelect") {
-                item.dataValues = this.arrToString(item.dataValues);
-                item.defaultValue = this.arrToString(item.defaultValue);
-              }
-              if (item.dataType === "address") {
-                item.defaultValue = JSON.stringify(item.defaultValue);
-              }
           });
         }
         if (flag) {
@@ -2514,18 +2512,18 @@ export default {
     },
     // 页面显示条数
     handleSizeChange(val) {
-      console.log(val)
-      this.reqPag.pageNo = 1
+      console.log(val);
+      this.reqPag.pageNo = 1;
       this.reqPag.pageSize = val;
-      console.log(this.pageInfo)
+      console.log(this.pageInfo);
       this.getWorkFormList(this.reqPag);
     },
     // 分页翻页功能
     handleCurrentChange(val) {
-      console.log(val)
+      console.log(val);
       this.reqPag.pageNo = val;
-      this.reqPag.pageSize = this.pageInfo.pageSize
-      console.log(this.pageInfo)
+      this.reqPag.pageSize = this.pageInfo.pageSize;
+      console.log(this.pageInfo);
       this.getWorkFormList(this.reqPag);
     }
   }
@@ -2674,5 +2672,20 @@ export default {
 }
 .el-checkbox + .el-checkbox {
   margin-left: 0;
+}
+.star {
+  padding-left: 10px;
+  display: block;
+  position: relative;
+  &::before {
+    content: "*";
+    width: 5px;
+    height: 5px;
+    color: red;
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translate(-50%);
+  }
 }
 </style>
