@@ -385,8 +385,8 @@
                           @click="customerInfosFormToggle('linkResultInfos',index,true)">
                           <img src="../../../static/images/edit_btn.png">
                         </i>
-                        <el-button v-if="item2.isUsually===0" size="mini" type="text" @click="setDefaultLink('linkResultInfos',index,false)" style="color:#54B8FF;">设为默认</el-button>
-                        <el-tag :disable-transitions="true" v-if="item2.isUsually===1" size="mini">默认</el-tag>
+                        <el-button v-if="showDefaultBtn&&(item2.isUsually===null||item2.isUsually===0)" size="mini" type="text" @click="setDefaultLink('linkResultInfos',index,false)" style="color:#54B8FF;">设为默认</el-button>
+                        <el-tag :disable-transitions="true" v-if="showDefaultBtn&&item2.isUsually===1" size="mini">默认</el-tag>
                       </el-col>
                       <!-- <el-col v-if="customerInfos.linkResultInfos!==undefined&&customerInfos.linkResultInfos.length===0||!(customerInfos.linkResultInfos)" class="customerInfo-item font12" :span="6">
                         <span>手机号码：</span>
@@ -436,8 +436,8 @@
                         <i v-if="!customerInfosFormVisbile.addressResultInfos[index2]&&provinces&&provinces.length" style="cursor:pointer;" @click="handleEditRegion(index2);">
                           <img src="../../../static/images/edit_btn.png">
                         </i>
-                        <el-button v-if="item.isDefault===0" size="mini" type="text" @click="setDefaultAddress('addressResultInfos',index2,false)" style="color:#54B8FF;">设为默认</el-button>
-                        <el-tag :disable-transitions="true" v-if="item.isDefault===1" size="mini">默认</el-tag>
+                        <el-button v-if="showDefaultBtn&&(item.isDefault===null||item.isDefault===0)" size="mini" type="text" @click="setDefaultAddress('addressResultInfos',index2,false)" style="color:#54B8FF;">设为默认</el-button>
+                        <el-tag :disable-transitions="true" v-if="showDefaultBtn&&item.isDefault===1" size="mini">默认</el-tag>
                       </el-col>
                       <!-- <el-col v-if="customerInfos.addressResultInfos!==undefined&&customerInfos.addressResultInfos.length===0||!(customerInfos.addressResultInfos)" class="customerInfo-item font12" :span="24">
                         <span>地址:</span>
@@ -799,6 +799,71 @@
               </div>
             </div>
           </el-tab-pane>
+          <el-tab-pane label="酒店信息" name="8" style="padding:15px;">
+            <el-row>
+              <el-table
+                class="hotel-table"
+                :data="hotelTableData"
+                style="width: 100%">
+                <el-table-column type="expand">
+                  <template slot-scope="props">
+                    <el-form label-position="left">
+                      <el-form-item label="酒店名称">
+                        <span>{{ props.row.name }}</span>
+                      </el-form-item>
+                      <el-form-item label="国家">
+                        <span>{{ props.row.country }}</span>
+                      </el-form-item>
+                      <el-form-item label="城市">
+                        <span>{{ props.row.city }}</span>
+                      </el-form-item>
+                      <el-form-item label="优惠类型">
+                        <span>{{ props.row.offerType===0?'免费住宿':'住二送一' }}</span>
+                      </el-form-item>
+                      <el-form-item label="房间类型">
+                        <span>{{ props.row.roomType }}</span>
+                      </el-form-item>
+                      <el-form-item label="床型">
+                        <span>{{ props.row.bedType===0?'大床':'双床' }}</span>
+                      </el-form-item>
+                      <el-form-item label="餐型">
+                        <span>{{ props.row.mealType===0?'无早':props.row.mealType===1?'单早':'双早' }}</span>
+                      </el-form-item>
+                      <el-form-item label="地址">
+                        <span>{{ props.row.address }}</span>
+                      </el-form-item>
+                      <el-form-item label="状态">
+                        <span>{{ props.row.status===0?'有效':'无效' }}</span>
+                      </el-form-item>
+                    </el-form>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="商品名称"
+                  prop="name">
+                </el-table-column>
+                <el-table-column
+                  label="国家"
+                  prop="country">
+                </el-table-column>
+                <el-table-column
+                  label="地址"
+                  prop="address">
+                </el-table-column>
+              </el-table>
+            </el-row>
+            <el-row>
+              <el-pagination
+                @size-change="hotelSizeChange"
+                @current-change="hotelCurrentChange"
+                :current-page.sync="hotelPagination.pageNo"
+                :page-size="hotelPagination.pageSize"
+                :page-sizes="[10, 20, 30, 40, 50]"
+                layout="total, sizes, prev, pager, next, jumper "
+                :total="hotelPagination.totalCount" style="text-align: right">
+              </el-pagination>
+            </el-row>
+          </el-tab-pane>
           <el-tab-pane closable label="服务记录详情" name="6" class="record-dail" v-if="recordDailTabVisible">
             <div class="table-container" style="margin-top:0;">
               <b class="font14" style="padding-top:10px;">{{detailInfo.contactInfo.recordId}}</b>
@@ -902,6 +967,8 @@
               </div>
             </div>
           </el-tab-pane>
+          
+
           <!-- <el-tab-pane
             closable
             v-for="(item, index) in editableTabs"
@@ -1240,6 +1307,14 @@
       color: #333;
       // text-align: center;
       height: 834px;
+      .hotel-table{
+        .el-table__expanded-cell{
+          padding:10px 15px 15px 57px;
+        }
+        .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item{
+          margin-bottom:0;
+        }
+      }
       .el-icon-circle-check-outline,.el-icon-circle-close-outline{
         font-size:16px;
         cursor:pointer;
@@ -1498,7 +1573,8 @@ import {
   reSendMsg,
   addUrge,
   queryUrgeList,
-  cancelUrge
+  cancelUrge,
+  getHotelList
 } from '@/api/incoming_call'
 import {
   getContactByGradeId,
@@ -1527,483 +1603,495 @@ import vueEmoji from '@/components/Emotion3/emoji.vue'
 import emojidata from '@/components/Emotion3/emoji-data.js'
 import reg_emoji from '@/components/Emotion3/reg_emojis.js'
 // var vm = null
+let overallIncallCache = {}
 export default {
   name: 'incoming_call',
   inject: ['reloadCompoment'],
   data() {
-    return {
-      urgeList: [],
-      urgeVisible: false, // 显示催办弹窗
-      addUrge: {// 新增催办请求对象
-        workformRecordId: null,
-        workformRecordName: '',
-        urgeContent: '',
-        creatorId: '',
-        creatorName: ''
-      },
-      hideHits: false,
-      menuCustomerName: '',
-      customerEditReq: {
-        customer: {},
-        customerAddresses: [],
-        customerLinks: [],
-        customerCars: []
-      },
-      customerInfosFormVisbile: {// 控制客户名片编辑表单与内容的切换
-        customerName: null,
-        customerSex: null,
-        idNo: null,
-        linkResultInfos: [],
-        addressResultInfos: []
-      },
-      customerVmodels: [],
-      provincesCache: null,
-      provinces: [],
-      cities: [],
-      districts: [],
-      isConversation: { // 控制在是否会话中的表单可用不可用
-        summaryDisabled: false,
-        addWorkformDisabled: false,
-        workformRecordInvisible: false
-      },
-      reload: true,
-      showCustomerAddresses: false,
-      timeValue: null,
-      // 需删除---------------------
-      // taskId: 'T2019040200000000007',
-      // ---------------------
-      canSubmit: true,
-      workformVali: [],
-      searchWorkFormRecord: {
-        customerId: null,
-        name: '',
-        modifierName: '',
-        timeStart: null,
-        timeEnd: null,
-        pageNo: 1,
-        pageSize: 10
-      },
-      searchWorkFormRecord2: {
-        customerId: null,
-        name: '',
-        modifierName: '',
-        timeStart: null,
-        timeEnd: null,
-        pageNo: 1,
-        pageSize: 10
-      },
-      workformRecordDetail: {},
-      workformRecordContent: {},
-      workformRecordRule: {},
-      workformInfo: {},
-      addWorkForm: {
-        name: null,
-        workformId: null,
-        customerId: null,
-        customerName: null,
-        customerPhone: null,
-        creatorId: null,
-        status: null,
-        creatorName: null,
-        workformRecordRuleCreateInfos: []
-      },
-      addWorkFormTabVisible: false,
-      workFormRecordTabVisible: false,
-      isAddWorkOrder: false,
-      recordSummaryCreateInfo: {
-        description: '',
-        recordId: '',
-        summaryIds: []
+    let cache = {}
+    if (this.$store.state.incomingCall.incall_cache.customerPhone) {
+      cache = this.$store.state.incomingCall.incall_cache
+    } else {
+      cache = {
+        showDefaultBtn: true,
+        hotelTableData: [],
+        hotelPagination: {},
+        urgeList: [],
+        urgeVisible: false, // 显示催办弹窗
+        addUrge: {// 新增催办请求对象
+          workformRecordId: null,
+          workformRecordName: '',
+          urgeContent: '',
+          creatorId: '',
+          creatorName: ''
+        },
+        hideHits: false,
+        menuCustomerName: '',
+        customerEditReq: {
+          customer: {},
+          customerAddresses: [],
+          customerLinks: [],
+          customerCars: []
+        },
+        customerInfosFormVisbile: {// 控制客户名片编辑表单与内容的切换
+          customerName: null,
+          customerSex: null,
+          idNo: null,
+          linkResultInfos: [],
+          addressResultInfos: []
+        },
+        customerVmodels: [],
+        provincesCache: null,
+        provinces: [],
+        cities: [],
+        districts: [],
+        isConversation: { // 控制在是否会话中的表单可用不可用
+          summaryDisabled: false,
+          addWorkformDisabled: false,
+          workformRecordInvisible: false
+        },
+        reload: true,
+        showCustomerAddresses: false,
+        timeValue: null,
+        // 需删除---------------------
+        // taskId: 'T2019040200000000007',
+        // ---------------------
+        canSubmit: true,
+        workformVali: [],
+        searchWorkFormRecord: {
+          customerId: null,
+          name: '',
+          modifierName: '',
+          timeStart: null,
+          timeEnd: null,
+          pageNo: 1,
+          pageSize: 10
+        },
+        searchWorkFormRecord2: {
+          customerId: null,
+          name: '',
+          modifierName: '',
+          timeStart: null,
+          timeEnd: null,
+          pageNo: 1,
+          pageSize: 10
+        },
+        workformRecordDetail: {},
+        workformRecordContent: {},
+        workformRecordRule: {},
+        workformInfo: {},
+        addWorkForm: {
+          name: null,
+          workformId: null,
+          customerId: null,
+          customerName: null,
+          customerPhone: null,
+          creatorId: null,
+          status: null,
+          creatorName: null,
+          workformRecordRuleCreateInfos: []
+        },
+        addWorkFormTabVisible: false,
+        workFormRecordTabVisible: false,
+        isAddWorkOrder: false,
+        recordSummaryCreateInfo: {
+          description: '',
+          recordId: '',
+          summaryIds: ''
         // taskStatus: '' // 任务状态 1 预约,2 完成,3 失败
-      },
-      showPlayer: false,
-      option: { i18n: { normal: '1×', speed: '播放速度' }},
-      customerPhoneAddress: '',
-      ids: {
-        recordId: '',
-        agentId: '',
-        customerId: ''
-      },
-      detailInfo: {
-        contactInfo: {},
-        staffInfo: {},
-        customerInfo: {}
-      },
-      recordDailTabVisible: false,
-      editableTabs: [],
-      routeParams: {},
-      agentId: localStorage.getItem('agentId'),
-      defaultPagination: {
-        pageNo: 1,
-        pageSize: 10,
-        totalCount: 0,
-        totalPage: 1
-      },
-      searchContactListReq: {
-        contactType: '',
+        },
+        showPlayer: false,
+        option: { i18n: { normal: '1×', speed: '播放速度' }},
+        customerPhoneAddress: '',
+        ids: {
+          recordId: '',
+          agentId: '',
+          customerId: ''
+        },
+        detailInfo: {
+          contactInfo: {},
+          staffInfo: {},
+          customerInfo: {}
+        },
+        recordDailTabVisible: false,
+        editableTabs: [],
+        routeParams: {},
+        agentId: localStorage.getItem('agentId'),
+        defaultPagination: {
+          pageNo: 1,
+          pageSize: 10,
+          totalCount: 0,
+          totalPage: 1
+        },
+        searchContactListReq: {
+          contactType: '',
+          customerId: '',
+          callDirection: '',
+          pageNo: 1,
+          pageSize: 10
+        },
+        searchContactListReq2: {
+          contactType: '',
+          customerId: '',
+          callDirection: '',
+          pageNo: 1,
+          pageSize: 10
+        },
+        contactList: [],
+        workFormRecordList: [],
+        customerInfos: [],
+        serviceRecordPagination: {// 插件页码
+          pageNo: 1,
+          pageSize: 10,
+          totalCount: 0,
+          totalPage: 1
+        },
+        workFormRecordPagination: {// 页码插件
+          pageNo: 1,
+          pageSize: 10,
+          totalCount: 0,
+          totalPage: 1
+        },
+        serviceRecord: [1],
+        basicInfo: [0, 1, 2],
+        callInfoActive: ['收起', '收起', '收起'],
+        customerPhoneHeader: '',
+        emojidata: emojidata,
+        reg_emojis: reg_emoji,
+        finalContent: '',
+        showEmojis: false, // 是否显示出表情的div
+        chooseEmojis: 'qq_face', // 显示表情的tabs
+        sessionId: '',
+        queryPageNum: 2,
+        hasMoreRecords: false, // 判断是否有更多记录 是否需要显示loading按钮
+        sendMessageAgainVisible: false, // 是否重新发送dialog
+        sendMessageAgain_Obj: null, //
+        sendMessageAgain_Index: '', //
+        sendVisible: true,
+        imageVisible: false,
+        fileVisible: false,
+        imageDetailVisible: false,
+        recordingVisible: false,
+        uploadDisabled: false,
+        uploadInfoReq: {
+          bucketName: 'crm',
+          objectName: ''
+        },
+        imgsrc: '',
+        fileName: '',
+        fileSize: '',
+        fileSrc: '',
+        DLurl: [],
+        updateUrl: '',
+        timeStamp: null,
+        contents: this.$store.state.app.wechat_contents, // 聊天记录
+        nodulesTree: [], // 需要展示的小结树 数据
+        serviceListTree: [],
+        serviceList: [],
+        selectedServiceList: [],
+        selectedWorkFormId: '',
+        serviceListTreeProps: {
+          children: 'children',
+          label: 'serviceName',
+          value: 'id'
+        },
+        summaryTreeProps: {
+          children: 'summaryDetailInfos',
+          label: 'name',
+          value: 'id'
+        },
+        showSendMessage: false, // 是否展示发送支付短信
+        sendMessageOrNot: true, //  发送支付短信checkbox
+        campaignType: '', // 活动类型
+        hasProductInfo: false, // 是否有产品的标志
+        selectedSummarys: [], // 选中的小结id
+        summary_description: '', // 小结备注
+        addDays: '', // 预约时间添加的天数
+        isLastContactTime: false, // 判断是否是最后一次拨打次数
+        appointTime: '', // 预约时间
+        taskRadio: '', // 任务状态
+        myMessages: '', // 发送的消息
+        activeTab: '', // 产品展示项
+        products: [], // 活动下的产品
+        customerNote: '', // 客户留言
+        sumTotal: 0, // 总价格
+        sumInfo: new Map(), // 所选中的产品
+        checks: {},
+        taskId: 'T2019040200000000007',
+        campaignId: '',
         customerId: '',
-        callDirection: '',
-        pageNo: 1,
-        pageSize: 10
-      },
-      searchContactListReq2: {
-        contactType: '',
-        customerId: '',
-        callDirection: '',
-        pageNo: 1,
-        pageSize: 10
-      },
-      contactList: [],
-      workFormRecordList: [],
-      customerInfos: [],
-      serviceRecordPagination: {// 插件页码
-        pageNo: 1,
-        pageSize: 10,
-        totalCount: 0,
-        totalPage: 1
-      },
-      workFormRecordPagination: {// 页码插件
-        pageNo: 1,
-        pageSize: 10,
-        totalCount: 0,
-        totalPage: 1
-      },
-      serviceRecord: [1],
-      basicInfo: [0, 1, 2],
-      callInfoActive: ['收起', '收起', '收起'],
-      customerPhoneHeader: '',
-      emojidata: emojidata,
-      reg_emojis: reg_emoji,
-      finalContent: '',
-      showEmojis: false, // 是否显示出表情的div
-      chooseEmojis: 'qq_face', // 显示表情的tabs
-      sessionId: '',
-      queryPageNum: 2,
-      hasMoreRecords: false, // 判断是否有更多记录 是否需要显示loading按钮
-      sendMessageAgainVisible: false, // 是否重新发送dialog
-      sendMessageAgain_Obj: null, //
-      sendMessageAgain_Index: '', //
-      sendVisible: true,
-      imageVisible: false,
-      fileVisible: false,
-      imageDetailVisible: false,
-      recordingVisible: false,
-      uploadDisabled: false,
-      uploadInfoReq: {
-        bucketName: 'crm',
-        objectName: ''
-      },
-      imgsrc: '',
-      fileName: '',
-      fileSize: '',
-      fileSrc: '',
-      DLurl: [],
-      updateUrl: '',
-      timeStamp: null,
-      contents: this.$store.state.app.wechat_contents, // 聊天记录
-      nodulesTree: [], // 需要展示的小结树 数据
-      serviceListTree: [],
-      serviceList: [],
-      selectedServiceList: [],
-      selectedWorkFormId: '',
-      serviceListTreeProps: {
-        children: 'children',
-        label: 'serviceName',
-        value: 'id'
-      },
-      summaryTreeProps: {
-        children: 'summaryDetailInfos',
-        label: 'name',
-        value: 'id'
-      },
-      showSendMessage: false, // 是否展示发送支付短信
-      sendMessageOrNot: true, //  发送支付短信checkbox
-      campaignType: '', // 活动类型
-      hasProductInfo: false, // 是否有产品的标志
-      selectedSummarys: [], // 选中的小结id
-      summary_description: '', // 小结备注
-      addDays: '', // 预约时间添加的天数
-      isLastContactTime: false, // 判断是否是最后一次拨打次数
-      appointTime: '', // 预约时间
-      taskRadio: '', // 任务状态
-      myMessages: '', // 发送的消息
-      activeTab: '', // 产品展示项
-      products: [], // 活动下的产品
-      customerNote: '', // 客户留言
-      sumTotal: 0, // 总价格
-      sumInfo: new Map(), // 所选中的产品
-      checks: {},
-      taskId: 'T2019040200000000007',
-      campaignId: '',
-      customerId: '',
-      customerPhone: '',
-      customerName: '', // 对话框中客户姓名
-      idNumber: '',
-      customerColumnInfos: [], // 用来展示的客户字段
-      isRecruit: false, // 活动类型的判断
-      contactRecord: [], // 接触记录信息
-      activeName: '1', // 折叠板默认打开项
-      msgIds: [],
-      dailTaskCustomer: {},
-      customerActive: null,
-      unicoded_qq_face: [
-        '/::)',
-        '/::~',
-        '/::B',
-        '/::|',
-        '/:8-)',
-        '/::<',
-        '/::$',
-        '/::X',
-        '/::Z',
-        "/::'(",
-        '/::-|',
-        '/::@',
-        '/::P',
-        '/::D',
-        '/::O',
-        '/::(',
-        '/::+',
-        '[囧]',
-        '/::Q',
-        '/::T',
-        '/:,@P',
-        '/:,@-D',
-        '/::d',
-        '/:,@o',
-        '/::g',
-        '/:|-)',
-        '/::!',
-        '/::L',
-        '/::>',
-        '/::,@',
-        '/:,@f',
-        '/::-S',
-        '/:?',
-        '/:,@x',
-        '/:,@@',
-        '/::8',
-        '/:,@!',
-        '/:!!!',
-        '/:xx',
-        '/:bye',
-        '/:wipe',
-        '/:dig',
-        '/:handclap',
-        '/:&-(',
-        '/:B-)',
-        '/:<@',
-        '/:@>',
-        '/::-O',
-        '/:>-|',
-        '/:P-(',
-        "/::'|",
-        '/:X-)',
-        '/::*',
-        '/:@x',
-        '/:8*',
-        '/:pd',
-        '/:<W>',
-        '/:beer',
-        '/:basketb',
-        '/:oo',
-        '/:coffee',
-        '/:eat',
-        '/:pig',
-        '/:rose',
-        '/:fade',
-        '/:showlove',
-        '/:heart',
-        '/:break',
-        '/:cake',
-        '/:li',
-        '/:bome',
-        '/:kn',
-        '/:footb',
-        '/:ladybug',
-        '/:shit',
-        '/:moon',
-        '/:sun',
-        '/:gift',
-        '/:hug',
-        '/:strong',
-        '/:weak',
-        '/:share',
-        '/:v',
-        '/:@)',
-        '/:jj',
-        '/:@@',
-        '/:bad',
-        '/:lvu',
-        '/:no',
-        '/:ok',
-        '/:love',
-        '/:<L>',
-        '/:jump',
-        '/:shake',
-        '/:<O>',
-        '/:circle',
-        '/:kotow',
-        '/:turn',
-        '/:skip',
-        '[挥手]',
-        '/:#-0',
-        '/:hiphot',
-        '/:<&',
-        '/:&>'
-      ],
-      unicoded_emoji_face: [
-        '0x1f600',
-        '0x1f601',
-        '0x1f602',
-        '0x1f923',
-        '0x1f603',
-        '0x1f604',
-        '0x1f605',
-        '0x1f606',
-        '0x1f609',
-        '0x1f60a',
-        '0x1f60b',
-        '0x1f60e',
-        '0x1f60d',
-        '0x1f618',
-        '0x1f617',
-        '0x1f619',
-        '0x1f61a',
-        '0x263a',
-        '0x1f642',
-        '0x1f917',
-        '0x1f914',
-        '0x1f610',
-        '0x1f611',
-        '0x1f636',
-        '0x1f644',
-        '0x1f60f',
-        '0x1f623',
-        '0x1f625',
-        '0x1f62e',
-        '0x1f910',
-        '0x1f62f',
-        '0x1f62a',
-        '0x1f62b',
-        '0x1f634',
-        '0x1f60c',
-        '0x1f61b',
-        '0x1f61c',
-        '0x1f61d',
-        '0x1f924',
-        '0x1f6120',
-        '0x1f613',
-        '0x1f614',
-        '0x1f615',
-        '0x1f643',
-        '0x1f911',
-        '0x1f632',
-        '0x2639',
-        '0x1f641',
-        '0x1f616',
-        '0x1f61e',
-        '0x1f61f',
-        '0x1f624',
-        '0x1f622',
-        '0x1f62d',
-        '0x1f626',
-        '0x1f627',
-        '0x1f628',
-        '0x1f629',
-        '0x1f62c',
-        '0x1f630',
-        '0x1f631',
-        '0x1f633',
-        '0x1f635',
-        '0x1f621',
-        '0x1f620',
-        '0x1f637',
-        '0x1f912',
-        '0x1f915',
-        '0x1f922',
-        '0x1f927',
-        '0x1f607',
-        '0x1f920',
-        '0x1f921',
-        '0x1f925',
-        '0x1f913',
-        '0x1f608',
-        '0x1f47f',
-        '0x1f479',
-        '0x1f47a',
-        '0x1f480',
-        '0x1f47b',
-        '0x1f47d',
-        '0x1f916',
-        '0x1f4a9',
-        '0x1f63a',
-        '0x1f638',
-        '0x1f639',
-        '0x1f63b',
-        '0x1f63c',
-        '0x1f63d',
-        '0x1f640',
-        '0x1f63f',
-        '0x1f63e',
-        '0x1f3fb',
-        '0x1f3fc',
-        '0x1f3fd',
-        '0x1f3fe',
-        '0x1f3ff',
-        '0x1f5e3',
-        '0x1f464',
-        '0x1f465',
-        '0x1f46b',
-        '0x1f46c',
-        '0x1f46d',
-        '0x1f442',
-        '0x1f442 0x1f3fb',
-        '0x1f442 0x1f3fc',
-        '0x1f442 0x1f3fd',
-        '0x1f442 0x1f3fe',
-        '0x1f442 0x1f3ff',
-        '0x1f443',
-        '0x1f443 0x1f3fb',
-        '0x1f443 0x1f3fc',
-        '0x1f443 0x1f3fd',
-        '0x1f443 0x1f3fe',
-        '0x1f443 0x1f3ff',
-        '0x1f463',
-        '0x1f440',
-        '0x1f441',
-        '0x1f445',
-        '0x1f444',
-        '0x1f48b',
-        '0x1f453',
-        '0x1f576',
-        '0x1f454',
-        '0x1f455',
-        '0x1f456',
-        '0x1f457',
-        '0x1f458',
-        '0x1f459',
-        '0x1f45a',
-        '0x1f45b',
-        '0x1f45c',
-        '0x1f45d',
-        '0x1f392',
-        '0x1f45e',
-        '0x1f45f',
-        '0x1f460',
-        '0x1f461',
-        '0x1f462',
-        '0x1f451',
-        '0x1f452',
-        '0x1f3a9',
-        '0x1f393',
-        '0x26d1',
-        '0x1f484',
-        '0x1f48d',
-        '0x1f302',
-        '0x1f4bc'
-      ]
+        customerPhone: '',
+        customerName: '', // 对话框中客户姓名
+        idNumber: '',
+        customerColumnInfos: [], // 用来展示的客户字段
+        isRecruit: false, // 活动类型的判断
+        contactRecord: [], // 接触记录信息
+        activeName: '1', // 折叠板默认打开项
+        msgIds: [],
+        dailTaskCustomer: {},
+        customerActive: null,
+        unicoded_qq_face: [
+          '/::)',
+          '/::~',
+          '/::B',
+          '/::|',
+          '/:8-)',
+          '/::<',
+          '/::$',
+          '/::X',
+          '/::Z',
+          "/::'(",
+          '/::-|',
+          '/::@',
+          '/::P',
+          '/::D',
+          '/::O',
+          '/::(',
+          '/::+',
+          '[囧]',
+          '/::Q',
+          '/::T',
+          '/:,@P',
+          '/:,@-D',
+          '/::d',
+          '/:,@o',
+          '/::g',
+          '/:|-)',
+          '/::!',
+          '/::L',
+          '/::>',
+          '/::,@',
+          '/:,@f',
+          '/::-S',
+          '/:?',
+          '/:,@x',
+          '/:,@@',
+          '/::8',
+          '/:,@!',
+          '/:!!!',
+          '/:xx',
+          '/:bye',
+          '/:wipe',
+          '/:dig',
+          '/:handclap',
+          '/:&-(',
+          '/:B-)',
+          '/:<@',
+          '/:@>',
+          '/::-O',
+          '/:>-|',
+          '/:P-(',
+          "/::'|",
+          '/:X-)',
+          '/::*',
+          '/:@x',
+          '/:8*',
+          '/:pd',
+          '/:<W>',
+          '/:beer',
+          '/:basketb',
+          '/:oo',
+          '/:coffee',
+          '/:eat',
+          '/:pig',
+          '/:rose',
+          '/:fade',
+          '/:showlove',
+          '/:heart',
+          '/:break',
+          '/:cake',
+          '/:li',
+          '/:bome',
+          '/:kn',
+          '/:footb',
+          '/:ladybug',
+          '/:shit',
+          '/:moon',
+          '/:sun',
+          '/:gift',
+          '/:hug',
+          '/:strong',
+          '/:weak',
+          '/:share',
+          '/:v',
+          '/:@)',
+          '/:jj',
+          '/:@@',
+          '/:bad',
+          '/:lvu',
+          '/:no',
+          '/:ok',
+          '/:love',
+          '/:<L>',
+          '/:jump',
+          '/:shake',
+          '/:<O>',
+          '/:circle',
+          '/:kotow',
+          '/:turn',
+          '/:skip',
+          '[挥手]',
+          '/:#-0',
+          '/:hiphot',
+          '/:<&',
+          '/:&>'
+        ],
+        unicoded_emoji_face: [
+          '0x1f600',
+          '0x1f601',
+          '0x1f602',
+          '0x1f923',
+          '0x1f603',
+          '0x1f604',
+          '0x1f605',
+          '0x1f606',
+          '0x1f609',
+          '0x1f60a',
+          '0x1f60b',
+          '0x1f60e',
+          '0x1f60d',
+          '0x1f618',
+          '0x1f617',
+          '0x1f619',
+          '0x1f61a',
+          '0x263a',
+          '0x1f642',
+          '0x1f917',
+          '0x1f914',
+          '0x1f610',
+          '0x1f611',
+          '0x1f636',
+          '0x1f644',
+          '0x1f60f',
+          '0x1f623',
+          '0x1f625',
+          '0x1f62e',
+          '0x1f910',
+          '0x1f62f',
+          '0x1f62a',
+          '0x1f62b',
+          '0x1f634',
+          '0x1f60c',
+          '0x1f61b',
+          '0x1f61c',
+          '0x1f61d',
+          '0x1f924',
+          '0x1f6120',
+          '0x1f613',
+          '0x1f614',
+          '0x1f615',
+          '0x1f643',
+          '0x1f911',
+          '0x1f632',
+          '0x2639',
+          '0x1f641',
+          '0x1f616',
+          '0x1f61e',
+          '0x1f61f',
+          '0x1f624',
+          '0x1f622',
+          '0x1f62d',
+          '0x1f626',
+          '0x1f627',
+          '0x1f628',
+          '0x1f629',
+          '0x1f62c',
+          '0x1f630',
+          '0x1f631',
+          '0x1f633',
+          '0x1f635',
+          '0x1f621',
+          '0x1f620',
+          '0x1f637',
+          '0x1f912',
+          '0x1f915',
+          '0x1f922',
+          '0x1f927',
+          '0x1f607',
+          '0x1f920',
+          '0x1f921',
+          '0x1f925',
+          '0x1f913',
+          '0x1f608',
+          '0x1f47f',
+          '0x1f479',
+          '0x1f47a',
+          '0x1f480',
+          '0x1f47b',
+          '0x1f47d',
+          '0x1f916',
+          '0x1f4a9',
+          '0x1f63a',
+          '0x1f638',
+          '0x1f639',
+          '0x1f63b',
+          '0x1f63c',
+          '0x1f63d',
+          '0x1f640',
+          '0x1f63f',
+          '0x1f63e',
+          '0x1f3fb',
+          '0x1f3fc',
+          '0x1f3fd',
+          '0x1f3fe',
+          '0x1f3ff',
+          '0x1f5e3',
+          '0x1f464',
+          '0x1f465',
+          '0x1f46b',
+          '0x1f46c',
+          '0x1f46d',
+          '0x1f442',
+          '0x1f442 0x1f3fb',
+          '0x1f442 0x1f3fc',
+          '0x1f442 0x1f3fd',
+          '0x1f442 0x1f3fe',
+          '0x1f442 0x1f3ff',
+          '0x1f443',
+          '0x1f443 0x1f3fb',
+          '0x1f443 0x1f3fc',
+          '0x1f443 0x1f3fd',
+          '0x1f443 0x1f3fe',
+          '0x1f443 0x1f3ff',
+          '0x1f463',
+          '0x1f440',
+          '0x1f441',
+          '0x1f445',
+          '0x1f444',
+          '0x1f48b',
+          '0x1f453',
+          '0x1f576',
+          '0x1f454',
+          '0x1f455',
+          '0x1f456',
+          '0x1f457',
+          '0x1f458',
+          '0x1f459',
+          '0x1f45a',
+          '0x1f45b',
+          '0x1f45c',
+          '0x1f45d',
+          '0x1f392',
+          '0x1f45e',
+          '0x1f45f',
+          '0x1f460',
+          '0x1f461',
+          '0x1f462',
+          '0x1f451',
+          '0x1f452',
+          '0x1f3a9',
+          '0x1f393',
+          '0x26d1',
+          '0x1f484',
+          '0x1f48d',
+          '0x1f302',
+          '0x1f4bc'
+        ]
+      }
+      overallIncallCache = cache
+      this.$store.commit('SET_INCALL_CACHE', cache)
     }
+    return cache
   },
   components: {
     knowledgeQuery,
@@ -2012,6 +2100,9 @@ export default {
     vueEmoji
   },
   computed: {
+    incall_cache() {
+      return this.$store.state.incomingCall.incall_cache
+    },
     wechatContents() {
       return this.$store.state.app.wechat_contents
     },
@@ -2197,6 +2288,8 @@ export default {
         console.log('话术知识库')
       } else if (tab.name === '4') { // 工单记录
         this.getWorkFormRecord()
+      } else if (tab.name === '8') {
+        this.getHotelList()
       }
     },
     // 基本信息--------------1
@@ -2219,8 +2312,10 @@ export default {
     },
     // 编辑时显示隐藏表单
     customerInfosFormToggle(fieldName, index, val) {
+      this.showDefaultBtn = false
       if (index === 0 || index) {
         if (this.customerInfos[fieldName][index].isAdd) {
+          this.showDefaultBtn = true
           this.customerInfos[fieldName].splice(index, 1)
           this.customerInfosFormVisbile[fieldName].splice(index, 1)
           if (fieldName === 'addressResultInfos') {
@@ -2228,6 +2323,7 @@ export default {
           }
         } else {
           this.$set(this.customerInfosFormVisbile[fieldName], index, val)
+          this.showDefaultBtn = !val
           // this.customerInfos = JSON.parse(sessionStorage.getItem('inCall_customerInfos'))
           if (fieldName === 'addressResultInfos') {
             // 还原回显数据
@@ -2250,9 +2346,11 @@ export default {
       this.customerInfos[fieldName] = clone(customerInfoSession[fieldName])
       // this.customerInfos = JSON.parse(sessionStorage.getItem('inCall_customerInfos'))
       this.customerInfosFormVisbile[fieldName] = false
+      this.showDefaultBtn = true
     },
     // 点击添加联系信息
     handleAddContactInfo() {
+      this.showDefaultBtn = false
       const lastOne = this.customerInfosFormVisbile.linkResultInfos[this.customerInfosFormVisbile.linkResultInfos.length - 1]
       if (lastOne) {
         this.$message.error('请先提交当前添加的联系信息再继续添加')
@@ -2263,6 +2361,7 @@ export default {
     },
     // 点击添加地址信息
     handleAddAddressInfo(index) {
+      this.showDefaultBtn = false
       const lastOne = this.customerInfosFormVisbile.addressResultInfos[this.customerInfosFormVisbile.addressResultInfos.length - 1]
       if (lastOne) {
         this.$message.error('请先提交当前添加的地址信息再继续添加')
@@ -2275,6 +2374,7 @@ export default {
     },
     // 编辑并回显客户地址信息
     handleEditRegion(index) {
+      this.showDefaultBtn = false
       this.customerInfosFormToggle('addressResultInfos', index, true)
       getRegion(this.customerInfos.addressResultInfos[index].province).then(res => {
         if (res.data.code === 0) {
@@ -2384,6 +2484,7 @@ export default {
       }
       editCustomer(this.customerEditReq).then(response => {
         if (response.data.code === 0) {
+          this.showDefaultBtn = true
           this.$message.success(response.data.message)
           getCustomerInfoByPhone(this.customerPhone).then(response => {
             this.customerInfos[fieldName] = response.data.data[fieldName]
@@ -2760,6 +2861,7 @@ export default {
           sessionStorage.removeItem('inCall_customerPhone')
           sessionStorage.removeItem('inCall_customerInfos')
           sessionStorage.removeItem('inCall_recordId')
+          this.$store.commit('SET_INCALL_CACHE', {})
           this.isConversation = {
             summaryDisabled: true,
             addWorkformDisabled: true,
@@ -2815,19 +2917,43 @@ export default {
     },
     // 提交完成
     handleSubmit() {
+      if (!this.recordSummaryCreateInfo.summaryIds) {
+        this.$message.error('请选择话后小结')
+        return false
+      }
       if (this.isAddWorkOrder) {
         this.submitForm('workform')
       } else {
-        if (!this.recordSummaryCreateInfo.summaryIds) {
-          this.$message.error('请选择话后小结')
-          return false
-        }
         this.recordSummaryInfo()
       }
     },
     // 改为就绪状态
     changeKeepReady(val) {
       this.$store.commit('SET_KEEPREADY', val)
+    },
+    // 酒店信息-----------------8
+    getHotelList(req) {
+      getHotelList(req).then(response => {
+        if (response.data.code === 0) {
+          this.hotelTableData = response.data.data
+          this.hotelPagination = response.data.pageInfo
+        } else {
+          this.$message.error(response.data.message)
+        }
+      }).catch(error => {
+        throw error
+      })
+    },
+    hotelSizeChange(val) {
+      const req = clone(this.hotelPagination)
+      req.pageSize = val
+      req.pageNo = 1
+      this.getHotelList(req)
+    },
+    hotelCurrentChange(val) {
+      const req = clone(this.hotelPagination)
+      req.pageNo = val
+      this.getHotelList(req)
     },
     // -----------------------
     handleChangeAcitve(active = [1]) {
@@ -3662,184 +3788,190 @@ export default {
   },
 
   mounted() {
-    // const customerPhone = sessionStorage.getItem('inCall_customerPhone')
-    // const customerInfos = JSON.parse(sessionStorage.getItem('inCall_customerInfos'))
-    // const recordId = sessionStorage.getItem('inCall_recordId')
     this.activeName = '1'
-    // 获取路由传参的值
-    // this.$store.dispatch('setCustomerInfosAndRecodId', { customerPhone: customerPhone, customerInfos: customerInfos, recordId: recordId })
-    if (sessionStorage.getItem('inCall_customerInfos')) {
-      this.customerPhone = sessionStorage.getItem('inCall_customerPhone')
-      this.getCustomerInfoByPhone()
-      this.customerInfos = JSON.parse(sessionStorage.getItem('inCall_customerInfos')) || { cuatomerName: '', cuatomerId: null }
-      this.searchContactListReq.customerId = this.customerInfos ? this.customerInfos.customerId : ''
-      this.recordSummaryCreateInfo.recordId = sessionStorage.getItem('inCall_recordId')
-    } else {
-      this.customerPhone = ''
-      this.customerInfos = { cuatomerName: '', cuatomerId: null }
-    }
-    if (this.customerPhone) {
-      this.customerActive = '1' // 进入界面默认选中第一个客户
-      this.isConversation = {
-        summaryDisabled: false,
-        addWorkformDisabled: false,
-        workformRecordVisible: true,
-        completeButtonVisible: true
+    console.log(this.incall_cache)
+    if (!this.incall_cache.customerPhone) {
+      // 获取路由传参的值
+      // this.$store.dispatch('setCustomerInfosAndRecodId', { customerPhone: customerPhone, customerInfos: customerInfos, recordId: recordId })
+      if (sessionStorage.getItem('inCall_customerInfos')) {
+        this.customerPhone = sessionStorage.getItem('inCall_customerPhone')
+        this.getCustomerInfoByPhone()
+        this.customerInfos = JSON.parse(sessionStorage.getItem('inCall_customerInfos')) || { cuatomerName: '', cuatomerId: null }
+        this.searchContactListReq.customerId = this.customerInfos ? this.customerInfos.customerId : ''
+        this.recordSummaryCreateInfo.recordId = sessionStorage.getItem('inCall_recordId')
+      } else {
+        this.customerPhone = ''
+        this.customerInfos = { cuatomerName: '', cuatomerId: null }
       }
-    } else if (!this.customerPhone) {
-      this.customerActive = ''
-      this.isConversation = {
-        summaryDisabled: true,
-        addWorkformDisabled: true,
-        workformRecordVisible: false,
-        completeButtonVisible: false
+      if (this.customerPhone) {
+        this.customerActive = '1' // 进入界面默认选中第一个客户
+        this.isConversation = {
+          summaryDisabled: false,
+          addWorkformDisabled: false,
+          workformRecordVisible: true,
+          completeButtonVisible: true
+        }
+      } else if (!this.customerPhone) {
+        this.customerActive = ''
+        this.isConversation = {
+          summaryDisabled: true,
+          addWorkformDisabled: true,
+          workformRecordVisible: false,
+          completeButtonVisible: false
+        }
       }
-    }
-    if (this.customerPhone) {
-      // 查询号码归属地
-      getPhoneAddress(this.customerPhone).then(response => {
+      if (this.customerPhone) {
+        // 查询号码归属地
+        getPhoneAddress(this.customerPhone).then(response => {
+          if (response.data.code === 0) {
+            this.customerPhoneAddress = response.data.data
+          } else {
+            console.log(response.data.message) // 静默报错
+          }
+        }).catch(error => {
+          throw error
+        })
+      }
+      // 获取所有呼入小结
+      getSummary().then(response => {
         if (response.data.code === 0) {
-          this.customerPhoneAddress = response.data.data
+          this.nodulesTree = response.data.data
+          console.log(this.nodulesTree)
         } else {
-          console.log(response.data.message) // 静默报错
+          this.$message.error(response.data.message)
         }
       }).catch(error => {
         throw error
       })
-    }
-    // 获取所有呼入小结
-    getSummary().then(response => {
-      if (response.data.code === 0) {
-        this.nodulesTree = response.data.data
-        console.log(this.nodulesTree)
-      } else {
-        this.$message.error(response.data.message)
-      }
-    }).catch(error => {
-      throw error
-    })
-    // if (this.$route.query) {
-    //   this.dailTaskCustomer.taskId = this.$route.query.taskId
-    //   this.dailTaskCustomer.campaignId = this.$route.query.campaignId
-    //   this.dailTaskCustomer.customerId = this.$route.query.customerId
-    //   this.dailTaskCustomer.customerPhone = this.$route.query.customerPhone
-    //   this.customerPhoneHeader = this.$route.query.customerPhone
-    // } else if (!this.dailTaskCustomer) {
-    //   this.dailTaskCustomer = this.customerInfos[0]
-    //   this.customerPhoneHeader = this.customerInfos[0].customerPhone
-    // }
-    // // 查询所有客户列表
-    // getWechatCustomer(localStorage.getItem('agentId')).then(response => {
-    //   this.customerInfos = response.data.data
-    //   this.$store.commit('SET_WECHATCUSTOMERINFO', this.customerInfo)
-    //   localStorage.setItem('customerInfos', JSON.stringify(response.data.data))
-    //   if (this.customerInfos.length) {
-    //     if (this.$route.query && this.$route.query.fromDialTask === '0') {
-    //       this.taskId = this.$route.query.taskId
-    //       this.campaignId = this.$route.query.campaignId
-    //       this.customerId = this.$route.query.customerId
-    //       this.customerPhone = this.$route.query.customerPhone
-    //       this.customerPhoneHeader = this.$route.query.customerPhone
-    //       for (var a = 0; a < this.customerInfos.length; a++) {
-    //         if (
-    //           this.customerInfos[a].customerId === this.$route.query.customerId
-    //         ) {
-    //           this.customerInfos[a].isTalking = true
-    //           this.customerActive = a.toString()
-    //         } else {
-    //           this.customerInfos[a].isTalking = false
-    //         }
-    //       }
-    //       localStorage.setItem(
-    //         'customerInfos',
-    //         JSON.stringify(this.customerInfo)
-    //       )
-    //       // 展示客户信息
-    //       this.showCustomerInfos(
-    //         this.taskId,
-    //         this.campaignId,
-    //         this.customerId,
-    //         this.customerPhone
-    //       )
-    //       // 获取聊天记录
-    //       this.getChatRecords(this.$route.query.customerId, null)
-    //       const contentDiv = document.getElementById('short-message-content')
-    //       const contentDivBox = document.getElementById(
-    //         'short-message-content-container'
-    //       )
-    //       setTimeout(() => {
-    //         contentDivBox.scrollTop = contentDiv.scrollHeight
-    //       }, 10)
-    //     } else {
-    //       this.customerActive = '0'
-    //       const customerInfos = JSON.parse(
-    //         localStorage.getItem('customerInfos')
-    //       )
-    //       this.customerInfos[0].isTalking = true
-    //       for (var i = 1; i < this.customerInfos.length; i++) {
-    //         this.customerInfos[i].isTalking = false
-    //       }
-    //       this.taskId = customerInfos[0].taskId
-    //       const taskId = customerInfos[0].taskId
-    //       const campaignId = customerInfos[0].campaignId
-    //       const customerId = customerInfos[0].customerId
-    //       const customerPhone = customerInfos[0].customerPhone
-    //       this.customerId = customerInfos[0].customerId
-    //       this.customerPhoneHeader = customerInfos[0].customerPhone
-    //       this.customerName = customerInfos[0].customerName
-    //       // 展示客户信息
-    //       this.showCustomerInfos(taskId, campaignId, customerId, customerPhone)
-    //       // 获取聊天记录
-    //       this.getChatRecords(customerId, null)
-    //       const contentDiv = document.getElementById('short-message-content')
-    //       const contentDivBox = document.getElementById(
-    //         'short-message-content-container'
-    //       )
-    //       setTimeout(() => {
-    //         contentDivBox.scrollTop = contentDiv.scrollHeight
-    //       }, 10)
-    //     }
-    //   } else {
-    //     this.contents = []
-    //     this.customerPhoneHeader = ''
-    //     this.$store.commit('SET_WECHATCONTENTS', this.contents)
-    //   }
+      // if (this.$route.query) {
+      //   this.dailTaskCustomer.taskId = this.$route.query.taskId
+      //   this.dailTaskCustomer.campaignId = this.$route.query.campaignId
+      //   this.dailTaskCustomer.customerId = this.$route.query.customerId
+      //   this.dailTaskCustomer.customerPhone = this.$route.query.customerPhone
+      //   this.customerPhoneHeader = this.$route.query.customerPhone
+      // } else if (!this.dailTaskCustomer) {
+      //   this.dailTaskCustomer = this.customerInfos[0]
+      //   this.customerPhoneHeader = this.customerInfos[0].customerPhone
+      // }
+      // // 查询所有客户列表
+      // getWechatCustomer(localStorage.getItem('agentId')).then(response => {
+      //   this.customerInfos = response.data.data
+      //   this.$store.commit('SET_WECHATCUSTOMERINFO', this.customerInfo)
+      //   localStorage.setItem('customerInfos', JSON.stringify(response.data.data))
+      //   if (this.customerInfos.length) {
+      //     if (this.$route.query && this.$route.query.fromDialTask === '0') {
+      //       this.taskId = this.$route.query.taskId
+      //       this.campaignId = this.$route.query.campaignId
+      //       this.customerId = this.$route.query.customerId
+      //       this.customerPhone = this.$route.query.customerPhone
+      //       this.customerPhoneHeader = this.$route.query.customerPhone
+      //       for (var a = 0; a < this.customerInfos.length; a++) {
+      //         if (
+      //           this.customerInfos[a].customerId === this.$route.query.customerId
+      //         ) {
+      //           this.customerInfos[a].isTalking = true
+      //           this.customerActive = a.toString()
+      //         } else {
+      //           this.customerInfos[a].isTalking = false
+      //         }
+      //       }
+      //       localStorage.setItem(
+      //         'customerInfos',
+      //         JSON.stringify(this.customerInfo)
+      //       )
+      //       // 展示客户信息
+      //       this.showCustomerInfos(
+      //         this.taskId,
+      //         this.campaignId,
+      //         this.customerId,
+      //         this.customerPhone
+      //       )
+      //       // 获取聊天记录
+      //       this.getChatRecords(this.$route.query.customerId, null)
+      //       const contentDiv = document.getElementById('short-message-content')
+      //       const contentDivBox = document.getElementById(
+      //         'short-message-content-container'
+      //       )
+      //       setTimeout(() => {
+      //         contentDivBox.scrollTop = contentDiv.scrollHeight
+      //       }, 10)
+      //     } else {
+      //       this.customerActive = '0'
+      //       const customerInfos = JSON.parse(
+      //         localStorage.getItem('customerInfos')
+      //       )
+      //       this.customerInfos[0].isTalking = true
+      //       for (var i = 1; i < this.customerInfos.length; i++) {
+      //         this.customerInfos[i].isTalking = false
+      //       }
+      //       this.taskId = customerInfos[0].taskId
+      //       const taskId = customerInfos[0].taskId
+      //       const campaignId = customerInfos[0].campaignId
+      //       const customerId = customerInfos[0].customerId
+      //       const customerPhone = customerInfos[0].customerPhone
+      //       this.customerId = customerInfos[0].customerId
+      //       this.customerPhoneHeader = customerInfos[0].customerPhone
+      //       this.customerName = customerInfos[0].customerName
+      //       // 展示客户信息
+      //       this.showCustomerInfos(taskId, campaignId, customerId, customerPhone)
+      //       // 获取聊天记录
+      //       this.getChatRecords(customerId, null)
+      //       const contentDiv = document.getElementById('short-message-content')
+      //       const contentDivBox = document.getElementById(
+      //         'short-message-content-container'
+      //       )
+      //       setTimeout(() => {
+      //         contentDivBox.scrollTop = contentDiv.scrollHeight
+      //       }, 10)
+      //     }
+      //   } else {
+      //     this.contents = []
+      //     this.customerPhoneHeader = ''
+      //     this.$store.commit('SET_WECHATCONTENTS', this.contents)
+      //   }
 
-    //   // 查询客户列表对应显示的未读数量
-    //   getUnreadNum(localStorage.getItem('agentId')).then(response => {
-    //     if (response.data.data.length === 0) {
-    //       for (var n = 0; n < this.customerInfos.length; n++) {
-    //         this.customerInfos[n].unreadNum = 0
-    //       }
-    //     } else {
-    //       for (let i = 0; i < this.customerInfos.length; i++) {
-    //         const res = JSON.stringify(response.data.data)
-    //         if (res.indexOf(this.customerInfos[i].customerId) === -1) {
-    //           this.customerInfos[i].unreadNum = 0
-    //         }
-    //         for (let j = 0; j < response.data.data.length; j++) {
-    //           if (
-    //             this.customerInfos[i].customerId ===
-    //             response.data.data[j].customerId
-    //           ) {
-    //             this.customerInfos[i].unreadNum = response.data.data[j].num
-    //           }
-    //         }
-    //       }
-    //     }
-    //     this.$store.commit('SET_WECHATCUSTOMERINFO', this.customerInfos)
-    //     localStorage.setItem(
-    //       'customerInfos',
-    //       JSON.stringify(this.customerInfos)
-    //     )
-    //   })
-    // })
-    // }
+      //   // 查询客户列表对应显示的未读数量
+      //   getUnreadNum(localStorage.getItem('agentId')).then(response => {
+      //     if (response.data.data.length === 0) {
+      //       for (var n = 0; n < this.customerInfos.length; n++) {
+      //         this.customerInfos[n].unreadNum = 0
+      //       }
+      //     } else {
+      //       for (let i = 0; i < this.customerInfos.length; i++) {
+      //         const res = JSON.stringify(response.data.data)
+      //         if (res.indexOf(this.customerInfos[i].customerId) === -1) {
+      //           this.customerInfos[i].unreadNum = 0
+      //         }
+      //         for (let j = 0; j < response.data.data.length; j++) {
+      //           if (
+      //             this.customerInfos[i].customerId ===
+      //             response.data.data[j].customerId
+      //           ) {
+      //             this.customerInfos[i].unreadNum = response.data.data[j].num
+      //           }
+      //         }
+      //       }
+      //     }
+      //     this.$store.commit('SET_WECHATCUSTOMERINFO', this.customerInfos)
+      //     localStorage.setItem(
+      //       'customerInfos',
+      //       JSON.stringify(this.customerInfos)
+      //     )
+      //   })
+      // })
+      // }
+    }
   },
 
   beforeRouteLeave(to, from, next) {
     console.log('leave')
-    this.resetAll()
+    for (var key in overallIncallCache) {
+      overallIncallCache[key] = this[key]
+    }
+    // this.resetAll()
+    this.$store.commit('SET_INCALL_CACHE', overallIncallCache)
+    // sessionStorage.setItem('incall_compoment', JSON.stringify(incall_cache))
+    // sessionStorage.setItem('incallCompoment', JSON.stringify(this))
     next()
   }
 }

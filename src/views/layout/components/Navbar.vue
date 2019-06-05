@@ -1499,10 +1499,11 @@ export default {
         })
         // cti.setAgentStatus(agentid, '-5')
       } else {
-        const reg = /^\d{4}$/
-        if (vm.caller && reg.test(parseInt(vm.caller))) {
-          console.log('是友军')
-        } else if (vm.caller) {
+        // const reg = /^\d{4}$/
+        // if (vm.caller && reg.test(parseInt(vm.caller))) {
+        //   console.log('是友军')
+        // } else
+        if (vm.caller) {
           // sessionStorage.setItem('inCall_customerPhone', vm.caller)
           getCustomerInfoByPhone(vm.caller).then(response => {
             if (response.data.code === 0) {

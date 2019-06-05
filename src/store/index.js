@@ -6,6 +6,7 @@ import tagsView from './modules/tagsView'
 import dialTask from './modules/dialTask'
 import theme from './modules/theme'
 import ctiData from './modules/ctiData'
+import incomingCall from './modules/incoming_call'
 import getters from './getters'
 
 Vue.use(Vuex)
@@ -18,6 +19,7 @@ const store = new Vuex.Store({
     dialTask,
     theme,
     ctiData,
+    incomingCall,
     needLoginMgrPhone: false
   },
   getters

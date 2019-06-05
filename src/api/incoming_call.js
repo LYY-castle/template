@@ -104,3 +104,10 @@ export function recordSummaryInfo(data) {
     data: data
   })
 }
+// 综合查询酒店信息
+export function getHotelList(req) {
+  return request_v2({
+    url: '/customer/hotel/hotels',
+    params: req
+  })
+}
