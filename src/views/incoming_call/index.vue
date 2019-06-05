@@ -799,13 +799,48 @@
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="酒店信息" name="8" style="padding:15px;">
-            <el-row>
+          <el-tab-pane label="酒店信息" name="8">
+            <el-collapse class="form-container" v-model="serviceRecord" @change="handleChangeAcitve" style="box-shadow:none;margin-bottom:0;border-top:none;border-left:none;position:relative;">
+              <span class="form-more bold" style="line-height: 24px;font-size: 14px;float:right;margin-right:6px;color:#57AFFF;position:absolute;top:12px;right:40px;">{{callInfoActive[0]}}</span>
+              <el-collapse-item class="callInfo" title="筛选条件" :name="1">
+                <el-form :inline="true">
+                  <el-form-item label="酒店名称：">
+                    <el-input v-model="searchHotelReq.name"></el-input>
+                  </el-form-item>
+                  <el-form-item label="国家：">
+                    <el-input v-model="searchHotelReq.country"></el-input>
+                  </el-form-item>
+                  <el-form-item label="城市：">
+                    <el-input v-model="searchHotelReq.city"></el-input>
+                  </el-form-item>
+                  <el-form-item label="状态：" placeholder="请选择状态">
+                    <el-select v-model="searchHotelReq.status" @change="time_dimensionChange">
+                      <el-option label="有效" :value="0"></el-option>
+                      <el-option label="无效" :value="1"></el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item label="优惠类型：" placeholder="请选择优惠类型">
+                    <el-select v-model="searchHotelReq.offerType" @change="time_dimensionChange">
+                      <el-option label="免费住宿" :value="0"></el-option>
+                      <el-option label="住二送一" :value="1"></el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="primary" @click="getHotelList">查询</el-button>
+                    <el-button @click="resetHotelReq">重置</el-button>
+                  </el-form-item>
+                </el-form>
+              </el-collapse-item>
+            </el-collapse>
+            <el-row class="table-container" style="margin-top:0">
+              <el-row class="margin-bottom-15">
+                <div class="font14 bold">酒店信息</div>
+              </el-row>
               <el-table
                 class="hotel-table"
                 :data="hotelTableData"
                 style="width: 100%">
-                <el-table-column type="expand">
+                <el-table-column align="center" type="expand">
                   <template slot-scope="props">
                     <el-form label-position="left">
                       <el-form-item label="酒店名称">
@@ -839,29 +874,41 @@
                   </template>
                 </el-table-column>
                 <el-table-column
+                  align="center"
                   label="商品名称"
                   prop="name">
                 </el-table-column>
                 <el-table-column
+                  align="center"
                   label="国家"
                   prop="country">
                 </el-table-column>
                 <el-table-column
+                  align="center"
                   label="地址"
                   prop="address">
                 </el-table-column>
+                <el-table-column
+                  align="center"
+                  label="状态">
+                  <template slot-scope="scope">
+                    <div :class="scope.row.status===0?'visible':'invisible'">
+                      <span>{{scope.row.status===0?'有效':'无效'}}</span>
+                    </div>
+                  </template>
+                </el-table-column>
               </el-table>
-            </el-row>
-            <el-row>
-              <el-pagination
-                @size-change="hotelSizeChange"
-                @current-change="hotelCurrentChange"
-                :current-page.sync="hotelPagination.pageNo"
-                :page-size="hotelPagination.pageSize"
-                :page-sizes="[10, 20, 30, 40, 50]"
-                layout="total, sizes, prev, pager, next, jumper "
-                :total="hotelPagination.totalCount" style="text-align: right">
-              </el-pagination>
+              <el-row style="margin-top:20px;">
+                <el-pagination
+                  @size-change="hotelSizeChange"
+                  @current-change="hotelCurrentChange"
+                  :current-page.sync="hotelPagination.pageNo"
+                  :page-size="hotelPagination.pageSize"
+                  :page-sizes="[10, 20, 30, 40, 50]"
+                  layout="total, sizes, prev, pager, next, jumper "
+                  :total="hotelPagination.totalCount" style="text-align: right">
+                </el-pagination>
+              </el-row>
             </el-row>
           </el-tab-pane>
           <el-tab-pane closable label="服务记录详情" name="6" class="record-dail" v-if="recordDailTabVisible">
@@ -1614,6 +1661,24 @@ export default {
     } else {
       cache = {
         showDefaultBtn: true,
+        searchHotelReq: {
+          name: '',
+          country: '',
+          city: '',
+          status: null,
+          offerType: null,
+          pageNo: 1,
+          pageSize: 10
+        },
+        searchHotelReq2: {
+          name: '',
+          country: '',
+          city: '',
+          status: null,
+          offerType: null,
+          pageNo: 1,
+          pageSize: 10
+        },
         hotelTableData: [],
         hotelPagination: {},
         urgeList: [],
@@ -2598,7 +2663,7 @@ export default {
       this.searchContactListReq2 = clone(this.searchContactListReq)
       this.searchContactListReq2.pageSize = val
       this.searchContactListReq.pageSize = val
-      this.searchContactListReq2.pageNo = 1
+      this.searchContactListReq.pageNo = 1
       this.serviceRecordPagination.pageNo = 1
       this.getContactList()
     },
@@ -2634,7 +2699,7 @@ export default {
       this.searchWorkFormRecord2.customerId = this.customerInfos.customerId
       this.searchWorkFormRecord2.pageSize = val
       this.searchWorkFormRecord.pageSize = val
-      this.searchWorkFormRecord2.pageNo = 1
+      this.searchWorkFormRecord.pageNo = 1
       this.workFormRecordPagination.pageNo = 1
       this.getWorkFormRecord()
     },
@@ -2862,6 +2927,8 @@ export default {
           sessionStorage.removeItem('inCall_customerInfos')
           sessionStorage.removeItem('inCall_recordId')
           this.$store.commit('SET_INCALL_CACHE', {})
+          this.customerPhone = null
+          this.menuCustomerName = null
           this.isConversation = {
             summaryDisabled: true,
             addWorkformDisabled: true,
@@ -2932,8 +2999,9 @@ export default {
       this.$store.commit('SET_KEEPREADY', val)
     },
     // 酒店信息-----------------8
-    getHotelList(req) {
-      getHotelList(req).then(response => {
+    getHotelList() {
+      this.searchHotelReq2 = clone(this.searchHotelReq)
+      getHotelList(this.searchHotelReq).then(response => {
         if (response.data.code === 0) {
           this.hotelTableData = response.data.data
           this.hotelPagination = response.data.pageInfo
@@ -2944,16 +3012,28 @@ export default {
         throw error
       })
     },
+    resetHotelReq() {
+      this.searchHotelReq.name = ''
+      this.searchHotelReq.country = ''
+      this.searchHotelReq.city = ''
+      this.searchHotelReq.status = ''
+      this.searchHotelReq.offerType = ''
+      this.searchHotelReq2 = clone(this.searchHotelReq)
+    },
     hotelSizeChange(val) {
-      const req = clone(this.hotelPagination)
-      req.pageSize = val
-      req.pageNo = 1
-      this.getHotelList(req)
+      this.searchHotelReq2 = clone(this.searchHotelReq)
+      this.searchHotelReq2.pageSize = val
+      this.searchHotelReq.pageSize = val
+      this.searchHotelReq.pageNo = 1
+      this.hotelPagination.pageNo = 1
+      this.getHotelList()
     },
     hotelCurrentChange(val) {
-      const req = clone(this.hotelPagination)
-      req.pageNo = val
-      this.getHotelList(req)
+      this.searchHotelReq2 = clone(this.searchHotelReq)
+      this.searchHotelReq2 = clone(this.searchHotelReq)
+      this.searchHotelReq2.pageNo = val
+      this.searchHotelReq.pageNo = val
+      this.getHotelList()
     },
     // -----------------------
     handleChangeAcitve(active = [1]) {
