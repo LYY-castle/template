@@ -2282,9 +2282,12 @@ export default {
               item.defaultValueType !== ""
             ) {
               if (
-                item.defaultValueType !== "0" ||
-                item.defaultValueType !== "1"
+                item.defaultValueType === "0" ||
+                item.defaultValueType === "1"
               ) {
+                console.log(item.defaultValueType)
+              }else{
+                console.log(item.defaultValueType)
                 this.$message.error("默认值类型请输入0或1");
                 flag = false;
               }
