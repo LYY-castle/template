@@ -40,6 +40,17 @@
             </el-card>
           </el-col>
 
+          <el-col :span="4" style="text-align:center;">
+            <el-card shadow="hover">
+              <div class="card-content" @click="callLossReport=true;buttonVisible=false;reportTitle='呼损统计报表'">
+                <div class="img-container">
+                  <img style="width:60%;" src="../../../static/images/report/call_loss.png" alt="呼损统计报表">
+                </div>
+                <span class="font14">呼损统计报表</span>
+              </div>
+            </el-card>
+          </el-col>
+
         </el-row>
       </div>
 
@@ -134,6 +145,7 @@
       <qc-result-report v-if="qcResultReport"></qc-result-report>
       <staff-structure v-if="staffStructure"></staff-structure>
       <list-report v-if="listReport"></list-report>
+      <call-loss-report v-if="callLossReport"></call-loss-report>
     </div>
   </div>
 </template>
@@ -147,6 +159,7 @@ import qualityMarkReport from './quality_mark_report/index'
 import qcResultReport from './qc_result_report/index'
 import staffStructure from './staff_structure/index'
 import listReport from './list_report/index'
+import callLossReport from './call_loss_report/index'
 import axios from 'axios'
 import {
   permsManager, // 现场主管
@@ -182,6 +195,7 @@ export default {
       qcResultReport: false,
       staffStructure: false,
       listReport: false,
+      callLossReport: false,
       buttonVisible: true,
       reportTitle: ''
     }
@@ -194,7 +208,8 @@ export default {
     qualityMarkReport,
     qcResultReport,
     staffStructure,
-    listReport
+    listReport,
+    callLossReport
   },
   methods: {
     handleBack() {
@@ -206,6 +221,7 @@ export default {
       this.qcResultReport = false
       this.staffStructure = false
       this.listReport = false
+      this.callLossReport = false
       this.buttonVisible = true
     }
   },
