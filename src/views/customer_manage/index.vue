@@ -302,7 +302,7 @@
             <el-collapse-item class="screening" title="自定义筛选条件" name="1">
               <el-row style="min-height:30px;">
                 <el-tag
-                  style="margin-right:10px;"
+                  style="margin-right:10px;margin-bottom:10px;"
                   v-for="(item,index) in fieldTags"
                   @close="closeTag(index)"
                   :disable-transitions="true"
@@ -351,8 +351,14 @@
                 <el-form-item label="条件值：" v-if="fieldType=='int'">
                   <el-input v-model="customRequirement.value" @blur="checkNumber(customRequirement.value)"></el-input>
                 </el-form-item>
-
-                <el-form-item label="条件值：" v-if="fieldType=='string'">
+                <el-form-item label="性别：" v-if="fieldType=='string'&&customerSexVisible">
+                  <el-select v-model="customRequirement.value">
+                    <el-option value="">请选择</el-option>
+                    <el-option value="0" label="男"></el-option>
+                    <el-option value="1" label="女"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="条件值：" v-if="fieldType=='string'&&!customerSexVisible">
                   <el-input v-model="customRequirement.value"></el-input>
                 </el-form-item>
                 <el-form-item label="条件值：" v-if="fieldType=='dateInterval'">
@@ -978,6 +984,7 @@ export default {
     return {
       formContainerOpen: '1',
       // 名单抽取
+      customerSexVisible: false,
       extractVisible: false,
       screeningFormOpen: [],
       addScreeningVisible: false,
@@ -1371,6 +1378,11 @@ export default {
       obj = this.allFieldName.find((item) => {
         return item.propertyCode === value
       })
+      if (value === 'customerSex') {
+        this.customerSexVisible = true
+      } else {
+        this.customerSexVisible = false
+      }
       this.fieldValues = []
       this.$set(this.customRequirement, 'value', '')
       this.$set(this.customRequirement, 'valueFrom', '')
@@ -1392,14 +1404,14 @@ export default {
       this.$set(this.customRequirement, 'value', '')
       this.$set(this.customRequirement, 'valueFrom', '')
       this.$set(this.customRequirement, 'valueTo', '')
-      if (this.customRequirement.fieldType === 0) this.fieldType = 'string'
-      else if (index >= '0' && index <= '5' && this.customRequirement.fieldType === 2) this.fieldType = 'dateTime'
+      if (this.customRequirement.fieldType === 0) this.fieldType = 'string'// 字符串
+      else if (index >= '0' && index <= '5' && this.customRequirement.fieldType === 2) this.fieldType = 'dateTime'// 时间
       else if (index === '8' && this.customRequirement.fieldType === 2) {
-        this.fieldType = 'dateInterval'
+        this.fieldType = 'dateInterval' // 时间区间
         this.customRequirement.value = ''
       } else if (index === '8' && this.customRequirement.fieldType === 1) {
-        this.fieldType = 'interval'
-      } else this.fieldType = 'int'
+        this.fieldType = 'interval' // 数字区间
+      } else this.fieldType = 'int'// 数字
     },
     // 添加标签
     addFieldTag() {
@@ -1407,7 +1419,11 @@ export default {
       var tagTemp = {}
       var temp = {}
       if (this.customRequirement.value || this.customRequirement.value === 0) {
-        this.$set(this.fieldTagInfo, 'value', this.customRequirement.value)
+        if (this.customerSexVisible) {
+          this.$set(this.fieldTagInfo, 'value', this.customRequirement.value === '0' ? '男' : '女')
+        } else {
+          this.$set(this.fieldTagInfo, 'value', this.customRequirement.value)
+        }
         this.fieldTagInfo.valueFrom = ''
         this.fieldTagInfo.valueTo = ''
         this.customRequirement.valueFrom = ''
