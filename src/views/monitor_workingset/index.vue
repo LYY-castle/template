@@ -73,10 +73,8 @@
               <el-row>
                 <el-col :span="8">
                   <el-card shadow="never" class="no-border">
-                    <div class="item-content">
-                      <a class="bold" @click="changeToOrderManagement()" >
-                        <font class="line-center font30 under-line">{{orderData.total_amount}}</font>
-                      </a>
+                    <div class="item-content" style="cursor:default;" >
+                      <font class="line-center font30 " style="cursor:default;">{{orderData.total_amount}}</font>
                     </div>
                     <div style="text-align: center">
                       <font class="font12">订单总金额</font>
@@ -85,12 +83,10 @@
                 </el-col>
                 <el-col :span="8">
                   <el-card shadow="never" class="no-border">
-                    <div class="item-content">
-                      <a class="bold" @click="changeToOrderManagement()">
-                        <font class="line-center font30 under-line">{{orderData.avg_amount}}</font>
-                      </a>
+                    <div class="item-content"  style="cursor:default;">
+                      <font class="line-center font30 bold" style="cursor:default;">{{orderData.avg_amount}}</font>
                     </div>
-                    <div style="text-align: center">
+                    <div style="text-align: center;" >
                       <font class="font12" style="height:40px;">订单平均金额</font>
                     </div>
                   </el-card>
@@ -104,16 +100,16 @@
           <el-card shadow="never" class="card-container">
             <div slot="header" class="clearfix">
               <div>
-                <b>通话统计</b>
+                <b>总话务量统计</b>
               </div>
               <div>
                 <div class="font12" style="display: inline-block;line-height: 25px;">
                   <font style="padding-right: 5px">通话时间: </font>
-                  <font class="bold under-line" style="cursor: pointer"  @click="changeToMonitorPhone()">{{ctiData.call_time_duration}}</font>
+                  <font class="bold" >{{ctiData.call_time_duration}}</font>
                 </div>
                 <div class="font12" style="float: right;line-height: 25px">
                   <font style="padding-right: 5px">通话次数: </font>
-                  <font class="bold under-line" style="cursor: pointer" @click="changeToMonitorPhone()">{{ctiData.calls_number}}</font>
+                  <font class="bold under-line" style="cursor: pointer" @click="changeToDailTaskList()">{{ctiData.calls_number}}</font>
                 </div>
               </div>
               <div class="font12">
@@ -131,10 +127,8 @@
               <el-row>
                 <el-col :span="8" >
                   <el-card shadow="never" class="no-border">
-                    <div class="item-content">
-                      <a @click="changeToMonitorPhone()">
-                        <font class="line-center font30 under-line">{{ctiData.online_time_duration}}</font>
-                      </a>
+                    <div class="item-content" style="cursor:default;">
+                      <font class="line-center font30">{{ctiData.online_time_duration}}</font>
                     </div>
                     <div style="text-align: center">
                       <font class="font12" style="height:40px;">在线时长</font>
@@ -143,22 +137,18 @@
                 </el-col>
                 <el-col :span="8">
                   <el-card shadow="never" class="no-border">
-                    <div class="item-content">
-                      <a @click="changeToMonitorPhone()">
-                        <font class="line-center font30 under-line">{{ctiData.free_time_duration}}</font>
-                      </a>
+                    <div class="item-content" style="cursor:default;">
+                      <font class="line-center font30">{{ctiData.free_time_duration}}</font>
                     </div>
-                    <div style="text-align: center">
+                    <div style="text-align: center" >
                       <font class="font12" style="height:40px;">空闲时长</font>
                     </div>
                   </el-card>
                 </el-col>
                 <el-col :span="8">
                   <el-card shadow="never" class="no-border">
-                    <div class="item-content">
-                      <a @click="changeToMonitorPhone()">
-                        <font class="line-center font30 under-line" >{{ctiData.busy_time_duration}}</font>
-                      </a>
+                    <div class="item-content" style="cursor:default;">
+                      <font class="line-center font30" >{{ctiData.busy_time_duration}}</font>
                     </div>
                     <div style="text-align: center">
                       <font class="font12" style="height:40px;">示忙时长</font>
@@ -443,6 +433,12 @@ export default {
     this.$store.dispatch('SwitchNeedLoginMgrPhone', { monitorId: localStorage.getItem('agentId'), monitorDN: '12345' })
   },
   methods: {
+    changeToDailTaskList() { // 跳转到接触记录
+      this.$router.push({
+        path: process.env.BUILT_IN_ROUTERS.contactRecordQuery,
+        query: { 'callStatu': 1, 'sTime': formatDateTime(new Date().setHours(0, 0, 0, 0)), 'eTime': formatDateTime(new Date().setHours(23, 59, 59, 0)), 'agentid': '', 'contactType': '1', 'callDirection': '0' }
+      })
+    },
     on_queuecount(event, queuename, queuecount) {
       console.log(event, queuename, queuecount)
     },

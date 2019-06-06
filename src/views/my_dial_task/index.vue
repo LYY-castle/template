@@ -1448,16 +1448,16 @@ export default {
     // 综合查询
     searchByKeyWords(req) {
       const queryInfo = {}
-      queryInfo.appointTimeEnd = this.appointTimeValue ? this.appointTimeValue[0] : null
-      queryInfo.appointTimeStart = this.appointTimeValue ? this.appointTimeValue[1] : null
+      queryInfo.appointTimeEnd = this.appointTimeValue ? this.appointTimeValue[1] : null
+      queryInfo.appointTimeStart = this.appointTimeValue ? this.appointTimeValue[0] : null
       queryInfo.contactStatus = req.contactStatus
       queryInfo.contactedNum = req.contactedNum
       queryInfo.customerName = req.customerName
       queryInfo.customerPhone = req.customerPhone
-      queryInfo.distributeTimeEnd = this.distributeTimeValue ? this.distributeTimeValue[0] : null
-      queryInfo.distributeTimeStart = this.distributeTimeValue ? this.distributeTimeValue[1] : null
-      queryInfo.modifyTimeEnd = this.modifyTimeValue ? this.modifyTimeValue[0] : null
-      queryInfo.modifyTimeStart = this.modifyTimeValue ? this.modifyTimeValue[1] : null
+      queryInfo.distributeTimeEnd = this.distributeTimeValue ? this.distributeTimeValue[1] : null
+      queryInfo.distributeTimeStart = this.distributeTimeValue ? this.distributeTimeValue[0] : null
+      queryInfo.modifyTimeEnd = this.modifyTimeValue ? this.modifyTimeValue[1] : null
+      queryInfo.modifyTimeStart = this.modifyTimeValue ? this.modifyTimeValue[0] : null
       queryInfo.pageNo = req.pageNo
       queryInfo.pageSize = req.pageSize
       queryInfo.staffId = req.staffId
@@ -2827,6 +2827,7 @@ export default {
           const dayEnd = formatDateTime(new Date().setHours(23, 59, 59, 0))
           this.req.modifyTimeStart = dayStart
           this.req.modifyTimeEnd = dayEnd
+          this.modifyTimeValue = [dayStart, dayEnd]
         }
       } else { // 说明是跳拨打页面
         this.isDialTask = this.$route.query.isDialTask

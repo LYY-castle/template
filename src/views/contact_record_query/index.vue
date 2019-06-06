@@ -61,6 +61,13 @@
                 <el-option label="电话" value="1"></el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="呼叫方向：">
+              <el-select placeholder="呼叫方向：" v-model="req.callDirection"  style="width:6em">
+                <el-option label="全部" value=""></el-option>
+                <el-option label="呼出" value="0"></el-option>
+                <el-option label="呼入" value="1"></el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="通话时长：" v-if="showTalkTime">
               <el-input v-model="req.stime" style="width:80px" @change="checkNo(req.stime)" onkeypress="return event.keyCode>=48&&event.keyCode<=57" :maxlength="3"></el-input>
               至
@@ -134,6 +141,13 @@
             <template slot-scope="scope">
               <div :class="scope.row.status==='1'?'visible':'invisible'">
                 <span>{{scope.row.status==='1'?'接通':'未接通'}}</span>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" label="呼叫方向">
+            <template slot-scope="scope">
+              <div :class="scope.row.callDirection==='1'?'visible':'invisible'">
+                <span>{{scope.row.callDirection==='1'?'呼入':(scope.row.callDirection==='0'?'呼出':'其他情况')}}</span>
               </div>
             </template>
           </el-table-column>
@@ -299,7 +313,7 @@
           </el-table-column>
           <el-table-column align="center" label="被叫号码">
             <template slot-scope="item">
-                <div>{{item.row.callDirection==1?item.row.calleeNumber:hideMobile(item.row.calleeNumber)}}</div>
+                <div>{{item.row.callDirection=='1'?item.row.calleeNumber:hideMobile(item.row.calleeNumber)}}</div>
             </template>
           </el-table-column>
           <el-table-column align="center" label="话后小结" :show-overflow-tooltip="true">
@@ -715,7 +729,7 @@ audio {
         questionnaireTabs: [],
         answerData: [], // 所有问卷的填写记录
         campaignType: '',
-        timeValue: null,
+        timeValue: [],
         option: { i18n: { normal: '1×', speed: '播放速度' }},
         visibleClass: '',
         formContainerOpen: '1',
@@ -782,7 +796,8 @@ audio {
           agentid: '',
           pageSize: 10,
           pageNo: 1,
-          status: '-1'
+          status: '-1',
+          callDirection: ''
         },
         contents: [],
         hasMoreRecords: false,
@@ -807,10 +822,10 @@ audio {
       this.handleChangeAcitve()
       new Promise((resolve, reject) => {
         getStaffByDepartId(localStorage.getItem('departId')).then(response => {
-          const lists = response.data.dataAll
+          const lists = response.data.data
           this.staffs = []
           lists.forEach(element => {
-            this.staffs.push({ 'staffName': element[2], 'angentId': element[1] })
+            this.staffs.push({ 'staffName': element.name, 'angentId': element.staffNo })
           })
           resolve()
         })
@@ -832,28 +847,41 @@ audio {
       player() { return this.$refs.plyr.player }
     },
     created() {
+      if (typeof (this.$route.query.agentid) !== 'undefined') {
+        this.req.agentid = this.$route.query.agentid
+      } else {
+        this.req.agentid = localStorage.getItem('agentId')
+        this.oriAgentId = localStorage.getItem('agentId')
+        this.staffInfo.agentid = localStorage.getItem('agentId')
+      }
+      if (typeof (this.$route.query.contactType) !== 'undefined') {
+        this.req.contactType = this.$route.query.contactType
+      }
+      if (typeof (this.$route.query.callDirection) !== 'undefined') {
+        this.req.callDirection = this.$route.query.callDirection
+      }
       if (typeof (this.$route.query.sTime) !== 'undefined') {
         this.req.startTime = this.$route.query.sTime
         this.oriSTime = this.$route.query.sTime
+        this.timeValue[0] = this.$route.query.sTime
       }
       if (typeof (this.$route.query.eTime) !== 'undefined') {
         this.req.endTime = this.$route.query.eTime
         this.oriETime = this.$route.query.eTime
+        this.timeValue[1] = this.$route.query.eTime
       }
-      if (typeof (this.$route.query.callStatu) === 'undefined') {
+      if (typeof (this.$route.query.callStatu) === 'undefined' || this.$route.query.callStatu === '-1') {
         this.req.status = '-1'
       } else {
-        this.req.agentid = localStorage.getItem('agentId')
-        if (this.$route.query.callStatu === 1) {
+        if (this.$route.query.callStatu + '' === '1') {
           this.req.status = '1'
           this.oriQueryStatus = '1'
         } else {
           this.req.status = '0'
           this.oriQueryStatus = '0'
         }
-        this.oriAgentId = localStorage.getItem('agentId')
-        this.staffInfo.agentid = localStorage.getItem('agentId')
       }
+
       this.req.pageNo = 1
     },
     methods: {
@@ -979,9 +1007,10 @@ audio {
           agentid: this.oriAgentId,
           pageSize: 10,
           pageNo: 1,
-          status: this.oriQueryStatus
+          status: this.oriQueryStatus,
+          callDirection: ''
         }
-        this.timeValue = null
+        this.timeValue = []
       },
       // 跳转到别的组件
       // transferParameters(taskId, campaignId, customerId, customerPhone) {
@@ -1008,18 +1037,20 @@ audio {
             this.isManager = true
           } else if (code === 403) {
             this.isManager = false
-            // 判断班组长
-            permsDepart(localStorage.getItem('accountNo')).then(response => {
-              const code = parseInt(response.data.code)
-              if (code === 200) this.isManager = true
-              else if (code === 403) this.isManager = false
-            }).catch(error => {
-              throw error
-            })
           }
         }).catch(error => {
           throw error
         })
+        if (!this.isManager) {
+          // 判断班组长
+          await permsDepart(localStorage.getItem('accountNo')).then(response => {
+            const code = parseInt(response.data.code)
+            if (code === 200) this.isManager = true
+            else if (code === 403) this.isManager = false
+          }).catch(error => {
+            throw error
+          })
+        }
         // 判断员工
         await permsStaff(localStorage.getItem('accountNo')).then(response => {
           const code = parseInt(response.data.code)
@@ -1258,6 +1289,7 @@ audio {
 
       // 综合查询
       searchByKeyWords(req) {
+        console.log(req, '1111111111111')
         if (this.isManager) {
           this.req.departId = localStorage.getItem('departId')
         } else if (this.isStaff) {
@@ -1268,6 +1300,7 @@ audio {
         }
         req.startTime = this.timeValue ? this.timeValue[0] : null
         req.endTime = this.timeValue ? this.timeValue[1] : null
+        console.log(req, '222222222222222222222222222222')
         queryByKeyWords(req)
           .then(response => {
             if (response.data.code === 0) {
