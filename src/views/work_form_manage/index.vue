@@ -146,59 +146,48 @@
               }"
               @click="changeItem(item, index)"
             >
-              <div v-if="item.dataType === 'input'" class="demo">
+              <div class="demo">
                 <div class="name">{{ item.name }}</div>
                 <div class="name">
                   <p class="white-space:normal;width:100%;">{{ item.val }}</p>
                 </div>
-                <el-input
-                  size="small"
-                  :disabled="show===3?false:true"
-                  style="inputWidth"
-                  :placeholder="item.placeholder"
-                  v-model="item.defaultValue"
-                  :maxlength="item.maxValue"
-                  :minlength="item.minValue"
-                ></el-input>
-              </div>
-              <div v-if="item.dataType === 'textarea'" class="demo">
-                <div class="name">{{ item.name }}</div>
-                <div class="name">
-                  <p>{{ item.val }}</p>
+                <div v-if="item.dataType === 'input'">
+                  <el-input
+                    type="text"
+                    size="small"
+                    :disabled="show===3?false:true"
+                    style="inputWidth"
+                    :placeholder="item.placeholder"
+                    v-model="item.defaultValue"
+                    :maxlength="item.maxValue"
+                    :minlength="item.minValue"
+                  ></el-input>
                 </div>
-                <el-input
-                  size="small"
-                  type="textarea"
-                  :rows="1"
-                  :disabled="show===3?false:true"
-                  style="inputWidth"
-                  :placeholder="item.placeholder"
-                  v-model="item.defaultValue"
-                  :maxlength="item.maxValue"
-                  :minlength="item.minValue"
-                ></el-input>
-              </div>
-              <div v-if="item.dataType === 'inputNumber'" class="demo">
-                <div class="name">{{ item.name }}</div>
-                <div class="name">
-                  <p>{{ item.val }}</p>
+                <div v-if="item.dataType === 'textarea'">
+                  <el-input
+                    size="small"
+                    type="textarea"
+                    :rows="1"
+                    :disabled="show===3?false:true"
+                    style="inputWidth"
+                    :placeholder="item.placeholder"
+                    v-model="item.defaultValue"
+                    :maxlength="item.maxValue"
+                    :minlength="item.minValue"
+                  ></el-input>
                 </div>
-                <el-input
-                  size="small"
-                  type="number"
-                  :disabled="show===3?false:true"
-                  :placeholder="item.placeholder"
-                  v-model="item.defaultValue"
-                  :maxlength="item.maxValue"
-                  :minlength="item.minValue"
-                ></el-input>
-              </div>
-              <div v-if="item.dataType === 'radio'" class="demo">
-                <div class="name">{{ item.name }}</div>
-                <div class="name">
-                  <p>{{ item.val }}</p>
+                <div v-if="item.dataType === 'inputNumber'">
+                  <el-input
+                    size="small"
+                    type="number"
+                    :disabled="show===3?false:true"
+                    :placeholder="item.placeholder"
+                    v-model="item.defaultValue"
+                    :maxlength="item.maxValue"
+                    :minlength="item.minValue"
+                  ></el-input>
                 </div>
-                <div>
+                <div v-if="item.dataType === 'radio'">
                   <el-radio-group v-model="item.defaultValue">
                     <el-radio
                       :label="item1.value"
@@ -208,13 +197,7 @@
                     ></el-radio>
                   </el-radio-group>
                 </div>
-              </div>
-              <div v-if="item.dataType === 'checkbox'" class="demo">
-                <div class="name">{{ item.name }}</div>
-                <div class="name">
-                  <p>{{ item.val }}</p>
-                </div>
-                <div>
+                <div v-if="item.dataType === 'checkbox'">
                   <el-checkbox-group v-model="item.defaultValue">
                     <el-checkbox
                       v-for="(item2,index2) in item.dataValues"
@@ -224,59 +207,37 @@
                     ></el-checkbox>
                   </el-checkbox-group>
                 </div>
-              </div>
-              <div
-                v-if="item.dataType === 'select'|| item.dataType === 'multipleSelect'"
-                class="demo"
-              >
-                <div class="name">{{ item.name }}</div>
-                <div class="name">
-                  <p>{{ item.val }}</p>
+                <div v-if="item.dataType === 'select'|| item.dataType === 'multipleSelect'">
+                  <el-select
+                    :placeholder="item.placeholder"
+                    v-model="item.defaultValue"
+                    :disabled="show===3?false:true"
+                    :multiple="item.dataType==='multipleSelect'?true:false"
+                  >
+                    <el-option v-for="i in item.dataValues" :key="i.value" :value="i.value"></el-option>
+                  </el-select>
                 </div>
-                <el-select
-                  :placeholder="item.placeholder"
-                  v-model="item.defaultValue"
-                  :disabled="show===3?false:true"
-                  :multiple="item.dataType==='multipleSelect'?true:false"
+                <div
+                  v-if="item.dataType === 'datetime'||item.dataType === 'date'||item.dataType === 'time'"
                 >
-                  <el-option v-for="i in item.dataValues" :key="i.value" :value="i.value"></el-option>
-                </el-select>
-              </div>
-              <div
-                v-if="item.dataType === 'datetime'||item.dataType === 'date'||item.dataType === 'time'"
-                class="demo"
-              >
-                <div class="name">{{ item.name }}</div>
-                <div class="name">
-                  <p>{{ item.val }}</p>
+                  <el-date-picker
+                    :type="item.dataType"
+                    :placeholder="item.placeholder"
+                    :disabled="show===3?false:true"
+                    v-model="item.defaultValue"
+                  ></el-date-picker>
                 </div>
-                <el-date-picker
-                  :type="item.dataType"
-                  :placeholder="item.placeholder"
-                  :disabled="show===3?false:true"
-                  v-model="item.defaultValue"
-                ></el-date-picker>
-              </div>
-              <div v-if="item.dataType === 'span'" class="demo">
-                <div class="name">{{ item.name }}</div>
-                <div class="name">
-                  <p>{{ item.val }}</p>
+                <div v-if="item.dataType==='span'">
+                  <quill-editor
+                    :disabled="show===3?false:true"
+                    v-model="item.defaultValue"
+                    :options="editorOption"
+                    :placeholder="item.placeholder"
+                    :maxlength="item.maxValue"
+                    :minlength="item.minValue"
+                  ></quill-editor>
                 </div>
-                <quill-editor
-                  :disabled="show===3?false:true"
-                  v-model="item.defaultValue"
-                  :options="editorOption"
-                  :placeholder="item.placeholder"
-                  :maxlength="item.maxValue"
-                  :minlength="item.minValue"
-                ></quill-editor>
-              </div>
-              <div v-if="item.dataType === 'address'" class="demo">
-                <div class="name">{{ item.name }}</div>
-                <div class="name">
-                  <p>{{ item.val }}</p>
-                </div>
-                <div>
+                <div v-if="item.dataType === 'address'">
                   <div style="display:flex;justify-content: space-between;">
                     <el-select
                       v-model="item.defaultValue.province"
@@ -376,782 +337,89 @@
           <div
             v-for="(item, index) in workFormTable.workformPropertyCreateInfos"
             :key="index"
-            v-show="text"
+            v-show="text&&typeShow[index]"
             class="singchange"
           >
-            <div v-if="item.dataType === 'input' && typeShow[index]">
+            <!-- 模板详情 -->
+            <div>
+              <!-- 字段名称 -->
               <div>
                 <div>
                   <span class="star">字段名称:</span>
                 </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
+              <!-- 字段描述 -->
               <div>
                 <div>
                   <span class="star">字段描述:</span>
                 </div>
                 <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
               </div>
-              <div>
+              <!-- 特殊类型 radio/checkbox/select/multipleSelect/address-->
+              <div
+                v-if="item.dataType==='radio'||item.dataType==='checkbox'||item.dataType==='select'||item.dataType==='multipleSelect'"
+              >
                 <div>
-                  <span class="star">默认值:</span>
-                </div>
-                <el-input type="text" v-model="item.defaultValue"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">默认值类型:</span>
-                </div>
-                <el-input type="number" v-model="item.defaultValueType"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>默认占位符:</span>
-                </div>
-                <el-input type="text" v-model="item.placeholder"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>范围:</span>
-                </div>
-                <el-input type="number" v-model="item.minValue" placeholder="最小长度"></el-input>
-                <el-input type="number" v-model="item.maxValue" placeholder="最大长度"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>填写方式:</span>
-                </div>
-                <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio>
-                  <el-radio :label="1">审核填写</el-radio>
-                </el-radio-group>
-              </div>
-              <div>
-                <div>
-                  <span>设置:</span>
-                </div>
-                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
-                  <el-checkbox label="1">可读</el-checkbox>
-                  <el-checkbox label="2">可写</el-checkbox>
-                </el-checkbox-group>
-              </div>
-              <div>
-                <div>
-                  <span>是否必填：</span>
-                </div>
-                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
-              </div>
-              <div>
-                <div>
-                  <span>校验规则:</span>
-                </div>
-                <el-input type="text" v-model="item.regex"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>规则提醒:</span>
-                </div>
-                <el-input type="text" v-model="item.regMsg"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>属性值排序:</span>
-                </div>
-                <el-input type="number" v-model="item.propertySort"></el-input>
-              </div>
-
-              <div>
-                <div>
-                  <span>备注:</span>
-                </div>
-                <el-input type="text" v-model="item.remark"></el-input>
-              </div>
-            </div>
-            <div v-if="item.dataType === 'textarea' && typeShow[index]">
-              <div>
-                <div>
-                  <span class="star">字段名称:</span>
-                </div>
-                <el-input type="text" :rows="1" v-model="item.name"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">字段描述:</span>
-                </div>
-                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">默认值:</span>
-                </div>
-                <el-input type="text" v-model="item.defaultValue"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">默认值类型:</span>
-                </div>
-                <el-input type="number" v-model="item.defaultValueType"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>默认占位符:</span>
-                </div>
-                <el-input type="text" v-model="item.placeholder"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>范围:</span>
-                </div>
-                <el-input type="number" v-model="item.minValue" placeholder="最小长度"></el-input>
-                <el-input type="number" v-model="item.maxValue" placeholder="最大长度"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>填写方式:</span>
-                </div>
-                <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio>
-                  <el-radio :label="1">审核填写</el-radio>
-                </el-radio-group>
-              </div>
-              <div>
-                <div>
-                  <span>设置:</span>
-                </div>
-                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
-                  <el-checkbox label="1">可读</el-checkbox>
-                  <el-checkbox label="2">可写</el-checkbox>
-                </el-checkbox-group>
-              </div>
-              <div>
-                <div>
-                  <span>是否必填：</span>
-                </div>
-                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
-              </div>
-              <div>
-                <div>
-                  <span>校验规则:</span>
-                </div>
-                <el-input type="text" v-model="item.regex"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>规则提醒:</span>
-                </div>
-                <el-input type="text" v-model="item.regMsg"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>属性值排序:</span>
-                </div>
-                <el-input type="number" v-model="item.propertySort"></el-input>
-              </div>
-
-              <div>
-                <div>
-                  <span>备注:</span>
-                </div>
-                <el-input type="text" v-model="item.remark"></el-input>
-              </div>
-            </div>
-            <div v-if="item.dataType === 'inputNumber' && typeShow[index]">
-              <div>
-                <div>
-                  <span class="star">字段名称:</span>
-                </div>
-                <el-input type="text" :rows="1" v-model="item.name"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">字段描述:</span>
-                </div>
-                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">默认值:</span>
-                </div>
-                <el-input type="number" v-model="item.defaultValue"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">默认值类型:</span>
-                </div>
-                <el-input type="number" v-model="item.defaultValueType"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>默认占位符:</span>
-                </div>
-                <el-input type="text" v-model="item.placeholder"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>范围:</span>
-                </div>
-                <el-input type="number" v-model="item.minValue" placeholder="最小长度"></el-input>
-                <el-input type="number" v-model="item.maxValue" placeholder="最大长度"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>填写方式:</span>
-                </div>
-                <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio>
-                  <el-radio :label="1">审核填写</el-radio>
-                </el-radio-group>
-              </div>
-              <div>
-                <div>
-                  <span>设置:</span>
-                </div>
-                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
-                  <el-checkbox label="1">可读</el-checkbox>
-                  <el-checkbox label="2">可写</el-checkbox>
-                </el-checkbox-group>
-              </div>
-              <div>
-                <div>
-                  <span>是否必填：</span>
-                </div>
-                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
-              </div>
-              <div>
-                <div>
-                  <span>校验规则:</span>
-                </div>
-                <el-input type="text" v-model="item.regex"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>规则提醒:</span>
-                </div>
-                <el-input type="text" v-model="item.regMsg"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>属性值排序:</span>
-                </div>
-                <el-input type="number" v-model="item.propertySort"></el-input>
-              </div>
-
-              <div>
-                <div>
-                  <span>备注:</span>
-                </div>
-                <el-input type="text" v-model="item.remark"></el-input>
-              </div>
-            </div>
-            <div v-if="item.dataType === 'radio' && typeShow[index]">
-              <div>
-                <div>
-                  <span class="star">字段名称:</span>
-                </div>
-                <el-input type="text" :rows="1" v-model="item.name"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">字段描述:</span>
-                </div>
-                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>选择项</span>
-                </div>
-                <div>
-                  <div v-for="(item5,index5) in item.dataValues" :key="index5" class="addDemo">
-                    <div>
-                      <el-input v-model="item5.value" size="small" type="text"></el-input>
-                    </div>
-                    <div class="addDemoTools">
-                      <div class="tool">
-                        <i
-                          class="el-icon-plus"
-                          style="cursor:pointer;color:#54B8FF;font-size:12px;"
-                          @click="addRadio(item.dataValues)"
-                          title="新建选项"
-                        ></i>
-                        <div v-if="item.dataValues.length > 1">
-                          <el-button
-                            icon="el-icon-arrow-up"
-                            type="text"
-                            size="mini"
-                            title="上移"
-                            @click="upOption(item.dataValues, index5, item.dataValues.length)"
-                          ></el-button>
-                          <el-button
-                            icon="el-icon-arrow-down"
-                            type="text"
-                            size="mini"
-                            title="下移"
-                            @click="
+                  <div>
+                    <span>选择项</span>
+                  </div>
+                  <div>
+                    <div v-for="(item5,index5) in item.dataValues" :key="index5" class="addDemo">
+                      <div>
+                        <el-input v-model="item5.value" size="small" type="text"></el-input>
+                      </div>
+                      <div class="addDemoTools">
+                        <div class="tool">
+                          <i
+                            class="el-icon-plus"
+                            style="cursor:pointer;color:#54B8FF;font-size:12px;"
+                            @click="addRadio(item.dataValues)"
+                            title="新建选项"
+                          ></i>
+                          <div v-if="item.dataValues.length > 1">
+                            <el-button
+                              icon="el-icon-arrow-up"
+                              type="text"
+                              size="mini"
+                              title="上移"
+                              @click="upOption(item.dataValues, index5, item.dataValues.length)"
+                            ></el-button>
+                            <el-button
+                              icon="el-icon-arrow-down"
+                              type="text"
+                              size="mini"
+                              title="下移"
+                              @click="
                           downOption(item.dataValues, index5, item.dataValues.length)
                         "
-                          ></el-button>
-                          <el-button
-                            icon="el-icon-delete"
-                            type="text"
-                            size="mini"
-                            title="删除"
-                            @click="removeRadio(item.dataValues, index5)"
-                          ></el-button>
+                            ></el-button>
+                            <el-button
+                              icon="el-icon-delete"
+                              type="text"
+                              size="mini"
+                              title="删除"
+                              @click="removeRadio(item.dataValues, index5)"
+                            ></el-button>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+              <!-- 默认值 -->
               <div>
                 <div>
                   <span class="star">默认值:</span>
                 </div>
-                <el-input type="text" v-model="item.defaultValue"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">默认值类型:</span>
+                <div v-if="item.dataType==='textarea'">
+                  <el-input type="textarea" rows="2" v-model="item.defaultValue"></el-input>
                 </div>
-                <el-input type="number" v-model="item.defaultValueType"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>填写方式:</span>
+                <div v-else-if="item.dataType==='inputNumber'">
+                  <el-input type="number" v-model="item.defaultValue"></el-input>
                 </div>
-                <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio>
-                  <el-radio :label="5">审核填写</el-radio>
-                </el-radio-group>
-              </div>
-              <div>
-                <div>
-                  <span>设置:</span>
-                </div>
-                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
-                  <el-checkbox label="1">可读</el-checkbox>
-                  <el-checkbox label="2">可写</el-checkbox>
-                </el-checkbox-group>
-              </div>
-              <div>
-                <div>
-                  <span>是否必填：</span>
-                </div>
-                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
-              </div>
-              <div>
-                <div>
-                  <span>校验规则:</span>
-                </div>
-                <el-input type="text" v-model="item.regex"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>规则提醒:</span>
-                </div>
-                <el-input type="text" v-model="item.regMsg"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>属性值排序:</span>
-                </div>
-                <el-input type="number" v-model="item.propertySort"></el-input>
-              </div>
-
-              <div>
-                <div>
-                  <span>备注:</span>
-                </div>
-                <el-input type="text" v-model="item.remark"></el-input>
-              </div>
-            </div>
-            <div v-if="item.dataType === 'checkbox' && typeShow[index]">
-              <div>
-                <div>
-                  <span class="star">字段名称:</span>
-                </div>
-                <el-input type="text" :rows="1" v-model="item.name"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">字段描述:</span>
-                </div>
-                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>选择项</span>
-                </div>
-                <div>
-                  <div v-for="(item6,index6) in item.dataValues" :key="index6" class="addDemo">
-                    <div>
-                      <el-input v-model="item6.value" size="small" type="text"></el-input>
-                    </div>
-                    <div class="addDemoTools">
-                      <div class="tool">
-                        <i
-                          class="el-icon-plus"
-                          style="cursor:pointer;color:#54B8FF;font-size:12px;"
-                          @click="addRadio(item.dataValues)"
-                          title="新建选项"
-                        ></i>
-                        <div>
-                          <el-button
-                            icon="el-icon-arrow-up"
-                            type="text"
-                            size="mini"
-                            title="上移"
-                            @click="upOption(item.dataValues, index6, item.dataValues.length)"
-                          ></el-button>
-                          <el-button
-                            icon="el-icon-arrow-down"
-                            type="text"
-                            size="mini"
-                            title="下移"
-                            @click="
-                          downOption(item.dataValues, index6, item.dataValues.length)
-                        "
-                          ></el-button>
-                          <el-button
-                            icon="el-icon-delete"
-                            type="text"
-                            size="mini"
-                            title="删除"
-                            @click="removeRadio(item.dataValues, index6)"
-                          ></el-button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <div>
-                  <span class="star">默认值:</span>
-                </div>
-                <el-input type="text" v-model="item.defaultValue"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">默认值类型:</span>
-                </div>
-                <el-input type="number" v-model="item.defaultValueType"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>填写方式:</span>
-                </div>
-                <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio>
-                  <el-radio :label="1">审核填写</el-radio>
-                </el-radio-group>
-              </div>
-              <div>
-                <div>
-                  <span>设置:</span>
-                </div>
-                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
-                  <el-checkbox label="1">可读</el-checkbox>
-                  <el-checkbox label="2">可写</el-checkbox>
-                </el-checkbox-group>
-              </div>
-              <div>
-                <div>
-                  <span>是否必填：</span>
-                </div>
-                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
-              </div>
-              <div>
-                <div>
-                  <span>校验规则:</span>
-                </div>
-                <el-input type="text" v-model="item.regex"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>规则提醒:</span>
-                </div>
-                <el-input type="text" v-model="item.regMsg"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>属性值排序:</span>
-                </div>
-                <el-input type="number" v-model="item.propertySort"></el-input>
-              </div>
-
-              <div>
-                <div>
-                  <span>备注:</span>
-                </div>
-                <el-input type="text" v-model="item.remark"></el-input>
-              </div>
-            </div>
-            <div v-if="item.dataType === 'select' && typeShow[index]">
-              <div>
-                <div>
-                  <span class="star">字段名称:</span>
-                </div>
-                <el-input type="text" :rows="1" v-model="item.name"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">字段描述:</span>
-                </div>
-                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
-              </div>
-
-              <div>
-                <div>
-                  <span>选择项</span>
-                </div>
-                <div v-for="(item7,index7) in item.dataValues" :key="index7" class="addDemo">
-                  <div>
-                    <el-input type="text" v-model="item7.value" size="small"></el-input>
-                  </div>
-                  <div class="addDemoTools">
-                    <div class="tool">
-                      <i
-                        class="el-icon-plus"
-                        style="cursor:pointer;color:#54B8FF;font-size:12px;"
-                        @click="addRadio(item.dataValues)"
-                        title="新建选项"
-                      ></i>
-                      <div>
-                        <el-button
-                          icon="el-icon-arrow-up"
-                          type="text"
-                          size="mini"
-                          title="上移"
-                          @click="upOption(item.dataValues, index7, item.dataValues.length)"
-                        ></el-button>
-                        <el-button
-                          icon="el-icon-arrow-down"
-                          type="text"
-                          size="mini"
-                          title="下移"
-                          @click="
-                          downOption(item.dataValues, index7, item.dataValues.length)
-                        "
-                        ></el-button>
-                        <el-button
-                          icon="el-icon-delete"
-                          type="text"
-                          size="mini"
-                          title="删除"
-                          @click="removeRadio(item.dataValues, index7)"
-                        ></el-button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <div>
-                  <span class="star">默认值:</span>
-                </div>
-                <el-input type="text" v-model="item.defaultValue"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">默认值类型:</span>
-                </div>
-                <el-input type="number" v-model="item.defaultValueType"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>填写方式:</span>
-                </div>
-                <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio>
-                  <el-radio :label="1">审核填写</el-radio>
-                </el-radio-group>
-              </div>
-              <div>
-                <div>
-                  <span>设置:</span>
-                </div>
-                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
-                  <el-checkbox label="1">可读</el-checkbox>
-                  <el-checkbox label="2">可写</el-checkbox>
-                </el-checkbox-group>
-              </div>
-              <div>
-                <div>
-                  <span>是否必填：</span>
-                </div>
-                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
-              </div>
-              <div>
-                <div>
-                  <span>校验规则:</span>
-                </div>
-                <el-input type="text" v-model="item.regex"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>规则提醒:</span>
-                </div>
-                <el-input type="text" v-model="item.regMsg"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>属性值排序:</span>
-                </div>
-                <el-input type="number" v-model="item.propertySort"></el-input>
-              </div>
-
-              <div>
-                <div>
-                  <span>备注:</span>
-                </div>
-                <el-input type="text" v-model="item.remark"></el-input>
-              </div>
-            </div>
-            <div v-if="item.dataType === 'datetime'&& typeShow[index]">
-              <div>
-                <div>
-                  <span class="star">字段名称:</span>
-                </div>
-                <el-input type="text" :rows="1" v-model="item.name"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">字段描述:</span>
-                </div>
-                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">默认值:</span>
-                </div>
-                <el-input type="text" v-model="item.defaultValue"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">默认值类型:</span>
-                </div>
-                <el-input type="number" v-model="item.defaultValueType"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>默认占位符:</span>
-                </div>
-                <el-input type="text" v-model="item.placeholder"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>填写方式:</span>
-                </div>
-                <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio>
-                  <el-radio :label="1">审核填写</el-radio>
-                </el-radio-group>
-              </div>
-              <div>
-                <div>
-                  <span>设置:</span>
-                </div>
-                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
-                  <el-checkbox label="1">可读</el-checkbox>
-                  <el-checkbox label="2">可写</el-checkbox>
-                </el-checkbox-group>
-              </div>
-              <div>
-                <div>
-                  <span>是否必填：</span>
-                </div>
-                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
-              </div>
-              <div>
-                <div>
-                  <span>校验规则:</span>
-                </div>
-                <el-input type="text" v-model="item.regex"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>规则提醒:</span>
-                </div>
-                <el-input type="text" v-model="item.regMsg"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>属性值排序:</span>
-                </div>
-                <el-input type="number" v-model="item.propertySort"></el-input>
-              </div>
-
-              <div>
-                <div>
-                  <span>备注:</span>
-                </div>
-                <el-input type="text" v-model="item.remark"></el-input>
-              </div>
-            </div>
-            <div v-if="item.dataType === 'multipleSelect' && typeShow[index]">
-              <div>
-                <div>
-                  <span class="star">字段名称:</span>
-                </div>
-                <el-input type="text" :rows="1" v-model="item.name"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">字段描述:</span>
-                </div>
-                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>选择项</span>
-                </div>
-                <div v-for="(item8,index8) in item.dataValues" :key="index8" class="addDemo">
-                  <div>
-                    <el-input type="text" v-model="item8.value" size="small"></el-input>
-                  </div>
-                  <div class="addDemoTools">
-                    <div class="tool">
-                      <i
-                        class="el-icon-plus"
-                        style="cursor:pointer;color:#54B8FF;font-size:12px;"
-                        @click="addRadio(item.dataValues)"
-                        title="新建选项"
-                      ></i>
-                      <div>
-                        <el-button
-                          icon="el-icon-arrow-up"
-                          type="text"
-                          size="mini"
-                          title="上移"
-                          @click="upOption(item.dataValues, index8, item.dataValues.length)"
-                        ></el-button>
-                        <el-button
-                          icon="el-icon-arrow-down"
-                          type="text"
-                          size="mini"
-                          title="下移"
-                          @click="
-                          downOption(item.dataValues, index8, item.dataValues.length)
-                        "
-                        ></el-button>
-                        <el-button
-                          icon="el-icon-delete"
-                          type="text"
-                          size="mini"
-                          title="删除"
-                          @click="removeRadio(item.dataValues, index8)"
-                        ></el-button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <div>
-                  <span class="star">默认值:</span>
-                </div>
-                <div>
+                <div v-else-if="item.dataType==='checkbox'||item.dataType==='multipleSelect'">
                   <div class="addDemo" v-for="(item9,index9) in item.defaultValue" :key="index9">
                     <el-input type="text" v-model="item9.value"></el-input>
                     <div class="addDemoTools">
@@ -1162,7 +430,7 @@
                           @click="addRadio(item.defaultValue)"
                           title="新建选项"
                         ></i>
-                        <div>
+                        <div v-if="item.defaultValue.length > 1">
                           <el-button
                             icon="el-icon-arrow-up"
                             type="text"
@@ -1191,94 +459,82 @@
                     </div>
                   </div>
                 </div>
+                <div v-else-if="item.dataType==='span'">
+                  <quill-editor
+                    v-model="item.defaultValue"
+                    :options="editorOption"
+                    :placeholder="item.placeholder"
+                    style="white-space:pre"
+                  ></quill-editor>
+                </div>
+                <div v-else-if="item.dataType==='address'">
+                  <div style="display:flex;justify-content: space-between;flex-wrap:wrap;">
+                    <el-select
+                      v-model="item.defaultValue.province"
+                      placeholder="请选择"
+                      style="width:100%;"
+                      @change="getLower1(item)"
+                    >
+                      <el-option
+                        v-for="item in province"
+                        :key="item.id"
+                        :label="item.regionName"
+                        :value="item.regionCode"
+                      ></el-option>
+                    </el-select>
+                    <el-select
+                      v-model="item.defaultValue.city"
+                      placeholder="请选择"
+                      style="width:100%;"
+                      @change="getLower2(item)"
+                    >
+                      <el-option
+                        v-for="item in city"
+                        :key="item.id"
+                        :label="item.regionName"
+                        :value="item.regionCode"
+                      ></el-option>
+                    </el-select>
+                    <el-select
+                      v-model="item.defaultValue.area"
+                      placeholder="请选择"
+                      style="width:100%;"
+                    >
+                      <el-option
+                        v-for="item in area"
+                        :key="item.id"
+                        :label="item.regionName"
+                        :value="item.regionCode"
+                      ></el-option>
+                    </el-select>
+                  </div>
+                  <el-input type="textarea" rows="2" v-model="item.defaultValue.detail"></el-input>
+                </div>
+                <el-input v-else type="text" v-model="item.defaultValue"></el-input>
               </div>
+              <!-- 默认值类型 -->
               <div>
                 <div>
                   <span class="star">默认值类型:</span>
                 </div>
                 <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
-              <div>
-                <div>
-                  <span>填写方式:</span>
-                </div>
-                <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio>
-                  <el-radio :label="1">审核填写</el-radio>
-                </el-radio-group>
-              </div>
-              <div>
-                <div>
-                  <span>设置:</span>
-                </div>
-                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
-                  <el-checkbox label="1">可读</el-checkbox>
-                  <el-checkbox label="2">可写</el-checkbox>
-                </el-checkbox-group>
-              </div>
-              <div>
-                <div>
-                  <span>是否必填：</span>
-                </div>
-                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
-              </div>
-              <div>
-                <div>
-                  <span>校验规则:</span>
-                </div>
-                <el-input type="text" v-model="item.regex"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>规则提醒:</span>
-                </div>
-                <el-input type="text" v-model="item.regMsg"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>属性值排序:</span>
-                </div>
-                <el-input type="number" v-model="item.propertySort"></el-input>
-              </div>
-
-              <div>
-                <div>
-                  <span>备注:</span>
-                </div>
-                <el-input type="text" v-model="item.remark"></el-input>
-              </div>
-            </div>
-            <div v-if="item.dataType === 'date' && typeShow[index]">
-              <div>
-                <div>
-                  <span class="star">字段名称:</span>
-                </div>
-                <el-input type="text" :rows="1" v-model="item.name"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">字段描述:</span>
-                </div>
-                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">默认值:</span>
-                </div>
-                <el-input type="text" v-model="item.defaultValue"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">默认值类型:</span>
-                </div>
-                <el-input type="number" v-model="item.defaultValueType"></el-input>
-              </div>
+              <!-- 默认占位符 -->
               <div>
                 <div>
                   <span>默认占位符:</span>
                 </div>
                 <el-input type="text" v-model="item.placeholder"></el-input>
               </div>
+              <!-- 范围 -->
+              <div>
+                <div>
+                  <span>范围:</span>
+                </div>
+                <el-input type="number" v-model="item.minValue" placeholder="最小长度"></el-input>
+                <el-input type="number" v-model="item.maxValue" placeholder="最大长度"></el-input>
+              </div>
+              <!-- 填写方式 -->
               <div>
                 <div>
                   <span>填写方式:</span>
@@ -1288,6 +544,7 @@
                   <el-radio :label="1">审核填写</el-radio>
                 </el-radio-group>
               </div>
+              <!-- 设置可读可写 -->
               <div>
                 <div>
                   <span>设置:</span>
@@ -1297,313 +554,35 @@
                   <el-checkbox label="2">可写</el-checkbox>
                 </el-checkbox-group>
               </div>
+              <!-- 是否必填 -->
               <div>
                 <div>
                   <span>是否必填：</span>
                 </div>
                 <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
               </div>
+              <!-- 校验规则 -->
               <div>
                 <div>
                   <span>校验规则:</span>
                 </div>
                 <el-input type="text" v-model="item.regex"></el-input>
               </div>
+              <!-- 规则提醒 -->
               <div>
                 <div>
                   <span>规则提醒:</span>
                 </div>
                 <el-input type="text" v-model="item.regMsg"></el-input>
               </div>
+              <!-- 属性值排序 -->
               <div>
                 <div>
                   <span>属性值排序:</span>
                 </div>
                 <el-input type="number" v-model="item.propertySort"></el-input>
               </div>
-
-              <div>
-                <div>
-                  <span>备注:</span>
-                </div>
-                <el-input type="text" v-model="item.remark"></el-input>
-              </div>
-            </div>
-            <div v-if="item.dataType === 'time' && typeShow[index]">
-              <div>
-                <div>
-                  <span class="star">字段名称:</span>
-                </div>
-                <el-input type="text" :rows="1" v-model="item.name"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">字段描述:</span>
-                </div>
-                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">默认值:</span>
-                </div>
-                <el-input type="text" v-model="item.defaultValue"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">默认值类型:</span>
-                </div>
-                <el-input type="number" v-model="item.defaultValueType"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>默认占位符:</span>
-                </div>
-                <el-input type="text" v-model="item.placeholder"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>填写方式:</span>
-                </div>
-                <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio>
-                  <el-radio :label="1">审核填写</el-radio>
-                </el-radio-group>
-              </div>
-              <div>
-                <div>
-                  <span>设置:</span>
-                </div>
-                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
-                  <el-checkbox label="1">可读</el-checkbox>
-                  <el-checkbox label="2">可写</el-checkbox>
-                </el-checkbox-group>
-              </div>
-              <div>
-                <div>
-                  <span>是否必填：</span>
-                </div>
-                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
-              </div>
-              <div>
-                <div>
-                  <span>校验规则:</span>
-                </div>
-                <el-input type="text" v-model="item.regex"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>规则提醒:</span>
-                </div>
-                <el-input type="text" v-model="item.regMsg"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>属性值排序:</span>
-                </div>
-                <el-input type="number" v-model="item.propertySort"></el-input>
-              </div>
-
-              <div>
-                <div>
-                  <span>备注:</span>
-                </div>
-                <el-input type="text" v-model="item.remark"></el-input>
-              </div>
-            </div>
-            <div v-if="item.dataType === 'span' && typeShow[index]">
-              <div>
-                <div>
-                  <span class="star">字段名称:</span>
-                </div>
-                <el-input type="text" :rows="1" v-model="item.name"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">字段描述:</span>
-                </div>
-                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>详细内容</span>
-                </div>
-                <quill-editor
-                  v-model="item.defaultValue"
-                  :options="editorOption"
-                  :placeholder="item.placeholder"
-                  style="white-space:pre"
-                ></quill-editor>
-              </div>
-              <div>
-                <div>
-                  <span class="star">默认值类型:</span>
-                </div>
-                <el-input type="number" v-model="item.defaultValueType"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>默认占位符:</span>
-                </div>
-                <el-input type="text" v-model="item.placeholder"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>填写方式:</span>
-                </div>
-                <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio>
-                  <el-radio :label="1">审核填写</el-radio>
-                </el-radio-group>
-              </div>
-              <div>
-                <div>
-                  <span>设置:</span>
-                </div>
-                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
-                  <el-checkbox label="1">可读</el-checkbox>
-                  <el-checkbox label="2">可写</el-checkbox>
-                </el-checkbox-group>
-              </div>
-              <div>
-                <div>
-                  <span>是否必填：</span>
-                </div>
-                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
-              </div>
-              <div>
-                <div>
-                  <span>校验规则:</span>
-                </div>
-                <el-input type="text" v-model="item.regex"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>规则提醒:</span>
-                </div>
-                <el-input type="text" v-model="item.regMsg"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>属性值排序:</span>
-                </div>
-                <el-input type="number" v-model="item.propertySort"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>备注:</span>
-                </div>
-                <el-input type="text" v-model="item.remark"></el-input>
-              </div>
-            </div>
-            <div v-if="item.dataType === 'address' && typeShow[index]">
-              <div>
-                <div>
-                  <span class="star">字段名称:</span>
-                </div>
-                <el-input type="text" :rows="1" v-model="item.name"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">字段描述:</span>
-                </div>
-                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">默认值:</span>
-                </div>
-                <div style="display:flex;justify-content: space-between;flex-wrap:wrap;">
-                  <el-select
-                    v-model="item.defaultValue.province"
-                    placeholder="请选择"
-                    style="width:100%;"
-                    @change="getLower1(item)"
-                  >
-                    <el-option
-                      v-for="item in province"
-                      :key="item.id"
-                      :label="item.regionName"
-                      :value="item.regionCode"
-                    ></el-option>
-                  </el-select>
-                  <el-select
-                    v-model="item.defaultValue.city"
-                    placeholder="请选择"
-                    style="width:100%;"
-                    @change="getLower2(item)"
-                  >
-                    <el-option
-                      v-for="item in city"
-                      :key="item.id"
-                      :label="item.regionName"
-                      :value="item.regionCode"
-                    ></el-option>
-                  </el-select>
-                  <el-select v-model="item.defaultValue.area" placeholder="请选择" style="width:100%;">
-                    <el-option
-                      v-for="item in area"
-                      :key="item.id"
-                      :label="item.regionName"
-                      :value="item.regionCode"
-                    ></el-option>
-                  </el-select>
-                </div>
-                <el-input type="textarea" rows="2" v-model="item.defaultValue.detail"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span class="star">默认值类型:</span>
-                </div>
-                <el-input type="number" v-model="item.defaultValueType"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>默认占位符:</span>
-                </div>
-                <el-input type="text" v-model="item.placeholder"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>填写方式:</span>
-                </div>
-                <el-radio-group v-model="item.propertyUsage">
-                  <el-radio :label="0">新增填写</el-radio>
-                  <el-radio :label="1">审核填写</el-radio>
-                </el-radio-group>
-              </div>
-              <div>
-                <div>
-                  <span>设置:</span>
-                </div>
-                <el-checkbox-group v-model="item.checklist" @change="changeChecklist(item)">
-                  <el-checkbox label="1">可读</el-checkbox>
-                  <el-checkbox label="2">可写</el-checkbox>
-                </el-checkbox-group>
-              </div>
-              <div>
-                <div>
-                  <span>是否必填：</span>
-                </div>
-                <el-checkbox v-model="item.isRequired" true-label="1" false-label="0">必填</el-checkbox>
-              </div>
-              <div>
-                <div>
-                  <span>校验规则:</span>
-                </div>
-                <el-input type="text" v-model="item.regex"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>规则提醒:</span>
-                </div>
-                <el-input type="text" v-model="item.regMsg"></el-input>
-              </div>
-              <div>
-                <div>
-                  <span>属性值排序:</span>
-                </div>
-                <el-input type="number" v-model="item.propertySort"></el-input>
-              </div>
+              <!-- 备注 -->
               <div>
                 <div>
                   <span>备注:</span>
@@ -1966,7 +945,7 @@ export default {
             { value: "选项2" },
             { value: "选项3" }
           ],
-          defaultValue: "",
+          defaultValue: [{ value: "选项1" }],
           defaultValueType: "0",
           formatValue: "",
           isRequired: 0,
@@ -2299,14 +1278,13 @@ export default {
                   item.rw = 0;
                 }
                 delete item.checklist;
-                if (
-                  item.dataType === "radio" ||
-                  item.dataType === "checkbox" ||
-                  item.dataType === "select"
-                ) {
+                if (item.dataType === "radio" || item.dataType === "select") {
                   item.dataValues = this.arrToString(item.dataValues);
                 }
-                if (item.dataType === "multipleSelect") {
+                if (
+                  item.dataType === "multipleSelect" ||
+                  item.dataType === "checkbox"
+                ) {
                   item.dataValues = this.arrToString(item.dataValues);
                   item.defaultValue = this.arrToString(item.defaultValue);
                 }
@@ -2358,7 +1336,6 @@ export default {
     },
     // 修改传值
     showModifyContent(row) {
-      console.log(row);
       row.workformProperties.forEach(item => {
         if (item.rw === 3) {
           item.checklist = ["1", "2"];
@@ -2371,14 +1348,13 @@ export default {
         }
         item.isRequired = item.isRequired === 1 ? true : false;
         item.defaultValueType = String(item.defaultValueType);
-        if (
-          item.dataType === "radio" ||
-          item.dataType === "checkbox" ||
-          item.dataType === "select"
-        ) {
+        if (item.dataType === "radio" || item.dataType === "select") {
           item.dataValues = this.stringToArr(item.dataValues);
         }
-        if (item.dataType === "multipleSelect") {
+        if (
+          item.dataType === "checkbox" ||
+          item.dataType === "multipleSelect"
+        ) {
           item.dataValues = this.stringToArr(item.dataValues);
           item.defaultValue = this.stringToArr(item.defaultValue);
         }
@@ -2414,14 +1390,13 @@ export default {
         this.workFormTable.workformPropertyCreateInfos.forEach(item => {
           delete item.checklist;
           item.isRequired = item.isRequired ? 1 : 0;
-          if (
-            item.dataType === "radio" ||
-            item.dataType === "checkbox" ||
-            item.dataType === "select"
-          ) {
+          if (item.dataType === "radio" || item.dataType === "select") {
             item.dataValues = this.arrToString(item.dataValues);
           }
-          if (item.dataType === "multipleSelect") {
+          if (
+            item.dataType === "checkbox" ||
+            item.dataType === "multipleSelect"
+          ) {
             item.dataValues = this.arrToString(item.dataValues);
             item.defaultValue = this.arrToString(item.defaultValue);
           }
@@ -2469,11 +1444,6 @@ export default {
     },
     // 查看编辑
     edite(row) {
-      this.workFormTable = row;
-      this.workFormTable.workformPropertyCreateInfos = row.workformProperties;
-      this.createShow = true;
-      this.tableShow = false;
-      this.show = 3;
       row.workformProperties.forEach(item => {
         if (item.rw === 3) {
           item.checklist = ["1", "2"];
@@ -2485,30 +1455,41 @@ export default {
           item.checklist = [];
         }
         item.isRequired = item.isRequired === 1 ? true : false;
+        item.defaultValueType = String(item.defaultValueType);
+        if (item.dataType === "radio" || item.dataType === "select") {
+          item.dataValues = this.stringToArr(item.dataValues);
+        }
         if (
-          item.dataType === "radio" ||
           item.dataType === "checkbox" ||
-          item.dataType === "select" ||
           item.dataType === "multipleSelect"
         ) {
-          item.dataValues = JSON.parse(item.dataValues);
+          item.dataValues = this.stringToArr(item.dataValues);
+          item.defaultValue = this.stringToArr(item.defaultValue);
         }
         if (item.dataType === "address") {
           item.defaultValue = JSON.parse(item.defaultValue);
+          let address = item.defaultValue;
+          getLowerAddress(String(address.province)).then(res => {
+            if (res.data.code === 0) {
+              this.city = res.data.data;
+            }
+          });
+          getLowerAddress(String(address.city)).then(res => {
+            if (res.data.code === 0) {
+              this.area = res.data.data;
+            }
+          });
         }
-        // item.defaultValueType = String(item.defaultValueType);
-        let address = item.defaultValue;
-        getLowerAddress(String(address.province)).then(res => {
-          if (res.data.code === 0) {
-            this.city = res.data.data;
-          }
-        });
-        getLowerAddress(String(address.city)).then(res => {
-          if (res.data.code === 0) {
-            this.area = res.data.data;
-          }
-        });
       });
+      this.workFormTable.name = row.name;
+      this.workFormTable.enabled = row.enabled;
+      this.workFormTable.remark = row.remark;
+      this.workFormTable.workformPropertyCreateInfos = row.workformProperties;
+      this.createShow = true;
+      this.tableShow = false;
+      this.show = 2;
+      this.table = true;
+      this.text = false;
     },
     // 页面显示条数
     handleSizeChange(val) {
