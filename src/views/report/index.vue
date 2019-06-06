@@ -40,7 +40,7 @@
             </el-card>
           </el-col>
 
-          <el-col :span="4" style="text-align:center;">
+          <el-col :span="4" style="text-align:center;" v-if="manager||depart">
             <el-card shadow="hover">
               <div class="card-content" @click="callLossReport=true;buttonVisible=false;reportTitle='呼损统计报表'">
                 <div class="img-container">

@@ -6,8 +6,8 @@
             <el-collapse-item title="筛选条件" name="1">
               <el-form :inline="true" :rules="rule"  class="demo-form-inline" size="small">
                 <el-form-item label="技能组：">
-                  <el-select v-model="req1.queueNumbers" placeholder="请选择技能组">
-                    <el-option v-for="item in skillList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                  <el-select v-model="queueNumbers" multiple collapse-tags>
+                    <el-option v-for="item in skillList" :key="item.id" :label="item.name" :value="item.code"></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="时间维度：">
@@ -110,16 +110,6 @@
                     format="yyyy">
                   </el-date-picker>
                 </el-form-item>
-                <!--
-                <el-form-item label="呼损次数：">
-                  <el-input v-model="req1.lost_count_from" type="number" :min="0"></el-input>
-                </el-form-item>
-                <el-form-item>
-                  <span>至</span>
-                </el-form-item>
-                <el-form-item>
-                  <el-input v-model="req1.lost_count_to" type="number" :min="0"></el-input>
-                </el-form-item> -->
                 <el-form-item>
                   <el-button type="primary" @click="req1.pageNo=1;queryByKeyWords(req1)">查询</el-button>
                   <el-button @click="resetQueryCondition()">重置</el-button>
@@ -128,17 +118,15 @@
             </el-collapse-item>
           </el-collapse>
 
-          <!-- <el-row class="table-container margin-bottom-15"> -->
-            <el-collapse v-model="formContainerOpen2" class="form-container" @change="handleChangeAcitve2" style="position:relative;">
-              <span class="form-more2 bold" style="line-height: 24px;font-size: 14px;float:right;margin-right:6px;color:#57AFFF;position:absolute;top:12px;right:40px;">收起</span>
-              <el-collapse-item title="统计图" name="2">
-                <el-row>
-                  <div id="countEchart" v-show="hasQueryed" class="countEchart" ref="echartWidth">
-                  </div>
-                </el-row>
-              </el-collapse-item>
-            </el-collapse>
-          <!-- </el-row> -->
+          <el-collapse v-model="formContainerOpen2" class="form-container" @change="handleChangeAcitve2" style="position:relative;">
+            <span class="form-more2 bold" style="line-height: 24px;font-size: 14px;float:right;margin-right:6px;color:#57AFFF;position:absolute;top:12px;right:40px;">收起</span>
+            <el-collapse-item title="统计图" name="2">
+              <el-row>
+                <div id="countEchart" v-show="hasQueryed" class="countEchart" ref="echartWidth">
+                </div>
+              </el-row>
+            </el-collapse-item>
+          </el-collapse>
 
           <el-row class="table-container margin-bottom-15">
             <el-row class="margin-bottom-20">
@@ -156,7 +144,7 @@
 
           <el-row class="table-container margin-bottom-15">
             <el-row class="margin-bottom-20">
-              <el-tabs v-model="activeTab" type="card" >
+              <el-tabs v-model="activeTab" type="card"  @tab-click="handleClick">
               <el-tab-pane label="时间合计表" name="timeCount">
                 <el-table tooltip-effect="dark" :data="TimeCountsData">
                   <el-table-column align="center" prop="dateChar" label="时间段" :show-overflow-tooltip="true"></el-table-column>
@@ -164,18 +152,83 @@
                   <el-table-column align="center" prop="inboundCount" label="呼入量" :show-overflow-tooltip="true"></el-table-column>
                   <el-table-column align="center" prop="lostRateString" label="呼损率" :show-overflow-tooltip="true"></el-table-column>
                 </el-table>
+                <el-pagination
+                  v-if="pageShow1"
+                  background
+                  @size-change="handleSizeChange1"
+                  @current-change="handleCurrentChange1"
+                  :current-page='pageInfo1.pageNo'
+                  :page-sizes="[10, 20, 30, 40, 50]"
+                  :page-size='pageInfo1.pageSize'
+                  layout="total, sizes, prev, pager, next, jumper "
+                  :total='pageInfo1.totalCount' style="text-align: right;float:right;">
+                </el-pagination>
               </el-tab-pane>
-              <el-tab-pane label="员工合计表" name="staffCount">
-                <el-table tooltip-effect="dark">
-                  <el-table-column align="center" prop="" label="时间段" :show-overflow-tooltip="true"></el-table-column>
-                  <el-table-column align="center" prop="" label="呼损量" :show-overflow-tooltip="true"></el-table-column>
-                  <el-table-column align="center" prop="" label="呼入量" :show-overflow-tooltip="true"></el-table-column>
-                  <el-table-column align="center" prop="" label="呼损率" :show-overflow-tooltip="true"></el-table-column>
+              <el-tab-pane label="技能组合计表" name="skillsetCount">
+                <el-table tooltip-effect="dark" :data="SkillSetCountsData">
+                  <el-table-column align="center"  label="技能组" :show-overflow-tooltip="true">
+                    <template slot-scope="scope">
+                      {{showSkillSetName(scope.row.queueNumber)}}
+                    </template>
+                  </el-table-column>
+                  <el-table-column align="center" prop="lostCount" label="呼损量" :show-overflow-tooltip="true"></el-table-column>
+                  <el-table-column align="center" prop="inboundCount" label="呼入量" :show-overflow-tooltip="true"></el-table-column>
+                  <el-table-column align="center" prop="lostRateString" label="呼损率" :show-overflow-tooltip="true"></el-table-column>
+                  <el-table-column align="center" label="操作">
+                    <template slot-scope="scope">
+                      <el-button type="text" @click="req_queue_detail.queueNumbers=scope.row.queueNumber;req_queue_detail.pageNo=1;req_queue_detail.pageSize=10;querySkillSetDetail(req_queue_detail)">查看</el-button>
+                    </template>
+                  </el-table-column>
                 </el-table>
+                <el-pagination
+                  v-if="pageShow2"
+                  background
+                  @size-change="handleSizeChange2"
+                  @current-change="handleCurrentChange2"
+                  :current-page='pageInfo2.pageNo'
+                  :page-sizes="[10, 20, 30, 40, 50]"
+                  :page-size='pageInfo2.pageSize'
+                  layout="total, sizes, prev, pager, next, jumper "
+                  :total='pageInfo2.totalCount' style="text-align: right;float:right;">
+                </el-pagination>
               </el-tab-pane>
             </el-tabs>
             </el-row>
           </el-row>
+
+          <el-dialog
+            align:left
+            width="60%"
+            title="查看技能组详情数据"
+            :visible.sync="detailVisible"
+            append-to-body>
+            <el-form>
+              <el-form-item>
+                <el-table tooltip-effect="dark" :data="skillSetDetailData">
+                  <el-table-column align="center" prop="dateChar" label="时间段" :show-overflow-tooltip="true"></el-table-column>
+                  <el-table-column align="center" prop="lostCount" label="呼损量" :show-overflow-tooltip="true"></el-table-column>
+                  <el-table-column align="center" prop="inboundCount" label="呼入量" :show-overflow-tooltip="true"></el-table-column>
+                  <el-table-column align="center" prop="lostRateString" label="呼损率" :show-overflow-tooltip="true"></el-table-column>
+                </el-table>
+              </el-form-item>
+              <el-form-item>
+                <el-pagination
+                  v-if="pageShow3"
+                  background
+                  @size-change="handleSizeChange3"
+                  @current-change="handleCurrentChange3"
+                  :current-page='pageInfo3.pageNo'
+                  :page-sizes="[10, 20, 30, 40, 50]"
+                  :page-size='pageInfo3.pageSize'
+                  layout="total, sizes, prev, pager, next, jumper "
+                  :total='pageInfo3.totalCount' style="text-align: right;float:right;">
+                </el-pagination>
+              </el-form-item>
+              <el-form-item style="float:right;margin-bottom: 0;">
+                <el-button @click="detailVisible=false">关闭</el-button>
+              </el-form-item>
+            </el-form>
+          </el-dialog>
         </div>
     </div>
 </template>
@@ -192,9 +245,9 @@
 import echarts from 'echarts'
 import {
   countCallLossTimes,
-  querySkillListByAgentId
+  querySkillList
 } from '@/api/call_loss_report'
-import { formatDateTime, formatDate } from '@/utils/tools'
+import { formatDate } from '@/utils/tools'
 
 export default {
   name: 'callLossReport',
@@ -294,10 +347,17 @@ export default {
       }
     }
     return {
+      detailVisible: false,
+      pageShow1: false,
+      pageShow2: false,
+      pageShow3: false,
+      pageInfo1: {},
+      pageInfo2: {},
+      pageInfo3: {},
       rule: {
         day: [
           {
-            required: true, validator: checkDays, trigger: 'change'
+            required: true, validator: checkDays, trigger: 'blur'
           }
         ],
         hour: [
@@ -326,6 +386,7 @@ export default {
           }
         ]
       },
+      queueNumbers: [],
       validate: true,
       chart: null,
       hasQueryed: false,
@@ -372,18 +433,40 @@ export default {
       ],
       echartWidth: null,
       req1: {
+        groupBy: 'time_and_queue',
         dateCharFrom: null,
         dateCharTo: null,
         timeDimension: 'day',
-        queueNumbers: null,
+        queueNumbers: '',
         pageNo: 1,
         pageSize: 25
+      },
+      req_time: {
+        groupBy: 'time',
+        dateCharFrom: null,
+        dateCharTo: null,
+        timeDimension: '',
+        pageNo: 1,
+        pageSize: 10
+      },
+      req_queue: {
+        groupBy: 'queue',
+        queueNumbers: '',
+        pageNo: 1,
+        pageSize: 10
+      },
+      req_queue_detail: {
+        queueNumbers: '',
+        pageNo: 1,
+        pageSize: 10
       },
       dateChars: [], // 用以显示X轴的数组
       inboundCounts: [], // 呼入量数组 用以显示y轴内容
       lostCounts: [], // 呼损量数组 用以显示y轴内容
       lostRates: [], // 呼损率数组 用以显示y轴内容
       TimeCountsData: [], // 时间合计表数据
+      SkillSetCountsData: [], // 技能组合计表数据
+      skillSetDetailData: [], // 技能组详情数据
       allCounts: [], // 合计表的数据
       allCount: { // 合计表实际的数据  就这一个
         name: '合计',
@@ -394,6 +477,33 @@ export default {
     }
   },
   methods: {
+    handleSizeChange1(v) {
+      this.req_time.pageNo = 1
+      this.req_time.pageSize = v
+      this.queryByTimes(this.req1)
+    },
+    handleCurrentChange1(v) {
+      this.req_time.pageNo = v
+      this.queryByTimes(this.req1)
+    },
+    handleSizeChange2(v) {
+      this.req_queue.pageNo = 1
+      this.req_queue.pageSize = v
+      this.queryByQueues()
+    },
+    handleCurrentChange2(v) {
+      this.req_queue.pageNo = v
+      this.queryByQueues()
+    },
+    handleSizeChange3(v) {
+      this.req_queue_detail.pageNo = 1
+      this.req_queue_detail.pageSize = v
+      this.querySkillSetDetail(this.req_queue_detail)
+    },
+    handleCurrentChange3(v) {
+      this.req_queue_detail.pageNo = v
+      this.querySkillSetDetail(this.req_queue_detail)
+    },
     // 初始化图表
     initChart() {
       this.chart = echarts.init(document.getElementById('countEchart'))
@@ -518,12 +628,13 @@ export default {
     },
     // 重置查询条件
     resetQueryCondition() {
+      this.validate = true
       this.req1.pageNo = 1
       this.req1.pageSize = 25
       this.req1.timeDimension = 'day'
       this.dateChar = []
       this.dateChar = [formatDate(new Date(new Date().toLocaleDateString()).getTime() - 7 * 24 * 3600 * 1000), formatDate(new Date())]
-      this.req1.queueNumbers = this.skillList[0] ? this.skillList[0].value : ''
+      this.queueNumbers = []
     },
     // 获取周数
     getWeekNumber(src) {
@@ -547,6 +658,14 @@ export default {
       this.halfhour_time_from = ''
       this.halfhour_time_to = ''
     },
+    // 根据技能组id返回技能组名称
+    showSkillSetName(v) {
+      for (var i = 0; i < this.skillList.length; i++) {
+        if (v === parseInt(this.skillList[i].code)) {
+          return this.skillList[i].name
+        }
+      }
+    },
     handleChangeAcitve1(active1 = ['1']) {
       if (active1.length) {
         $('.form-more1').text('收起')
@@ -568,6 +687,111 @@ export default {
       var str = Number(point * 100).toFixed()
       str += '%'
       return str
+    },
+    handleClick() {
+      if (this.activeTab === 'timeCount') {
+        this.queryByTimes(this.req1)
+      } else {
+        this.queryByQueues(this.req1)
+      }
+    },
+    // 根据时间查询
+    queryByTimes(req) {
+      if (!this.validate) {
+        this.$message.error('请检查是否填写正确！')
+        return
+      }
+      if (req.timeDimension === 'week') {
+        // 周处理
+        if (this.dateCharWeekFrom) {
+          req.dateCharFrom = formatDate(this.dateCharWeekFrom).split('-')[0] + '(' + this.getWeekNumber(this.dateCharWeekFrom) + ')'
+        }
+        if (this.dateCharWeekTo) {
+          req.dateCharTo = formatDate(this.dateCharWeekTo).split('-')[0] + '(' + this.getWeekNumber(this.dateCharWeekTo) + ')'
+        }
+      } else if (req.timeDimension === 'halfhour') {
+        // 半小时处理
+        if (this.halfhour_date_from) {
+          if (this.halfhour_time_from) {
+            req.dateCharFrom = this.halfhour_date_from + ' ' + this.halfhour_time_from + ':00'
+          } else {
+            this.$message.error('请选择开始时间！')
+            return
+          }
+        } else {
+          req.dateCharFrom = ''
+        }
+        if (this.halfhour_date_to) {
+          if (this.halfhour_time_to) {
+            req.dateCharTo = this.halfhour_date_to + ' ' + this.halfhour_time_to + ':00'
+          } else {
+            this.$message.error('请选择结束时间！')
+            return
+          }
+        } else {
+          req.dateCharTo = ''
+        }
+      } else {
+        // 其他情况 天、小时、月、年
+        if (this.dateChar.length > 0) {
+          if (this.dateChar[0]) {
+            req.dateCharFrom = this.dateChar[0]
+          }
+          if (this.dateChar[1]) {
+            req.dateCharTo = this.dateChar[1]
+          }
+        }
+      }
+      this.req_time.dateCharFrom = req.dateCharFrom
+      this.req_time.dateCharTo = req.dateCharTo
+      this.req_time.timeDimension = req.timeDimension
+      console.log('按时间查询条件：', this.req_time)
+      countCallLossTimes(this.req_time).then(res => {
+        if (res.data.result) {
+          this.pageShow1 = true
+          this.TimeCountsData = res.data.result
+          this.pageInfo1.pageNo = res.data.pageNo
+          this.pageInfo1.pageSize = res.data.pageSize
+          this.pageInfo1.totalCount = res.data.totalCount
+        }
+      }).catch(error => {
+        throw error
+      })
+    },
+    // 根据技能组查询
+    queryByQueues() {
+      if (this.queueNumbers && this.queueNumbers.length > 0) {
+        this.req_queue.queueNumbers = this.queueNumbers.join(',')
+        console.log('按技能组查询条件：', this.req_queue)
+        countCallLossTimes(this.req_queue).then(res => {
+          if (res.data.result) {
+            this.pageShow2 = true
+            this.SkillSetCountsData = res.data.result
+            this.pageInfo2.pageNo = res.data.pageNo
+            this.pageInfo2.pageSize = res.data.pageSize
+            this.pageInfo2.totalCount = res.data.totalCount
+          }
+        }).catch(error => {
+          throw error
+        })
+      } else {
+        this.$message.error('请先选择需要查询的技能组！')
+      }
+    },
+    // 技能组查看详情
+    querySkillSetDetail(data) {
+      countCallLossTimes(data).then(res => {
+        if (res.data.result) {
+          this.detailVisible = true
+          this.pageShow3 = true
+          this.skillSetDetailData = res.data.result
+          this.pageInfo3.pageNo = res.data.pageNo
+          this.pageInfo3.pageSize = res.data.pageSize
+          this.pageInfo3.totalCount = res.data.totalCount
+        }
+      }).catch(error => {
+        throw error
+      })
     },
     // 查询
     queryByKeyWords(req) {
@@ -617,6 +841,12 @@ export default {
           }
         }
       }
+      if (this.queueNumbers && this.queueNumbers.length > 0) {
+        req.queueNumbers = this.queueNumbers.join(',')
+      } else {
+        delete req.queueNumbers
+      }
+      req.pageSize = 25
       console.log('查询条件：', req)
       this.dateChars = []
       this.inboundCounts = []
@@ -626,7 +856,6 @@ export default {
       countCallLossTimes(req).then(res => {
         if (res.data.result) {
           if (res.data.result.length > 0) {
-            this.TimeCountsData = res.data.result
             this.hasQueryed = true
             this.allCount.inboundCount = 0
             this.allCount.lostCount = 0
@@ -654,22 +883,15 @@ export default {
   },
   mounted() {
     // 查询技能组
-    querySkillListByAgentId(localStorage.getItem('agentId')).then(res => {
+    querySkillList().then(res => {
       if (res.data.code === 1) {
         if (res.data.data.length > 0) {
-          const data = res.data.data
-          for (let i = 0; i < data.length; i++) {
-            const option = {}
-            option.label = data[i].skillSet.name
-            option.value = data[i].skillSet.code
-            option.priority = data[i].priority
-            this.skillList.push(option)
-            this.req1.queueNumbers = this.skillList[0] ? this.skillList[0].value : ''
-          }
+          this.skillList = res.data.data
         }
       }
       this.queryByKeyWords(this.req1)
     })
+    this.queryByTimes(this.req1)
     this.handleChangeAcitve1()
     this.handleChangeAcitve2()
   }

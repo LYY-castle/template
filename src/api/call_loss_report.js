@@ -2,11 +2,11 @@ import request from '@/utils/request'
 import requestV2 from '@/utils/request-v2'
 
 // 通过员工id查找技能组
-export function querySkillListByAgentId(agentId) {
+export function querySkillList() {
   return request({
-    url: '/employee/queryListByAgentId',
+    url: '/employee/querySkillSetList',
     method: 'get',
-    params: { 'agentId': agentId }
+    params: { 'pageable': false }
   })
 }
 
