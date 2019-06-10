@@ -411,7 +411,7 @@
               <!-- 默认值 -->
               <div>
                 <div>
-                  <span class="star">默认值:</span>
+                  <span>默认值:</span>
                 </div>
                 <div v-if="item.dataType==='textarea'">
                   <el-input type="textarea" rows="2" v-model="item.defaultValue"></el-input>
@@ -1257,7 +1257,6 @@ export default {
             if (
               item.name !== "" &&
               item.val !== "" &&
-              item.defaultValue !== "" &&
               item.defaultValueType !== ""
             ) {
               if (
@@ -1408,7 +1407,6 @@ export default {
           if (
             item.name !== "" &&
             item.val !== "" &&
-            item.defaultValue !== "" &&
             item.defaultValueType !== ""
           ) {
             console.log(item.defaultValue);
