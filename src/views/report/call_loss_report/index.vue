@@ -650,6 +650,7 @@ export default {
     },
     // 每次选时间维度重置查询条件
     resetDateChar() {
+      this.validate = false
       this.dateChar = []
       this.dateCharWeekFrom = ''
       this.dateCharWeekTo = ''
@@ -813,8 +814,9 @@ export default {
     // 查询
     queryByKeyWords(req) {
       // 这个查询条件就是这么复杂 希望以后修改的人看到时不要惊讶 不要为难  稳住 我们能赢
+      console.log(this.validate)
       if (!this.validate) {
-        this.$message.error('请检查是否填写正确！')
+        this.$message.error('请检查时间段是否填写正确！')
         return
       }
       if (req.timeDimension === 'week') {
@@ -896,7 +898,6 @@ export default {
         this.hasQueryed = false
         throw error
       })
-      console.log(this.hasQueryed)
     }
   },
   mounted() {
