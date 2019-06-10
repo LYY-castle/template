@@ -1386,55 +1386,71 @@ export default {
     // 修改
     modifyWorkForm(row) {
       if (this.workFormTable.workformPropertyCreateInfos.length !== 0) {
-        this.workFormTable.workformPropertyCreateInfos.forEach(item => {
-          delete item.checklist;
-          item.isRequired = item.isRequired ? 1 : 0;
-          if (item.dataType === "radio" || item.dataType === "select") {
-            item.dataValues = this.arrToString(item.dataValues);
-          }
-          if (
-            item.dataType === "checkbox" ||
-            item.dataType === "multipleSelect"
-          ) {
-            item.dataValues = this.arrToString(item.dataValues);
-            item.defaultValue = this.arrToString(item.defaultValue);
-          }
-          if (item.dataType === "address") {
-            item.defaultValue = JSON.stringify(item.defaultValue);
-          }
-        });
-        this.workFormTable.workformPropertyCreateInfos.forEach(item => {
-          if (
-            item.name !== "" &&
-            item.val !== "" &&
-            item.defaultValueType !== ""
-          ) {
-            console.log(item.defaultValue);
+        let flag = true;
+        if (flag) {
+          this.workFormTable.workformPropertyCreateInfos.forEach(item => {
             if (
-              item.defaultValueType !== "0" ||
-              item.defaultValueType !== "1"
+              item.name !== "" &&
+              item.val !== "" &&
+              item.defaultValueType !== ""
             ) {
-              this.$message.error("默认值类型请输入0或1");
-              return;
+              if (
+                item.defaultValueType === "0" ||
+                item.defaultValueType === "1"
+              ) {
+                if (item.checklist) {
+                  if (item.checklist.length === 2) {
+                    item.rw = 3;
+                  } else if (item.checklist.length === 1) {
+                    if (item.checklist[0] === "1") {
+                      item.rw = 1;
+                    } else {
+                      item.rw = 2;
+                    }
+                  }
+                } else {
+                  item.rw = 0;
+                }
+                delete item.checklist;
+                if (item.dataType === "radio" || item.dataType === "select") {
+                  item.dataValues = this.arrToString(item.dataValues);
+                }
+                if (
+                  item.dataType === "multipleSelect" ||
+                  item.dataType === "checkbox"
+                ) {
+                  item.dataValues = this.arrToString(item.dataValues);
+                  item.defaultValue = this.arrToString(item.defaultValue);
+                }
+                if (item.dataType === "address") {
+                  item.defaultValue = JSON.stringify(item.defaultValue);
+                }
+              } else {
+                console.log(item.defaultValueType);
+                this.$message.error("默认值类型请输入0或1");
+                flag = false;
+              }
+            } else {
+              this.$message.error("请完善信息");
+              flag = false;
             }
-          } else {
-            this.$message.error("请完善信息");
-            return;
-          }
-        });
+          });
+        }
         this.modifyWorkFormTable.name = this.workFormTable.name;
         this.modifyWorkFormTable.enabled = this.workFormTable.enabled;
         this.modifyWorkFormTable.remark = this.workFormTable.remark;
         this.modifyWorkFormTable.workformPropertyUpdateInfos = this.workFormTable.workformPropertyCreateInfos;
-        updateWorkForm(this.modifyWorkFormTable).then(res => {
-          if (res.data.code === 0) {
-            this.$message.success(res.data.message);
-            this.success();
-          } else {
-            this.$message.error(res.data.message);
-            this.success();
-          }
-        });
+        if (flag) {
+          updateWorkForm(this.modifyWorkFormTable).then(res => {
+            if (res.data.code === 0) {
+              this.$message.success(res.data.message);
+              this.success();
+            } else {
+              this.$message.error(res.data.message);
+              this.success();
+            }
+          });
+        }
       } else {
         this.$message.error("请至少选择一种模板题型");
         return;
