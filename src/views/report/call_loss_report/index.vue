@@ -775,7 +775,24 @@ export default {
           throw error
         })
       } else {
-        this.$message.error('请先选择需要查询的技能组！')
+        // 查询全部技能组
+        var arr = []
+        for (var i = 0; i < this.skillList.length; i++) {
+          arr.push(this.skillList[i].code)
+        }
+        this.req_queue.queueNumbers = arr.join(',')
+        console.log('按技能组查询条件：', this.req_queue)
+        countCallLossTimes(this.req_queue).then(res => {
+          if (res.data.result) {
+            this.pageShow2 = true
+            this.SkillSetCountsData = res.data.result
+            this.pageInfo2.pageNo = res.data.pageNo
+            this.pageInfo2.pageSize = res.data.pageSize
+            this.pageInfo2.totalCount = res.data.totalCount
+          }
+        }).catch(error => {
+          throw error
+        })
       }
     },
     // 技能组查看详情
@@ -879,6 +896,7 @@ export default {
         this.hasQueryed = false
         throw error
       })
+      console.log(this.hasQueryed)
     }
   },
   mounted() {
