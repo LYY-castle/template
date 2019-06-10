@@ -228,14 +228,17 @@
                   ></el-date-picker>
                 </div>
                 <div v-if="item.dataType==='span'">
-                  <quill-editor
+                  <div v-html="item.defaultValue">
+                  </div>
+                  <!-- <quill-editor
+                    ref="myQuillEditor"
                     :disabled="show===3?false:true"
                     v-model="item.defaultValue"
                     :options="editorOption"
                     :placeholder="item.placeholder"
                     :maxlength="item.maxValue"
                     :minlength="item.minValue"
-                  ></quill-editor>
+                  ></quill-editor> -->
                 </div>
                 <div v-if="item.dataType === 'address'">
                   <div style="display:flex;justify-content: space-between;">
@@ -461,6 +464,7 @@
                 </div>
                 <div v-else-if="item.dataType==='span'">
                   <quill-editor
+                    ref="myQuillEditor"
                     v-model="item.defaultValue"
                     :options="editorOption"
                     :placeholder="item.placeholder"
@@ -1520,6 +1524,18 @@ export default {
       this.reqPag.pageSize = this.pageInfo.pageSize;
       console.log(this.pageInfo);
       this.getWorkFormList(this.reqPag);
+    },
+    onEditorBlur(editor) {
+      // 失去焦点事件
+    },
+    onEditorFocus(editor) {
+      // 获得焦点事件
+    },
+    onEditorChange({ editor, html, text }) {
+      // 编辑器文本发生变化
+      // this.content可以实时获取到当前编辑器内的文本内容
+      // console.log(html)
+      // this.text = text
     }
   }
 };
