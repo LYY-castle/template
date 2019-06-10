@@ -13,8 +13,8 @@
               <el-row>
                 <el-col :span="8">
                   <el-card shadow="never" class="no-border">
-                    <div class="item-content" style="cursor:point;">
-                      <span class="line-center font30" @click="changeToDialTaskList('-1')" >{{incallStatistical.ringCount?incallStatistical.ringCount:0}}</span>
+                    <div :class="itemContentClass" style="cursor:point;">
+                      <span :class="linkClassFont30" @click="changeToDialTaskList('-1')" >{{incallStatistical.ringCount?incallStatistical.ringCount:0}}</span>
                     </div>
                     <div style="text-align: center;">
                       <span class="font12" style="height:40px;" >振铃次数</span>
@@ -23,8 +23,8 @@
                 </el-col>
                 <el-col :span="8">
                   <el-card shadow="never" class="no-border">
-                    <div class="item-content" style="cursor:point;">
-                      <span class="line-center font30" @click="changeToDialTaskList('1')">{{incallStatistical.answerCount?incallStatistical.answerCount:0}}</span>
+                    <div :class="itemContentClass" style="cursor:point;">
+                      <span :class="linkClassFont30" @click="changeToDialTaskList('1')">{{incallStatistical.answerCount?incallStatistical.answerCount:0}}</span>
                     </div>
                     <div style="text-align: center">
                       <span class="font12" style="height:40px;" >接听次数</span>
@@ -94,6 +94,8 @@ export default {
   props: ['role'],
   data() {
     return {
+      itemContentClass: 'item-content',
+      linkClassFont30: 'line-center font30 under-line',
       agentId: localStorage.getItem('agentId'),
       agentIds: [],
       departId: localStorage.getItem('departId'),
@@ -111,7 +113,8 @@ export default {
 
   },
   mounted() {
-    if (this.role === 'depart') {
+    this.changeLinkClass()
+    if (this.role === 'manager') {
       getSubordinate(this.departId).then(response => {
         if (response.data.code === 1) {
           this.agentIds = []
@@ -144,14 +147,31 @@ export default {
     }
   },
   methods: {
+    // 可跳转连接和不能跳转的样式切换
+    changeLinkClass() {
+      if (this.role === 'manager') {
+        this.linkClassFont30 = 'line-center font30'
+        this.linkClassFont14 = 'bold'
+        this.itemContentClass = 'item-content cursor-default'
+      } else {
+        this.linkClassFont30 = 'line-center font30 under-line'
+        this.linkClassFont14 = 'bold under-line'
+        this.itemContentClass = 'item-content'
+      }
+    },
     sec_to_time(second = 0) {
       return sec_to_time(second)
     },
     changeToDialTaskList(status) {
-      this.$router.push({
-        path: process.env.BUILT_IN_ROUTERS.contactRecordQuery,
-        query: { 'callStatu': status, 'sTime': formatDateTime(new Date().setHours(0, 0, 0, 0)), 'eTime': formatDateTime(new Date().setHours(23, 59, 59, 0)), 'agentid': '', 'contactType': '1', 'callDirection': '1' }
-      })
+      if (this.role === 'manager') {
+        console.log('现场主管不能跳转接触记录页面')
+        return false
+      } else {
+        this.$router.push({
+          path: process.env.BUILT_IN_ROUTERS.contactRecordQuery,
+          query: { 'callStatu': status, 'sTime': formatDateTime(new Date().setHours(0, 0, 0, 0)), 'eTime': formatDateTime(new Date().setHours(23, 59, 59, 0)), 'agentid': '', 'contactType': '1', 'callDirection': '1' }
+        })
+      }
     }
   }
 }

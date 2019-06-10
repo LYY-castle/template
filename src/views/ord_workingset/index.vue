@@ -1,3 +1,4 @@
+<!-- 坐席工作台 -->
 <template>
   <div class="app-container work-bench">
     <div>
@@ -162,6 +163,7 @@ import moment, { relativeTimeRounding } from 'moment'
 var baseinfo = null
 export default {
   name: 'ord_workingset',
+  props: ['role'],
   data() {
     return {
       totalInfo: {}, // 用于统计在线时长，空闲时长，示忙时长，通话时间的对象

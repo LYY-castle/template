@@ -1,8 +1,8 @@
+<!-- 班组长工作台 -->
 <template>
   <div class="app-container work-bench">
     <div >
       <el-row :gutter="5">
-
         <el-col :span="8">
           <el-card shadow="never" class="card-container">
             <!--<div slot="header" class="clearfix">-->
@@ -16,17 +16,17 @@
               <div>
                 <b>外呼任务统计</b>
               </div>
-              <div class="font12" style="display: inline-block;line-height: 50px;cursor: pointer" @click="changeToDailTask('0')">
+              <div class="font12" style="display: inline-block;line-height: 50px;">
                 <font style="padding-right: 5px">首拨总数量: </font>
-                <font class="bold under-line">{{obTaskData.firstCallTotal}}</font>
+                <font :class="linkClassFont14" @click="changeToDailTask('0')">{{obTaskData.firstCallTotal}}</font>
               </div>
             </div>
             <div class="text item">
               <el-row>
                 <el-col :span="8" >
                   <el-card shadow="never" class="no-border">
-                    <div class="item-content" @click="changeToDailTask('1')">
-                      <font class="line-center font30 under-line">{{obTaskData.appointCallTotal}}</font>
+                    <div :class="itemContentClass" @click="changeToDailTask('1')">
+                      <font :class="linkClassFont30">{{obTaskData.appointCallTotal}}</font>
                     </div>
                     <div style="text-align: center">
                       <font class="font12" style="height:40px;">总预约量</font>
@@ -35,8 +35,8 @@
                 </el-col>
                 <el-col :span="8">
                   <el-card shadow="never" class="no-border">
-                    <div class="item-content" @click="changeToDailTask('2')">
-                      <font class="line-center font30 under-line">{{obTaskData.successCallTotal}}</font>
+                    <div :class="itemContentClass" @click="changeToDailTask('2')">
+                      <font :class="linkClassFont30">{{obTaskData.successCallTotal}}</font>
                     </div>
                     <div style="text-align: center">
                       <font class="font12" style="height:40px;">今日总成功量</font>
@@ -45,8 +45,8 @@
                 </el-col>
                 <el-col :span="8">
                   <el-card shadow="never" class="no-border">
-                    <div class="item-content" @click="changeToDailTask('3')">
-                      <font class="line-center font30 under-line">{{obTaskData.failedCallTotal}}</font>
+                    <div :class="itemContentClass" @click="changeToDailTask('3')">
+                      <font :class="linkClassFont30">{{obTaskData.failedCallTotal}}</font>
                     </div>
                     <div style="text-align: center">
                       <font class="font12" style="height:40px;">今日总失败量</font>
@@ -109,7 +109,7 @@
                 </div>
                 <div class="font12" style="float: right;line-height: 25px">
                   <font style="padding-right: 5px">通话次数: </font>
-                  <font class="bold under-line" style="cursor: pointer" @click="changeToDailTaskList()">{{ctiData.calls_number}}</font>
+                  <font :class="linkClassFont14" @click="changeToDailTaskList()">{{ctiData.calls_number}}</font>
                 </div>
               </div>
               <div class="font12">
@@ -288,8 +288,12 @@ import { taskAssignInfo, agentStatus, findCampaignByUser, departAgents, orderRep
 var baseinfo = null
 export default {
   name: 'monitor_workingset',
+  props: ['role'],
   data() {
     return {
+      itemContentClass: 'item-content',
+      linkClassFont30: 'line-center font30 under-line',
+      linkClassFont14: 'bold under-line',
       // 定时器数组，累计在线，空闲，示忙和通话情况
       online_interval: null,
       free_interval: null,
@@ -366,6 +370,7 @@ export default {
   mounted() {
     baseinfo = this
     baseinfo.monitorID = localStorage.getItem('agentId')
+    this.changeLinkClass()
     if (localStorage.getItem('DN')) {
       baseinfo.monitorDN = localStorage.getItem('DN')
     } else {
@@ -433,11 +438,28 @@ export default {
     this.$store.dispatch('SwitchNeedLoginMgrPhone', { monitorId: localStorage.getItem('agentId'), monitorDN: '12345' })
   },
   methods: {
+    // 可跳转连接和不能跳转的样式切换
+    changeLinkClass() {
+      if (this.role === 'manager') {
+        this.linkClassFont30 = 'line-center font30'
+        this.linkClassFont14 = 'bold'
+        this.itemContentClass = 'item-content cursor-default'
+      } else {
+        this.linkClassFont30 = 'line-center font30 under-line'
+        this.linkClassFont14 = 'bold under-line'
+        this.itemContentClass = 'item-content'
+      }
+    },
     changeToDailTaskList() { // 跳转到接触记录
-      this.$router.push({
-        path: process.env.BUILT_IN_ROUTERS.contactRecordQuery,
-        query: { 'callStatu': 1, 'sTime': formatDateTime(new Date().setHours(0, 0, 0, 0)), 'eTime': formatDateTime(new Date().setHours(23, 59, 59, 0)), 'agentid': '', 'contactType': '1', 'callDirection': '0' }
-      })
+      if (this.role === 'manager') {
+        console.log('现场主管不能跳转接触记录页面')
+        return false
+      } else {
+        this.$router.push({
+          path: process.env.BUILT_IN_ROUTERS.contactRecordQuery,
+          query: { 'callStatu': 1, 'sTime': formatDateTime(new Date().setHours(0, 0, 0, 0)), 'eTime': formatDateTime(new Date().setHours(23, 59, 59, 0)), 'agentid': '', 'contactType': '1', 'callDirection': '0' }
+        })
+      }
     },
     on_queuecount(event, queuename, queuecount) {
       console.log(event, queuename, queuecount)
@@ -927,14 +949,21 @@ export default {
     //     query: { 'sTime': sTime, 'eTime': eTime, 'callStatu': callStatu }
     //   })
     // },
+    // 跳转外呼页面
     changeToDailTask(status) {
-      this.$router.push({
-        path: process.env.BUILT_IN_ROUTERS.myDialTask,
-        query: { 'dialstatus': status }
-      })
-      sessionStorage.removeItem('isDialTask')
-      sessionStorage.removeItem('quickDialto')
+      if (this.role === 'manager') {
+        console.log('现场主管不能跳转外呼页面')
+        return false
+      } else {
+        this.$router.push({
+          path: process.env.BUILT_IN_ROUTERS.myDialTask,
+          query: { 'dialstatus': status }
+        })
+        sessionStorage.removeItem('isDialTask')
+        sessionStorage.removeItem('quickDialto')
+      }
     },
+    // 跳转订单管理页面
     changeToOrderManagement() {
       this.$router.push({
         path: process.env.BUILT_IN_ROUTERS.orderManage,

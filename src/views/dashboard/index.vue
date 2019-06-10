@@ -4,9 +4,9 @@
     <div v-if="!personnel">
       <div v-if="!qcdepart||!qcstaff">
         <!-- <h1 v-if="depart">现场主管</h1> -->
-        <monitor-workingset v-if="depart"></monitor-workingset>
+        <monitor-workingset :role="role" v-if="depart"></monitor-workingset>
         <!-- <h1 v-if="!depart&&staff">坐席</h1> -->
-        <ord-workingset v-if="!depart&&staff"></ord-workingset>
+        <ord-workingset :role="role" v-if="!depart&&staff"></ord-workingset>
       </div>
       <div v-if="!depart||!staff">
         <!-- <h1 v-if="qcdepart">质检主管</h1> -->
@@ -108,11 +108,12 @@ export default {
       console.error(error)
     })
 
-    //
+    // 人事
     permsPersonnel(this.accountNo).then(response => {
       const code = parseInt(response.data.code)
       if (code === 200) {
         this.personnel = true
+        this.role = 'personnel'
       } else if (code === 403) {
         this.personnel = false
         // 判断现场主管权限
@@ -120,7 +121,7 @@ export default {
           const code = parseInt(response.data.code)
           if (code === 200) {
             this.depart = true
-            this.role = 'depart'
+            this.role = 'manager'
           } else if (code === 403) {
             this.depart = false
             // 判断班组长权限
@@ -156,6 +157,7 @@ export default {
           const code = parseInt(response.data.code)
           if (code === 200) {
             this.qcdepart = true
+            this.role = 'qcdepart'
           } else if (code === 403) {
             this.qcdepart = false
             // 判断质检员权限
@@ -163,6 +165,7 @@ export default {
               const code = parseInt(response.data.code)
               if (code === 200) {
                 this.qcstaff = true
+                this.role = 'qcstaff'
               } else if (code === 403) {
                 this.qcstaff = false
               }
