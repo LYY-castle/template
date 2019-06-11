@@ -5,7 +5,7 @@
             <span class="form-more1 bold" style="line-height: 24px;font-size: 14px;float:right;margin-right:6px;color:#57AFFF;position:absolute;top:12px;right:40px;">收起</span>
             <el-collapse-item title="筛选条件" name="1">
               <el-form :inline="true" :rules="rule"  class="demo-form-inline" size="small">
-                <el-form-item label="技能组：">
+                <el-form-item label="技能组：" v-if="skillList&&skillList.length">
                   <el-select v-model="queueNumbers" multiple collapse-tags>
                     <el-option v-for="item in skillList" :key="item.id" :label="item.name" :value="item.code"></el-option>
                   </el-select>
@@ -143,7 +143,7 @@
           </el-row>
 
           <el-row class="table-container margin-bottom-15">
-            <el-row class="margin-bottom-20">
+            <el-row>
               <el-tabs v-model="activeTab" type="card"  @tab-click="handleClick">
               <el-tab-pane label="时间合计表" name="timeCount">
                 <el-table tooltip-effect="dark" :data="TimeCountsData">

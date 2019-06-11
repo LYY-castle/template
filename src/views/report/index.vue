@@ -51,6 +51,17 @@
             </el-card>
           </el-col>
 
+          <el-col :span="4" style="text-align:center;" v-if="manager||depart">
+            <el-card shadow="hover">
+              <div class="card-content" @click="verageResponseSpeedReport=true;buttonVisible=false;reportTitle='平均应答速度统计报表'">
+                <div class="img-container">
+                  <img style="width:60%;" src="../../../static/images/report/average_answer.png" alt="平均应答速度统计报表">
+                </div>
+                <span class="font14">平均应答速度统计报表</span>
+              </div>
+            </el-card>
+          </el-col>
+
         </el-row>
       </div>
 
@@ -146,6 +157,7 @@
       <staff-structure v-if="staffStructure"></staff-structure>
       <list-report v-if="listReport"></list-report>
       <call-loss-report v-if="callLossReport"></call-loss-report>
+      <average-response-speed v-if="verageResponseSpeedReport"></average-response-speed>
     </div>
   </div>
 </template>
@@ -160,6 +172,7 @@ import qcResultReport from './qc_result_report/index'
 import staffStructure from './staff_structure/index'
 import listReport from './list_report/index'
 import callLossReport from './call_loss_report/index'
+import averageResponseSpeed from './average_response_speed_report/index'
 import axios from 'axios'
 import {
   permsManager, // 现场主管
@@ -196,6 +209,7 @@ export default {
       staffStructure: false,
       listReport: false,
       callLossReport: false,
+      verageResponseSpeedReport: false,
       buttonVisible: true,
       reportTitle: ''
     }
@@ -209,7 +223,8 @@ export default {
     qcResultReport,
     staffStructure,
     listReport,
-    callLossReport
+    callLossReport,
+    averageResponseSpeed
   },
   methods: {
     handleBack() {
@@ -222,6 +237,7 @@ export default {
       this.staffStructure = false
       this.listReport = false
       this.callLossReport = false
+      this.verageResponseSpeedReport = false
       this.buttonVisible = true
     }
   },
