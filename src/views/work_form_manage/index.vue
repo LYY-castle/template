@@ -20,7 +20,7 @@
 
           <el-table-column align="center" label="表单名" :show-overflow-tooltip="true">
             <template slot-scope="scope">
-              <span @click="edite(scope.row)" style="color:red;cursor:pointer;">{{ scope.row.name }}</span>
+              <span>{{ scope.row.name }}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -503,6 +503,7 @@
                       v-model="item.defaultValue.area"
                       placeholder="请选择"
                       style="width:100%;"
+                      @change="areaChange(item)"
                     >
                       <el-option
                         v-for="item in area"
@@ -798,6 +799,10 @@ export default {
         .catch(error => {
           throw error;
         });
+    },
+    areaChange(item){
+      this.$set(item,item.defaultValue.area)
+      console.log(item)
     },
     // 新建初始化
     createWorkFrom() {
@@ -1337,8 +1342,8 @@ export default {
           this.$message("删除失败");
         });
     },
-    // 修改传值
-    showModifyContent(row) {
+    // 修改或者新建传值时数据格式过滤
+    filterData(row){
       row.workformProperties.forEach(item => {
         if (item.rw === 3) {
           item.checklist = ["1", "2"];
@@ -1376,6 +1381,10 @@ export default {
           });
         }
       });
+    },
+    // 修改传值
+    showModifyContent(row) {
+      this.filterData(row)
       this.modifyWorkFormTable.id = row.id;
       this.workFormTable.name = row.name;
       this.workFormTable.enabled = row.enabled;
