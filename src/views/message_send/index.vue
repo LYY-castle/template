@@ -15,6 +15,7 @@
           <el-form-item prop="code" label="短信状态:">
             <el-select v-model="req.code">
               <el-option label="全部" value="" selected></el-option>
+              <el-option label="发送中" value="1"></el-option>
               <el-option label="成功" value="3"></el-option>
               <el-option label="失败" value="2"></el-option>
             </el-select>
@@ -44,7 +45,8 @@
         <div class="font14 bold">短信表</div>
       </el-row>
       <el-row class="margin-bottom-20">
-        <el-button type="info" size="small" @click="sendVisible=true;dynamicValidateForm.name='';dynamicValidateForm.text='';resetForm('dynamicValidateForm')">发送短信</el-button>
+        <el-button type="info" size="small" @click="sendVisible=true;dynamicValidateForm.name='';dynamicValidateForm.text='';msg_transfer='';resetForm('dynamicValidateForm')">发送短信</el-button>
+        <el-button type="success" size="small" @click="req.pageNo=1;messageSendRecords(req);">刷新</el-button>
       </el-row>
       <el-row>
         <el-table
@@ -75,8 +77,15 @@
             label="短信状态">
               <template slot-scope="scope">
                 <div :class="scope.row.code==='3'?'visible':'invisible'">
-                  <span>{{scope.row.code==='3'?'成功':'失败'}}</span>
+                  <span>{{scope.row.code==='3'?'成功':scope.row.code==='1'?'发送中' : '失败'}}</span>
                 </div>
+              </template>
+          </el-table-column>
+          <el-table-column align="center" label="发送失败原因" :show-overflow-tooltip="true">
+            <template slot-scope="scope">
+              <div>
+                {{showSendFailReason(scope.row.code,scope.row.msg)}}
+              </div>
               </template>
           </el-table-column>
           <el-table-column
@@ -109,7 +118,6 @@
       </el-row>
     </el-row>
     
-    
      <!-- 发送短信 -->
     <el-dialog
       align:left
@@ -117,6 +125,8 @@
       title="发送短信"
       :visible.sync="sendVisible"
       append-to-body>
+      <div style="margin-left:20px;margin-bottom:5px;font-weight:bold;font-size:16px;">基本信息</div>
+      <div style="border-bottom:1px solid #e8e8e8;margin-bottom:3px;margin-left:15px;margin-right:45px;"></div>
       <el-form size="small" :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="125px">
         <el-form-item
           prop="name"
@@ -126,62 +136,44 @@
              <el-button slot="append" icon="el-icon-search"  @click.prevent="messageVisible=true;radio='';resetMessageReq();findTemplateList()"></el-button>
           </el-input>
         </el-form-item>
-        <el-form-item
+        <el-form-item prop="phoneNumbers" label="接收人号码" :rules="[{required: true, message: '接收人号码不能为空', trigger: 'blur'}]">
+          <el-input v-model="dynamicValidateForm.phoneNumbers" type="textarea" :rows="3"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <span>说明：多个号码请用逗号隔开</span>
+        </el-form-item>
+        <el-form-item label="短信内容预览">
+          <el-input type="textarea" :rows="4" v-model="msg_transfer" readonly></el-input>
+        </el-form-item>
+        <!-- <el-form-item v-show="showInputAndPreview && paramsArr.length > 0" v-for="item in paramsArr" :label="item" prop="text" :rules="{ required: true, message: '请填写变量值', trigger: 'change' }">
+          <el-col :span="8">
+            <el-input v-model="paramsValue[item]" @change="setPreview(item)"></el-input>
+          </el-col>
+        </el-form-item> -->
+        <!-- <el-form-item
           prop="text"
           label="短信内容"
           :rules="{ required: true, message: '短信内容不能为空', trigger: 'blur' }">
           <el-input type="textarea" v-model="dynamicValidateForm.text" :rows="4" readonly></el-input>
-          <!-- <span><span style="color:red">*</span>短信内容只允许更改{}里面的内容，修改其他地方无效!</span> -->
-        </el-form-item>
-        <el-form-item v-show="showInputAndPreview && paramsArr.length > 0" v-for="item in paramsArr" :label="item" prop="text" :rules="{ required: true, message: '请填写变量值', trigger: 'change' }" >
+        </el-form-item> -->
+        <!-- <el-form-item v-show="showInputAndPreview && paramsArr.length > 0" v-for="item in paramsArr" :label="item" prop="text" :rules="{ required: true, message: '请填写变量值', trigger: 'change' }" >
           <el-input v-model="paramsValue[item]" @change="setPreview(item)"></el-input>
-        </el-form-item>
-        <!-- <el-form-item v-show="showInputAndPreview && paramsArr.length > 0">
-          <span slot="label">
-            <span style="color:#f56c6c">*</span> 变量值
-          </span>
-          <el-table empty-text="该模板无变量值" :data="paramsData">
-            <el-table-column align="center" v-for="item in paramsArr" :label="item">
-              <template slot-scope="scope">
-                <el-input v-model="paramsValue[item]" @change="setPreview(item)"></el-input>
-              </template>
-            </el-table-column>
-          </el-table>
-          <span slot="label">
-              <span style="color:#f56c6c">*</span> 变量值
-            </span>
-          <div v-for="(item,index) in paramsArr">
-            <span>{{'变量 ' + item}}</span>
-            <el-input v-model="paramsValue[item]" @change="setPreview(item)"></el-input>
-          </div>
         </el-form-item> -->
-        <el-form-item label="短信预览" v-show="showInputAndPreview">
-          <span>{{msg_transfer}}</span>
-        </el-form-item>
-        <el-form-item prop="phoneNumbers" label="电话号码" :rules="[{required: true, message: '电话号码不能为空', trigger: 'blur'}]">
-          <el-input v-model="dynamicValidateForm.phoneNumbers" type="textarea" :rows="3"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <span><span style="color:red">*</span>多个号码请用英文逗号隔开</span>
-        </el-form-item>
-        <!-- <el-form-item
-          v-for="(domain, index) in dynamicValidateForm.domains"
-          :label="'电话号码' + (index+1)"
-          :key="domain.key"
-          :prop="'domains.' + index + '.value'"
-          :rules="[
-          {required: true, message: '电话号码不能为空', trigger: 'blur'},
-          { pattern: /^\d{1,11}$/, message: '请输入不超过11位数字',trigger:'blur'}
-          ]">
-          <el-input v-model="domain.value" size="small" style="width:82%" placeholder="电话号码（上限20字符）"></el-input>
-          <el-button type="danger" size="small" @click.prevent="removeDomain(domain)">删除</el-button>
-        </el-form-item> -->
-        <div style="text-align: right;">
-          <!-- <el-button type="success" @click="addDomain">新增号码</el-button> -->
-          <el-button type="primary" @click="validate('dynamicValidateForm')">发送</el-button>
-          <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
-        </div>
       </el-form>
+      <div v-show="showInputAndPreview && paramsArr.length > 0">
+        <div style="margin-left:20px;margin-bottom:5px;font-weight:bold;font-size:16px;">填写变量</div>
+        <div style="border-bottom:1px solid #e8e8e8;margin-bottom:3px;margin-left:15px;margin-right:45px;"></div>
+        <el-row :gutter="20" style="margin-left:60px;">
+          <el-col :span="10" :offset="1" v-for="item in paramsArr" :label="item" prop="text" :rules="{ required: true, message: '请填写变量值', trigger: 'change' }">
+            <span style="color:#f56c6c;">* </span>{{item}}<br/>
+            <el-input v-model="paramsValue[item]" @change="setPreview(item)" size="small" style="width:90%"></el-input>
+          </el-col>
+        </el-row>
+      </div>
+      <div style="text-align: right;margin-top: 5%;">
+        <el-button type="primary" @click="validate('dynamicValidateForm')">发送</el-button>
+        <el-button @click="resetForm('dynamicValidateForm')">重置</el-button>
+      </div>
     </el-dialog>
     <!-- 短信模板展示 -->
      <el-dialog
@@ -219,73 +211,73 @@
         </el-form-item>
       </el-form>
        <!-- 表格 -->
-    <el-row>
-      <el-col>
-        <el-table
-          :data="messageTableData">
-          <el-table-column
-            align="center"
-             label="选择">
-             <template
-              slot-scope="scope">
-              <el-radio v-model="radio" :label="scope.row.templateid">&nbsp;</el-radio>
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="模板名称"
-            prop="name"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="归属模板组"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-                {{formatData(scope.row.groupId)}}
-            </template>
-          </el-table-column>
-          <el-table-column
-            align="left"
-            label="模板内容"
-            prop="content"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="操作人"
-            prop="modifier"
-            :show-overflow-tooltip="true">
-          </el-table-column>
-          <el-table-column
-            align="center"
-            label="操作时间"
-            prop="id"
-            width="155"
-            :show-overflow-tooltip="true">
-            <template slot-scope="scope">
-                {{formatDateTime(scope.row.modifyTime)}}
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-col>
-    </el-row>
-    <el-row style="margin-top:5px;">
-        <el-pagination
-          v-if="messagePageShow"
-          @size-change="messageHandleSizeChange"
-          @current-change="messageHandleCurrentChange"
-          :current-page='messagePageInfo.pageNo'
-          :page-sizes="[10, 20, 30, 40, 50]"
-          :page-size='messagePageInfo.pageSize'
-          layout="total, sizes, prev, pager, next, jumper "
-          :total='messagePageInfo.totalCount' style="text-align: right;float:right;">
-        </el-pagination>
-    </el-row>
-    <el-row style="text-align: right; margin-top:10px">
-      <el-button type="primary" @click="selectedMessage()">确定</el-button>
-      <el-button type="primary" plain @click="radio='';messageVisible=false">取消</el-button>
-    </el-row>
+      <el-row>
+        <el-col>
+          <el-table
+            :data="messageTableData">
+            <el-table-column
+              align="center"
+              label="选择">
+              <template
+                slot-scope="scope">
+                <el-radio v-model="radio" :label="scope.row.templateid">&nbsp;</el-radio>
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="center"
+              label="模板名称"
+              prop="name"
+              :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              label="归属模板组"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                  {{formatData(scope.row.groupId)}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              align="left"
+              label="模板内容"
+              prop="content"
+              :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              label="操作人"
+              prop="modifier"
+              :show-overflow-tooltip="true">
+            </el-table-column>
+            <el-table-column
+              align="center"
+              label="操作时间"
+              prop="id"
+              width="155"
+              :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                  {{formatDateTime(scope.row.modifyTime)}}
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-col>
+      </el-row>
+      <el-row style="margin-top:5px;">
+          <el-pagination
+            v-if="messagePageShow"
+            @size-change="messageHandleSizeChange"
+            @current-change="messageHandleCurrentChange"
+            :current-page='messagePageInfo.pageNo'
+            :page-sizes="[10, 20, 30, 40, 50]"
+            :page-size='messagePageInfo.pageSize'
+            layout="total, sizes, prev, pager, next, jumper "
+            :total='messagePageInfo.totalCount' style="text-align: right;float:right;">
+          </el-pagination>
+      </el-row>
+      <el-row style="text-align: right; margin-top:10px">
+        <el-button type="primary" @click="selectedMessage()">确定</el-button>
+        <el-button type="primary" plain @click="radio='';messageVisible=false">取消</el-button>
+      </el-row>
     </el-dialog>
      <!-- 发送 -->
       <el-dialog
@@ -387,16 +379,20 @@ export default {
       }
       return tpl
     },
+    // 展示发送失败原因
+    showSendFailReason(code, msg) {
+      if (code === '3') {
+        // 发送成功
+        return '无'
+      } else if (code === '1') {
+        return '发送中'
+      } else {
+        return msg
+      }
+    },
     setPreview(v) {
       const data = this.setData(v)
       this.msg_transfer = this.render(this.dynamicValidateForm.text, data)
-      // if (typeof (this.paramsValue_beforeTransfer[v]) === 'undefined') {
-      //   this.paramsValue_beforeTransfer[v] = this.paramsValue[v]
-      //   this.msg_transfer = this.msg_transfer.replace('${' + v + '}', this.paramsValue[v])
-      // } else {
-      //   this.msg_transfer = this.msg_transfer.replace(this.paramsValue_beforeTransfer[v], this.paramsValue[v])
-      //   this.paramsValue_beforeTransfer[v] = this.paramsValue[v]
-      // }
     },
     setData(item) {
       var data = {}
@@ -465,10 +461,16 @@ export default {
       // this.dynamicValidateForm.domains.forEach(element => {
       //   PhoneNumbers.push(element.value)
       // })
+      // 将所有中文逗号转为英文逗号
+      this.dynamicValidateForm.phoneNumbers = this.dynamicValidateForm.phoneNumbers.replace(/，/ig, ',')
       if (this.dynamicValidateForm.phoneNumbers.split(',').length > 0) {
         const reg_phone = /^[1][3,4,5,6,7,8][0-9]{9}$/
         phoneNumbers = this.dynamicValidateForm.phoneNumbers.split(',')
         for (var i = 0; i < phoneNumbers.length; i++) {
+          if (phoneNumbers[i] === '') {
+            phoneNumbers.splice(i, 1)
+            continue
+          }
           if (!reg_phone.test(phoneNumbers[i])) {
             this.$message.error('电话号码' + phoneNumbers[i] + '格式不正确！')
             this.send = false
@@ -514,6 +516,9 @@ export default {
             type: 'error',
             duration: 3 * 1000
           })
+          setTimeout(() => {
+            this.messageSendRecords()
+          }, 3000)
           this.send = false
         }
       })
