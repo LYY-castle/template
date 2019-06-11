@@ -228,8 +228,7 @@
                   ></el-date-picker>
                 </div>
                 <div v-if="item.dataType==='span'">
-                  <div v-html="item.defaultValue">
-                  </div>
+                  <div v-html="item.defaultValue"></div>
                   <!-- <quill-editor
                     ref="myQuillEditor"
                     :disabled="show===3?false:true"
@@ -238,7 +237,7 @@
                     :placeholder="item.placeholder"
                     :maxlength="item.maxValue"
                     :minlength="item.minValue"
-                  ></quill-editor> -->
+                  ></quill-editor>-->
                 </div>
                 <div v-if="item.dataType === 'address'">
                   <div style="display:flex;justify-content: space-between;">
@@ -800,9 +799,8 @@ export default {
           throw error;
         });
     },
-    areaChange(item){
-      this.$set(item,item.defaultValue.area)
-      console.log(item)
+    areaChange(item) {
+      this.$set(item, item.defaultValue.area);
     },
     // 新建初始化
     createWorkFrom() {
@@ -837,11 +835,11 @@ export default {
       this.workFormTable.workformPropertyCreateInfos.splice(index, 1);
     },
     // 设置可读可写
-
     changeChecklist(item) {
-      this.workFormTable.workformPropertyCreateInfos.forEach(a => {
-        a.checklist = item.checklist;
-      });
+      this.$set(item,item.checklist)
+      // this.workFormTable.workformPropertyCreateInfos.forEach(a => {
+      //   a.checklist = item.checklist;
+      // });
     },
     // 标题属性切换
     changeTitle() {
@@ -1272,13 +1270,14 @@ export default {
                 item.defaultValueType === "0" ||
                 item.defaultValueType === "1"
               ) {
-                if (item.checklist) {
+                item.defaultValueType = parseInt(item.defaultValueType);
+                if (item.checklist.length !== 0) {
                   if (item.checklist.length === 2) {
                     item.rw = 3;
                   } else if (item.checklist.length === 1) {
                     if (item.checklist[0] === "1") {
                       item.rw = 1;
-                    } else {
+                    } else if(item.checklist[0] === "2") {
                       item.rw = 2;
                     }
                   }
@@ -1343,7 +1342,7 @@ export default {
         });
     },
     // 修改或者新建传值时数据格式过滤
-    filterData(row){
+    filterDataUpdate(row) {
       row.workformProperties.forEach(item => {
         if (item.rw === 3) {
           item.checklist = ["1", "2"];
@@ -1382,9 +1381,12 @@ export default {
         }
       });
     },
+    // 提交修改或者新建时候数据过滤
+    filterData() {},
     // 修改传值
     showModifyContent(row) {
-      this.filterData(row)
+      console.log(row);
+      this.filterDataUpdate(row);
       this.modifyWorkFormTable.id = row.id;
       this.workFormTable.name = row.name;
       this.workFormTable.enabled = row.enabled;
@@ -1397,7 +1399,7 @@ export default {
       this.text = false;
     },
     // 修改
-    modifyWorkForm(row) {
+    modifyWorkForm() {
       if (this.workFormTable.workformPropertyCreateInfos.length !== 0) {
         let flag = true;
         if (flag) {
@@ -1411,13 +1413,15 @@ export default {
                 item.defaultValueType === "0" ||
                 item.defaultValueType === "1"
               ) {
-                if (item.checklist) {
+                item.defaultValueType = parseInt(item.defaultValueType);
+                item.isRequired = item.isRequired === false?0:1;
+                if (item.checklist.length !== 0) {
                   if (item.checklist.length === 2) {
                     item.rw = 3;
                   } else if (item.checklist.length === 1) {
                     if (item.checklist[0] === "1") {
                       item.rw = 1;
-                    } else {
+                    } else if (item.checklist[0] === "2"){
                       item.rw = 2;
                     }
                   }
@@ -1454,6 +1458,7 @@ export default {
         this.modifyWorkFormTable.remark = this.workFormTable.remark;
         this.modifyWorkFormTable.workformPropertyUpdateInfos = this.workFormTable.workformPropertyCreateInfos;
         if (flag) {
+          console.log(this.modifyWorkFormTable)
           updateWorkForm(this.modifyWorkFormTable).then(res => {
             if (res.data.code === 0) {
               this.$message.success(res.data.message);
