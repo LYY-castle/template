@@ -17,7 +17,6 @@
           ref="multipleTable"
         >
           <el-table-column align="center" type="selection" width="55"></el-table-column>
-
           <el-table-column align="center" label="表单名" :show-overflow-tooltip="true">
             <template slot-scope="scope">
               <span>{{ scope.row.name }}</span>
@@ -38,6 +37,13 @@
 
           <el-table-column align="center" label="备注">
             <template slot-scope="scope">{{ scope.row.remark }}</template>
+          </el-table-column>
+          <el-table-column align="center" label="有效性">
+            <template slot-scope="scope">
+              <div :style="scope.row.enabled===0?'background:#F8A300':'background:#28CC6C'">
+                <span style="color:#fff">{{scope.row.enabled===0?'无效':'有效'}}</span>
+              </div>
+            </template>
           </el-table-column>
           <!-- 操作 -->
           <el-table-column align="center" label="操作" width="100">
@@ -297,11 +303,24 @@
               <el-button size="small" type="primary" @click="modifyWorkForm" v-if="show === 2">确认</el-button>
               <el-button size="small" type="primary" @click="submitUpload" v-if="show === 1">提交</el-button>
               <el-button
+                v-if="show === 1"
                 size="small"
                 type="primary"
                 plain
                 @click="
                   initWorkFormTable;
+                  createShow = false;
+                  tableShow = true;
+                  show = 0;
+                "
+              >取消</el-button>
+              <el-button
+                v-if="show === 2"
+                size="small"
+                type="primary"
+                plain
+                @click="
+                  getWorkFormList()
                   createShow = false;
                   tableShow = true;
                   show = 0;
@@ -519,7 +538,7 @@
               <!-- 默认值类型 -->
               <div>
                 <div>
-                  <span class="star">默认值类型:</span>
+                  <span class="star">默认值类型:（0:String 1:Object）</span>
                 </div>
                 <el-input type="number" v-model="item.defaultValueType"></el-input>
               </div>
@@ -665,6 +684,7 @@ export default {
   name: "work_form_manage",
   data() {
     return {
+      classA: true,
       formContainerOpen: "1",
       // 工作表单列表
       workFormData: [],
@@ -836,7 +856,7 @@ export default {
     },
     // 设置可读可写
     changeChecklist(item) {
-      this.$set(item,item.checklist)
+      this.$set(item, item.checklist);
       // this.workFormTable.workformPropertyCreateInfos.forEach(a => {
       //   a.checklist = item.checklist;
       // });
@@ -1271,13 +1291,14 @@ export default {
                 item.defaultValueType === "1"
               ) {
                 item.defaultValueType = parseInt(item.defaultValueType);
+                item.isRequired = item.isRequired === true ? 1 : 0;
                 if (item.checklist.length !== 0) {
                   if (item.checklist.length === 2) {
                     item.rw = 3;
                   } else if (item.checklist.length === 1) {
                     if (item.checklist[0] === "1") {
                       item.rw = 1;
-                    } else if(item.checklist[0] === "2") {
+                    } else if (item.checklist[0] === "2") {
                       item.rw = 2;
                     }
                   }
@@ -1341,7 +1362,7 @@ export default {
           this.$message("删除失败");
         });
     },
-    // 修改或者新建传值时数据格式过滤
+    // 修改传值时数据格式过滤
     filterDataUpdate(row) {
       row.workformProperties.forEach(item => {
         if (item.rw === 3) {
@@ -1350,7 +1371,7 @@ export default {
           item.checklist = ["2"];
         } else if (item.rw === 1) {
           item.checklist = ["1"];
-        } else {
+        } else if (item.rw === 0) {
           item.checklist = [];
         }
         item.isRequired = item.isRequired === 1 ? true : false;
@@ -1414,14 +1435,14 @@ export default {
                 item.defaultValueType === "1"
               ) {
                 item.defaultValueType = parseInt(item.defaultValueType);
-                item.isRequired = item.isRequired === false?0:1;
+                item.isRequired = item.isRequired === false ? 0 : 1;
                 if (item.checklist.length !== 0) {
                   if (item.checklist.length === 2) {
                     item.rw = 3;
                   } else if (item.checklist.length === 1) {
                     if (item.checklist[0] === "1") {
                       item.rw = 1;
-                    } else if (item.checklist[0] === "2"){
+                    } else if (item.checklist[0] === "2") {
                       item.rw = 2;
                     }
                   }
@@ -1458,7 +1479,7 @@ export default {
         this.modifyWorkFormTable.remark = this.workFormTable.remark;
         this.modifyWorkFormTable.workformPropertyUpdateInfos = this.workFormTable.workformPropertyCreateInfos;
         if (flag) {
-          console.log(this.modifyWorkFormTable)
+          console.log(this.modifyWorkFormTable);
           updateWorkForm(this.modifyWorkFormTable).then(res => {
             if (res.data.code === 0) {
               this.$message.success(res.data.message);
@@ -1712,5 +1733,8 @@ export default {
     top: 0;
     transform: translate(-50%);
   }
+}
+.classA {
+  color: red;
 }
 </style>
