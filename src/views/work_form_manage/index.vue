@@ -40,8 +40,8 @@
           </el-table-column>
           <el-table-column align="center" label="有效性">
             <template slot-scope="scope">
-              <div :style="scope.row.enabled===0?'background:#F8A300':'background:#28CC6C'">
-                <span style="color:#fff">{{scope.row.enabled===0?'无效':'有效'}}</span>
+              <div>
+                <span :style="scope.row.enabled===0?'background:#F8A300':'background:#28CC6C'" style="display:inline-block;color:#fff;padding:1px 10px;">{{scope.row.enabled===0?'无效':'有效'}}</span>
               </div>
             </template>
           </el-table-column>
@@ -760,7 +760,8 @@ export default {
   },
   mounted() {
     this.getWorkFormList();
-    this.$dragging.$on("dragged", ({ value }) => {});
+    this.$dragging.$on("dragged", ({ value }) => {
+    });
     this.getAddress();
   },
   methods: {
@@ -1642,6 +1643,15 @@ export default {
 }
 .selectShow {
   &:hover {
+    cursor: pointer;
+    border: 1px dashed #eee;
+    background-color: rgba(87, 175, 255, 0.1);
+    i {
+      display: block;
+      font-size: 16px;
+    }
+  }
+  &.active {
     cursor: pointer;
     border: 1px dashed #eee;
     background-color: rgba(87, 175, 255, 0.1);
