@@ -15,7 +15,7 @@ const service = axios.create({
 // request拦截器
 service.interceptors.request.use(config => {
   config.headers['Content-Type'] = 'application/json;charset=UTF-8'
-  if (!!config.params && _.isPlainObject(config.body)) {
+  if (!!config.params && _.isPlainObject(config.params)) {
     config.params = _.omitBy(config.params, (v) => {
       return _.isUndefined(v) || _.isNull(v) || _.isNaN(v)
     })
