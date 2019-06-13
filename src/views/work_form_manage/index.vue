@@ -173,7 +173,7 @@
                   <el-input
                     size="small"
                     type="textarea"
-                    :rows="1"
+                    :rows="2"
                     :disabled="show===3?false:true"
                     style="inputWidth"
                     :placeholder="item.placeholder"
@@ -337,7 +337,7 @@
               <div>
                 <span class="star">工单名称:</span>
               </div>
-              <el-input type="textarea" :rows="1" v-model="workFormTable.name"></el-input>
+              <el-input type="text" v-model="workFormTable.name"></el-input>
             </div>
             <div>
               <div>
@@ -352,7 +352,7 @@
               <div>
                 <span>工单备注:</span>
               </div>
-              <el-input type="textarea" :rows="1" v-model="workFormTable.remark"></el-input>
+              <el-input type="textarea" :rows="2" v-model="workFormTable.remark"></el-input>
             </div>
           </div>
           <div
@@ -370,12 +370,19 @@
                 </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
-              <!-- 字段描述 -->
+              <!-- 字段英文名 -->
               <div>
                 <div>
-                  <span class="star">字段描述:</span>
+                  <span class="star">字段英文名:</span>
                 </div>
-                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
+                <el-input type="text" v-model="item.val"></el-input>
+              </div>
+              <!-- 描述 -->
+              <div>
+                <div>
+                  <span>描述:</span>
+                </div>
+                <el-input type="textarea" rows="2" v-model="item.remark"></el-input>
               </div>
               <!-- 特殊类型 radio/checkbox/select/multipleSelect/address-->
               <div
@@ -605,13 +612,7 @@
                 </div>
                 <el-input type="number" v-model="item.propertySort"></el-input>
               </div>
-              <!-- 备注 -->
-              <div>
-                <div>
-                  <span>备注:</span>
-                </div>
-                <el-input type="text" v-model="item.remark"></el-input>
-              </div>
+              
             </div>
           </div>
         </el-col>
