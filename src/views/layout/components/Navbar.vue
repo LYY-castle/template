@@ -2020,13 +2020,13 @@ export default {
       throw error
     })
     // 查找队列
-    queryListByAgentId(agentId).then(res => {
+    queryListByAgentId(localStorage.getItem('accountNo')).then(res => {
       if (res.data.code === 1 && res.data.data.length > 0) {
         const data = res.data.data
         for (let i = 0; i < data.length; i++) {
           const option = {}
-          option.label = data[i].skillSet.name
-          option.value = data[i].skillSet.code
+          option.label = data[i].skillsetResultInfo.name
+          option.value = data[i].skillsetResultInfo.code
           option.priority = data[i].priority
           vm.queues.push(option)
         }
@@ -2156,7 +2156,7 @@ export default {
     }
 
     // 刚进页面获取未读消息数量
-    this.firstgetUnreadMessages(agentId)
+    this.firstgetUnreadMessages(localStorage.getItem('accountNo'))
 
     this.socket_nofitication = new WebSocket(`${process.env.TUI_WS_SERVERURL}/realtime_notification_${agentId}`)
     // this.socket_wechat = new WebSocket(`${process.env.TUI_WS_SERVERURL}/realtime_wechat_${agentId}`)

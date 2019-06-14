@@ -74,7 +74,7 @@
                 v-for="item in agentsOptions"
                 :key="item.agent_id"
                 :value="item.agent_id"
-                :label="item.real_name">
+                :label="item.real_name+'('+item.agent_id+')'">
               </el-option>
             </el-select>
           </el-form-item>
@@ -148,7 +148,7 @@
           </el-table-column>
           <el-table-column
             align="center"
-            label="所属员工"
+            label="所属账号"
             prop="staffId"
             :show-overflow-tooltip="true">
           </el-table-column>
@@ -2874,7 +2874,7 @@ export default {
       }
       getDepartId().then(res => {
         this.departId = res.data.departId
-        this.aId = res.data.agentid
+        this.aId = localStorage.getItem('accountNo')
         permsDepart(localStorage.getItem('accountNo')).then(r => {
           const code = parseInt(r.data.code)
           if (code === 200) {
@@ -2887,7 +2887,7 @@ export default {
               if (this.$route.query.agent === undefined) {
                 this.req.staffId = this.agents.join(',')
               } else {
-                this.req.staffId = res.data.agentid
+                this.req.staffId = localStorage.getItem('accountNo')
               }
               this.agentsId = this.agents.join(',')
               // 判断是 快速拨打 还是 拨打
@@ -2911,7 +2911,7 @@ export default {
               const code = parseInt(re.data.code)
               if (code === 200) {
                 this.departPermission = false
-                this.req.staffId = res.data.agentid
+                this.req.staffId = localStorage.getItem('accountNo')
                 // 判断是 快速拨打 还是 拨打
                 if (sessionStorage.getItem('quickDialto') && sessionStorage.getItem('isDialTask')) {
                   const obj = JSON.parse(sessionStorage.getItem('setDetails'))
@@ -3069,7 +3069,7 @@ export default {
       }
       getDepartId().then(res => {
         this.departId = res.data.departId
-        this.aId = res.data.agentid
+        this.aId = localStorage.getItem('accountNo')
         permsDepart(localStorage.getItem('accountNo')).then(r => {
           const code = parseInt(r.data.code)
           if (code === 200) {
@@ -3082,7 +3082,7 @@ export default {
               if (this.$route.query.agent === undefined) {
                 this.req.staffId = this.agents.join(',')
               } else {
-                this.req.staffId = res.data.agentid
+                this.req.staffId = localStorage.getItem('accountNo')
               }
               this.agentsId = this.agents.join(',')
               // 判断是 快速拨打 还是 拨打
@@ -3106,7 +3106,7 @@ export default {
               const code = parseInt(re.data.code)
               if (code === 200) {
                 this.departPermission = false
-                this.req.staffId = res.data.agentid
+                this.req.staffId = localStorage.getItem('accountNo')
                 // 判断是 快速拨打 还是 拨打
                 if (sessionStorage.getItem('quickDialto') && sessionStorage.getItem('isDialTask')) {
                   const obj = JSON.parse(sessionStorage.getItem('setDetails'))

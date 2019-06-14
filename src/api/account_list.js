@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import requestv2 from '@/utils/request-v2'
 
 export function findAllAccount(obj) {
   return request({
@@ -128,3 +129,47 @@ export function queryStaff(page) {
     params: page
   })
 }
+/** 查询出该部门以及子部门下的所有帐号列表 */
+export function getAccountsByDepartIdsRecursive(ids) {
+  return request({
+    url: '/account/all',
+    method: 'get',
+    params: ids
+  })
+}
+/** 综合查看员工系统帐号列表 */
+export function getAccountList(page) {
+  return requestv2({
+    url: '/employee/accountList',
+    method: 'get',
+    params: page
+  })
+}
+
+/** 综合查看（不在技能组中）员工系统帐号列表 */
+export function getAccountListBySkillsetIdNotEqual(page) {
+  return requestv2({
+    url: '/employee/list',
+    method: 'get',
+    params: page
+  })
+}
+
+/** 查询部门员工的系统帐号列表 */
+export function getDepartAccount(page) {
+  return requestv2({
+    url: '/employee/departAccountList',
+    method: 'get',
+    params: page
+  })
+}
+
+/** 通过系统帐号编号查询系统帐号 */
+export function findByAccountNo(accountNo) {
+  return requestv2({
+    url: '/employee/account',
+    method: 'get',
+    params: accountNo
+  })
+}
+

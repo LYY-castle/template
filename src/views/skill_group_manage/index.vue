@@ -195,7 +195,7 @@
                   <el-table-column
                     fixed
                     align="center"
-                    label="工号"
+                    label="账号"
                     prop="agentId"
                     :show-overflow-tooltip="true">
                     <template slot-scope="scope">
@@ -451,8 +451,8 @@
                       <el-form-item label="姓名:">
                         <el-input placeholder="姓名" v-model="selectStaffItem.name" maxlength="45"></el-input>
                       </el-form-item>
-                      <el-form-item label="工号:" >
-                        <el-input placeholder="工号" v-model="selectStaffItem.staffNo" maxlength="45"></el-input>
+                      <el-form-item label="账号:" >
+                        <el-input placeholder="账号" v-model="selectStaffItem.accountNo" maxlength="45"></el-input>
                       </el-form-item>
                       <el-form-item label="联系方式:">
                         <el-input placeholder="联系方式" v-model="selectStaffItem.userPhone" maxlength="45"></el-input>
@@ -493,11 +493,11 @@
                     <el-table-column
                       fixed
                       align="center"
-                      label="工号"
-                      prop="staffNo"
+                      label="账号"
+                      prop="accountNo"
                       :show-overflow-tooltip="true">
                       <template slot-scope="scope">
-                        {{scope.row.staffNo}}
+                        {{scope.row.accountNo}}
                       </template>
                     </el-table-column>
                     <el-table-column
@@ -506,7 +506,7 @@
                       label="姓名"
                       :show-overflow-tooltip="true">
                       <template slot-scope="scope">
-                        {{scope.row.name}}
+                        {{scope.row.staffResultInfo.name}}
                       </template>
                     </el-table-column>
                     <el-table-column
@@ -515,7 +515,7 @@
                       label="性别"
                       :show-overflow-tooltip="true">
                       <template slot-scope="scope">
-                        {{showSex(scope.row.sex)}}
+                        {{showSex(scope.row.staffResultInfo.sex)}}
                       </template>
                     </el-table-column>
                     <el-table-column
@@ -524,7 +524,7 @@
                       label="归属部门"
                       :show-overflow-tooltip="true">
                       <template slot-scope="scope">
-                        {{ scope.row.depart?(scope.row.depart.name?scope.row.depart.name:""):"" }}
+                        {{ scope.row.staffResultInfo.depart?(scope.row.staffResultInfo.depart.name?scope.row.staffResultInfo.depart.name:""):"" }}
                       </template>
                     </el-table-column>
                     <el-table-column
@@ -533,7 +533,7 @@
                       label="联系方式"
                       :show-overflow-tooltip="true">
                       <template slot-scope="scope">
-                        {{scope.row.phone?scope.row.phone:""}}
+                        {{scope.row.staffResultInfo.phone?scope.row.staffResultInfo.phone:""}}
                       </template>
                     </el-table-column>
                   </el-table>
@@ -597,8 +597,9 @@
 
 <script>
 import { formatDateTime, list2Tree } from '@/utils/tools'
-import { querySkillSetList, addSkillSet, queryOne, editSkillSet, hiddenOne, deleteOneUserSkillSet, deleteBatch, addUserSkillSet, queryUserSkillSetList, editUserSkillSet, deleteBatchUserSkillSet } from '@/api/skillset'
-import { queryDepts, queryUserSkillSet, queryUserSkillSetByDepart } from '@/api/employee_list'
+import { querySkillSetList, addSkillSet, queryOne, editSkillSet, hiddenOne, deleteOneUserSkillSet, deleteBatch, addUserSkillSet, editUserSkillSet, deleteBatchUserSkillSet } from '@/api/skillset'
+import { queryDepts } from '@/api/employee_list'
+import { getAccountList, getAccountListBySkillsetIdNotEqual } from '@/api/account_list'
 import { Message } from 'element-ui'
 
 var vm = null
@@ -626,7 +627,7 @@ export default {
       staffRelationshipData: [],
       selectStaffItem: {
         name: '',
-        staffNo: '',
+        accountNo: '',
         userPhone: '',
         departId: null,
         departName: '所有部门'
@@ -712,7 +713,7 @@ export default {
           if (res.data.code === 1) {
             const requestParam = {}
             requestParam.skillsetId = this.ownnerSkillSetId
-            this.queryUserSkillSetList(requestParam)
+            this.getAccountList(requestParam)
           } else {
             console.log(res.data)
           }
@@ -730,7 +731,7 @@ export default {
           if (res.data.code === 1) {
             const requestParam = {}
             requestParam.skillsetId = this.ownnerSkillSetId
-            this.queryUserSkillSetList(requestParam)
+            this.getAccountList(requestParam)
           } else {
             console.log(res.data)
           }
@@ -759,7 +760,7 @@ export default {
         if (res.data.code === 1) {
           const req = {}
           req.skillsetId = this.ownnerSkillSetId
-          this.queryUserSkillSetList(req)
+          this.getAccountList(req)
         }
       })
     },
@@ -810,7 +811,7 @@ export default {
           this.tags = []
           this.filterText = ''
           this.resetStaffInfo()
-          this.queryUserSkillSetList(req)
+          this.getAccountList(req)
         }
       })
     },
@@ -827,7 +828,7 @@ export default {
       for (let i = 0; i < data.length; i++) {
         const tag = {}
         tag.id = data[i].id
-        tag.name = data[i].name + '（' + data[i].staffNo + '）'
+        tag.name = data[i].staffResultInfo.name + '（' + data[i].accountNo + '）'
         new_tags.push(tag)
       }
       if (this.tags.length > 0) {
@@ -849,8 +850,9 @@ export default {
       }
     },
     haddleRow(val) {
+      console.log('val', val)
       const tag = {}
-      tag.name = val.name + '（' + val.staffNo + '）'
+      tag.name = val.staffResultInfo.name + '（' + val.accountNo + '）'
       tag.id = val.id
       if (this.tags.length > 0) {
         let flag = true
@@ -869,7 +871,7 @@ export default {
     },
     resetStaffInfo() {
       this.selectStaffItem.name = ''
-      this.selectStaffItem.staffNo = ''
+      this.selectStaffItem.accountNo = ''
       this.selectStaffItem.userPhone = ''
       this.selectStaffItem.departName = '所有部门'
       this.selectStaffItem.departId = null
@@ -891,26 +893,31 @@ export default {
     },
     queryStaff(res) {
       this.selectStaffTableData = res.data.data
+      console.log('this.selectStaffTableData', this.selectStaffTableData)
       this.pagination2 = res.data.pageInfo
     },
     searchStaffInfo(req, val) {
-      const param = { name: '', userPhone: '', departId: null, staffNo: '' }
+      const param = { name: '', userPhone: '', departId: null, staffNo: '', accountNo: '' }
       param.name = req.name
       param.userPhone = req.userPhone
       param.departId = req.departId
       param.staffNo = req.staffNo
+      param.accountNo = req.accountNo
       param.pageNo = req.pageNo ? req.pageNo : 1
       param.pageSize = req.pageSize ? req.pageSize : (this.pagination2.pageSize ? this.pagination2.pageSize : 10)
       param.skillsetId = this.ownnerSkillSetId
-      if (val === 0) {
-        queryUserSkillSet(param).then(response => {
-          this.queryStaff(response)
-        })
-      } else {
-        queryUserSkillSetByDepart(param).then(res => {
-          this.queryStaff(res)
-        })
-      }
+      getAccountListBySkillsetIdNotEqual(param).then(response => {
+        this.queryStaff(response)
+      })
+      // if (val === 0) {
+      //   queryUserSkillSet(param).then(response => {
+      //     this.queryStaff(response)
+      //   })
+      // } else {
+      //   queryUserSkillSetByDepart(param).then(res => {
+      //     this.queryStaff(res)
+      //   })
+      // }
     },
     resetFormInline() {
       this.formInline = {}
@@ -965,15 +972,15 @@ export default {
       this.searchStaffInfo(this.selectStaffItem)
       const req = {}
       req.skillsetId = this.ownnerSkillSetId
-      req.showAll = 'showAll'
-      queryUserSkillSetList(req).then(res => {
+      req.pageable = false
+      getAccountList(req).then(res => {
         if (res.data && res.data.data.length > 0) {
           const data = res.data.data
 
           for (let i = 0; i < data.length; i++) {
             const temp_tag = {}
             temp_tag.id = data[i].id
-            temp_tag.name = (data[i].staffInfo.name ? data[i].staffInfo.name : '') + '（' + (data[i].staffInfo.staffNo ? data[i].staffInfo.staffNo : '') + '）'
+            temp_tag.name = (data[i].staffResultInfo.name ? data[i].staffResultInfo.name : '') + '（' + (data[i].accountNo ? data[i].accountNo : '') + '）'
             vm.history_tags.push(temp_tag)
           }
         }
@@ -1002,28 +1009,30 @@ export default {
       }
       this.ownnerSkillSetName = obj.name
       this.ownnerSkillSetId = obj.id
-      const req = {}
-      req.skillsetId = obj.id
-      this.queryUserSkillSetList(req)
+      const req = {
+        'skillsetId': obj.id
+      }
+      this.getAccountList(req)
     },
-    queryUserSkillSetList(obj) {
+    getAccountList(obj) {
       this.staffRelationshipData = []
       this.pagination1 = { 'pageNo': 0, 'pageSize': this.pagination1.pageSize, 'totalCount': 0 }
-      queryUserSkillSetList(obj).then(res => {
+      getAccountList(obj).then(res => {
         if (res.data.code === 1 && res.data.data.length > 0) {
           const data = res.data.data
+          console.log('15151515', data)
           for (let i = 0; i < data.length; i++) {
             const shipData = {}
-            if (data[i].staffInfo) {
-              shipData.agentId = data[i].staffInfo.staffNo ? data[i].staffInfo.staffNo : ''
-              shipData.agentName = data[i].staffInfo.name ? data[i].staffInfo.name : ''
-              shipData.sex = data[i].staffInfo.sex
-              shipData.departName = data[i].staffInfo.depart ? (data[i].staffInfo.depart, name ? data[i].staffInfo.depart.name : '') : ''
-              shipData.userPhone = data[i].staffInfo.phone ? data[i].staffInfo.phone : ''
+            if (data[i].staffResultInfo) {
+              shipData.agentId = data[i].accountNo ? data[i].accountNo : ''
+              shipData.agentName = data[i].staffResultInfo.name ? data[i].staffResultInfo.name : ''
+              shipData.sex = data[i].staffResultInfo.sex
+              shipData.departName = data[i].staffResultInfo.depart ? (data[i].staffResultInfo.depart.name ? data[i].staffResultInfo.depart.name : '') : ''
+              shipData.userPhone = data[i].staffResultInfo.phone ? data[i].staffResultInfo.phone : ''
               shipData.isEdit = false
             }
-            shipData.id = data[i].id
-            shipData.priority = data[i].priority ? data[i].priority : '0'
+            shipData.id = data[i].userSkillSetResultInfo[0].id
+            shipData.priority = data[i].userSkillSetResultInfo[0].priority
             this.staffRelationshipData.push(shipData)
           }
           this.pagination1 = res.data.pageInfo
@@ -1188,7 +1197,7 @@ export default {
       req.skillsetId = this.ownnerSkillSetId
       req.pageNo = 1
       req.pageSize = val
-      this.queryUserSkillSetList(req)
+      this.getAccountList(req)
     },
     handleCurrentChange1(val) {
       this.staffRelationshipData = []
@@ -1196,7 +1205,7 @@ export default {
       req.skillsetId = this.ownnerSkillSetId
       req.pageNo = val
       req.pageSize = this.pagination1.pageSize
-      this.queryUserSkillSetList(req)
+      this.getAccountList(req)
     },
     handleSelectionChange2(val) {
       this.multipleSelection2 = val

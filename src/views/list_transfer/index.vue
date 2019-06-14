@@ -22,9 +22,9 @@
               <el-option label="无" value="" v-if="!hasAgent"></el-option>
               <el-option
                 v-for="item in s_staffs"
-                :key="item[1]"
-                :label="item[2]+' ('+item[1]+')'"
-                :value="item[1]"
+                :key="item['accountNo']"
+                :label="item['staffResultInfo']['name']+' ('+item['accountNo']+')'"
+                :value="item['accountNo']"
               >
               </el-option>
             </el-select>
@@ -81,7 +81,7 @@
           </el-form-item>
           <el-form-item>
               <el-button type="primary" @click="req.pageNo=1;searchByKeyWords(req)">查询</el-button>
-              <el-button type="danger" @click="clearForm(req)">重置</el-button>
+              <el-button @click="clearForm(req)">重置</el-button>
           </el-form-item>
         </el-form>
       </el-collapse-item>
@@ -91,7 +91,7 @@
         <div class="font14 bold">名单转移表</div>
       </el-row>
       <el-row class="margin-bottom-20">
-        <el-button type="primary" @click="checkTransferNum(contactTaskIds);">转移</el-button>
+        <el-button type="primary" @click="checkTransferNum(contactTaskIds);transfer_dept_id=[],s_staffs1=[]">转移</el-button>
       </el-row>
       <el-row>
         <el-table
@@ -211,7 +211,7 @@
     <!-- 选择转移的坐席dialog -->
     <el-dialog width="30%" title="操作提示" :visible.sync="transferVisible" append-to-body>
       <el-form size="small">
-        <el-form-item label="转移的部门：">
+        <el-form-item label="目标部门：">
           <el-cascader
             style="width:100%;"
             v-model="transfer_dept_id"
@@ -224,16 +224,16 @@
             change-on-select
           ></el-cascader>
         </el-form-item>
-        <el-form-item label="转移的坐席：">
+        <el-form-item label="目标坐席：">
           <el-select
             style="width:100%;"
             v-model="transferToAgentId"
             clearable>
             <el-option
               v-for="item in s_staffs1"
-              :key="item[1]"
-              :label="item[2]+' ('+item[1]+')'"
-              :value="item[1]">
+              :key="item['accountNo']"
+              :label="item['staffResultInfo']['name']+' ('+item['accountNo']+')'"
+              :value="item['accountNo']">
             </el-option>
           </el-select>
         </el-form-item>
@@ -254,6 +254,9 @@ import {
   getAgentsByDeptId
 } from '@/api/dialtask_recover'
 import {
+  getAccountsByDepartIdsRecursive
+} from '@/api/account_list'
+import {
   getAllStaffs,
   filter_split_agents,
   transferContactTasks
@@ -263,7 +266,7 @@ import {
   findCampaignByUser,
   getSummariesByAgentId
 } from '@/api/dialTask' // 接口
-import { getAllDeptsByCurrent, getAllAgentsRecursion } from '@/utils/tools'
+import { getAllDeptsByCurrent } from '@/utils/tools'
 var vm = null
 export default {
   name: 'dialtask_transfer',
@@ -351,7 +354,7 @@ export default {
             this.hasAgent = true
             this.s_staffs = res.data.data
             for (var i = 0; i < this.s_staffs.length; i++) {
-              this.s_staffIds += this.s_staffs[i][1] + ','
+              this.s_staffIds += this.s_staffs[i]['accountNo'] + ','
             }
             this.req.staffId = this.s_staffIds
           } else {
@@ -446,7 +449,7 @@ export default {
       this.selected_dept_id = []
       this.hasAgent = false
       this.s_staffIds = this.allAgentIds
-      this.req.staffId = this.s_staffIds
+      this.req.staffId = ''
       this.s_staffs.length = 0
       this.distributeTimeValue = null
       this.lastContactTimeValue = null
@@ -522,8 +525,8 @@ export default {
     // 显示坐席名称+id
     showStaffName(staffId) {
       for (var i = 0; i < this.all_staffs.length; i++) {
-        if (staffId === this.all_staffs[i][1]) {
-          return this.all_staffs[i][2] + ' (' + staffId + ')'
+        if (staffId === this.all_staffs[i]['accountNo']) {
+          return this.all_staffs[i]['staffResultInfo']['name'] + ' (' + staffId + ')'
         }
       }
     },
@@ -612,13 +615,13 @@ export default {
     // 查询当前主管下的坐席人员(包括自己)
     // this.getAllStaffs()
     // 获取所有部门及子部门下的坐席id用以默认查询
-    getAllAgentsRecursion(localStorage.getItem('departId'))
+    getAccountsByDepartIdsRecursive({ 'ids': localStorage.getItem('departId') })
       .then(response => {
         if (response.data) {
-          if (response.data.code === 0) {
+          if (response.data.code === 1) {
             this.all_staffs = response.data.data
             for (var i = 0; i < response.data.data.length; i++) {
-              this.allAgentIds += response.data.data[i][1] + ','
+              this.allAgentIds += response.data.data[i]['accountNo'] + ','
             }
             this.req.staffId = this.allAgentIds
             this.searchByKeyWords(this.req)

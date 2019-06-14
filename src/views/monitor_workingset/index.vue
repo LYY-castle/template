@@ -397,7 +397,7 @@ export default {
           obj.updateTime = 0
           this.agentStatusMap[agent_id] = obj
           this.agentArray.push(element.agent_id)
-          if (element.agent_id !== localStorage.getItem('agentId')) {
+          if (element.agent_id !== localStorage.getItem('accountNo')) {
             this.downAgents.push(element.agent_id)
           }
         })

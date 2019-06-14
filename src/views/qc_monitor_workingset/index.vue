@@ -113,7 +113,7 @@ export default {
   },
   mounted() {
     this.departId = localStorage.getItem('departId')
-    this.staffId = localStorage.getItem('agentId')
+    this.staffId = localStorage.getItem('accountNo')
     if (this.departId) {
       findGradeByDepartIds({ 'departId': this.departId }).then(res => {
         if (res.data.code === 0) {

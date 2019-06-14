@@ -661,14 +661,11 @@ export default {
   mounted() {
     this.formContainer()
     this.handleChangeAcitve()
-    getRequestUser().then(res => {
-      this.uid = res.data.agentid
-      console.log(this.uid)
-      this.req.uid = res.data.agentid
-      if (this.req.uid !== '') {
-        this.firstInQuery(this.req.uid)
-      }
-    })
+    this.uid = localStorage.getItem('accountNo')// 关联账号
+    this.req.uid = localStorage.getItem('accountNo')
+    if (this.req.uid !== '') {
+      this.firstInQuery(this.req.uid)
+    }
   },
   watch: {},
 

@@ -72,11 +72,11 @@ export function navbarQueryRecords(agentId) {
   })
 }
 // 通过员工id查找技能组
-export function queryListByAgentId(agentId) {
+export function queryListByAgentId(accountNo) {
   return request({
-    url: '/employee/queryListByAgentId',
+    url: '/employee/queryUserSkillSetList',
     method: 'get',
-    params: { 'agentId': agentId }
+    params: { 'accountNo': accountNo, 'pageable': false }
   })
 }
 

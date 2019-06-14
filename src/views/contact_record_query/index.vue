@@ -23,7 +23,7 @@
               <el-option label="本部门人员" value=""></el-option>
               <el-option
               v-for="item in staffs"
-              :label="item.staffName"
+              :label="item.staffName+'('+item.angentId+')'"
               :value="item.angentId">
               </el-option>
             </el-select>
@@ -192,7 +192,7 @@
         <div style="width:20%;float:left;">
           <el-row class="font12">
             <span style="color:#666666;">员工姓名：</span>
-            <b style="color:#020202;" :title="detailInfo.staffInfo.staffName">{{detailInfo.staffInfo.staffName}}</b>
+            <b style="color:#020202;" :title="detailInfo.staffInfo.staffResultInfo['name']">{{detailInfo.staffInfo.staffResultInfo['name']}}</b>
           </el-row>
           <el-row class="font12">
             <span style="color:#666666;">客户姓名：</span>
@@ -206,7 +206,7 @@
 
         <div style="width:20%;float:left;">
           <el-row class="font12">
-            <span style="color:#666666;">员工工号：</span>
+            <span style="color:#666666;">员工账号：</span>
             <b style="color:#020202;" :title="detailInfo.contactInfo.staffId">{{detailInfo.contactInfo.staffId}}</b>
           </el-row>
           <el-row class="font12">
@@ -713,6 +713,7 @@ audio {
     queryRecords
   } from '@/api/contact_record_dail' // api接口引用
   import { getCampaignType } from '@/api/dialTask'
+  import { getDepartAccount, findByAccountNo } from '@/api/account_list'
   import { queryOneQuestionnaire, queryRecordsByTaskId } from '@/api/questionnaire'
   import { permsManager, permsDepart, permsStaff } from '@/api/permission'
   import Emotion from '@/components/Emotion1/index'
@@ -821,12 +822,14 @@ audio {
       // this.player.options = { 'speed': { selected: 1, options: [0.5, 0.75, 1] }}
       this.handleChangeAcitve()
       new Promise((resolve, reject) => {
-        getStaffByDepartId(localStorage.getItem('departId')).then(response => {
-          const lists = response.data.data
-          this.staffs = []
-          lists.forEach(element => {
-            this.staffs.push({ 'staffName': element.name, 'angentId': element.staffNo })
-          })
+        getDepartAccount({ 'departId': parseInt(localStorage.getItem('departId')), 'pageable': false }).then(response => {
+          if (response.data.code === 1) {
+            const lists = response.data.data
+            this.staffs = []
+            lists.forEach(element => {
+              this.staffs.push({ 'staffName': element['staffResultInfo']['name'], 'angentId': element['accountNo'] })
+            })
+          }
           resolve()
         })
       })
@@ -1161,9 +1164,9 @@ audio {
             }
           }
         })
-        getStaffNameByAgentId(this.ids.agentId).then(response => {
+        findByAccountNo({ 'accountNo': this.ids.agentId }).then(response => {
           if (response.data.code === 1) {
-            this.detailInfo.staffInfo = response.data.data[0]
+            this.detailInfo.staffInfo = response.data.data
           }
         })
         queryTaskByTaskId(this.ids.taskId).then(response => {

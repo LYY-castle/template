@@ -216,7 +216,7 @@ export default {
           statistics_type: 'agent',
           depart_id: self.departId,
           time_dimension: 'day',
-          agent_id: localStorage.getItem('agentId'),
+          agent_id: localStorage.getItem('accountNo'),
           start_time: self.getStartTimestamp(Date.parse(new Date((new Date()).toLocaleDateString()))),
           end_time: self.getEndTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))
         }).then(response => {
@@ -230,7 +230,7 @@ export default {
           statistics_type: 'agent',
           depart_id: self.departId,
           time_dimension: 'day',
-          agent_id: localStorage.getItem('agentId'),
+          agent_id: localStorage.getItem('accountNo'),
           start_time: self.getStartTimestamp(Date.parse(new Date((new Date()).toLocaleDateString()))),
           end_time: self.getEndTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))
         }).then(response => {
@@ -296,7 +296,7 @@ export default {
         statistics_type: 'agent',
         depart_id: this.departId,
         time_dimension: 'day',
-        agent_id: localStorage.getItem('agentId'),
+        agent_id: localStorage.getItem('accountNo'),
         start_time: this.getStartTimestamp(Date.parse(new Date((new Date()).toLocaleDateString()))),
         end_time: this.getEndTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))
       }).then(response => {
@@ -309,7 +309,7 @@ export default {
         statistics_type: 'agent',
         depart_id: this.departId,
         time_dimension: 'day',
-        agent_id: localStorage.getItem('agentId'),
+        agent_id: localStorage.getItem('accountNo'),
         start_time: this.getStartTimestamp(Date.parse(new Date((new Date()).toLocaleDateString()))),
         end_time: this.getEndTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))
       }).then(response => {
@@ -321,7 +321,7 @@ export default {
         statistics_type: 'agent',
         depart_id: this.departId,
         time_dimension: 'day',
-        agent_id: localStorage.getItem('agentId'),
+        agent_id: localStorage.getItem('accountNo'),
         start_time: this.getStartTimestamp(Date.parse(new Date((new Date()).toLocaleDateString()))),
         end_time: this.getEndTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))
       }).then(response => {
@@ -415,7 +415,7 @@ export default {
           statistics_type: 'agent',
           depart_id: baseinfo.departId,
           time_dimension: 'day',
-          agent_id: localStorage.getItem('agentId'),
+          agent_id: localStorage.getItem('accountNo'),
           start_time: baseinfo.getStartTimestamp(Date.parse(new Date((new Date()).toLocaleDateString()))),
           end_time: baseinfo.getEndTimestamp(Date.parse(new Date((new Date()).toLocaleDateString())))
         }).then(response => {

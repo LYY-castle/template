@@ -112,7 +112,7 @@ export default {
     }
   },
   mounted() {
-    this.staffId = localStorage.getItem('agentId')
+    this.staffId = localStorage.getItem('accountNo')
     if (this.staffId) {
       const staff = {}
       staff.staffId = this.staffId
@@ -160,7 +160,7 @@ export default {
     checkNum(value) {
       this.$router.push({
         path: process.env.BUILT_IN_ROUTERS.qualityChecking,
-        query: { 'status': value, 'staffId': localStorage.getItem('agentId') }
+        query: { 'status': value, 'staffId': localStorage.getItem('accountNo') }
       })
     }
   }
