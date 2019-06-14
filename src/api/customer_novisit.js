@@ -55,3 +55,11 @@ export function delBlackListInfo(obj) {
     data: { 'customerId': obj }
   })
 }
+export function uploadFileandImport(multipartFile) {
+  return request({
+    url: '/blacklist/upload',
+    method: 'post',
+    data: multipartFile
+  })
+}
+
