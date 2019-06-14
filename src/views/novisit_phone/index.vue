@@ -56,6 +56,8 @@
           <el-dropdown-menu slot="dropdown" class="info">
             <el-dropdown-item command='1'>批量生效</el-dropdown-item>
             <el-dropdown-item command='2'>批量不生效</el-dropdown-item>
+            <el-dropdown-item command='3'>下载模板</el-dropdown-item>
+            <el-dropdown-item command='4'>免访号码导入</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </el-row>
@@ -346,10 +348,70 @@
         <el-button type="primary" plain @click="detailVisible = false">关闭</el-button>
       </div>
     </el-dialog>
+    <el-dialog
+      align:left
+      width="40%"
+      title="导入免访号码"
+      :visible.sync="importVisible"
+      append-to-body>
+      <el-row style="height:35px">
+        <el-col :span="11" style="height:35px">
+          <el-form size="small" label-width="120px" :model="importInfo" :rules="rule" ref="importInfo">
+            <el-form-item class="inputWidth">
+              <span slot="label">
+              <span style="color:#f56c6c">*</span> 
+                上传文件：
+              </span>
+              <el-input size="small" style="width:130px" v-model="importInfo.uploadFileName" disabled></el-input>
+            </el-form-item>
+          </el-form>
+        </el-col>
+      <el-col :span="8">
+        <el-upload
+          ref="upload"
+          :action="uploadUrl"   
+          :headers="{'Authorization':'Bearer ' +token}"
+          :http-request="uploadFileInfo"
+          :on-change="handleUploadOnChange"
+          :show-file-list="false"
+          :auto-upload="false">
+          <el-button slot="trigger" size="small" type="success">选取文件</el-button>
+        </el-upload>
+      </el-col>
+      </el-row>
+      <div style="margin-left:30px">
+        <span style="font-size:12px;color:red;">提示：文件格式支持xls、xlsx，文件大小限制为10M</span>
+      </div>
+      <br/>
+      <div v-if="hasFalseinfo">
+        <span style="font-size:18px"><b>验证失败原因</b></span>
+        <el-table :data="falseInfo" border highlight-current-row>
+          <el-table-column
+            align="center"
+            label="行"
+            prop="rowNum">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="列"
+            prop="colNum">
+          </el-table-column>
+          <el-table-column
+            align="center"
+            label="失败原因"
+            prop="log">
+          </el-table-column>
+        </el-table>
+      </div>
+      <div slot="footer" style="text-align: right;">
+        <el-button type="primary" @click="submitUploadandimport()">确定导入</el-button>
+        <el-button   @click="importVisible = false">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-  import { batchSetVisible, findAllCampaigns, queryNoVisitCustomers, addNoVisitCustomers, batchDelete, getBlackListInfoById, editBlackListInfo, delBlackListInfo } from '@/api/customer_novisit'
+  import { batchSetVisible, findAllCampaigns, queryNoVisitCustomers, addNoVisitCustomers, batchDelete, getBlackListInfoById, editBlackListInfo, delBlackListInfo, uploadFileandImport } from '@/api/customer_novisit'
   import { hideMobile } from '@/utils/tools'
   export default {
     name: 'customer_novisit',
@@ -358,6 +420,15 @@
         timeValue: null,
         formContainerOpen: '1',
         formContainer: this.$store.state.app.formContainer,
+        importVisible: false, // 导入对话框
+        hasFalseinfo: false, // 校验是否有错误信息
+        falseInfo: [], // 错误信息
+        file: {}, // 上传的文件
+        uploadUrl: '/api/v1/blacklist/upload', // 上传文件url
+        importInfo: { // 导入需要的信息
+          uploadFileName: ''
+        },
+        token: localStorage.getItem('Admin-Token'),
         detailVisible: false, // 免访客户详情
         delVisible: false, // 删除对话框显示隐藏
         editVisible: false, // 修改对话框显示隐藏
@@ -429,14 +500,80 @@
     },
     methods: {
       moreOperating(val) {
-        if (val === '1') this.op_hints1 = true
-        else this.op_hints2 = true
+        if (val === '1') {
+          this.op_hints1 = true
+        } else if (val === '2') {
+          this.op_hints2 = true
+        } else if (val === '3') {
+          window.location.href = process.env.BASE_API + `/blacklist/exportexcel?fileType=xls`
+        } else if (val === '4') {
+          this.importVisible = true // 导入对话框
+          this.importInfo.uploadFileName = ''
+          this.falseInfo = []
+          this.hasFalseinfo = false
+        }
       },
       handleChangeAcitve(active = ['1']) {
         if (active.length) {
           $('.form-more').text('收起')
         } else {
           $('.form-more').text('更多')
+        }
+      },
+      submitUploadandimport() {
+        if (this.importInfo.uploadFileName === '') {
+          this.$message.error('请选择上传文件！')
+          return
+        }
+        this.$refs.upload.submit()
+      },
+      // 上传的动作
+      uploadFileInfo(fileList) {
+        var formdata = new FormData()
+        formdata.append('multipartFile', fileList.file)
+        uploadFileandImport(formdata).then(response => {
+          if (response.data.code === 0) {
+            this.hasFalseinfo = false
+            this.$message.success(response.data.message)
+            this.importVisible = false
+            this.req.pageNo = 1
+            // 查询列表
+            setTimeout(() => {
+              this.findNoVisitCustomers(this.req)
+            }, 3000)
+          } else {
+            this.$message.error(response.data.message)
+            this.falseInfo = response.data.data
+            this.hasFalseinfo = true
+          }
+        })
+      },
+      //
+      handleUploadOnChange(file, fileList) {
+        fileList.length = 0
+        fileList.push(file)
+        this.importInfo.uploadFileName = file.name
+        console.log(' file.name', file.name)
+        var testmsg = file.name.substring(file.name.lastIndexOf('.') + 1)
+        this.file = file
+        const extension = testmsg === 'xls'
+        const extension2 = testmsg === 'xlsx'
+        const isLt2M = file.size / 1024 / 1024 < 10
+        if (!extension && !extension2) {
+          this.$message({
+            message: '上传文件只能是 xls、xlsx格式!',
+            type: 'warning'
+          })
+          fileList.length = 0
+          this.importInfo.uploadFileName = ''
+        }
+        if (!isLt2M) {
+          this.$message({
+            message: '上传文件大小不能超过 10MB!',
+            type: 'warning'
+          })
+          fileList.length = 0
+          this.importInfo.uploadFileName = ''
         }
       },
       batchSetVisibleStatus(batchDelReq, status) {
