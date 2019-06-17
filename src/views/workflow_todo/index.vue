@@ -422,7 +422,7 @@ export default {
     }
   },
   mounted() {
-    this.WORKFLOW_AUTH = _.includes(process.env.WORKFLOW_AUTH_STAFFNO, localStorage.getItem('accountNo'))
+    this.WORKFLOW_AUTH = _.includes(_.values(process.env.WORKFLOW_AUTH_STAFFNO), localStorage.getItem('accountNo'))
     this.formContainer()
     this.handleChangeAcitve()
     this.queryList(this.req)
