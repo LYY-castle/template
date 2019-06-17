@@ -826,7 +826,7 @@
                     </el-select>
                   </el-form-item>
                   <el-form-item>
-                    <el-button type="primary" @click="getHotelList">查询</el-button>
+                    <el-button type="primary" @click="getHotelList();searchHotelReq.pageNo=1;">查询</el-button>
                     <el-button @click="resetHotelReq">重置</el-button>
                   </el-form-item>
                 </el-form>
@@ -875,7 +875,7 @@
                 </el-table-column>
                 <el-table-column
                   align="center"
-                  label="商品名称"
+                  label="酒店名称"
                   prop="name">
                 </el-table-column>
                 <el-table-column
