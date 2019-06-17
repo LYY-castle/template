@@ -105,7 +105,7 @@
               <el-badge :value="scope.row.urgeCounts" class="badge_item" type="primary" v-else-if="scope.row.urgeCounts>0">
                 <el-popover trigger="click">
                   <el-table :data="urgeList" >
-                    <el-table-column 
+                    <el-table-column
                       label="催办内容"
                       width="180"
                       prop="urgeContent"
@@ -281,7 +281,7 @@
       </div>
     </el-dialog>
     <!-- 工单记录详情 -->
-    <el-dialog 
+    <el-dialog
       align:left
       width="50%"
       title="工单详情"
@@ -384,7 +384,7 @@ export default {
       showConfirmInfo: false, // 展示待确认信息
       sendMessage: true, // 默认修改工单发送短信
       workformInfo: {}, // 工单模板信息
-      WORKFLOW_AUTH_STAFFNO: false, // 默认没有权限查询
+      WORKFLOW_AUTH: false, // 默认没有权限查询
       delReq: {// 修改详情暂存id
         id: null,
         workformId: null
@@ -421,7 +421,7 @@ export default {
     }
   },
   mounted() {
-    this.WORKFLOW_AUTH_STAFFNO = (process.env.WORKFLOW_AUTH_STAFFNO === parseInt(localStorage.getItem('accountNo')))
+    this.WORKFLOW_AUTH = process.env.WORKFLOW_AUTH_STAFFNO.includes(localStorage.getItem('accountNo'))
     this.formContainer()
     this.handleChangeAcitve()
     this.queryList(this.req)
@@ -603,7 +603,7 @@ export default {
       return workformVali.includes(false)
     },
     submitEditWorkformRecord(obj) {
-      if (!this.WORKFLOW_AUTH_STAFFNO) {
+      if (!this.WORKFLOW_AUTH) {
         this.$message({
           message: '您没有修改权限',
           type: 'error',
@@ -706,7 +706,7 @@ export default {
       })
     },
     queryList(req) {
-      if (!this.WORKFLOW_AUTH_STAFFNO) {
+      if (!this.WORKFLOW_AUTH) {
         this.tableData = []
         this.pageInfo = {}
         this.pageShow = false

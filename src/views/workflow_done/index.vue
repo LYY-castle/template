@@ -103,7 +103,7 @@
               <el-badge :value="scope.row.urgeCounts" class="badge_item" type="primary" v-else-if="scope.row.urgeCounts>0">
                 <el-popover trigger="click">
                   <el-table :data="urgeList" >
-                    <el-table-column 
+                    <el-table-column
                       label="催办内容"
                       width="180"
                       prop="urgeContent"
@@ -253,7 +253,7 @@ export default {
   data() {
     return {
       urgeList: [],
-      WORKFLOW_AUTH_STAFFNO: false,
+      WORKFLOW_AUTH: false,
       workformRecordDetail: {
         workform: {},
         workformRecordRuleResults: [
@@ -290,7 +290,7 @@ export default {
     }
   },
   mounted() {
-    this.WORKFLOW_AUTH_STAFFNO = (process.env.WORKFLOW_AUTH_STAFFNO === parseInt(localStorage.getItem('accountNo')))
+    this.WORKFLOW_AUTH = process.env.WORKFLOW_AUTH_STAFFNO.includes(localStorage.getItem('accountNo'))
     this.formContainer()
     this.handleChangeAcitve()
     this.queryList(this.req)
@@ -388,7 +388,7 @@ export default {
       })
     },
     queryList(req) {
-      if (!this.WORKFLOW_AUTH_STAFFNO) {
+      if (!this.WORKFLOW_AUTH) {
         this.tableData = []
         this.pageInfo = {}
         this.pageShow = false
