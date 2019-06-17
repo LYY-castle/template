@@ -3021,7 +3021,7 @@ export default {
           this.hotelTableData = response.data.data
           this.hotelPagination = response.data.pageInfo
         } else {
-          this.$message.error(response.data.message)
+          console.log('getHotelList', response.data.message)
         }
       }).catch(error => {
         throw error
