@@ -826,7 +826,7 @@
                     </el-select>
                   </el-form-item>
                   <el-form-item>
-                    <el-button type="primary" @click="getHotelList">查询</el-button>
+                    <el-button type="primary" @click="getHotelList();searchHotelReq.pageNo=1;">查询</el-button>
                     <el-button @click="resetHotelReq">重置</el-button>
                   </el-form-item>
                 </el-form>
@@ -862,7 +862,7 @@
                         <span>{{ props.row.bedType===0?'大床':'双床' }}</span>
                       </el-form-item>
                       <el-form-item label="餐型">
-                        <span>{{ props.row.mealType===0?'无早':props.row.mealType===1?'单早':'双早' }}</span>
+                        <span>{{mealTypeName(props.row.mealType)}}</span>
                       </el-form-item>
                       <el-form-item label="地址">
                         <span>{{ props.row.address }}</span>
@@ -875,7 +875,7 @@
                 </el-table-column>
                 <el-table-column
                   align="center"
-                  label="商品名称"
+                  label="酒店名称"
                   prop="name">
                 </el-table-column>
                 <el-table-column
@@ -2185,6 +2185,21 @@ export default {
     showQuestion(h, { column, $index }) {
       return (<span>催办状态&nbsp;<el-tooltip content='点击查看详情' placement='top'><i class='el-icon-question' /></el-tooltip></span>)
     },
+    mealTypeName(param) {
+      if (param === 0) {
+        return '无早'
+      }
+      if (param === 1) {
+        return '单早'
+      }
+      if (param === 2) {
+        return '双早'
+      }
+      if (param === 3) {
+        return '一价全包'
+      }
+      return ''
+    },
     toCancelUrge(id) {
       this.$confirm('确认取消催办？', '请确认', {
         confirmButtonText: '确定',
@@ -3006,7 +3021,7 @@ export default {
           this.hotelTableData = response.data.data
           this.hotelPagination = response.data.pageInfo
         } else {
-          this.$message.error(response.data.message)
+          console.log('getHotelList', response.data.message)
         }
       }).catch(error => {
         throw error
