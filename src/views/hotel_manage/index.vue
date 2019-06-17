@@ -7,29 +7,30 @@
             <el-input v-model="req.name" placeholder="名称" maxlength="20"></el-input>
           </el-form-item>
           <el-form-item prop="offerType" label="优惠类型：">
-             <el-select placeholder="优惠类型：" v-model="req.offerType"  style="width:6em">
+             <el-select placeholder="优惠类型：" v-model="req.offerType"  style="width:10em">
               <el-option label="全部" value=''></el-option>
               <el-option label="免费住宿" :value=0></el-option>
               <el-option label="住二送一" :value=1></el-option>
             </el-select>
           </el-form-item>
           <el-form-item prop="bedType" label="床型：">
-             <el-select placeholder="床型：" v-model="req.bedType"  style="width:6em">
+             <el-select placeholder="床型：" v-model="req.bedType"  style="width:10em">
               <el-option label="全部" value=''></el-option>
               <el-option label="大床" :value=0></el-option>
               <el-option label="双床" :value=1></el-option>
             </el-select>
           </el-form-item>
           <el-form-item prop="mealType" label="餐型：">
-             <el-select placeholder="床型：" v-model="req.mealType"  style="width:6em">
+             <el-select placeholder="床型：" v-model="req.mealType"  style="width:10em">
               <el-option label="全部" value=''></el-option>
               <el-option label="无早" :value=0></el-option>
               <el-option label="单早" :value=1></el-option>
               <el-option label="双早" :value=2></el-option>
+              <el-option label="一价全包" :value=3></el-option>
             </el-select>
           </el-form-item>
           <el-form-item prop="status" label="状态：">
-            <el-select placeholder="状态：" v-model="req.status"  style="width:6em">
+            <el-select placeholder="状态：" v-model="req.status"  style="width:10em">
               <el-option label="全部" value=''></el-option>
               <el-option label="有效" :value=0></el-option>
               <el-option label="无效" :value=1></el-option>
@@ -184,25 +185,26 @@
           <el-input v-model="addHotel.roomType" size="small" placeholder="如：豪华客房（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item prop="offerType" label="优惠类型：">
-             <el-select placeholder="优惠类型：" v-model="addHotel.offerType"  style="width:6em">
+             <el-select placeholder="优惠类型：" v-model="addHotel.offerType"  style="width:10em">
               <el-option label="请选择优惠类型" value=''></el-option>
               <el-option label="免费住宿" :value=0></el-option>
               <el-option label="住二送一" :value=1></el-option>
             </el-select>
           </el-form-item>
           <el-form-item prop="bedType" label="床型：">
-             <el-select placeholder="床型：" v-model="addHotel.bedType"  style="width:6em">
+             <el-select placeholder="床型：" v-model="addHotel.bedType"  style="width:10em">
               <el-option label="请选择床型" value=''></el-option>
               <el-option label="大床" :value=0></el-option>
               <el-option label="双床" :value=1></el-option>
             </el-select>
           </el-form-item>
           <el-form-item prop="mealType" label="餐型：">
-             <el-select placeholder="餐型：" v-model="addHotel.mealType"  style="width:6em">
+             <el-select placeholder="餐型：" v-model="addHotel.mealType"  style="width:10em">
               <el-option label="请选择餐型" value=''></el-option>
               <el-option label="无早" :value=0></el-option>
               <el-option label="单早" :value=1></el-option>
               <el-option label="双早" :value=2></el-option>
+              <el-option label="一价全包" :value=3></el-option>
             </el-select>
           </el-form-item>
           <el-form-item prop="status" label="状态：">
@@ -282,25 +284,26 @@
           <el-input v-model="modifyHotel.roomType" size="small" placeholder="如：豪华客房（限长45字符）" maxlength="45"></el-input>
         </el-form-item>
         <el-form-item prop="offerType" label="优惠类型：">
-             <el-select placeholder="优惠类型：" v-model="modifyHotel.offerType"  style="width:6em">
+             <el-select placeholder="优惠类型：" v-model="modifyHotel.offerType"  style="width:10em">
               <el-option label="请选择优惠类型" value=''></el-option>
               <el-option label="免费住宿" :value=0></el-option>
               <el-option label="住二送一" :value=1></el-option>
             </el-select>
           </el-form-item>
           <el-form-item prop="bedType" label="床型：">
-             <el-select placeholder="床型：" v-model="modifyHotel.bedType"  style="width:6em">
+             <el-select placeholder="床型：" v-model="modifyHotel.bedType"  style="width:10em">
               <el-option label="请选择床型" value=''></el-option>
               <el-option label="大床" :value=0></el-option>
               <el-option label="双床" :value=1></el-option>
             </el-select>
           </el-form-item>
           <el-form-item prop="mealType" label="餐型：">
-             <el-select placeholder="餐型：" v-model="modifyHotel.mealType"  style="width:6em">
+             <el-select placeholder="餐型：" v-model="modifyHotel.mealType"  style="width:10em">
               <el-option label="请选择餐型" value=''></el-option>
               <el-option label="无早" :value=0></el-option>
               <el-option label="单早" :value=1></el-option>
               <el-option label="双早" :value=2></el-option>
+              <el-option label="一价全包" :value=3></el-option>
             </el-select>
           </el-form-item>
           <el-form-item prop="status" label="状态：">
@@ -546,6 +549,9 @@ export default {
       }
       if (param === 2) {
         return '双早'
+      }
+      if (param === 3) {
+        return '一价全包'
       }
       return ''
     },
