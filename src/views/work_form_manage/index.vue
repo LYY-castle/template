@@ -41,7 +41,10 @@
           <el-table-column align="center" label="有效性">
             <template slot-scope="scope">
               <div>
-                <span :style="scope.row.enabled===0?'background:#F8A300':'background:#28CC6C'" style="display:inline-block;color:#fff;padding:1px 10px;">{{scope.row.enabled===0?'无效':'有效'}}</span>
+                <span
+                  :style="scope.row.enabled===0?'background:#F8A300':'background:#28CC6C'"
+                  style="display:inline-block;color:#fff;padding:1px 10px;"
+                >{{scope.row.enabled===0?'无效':'有效'}}</span>
               </div>
             </template>
           </el-table-column>
@@ -134,7 +137,7 @@
         </el-col>
         <!-- 模板 -->
         <el-col :span="13" style="background-color: #fff;">
-          <div class="template">
+          <!-- <div class="template">
             <div style="font-size:18px;font-weight:800">工单模板</div>
             <div
               class="title"
@@ -235,15 +238,6 @@
                 </div>
                 <div v-if="item.dataType==='span'">
                   <div v-html="item.defaultValue"></div>
-                  <!-- <quill-editor
-                    ref="myQuillEditor"
-                    :disabled="show===3?false:true"
-                    v-model="item.defaultValue"
-                    :options="editorOption"
-                    :placeholder="item.placeholder"
-                    :maxlength="item.maxValue"
-                    :minlength="item.minValue"
-                  ></quill-editor>-->
                 </div>
                 <div v-if="item.dataType === 'address'">
                   <div style="display:flex;justify-content: space-between;">
@@ -327,7 +321,8 @@
                 "
               >取消</el-button>
             </div>
-          </div>
+          </div> -->
+          <WorkForm v-model="workFormTable" ></WorkForm>
         </el-col>
         <!-- 设值 -->
         <el-col :span="7" class="setting" v-if="show === 1 || show === 2" :rules="rules">
@@ -612,7 +607,6 @@
                 </div>
                 <el-input type="number" v-model="item.propertySort"></el-input>
               </div>
-              
             </div>
           </div>
         </el-col>
@@ -669,6 +663,8 @@
   </div>
 </template>
 <script>
+import WorkForm from "@/components/WorkForm";
+import AddressSelect from "@/components/AddressSelect";
 import {
   getWorkForm,
   deleteWorkForm,
@@ -761,8 +757,7 @@ export default {
   },
   mounted() {
     this.getWorkFormList();
-    this.$dragging.$on("dragged", ({ value }) => {
-    });
+    this.$dragging.$on("dragged", ({ value }) => {});
     this.getAddress();
   },
   methods: {
@@ -1408,6 +1403,7 @@ export default {
     filterData() {},
     // 修改传值
     showModifyContent(row) {
+      console.log(1233333333)
       console.log(row);
       this.filterDataUpdate(row);
       this.modifyWorkFormTable.id = row.id;
@@ -1420,6 +1416,7 @@ export default {
       this.show = 2;
       this.table = true;
       this.text = false;
+      console.log(5555)
     },
     // 修改
     modifyWorkForm() {
@@ -1574,6 +1571,9 @@ export default {
       // console.log(html)
       // this.text = text
     }
+  },
+  components: {
+    WorkForm, AddressSelect
   }
 };
 </script>
