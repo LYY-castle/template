@@ -247,7 +247,9 @@
   </div>
 </template>
 <script>
+import _ from 'lodash'
 import { queryList, queryOne, reSendMsg, queryUrgeList } from '@/api/workform_record'
+
 export default {
   name: 'workflow_done',
   data() {
@@ -290,7 +292,7 @@ export default {
     }
   },
   mounted() {
-    this.WORKFLOW_AUTH = process.env.WORKFLOW_AUTH_STAFFNO.includes(localStorage.getItem('accountNo'))
+    this.WORKFLOW_AUTH = _.includes(process.env.WORKFLOW_AUTH_STAFFNO, localStorage.getItem('accountNo'))
     this.formContainer()
     this.handleChangeAcitve()
     this.queryList(this.req)
