@@ -41,7 +41,10 @@
           <el-table-column align="center" label="有效性">
             <template slot-scope="scope">
               <div>
-                <span :style="scope.row.enabled===0?'background:#F8A300':'background:#28CC6C'" style="display:inline-block;color:#fff;padding:1px 10px;">{{scope.row.enabled===0?'无效':'有效'}}</span>
+                <span
+                  :style="scope.row.enabled===0?'background:#F8A300':'background:#28CC6C'"
+                  style="display:inline-block;color:#fff;padding:1px 10px;"
+                >{{scope.row.enabled===0?'无效':'有效'}}</span>
               </div>
             </template>
           </el-table-column>
@@ -134,7 +137,7 @@
         </el-col>
         <!-- 模板 -->
         <el-col :span="13" style="background-color: #fff;">
-          <div class="template">
+          <!-- <div class="template">
             <div style="font-size:18px;font-weight:800">工单模板</div>
             <div
               class="title"
@@ -173,7 +176,7 @@
                   <el-input
                     size="small"
                     type="textarea"
-                    :rows="1"
+                    :rows="2"
                     :disabled="show===3?false:true"
                     style="inputWidth"
                     :placeholder="item.placeholder"
@@ -235,15 +238,6 @@
                 </div>
                 <div v-if="item.dataType==='span'">
                   <div v-html="item.defaultValue"></div>
-                  <!-- <quill-editor
-                    ref="myQuillEditor"
-                    :disabled="show===3?false:true"
-                    v-model="item.defaultValue"
-                    :options="editorOption"
-                    :placeholder="item.placeholder"
-                    :maxlength="item.maxValue"
-                    :minlength="item.minValue"
-                  ></quill-editor>-->
                 </div>
                 <div v-if="item.dataType === 'address'">
                   <div style="display:flex;justify-content: space-between;">
@@ -327,6 +321,35 @@
                 "
               >取消</el-button>
             </div>
+          </div>-->
+          <WorkForm v-model="workFormTable"></WorkForm>
+          <div style="display: flex;justify-content: center;">
+            <el-button size="small" type="primary" @click="modifyWorkForm" v-if="show === 2">确认</el-button>
+            <el-button size="small" type="primary" @click="submitUpload" v-if="show === 1">提交</el-button>
+            <el-button
+              v-if="show === 1"
+              size="small"
+              type="primary"
+              plain
+              @click="
+                  initWorkFormTable;
+                  createShow = false;
+                  tableShow = true;
+                  show = 0;
+                "
+            >取消</el-button>
+            <el-button
+              v-if="show === 2"
+              size="small"
+              type="primary"
+              plain
+              @click="
+                  getWorkFormList()
+                  createShow = false;
+                  tableShow = true;
+                  show = 0;
+                "
+            >取消</el-button>
           </div>
         </el-col>
         <!-- 设值 -->
@@ -337,7 +360,7 @@
               <div>
                 <span class="star">工单名称:</span>
               </div>
-              <el-input type="textarea" :rows="1" v-model="workFormTable.name"></el-input>
+              <el-input type="text" v-model="workFormTable.name"></el-input>
             </div>
             <div>
               <div>
@@ -352,7 +375,7 @@
               <div>
                 <span>工单备注:</span>
               </div>
-              <el-input type="textarea" :rows="1" v-model="workFormTable.remark"></el-input>
+              <el-input type="textarea" :rows="2" v-model="workFormTable.remark"></el-input>
             </div>
           </div>
           <div
@@ -370,12 +393,19 @@
                 </div>
                 <el-input type="text" :rows="1" v-model="item.name"></el-input>
               </div>
-              <!-- 字段描述 -->
+              <!-- 字段英文名 -->
               <div>
                 <div>
-                  <span class="star">字段描述:</span>
+                  <span class="star">字段英文名:</span>
                 </div>
-                <el-input type="textarea" :rows="2" v-model="item.val"></el-input>
+                <el-input type="text" v-model="item.val"></el-input>
+              </div>
+              <!-- 描述 -->
+              <div>
+                <div>
+                  <span>描述:</span>
+                </div>
+                <el-input type="textarea" rows="2" v-model="item.remark"></el-input>
               </div>
               <!-- 特殊类型 radio/checkbox/select/multipleSelect/address-->
               <div
@@ -442,13 +472,13 @@
                 </div>
                 <div v-else-if="item.dataType==='checkbox'||item.dataType==='multipleSelect'">
                   <div class="addDemo" v-for="(item9,index9) in item.defaultValue" :key="index9">
-                    <el-input type="text" v-model="item9.value"></el-input>
+                    <el-input type="text" v-model="item.defaultValue[index9]"></el-input>
                     <div class="addDemoTools">
                       <div class="tool">
                         <i
                           class="el-icon-plus"
                           style="cursor:pointer;color:#54B8FF;font-size:12px;"
-                          @click="addRadio(item.defaultValue)"
+                          @click="addRadioMut(item.defaultValue)"
                           title="新建选项"
                         ></i>
                         <div v-if="item.defaultValue.length > 1">
@@ -605,13 +635,6 @@
                 </div>
                 <el-input type="number" v-model="item.propertySort"></el-input>
               </div>
-              <!-- 备注 -->
-              <div>
-                <div>
-                  <span>备注:</span>
-                </div>
-                <el-input type="text" v-model="item.remark"></el-input>
-              </div>
             </div>
           </div>
         </el-col>
@@ -668,6 +691,8 @@
   </div>
 </template>
 <script>
+import WorkForm from "@/components/WorkForm";
+import AddressSelect from "@/components/AddressSelect";
 import {
   getWorkForm,
   deleteWorkForm,
@@ -679,7 +704,6 @@ import {
   mutipledeleteWorkForm
 } from "@/api/work_form_manage";
 import { formatDateTime, swapArray } from "@/utils/tools";
-
 export default {
   name: "work_form_manage",
   data() {
@@ -712,7 +736,6 @@ export default {
       rules: {
         name: [{ required: true, message: "请输入工单名称", trigger: "blur" }]
       },
-
       // 修改工作表单
       modifyWorkFormTable: {
         id: "",
@@ -743,7 +766,6 @@ export default {
       pageInfo: {},
       reqPag: {},
       arr: [],
-
       // 省市区三级联动
       province: [],
       city: [],
@@ -760,8 +782,7 @@ export default {
   },
   mounted() {
     this.getWorkFormList();
-    this.$dragging.$on("dragged", ({ value }) => {
-    });
+    this.$dragging.$on("dragged", ({ value }) => {});
     this.getAddress();
   },
   methods: {
@@ -973,7 +994,7 @@ export default {
             { value: "选项2" },
             { value: "选项3" }
           ],
-          defaultValue: [{ value: "选项1" }],
+          defaultValue: ["选项1"],
           defaultValueType: "0",
           formatValue: "",
           isRequired: 0,
@@ -1050,7 +1071,7 @@ export default {
             { value: "选项2" },
             { value: "选项3" }
           ],
-          defaultValue: [{ value: "选项1" }],
+          defaultValue: ["选项1"],
           defaultValueType: "0",
           formatValue: "",
           isRequired: 0,
@@ -1247,6 +1268,9 @@ export default {
         value: ""
       });
     },
+    addRadioMut(options) {
+      options.push("");
+    },
     // 新建修改成功
     success() {
       this.tableShow = true;
@@ -1271,6 +1295,26 @@ export default {
         arr.push({ value: key });
       }
       return arr;
+    },
+    // 多选，多级下拉转成数组
+    stringToArrMut(str) {
+      let obj = JSON.parse(str);
+      let arr = [];
+      for (let key in obj) {
+        arr.push(key);
+      }
+      console.log(arr);
+      return arr;
+    },
+    // 多选多级下拉转成字符串对象
+    arrToStringMut(arr) {
+      const array = arr;
+      const target = {};
+      array.forEach(a => {
+        const source = JSON.parse(`{"${a.value}":"${a.value}"}`);
+        Object.assign(target, source);
+      });
+      return JSON.stringify(target);
     },
     // 新建
     submitUpload() {
@@ -1385,7 +1429,7 @@ export default {
           item.dataType === "multipleSelect"
         ) {
           item.dataValues = this.stringToArr(item.dataValues);
-          item.defaultValue = this.stringToArr(item.defaultValue);
+          item.defaultValue = this.stringToArrMut(item.defaultValue);
         }
         if (item.dataType === "address") {
           item.defaultValue = JSON.parse(item.defaultValue);
@@ -1407,7 +1451,6 @@ export default {
     filterData() {},
     // 修改传值
     showModifyContent(row) {
-      console.log(row);
       this.filterDataUpdate(row);
       this.modifyWorkFormTable.id = row.id;
       this.workFormTable.name = row.name;
@@ -1573,6 +1616,10 @@ export default {
       // console.log(html)
       // this.text = text
     }
+  },
+  components: {
+    WorkForm,
+    AddressSelect
   }
 };
 </script>
@@ -1660,7 +1707,6 @@ export default {
       font-size: 16px;
     }
   }
-
   .demo {
     padding: 10px;
     .name {
