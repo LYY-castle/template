@@ -1311,7 +1311,7 @@ export default {
       const array = arr;
       const target = {};
       array.forEach(a => {
-        const source = JSON.parse(`{"${a.value}":"${a.value}"}`);
+        const source = JSON.parse(`{"${a}":"${a}"}`);
         Object.assign(target, source);
       });
       return JSON.stringify(target);
@@ -1359,7 +1359,7 @@ export default {
                   item.dataType === "checkbox"
                 ) {
                   item.dataValues = this.arrToString(item.dataValues);
-                  item.defaultValue = this.arrToString(item.defaultValue);
+                  item.defaultValue = this.arrToStringMut(item.defaultValue);
                 }
                 if (item.dataType === "address") {
                   item.defaultValue = JSON.stringify(item.defaultValue);
@@ -1502,7 +1502,7 @@ export default {
                   item.dataType === "checkbox"
                 ) {
                   item.dataValues = this.arrToString(item.dataValues);
-                  item.defaultValue = this.arrToString(item.defaultValue);
+                  item.defaultValue = this.arrToStringMut(item.defaultValue);
                 }
                 if (item.dataType === "address") {
                   item.defaultValue = JSON.stringify(item.defaultValue);
@@ -1523,14 +1523,13 @@ export default {
         this.modifyWorkFormTable.remark = this.workFormTable.remark;
         this.modifyWorkFormTable.workformPropertyUpdateInfos = this.workFormTable.workformPropertyCreateInfos;
         if (flag) {
-          console.log(this.modifyWorkFormTable);
           updateWorkForm(this.modifyWorkFormTable).then(res => {
             if (res.data.code === 0) {
+              this.success();
               this.$message.success(res.data.message);
-              this.success();
             } else {
-              this.$message.error(res.data.message);
               this.success();
+              this.$message.error(res.data.message);
             }
           });
         }
