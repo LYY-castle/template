@@ -66,7 +66,7 @@ const env_conf = {
       sendMessageTime: 10,//通话多少秒需要发短信
       content: '"你好，谢谢支持"'
     },
-    WORKFLOW_AUTH_STAFFNO: ['"10010"'],
+    WORKFLOW_AUTH_STAFFNO: ['"10010"','"10021"'],
   }
 }
 

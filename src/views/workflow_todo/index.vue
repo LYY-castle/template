@@ -356,10 +356,12 @@
             <div class="font14 bold">详细信息</div>
           </el-col>
         </el-row>
+
         <el-row style="margin-bottom:10px;">
           <div style="border-bottom:solid #e8e8e8 1px;"></div>
         </el-row>
-        <div v-for="(item, index) in workformRecordDetail.workformRecordRuleResults" v-if="item.workformProperty">
+        <!-- <WorkForm v-model="workformRecordDetail.workformRecordRuleResults"></WorkForm> -->
+        <div v-for="(item, index) in workformRecordDetail.workformRecordRuleResults" :key="index" v-if="item.workformProperty">
           <el-col :span="12">
             <el-form-item :label="item.workformProperty.name+'：'" label-width="180px;">
               <span>{{showValues(item)}}</span>
@@ -375,6 +377,8 @@
 </template>
 <script>
 import _ from 'lodash'
+import WorkForm from "@/components/WorkForm";
+import AddressSelect from "@/components/AddressSelect";
 import { queryList, queryOne, updateWorkformRecord, reSendMsg, queryUrgeList } from '@/api/workform_record'
 
 export default {
@@ -789,6 +793,10 @@ export default {
       this.req.pageNo = val
       this.queryList(this.req)
     }
+  },
+  components: {
+    WorkForm,
+    AddressSelect
   }
 }
 </script>

@@ -137,7 +137,7 @@
         </el-col>
         <!-- 模板 -->
         <el-col :span="13" style="background-color: #fff;">
-          <!-- <div class="template">
+          <div class="template">
             <div style="font-size:18px;font-weight:800">工单模板</div>
             <div
               class="title"
@@ -321,8 +321,8 @@
                 "
               >取消</el-button>
             </div>
-          </div>-->
-          <WorkForm v-model="workFormTable"></WorkForm>
+          </div>
+          <!-- <WorkForm v-model="workFormTable"></WorkForm>
           <div style="display: flex;justify-content: center;">
             <el-button size="small" type="primary" @click="modifyWorkForm" v-if="show === 2">确认</el-button>
             <el-button size="small" type="primary" @click="submitUpload" v-if="show === 1">提交</el-button>
@@ -350,7 +350,7 @@
                   show = 0;
                 "
             >取消</el-button>
-          </div>
+          </div> -->
         </el-col>
         <!-- 设值 -->
         <el-col :span="7" class="setting" v-if="show === 1 || show === 2" :rules="rules">
@@ -1447,8 +1447,6 @@ export default {
         }
       });
     },
-    // 提交修改或者新建时候数据过滤
-    filterData() {},
     // 修改传值
     showModifyContent(row) {
       this.filterDataUpdate(row);
