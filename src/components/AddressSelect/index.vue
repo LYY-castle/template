@@ -4,7 +4,7 @@
       <el-select
         :value="provinceData.length ? value.province : ''"
         placeholder="请选择省份"
-        :disabled="selectDisabled"
+        :readonly="selectDisabled"
         @change="changeProvince"
       >
         <el-option
@@ -17,7 +17,7 @@
       <el-select
         :value="cityData.length ? value.city: ''"
         placeholder="请选择城市"
-        :disabled="selectDisabled"
+        :readonly="selectDisabled"
         @change="changeCity"
       >
         <el-option
@@ -30,7 +30,7 @@
       <el-select
         :value="areaData.length ? value.area : ''"
         placeholder="请选择区域"
-        :disabled="selectDisabled"
+        :readonly="selectDisabled"
         @change="changeArea"
       >
         <el-option
@@ -46,6 +46,7 @@
       rows="2"
       :value="value.detail"
       @input="detailInput"
+      :readonly="selectDisabled"
     ></el-input>
   </div>
 </template>

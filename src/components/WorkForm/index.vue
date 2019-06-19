@@ -3,7 +3,7 @@
     <div class="template">
       <div style="font-size:18px;font-weight:800" v-if="!showOrEdite">工单模板</div>
       <div>
-        <el-input v-model="value.name" class="title"></el-input>
+        <el-input v-model="value.name" class="title" :readonly="true"></el-input>
       </div>
       <div
         class="selectShow"
@@ -11,92 +11,74 @@
         :key="index"
       >
         <div class="demo">
-          <div class="name" :class="item.isRequired?'star':''">{{ item.name }}</div>
           <div class="name">
-            <p class="white-space:normal;width:100%;">{{ item.val }}</p>
+            
           </div>
-          <div v-if="item.dataType === 'input'">
-            <el-input
-              type="text"
-              size="small"
-              :disabled="showOrEdite"
-              style="inputWidth"
-              :placeholder="item.placeholder"
-              v-model="item.defaultValue"
-              :maxlength="item.maxValue"
-              :minlength="item.minValue"
-            ></el-input>
-          </div>
-          <div v-if="item.dataType === 'textarea'">
-            <el-input
-              size="small"
-              type="textarea"
-              :rows="2"
-              :disabled="showOrEdite"
-              style="inputWidth"
-              :placeholder="item.placeholder"
-              v-model="item.defaultValue"
-              :maxlength="item.maxValue"
-              :minlength="item.minValue"
-            ></el-input>
-          </div>
-          <div v-if="item.dataType === 'inputNumber'">
-            <el-input
-              size="small"
-              type="number"
-              :disabled="showOrEdite"
-              :placeholder="item.placeholder"
-              v-model="item.defaultValue"
-              :maxlength="item.maxValue"
-              :minlength="item.minValue"
-            ></el-input>
-          </div>
-          <div v-if="item.dataType === 'radio'">
-            <el-radio-group v-model="item.defaultValue">
-              <el-radio
-                :label="item1.value"
+          <el-form label-position="top" size="small" :model="value.workformPropertyCreateInfos">
+            <el-form-item :label="item.name+':'" :class="item.isRequired?'star':''">
+              <p class="white-space:normal;width:100%;">{{ item.val }}</p>
+              <el-input
+                v-if="item.dataType === 'input' || item.dataType === 'textarea' || item.dataType === 'inputNumber'"
+                :type="item.dataType=='textarea'?'textarea':item.dataType=='inputnumber'?'number':'text'"
+                size="small"
                 :disabled="showOrEdite"
-                v-for="(item1,index1) in item.dataValues"
-                :key="index1"
-              ></el-radio>
-            </el-radio-group>
-          </div>
-          <div v-if="item.dataType === 'checkbox'">
-            <el-checkbox-group v-model="item.defaultValue">
-              <el-checkbox
-                v-for="(item2,index2) in item.dataValues"
-                :key="index2"
-                :label="item2.value"
+                style="inputWidth"
+                :placeholder="item.placeholder"
+                v-model="item.defaultValue"
+                :maxlength="item.maxValue"
+                :minlength="item.minValue"
+              ></el-input>
+              <el-radio-group v-model="item.defaultValue" v-if="item.dataType === 'radio'">
+                <el-radio
+                  :label="item1.value"
+                  :disabled="showOrEdite"
+                  v-for="(item1,index1) in item.dataValues"
+                  :key="index1"
+                ></el-radio>
+              </el-radio-group>
+              <el-checkbox-group v-model="item.defaultValue" v-if="item.dataType === 'checkbox'">
+                <el-checkbox
+                  v-for="(item2,index2) in item.dataValues"
+                  :key="index2"
+                  :label="item2.value"
+                  :disabled="showOrEdite"
+                ></el-checkbox>
+              </el-checkbox-group>
+              <el-select
+                v-if="item.dataType === 'select'|| item.dataType === 'multipleSelect'"
+                :placeholder="item.placeholder"
+                v-model="item.defaultValue"
                 :disabled="showOrEdite"
-              ></el-checkbox>
-            </el-checkbox-group>
-          </div>
-          <div v-if="item.dataType === 'select'|| item.dataType === 'multipleSelect'">
-            <el-select
-              :placeholder="item.placeholder"
-              v-model="item.defaultValue"
-              :disabled="showOrEdite"
-              :multiple="item.dataType==='multipleSelect'?true:false"
-            >
-              <el-option v-for="i in item.dataValues" :key="i.value" :value="i.value"></el-option>
-            </el-select>
-          </div>
+                :multiple="item.dataType==='multipleSelect'?true:false"
+              >
+                <el-option v-for="i in item.dataValues" :key="i.value" :value="i.value"></el-option>
+              </el-select>
+              <el-date-picker
+                v-if="item.dataType === 'datetime'||item.dataType === 'date'||item.dataType === 'time'"
+                :type="item.dataType"
+                :placeholder="item.placeholder"
+                :disabled="showOrEdite"
+                v-model="item.defaultValue"
+              ></el-date-picker>
+              <div v-if="item.dataType==='span'" v-html="item.defaultValue"></div>
+              <AddressSelect
+                v-model="item.defaultValue"
+                :disabled="true"
+                v-if="item.dataType === 'address'"
+              ></AddressSelect>
+            </el-form-item>
+          </el-form>
+          <!-- <div v-if="item.dataType === 'input'"></div>
+          <div v-if="item.dataType === 'textarea'"></div>
+          <div v-if="item.dataType === 'inputNumber'"></div>
+          <div v-if="item.dataType === 'radio'"></div>
+          <div v-if="item.dataType === 'checkbox'"></div>
+          <div v-if="item.dataType === 'select'|| item.dataType === 'multipleSelect'"></div>
           <div
             v-if="item.dataType === 'datetime'||item.dataType === 'date'||item.dataType === 'time'"
-          >
-            <el-date-picker
-              :type="item.dataType"
-              :placeholder="item.placeholder"
-              :disabled="showOrEdite"
-              v-model="item.defaultValue"
-            ></el-date-picker>
-          </div>
-          <div v-if="item.dataType==='span'">
-            <div v-html="item.defaultValue"></div>
-          </div>
-          <div v-if="item.dataType === 'address'">
-            <AddressSelect v-model="item.defaultValue"></AddressSelect>
-          </div>
+          ></div>
+          <div v-if="item.dataType==='span'"></div>
+          <div v-if="item.dataType === 'address'"></div> -->
         </div>
       </div>
     </div>
@@ -109,11 +91,10 @@ export default {
   name: "WorkForm",
   data() {
     return {
-      showOrEdite: false,
+      showOrEdite: true
     };
   },
-  created() {
-  },
+  created() {},
   props: {
     value: {
       type: Object,
@@ -305,6 +286,13 @@ export default {
 .classA {
   color: red;
 }
+/deep/ .el-input.is-disabled .el-input__inner,
+/deep/ .el-textarea.is-disabled .el-textarea__inner {
+  border: none;
+  background: none;
+  color: #000;
+}
+// /deep/
 </style>
 
 
