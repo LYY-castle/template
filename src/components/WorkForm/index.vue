@@ -68,17 +68,6 @@
               ></AddressSelect>
             </el-form-item>
           </el-form>
-          <!-- <div v-if="item.dataType === 'input'"></div>
-          <div v-if="item.dataType === 'textarea'"></div>
-          <div v-if="item.dataType === 'inputNumber'"></div>
-          <div v-if="item.dataType === 'radio'"></div>
-          <div v-if="item.dataType === 'checkbox'"></div>
-          <div v-if="item.dataType === 'select'|| item.dataType === 'multipleSelect'"></div>
-          <div
-            v-if="item.dataType === 'datetime'||item.dataType === 'date'||item.dataType === 'time'"
-          ></div>
-          <div v-if="item.dataType==='span'"></div>
-          <div v-if="item.dataType === 'address'"></div> -->
         </div>
       </div>
     </div>

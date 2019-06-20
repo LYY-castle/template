@@ -211,11 +211,50 @@
                       :value-format="item.formatValue"
                     ></el-date-picker>
                     <div v-if="item.dataType==='span'" v-html="item.defaultValue"></div>
-                    <AddressSelect
-                      v-model="item.defaultValue"
-                      :disabled="true"
-                      v-if="item.dataType === 'address'"
-                    ></AddressSelect>
+                    <div v-if="item.dataType==='address'">
+                      <div style="display:flex;justify-content: space-between;flex-wrap:wrap;">
+                        <el-select
+                          v-model="item.defaultValue.province"
+                          placeholder="请选择"
+                          style="width:100%;"
+                          @change="getLower1(item)"
+                        >
+                          <el-option
+                            v-for="item in province"
+                            :key="item.id"
+                            :label="item.regionName"
+                            :value="item.regionCode"
+                          ></el-option>
+                        </el-select>
+                        <el-select
+                          v-model="item.defaultValue.city"
+                          placeholder="请选择"
+                          style="width:100%;"
+                          @change="getLower2(item)"
+                        >
+                          <el-option
+                            v-for="item in city"
+                            :key="item.id"
+                            :label="item.regionName"
+                            :value="item.regionCode"
+                          ></el-option>
+                        </el-select>
+                        <el-select
+                          v-model="item.defaultValue.area"
+                          placeholder="请选择"
+                          style="width:100%;"
+                          @change="areaChange(item)"
+                        >
+                          <el-option
+                            v-for="item in area"
+                            :key="item.id"
+                            :label="item.regionName"
+                            :value="item.regionCode"
+                          ></el-option>
+                        </el-select>
+                      </div>
+                      <el-input type="textarea" rows="2" v-model="item.defaultValue.detail"></el-input>
+                    </div>
                   </el-form-item>
                 </el-form>
               </div>
@@ -254,8 +293,8 @@
               >取消</el-button>
             </div>
           </div>
-          <!-- <WorkForm v-model="workFormTable"></WorkForm>
-          <div style="display: flex;justify-content: center;">
+          <!-- <WorkForm v-model="workFormTable"></WorkForm> -->
+          <!-- <div style="display: flex;justify-content: center;">
             <el-button size="small" type="primary" @click="modifyWorkForm" v-if="show === 2">确认</el-button>
             <el-button size="small" type="primary" @click="submitUpload" v-if="show === 1">提交</el-button>
             <el-button
