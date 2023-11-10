@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "awe-dnd": "^0.3.4",
-    "axios": "0.17.1",
+    "axios": "1.6.0",
     "echarts": "^4.1.0",
     "element-china-area-data": "^4.1.0",
     "element-ui": "2.3.4",
